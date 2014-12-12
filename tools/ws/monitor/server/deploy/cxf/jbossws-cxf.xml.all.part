@@ -1,0 +1,46 @@
+	
+	<jaxws:endpoint 
+		id="StatoPdd_PortSoap11"
+		serviceName="StatoPddSoap11Service"
+		implementor="org.openspcoop2.pdd.monitor.ws.server.impl.StatoPdd@IMPLEMENTOR@Impl_PortSoap11"
+		address="/StatoPdd/Soap11" 
+		xmlns="http://www.openspcoop2.org/pdd/monitor/management"
+		wsdlLocation="/WEB-INF/classes/StatoPdd@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="StatoPdd_PortSoap12"
+		serviceName="StatoPddSoap12Service"
+		implementor="org.openspcoop2.pdd.monitor.ws.server.impl.StatoPdd@IMPLEMENTOR@Impl_PortSoap12"
+		address="/StatoPdd/Soap12" 
+		xmlns="http://www.openspcoop2.org/pdd/monitor/management"
+		wsdlLocation="/WEB-INF/classes/StatoPdd@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
+		id="Messaggio_PortSoap11"
+		serviceName="MessaggioSoap11Service"
+		implementor="org.openspcoop2.pdd.monitor.ws.server.impl.Messaggio@IMPLEMENTOR@Impl_PortSoap11"
+		address="/Messaggio/Soap11" 
+		xmlns="http://www.openspcoop2.org/pdd/monitor/management"
+		wsdlLocation="/WEB-INF/classes/Messaggio@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="Messaggio_PortSoap12"
+		serviceName="MessaggioSoap12Service"
+		implementor="org.openspcoop2.pdd.monitor.ws.server.impl.Messaggio@IMPLEMENTOR@Impl_PortSoap12"
+		address="/Messaggio/Soap12" 
+		xmlns="http://www.openspcoop2.org/pdd/monitor/management"
+		wsdlLocation="/WEB-INF/classes/Messaggio@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>

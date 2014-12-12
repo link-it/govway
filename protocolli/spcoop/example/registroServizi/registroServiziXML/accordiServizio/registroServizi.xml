@@ -1,0 +1,215 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+   <accordo-servizio-parte-comune 
+		     nome="EsempioASParteComune" 
+		     descrizione="Esempio di accordo servizio parte comune"
+		     versione="1"
+		     profilo-collaborazione="oneway"
+		     wsdl-definitorio="EsempioAccordoServizioParteComune/allegati/InterfacciaDefinitoria.xsd"
+		     wsdl-concettuale="EsempioAccordoServizioParteComune/specificaInterfaccia/InterfacciaConcettuale.wsdl"
+		     wsdl-logico-erogatore="EsempioAccordoServizioParteComune/specificaInterfaccia/InterfacciaLogicaErogatore.wsdl"
+		     wsdl-logico-fruitore="EsempioAccordoServizioParteComune/specificaInterfaccia/InterfacciaLogicaFruitore.wsdl"
+><!--		     specifica-conversazione-concettuale="EsempioAccordoServizioParteComune/specificaConversazione/ConversazioneConcettuale.wsbl"
+		     specifica-conversazione-erogatore="EsempioAccordoServizioParteComune/specificaConversazione/ConversazioneLogicaLatoErogatore.wsbl"
+		     specifica-conversazione-fruitore="EsempioAccordoServizioParteComune/specificaConversazione/ConversazioneLogicaLatoFruitore.wsbl"--> 
+	<soggetto-referente tipo="SPC" nome="MinisteroReferente" />
+	<port-type nome="Oneway" profilo-collaborazione="oneway" descrizione="Esempio di servizio oneway">
+            <azione nome="notifica" />
+        </port-type>
+        <port-type nome="Sincrono" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
+            <azione nome="aggiornamento" />
+        </port-type>
+        <port-type nome="AsincronoSimmetricoRichiesta" profilo-collaborazione="asincronoSimmetrico" descrizione="Esempio di servizio asincrono simmetrico (Richiesta)">
+            <azione nome="richiestaAggiornamento" />
+        </port-type>
+        <port-type nome="AsincronoSimmetricoRisposta" profilo-collaborazione="asincronoSimmetrico" descrizione="Esempio di servizio asincrono simmetrico (Risposta)">
+            <azione nome="esitoAggiornamento" correlata-servizio="AsincronoSimmetricoRichiesta" correlata="richiestaAggiornamento" />
+        </port-type>
+        <port-type nome="AsincronoAsimmetrico" profilo-collaborazione="asincronoAsimmetrico" descrizione="Esempio di servizio asincrono asimmetrico">
+            <azione nome="richiestaRegistrazione" />
+	    <azione nome="richiestaStatoRegistrazione" correlata="richiestaRegistrazione" />
+        </port-type>
+	<port-type nome="AsincronoAsimmetricoRichiesta" profilo-collaborazione="asincronoAsimmetrico" descrizione="Esempio di servizio asincrono asimmetrico">
+            <azione nome="richiestaRegistrazione" />
+        </port-type>
+	<port-type nome="AsincronoAsimmetricoRisposta" profilo-collaborazione="asincronoAsimmetrico" descrizione="Esempio di servizio asincrono asimmetrico">
+            <azione nome="richiestaStatoRegistrazione" correlata-servizio="AsincronoAsimmetricoRichiesta" correlata="richiestaRegistrazione" />
+        </port-type>
+	<allegato tipo="doc" file="EsempioAccordoServizioParteComune/allegati/ContestoUtilizzo.doc" />
+	<allegato tipo="txt" file="EsempioAccordoServizioParteComune/allegati/README.txt" />
+	<allegato tipo="XML" file="EsempioAccordoServizioParteComune/allegati/allegatoImportFromDefinitorio.xsd" />
+	<allegato tipo="XML" file="EsempioAccordoServizioParteComune/allegati/allegatoImportFromDefinitorio2.xsd" />
+	<allegato tipo="XML" file="EsempioAccordoServizioParteComune/allegati/allegatoIncludeFromDefinitorio.xsd" />
+	<allegato tipo="XML" file="EsempioAccordoServizioParteComune/allegati/allegatoImportFromAllegato.xsd" />
+	<allegato tipo="XML" file="EsempioAccordoServizioParteComune/allegati/allegatoImportFromWSDL.xsd" />
+        <specifica-semiformale tipo="Linguaggio Naturale" file="EsempioAccordoServizioParteComune/specificaSemiformale/SpecificaSemiformale.doc"/>
+        <specifica-semiformale tipo="XML" file="EsempioAccordoServizioParteComune/specificaSemiformale/types.xml"/>
+	<specifica-semiformale tipo="XML" file="EsempioAccordoServizioParteComune/specificaSemiformale/specificaSemiformaleImportFromSpecificaSemiformale.xsd"/>
+	<specifica-semiformale tipo="XML" file="EsempioAccordoServizioParteComune/specificaSemiformale/specificaSemiformaleImportFromDefinitorio.xsd"/>
+	<specifica-semiformale tipo="XML" file="EsempioAccordoServizioParteComune/specificaSemiformale/specificaSemiformaleIncludeFromDefinitorio.xsd"/>
+	<specifica-semiformale tipo="XML" file="EsempioAccordoServizioParteComune/specificaSemiformale/specificaSemiformaleImportFromWSDL.xsd"/>
+   </accordo-servizio-parte-comune>
+
+
+   <soggetto tipo="SPC" nome="MinisteroErogatore">
+        <connettore tipo="http" nome="PdDMinisteroErogatore">
+             <property nome="location" valore="http://pddErogatore:8080/openspcoop/PA" />
+         </connettore>
+
+        <!-- Servizio oneway -->
+	<accordo-servizio-parte-specifica 
+		nome="Oneway"
+		accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="Oneway"
+		descrizione="Esempio di accordo di servizio parte specifica (Oneway)"
+		wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioOneway/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+		versione="1"
+		>
+	    <servizio tipo="SPC" nome="Oneway" />
+            <fruitore tipo="SPC" nome="MinisteroFruitore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioOneway/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioOneway/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioOneway/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioOneway/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioOneway/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioOneway/specificaSicurezza/SpecificaSicurezza.doc" />
+	    <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioOneway/specificaSicurezza/usernametoken.xml" />
+        </accordo-servizio-parte-specifica>
+
+        <!-- Servizio sincrono -->
+	<accordo-servizio-parte-specifica
+		nome="Sincrono"
+		accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="Sincrono"
+		descrizione="Esempio di accordo di servizio parte specifica (Sincrono)"
+		wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+		versione="1"
+		>
+            <servizio tipo="SPC" nome="Sincrono" />
+            <fruitore tipo="SPC" nome="MinisteroFruitore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSicurezza/usernametoken.xml" />
+        </accordo-servizio-parte-specifica>
+
+        <!-- Servizio asincrono simmetrico -->
+	<accordo-servizio-parte-specifica
+		nome="AsincronoSimmetricoRichiesta"
+		accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="AsincronoSimmetricoRichiesta"
+		descrizione="Esempio di accordo di servizio parte specifica (AsincronoSimmetrica richiesta)"
+		wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+		versione="1"
+		>
+            <servizio tipo="SPC" nome="AsincronoSimmetricoRichiesta" />
+            <fruitore tipo="SPC" nome="MinisteroFruitore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRichiesta/specificaSicurezza/usernametoken.xml" />
+        </accordo-servizio-parte-specifica>
+
+        <!-- Servizio asincrono asimmetrico -->
+	<accordo-servizio-parte-specifica
+		nome="AsincronoAsimmetrico"
+		accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="AsincronoAsimmetrico"
+		descrizione="Esempio di accordo di servizio parte specifica (AsincronoAsimmetrico)"
+		wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+		versione="1"
+		>
+            <servizio tipo="SPC" nome="AsincronoAsimmetrico" />
+            <fruitore tipo="SPC" nome="MinisteroFruitore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetrico/specificaSicurezza/usernametoken.xml" />
+        </accordo-servizio-parte-specifica>
+
+	<!-- Servizio asincrono asimmetrico richiesta -->
+	<accordo-servizio-parte-specifica
+		nome="AsincronoAsimmetricoRichiesta"
+		accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="AsincronoAsimmetricoRichiesta"
+		descrizione="Esempio di accordo di servizio parte specifica (AsincronoAsimmetrico richiesta)"
+		wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+		versione="1"
+		>
+	     <servizio tipo="SPC" nome="AsincronoAsimmetricoRichiesta" />
+            <fruitore tipo="SPC" nome="MinisteroFruitore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRichiesta/specificaSicurezza/usernametoken.xml" />
+        </accordo-servizio-parte-specifica>
+
+	<!-- Servizio asincrono asimmetrico risposta -->
+	<accordo-servizio-parte-specifica
+		nome="AsincronoAsimmetricoRisposta"
+		accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="AsincronoAsimmetricoRisposta"
+		descrizione="Esempio di accordo di servizio parte specifica (AsincronoAsimmetrica risposta)"
+		wsdl-implementativo-fruitore="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/specificaPortiAccesso/PortiAccessoFruitore.wsdl"
+		versione="1"
+		>
+            <servizio tipo="SPC" nome="AsincronoAsimmetricoRisposta" tipologia-servizio="correlato"/>
+            <fruitore tipo="SPC" nome="MinisteroFruitore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoAsimmetricoRisposta/specificaSicurezza/usernametoken.xml" />
+        </accordo-servizio-parte-specifica>
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="MinisteroFruitore">
+        <connettore tipo="http" nome="PdDMinisteroFruitore">
+             <property nome="location" valore="http://pddFruitore:8080/openspcoop/PA" />
+        </connettore>
+
+        <!-- Servizio asincrono simmetrico -->
+	<accordo-servizio-parte-specifica
+		nome="AsincronoSimmetricoRisposta"
+	 	accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="AsincronoSimmetricoRisposta"
+		descrizione="Esempio di accordo di servizio parte specifica (AsincronoSimmetrica risposta)"
+		 wsdl-implementativo-fruitore="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/specificaPortiAccesso/PortiAccessoFruitore.wsdl"
+		versione="1"
+		>
+            <servizio tipo="SPC" nome="AsincronoSimmetricoRisposta" tipologia-servizio="correlato"/>
+            <fruitore tipo="SPC" nome="MinisteroErogatore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioAsincronoSimmetricoRisposta/specificaSicurezza/usernametoken.xml" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="MinisteroReferente">
+        <connettore tipo="http" nome="PdDMinisteroReferente">
+             <property nome="location" valore="http://pddReferente:8080/openspcoop/PA" />
+         </connettore>
+   </soggetto>
+
+</registro-servizi>

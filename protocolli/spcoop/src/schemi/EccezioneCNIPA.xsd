@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/"
+xmlns:eGov_IT="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns="http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/"
+xmlns:eGov_IT_Diag="http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/" elementFormDefault="qualified"
+attributeFormDefault="unqualified">
+     <xsd:import namespace="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/" schemaLocation="Busta.xsd"/>
+     <xsd:element name="OraRegistrazione" type="xsd:dateTime"/>
+     <xsd:element name="IdentificativoPorta">
+         <xsd:simpleType>
+             <xsd:restriction base="xsd:anyURI"/>
+         </xsd:simpleType>
+     </xsd:element>
+     <xsd:element name="IdentificativoFunzione">
+         <xsd:simpleType>
+             <xsd:restriction base="xsd:anyURI"/>
+         </xsd:simpleType>
+     </xsd:element>
+     <xsd:element name="MessaggioDiErroreApplicativo">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="OraRegistrazione"/>
+                 <xsd:element ref="IdentificativoPorta"/>
+                 <xsd:element ref="IdentificativoFunzione"/>
+                 <xsd:element ref="Eccezione"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="Eccezione">
+         <xsd:complexType>
+             <xsd:choice>
+                 <xsd:element ref="EccezioneBusta"/>
+                 <xsd:element ref="EccezioneProcessamento"/>
+             </xsd:choice>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="EccezioneProcessamento">
+         <xsd:complexType>
+             <xsd:attribute name="codiceEccezione" type="xsd:string" use="required"/>
+             <xsd:attribute name="descrizioneEccezione" type="xsd:string"/>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="EccezioneBusta">
+         <xsd:complexType>
+            <xsd:attribute name="codiceEccezione" type="eGov_IT:codiceEccezioneType" use="required"/>
+            <xsd:attribute name="descrizioneEccezione" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

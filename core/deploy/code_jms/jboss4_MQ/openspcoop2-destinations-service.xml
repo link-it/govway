@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+    <!-- OpenSPCoop2 -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toImbustamento">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toInoltroBuste">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">60000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toInoltroRisposte">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">60000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toSbustamento">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toConsegnaContenutiApplicativi">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">60000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toImbustamentoRisposte">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toSbustamentoRisposte">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toRicezioneBuste">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toRicezioneContenutiApplicativi">
+         <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <!-- OpenSPCoop2 -->
+
+</server>

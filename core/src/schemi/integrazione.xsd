@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/integrazione"
+        targetNamespace="http://www.openspcoop2.org/core/integrazione"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" elementFormDefault="qualified"
+        attributeFormDefault="unqualified">
+
+        <xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+                schemaLocation="soapEnvelope.xsd"/>
+
+        <!-- Contiene informazioni utili da passare tra servizio applicativo e porta di dominio -->
+        <xsd:element name="integrazione">
+                <xsd:complexType>
+                        <!-- Protocol Infos -->
+                        <xsd:sequence>
+                                <xsd:element ref="InfoProtocollo" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>    
+                        <!-- informazioni Protocollo -->
+                        <xsd:attribute name="TipoMittente" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="Mittente" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="TipoDestinatario" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="Destinatario" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="TipoServizio" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="Servizio" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="Azione" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="IdMessaggio" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="RiferimentoMessaggio" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="Collaborazione" type="xsd:string" use="optional"/>
+                        <!-- informazioni di integrazione -->
+                        <xsd:attribute name="IdApplicativo" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="RiferimentoIDApplicativoRichiesta" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="ServizioApplicativo" type="xsd:string" use="optional"/>
+                        <!--Informazioni sulla versione -->
+                        <xsd:attribute name="OpenSPCoop2Pdd" type="xsd:string"/>
+                        <xsd:attribute name="OpenSPCoop2PddDetails" type="xsd:string"/>
+                        <!-- SOAPHeader Element -->
+                        <xsd:attribute ref="SOAP_ENV:actor" use="required"
+                                fixed="http://www.openspcoop2.org/core/integrazione"/>
+                        <xsd:attribute ref="SOAP_ENV:mustUnderstand" use="required" fixed="0"/>
+                </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="InfoProtocollo">
+                <xsd:complexType>
+                        <xsd:simpleContent>
+                                <xsd:extension base="xsd:string">
+                                        <xsd:attribute name="tipo" type="xsd:string"/>                                        
+                                </xsd:extension>
+                        </xsd:simpleContent>
+                </xsd:complexType>
+        </xsd:element>
+
+</xsd:schema>

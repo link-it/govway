@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="openspcoop2" class="org.openspcoop2.protocol.manifest.Openspcoop2">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="protocolName" field="protocolName" usage="required"/>
+    <value name="factory" field="factory" usage="required"/>
+    <structure field="web" usage="required" map-as="org.openspcoop2.protocol.manifest.Web"/>
+    <structure field="registroServizi" usage="required" map-as="org.openspcoop2.protocol.manifest.RegistroServizi"/>
+    <structure field="urlMapping" usage="required" map-as="org.openspcoop2.protocol.manifest.UrlMapping"/>
+    <structure field="binding" usage="required" map-as="org.openspcoop2.protocol.manifest.Binding"/>
+  </mapping>
+  <mapping name="web" class="org.openspcoop2.protocol.manifest.Web">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="context" create-type="java.util.ArrayList">
+      <value name="context" type="java.lang.String"/>
+    </collection>
+    <structure field="emptyContext" usage="optional" map-as="org.openspcoop2.protocol.manifest.WebEmptyContext"/>
+  </mapping>
+  <mapping name="emptyContext" class="org.openspcoop2.protocol.manifest.WebEmptyContext">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="enabled" field="enabled" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="registroServizi" class="org.openspcoop2.protocol.manifest.RegistroServizi">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure field="soggetti" usage="required" map-as="org.openspcoop2.protocol.manifest.Soggetti"/>
+    <structure field="servizi" usage="required" map-as="org.openspcoop2.protocol.manifest.Servizi"/>
+    <structure field="versioni" usage="required" map-as="org.openspcoop2.protocol.manifest.Versioni"/>
+  </mapping>
+  <mapping name="soggetti" class="org.openspcoop2.protocol.manifest.Soggetti">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="tipi" field="tipi" usage="required" map-as="_Tipi_Type"/>
+    <value name="codiceIPA" field="codiceIPA" default="false" usage="optional" style="attribute"/>
+    <value name="indirizzoRisposta" field="indirizzoRisposta" default="false" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="servizi" class="org.openspcoop2.protocol.manifest.Servizi">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="tipi" field="tipi" usage="required" map-as="_Tipi_Type"/>
+    <structure field="profilo" usage="optional" map-as="org.openspcoop2.protocol.manifest.Profilo"/>
+    <structure field="funzionalita" usage="optional" map-as="org.openspcoop2.protocol.manifest.Funzionalita"/>
+    <value name="specificaConversazioni" field="specificaConversazioni" default="false" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="tipi" class="org.openspcoop2.protocol.manifest.Tipi" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="tipo" create-type="java.util.ArrayList">
+      <value name="tipo" type="java.lang.String"/>
+    </collection>
+    <value name="default" field="_default" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Tipi_Type" class="org.openspcoop2.protocol.manifest.Tipi" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="tipo" create-type="java.util.ArrayList">
+      <value name="tipo" type="java.lang.String"/>
+    </collection>
+    <value name="default" field="_default" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="versioni" class="org.openspcoop2.protocol.manifest.Versioni">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="versione" create-type="java.util.ArrayList">
+      <value name="versione" type="java.lang.String"/>
+    </collection>
+    <value name="default" field="_default" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="profilo" class="org.openspcoop2.protocol.manifest.Profilo">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="oneway" field="oneway" default="true" usage="optional" style="attribute"/>
+    <value name="sincrono" field="sincrono" default="true" usage="optional" style="attribute"/>
+    <value name="asincronoAsimmetrico" field="asincronoAsimmetrico" default="false" usage="optional" style="attribute"/>
+    <value name="asincronoSimmetrico" field="asincronoSimmetrico" default="false" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="funzionalita" class="org.openspcoop2.protocol.manifest.Funzionalita">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="filtroDuplicati" field="filtroDuplicati" default="false" usage="optional" style="attribute"/>
+    <value name="confermaRicezione" field="confermaRicezione" default="false" usage="optional" style="attribute"/>
+    <value name="collaborazione" field="collaborazione" default="false" usage="optional" style="attribute"/>
+    <value name="consegnaInOrdine" field="consegnaInOrdine" default="false" usage="optional" style="attribute"/>
+    <value name="scadenza" field="scadenza" default="false" usage="optional" style="attribute"/>
+    <value name="manifestAttachments" field="manifestAttachments" default="false" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="urlMapping" class="org.openspcoop2.protocol.manifest.UrlMapping">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="file" field="file" usage="required"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString"/>
+  </mapping>
+  <mapping name="binding" class="org.openspcoop2.protocol.manifest.Binding">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure field="soapHeaderBypassMustUnderstand" usage="optional" map-as="org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand"/>
+    <value name="soap11" field="soap11" usage="required" style="attribute"/>
+    <value name="soap12" field="soap12" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="soapHeaderBypassMustUnderstand" class="org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="header" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader"/>
+    </collection>
+  </mapping>
+  <mapping name="header" class="org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="localName" field="localName" usage="required"/>
+    <value name="namespace" field="namespace" usage="required"/>
+  </mapping>
+</binding>

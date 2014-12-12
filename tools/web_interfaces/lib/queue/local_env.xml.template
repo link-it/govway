@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="Queue_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../../../.."/>
+      <property name="openspcoop2_jars" location="${openspcoop2}/core/dist"/>
+
+      <property name="required_lib_queue" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_queue}"/>
+      <property name="sql" value="${openspcoop2}/core/deploy/sql"/>
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildAPI" value="true"/>
+      
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+
+</project>

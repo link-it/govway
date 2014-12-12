@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="XMLToBackend_LocalEnv" basedir=".">
+
+	<!-- Protocolli (indicare la directory che contiene i jar che implementano i plugins dei protocolli) -->
+	<property name="protocolli" location="protocolli" />
+
+
+	<!-- Personalizzazione testsuite -->
+	<property name="output" location="RisultatiTestSuite" />
+
+
+	<!-- ApplicationServer version -->
+	<property name="as" value="jboss/tomcat" />
+
+
+	<!-- Libreria jdbc verso i database di tracciamento di OpenSPCoop-->
+	<property name="jdbc_lib" location="JDBC_LIB" />
+
+
+	<!-- Protocollo Default -->
+	<property name="protocolloDefault" location="" />
+	
+
+	<!-- Configurazione -->
+	<property name="conversioneConfigurazione" value="true"/>
+	<!-- insertUpdate/delete -->
+	<property name="tipoConversioneConfigurazione" value="insertUpdate"/>
+	<!-- Gestione della configurazione -->
+	<property name="gestioneCRUDConfigurazionePdD" value="false"/>
+	<!-- Sorgente xml -->
+	<property name="sorgenteConfigurazione" value="deploy/example/config.xml" />
+	<!-- Tipo di configurazione, valori possibili: xml/db -->
+	<property name="tipoConfigurazione" value="db" />
+	<!-- Configuration.properties -->
+	<property name="proprietaConfigurazione" location="deploy/properties/configurazione.properties" />
+	<!-- Reset della configurazione -->
+	<property name="resetConfigurazione" value="false" />
+	<!-- Gestione dei soggetti SPCoop -->
+	<property name="gestioneSoggettiConfigurazione" value="false" />
+	
+	
+	<!-- Registro dei Servizi -->
+	<property name="conversioneRegistroServizi" value="true"/>
+	<!-- insertUpdate/delete -->
+	<property name="tipoConversioneRegistroServizi" value="insertUpdate"/>
+	<!-- Sorgente xml -->
+	<property name="sorgenteRegistroServizi" value="deploy/example/registroServizi.xml" />
+	<!-- Tipo del registroServizi, valori possibili: xml/db/uddi/web -->
+	<property name="tipoRegistroServizi" value="db" />
+	<!-- RegistroServizi.properties -->
+	<property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" />
+	<!-- Reset del registro dei servizi (in caso di registro db/uddi/web) -->
+	<property name="resetRegistroServizi" value="false" />
+	<!-- Gestione dei soggetti SPCoop -->
+	<property name="gestioneSoggettiRegistroServizi" value="false" />
+	<!-- Mantieni fruitori sui servizi esistenti -->
+	<property name="mantieniFruitoriServiziEsistentiRegistroServizi" value="true" />
+	<!-- PddOperativa in caso di conversione su control station, es. PdDOpenSPCoop
+	   Usare string vuota per non usare questa funzionalita'
+	-->
+	<property name="pddOperativa" value="PddOpenSPCoop" />
+	<!-- Stato degli accordi importati: bozza,operativo,finale -->
+	<property name="statoAccordi" value="operativo" /> 
+     
+     
+	<!-- Eliminazione puntuale del servizio -->
+	<property name="proprietaEliminazioneServizio" location="deploy/properties/eliminazioneServizio.properties" />
+	<!-- Tipologia di eliminazione (fruizione/erogazione) -->
+	<property name="tipologiaEliminazioneServizio" value="erogazione" />
+    
+ 
+	<!-- OpenSPCoop Location and Library -->
+	<property name="openspcoop2" location="../../" />
+	<property name="openspcoop2_lib" location="${openspcoop2}/lib" />
+	<property name="openspcoop2_dist" location="${openspcoop2}/core/dist" />
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+
+</project>

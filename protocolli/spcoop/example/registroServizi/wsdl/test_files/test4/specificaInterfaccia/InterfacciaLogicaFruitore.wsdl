@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.openspcoop2.org/example" xmlns:specificasemiformaleimportwsdl="http://www.openspcoop2.org/example/specificasemiformale/importwsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:allegatoimportwsdl="http://www.openspcoop2.org/example/allegato/importwsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:spc="http://www.openspcoop2.org/example" xmlns:spc2="http://www.openspcoop2.org/example2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:types="http://www.openspcoop2.org/example/types">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.openspcoop2.org/example/types"><xsd:include schemaLocation="../allegati/InterfacciaDefinitoria.xsd"/></xsd:schema>
+    <xsd:schema targetNamespace="http://www.openspcoop2.org/example">
+          <xsd:import namespace="http://www.openspcoop2.org/example2" schemaLocation="../allegati/InterfacciaDefinitoria_0.xsd"/> 
+    </xsd:schema>
+    <xsd:schema targetNamespace="http://www.openspcoop2.org/example">
+         <xsd:import namespace="http://www.openspcoop2.org/example/types" schemaLocation="../allegati/SchemaDatiImportato.xsd"/>
+    </xsd:schema>
+    <xsd:schema targetNamespace="http://www.openspcoop2.org/example">
+         <xsd:include schemaLocation="../allegati/SchemaDatiIncluso.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:import namespace="http://www.openspcoop2.org/example/specificasemiformale/importwsdl" location="../specificaInterfaccia/import.wsdl"/>
+  <wsdl:message name="notificaRequestFruitore">
+    <wsdl:part name="notificaRequestPart" element="types:notificaRequest">
+    </wsdl:part>
+    <wsdl:part name="notificaRequestPart2" element="spc2:notificaRequest2">
+    </wsdl:part>
+    <wsdl:part name="notificaRequestPartImportato" element="types:notificaRequestImportato">
+    </wsdl:part>
+    <wsdl:part name="notificaRequestPartIncluso" element="spc:notificaRequestIncluso">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="OnewayFruitore">
+    <wsdl:operation name="notificaFruitore">
+      <wsdl:input name="notificaRequestFruitore" message="spc:notificaRequestFruitore">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

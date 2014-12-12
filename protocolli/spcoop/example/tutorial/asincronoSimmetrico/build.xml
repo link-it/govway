@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+
+<project name="SPCoopTutorialAsincronoSimmetrico"  basedir=".">
+
+	<import file="local_env.xml"/>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${openspcoop2_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- set properties for this build -->
+	<property name="src_spcoop_tutorial_asincronoSimmetrico" location="src" />
+	<property name="build_spcoop_tutorial_asincronoSimmetrico" location="build/audit" />
+	<property name="dist_spcoop_tutorial_asincronoSimmetrico" location="dist" />
+
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${openspcoop2_lib}" >
+			<include name="**/cxf/*"/>
+			<include name="**/jetty/*"/>
+			<include name="**/security/*"/>
+			<include name="**/httpcore/*"/>
+			<include name="**/commons/*"/>
+			<include name="**/shared/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${dist_spcoop_tutorial_asincronoSimmetrico}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="-clean_spcoop_tutorial_asincronoSimmetrico">
+		<delete dir="${build_spcoop_tutorial_asincronoSimmetrico}" />
+		<delete dir="${dist_spcoop_tutorial_asincronoSimmetrico}" />
+		<delete dir="${doc_spcoop_tutorial_asincronoSimmetrico}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="-init_compile_spcoop_tutorial_asincronoSimmetrico">
+		<mkdir dir="${build_spcoop_tutorial_asincronoSimmetrico}" />
+		<mkdir dir="${dist_spcoop_tutorial_asincronoSimmetrico}" />
+	</target>
+	
+	
+	
+	<!-- Compilazione del Servizio -->
+	<target name="-compile_compile_spcoop_tutorial_asincronoSimmetrico" depends="-init_compile_spcoop_tutorial_asincronoSimmetrico" description="compila il servizio">
+		<!-- Compile the java code  -->
+		<javac destdir="${build_spcoop_tutorial_asincronoSimmetrico}" debug="${debug}">
+			<!--<compilerarg value="-Xlint:unchecked"/>
+                        <compilerarg value="-Xlint:deprecation"/>-->
+			<src path="${src_spcoop_tutorial_asincronoSimmetrico}" />
+			<classpath refid="classpath_compile" />
+		</javac>
+		<jar jarfile="${dist_spcoop_tutorial_asincronoSimmetrico}/openspcoop2_spcoop-protocol_tutorial_asincronoSimmetrico.jar">
+			<zipfileset dir="${build_spcoop_tutorial_asincronoSimmetrico}" />
+    	</jar>
+	</target>
+	
+	
+	<!-- Esecuzione del server -->
+	<target name="-run_server_spcoop_tutorial_asincronoSimmetrico" description="esegue il servizio">
+		 <java classname="org.openspcoop2.example.pdd.server.identificasoggetto.IdentificaSoggetto_IdentificaSoggettoInterfaceEndpoint_Server" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+            </classpath>
+        </java>
+	</target>
+	
+	
+	<!-- Esecuzione del client -->
+	<target name="-run_client_spcoop_tutorial_asincronoSimmetrico" description="esegue il client che fruisce del servizio">
+		 <java classname="org.openspcoop2.example.pdd.client.identificasoggetto.IdentificaSoggetto_IdentificaSoggettoInterfaceEndpoint_Client" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+            </classpath>
+        </java>
+	</target>
+	
+	
+	
+	<!-- alias -->
+	<target name="build" depends="-compile_compile_spcoop_tutorial_asincronoSimmetrico" />
+	<target name="clean" depends="-clean_spcoop_tutorial_asincronoSimmetrico" />
+	<target name="run_server" depends="-run_server_spcoop_tutorial_asincronoSimmetrico" />
+	<target name="run_client" depends="-run_client_spcoop_tutorial_asincronoSimmetrico" />
+	
+</project>

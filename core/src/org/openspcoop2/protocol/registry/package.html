@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.openspcoop2.protocol.registry package</title>
+<!--
+  @(#)package.html      $Rev$, $Date$
+ 
+OpenSPCoop v2 - Customizable SOAP Message Broker 
+http://www.openspcoop2.org
+ 
+Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved. 
+ 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+</head>
+<body bgcolor="white">
+
+Fornisce una classe <code>RegistroServiziReader</code> che contiene i metodi
+necessari per l'interrogazione di un registro dei servizi.
+
+
+
+
+<h3>Interrogazioni del registro</h3>
+
+La classe <code>RegistroServiziReader</code> contiene diversi metodi che possono essere
+utilizzati per ottenere informazioni sui servizi registrati nel registro dei servizi.
+Il metodo <code>getInfoServizio()</code> serve per ottenere tutte le funzionalita' associate ad un determinato
+servizio salvato nel registro. Il metodo <code>validaServizio()</code> serve per effettuare 
+alcuni aspetti della validazione.
+Il metodo <code>getDominio</code> ritorna il dominio associato ad un soggetto.
+Infine il metodo <code>getConnettore()</code>, dato un IdentificativoParte di una comunicazione 
+(il destinatario/mittente di una busta),ritorna un endPoint che indica dove deve essere spedita
+una busta destinata a quell'IdentificativoParte. 
+Questo poiche' nel registro, sono classificati tutti gli IdentificativiParte che possono dialogare 
+attraverso uno scambio di buste, e ad ognuno di essi e' stata associata, al momento della registrazione, 
+una propria porta di dominio (url di accesso  e codice). 
+<p>
+Un connettore, che rappresenta il punto di accesso alla porta di dominio che gestisce un
+dato servizio, puo' essere associato in maniera gerarchica a:
+<ul>
+<li>Fruitore di un'Azione di un Servizio
+<li>Azione di un Servizio
+<li>Fruitore di un Servizio
+<li>Servizio
+<li>Soggetto che eroga il servizio
+</ul>
+
+
+<p>
+<h3>See Also...</h3>
+<p>
+<p>
+Per altra documentazione, tutorials, esempi, guide guarda :
+<ul>
+  <li><a href="http://www.openspcoop2.org">Sito ufficiale del progetto OpenSPCoop2</a>
+</ul>
+<br>
+
+
+
+</body>
+</html>

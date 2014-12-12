@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="dettaglio-eccezione" class="org.openspcoop2.core.eccezione.details.DettaglioEccezione">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
+    <structure field="dominio" usage="required" map-as="org.openspcoop2.core.eccezione.details.Dominio"/>
+    <value name="ora-registrazione" field="oraRegistrazione" usage="required"/>
+    <structure field="eccezioni" usage="required" map-as="org.openspcoop2.core.eccezione.details.Eccezioni"/>
+    <structure field="dettagli" usage="optional" map-as="org.openspcoop2.core.eccezione.details.Dettagli"/>
+  </mapping>
+  <mapping name="dominio" class="org.openspcoop2.core.eccezione.details.Dominio">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
+    <structure field="soggetto" usage="required" map-as="org.openspcoop2.core.eccezione.details.DominioSoggetto"/>
+    <value name="funzione" field="funzione" usage="optional" style="attribute"/>
+    <value name="modulo" field="modulo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="soggetto" class="org.openspcoop2.core.eccezione.details.DominioSoggetto">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="eccezioni" class="org.openspcoop2.core.eccezione.details.Eccezioni">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
+    <collection field="eccezione" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.eccezione.details.Eccezione"/>
+    </collection>
+  </mapping>
+  <mapping name="dettagli" class="org.openspcoop2.core.eccezione.details.Dettagli">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
+    <collection field="dettaglio" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.eccezione.details.Dettaglio"/>
+    </collection>
+  </mapping>
+  <mapping name="eccezione" class="org.openspcoop2.core.eccezione.details.Eccezione">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
+    <value name="codice" field="codice" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="rilevanza" field="rilevanza" usage="optional" style="attribute"/>
+    <value name="contesto-codifica" field="contestoCodifica" usage="optional" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="dettaglio" class="org.openspcoop2.core.eccezione.details.Dettaglio">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+</binding>

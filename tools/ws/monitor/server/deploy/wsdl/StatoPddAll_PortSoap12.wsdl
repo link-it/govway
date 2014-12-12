@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+				  xmlns:tns="http://www.openspcoop2.org/pdd/monitor/management" 
+				  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+				  name="StatoPddService"
+				  targetNamespace="http://www.openspcoop2.org/pdd/monitor/management">
+
+	<wsdl:import namespace="http://www.openspcoop2.org/pdd/monitor/management" 
+				 location="StatoPddAll.wsdl"/>
+	
+	<!-- BINDING (SOAP12) --> 
+	
+	<wsdl:binding name="StatoPddServiceSoap12Binding" type="tns:StatoPdd">
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+
+		<wsdl:operation name="find">
+			<soap12:operation soapAction="find" soapActionRequired="true" style="document"/>
+			<wsdl:input name="find">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="findResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="monitor-service-exception">
+				<soap12:fault name="monitor-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-found-exception">
+				<soap12:fault name="monitor-not-found-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-multiple-result-exception">
+				<soap12:fault name="monitor-multiple-result-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-implemented-exception">
+				<soap12:fault name="monitor-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-authorized-exception">
+				<soap12:fault name="monitor-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+
+
+		
+
+	
+    
+
+	</wsdl:binding>
+
+	<!-- SERVICE -->	
+	<wsdl:service name="StatoPddSoap12Service">	
+	
+		<wsdl:port binding="tns:StatoPddServiceSoap12Binding" name="StatoPddPortSoap12">
+			<soap12:address location="http://localhost:8080/monitor/StatoPdd/Soap12"/>
+		</wsdl:port>
+					
+	</wsdl:service>
+	
+</wsdl:definitions>

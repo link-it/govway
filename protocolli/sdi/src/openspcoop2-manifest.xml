@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
+
+    <protocolName>sdi</protocolName>
+
+    <factory>org.openspcoop2.protocol.sdi.SDIFactory</factory>
+
+    <web>
+        <context>sdi</context>
+    </web>
+
+    <registroServizi>
+
+        <soggetti>
+            <tipi>
+            	<tipo>SDI</tipo>
+            </tipi>
+        </soggetti>
+
+        <servizi>
+            <tipi>
+                <tipo>SDI</tipo>
+            </tipi>
+        </servizi>
+
+        <versioni>
+            <versione>1.0</versione>
+        </versioni>
+
+    </registroServizi>
+
+    <urlMapping>
+        <file>/sdi-url-mapping.properties</file>
+        <tipo>PROPERTIES</tipo>
+    </urlMapping>
+
+    <binding soap11="true" soap12="false"/>
+
+</openspcoop2>

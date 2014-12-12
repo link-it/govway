@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.openspcoop2.org/example" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:spc="http://www.openspcoop2.org/example" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://www.openspcoop2.org/example" location="logicoErogatore.wsdl">
+    </wsdl:import>
+
+  <!-- Es. Sincrono --> 
+  <wsdl:binding name="SincronoBinding" type="spc:Sincrono">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="aggiornamento">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <!-- Es. Sincrono -->
+  <wsdl:service name="SincronoService">
+    <wsdl:port name="SincronoEndpoint" binding="spc:SincronoBinding">
+      <soap:address location="http://localhost:8080/Sincrono"/>
+    </wsdl:port>
+  </wsdl:service>
+
+
+</wsdl:definitions>

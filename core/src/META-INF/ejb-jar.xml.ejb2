@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<!DOCTYPE ejb-jar PUBLIC '-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN'
+ 'http://java.sun.com/dtd/ejb-jar_2_0.dtd'>
+<ejb-jar>
+    <enterprise-beans>
+
+        <!-- Moduli di Imbustamento -->
+        <message-driven>
+            <ejb-name>Imbustamento</ejb-name>
+            <ejb-class>org.openspcoop2.pdd.mdb.ImbustamentoMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+                <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+        </message-driven>
+        <message-driven>
+            <ejb-name>ImbustamentoRisposte</ejb-name>
+            <ejb-class>org.openspcoop2.pdd.mdb.ImbustamentoRisposteMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+                <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+        </message-driven>
+
+        <!-- Moduli di Sbustamento -->
+        <message-driven>
+            <ejb-name>Sbustamento</ejb-name>
+            <ejb-class>org.openspcoop2.pdd.mdb.SbustamentoMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+                <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+        </message-driven>
+        <message-driven>
+            <ejb-name>SbustamentoRisposte</ejb-name>
+            <ejb-class>org.openspcoop2.pdd.mdb.SbustamentoRisposteMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+                <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+        </message-driven>
+
+        <!-- Moduli di Inoltro buste -->
+        <message-driven>
+            <ejb-name>InoltroBuste</ejb-name>
+            <ejb-class>org.openspcoop2.pdd.mdb.InoltroBusteMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+                <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+        </message-driven>
+        <message-driven>
+            <ejb-name>InoltroRisposte</ejb-name>
+            <ejb-class>org.openspcoop2.pdd.mdb.InoltroRisposteMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+                <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+        </message-driven>
+
+        <!-- Moduli di consegna contenuti applicativi -->
+        <message-driven>
+            <ejb-name>ConsegnaContenutiApplicativi</ejb-name>
+            <ejb-class>org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiMDB</ejb-class>
+            <transaction-type>Container</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+                <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+        </message-driven>
+
+        <!-- TimerEJB di OpenSPCoop -->
+        <session id="GestoreBusteNonRiscontrate">
+            <display-name>GestoreBusteNonRiscontrate</display-name>
+            <ejb-name>GestoreBusteNonRiscontrate</ejb-name>
+            <home>org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateHome</home>
+            <remote>org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate</remote>
+            <ejb-class>org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+        <session id="GestoreMessaggi">
+            <display-name>GestoreMessaggi</display-name>
+            <ejb-name>GestoreMessaggi</ejb-name>
+            <home>org.openspcoop2.pdd.timers.TimerGestoreMessaggiHome</home>
+            <remote>org.openspcoop2.pdd.timers.TimerGestoreMessaggi</remote>
+            <ejb-class>org.openspcoop2.pdd.timers.TimerGestoreMessaggiImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+        <session id="GestorePuliziaMessaggiAnomali">
+            <display-name>GestorePuliziaMessaggiAnomali</display-name>
+            <ejb-name>GestorePuliziaMessaggiAnomali</ejb-name>
+            <home>org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliHome</home>
+            <remote>org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali</remote>
+            <ejb-class>org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+        <session id="GestoreRepositoryBuste">
+            <display-name>GestoreRepositoryBuste</display-name>
+            <ejb-name>GestoreRepositoryBuste</ejb-name>
+            <home>org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteHome</home>
+            <remote>org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste</remote>
+            <ejb-class>org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+
+    </enterprise-beans>
+
+    <!-- Transazione Attiva (trans-attribute=Required) -->
+    <assembly-descriptor>
+        <container-transaction>
+            <!-- Moduli di Imbustamento -->
+            <method>
+                <ejb-name>Imbustamento</ejb-name>
+                <method-name>onMessage()</method-name>
+            </method>
+            <method>
+                <ejb-name>ImbustamentoRisposte</ejb-name>
+                <method-name>onMessage()</method-name>
+            </method>
+
+            <!-- Moduli di Sbustamento -->
+            <method>
+                <ejb-name>Sbustamento</ejb-name>
+                <method-name>onMessage()</method-name>
+            </method>
+            <method>
+                <ejb-name>SbustamentoRisposte</ejb-name>
+                <method-name>onMessage()</method-name>
+            </method>
+
+            <!-- Moduli di Inoltro buste -->
+            <method>
+                <ejb-name>InoltroBuste</ejb-name>
+                <method-name>onMessage()</method-name>
+            </method>
+            <method>
+                <ejb-name>InoltroRisposte</ejb-name>
+                <method-name>onMessage()</method-name>
+            </method>
+
+            <!-- Moduli di consegna contenuti applicativi -->
+            <method>
+                <ejb-name>ConsegnaContenutiApplicativi</ejb-name>
+                <method-name>onMessage()</method-name>
+            </method>
+
+            <!-- TimerEJB di OpenSPCoop -->
+            <method>
+                <ejb-name>GestoreBusteNonRiscontrate</ejb-name>
+                <method-name>ejbTimeout()</method-name>
+            </method>
+            <method>
+                <ejb-name>GestoreMessaggi</ejb-name>
+                <method-name>ejbTimeout()</method-name>
+            </method>
+            <method>
+                <ejb-name>GestorePuliziaMessaggiAnomali</ejb-name>
+                <method-name>ejbTimeout()</method-name>
+            </method>
+            <method>
+                <ejb-name>GestoreRepositoryBuste</ejb-name>
+                <method-name>ejbTimeout()</method-name>
+            </method>
+
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+    </assembly-descriptor>
+</ejb-jar>

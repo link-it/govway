@@ -1,0 +1,56 @@
+
+<project name="setup-jar" basedir=".">
+	
+	<description>
+        	RIPRISTINA JAR
+	</description>
+
+	<var name="jarsDir" value="${deploy_sw}/jars" />
+	
+	<!-- Predispone i jar -->
+	<target name="ripristina_jar">
+				
+		<!-- Apertura archivio -->
+		<var name="archiveFileJarLocation" value="" />
+		<if>
+			<or>
+				<matches string="${as}" pattern="tomcat.*"/>
+				<equals arg1="${archiveType}" arg2="WAR"/>
+			</or>
+			<then>
+				<var name="archiveFileJarLocation" value="${archiveFile}/WEB-INF/lib" />
+			</then>
+			<else>
+				<var name="archiveFileJarLocation" value="${archiveFile}/lib" />
+			</else>
+		</if>
+		
+		<!-- Esamina/Elimina jars.txt presenti nell'archivio -->
+		<!-- <echo message="LISTA JARS [${archiveFileJarLocation}]"/> -->
+		<fileset dir="${archiveFileJarLocation}" id="archiveFile.txt">
+			<include name="**/*.txt"/>
+		</fileset>
+		<pathconvert pathsep=" " property="archiveFile_list.txt" refid="archiveFile.txt">
+			<map from="${archiveFileJarLocation}/" to=""/>
+		</pathconvert>
+		<delete>
+		    <fileset dir="${archiveFileJarLocation}" includes="**/*.txt"/>
+		</delete>
+		
+		<!-- Ripristina jars nella jarsDir -->
+		<foreach list="${archiveFile_list.txt}" delimiter=" " param="fileName" target="ripristina_jar_file" inheritall="true"/>
+		
+	</target>
+	
+	<target name="ripristina_jar_file">
+		<propertyregex property="fileNameWithoutTXT"
+		              input="${fileName}"
+		              regexp="^(.+)\.txt$"
+		              select="\1"
+		              casesensitive="false" />
+		<echo message="FILE [${fileName}]->[${fileNameWithoutTXT}]"/>
+		<copy file="${jarsDir}/${fileNameWithoutTXT}" todir="${archiveFileJarLocation}"/>
+	</target>
+	
+	
+</project>

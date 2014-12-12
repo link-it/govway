@@ -1,0 +1,1782 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+     "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+     "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+    <!-- ======== Form Bean Definitions =================================== -->
+    <form-beans>
+        <form-bean name="FileUpload" type="org.openspcoop2.web.ctrlstat.servlet.FileUploadForm">
+            <form-property name="theFile" type="org.apache.struts.upload.FormFile"/>
+        </form-bean>
+    </form-beans>
+
+    <!-- ======== Global Exceptions Definitions =========================== -->
+
+    <!-- ======== Global Forwards Definitions ============================= -->
+
+    <!-- ======== Action Mapping Definitions ============================== -->
+    <action-mappings>
+    
+    
+    	<!--  Login/Logout -->
+    
+    	<action path="/login" type="org.openspcoop2.web.ctrlstat.servlet.login.Login" 
+            scope="request" validate="true">
+            <forward name="loginForm" path="/jsplib/login.jsp"/>
+            <forward name="loginOk" path="/jsplib/info.jsp"/>
+            <forward name="loginCheckError" path="/jsplib/login.jsp"/>
+            <forward name="loginError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/logout" type="org.openspcoop2.web.ctrlstat.servlet.login.Logout" 
+            scope="request" validate="true">
+            <forward name="logoutOk" path="/jsplib/logout.jsp"/>
+            <forward name="logoutError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <action path="/loginAsSu" type="org.openspcoop2.web.ctrlstat.servlet.login.LoginAsSu"
+            scope="request" validate="true">
+            <forward name="loginAsSuForm" path="/jsplib/login.jsp"/>
+            <forward name="loginAsSuOk" path="/jsplib/info.jsp"/>
+            <forward name="loginAsSuCheckError" path="/jsplib/login.jsp"/>
+            <forward name="loginAsSuError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+    
+    
+    	<!--  Utenti -->
+    
+        <action path="/utentiAdd" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiAdd"
+            scope="request" validate="true">
+            <forward name="utentiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/utentiChange" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiChange"
+            scope="request" validate="true">
+            <forward name="utentiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiChangeInfo" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiChangePermessiOk" path="/jsplib/info.jsp"/>
+            <forward name="utentiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/utentiList" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiList"
+            scope="request" validate="true">
+            <forward name="utentiList" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/utentiDel" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiDel"
+            scope="request" validate="true">
+            <forward name="utentiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiDelInfo" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiError" path="/jsplib/info.jsp"/>
+        </action>
+    
+        <action path="/utenteChange" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtenteChange"
+            scope="request" validate="true">
+            <forward name="utenteChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="utenteChangeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="utenteChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="utenteError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+    
+    	 <!-- Porte di Dominio  -->
+    
+    	<action path="/pddAdd" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddAdd" 
+            scope="request" validate="true">
+            <forward name="pddAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="pddAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="pddAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="pddError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pddList" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddList"
+            scope="request" validate="true">
+            <forward name="pddList" path="/jsplib/listElement.jsp"/>
+            <forward name="pddError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pddChange" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddChange"
+            scope="request" validate="true">
+            <forward name="pddChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="pddChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="pddChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="pddError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pddDel" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddDel" 
+            scope="request" validate="true">
+            <forward name="pddDel" path="/jsplib/listElement.jsp"/>
+            <forward name="pddError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/pddSoggettiList" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddSoggettiList"
+            scope="request" validate="true">
+            <forward name="pddSoggettiList" path="/jsplib/listElement.jsp"/>
+            <forward name="pddSoggettiError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/pddSinglePdDAdd" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddSinglePdDAdd"
+            scope="request" validate="true">
+            <forward name="pddSinglePdDAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="pddSinglePdDAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="pddSinglePdDAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="pddSinglePdDError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pddSinglePdDList" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddSinglePdDList" 
+            scope="request" validate="true">
+            <forward name="pddSinglePdDList" path="/jsplib/listElement.jsp"/>
+            <forward name="pddSinglePdDError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pddSinglePdDChange" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddSinglePdDChange" 
+            scope="request" validate="true">
+            <forward name="pddSinglePdDChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="pddSinglePdDChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="pddSinglePdDChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="pddSinglePdDError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/pddSinglePdDDel" type="org.openspcoop2.web.ctrlstat.servlet.pdd.PddSinglePdDDel"
+            scope="request" validate="true">
+            <forward name="pddSinglePdDDel" path="/jsplib/listElement.jsp"/>
+            <forward name="pddSinglePdDError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        
+        
+        
+        <!--  Soggetti -->
+        
+        <action path="/soggettiAdd" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiAdd"
+            scope="request" validate="true">
+            <forward name="soggettiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiList" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiList"
+            scope="request" validate="true">
+            <forward name="soggettiList" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiChange" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiChange"
+            scope="request" validate="true">
+            <forward name="soggettiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiDel" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiDel"
+            scope="request" validate="true">
+            <forward name="soggettiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiEndPoint" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiEndPoint" 
+        	scope="request" validate="true">
+            <forward name="soggettiEndPointForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiEndPointOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiEndPointCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        
+        
+        
+        <!--  Connettori -->
+        
+        <action path="/connettoriCustomProprietaAdd" type="org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettorePropAdd" 
+            scope="request" validate="true">
+            <forward name="connettoriCustomProprietaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="connettoriCustomProprietaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="connettoriCustomProprietaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="connettoriCustomProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/connettoriCustomProprietaDel" type="org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettorePropDel" 
+            scope="request" validate="true">
+            <forward name="connettoriCustomProprietaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="connettoriCustomProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/connettoriCustomProprietaList" type="org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettorePropList" 
+            scope="request" validate="true">
+            <forward name="connettoriCustomProprietaList" path="/jsplib/listElement.jsp"/>
+            <forward name="connettoriCustomProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+
+
+
+
+		<!--  Servizi Applicativi -->
+
+		<action path="/serviziApplicativiAdd" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiAdd" 
+			scope="request" validate="true">
+            <forward name="serviziApplicativiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiList" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiList" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiList" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiChange" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiChange" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiDel" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiDel" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiEndPointInvocazioneServizio" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiEndPointInvocazioneServizio" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiEndPointInvocazioneServizioForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiEndPointInvocazioneServizioOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiEndPointInvocazioneServizioCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiEndPointRispostaAsincrona" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiEndPointRispostaAsincrona"
+            scope="request" validate="true">
+            <forward name="serviziApplicativiEndPointRispostaAsincronaForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiEndPointRispostaAsincronaOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiEndPointRispostaAsincronaCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+          
+        <!--  Servizi Applicativi Ruoli -->
+        
+        <action path="/serviziApplicativiRuoliAdd" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoli" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiRuoliAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiRuoliAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiRuoliAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiRuoliDel" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoli" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiRuoliDel" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiRuoliList" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoli" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiRuoliList" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+
+
+    
+    
+    
+    
+    
+    
+    	<!--  Accordi di Servizio Parte Comune -->
+    
+    	<action path="/accordiServizioParteComuneAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAdd"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComuneAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneList"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComuneList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneChange"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComuneChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneError" path="/jsplib/info.jsp"/>
+            <forward name="accordiServizioParteComuneChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneDel"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComuneDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneError" path="/jsplib/info.jsp"/>
+        </action>   
+        <action path="/accordiServizioParteComuneWSDLChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneWSDLChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneWSDLChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneWSDLChangeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneWSDLChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneError" path="/jsplib/info.jsp"/>
+              <forward name="accordiServizioParteComuneWSDLChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
+        </action>
+
+		<!--  Accordi di Servizio Parte Comune Azioni -->
+
+        <action path="/accordiServizioParteComuneAzioniAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAzioniAdd" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneAzioniAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneAzioniList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAzioniList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneAzioniList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneAzioniChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAzioniChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneAzioniChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneAzioniDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAzioniDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneAzioniDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAzioniError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Accordi di Servizio Parte Comune PortTypes -->
+
+ 		<action path="/accordiServizioParteComunePortTypesAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypesAdd" 
+ 			scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypesList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypesList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypesList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypesChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypesChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypesDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypesDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypesError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Accordi di Servizio Parte Comune Operations -->
+
+		<action path="/accordiServizioParteComunePortTypeOperationsAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsAdd" 
+		    scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypeOperationsList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsList"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypeOperationsChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsChange"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypeOperationsDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Accordi di Servizio Parte Comune Allegati -->
+
+        <action path="/accordiServizioParteComuneAllegatiAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAllegatiAdd" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiServizioParteComuneAllegatiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+ 		<action path="/accordiServizioParteComuneAllegatiList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAllegatiList" 
+ 			scope="request" validate="true">
+            <forward name="accordiServizioParteComuneAllegatiList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneAllegatiChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAllegatiChange" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiServizioParteComuneAllegatiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneAllegatiView" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAllegatiView" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiServizioParteComuneAllegatiViewForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiViewOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiViewCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneAllegatiDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAllegatiDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneAllegatiDelForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiDelOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiDelCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+		<!--  Accordi di Servizio Parte Comune Erogatori -->
+
+		<action path="/accordiServizioParteComuneErogatoriList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneErogatoriList" 
+			scope="request" validate="true">
+            <forward name="accordiServizioParteComuneErogatoriList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneErogatoriError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <!--  Accordi di Servizio Parte Comune Servizi Applicativi -->
+        <!--   
+        <action path="/accordiServizioParteComuneServiziApplicativiAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneServiziApplicativiAdd"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComuneServiziApplicativiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneServiziApplicativiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneServiziApplicativiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneServiziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneServiziApplicativiList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneServiziApplicativiList"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComuneServiziApplicativiList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneServiziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneServiziApplicativiDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneServiziApplicativiDel"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComuneServiziApplicativiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneServiziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+		-->
+		
+		<!--  Accordi di Servizio Composto, Componenti -->
+		
+		<action path="/accordiServizioParteComuneComponentiAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneComponentiAdd" 
+			scope="request" validate="true" name="FileUpload">
+			<forward name="accordiServizioParteComuneComponentiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneComponentiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneComponentiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneComponentiError" path="/jsplib/info.jsp"/>
+        </action>
+		<action path="/accordiServizioParteComuneComponentiList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneComponentiList" 
+			scope="request" validate="true">
+            <forward name="accordiServizioParteComuneComponentiList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneComponentiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneComponentiDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneComponentiDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneComponentiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneComponentiError" path="/jsplib/info.jsp"/>
+        </action>
+		
+		
+		<!--  Accordi di Servizio Parte Comune Operations Message -->
+
+		<action path="/accordiServizioParteComunePortTypeOperationsMessageAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsMessageAdd" 
+		    scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypeOperationsMessageList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsMessageList"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypeOperationsMessageChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsMessageChange"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComunePortTypeOperationsMessageDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComunePortTypeOperationsMessageDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComunePortTypeOperationsMessageError" path="/jsplib/info.jsp"/>
+        </action>
+		
+		
+		
+		
+		<!--  Accordi di Servizio Parte Specifica -->
+		
+		<action path="/accordiServizioParteSpecificaAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAdd"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaList"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaChange"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+            <forward name="accordiServizioParteSpecificaChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaDel"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+        </action>   
+        <action path="/accordiServizioParteSpecificaWSDLChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaWSDLChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaWSDLChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaWSDLChangeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaWSDLChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+        </action>
+		
+		<!--  Accordi di Servizio Parte Specifica Allegati -->
+
+        <action path="/accordiServizioParteSpecificaAllegatiAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAllegatiAdd" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiServizioParteSpecificaAllegatiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+ 		<action path="/accordiServizioParteSpecificaAllegatiList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAllegatiList" 
+ 			scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaAllegatiList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaAllegatiChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAllegatiChange" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiServizioParteSpecificaAllegatiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaAllegatiView" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAllegatiView" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiServizioParteSpecificaAllegatiViewForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiViewOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiViewCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaAllegatiDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAllegatiDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaAllegatiDelForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiDelOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiDelCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+		
+		<!--  Accordi di Servizio Parte Specifica (Fruitori) -->
+
+        <action path="/accordiServizioParteSpecificaFruitoriAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriAdd" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaFruitoriList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaFruitoriChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
+             <forward name="accordiServizioParteSpecificaFruitoriChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaFruitoriDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriDel" 
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaFruitoriWSDLChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriWSDLChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriWSDLChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriWSDLChangeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriWSDLChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Accordi di Servizio Parte Specifica (ServizioApplicativo) -->
+
+        <action path="/accordiServizioParteSpecificaServizioApplicativoAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaServizioApplicativoAdd"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaServizioApplicativoAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaServizioApplicativoAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaServizioApplicativoAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaServizioApplicativoDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaServizioApplicativoDel"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaServizioApplicativoDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaServizioApplicativoList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaServizioApplicativoList"
+            scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaServizioApplicativoList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Accordi di Servizio Parte Specifica (PorteApplicative) -->
+
+        <action path="/accordiServizioParteSpecificaPorteApplicativeList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaPorteApplicativeList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaPorteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaPorteApplicativeDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaPorteApplicativeDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaPorteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
+
+
+		
+		
+		
+		
+		
+		
+		<!--  Accordi di Cooperazione -->
+		
+		<action path="/accordiCooperazioneAdd" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneAdd" 
+			scope="request" validate="true">
+            <forward name="accordiCooperazioneAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiCooperazioneList" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneList" 
+        	scope="request" validate="true">
+            <forward name="accordiCooperazioneList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiCooperazioneChange" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneChange" 
+        	scope="request" validate="true">
+            <forward name="accordiCooperazioneChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneError" path="/jsplib/info.jsp"/>
+            <forward name="accordiCooperazioneChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
+        </action>
+        <action path="/accordiCooperazioneDel" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneDel" 
+        	scope="request" validate="true">
+            <forward name="accordiCooperazioneDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Accordi di Cooperazione Allegati -->
+
+        <action path="/accordiCooperazioneAllegatiAdd" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneAllegatiAdd" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiCooperazioneAllegatiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+ 		<action path="/accordiCooperazioneAllegatiList" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneAllegatiList" 
+ 			scope="request" validate="true">
+            <forward name="accordiCooperazioneAllegatiList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiCooperazioneAllegatiChange" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneAllegatiChange" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiCooperazioneAllegatiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiCooperazioneAllegatiView" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneAllegatiView" 
+        	scope="request" validate="true" name="FileUpload">
+        	<forward name="accordiCooperazioneAllegatiViewForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiViewOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiViewCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiCooperazioneAllegatiDel" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneAllegatiDel" 
+        	scope="request" validate="true">
+            <forward name="accordiCooperazioneAllegatiDelForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiDelOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiDelCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazioneAllegatiError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Accordi di Cooperazione Soggetti Partecipanti -->
+
+        <action path="/accordiCooperazionePartecipantiAdd" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazionePartecipantiAdd" 
+        	scope="request" validate="true">
+            <forward name="accordiCooperazionePartecipantiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazionePartecipantiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazionePartecipantiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiCooperazionePartecipantiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiCooperazionePartecipantiList" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazionePartecipantiList" 
+        	scope="request" validate="true">
+            <forward name="accordiCooperazionePartecipantiList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazionePartecipantiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiCooperazionePartecipantiDel" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazionePartecipantiDel" 
+        	scope="request" validate="true">
+            <forward name="accordiCooperazionePartecipantiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiCooperazionePartecipantiError" path="/jsplib/info.jsp"/>
+        </action>
+
+       
+
+
+        
+
+		<!--  Archivi -->
+
+		<!-- ** diagnostici ** -->
+  		<action path="/diagnostica" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Diagnostica"
+            scope="request" validate="true">
+            <forward name="diagnosticaForm" path="/jsplib/addElement.jsp"/>
+            <forward name="diagnosticaOk" path="/jsplib/listElement.jsp"/>
+            <forward name="diagnosticaCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="diagnosticaError" path="/jsplib/info.jsp"/>
+        </action>
+        <!--  Alias per la lista -->
+        <action path="/diagnosticaList" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Diagnostica"
+            scope="request" validate="true">
+            <forward name="diagnosticaForm" path="/jsplib/addElement.jsp"/>
+            <forward name="diagnosticaOk" path="/jsplib/listElement.jsp"/>
+            <forward name="diagnosticaCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="diagnosticaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/diagnosticaTesto" type="org.openspcoop2.web.ctrlstat.servlet.archivi.DiagnosticaTesto" 
+        	scope="request" validate="true">
+            <forward name="diagnosticaTesto" path="/jsplib/addElement.jsp"/>
+            <forward name="diagnosticaError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!-- ** tracce ** -->
+        <action path="/tracciamento" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Tracciamento"
+            scope="request" validate="true">
+            <forward name="tracciamentoForm" path="/jsplib/addElement.jsp"/>
+            <forward name="tracciamentoOk" path="/jsplib/listElement.jsp"/>
+            <forward name="tracciamentoCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="tracciamentoError" path="/jsplib/info.jsp"/>
+        </action>
+        <!--  Alias per la lista -->
+        <action path="/tracciamentoList" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Tracciamento"
+            scope="request" validate="true">
+            <forward name="tracciamentoForm" path="/jsplib/addElement.jsp"/>
+            <forward name="tracciamentoOk" path="/jsplib/listElement.jsp"/>
+            <forward name="tracciamentoCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="tracciamentoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/tracciamentoTesto" type="org.openspcoop2.web.ctrlstat.servlet.archivi.TracciamentoTesto" 
+        	scope="request" validate="true">
+            <forward name="tracciamentoTesto" path="/jsplib/addElement.jsp"/>
+            <forward name="tracciamentoError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- ** package ** -->
+        <action path="/import" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Importer"
+            scope="request" validate="true" name="FileUpload">
+            <forward name="importForm" path="/jsplib/addElement.jsp"/>
+            <forward name="importOk" path="/jsplib/addElement.jsp"/>
+            <forward name="importCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="importError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/export" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Exporter"
+            scope="request" validate="true">
+            <forward name="exportForm" path="/jsplib/addElement.jsp"/>
+            <forward name="exportOk" path="/jsplib/addElement.jsp"/>
+            <forward name="exportCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="exportError" path="/jsplib/info.jsp"/>
+        </action>
+    
+
+
+
+
+		<!--  Porte Delegate -->
+
+		<action path="/porteDelegateAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateAdd" 
+			scope="request" validate="true">
+            <forward name="porteDelegateAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (MessageSecurity) -->
+
+        <action path="/porteDelegateWS" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWS"
+            scope="request" validate="true">
+            <forward name="porteDelegateWSForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="Error" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (MessageSecurity Request Flow) -->
+
+        <action path="/porteDelegateWSRequestAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSRequestAdd" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateWSRequestAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSRequestAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSRequestAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateWSRequestList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSRequestList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateWSRequestList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateWSRequestChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSRequestChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateWSRequestChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSRequestChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSRequestChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateWSRequestDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSRequestDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateWSRequestDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (MessageSecurity Response Flow) -->
+
+        <action path="/porteDelegateWSResponseAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSResponseAdd" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateWSResponseAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSResponseAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSResponseAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateWSResponseList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSResponseList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateWSResponseList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateWSResponseChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSResponseChange"
+            scope="request" validate="true">
+            <forward name="porteDelegateWSResponseChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSResponseChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSResponseChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateWSResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateWSResponseDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSResponseDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateWSResponseDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateWSResponseError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (Servizi Applicativi) -->
+
+        <action path="/porteDelegateServizioApplicativoAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateServizioApplicativoAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateServizioApplicativoAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateServizioApplicativoAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateServizioApplicativoAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateServizioApplicativoList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateServizioApplicativoList"
+            scope="request" validate="true">
+            <forward name="porteDelegateServizioApplicativoList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateServizioApplicativoDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateServizioApplicativoDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateServizioApplicativoDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (Correlazione Applicativa Request Flow) -->
+
+        <action path="/porteDelegateCorrelazioneApplicativaRequestAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaRequestAdd" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaRequestAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateCorrelazioneApplicativaRequestList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaRequestList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaRequestList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateCorrelazioneApplicativaRequestChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaRequestChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaRequestChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateCorrelazioneApplicativaRequestDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaRequestDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaRequestDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (Correlazione Applicativa Response Flow) -->
+
+        <action path="/porteDelegateCorrelazioneApplicativaResponseAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaResponseAdd" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaResponseAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateCorrelazioneApplicativaResponseList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaResponseList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaResponseList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateCorrelazioneApplicativaResponseChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaResponseChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaResponseChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateCorrelazioneApplicativaResponseDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativaResponseDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaResponseDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+
+<!--  Porte Delegate (MTOM) -->
+
+        <action path="/porteDelegateMTOM" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOM"
+            scope="request" validate="true">
+            <forward name="porteDelegateMTOMForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="Error" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (MTOM Request Flow) -->
+
+        <action path="/porteDelegateMTOMRequestAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMRequestAdd" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateMTOMRequestAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateMTOMRequestList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMRequestList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateMTOMRequestList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateMTOMRequestChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMRequestChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateMTOMRequestChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateMTOMRequestDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMRequestDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateMTOMRequestDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (MTOM Response Flow) -->
+
+        <action path="/porteDelegateMTOMResponseAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMResponseAdd" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateMTOMResponseAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateMTOMResponseList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMResponseList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateMTOMResponseList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateMTOMResponseChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMResponseChange"
+            scope="request" validate="true">
+            <forward name="porteDelegateMTOMResponseChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateMTOMResponseDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOMResponseDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateMTOMResponseDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+
+    
+    
+    
+    
+    
+    
+    
+    	<!--  Porte Applicative -->
+    
+     	<action path="/porteApplicativeAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeChange"
+            scope="request" validate="true">
+            <forward name="porteApplicativeChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (MessageSecurity) -->
+
+        <action path="/porteApplicativeWS" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWS"
+            scope="request" validate="true">
+            <forward name="porteApplicativeWSForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (MessageSecurity Request Flow) -->
+
+        <action path="/porteApplicativeWSRequestAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSRequestAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSRequestAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSRequestAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSRequestAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeWSRequestList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSRequestList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSRequestList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeWSRequestChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSRequestChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSRequestChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSRequestChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSRequestChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeWSRequestDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSRequestDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSRequestDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSRequestError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (MessageSecurity Response Flow) -->
+
+        <action path="/porteApplicativeWSResponseAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSResponseAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSResponseAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSResponseAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSResponseAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeWSResponseList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSResponseList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSResponseList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeWSResponseChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSResponseChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSResponseChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSResponseChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSResponseChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeWSResponseChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeWSResponseDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSResponseDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeWSResponseDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeWSResponseError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (Servizi Applicativi) -->
+
+        <action path="/porteApplicativeServizioApplicativoAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeServizioApplicativoAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeServizioApplicativoAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeServizioApplicativoAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeServizioApplicativoAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeServizioApplicativoList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeServizioApplicativoList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeServizioApplicativoList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeServizioApplicativoDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeServizioApplicativoDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeServizioApplicativoDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (Correlazione Applicativa Request Flow) -->
+
+        <action path="/porteApplicativeCorrelazioneApplicativaRequestAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaRequestAdd" 
+			scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeCorrelazioneApplicativaRequestList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaRequestList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeCorrelazioneApplicativaRequestChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaRequestChange"
+            scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeCorrelazioneApplicativaRequestDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaRequestDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Correlazione Applicativa Response Flow) -->
+
+        <action path="/porteApplicativeCorrelazioneApplicativaResponseAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaResponseAdd" 
+			scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeCorrelazioneApplicativaResponseList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaResponseList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeCorrelazioneApplicativaResponseChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaResponseChange"
+            scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeCorrelazioneApplicativaResponseDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativaResponseDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Proprieta' Protocollo) -->
+               
+        <action path="/porteApplicativeProprietaProtocolloAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeProprietaProtocolloAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeProprietaProtocolloAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeProprietaProtocolloList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeProprietaProtocolloList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeProprietaProtocolloList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeProprietaProtocolloChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeProprietaProtocolloChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeProprietaProtocolloChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeProprietaProtocolloDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeProprietaProtocolloDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeProprietaProtocolloDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeProprietaProtocolloError" path="/jsplib/info.jsp"/>
+        </action>
+
+    
+    
+    <!--  Porte Applicative (MTOM) -->
+
+        <action path="/porteApplicativeMTOM" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOM"
+            scope="request" validate="true">
+            <forward name="porteApplicativeMTOMForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="Error" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (MTOM Request Flow) -->
+
+        <action path="/porteApplicativeMTOMRequestAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMRequestAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeMTOMRequestAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeMTOMRequestList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMRequestList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeMTOMRequestList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeMTOMRequestChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMRequestChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeMTOMRequestChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeMTOMRequestDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMRequestDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeMTOMRequestDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMRequestError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (MTOM Response Flow) -->
+
+        <action path="/porteApplicativeMTOMResponseAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMResponseAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeMTOMResponseAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeMTOMResponseList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMResponseList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeMTOMResponseList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeMTOMResponseChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMResponseChange"
+            scope="request" validate="true">
+            <forward name="porteApplicativeMTOMResponseChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeMTOMResponseDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOMResponseDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeMTOMResponseDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+    
+    
+    
+    
+    	<!--  Configurazione (Generale) -->
+    	
+        <action path="/configurazioneGenerale" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneGenerale"
+            scope="request" validate="true">
+            <forward name="configurazioneGeneraleForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+    	<!--  Configurazione Diagnostici (Appender) -->
+    
+    	<action path="/configurazioneDiagnosticaAppenderAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderAdd" 
+    		scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaAppenderList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaAppenderChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderChange" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaAppenderDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Configurazione Diagnostici (Appender, properties) -->
+
+        <action path="/configurazioneDiagnosticaAppenderPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderPropertiesAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaAppenderPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderPropertiesList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaAppenderPropertiesChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderPropertiesChange"
+            scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderPropertiesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaAppenderPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderPropertiesDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaAppenderPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Configurazione Diagnostici (Datasource) -->
+
+        <action path="/configurazioneDiagnosticaDatasourceAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourceAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourceAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaDatasourceList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourceList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourceList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaDatasourceChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourceChange" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourceChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaDatasourceDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourceDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourceDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Configurazione Diagnostici (Datasource, properties) -->
+
+        <action path="/configurazioneDiagnosticaDatasourcePropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourcePropertiesAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaDatasourcePropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourcePropertiesList"
+            scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaDatasourcePropertiesChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourcePropertiesChange"
+            scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDiagnosticaDatasourcePropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaDatasourcePropertiesDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDiagnosticaDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+        <!--  Configurazione Tracce (Appender) -->
+    
+    	<action path="/configurazioneTracciamentoAppenderAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderAdd" 
+    		scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoAppenderList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoAppenderChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderChange" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoAppenderDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Configurazione Tracce (Appender, properties) -->
+
+        <action path="/configurazioneTracciamentoAppenderPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderPropertiesAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoAppenderPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderPropertiesList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoAppenderPropertiesChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderPropertiesChange"
+            scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderPropertiesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoAppenderPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoAppenderPropertiesDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoAppenderPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Configurazione Tracce (Datasource) -->
+
+        <action path="/configurazioneTracciamentoDatasourceAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourceAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourceAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoDatasourceList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourceList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourceList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoDatasourceChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourceChange" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourceChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoDatasourceDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourceDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourceDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourceError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Configurazione Tracce (Datasource, properties) -->
+
+        <action path="/configurazioneTracciamentoDatasourcePropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourcePropertiesAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourcePropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoDatasourcePropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourcePropertiesList"
+            scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourcePropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoDatasourcePropertiesChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourcePropertiesChange"
+            scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourcePropertiesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneTracciamentoDatasourcePropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoDatasourcePropertiesDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneTracciamentoDatasourcePropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneTracciamentoDatasourcePropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+   		<!-- Configurazione Registro (cache e link alla lista dei registri) -->
+    
+    	<action path="/configurazioneAccessoRegistroServizi" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAccessoRegistro"
+            scope="request" validate="true">
+            <forward name="configurazioneAccessoRegistroServiziForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAccessoRegistroServiziOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAccessoRegistroServiziCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAccessoRegistroServiziError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!-- Configurazione Registri -->
+
+        <action path="/configurazioneRegistriAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRegistriAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneRegistriAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRegistriAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRegistriAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRegistriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneRegistriList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRegistriList"
+            scope="request" validate="true">
+            <forward name="configurazioneRegistriList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRegistriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneRegistriChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRegistriChange"
+            scope="request" validate="true">
+            <forward name="configurazioneRegistriChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRegistriChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRegistriChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRegistriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneRegistriDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRegistriDel"
+            scope="request" validate="true">
+            <forward name="configurazioneRegistriDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRegistriError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+   		<!-- Configurazione Routing (link alla lista delle rotte) -->
+    
+     	<action path="/configurazioneRouting" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRouting" 
+     		scope="request" validate="true">
+            <forward name="configurazioneRoutingForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRoutingOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRoutingCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRoutingError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!-- Configurazione Routing Rotte -->
+
+        <action path="/configurazioneRouteAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRouteAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneRouteAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRouteAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRouteAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRouteError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneRouteList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRouteList"
+            scope="request" validate="true">
+            <forward name="configurazioneRouteList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRouteError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneRouteChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRouteChange"
+            scope="request" validate="true">
+            <forward name="configurazioneRouteChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRouteChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRouteChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneRouteChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneRouteDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRouteDel"
+            scope="request" validate="true">
+            <forward name="configurazioneRouteDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneRouteError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        
+        <!-- Configurazione Properties  -->
+        
+        <action path="/configurazioneSystemPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSystemPropertiesAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneSystemPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneSystemPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSystemPropertiesList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneSystemPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneSystemPropertiesChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSystemPropertiesChange" 
+        	scope="request" validate="true">
+            <forward name="configurazioneSystemPropertiesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneSystemPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSystemPropertiesDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneSystemPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneSystemPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        
+        <!-- Configurazione Audit (Pagina Iniziale)  -->
+        
+    	<action path="/configurazioneAuditing" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAuditing"
+            scope="request" validate="true">
+    	    <forward name="configurazioneAuditingForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAuditingOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAuditingCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAuditingError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!-- Configurazione Audit (Filtri)  -->
+
+        <action path="/configurazioneAuditingFiltriAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAuditingFiltriAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneAuditingFiltriAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneAuditingFiltriList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAuditingFiltriList"
+            scope="request" validate="true">
+            <forward name="configurazioneAuditingFiltriList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriError" path="/jsplib/info.jsp"/>
+        </action> 
+        <action path="/configurazioneAuditingFiltriChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAuditingFiltriChange"
+            scope="request" validate="true">
+            <forward name="configurazioneAuditingFiltriChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneAuditingFiltriDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAuditingFiltriDel"
+            scope="request" validate="true">
+            <forward name="configurazioneAuditingFiltriDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneAuditingFiltriError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+    
+    
+    
+    
+     	<!-- Audit (Pagina Iniziale)  -->
+    
+        <action path="/auditing" type="org.openspcoop2.web.ctrlstat.servlet.audit.Auditing"
+            scope="request" validate="true">
+            <forward name="auditingForm" path="/jsplib/addElement.jsp"/>
+            <forward name="auditingOk" path="/jsplib/listElement.jsp"/>
+            <forward name="auditingError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/auditingDel" type="org.openspcoop2.web.ctrlstat.servlet.audit.AuditingDel"
+            scope="request" validate="true">
+            <forward name="auditingDel" path="/jsplib/listElement.jsp"/>
+            <forward name="auditingError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/auditingDettaglio" type="org.openspcoop2.web.ctrlstat.servlet.audit.AuditingDettaglio" 
+            scope="request" validate="true">
+            <forward name="auditingDettaglio" path="/jsplib/addElement.jsp"/>
+            <forward name="auditingDettaglioError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/auditingDettaglioInfo" type="org.openspcoop2.web.ctrlstat.servlet.audit.AuditingDettaglioInfo"
+            scope="request" validate="true">
+            <forward name="auditingDettaglioInfo" path="/jsplib/addElement.jsp"/>
+            <forward name="auditingDettaglioInfoError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/auditingDettaglioDocumentiBinari" type="org.openspcoop2.web.ctrlstat.servlet.audit.AuditingDettaglioDocumentiBinari" 
+        	scope="request" validate="true">
+            <forward name="auditingDettaglioDocumentiBinari" path="/jsplib/listElement.jsp"/>
+            <forward name="auditingDettaglioDocumentiBinariError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+    
+    
+    
+    
+    
+    
+    	<!-- Monitoraggio  -->
+    
+        <action path="/monitor" type="org.openspcoop2.web.ctrlstat.servlet.monitor.Monitor" 
+        	scope="request" validate="true">
+            <forward name="monitorForm" path="/jsplib/addElement.jsp"/>
+            <forward name="monitorConfirmForm" path="/jsplib/confermaRimozione.jsp"/>
+            <forward name="monitorOk" path="/jsplib/listElement.jsp"/>
+            <forward name="monitorCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="monitorStatoPddOk" path="/jsplib/addElement.jsp"/>
+            <forward name="monitorDettagliOk" path="/jsplib/addElement.jsp"/>
+			<forward name="monitorDettagliForm" path="/jsplib/addElement.jsp"/>
+            <forward name="monitorError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    
+    
+    
+    
+    
+    	<!-- Operazioni  -->
+    
+        <action path="/operazioni" type="org.openspcoop2.web.ctrlstat.servlet.operazioni.Operazioni" 
+        	scope="request" validate="true">
+            <forward name="operazioniForm" path="/jsplib/addElement.jsp"/>
+            <forward name="operazioniOk" path="/jsplib/listElement.jsp"/>
+            <forward name="operazioniList" path="/jsplib/listElement.jsp"/>
+            <forward name="operazioniDetailOk" path="/jsplib/addElement.jsp"/>
+            <forward name="operazioniError" path="/jsplib/info.jsp"/>
+        </action>
+    
+        <action path="/operazioniDel" type="org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniDel" 
+            scope="request" validate="true">
+            <forward name="operazioniDel" path="/jsplib/listElement.jsp"/>
+            <forward name="operazioniError" path="/jsplib/info.jsp"/>
+        </action>
+          
+        <action path="/operazioniList" type="org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniList"
+            scope="request" validate="true">
+            <forward name="operazioniList" path="/jsplib/listElement.jsp"/>
+            <forward name="operazioniError" path="/jsplib/info.jsp"/>
+        </action>
+
+    
+    
+    
+    
+    </action-mappings>
+
+    <!-- ======== Controller Definitions ================================== -->
+
+    <!-- ======== Message Resources Definitions =========================== -->
+
+    <!-- ======== Plug-In Definitions ===================================== -->
+
+</struts-config>

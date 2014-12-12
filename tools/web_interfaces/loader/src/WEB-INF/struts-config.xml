@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+     "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+     "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+  <!-- ======== Form Bean Definitions =================================== -->
+  <form-beans>
+		<form-bean name="FileUpload" type="org.openspcoop2.web.loader.servlet.FileUploadForm">
+			<form-property name="theFile" type="org.apache.struts.upload.FormFile"/>
+		</form-bean>
+  </form-beans>
+  
+  <!-- ======== Global Exceptions Definitions =========================== -->
+
+  <!-- ======== Global Forwards Definitions ============================= -->
+
+  <!-- ======== Action Mapping Definitions ============================== -->
+  <action-mappings>
+  
+  
+  		<!--  Login/Logout -->
+    
+    	<action path="/login" type="org.openspcoop2.web.loader.servlet.login.Login"
+            scope="request" validate="true">
+            <forward name="loginForm" path="/jsplib/login.jsp"/>
+            <forward name="loginOk" path="/jsplib/info.jsp"/>
+            <forward name="loginCheckError" path="/jsplib/login.jsp"/>
+            <forward name="loginError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <action path="/logout" type="org.openspcoop2.web.loader.servlet.login.Logout"
+            scope="request" validate="true">
+            <forward name="logoutOk" path="/jsplib/logout.jsp"/>
+            <forward name="logoutError" path="/jsplib/info.jsp"/>
+        </action>
+  
+  
+  		<!--  Archivi -->
+  
+    	<action  path="/importaXml" type="org.openspcoop2.web.loader.servlet.archivi.ImportaXML"
+    	 	scope="request" validate="true" name = "FileUpload">
+    	 	<forward name="importaXmlForm" path="/jsplib/addElement.jsp" />
+		    <forward name="importaXmlOk" path="/jsplib/addElement.jsp" />
+		    <forward name="importaXmlCheckError" path="/jsplib/addElement.jsp" />
+			<forward name="importaXmlError" path="/jsplib/addElement.jsp" />
+	    </action>
+	    
+	    <action  path="/eliminazioneXml" type="org.openspcoop2.web.loader.servlet.archivi.EliminazioneXML"
+    	 	scope="request" validate="true" name = "FileUpload">
+    	 	<forward name="eliminazioneXmlForm" path="/jsplib/addElement.jsp" />
+		    <forward name="eliminazioneXmlOk" path="/jsplib/addElement.jsp" />
+		    <forward name="eliminazioneXmlCheckError" path="/jsplib/addElement.jsp" />
+			<forward name="eliminazioneXmlError" path="/jsplib/addElement.jsp" />
+	    </action>
+	
+  </action-mappings>
+    	
+  <!-- ======== Controller Definitions ================================== -->
+
+  <!-- ======== Message Resources Definitions =========================== -->
+
+  <!-- ======== Plug-In Definitions ===================================== -->
+
+</struts-config>

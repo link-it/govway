@@ -1,0 +1,151 @@
+<xs:schema targetNamespace="http://www.openspcoop2.org/example/types" xmlns:definitorio="http://www.openspcoop2.org/example/types"
+    	xmlns:allegatoimport="http://www.openspcoop2.org/example/allegato/import" xmlns:allegatoimport2="http://www.openspcoop2.org/example/allegato/import2" 
+    	xmlns:specificasemiformaleimport="http://www.openspcoop2.org/example/specificasemiformale/import" 
+    	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    	>
+      
+      <!-- Es. Include from allegati -->
+      <xs:include schemaLocation="../allegati/allegatoIncludeFromDefinitorio.xsd"/>
+      <!-- Es. Include from specificaSemiformale -->
+      <xs:include schemaLocation="../specificaSemiformale/specificaSemiformaleIncludeFromDefinitorio.xsd"/> 
+      <!-- Es. Import from allegati -->
+      <xs:import namespace="http://www.openspcoop2.org/example/allegato/import" schemaLocation="../allegati/allegatoImportFromDefinitorio.xsd"/>
+      <xs:import namespace="http://www.openspcoop2.org/example/allegato/import2" schemaLocation="../allegati/allegatoImportFromDefinitorio2.xsd"/>
+      <!-- Es. Import from specificaSemiformale -->
+      <xs:import namespace="http://www.openspcoop2.org/example/specificasemiformale/import" schemaLocation="../specificaSemiformale/specificaSemiformaleImportFromDefinitorio.xsd"/>
+      
+      <!-- Es. OneWay -->
+      <xs:element name="notificaRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimport:esempioAllegatoImport1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimport:esempioAllegatoImport2"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimport2:AltroOggettoImportato"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioAllegatoInclude1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioAllegatoInclude2"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="specificasemiformaleimport:esempioSpecificaSemiformaleImport1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="specificasemiformaleimport:esempioSpecificaSemiformaleImport2"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioSpecificaSemiformaleInclude1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioSpecificaSemiformaleInclude2"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      <!-- Es. Sincrono -->        
+      <xs:element name="aggiornamentoRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="aggiornamentoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esito"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      <!-- Es. AsincronoSimmetrico -->
+      <xs:element name="richiestaAggiornamentoRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaAggiornamentoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:presaInCarico"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="esitoAggiornamentoRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esito"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="esitoAggiornamentoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:presaInCarico"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      
+      <!-- Es. AsincronoAsimmetrico -->
+      <xs:element name="richiestaRegistrazioneRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaRegistrazioneResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:presaInCarico"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaStatoRegistrazioneRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:identificativoRichiestaAsincrona"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaStatoRegistrazioneResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esito"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      
+      <!-- Dati complessi --> 
+      <xs:element name="dati">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="cognome" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="esito">
+        <xs:complexType>
+          <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:choice>
+              <xs:element name="ok" type="xs:string"/>
+              <xs:element name="fail" type="xs:string"/>
+            </xs:choice>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="presaInCarico">
+        <xs:complexType>
+          <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:choice>
+              <xs:element name="ok" type="xs:string"/>
+            </xs:choice>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="identificativoRichiestaAsincrona">
+        <xs:complexType>
+          <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:choice>
+              <xs:element name="id" type="xs:string"/>
+            </xs:choice>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      
+    </xs:schema>

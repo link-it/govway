@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="ProtocolloSPCoop" default="build" basedir=".">
+	
+	<description>
+        Plugin SPCoop
+    </description>
+
+	<import file="./local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+
+	<!-- Properties -->
+	<property name="src_spcoop" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="doc" location="doc" />
+
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="jax/jaxb*"/>
+			<include name="javax/*"/>
+			<include name="jibx/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<exclude name="openspcoop2_pdd*.jar"/>
+			<exclude name="openspcoop2*protocol_*.jar"/>
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+
+	
+	
+	<!-- Clean -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>	
+	
+	
+	
+	<target name="compile_spcoop_plugin" description="compila il plugin spcoop" depends="init_compile">
+
+		<!-- Info svn -->
+		<runtarget target="checksvn" />
+		<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+		
+		<!-- it.gov.spcoop.sica.manifest -->
+		<var name="packagesCompiled" value="it.gov.spcoop.sica.manifest,it.gov.spcoop.sica.manifest.driver" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/gov/spcoop/sica/manifest"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-sica-manifest"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.spcoop.sica.manifest"/>
+			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+		
+		<!-- it.cnipa.collprofiles -->
+		<var name="packagesCompiled" value="${packagesCompiled},it.cnipa.collprofiles" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/cnipa/collprofiles"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-sica-cnipacollprofiles"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/driver/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="it.cnipa.collprofiles"/>
+			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+		
+		<!-- it.gov.spcoop.sica.wscp -->
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wscp" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/gov/spcoop/sica/wscp"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-sica-wscp"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/driver/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.spcoop.sica.wscp"/>
+			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+		
+		<!-- it.gov.spcoop.sica + it.cnipa.driver -->
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.dao,it.gov.spcoop.sica.dao.driver" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.firma" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.cnipa.collprofiles.driver" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wscp.driver" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-sica"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="it/gov/spcoop/sica/dao/**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES_2" value="org/openspcoop2/protocol/spcoop/sica/**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES_3" value="it/gov/spcoop/sica/firma/**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES_4" value="it/cnipa/collprofiles/**/driver/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES_5" value="it/gov/spcoop/sica/wscp/**/driver/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_INCLUDES" value="it/gov/spcoop/sica/dao/**/*.properties"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.spcoop.sica"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+						
+		<!-- it.gov.spcoop.sica.wsbl -->
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wsbl,it.gov.spcoop.sica.wsbl.driver" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/gov/spcoop/sica/wsbl"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-sica-wsbl"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.spcoop.sica.wsbl"/>
+			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+							
+		<!-- org.openspcoop2.protocol.spcoop -->
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.archive" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.builder" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.config" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.diagnostica" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.tracciamento" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.spcoop.validator" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-plugin"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="org/openspcoop2/protocol/spcoop/**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="org/openspcoop2/protocol/spcoop/sica/**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.spcoop"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+
+		<!-- Jar contenente la configurazione -->
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-config"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value=""/>
+			<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.xml"/>
+			<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="**/*.properties"/>
+			<param name="compile_src_openspcoop2.SRC_EXCLUDES" value="it/gov/spcoop/sica/**/*.properties"/>
+			<param name="compile_src_openspcoop2.SRC_EXCLUDES_2" value="**/binding.xml"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.spcoop.config"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+		
+		<!-- schemi xsd -->
+		<antcall target="build_jar_schema">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${src_spcoop}/schemi"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol-schemi"/>
+			<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**"/>
+			<param name="compile_src_openspcoop2.JAR_SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+
+				
+		<!-- Jar Complessivo -->
+		<antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="spcoop-protocol"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+		</antcall>
+		
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
+			<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api"/>
+			<param name="src" value="${src_spcoop}"/>
+		</antcall>
+			
+	</target>
+	<target name="build" depends="compile_spcoop_plugin" />
+	
+	
+	
+	
+	<!-- Classi Test Standalone -->
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_run_lib" >
+		<fileset dir="${required_lib}" >
+			<include name="**/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_run_openspcoop_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	<path id="classpath_run_dist" >
+		<fileset dir="${dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	<target name="sica_dao_driver_client_test">
+		<if>
+			<equals arg1="${dirExampleRegistroServizi}" arg2="$${dirExampleRegistroServizi}"/>
+			<then>
+				<fail message="Parametro dirExampleRegistroServizi non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${testMode}" arg2="$${testMode}"/>
+			<then>
+				<fail message="Parametro testMode non fornito (Valori:0/1/2/SICA)"/>
+			</then>
+		</if>
+        <!-- Run the java code  -->
+        <java classname="it.gov.spcoop.sica.dao.driver.ClientTest" fork="true">
+                <arg value="${dirExampleRegistroServizi}" />
+        		<arg value="${testMode}" />
+                <classpath>
+                		<path refid="classpath_run_dist" />
+                		<path refid="classpath_run_openspcoop_dist" />
+                		<pathelement path="${openspcoop2}/core/deploy/properties"/>
+                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
+                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                		<fileset dir="${required_lib}" includes="cxf/*.jar"/>
+                		<fileset dir="${required_lib}" includes="jax/jaxb*.jar"/>
+                		<fileset dir="${required_lib}" includes="javax/*.jar"/>
+                </classpath>
+        </java>
+	</target>
+	
+	
+	
+</project>

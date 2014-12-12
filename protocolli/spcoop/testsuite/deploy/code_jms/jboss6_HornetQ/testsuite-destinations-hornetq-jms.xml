@@ -1,0 +1,12 @@
+<configuration xmlns="urn:hornetq"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:hornetq /schema/hornetq-jms.xsd">
+
+        <queue name="openspcoop2TestQueue">
+           <entry name="/queue/openspcoop2TestQueue"/>
+        </queue>
+	<topic name="openspcoop2TestTopic">
+  	   <entry name="/topic/openspcoop2TestTopic"/>  
+	</topic>
+
+</configuration>

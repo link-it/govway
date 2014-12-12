@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="openspcoop2" class="org.openspcoop2.pdd.monitor.Openspcoop2">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <structure field="statoPdd" usage="required" map-as="org.openspcoop2.pdd.monitor.StatoPdd"/>
+    <structure field="messaggio" usage="required" map-as="org.openspcoop2.pdd.monitor.Messaggio"/>
+  </mapping>
+  <mapping name="stato-pdd" class="org.openspcoop2.pdd.monitor.StatoPdd">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="num-msg-in-consegna" field="numMsgInConsegna" default="0" usage="required"/>
+    <value name="tempo-medio-attesa-in-consegna" field="tempoMedioAttesaInConsegna" default="-1" usage="required"/>
+    <value name="tempo-max-attesa-in-consegna" field="tempoMaxAttesaInConsegna" default="-1" usage="required"/>
+    <value name="num-msg-in-spedizione" field="numMsgInSpedizione" default="0" usage="required"/>
+    <value name="tempo-medio-attesa-in-spedizione" field="tempoMedioAttesaInSpedizione" default="-1" usage="required"/>
+    <value name="tempo-max-attesa-in-spedizione" field="tempoMaxAttesaInSpedizione" default="-1" usage="required"/>
+    <value name="num-msg-in-processamento" field="numMsgInProcessamento" default="0" usage="required"/>
+    <value name="tempo-medio-attesa-in-processamento" field="tempoMedioAttesaInProcessamento" default="-1" usage="required"/>
+    <value name="tempo-max-attesa-in-processamento" field="tempoMaxAttesaInProcessamento" default="-1" usage="required"/>
+    <value name="tot-messaggi" field="totMessaggi" default="0" usage="required"/>
+    <value name="tempo-medio-attesa" field="tempoMedioAttesa" default="-1" usage="required"/>
+    <value name="tempo-max-attesa" field="tempoMaxAttesa" default="-1" usage="required"/>
+    <value name="tot-messaggi-duplicati" field="totMessaggiDuplicati" default="0" usage="required"/>
+    <structure name="filtro" field="filtro" usage="optional" map-as="_Filtro_Type"/>
+  </mapping>
+  <mapping name="messaggio" class="org.openspcoop2.pdd.monitor.Messaggio">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <structure field="dettaglio" usage="required" map-as="org.openspcoop2.pdd.monitor.Dettaglio"/>
+    <structure name="busta-info" field="bustaInfo" usage="required" map-as="_Busta_Type"/>
+    <value name="id-messaggio" field="idMessaggio" usage="required"/>
+    <value name="ora-attuale" field="oraAttuale" usage="required"/>
+    <value name="ora-registrazione" field="oraRegistrazione" usage="required"/>
+    <value name="stato" field="stato" usage="required" enum-value-method="toString"/>
+    <structure name="filtro" field="filtro" usage="optional" map-as="_Filtro_Type"/>
+  </mapping>
+  <mapping name="filtro" class="org.openspcoop2.pdd.monitor.Filtro" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="correlazione-applicativa" field="correlazioneApplicativa" usage="optional"/>
+    <structure name="busta" field="busta" usage="optional" map-as="_Busta_Type"/>
+    <value name="id-messaggio" field="idMessaggio" usage="optional"/>
+    <value name="message-pattern" field="messagePattern" usage="optional"/>
+    <value name="soglia" field="soglia" usage="optional"/>
+    <value name="stato" field="stato" usage="optional" enum-value-method="toString"/>
+    <value name="tipo" field="tipo" usage="optional"/>
+    <collection field="soggetto" create-type="java.util.ArrayList">
+      <structure name="soggetto" map-as="_BustaSoggetto_Type"/>
+    </collection>
+    <collection field="proprieta" create-type="java.util.ArrayList">
+      <structure name="proprieta" map-as="_Proprieta_Type"/>
+    </collection>
+  </mapping>
+
+  <mapping type-name="_Filtro_Type" class="org.openspcoop2.pdd.monitor.Filtro" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="correlazione-applicativa" field="correlazioneApplicativa" usage="optional"/>
+    <structure name="busta" field="busta" usage="optional" map-as="_Busta_Type"/>
+    <value name="id-messaggio" field="idMessaggio" usage="optional"/>
+    <value name="message-pattern" field="messagePattern" usage="optional"/>
+    <value name="soglia" field="soglia" usage="optional"/>
+    <value name="stato" field="stato" usage="optional" enum-value-method="toString"/>
+    <value name="tipo" field="tipo" usage="optional"/>
+    <collection field="soggetto" create-type="java.util.ArrayList">
+      <structure name="soggetto" map-as="_BustaSoggetto_Type"/>
+    </collection>
+    <collection field="proprieta" create-type="java.util.ArrayList">
+      <structure name="proprieta" map-as="_Proprieta_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="dettaglio" class="org.openspcoop2.pdd.monitor.Dettaglio">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="errore-processamento" field="erroreProcessamento" usage="optional"/>
+    <value name="id-correlazione-applicativa" field="idCorrelazioneApplicativa" usage="optional"/>
+    <value name="id-modulo" field="idModulo" usage="required"/>
+    <value name="tipo" field="tipo" usage="required"/>
+    <collection field="servizioApplicativoConsegna" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.pdd.monitor.ServizioApplicativoConsegna"/>
+    </collection>
+    <collection field="proprieta" create-type="java.util.ArrayList">
+      <structure name="proprieta" map-as="_Proprieta_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="servizio-applicativo-consegna" class="org.openspcoop2.pdd.monitor.ServizioApplicativoConsegna">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="autorizzazione-integration-manager" field="autorizzazioneIntegrationManager" default="false" usage="required"/>
+    <value name="errore-processamento" field="erroreProcessamento" usage="optional"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="sbustamento-soap" field="sbustamentoSoap" default="false" usage="required"/>
+    <value name="tipo-consegna" field="tipoConsegna" usage="required"/>
+  </mapping>
+  <mapping name="busta-info" class="org.openspcoop2.pdd.monitor.Busta" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="attesa-riscontro" field="attesaRiscontro" default="false" usage="optional"/>
+    <structure name="mittente" field="mittente" usage="optional" map-as="_BustaSoggetto_Type"/>
+    <structure name="destinatario" field="destinatario" usage="optional" map-as="_BustaSoggetto_Type"/>
+    <structure field="servizio" usage="optional" map-as="org.openspcoop2.pdd.monitor.BustaServizio"/>
+    <value name="azione" field="azione" usage="optional"/>
+    <value name="profilo-collaborazione" field="profiloCollaborazione" usage="optional"/>
+    <value name="collaborazione" field="collaborazione" usage="optional"/>
+    <value name="riferimento-messaggio" field="riferimentoMessaggio" usage="optional"/>
+  </mapping>
+
+  <mapping type-name="_Busta_Type" class="org.openspcoop2.pdd.monitor.Busta" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="attesa-riscontro" field="attesaRiscontro" default="false" usage="optional"/>
+    <structure name="mittente" field="mittente" usage="optional" map-as="_BustaSoggetto_Type"/>
+    <structure name="destinatario" field="destinatario" usage="optional" map-as="_BustaSoggetto_Type"/>
+    <structure field="servizio" usage="optional" map-as="org.openspcoop2.pdd.monitor.BustaServizio"/>
+    <value name="azione" field="azione" usage="optional"/>
+    <value name="profilo-collaborazione" field="profiloCollaborazione" usage="optional"/>
+    <value name="collaborazione" field="collaborazione" usage="optional"/>
+    <value name="riferimento-messaggio" field="riferimentoMessaggio" usage="optional"/>
+  </mapping>
+  <mapping name="mittente" class="org.openspcoop2.pdd.monitor.BustaSoggetto" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="tipo" field="tipo" usage="optional"/>
+    <value name="nome" field="nome" usage="optional"/>
+  </mapping>
+
+  <mapping type-name="_BustaSoggetto_Type" class="org.openspcoop2.pdd.monitor.BustaSoggetto" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="tipo" field="tipo" usage="optional"/>
+    <value name="nome" field="nome" usage="optional"/>
+  </mapping>
+  <mapping name="servizio" class="org.openspcoop2.pdd.monitor.BustaServizio">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="tipo" field="tipo" usage="optional"/>
+    <value name="nome" field="nome" usage="optional"/>
+  </mapping>
+  <mapping name="proprieta" class="org.openspcoop2.pdd.monitor.Proprieta" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="required"/>
+  </mapping>
+
+  <mapping type-name="_Proprieta_Type" class="org.openspcoop2.pdd.monitor.Proprieta" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/pdd/monitor" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="required"/>
+  </mapping>
+</binding>

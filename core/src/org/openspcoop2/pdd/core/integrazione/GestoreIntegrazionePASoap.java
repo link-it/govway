@@ -1,0 +1,196 @@
+/*
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved. 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.openspcoop2.pdd.core.integrazione;
+
+
+import javax.xml.soap.SOAPHeaderElement;
+
+import org.apache.log4j.Logger;
+import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
+import org.openspcoop2.utils.xml.XSDResourceResolver;
+
+
+/**
+ * Classe utilizzata per la spedizione di informazioni di integrazione 
+ * dalla porta di dominio verso i servizi applicativi.
+ *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
+public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreIntegrazionePASoap{
+
+	/** Utility per l'integrazione */
+	UtilitiesIntegrazione utilities = UtilitiesIntegrazione.getInstance();
+	/** OpenSPCoopProperties */
+	OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
+	
+	private ValidatoreXSD validatoreXSD = null;
+	
+	/** Logger utilizzato per debug. */
+	private Logger log = null;
+
+	
+	public GestoreIntegrazionePASoap(){
+		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		if(this.log==null){
+			this.log = Logger.getLogger(GestoreIntegrazionePASoap.class);
+		}
+		try{
+			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
+			xsdResourceResolver.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
+			this.validatoreXSD = new ValidatoreXSD(this.log,xsdResourceResolver,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione.xsd"));
+		}catch(Exception e){
+			this.log.error("Integrazione.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+		}
+	}
+	
+	// IN - Request
+	
+	@Override
+	public void readInRequestHeader(HeaderIntegrazione integrazione,
+			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException{
+		try{
+			this.utilities.readHeader(inRequestPAMessage.getMessage(), integrazione, this.validatoreXSD,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteInRequestHeader(InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException{
+		try{
+			this.utilities.deleteHeader(inRequestPAMessage.getMessage(),this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void updateInRequestHeader(InRequestPAMessage inRequestPAMessage,
+			String idMessaggio,String servizioApplicativo,String correlazioneApplicativa) throws HeaderIntegrazioneException{
+		try{
+			this.utilities.updateHeader(inRequestPAMessage.getMessage(), 
+					inRequestPAMessage.getSoggettoMittente(), 
+					inRequestPAMessage.getServizio(), 
+					idMessaggio, 
+					servizioApplicativo, correlazioneApplicativa, null,
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione(),  // actor
+					this.openspcoopProperties.getHeaderSoapNameIntegrazione(),  // header name 
+					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(),  // prefix
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione(),  // namespace
+					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeElementoIntegrazione(), // nomeElemento ExtInfoProtocol
+					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione(), // nomeAttributo ExtInfoProtocol
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(inRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)
+				);
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
+		}
+	}
+	
+	
+	// OUT - Request
+	
+	@Override
+	public void setOutRequestHeader(HeaderIntegrazione integrazione,
+			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
+		try{
+			
+			SOAPHeaderElement header = this.utilities.buildHeader(integrazione,
+					this.openspcoopProperties.getHeaderSoapNameIntegrazione(), // header name 
+					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(), // prefix
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // namespace
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // actor
+					outRequestPAMessage.getMessage(),
+					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeElementoIntegrazione(), // nomeElemento ExtInfoProtocol
+					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione(), // nomeAttributo ExtInfoProtocol
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)
+				);
+			
+			if(outRequestPAMessage.getMessage().getSOAPHeader() == null){
+				outRequestPAMessage.getMessage().getSOAPPart().getEnvelope().addHeader();
+			}
+			outRequestPAMessage.getMessage().addHeaderElement(outRequestPAMessage.getMessage().getSOAPHeader(), header);
+			
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
+		}
+	}
+	
+	
+	// IN - Response
+		
+	@Override
+	public void readInResponseHeader(HeaderIntegrazione integrazione,
+			InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
+		try{
+			this.utilities.readHeader(inResponsePAMessage.getMessage(), integrazione, this.validatoreXSD,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteInResponseHeader(InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
+		try{
+			this.utilities.deleteHeader(inResponsePAMessage.getMessage(),this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
+		}
+	}
+		
+	@Override
+	public void updateInResponseHeader(InResponsePAMessage inResponsePAMessage,
+			String idMessaggioRichiesta,String idMessaggioRisposta,String servizioApplicativo,String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta) throws HeaderIntegrazioneException{
+		try{
+			this.utilities.updateHeader(inResponsePAMessage.getMessage(), 
+					inResponsePAMessage.getSoggettoMittente(), 
+					inResponsePAMessage.getServizio(),
+					idMessaggioRichiesta, idMessaggioRisposta,
+					servizioApplicativo, correlazioneApplicativa, riferimentoCorrelazioneApplicativaRichiesta, 
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione(),  // actor
+					this.openspcoopProperties.getHeaderSoapNameIntegrazione(),  // header name 
+					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(),  // prefix
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione(),  // namespace
+					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeElementoIntegrazione(), // nomeElemento ExtInfoProtocol
+					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione(), // nomeAttributo ExtInfoProtocol
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(inResponsePAMessage.getBustaRichiesta(), false, TipoIntegrazione.SOAP)
+				);
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
+		}
+	}
+		
+	// OUT - Response
+	
+	@Override
+	public void setOutResponseHeader(HeaderIntegrazione integrazione,
+			OutResponsePAMessage outResponsePAMessage) throws HeaderIntegrazioneException{
+		
+		// nop;
+		
+	}
+}

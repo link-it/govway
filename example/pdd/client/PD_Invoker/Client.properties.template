@@ -1,0 +1,133 @@
+# Punto di accesso della porta di dominio
+openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PD/
+#openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PDtoSOAP/
+
+
+# ContentType SOAP 1.1
+openspcoop2.contentType = text/xml; charset=utf-8
+# ContentType SOAP 1.2
+#openspcoop2.contentType = application/soap+xml; charset=UTF-8
+
+openspcoop2.soapAction = "TEST"
+
+# PortaDelegata
+openspcoop2.PD = NOME_PORTA_DELEGATA
+
+# Autenticazioni BASIC
+openspcoop2.username = USERNAME
+openspcoop2.password = PASSWORD
+
+# Print info
+openspcoop2.printFileSent = true
+openspcoop2.printFileReceived = true
+
+
+
+
+# ---------------------- File da spedire (default request.xml) ---------------------------
+
+# Messaggio SOAP 1.1
+#file=fileToSend/request.xml
+
+# Messaggio SOAP 1.2
+#file=fileToSend/request_soap12.xml
+
+# Messaggio SOAP utilizzabile per test identificazione dinamica del servizio tramite ContentBased
+#file=fileToSend/requestContentBased1.xml
+#file=fileToSend/requestContentBased2.xml
+
+# Messaggio SOAP utilizzabile per provare header SOAP di integrazione dei servizi applicativi
+#file=fileToSend/requestHeaderIntegrazione.xml
+
+# Messaggio SOAP utilizzabile per provare la validazione XSD dei contenuti applicativi
+#file=fileToSend/requestXSD.xml
+
+# Messaggio SOAP senza header
+#file=fileToSend/requestSenzaHeader.xml
+
+# --------- FUNZIONALITA' DI IMBUSTAMENTO SOAP -------------
+# Nota: da usare con http://localhost:8080/openspcoop/PDtoSOAP/
+
+# Contenuto XML senza struttura SOAP
+#file=fileToSend/requestBody.xml
+
+# File MIME senza struttura SOAP
+#file=fileToSend/requestMultipartRelatedMIME
+
+# Documenti da utilizzare per prove di Imbustamento
+# Con http://localhost:8080/openspcoop/PDtoSOAP/PD?OpenSPCoopTunnelSOAP=true
+#file=fileToSend/HelloWorld.doc
+#file=fileToSend/HelloWorld.pdf
+#file=fileToSend/HelloWorld.zip
+
+# ---------- Errore ----------------
+# XML Malformato
+#file=fileToSend/requestMalformato.xml
+
+# --------- Test Dimensioni messaggi -------
+#file=fileToSend/xml_varie_dimensioni/request1.1K.xml
+#file=fileToSend/xml_varie_dimensioni/request2.1K.xml
+#file=fileToSend/xml_varie_dimensioni/request3.2K.xml
+#file=fileToSend/xml_varie_dimensioni/request4K.xml
+#file=fileToSend/xml_varie_dimensioni/request7.5K.xml
+#file=fileToSend/xml_varie_dimensioni/request8.1K.xml
+
+
+
+
+
+# -- Identificativi di correlazione --
+
+# RiferimentoMessaggio 
+# Utile per:
+# - invocazione di richiestaStato/risposta per profili Asincroni
+#openspcoop2.integrazione.riferimentoMessaggio=
+
+# IDCollaborazione
+#openspcoop2.integrazione.collaborazione=
+
+
+
+# -- Informazioni sul servizio --
+
+# tipoDestinatario
+#openspcoop2.integrazione.tipoDestinatario=SPC
+# destinatario
+#openspcoop2.integrazione.destinatario=MinisteroErogatore
+# tipoServizio
+#openspcoop2.integrazione.tipoServizio=SPC
+# Servizio
+#openspcoop2.integrazione.servizio=ComunicazioneVariazione
+# Azione
+#openspcoop2.integrazione.azione=Affidabile
+
+
+# -- Integrazione Servizio Applicativo --
+
+# Identificativo Correlazione Applicativa
+#openspcoop2.integrazione.identificativoCorrelazioneApplicativa=XXX
+
+# Identificativo Servizio Applicativo
+#openspcoop2.integrazione.servizioApplicativo=nomeServizioApplicativo
+
+
+
+
+
+
+# ------ Header HTTP Integrazione -------------
+openspcoop2.trasporto.keyword.tipoMittente=X-OpenSPCoop2-TipoMittente
+openspcoop2.trasporto.keyword.mittente=X-OpenSPCoop2-Mittente
+openspcoop2.trasporto.keyword.tipoDestinatario=X-OpenSPCoop2-TipoDestinatario
+openspcoop2.trasporto.keyword.destinatario=X-OpenSPCoop2-Destinatario
+openspcoop2.trasporto.keyword.tipoServizio=X-OpenSPCoop2-TipoServizio
+openspcoop2.trasporto.keyword.servizio=X-OpenSPCoop2-Servizio
+openspcoop2.trasporto.keyword.azione=X-OpenSPCoop2-Azione
+openspcoop2.trasporto.keyword.identificativo=X-OpenSPCoop2-ID
+openspcoop2.trasporto.keyword.riferimentoMessaggio=X-OpenSPCoop2-RiferimentoMessaggio
+openspcoop2.trasporto.keyword.idCollaborazione=X-OpenSPCoop2-Collaborazione
+openspcoop2.trasporto.keyword.idApplicativo=X-OpenSPCoop2-IDApplicativo
+openspcoop2.trasporto.keyword.servizioApplicativo=X-OpenSPCoop2-ServizioApplicativo
+openspcoop2.trasporto.keyword.transazione=X-OpenSPCoop2-Transazione
+
+

@@ -1,0 +1,80 @@
+/*
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved.
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.all;
+
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for identified.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * <pre>
+ * &lt;simpleType name="identified">
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="AccordoCooperazione"/>
+ *     &lt;enumeration value="AccordoServizioParteComune"/>
+ *     &lt;enumeration value="PortaDominio"/>
+ *     &lt;enumeration value="Soggetto"/>
+ *     &lt;enumeration value="AccordoServizioParteSpecifica"/>
+ *   &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
+ * 
+ */
+@XmlType(name = "identified")
+@XmlEnum
+public enum Identified {
+
+    @XmlEnumValue("AccordoCooperazione")
+    ACCORDO_COOPERAZIONE("AccordoCooperazione"),
+    @XmlEnumValue("AccordoServizioParteComune")
+    ACCORDO_SERVIZIO_PARTE_COMUNE("AccordoServizioParteComune"),
+    @XmlEnumValue("PortaDominio")
+    PORTA_DOMINIO("PortaDominio"),
+    @XmlEnumValue("Soggetto")
+    SOGGETTO("Soggetto"),
+    @XmlEnumValue("AccordoServizioParteSpecifica")
+    ACCORDO_SERVIZIO_PARTE_SPECIFICA("AccordoServizioParteSpecifica");
+    private final String value;
+
+    Identified(String v) {
+        this.value = v;
+    }
+
+    public String value() {
+        return this.value;
+    }
+
+    public static Identified fromValue(String v) {
+        for (Identified c: Identified.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
+
+}

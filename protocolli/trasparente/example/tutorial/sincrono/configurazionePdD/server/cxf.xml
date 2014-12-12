@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:soap="http://cxf.apache.org/bindings/soap"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans
+                      http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                            http://cxf.apache.org/jaxws
+                                  http://cxf.apache.org/schemas/jaxws.xsd">
+ 
+      <jaxws:endpoint id="RichiestaStatoFamigliaSOAP11"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.richiestastatofamiglia.RichiestaStatoFamigliaImpl11"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap11.wsdl" address="http://localhost:8888/tutorial/sincrono11">
+      </jaxws:endpoint>
+      
+      <jaxws:endpoint id="RichiestaStatoFamigliaSOAP12"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.richiestastatofamiglia.RichiestaStatoFamigliaImpl12"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap12.wsdl" address="http://localhost:8888/tutorial/sincrono12">
+      </jaxws:endpoint>
+      
+      <jaxws:endpoint id="RichiestaStatoFamigliaSOAP11Sec"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.richiestastatofamiglia.RichiestaStatoFamigliaImplSec11"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap11Security.wsdl" address="http://localhost:8888/tutorial/sincronoSec11">
+            <jaxws:properties>
+                  <entry key="ws-security.signature.properties" value="configurazionePdD/server/server-crypto.properties"/>
+                  <entry key="ws-security.signature.username" value="serverkey"/>
+                  <entry key="ws-security.encryption.username" value="useReqSigCert"/>
+                  <entry key="ws-security.callback-handler" value="org.openspcoop2.example.pdd.server.trasparente.richiestastatofamiglia.ServerCallback"/>
+            </jaxws:properties>
+      </jaxws:endpoint>
+      
+      <jaxws:endpoint id="RichiestaStatoFamigliaSOAP12Sec"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.richiestastatofamiglia.RichiestaStatoFamigliaImplSec12"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap12Security.wsdl" address="http://localhost:8888/tutorial/sincronoSec12">
+            <jaxws:properties>
+                  <entry key="ws-security.signature.properties" value="configurazionePdD/server/server-crypto.properties"/>
+                  <entry key="ws-security.signature.username" value="serverkey"/>
+                  <entry key="ws-security.encryption.username" value="useReqSigCert"/>
+                  <entry key="ws-security.callback-handler" value="org.openspcoop2.example.pdd.server.trasparente.richiestastatofamiglia.ServerCallback"/>
+            </jaxws:properties>
+      </jaxws:endpoint>
+</beans>

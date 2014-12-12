@@ -1,0 +1,64 @@
+
+<project name="prepare-setup-pdd" basedir=".">
+	
+	<description>
+        	PREPARE SETUP PDD
+	</description>
+
+	<import file="jar-build.xml" />
+	
+	<!-- Porta di Dominio -->
+	<target name="prepare_pdd_setup">
+		
+		<foreach list="${application_server_version}" param="TIPO_AS" target="_buildPdd" />
+						
+	</target>
+	
+	<target name="_buildPdd">
+
+	    <copy todir="${deploy_sw}/${TIPO_AS}/dist">
+		    <fileset dir="${deploy_sw_openspcoop2_jars}">
+		      <include name="*.jar"/>
+		    </fileset>
+		</copy>
+		<antcall target="build_without_compile" >
+	    	<param name="as" value="${TIPO_AS}" />
+			<param name="dist" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+			<param name="plugins" value="${core}/deploy/plugins" />
+			<param name="application_plugins" value="${core}/deploy/application_plugins" />
+		    <param name="deploy_web_dir" value="${core}/deploy/deploy_web" />
+	        <param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
+			<param name="properties_dir" value="${core}/deploy/properties" />
+			<param name="printServerInfo" value="true"/>
+			<param name="forceDisableJ2eeMode" value="true"/>
+			<param name="wsdlFolder" value="${core}/deploy/deploy_web/web_app" />
+	 	</antcall>
+		<var name="archiveFile" value="" />
+		<if>
+			<available file="${deploy_sw}/${TIPO_AS}/dist/OpenSPCoop2.ear"/>
+			<then>
+				<move file="${deploy_sw}/${TIPO_AS}/dist/OpenSPCoop2.ear" todir="${deploy_sw}/${TIPO_AS}"/>
+				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/OpenSPCoop2.ear" />
+			</then>
+			<else>
+				<move file="${deploy_sw}/${TIPO_AS}/dist/openspcoop2.war" todir="${deploy_sw}/${TIPO_AS}"/>
+				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/openspcoop2.war" />
+			</else>
+		</if>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/${TIPO_AS}/dist" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<delete dir="build"/>
+		
+		<antcall target="read_jar">
+		    <param name="archiveFile" value="${archiveFile}"/>
+			<param name="as" value="${TIPO_AS}"/>
+		</antcall>
+		
+	</target>
+	
+</project>

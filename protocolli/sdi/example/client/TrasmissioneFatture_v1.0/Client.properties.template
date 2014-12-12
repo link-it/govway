@@ -1,0 +1,55 @@
+# MTOM Enabled
+mtom=true
+
+# Username/password
+#username=
+#password=
+
+# PdD
+# -- SDICOOP --
+pdd=http://localhost:8080/openspcoop2/sdi/PA
+pa=SDIENTE/SDITrasmissioneFatture/
+# -- SPCOOP --
+#pdd=http://localhost:8080/openspcoop2/spcoop/PA
+#pa=
+
+# Tipo Operazione
+# - RicevutaConsegna
+# - NotificaMancataConsegna
+# - NotificaScarto
+# - NotificaEsito
+# - NotificaDecorrenzaTermini
+# - AttestazioneTrasmissioneFattura
+tipoOperazione=RicevutaConsegna
+
+# Buste
+busta.RicevutaConsegna=spcoopFiles/RicevutaConsegna.xml
+busta.NotificaMancataConsegna=spcoopFiles/NotificaMancataConsegna.xml
+busta.NotificaScarto=spcoopFiles/NotificaScarto.xml
+busta.NotificaEsito=spcoopFiles/NotificaEsito.xml
+busta.NotificaDecorrenzaTermini=spcoopFiles/NotificaDecorrenzaTermini.xml
+busta.AttestazioneTrasmissioneFattura=spcoopFiles/AttestazioneTrasmissioneFattura.xml
+
+# -- RicevutaConsegna
+RicevutaConsegna=sdiFiles/esempiMessaggi/IT01234567890_11111_RC_001.xml
+#RicevutaConsegna=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_RC_001.xml
+
+# -- NotificaMancataConsegna
+NotificaMancataConsegna=sdiFiles/esempiMessaggi/IT01234567890_11111_MC_001.xml
+#NotificaMancataConsegna=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_MC_001.xml
+
+# -- NotificaScarto
+NotificaScarto=sdiFiles/esempiMessaggi/IT01234567890_11111_NS_001.xml
+#NotificaScarto=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_NS_001.xml
+
+# -- NotificaEsito
+NotificaEsito=sdiFiles/esempiMessaggi/IT01234567890_11111_NE_001.xml
+#NotificaEsito=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_NE_001.xml
+
+# -- NotificaDecorrenzaTermini
+NotificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
+#NotificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml
+
+# -- AttestazioneTrasmissioneFattura
+AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi/IT01234567890_11111_AT_001.zip
+#AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_AT_001.zip

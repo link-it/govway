@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web>
+  <depends>jboss.j2ee:jndiName=ejb/GestoreBusteNonRiscontrate,service=EJB</depends>
+  <depends>jboss.j2ee:jndiName=ejb/GestoreMessaggi,service=EJB</depends>
+  <depends>jboss.j2ee:jndiName=ejb/GestorePuliziaMessaggiAnomali,service=EJB</depends>
+  <depends>jboss.j2ee:jndiName=ejb/GestoreRepositoryBuste,service=EJB</depends>
+</jboss-web>

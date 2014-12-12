@@ -1,0 +1,40 @@
+<jboss-deployment-structure>
+	<!-- Make sub deployments isolated by default, so they cannot see each others classes without a Class-Path entry -->
+	<ear-subdeployments-isolated>false</ear-subdeployments-isolated>
+	<!-- This corresponds to the top level deployment. For a war this is the war's module, for an ear -->
+	<!-- This is the top level ear module, which contains all the classes in the EAR's lib folder     -->
+	<deployment>
+		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+		<exclusions>
+			<module name="org.apache.log4j" />
+			<module name="sun.jdk" />
+   		</exclusions>
+   		<dependencies> 
+			<module name="sun.jdk" > 
+				<imports> 
+					<exclude-set> 
+						<path name="com/sun/org/apache/xml/internal/security/transforms/implementations"/> 
+					</exclude-set> 
+				</imports> 
+			</module> 
+  		</dependencies>
+	</deployment>
+	<sub-deployment name="OpenSPCoop2.war">
+		<exclusions>
+			<module name="org.apache.log4j"/>
+			<module name="org.slf4j" />
+			<module name="org.apache.commons.logging"/>
+			<module name="org.log4j"/>
+			<module name="org.jboss.logging"/>
+		</exclusions>
+	</sub-deployment>	
+	<sub-deployment name="OpenSPCoop2.jar">
+		<exclusions>
+			<module name="org.apache.log4j"/>
+			<module name="org.slf4j" />
+			<module name="org.apache.commons.logging"/>
+			<module name="org.log4j"/>  
+			<module name="org.jboss.logging"/>
+		</exclusions>
+	</sub-deployment>
+</jboss-deployment-structure>

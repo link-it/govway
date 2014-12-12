@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="GenericProject" default="build" basedir=".">
+
+	<description>
+        	Ambiente di compilazione del Progetto GenericProject
+	</description>
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-genericProject-build.xml" />
+	<import file="${utils}/build.xml" />
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+	
+	<property name="src_genericProject" location="src" />
+	<property name="build_genericProject" location="build" />
+	<property name="dist_genericProject" location="dist" />
+	<property name="doc_genericProject" location="doc" />
+
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="openspcoop2_utils_*.jar"/> <!-- Deve dipendere solo da utils per evitare dipendenze cicliche -->
+		</fileset>
+	</path>	
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_genericProject">
+		<delete dir="${build_genericProject}" />
+		<delete dir="build" />
+		<delete dir="${dist_genericProject}" />
+		<delete dir="${doc_genericProject}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_genericProject">
+		<mkdir dir="${build_genericProject}" />
+		<mkdir dir="${build_genericProject}/tmp" />
+		<mkdir dir="${dist_genericProject}" />
+	</target>
+	
+	
+	
+	
+	<!-- Compilazione della PddConsole-->
+	<target name="compile_genericProject" depends="init_compile_genericProject,compile_openspcoop2_utils,compile_openspcoop2_genericProject" />
+	
+	<!-- alias -->
+	<target name="build" depends="compile_genericProject"/>
+	<target name="build_openspcoop2_genericProject_jar" depends="compile_openspcoop2_genericProject"/>
+	<target name="clean" depends="clean_genericProject"/>
+	
+</project>

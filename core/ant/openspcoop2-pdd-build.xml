@@ -1,0 +1,139 @@
+<project name="openspcoop2-compile-pdd">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.pdd
+    </description>
+
+	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/compile-build.xml" />
+	<import file="${rootDir}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.pdd.*' -->
+	<target name="compile_openspcoop2_pdd" description="compila la libreria org.openspcoop.pdd.*">
+
+		<if>
+			<istrue value="${buildPdd}"/>
+			<then>
+		
+				<!-- Info svn -->
+				<runtarget target="checksvn" />
+				<!-- <echo pdd="SVN:[${svnant.jar.presente}]"/> -->
+				
+				<!-- Preparo SRC per sovrascrivere versione -->
+				<property name="src_overwrite_version" value="${build}/SRC_VERSION" />
+				<delete dir="${src_overwrite_version}" failonerror="false" />
+				<mkdir dir="${src_overwrite_version}/org/openspcoop2/pdd"  />
+				<copy todir="${src_overwrite_version}/org/openspcoop2/pdd" overwrite="true">
+					<fileset dir="${src}/org/openspcoop2/pdd"/>
+				</copy>
+				
+				<!-- Estraggo informazioni sulla versione e la imposto -->
+				<if>
+					<istrue value="${svnant.jar.presente}"/>
+				    <then>
+				    	
+					    <echo message="Raccolta informazioni svn per impostazione versione..."/>
+				    	<svnSetting
+    				          svnkit="true"
+    				          username="${svnant.repository.user}"
+    				          password="${svnant.repository.passwd}"
+    				          id="svn.settings"
+    					      javahl="false"
+    				      />
+						<svn refid="svn.settings">
+							<status path="${svn_rootDir}"
+		                                		revisionProperty="svn.actualRevision"
+		                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
+		                                		lastChangedRevisionProperty="svn.lastChangedRev"
+		                                		lastChangedDateProperty="svn.lastChangedDate" 
+												urlProperty="svn.url"/>
+						</svn>
+				    	
+						<!-- Imposto versione -->
+						<propertyregex property="pddVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(.*)" replace="\1" />
+						<propertyregex property="pddVersion"
+						               input="${pddVersionTmp}"
+						               regexp="/"
+						               replace="_" />
+						<property name="pddDetails" value="OpenSPCoop Revision N.${svn.actualRevision}, LastChangedRevision N.${svn.lastChangedRev}, ${svn.lastChangedDate}" />		
+						
+						<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
+								 token="public static final String OPENSPCOOP2_VERSION" 
+								 value="public static final String OPENSPCOOP2_VERSION = &quot;${pddVersion}&quot; ; //" />
+						<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
+								 token="public static final String OPENSPCOOP2_DETAILS" 
+								 value="public static final String OPENSPCOOP2_DETAILS = &quot;${pddDetails}&quot; ; //" />
+				    	
+					</then>
+				</if>
+				
+				<!-- packages -->
+				<var name="packagesCompiled" value="org.openspcoop2.pdd" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.config" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autenticazione" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autorizzazione" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.statistics" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.integrazione" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.jmx" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.node" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.state" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.threshold" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb.threads" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.monitor" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.monitor.driver" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.monitor.constants" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.skeleton" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.connector" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.timers" />
+																							
+				<!-- org.openspcoop.2.pdd -->
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_overwrite_version}/org/openspcoop2/pdd"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pdd"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="pdd"/>
+					<param name="svnInfo_openspcoop2.SRC_DIR" value="true"/>
+					<param name="svnInfo_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/pdd"/>
+				</antcall>
+				
+				<!-- Jar Complessivo -->
+				<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pdd"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="pdd"/>
+				</antcall>
+				
+				<!-- API -->
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="pdd"/>
+					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api/pdd"/>
+				</antcall>
+
+				<!-- Elimino SRC per sovrascrivere versione -->
+				<delete dir="${src_overwrite_version}" failonerror="false" />
+				
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

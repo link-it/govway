@@ -1,0 +1,159 @@
+<project name="cli.monitor" basedir="." default="run">
+
+	<import file="local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- Indicazione sulla versione di jboss -->
+	<var name="jboss_jars" value="jbossas/${as}"/>
+	<runtarget target="check_as_version" />	
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<var name="jboss_jars" value="jbossas"/> <!-- In modo da non rilevare nessun jar -->
+		</then>
+	</if>
+
+	<!-- Properties -->
+	<property name="src_monitor_cli" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="doc" location="doc" />
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="jax/jaxb*"/>
+			<include name="javax/*"/>
+			<include name="jibx/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	<path id="classpath_script">
+		<fileset dir="${openspcoop2.lib}/${jboss_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement path="${openspcoop2.lib}/jibx/jibx-run-1.2.3.jar"/>
+		<pathelement path="${openspcoop2.lib}/jibx/xpp3-1.2.3.jar"/>
+		<pathelement path="${openspcoop2.lib}/log/log4j-1.2.16.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/soap.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/uddi4j-2.0.5.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.4.4.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/activation-1.1.1.jar"/>
+		<pathelement path="${openspcoop2.lib}/commons/commons-logging-1.1.1.jar"/>
+		<pathelement path="${openspcoop2.lib}/commons/commons-discovery-0.5.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/wsdl4j-1.6.2.jar"/>
+		<pathelement path="${openspcoop2.lib}/stub/cxf/*"/>
+		<fileset dir="${openspcoop2.dist}" includes="**/*.jar"/>
+		<pathelement path="${jdbc_lib}"/>
+		<pathelement path="${build}/properties"/>
+		<fileset dir="${dist}" includes="**/*.jar"/>
+	</path>
+
+
+	<!-- Clean -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>	
+
+
+	<target name="compile_monitor_cli" depends="init_compile">
+
+		<!-- Info svn -->
+		<runtarget target="checksvn" />
+		<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+				
+		<!-- org.openspcoop2.pdd.monitor.cli -->
+		<var name="packagesCompiled" value="org.openspcoop2.pdd.monitor.cli" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_monitor_cli}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor-cli"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd.monitor.cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+		</antcall>
+				
+		<!-- Jar Complessivo -->
+		<!--
+		<antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor-cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+		</antcall>
+		-->
+		
+		<mkdir dir="${build}/properties"/>
+		<copy todir="${build}/properties">
+			<fileset dir="deploy/properties">
+				<include name="*.properties"/>
+			</fileset>
+		</copy>
+		
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="monitor-cli"/>
+			<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api"/>
+			<param name="src" value="${src_monitor_cli}"/>
+		</antcall>
+			
+	</target>
+	<target name="build" depends="compile_monitor_cli" />
+	
+	
+	<target name="run">
+
+		<java classname="org.openspcoop2.pdd.monitor.cli.MonitorConsole" fork="true">
+			<classpath>
+				<path refid="classpath_script"/>
+			</classpath>
+		</java>
+
+	</target>
+
+
+</project>

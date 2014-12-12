@@ -1,0 +1,278 @@
+<?xml version="1.0" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ targetNamespace="http://spcoop.gov.it/sica/wsbl"
+ xmlns:wsbl="http://spcoop.gov.it/sica/wsbl" elementFormDefault="qualified" attributeFormDefault="unqualified">
+       <xsd:element name="ConceptualBehavior"
+        type="wsbl:ConceptualBehaviorType" nillable="false">
+               <!-- ################################## -->
+               <!-- Vincoli univocita’ dei nomi             -->
+               <!-- ################################## -->
+               <xsd:unique name="uniqueState">
+                       <xsd:selector xpath="./states/state"/>
+                       <xsd:field xpath="@name"/>
+               </xsd:unique>
+               <xsd:unique name="uniqueTransition">
+                              <xsd:selector xpath="./transitions/transition"/>
+                       <xsd:field xpath="@name"/>
+               </xsd:unique>
+               <!-- ################################## -->
+               <!-- Vincoli integrita' referenziale -->
+                          <!-- tra STATI e TRANSIZIONI                     -->
+               <!-- ################################## -->
+               <xsd:key name="keyStateName">
+                       <xsd:selector xpath="./states/*"></xsd:selector>
+                       <xsd:field xpath="@name"></xsd:field>
+               </xsd:key>
+               <xsd:keyref name="checkTransitionSource" refer="wsbl:keyStateName">
+                       <xsd:selector xpath="./transitions/transition"></xsd:selector>
+                       <xsd:field xpath="@source"></xsd:field>
+               </xsd:keyref>
+               <xsd:keyref name="checkTransitionTarget" refer="wsbl:keyStateName">
+                       <xsd:selector xpath="./transitions/transition"></xsd:selector>
+                       <xsd:field xpath="@target"></xsd:field>
+               </xsd:keyref>
+       </xsd:element>
+       <xsd:element name="MessageBehavior"
+        type="wsbl:MessageBehaviorType" nillable="false">
+               <!-- ################################## -->
+       <!-- Vincoli univocita' nomi             -->
+       <!-- ################################## -->
+       <xsd:unique name="uniqueState2">
+               <xsd:selector xpath="./states/state"/>
+               <xsd:field xpath="@name"/>
+       </xsd:unique>
+       <xsd:unique name="uniqueMessage">
+               <xsd:selector xpath="./messages/message"/>
+               <xsd:field xpath="@name"/>
+       </xsd:unique>
+       <!-- ################################## -->
+       <!-- Vincoli integrita' referenziale     -->
+       <!-- tra STATI e TRANSIZIONI             -->
+       <!-- ################################## -->
+       <xsd:key name="keyStateName2">
+               <xsd:selector xpath="./states/*"></xsd:selector>
+               <xsd:field xpath="@name"></xsd:field>
+       </xsd:key>
+       <xsd:keyref name="checkMessageSource" refer="wsbl:keyStateName2">
+               <xsd:selector xpath="./messages/message"></xsd:selector>
+               <xsd:field xpath="@source"></xsd:field>
+       </xsd:keyref>
+       <xsd:keyref name="checkMessageTarget" refer="wsbl:keyStateName2">
+               <xsd:selector xpath="./messages/message"></xsd:selector>
+               <xsd:field xpath="@target"></xsd:field>
+       </xsd:keyref>
+</xsd:element>
+<!-- ################################## -->
+<!-- Definizione tipi -->
+<!-- ################################## -->
+<xsd:complexType name="statesType">
+       <xsd:sequence>
+               <xsd:element name="state-initial" type="wsbl:StateTypeInitial"
+                nillable="false" minOccurs="1" maxOccurs="1"></xsd:element>
+               <xsd:element name="state-final" type="wsbl:StateTypeFinal"
+                nillable="false" minOccurs="1" maxOccurs="1"></xsd:element>
+               <xsd:element name="state" type="wsbl:StateTypeNormal"
+                nillable="false" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="transitionsType">
+       <xsd:sequence>
+               <xsd:element name="transition" type="wsbl:transitionType"
+                minOccurs="2" maxOccurs="unbounded" nillable="false"></xsd:element>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="messagesTypes">
+       <xsd:sequence>
+               <xsd:element name="message" minOccurs="1"
+                maxOccurs="unbounded" nillable="false">
+                       <xsd:complexType>
+                              <xsd:attribute name="name"
+                               type="wsbl:stringNotEmpty" use="required">
+                              </xsd:attribute>
+                              <xsd:attribute name="type"
+                               type="wsbl:messageOrientationType" use="required">
+                              </xsd:attribute>
+                              <xsd:attribute name="source"
+                               type="wsbl:stringNotEmpty" use="required">
+                              </xsd:attribute>
+                              <xsd:attribute name="target"
+                               type="wsbl:stringNotEmpty" use="required">
+                              </xsd:attribute>
+                       </xsd:complexType>
+               </xsd:element>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ConceptualBehaviorType">
+       <xsd:sequence>
+               <xsd:element name="name" type="wsbl:stringNotEmpty"
+                minOccurs="1" maxOccurs="1" nillable="false">
+               </xsd:element>
+               <xsd:element name="states" type="wsbl:statesType"
+                minOccurs="1" maxOccurs="1" nillable="false">
+               </xsd:element>
+               <xsd:element name="transitions" type="wsbl:transitionsType"
+                minOccurs="1" maxOccurs="1" nillable="false">
+               </xsd:element>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="MessageBehaviorType">
+       <xsd:sequence>
+               <xsd:element name="name" type="wsbl:stringNotEmpty"
+                minOccurs="1" maxOccurs="1" nillable="false">
+               </xsd:element>
+               <xsd:element name="states" type="wsbl:statesType"
+                minOccurs="1" maxOccurs="1" nillable="false">
+               </xsd:element>
+               <xsd:element name="messages" type="wsbl:messagesTypes"
+                minOccurs="1" maxOccurs="1" nillable="false">
+               </xsd:element>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="completionModeType">
+       <xsd:sequence>
+               <xsd:element name="mode">
+                       <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                      <xsd:enumeration value="EFFECTLESS">
+                                     </xsd:enumeration>
+                                      <xsd:enumeration value="DEFINITIVE">
+                                     </xsd:enumeration>
+                                      <xsd:enumeration value="COMPENSATABLE">
+                                     </xsd:enumeration>
+                              </xsd:restriction>
+                       </xsd:simpleType>
+               </xsd:element>
+               <xsd:element name="compensateMessage" minOccurs="0" maxOccurs="1" >
+                       <xsd:complexType>
+                              <xsd:attribute name="name"
+                               type="wsbl:stringNotEmpty" use="required">
+                              </xsd:attribute>
+                              <xsd:attribute name="type"
+                               type="wsbl:messageOrientationType" use="required">
+                              </xsd:attribute>
+                       </xsd:complexType>
+               </xsd:element>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:simpleType name="activationType">
+       <xsd:restriction base="xsd:string">
+               <xsd:enumeration value="IMPLICIT"></xsd:enumeration>
+               <xsd:enumeration value="EXPLICIT"></xsd:enumeration>
+       </xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="messageOrientationType">
+       <xsd:restriction base="xsd:string">
+               <xsd:enumeration value="RECEIVE"></xsd:enumeration>
+               <xsd:enumeration value="SEND"></xsd:enumeration>
+       </xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="eventType">
+       <xsd:sequence>
+               <xsd:element name="message" minOccurs="0" maxOccurs="1">
+                       <xsd:complexType>
+                              <xsd:attribute name="name"
+                               type="wsbl:stringNotEmpty" use="required">
+                              </xsd:attribute>
+                              <xsd:attribute name="type"
+                               type="wsbl:messageOrientationType" use="required">
+                              </xsd:attribute>
+                       </xsd:complexType>
+               </xsd:element>
+       </xsd:sequence>
+       <xsd:attribute name="name" type="wsbl:stringNotEmpty" use="required">
+        </xsd:attribute>
+</xsd:complexType>
+<xsd:complexType name="eventListType">
+       <xsd:sequence>
+               <xsd:element name="event" type="wsbl:eventType"
+                minOccurs="0" maxOccurs="unbounded">
+               </xsd:element>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="guardType">
+       <xsd:sequence>
+               <xsd:element name="description" type="xsd:string"></xsd:element>
+               <xsd:element name="rule" type="wsbl:stringNotEmpty"
+                minOccurs="1" maxOccurs="1">
+               </xsd:element>
+       </xsd:sequence>
+       <xsd:attribute name="name" type="wsbl:stringNotEmpty" use="required">
+        </xsd:attribute>
+</xsd:complexType>
+<xsd:complexType name="temporalConditionType">
+       <xsd:sequence>
+               <xsd:element name="predicate" minOccurs="1" maxOccurs="1">
+                       <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                      <xsd:enumeration value="C-INVOKE"/>
+                                      <xsd:enumeration value="M-INVOKE"/>
+                              </xsd:restriction>
+                       </xsd:simpleType>
+               </xsd:element>
+               <xsd:element name="boolop" minOccurs="1" maxOccurs="1">
+                       <xsd:simpleType>
+                              <xsd:restriction base="xsd:string">
+                                      <xsd:enumeration value="EQ"/>
+                                      <xsd:enumeration value="GR"/>
+                                      <xsd:enumeration value="GEQ"/>
+                                      <xsd:enumeration value="LS"/>
+                                      <xsd:enumeration value="LEQ"/>
+                              </xsd:restriction>
+                       </xsd:simpleType>
+               </xsd:element>
+               <xsd:element name="data" type="wsbl:stringNotEmpty"
+                minOccurs="1" maxOccurs="1"/>
+               <xsd:element name="description" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+       </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="transitionType">
+       <xsd:sequence>
+               <xsd:element name="activationMode" type="wsbl:activationType"
+                minOccurs="1" maxOccurs="1">
+               </xsd:element>
+               <xsd:element name="completionMode" type="wsbl:completionModeType"
+                minOccurs="1" maxOccurs="1">
+               </xsd:element>
+               <xsd:element name="guard" type="wsbl:guardType"
+                minOccurs="0" maxOccurs="1">
+               </xsd:element>
+                      <xsd:element name="events" type="wsbl:eventListType" nillable="true"
+                       minOccurs="0" maxOccurs="1">
+                      </xsd:element>
+                      <xsd:element name="temporalCondition"
+                       type="wsbl:temporalConditionType"
+                       minOccurs="0" maxOccurs="1">
+                      </xsd:element>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="wsbl:stringNotEmpty" use="required"/>
+              <xsd:attribute name="source" type="wsbl:stringNotEmpty" use="required"/>
+              <xsd:attribute name="target" type="wsbl:stringNotEmpty" use="required"/>
+       </xsd:complexType>
+       <xsd:complexType name="StateTypeBase" abstract="true">
+              <xsd:attribute name="name" type="wsbl:stringNotEmpty" use="required"/>
+       </xsd:complexType>
+       <xsd:complexType name="StateTypeInitial" abstract="false">
+              <xsd:complexContent>
+                      <xsd:extension base="wsbl:StateTypeBase">
+                      </xsd:extension>
+              </xsd:complexContent>
+       </xsd:complexType>
+       <xsd:complexType name="StateTypeFinal" abstract="false">
+              <xsd:complexContent>
+                      <xsd:extension base="wsbl:StateTypeBase">
+                      </xsd:extension>
+              </xsd:complexContent>
+       </xsd:complexType>
+       <xsd:complexType name="StateTypeNormal" abstract="false">
+              <xsd:complexContent>
+                      <xsd:extension base="wsbl:StateTypeBase">
+                      </xsd:extension>
+              </xsd:complexContent>
+       </xsd:complexType>
+       <xsd:simpleType name="stringNotEmpty">
+              <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="1"></xsd:minLength>
+              </xsd:restriction>
+       </xsd:simpleType>
+</xsd:schema>

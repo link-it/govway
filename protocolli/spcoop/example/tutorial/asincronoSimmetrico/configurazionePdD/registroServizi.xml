@@ -1,0 +1,62 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+   <accordo-servizio-parte-comune nome="AS_IdentificaSoggetto" 
+		     descrizione="Esempio di Servizio AsincronoSimmetrico"
+		     versione="1"
+		     profilo-collaborazione="asincronoSimmetrico"
+		     wsdl-definitorio="wsdl/definitorio.xsd"
+		     wsdl-concettuale="wsdl/concettuale.wsdl"
+		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl"
+		     wsdl-logico-fruitore="wsdl/logicoFruitore.wsdl"
+		     specifica-conversazione-concettuale="wsbl/ConversazioneConcettuale.wsbl"
+		     specifica-conversazione-erogatore="wsbl/ConversazioneLogicaLatoErogatore.wsbl"		
+		     specifica-conversazione-fruitore="wsbl/ConversazioneLogicaLatoFruitore.wsbl"
+		>
+	<soggetto-referente tipo="SPC" nome="CentroAnagrafico" />
+	<port-type nome="IdentificaSoggetto" profilo-collaborazione="asincronoSimmetrico" descrizione="Esempio di servizio asincronoSimmetrico">
+           <azione nome="Cerca" />
+	</port-type>
+	<port-type nome="EsitoIdentificazione" profilo-collaborazione="asincronoSimmetrico" descrizione="Esempio di servizio asincronoSimmetrico risposta">
+	   <azione nome="Risultato" correlata-servizio="IdentificaSoggetto" correlata="Cerca" />
+        </port-type>
+   </accordo-servizio-parte-comune>
+
+
+   <soggetto tipo="SPC" nome="CentroAnagrafico">
+
+        <connettore tipo="http" nome="PdDCentroAnagrafico">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/spcoop/PA" />
+         </connettore>
+
+	<accordo-servizio-parte-specifica
+		 nome="IdentificaSoggetto"
+		 accordo-servizio-parte-comune="SPC/CentroAnagrafico:AS_IdentificaSoggetto:1"
+		 port-type="IdentificaSoggetto"
+		 descrizione="Esempio di accordo di servizio parte specifica (AsincronoSimmetrico)"
+		 wsdl-implementativo-erogatore="wsdl/implementativoErogatore.wsdl">
+	    <servizio tipo="SPC" nome="IdentificaSoggetto"/> 
+            <fruitore tipo="SPC" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="Comune">
+
+        <connettore tipo="http" nome="PdDComune">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/spcoop/PA" />
+        </connettore>
+
+        <accordo-servizio-parte-specifica
+                 nome="EsitoIdentificazione"
+                 accordo-servizio-parte-comune="SPC/CentroAnagrafico:AS_IdentificaSoggetto:1"
+                 port-type="EsitoIdentificazione"
+                 descrizione="Esempio di accordo di servizio parte specifica (AsincronoSimmetrico) Risposta"
+                 wsdl-implementativo-erogatore="wsdl/implementativoFruitore.wsdl">
+            <servizio tipo="SPC" nome="EsitoIdentificazione" tipologia-servizio="correlato"/>
+            <fruitore tipo="SPC" nome="CentroAnagrafico" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+</registro-servizi>

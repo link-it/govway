@@ -1,0 +1,39 @@
+<project name="openspcoop2-javaCheck">
+	
+    <description>
+        Verifica la versione di Java
+    </description>
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>	
+
+	<!-- DEPRECATO: Non utilizzare, manda in OutOfMemory i task ant -->
+	
+	<!-- Check JAVA VERSIONE -->
+	<property environment="env"/>
+	<var name="java_home" value="${env.JAVA_HOME}"/>
+	<echo message="Java home: ${java_home}"/>
+	<!-- <echo message="Java version: ${ant.java.version}"/> L'informazione viene errata, stampa 1.6 anche per java 1.7-->
+	<if>
+		<equals arg1="${java_home}" arg2="$${env.JAVA_HOME}"/>
+		<then>
+			<fail message="JAVA_HOME non impostata"/>
+		</then>
+	</if>
+	<if>
+		<or>
+			<equals arg1="${ant.java.version}" arg2="1.3" />
+			<equals arg1="${ant.java.version}" arg2="1.4" />
+	     	<equals arg1="${ant.java.version}" arg2="1.5" />
+		</or>
+		<then>
+			<fail message="OpenSPCoop2 richiede java 6 o superiore"/>
+		</then>
+	</if>
+		
+		
+</project>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoop2Testsuite_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../"/>
+
+	  <!-- ApplicationServer version -->
+	  <property name="as" value="jboss/tomcat" />
+
+      <property name="required_lib_testsuite" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_testsuite}"/>
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildTestsuite" value="true"/>
+      <property name="buildAPI" value="true"/>
+      
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+      <property name="printServerInfo" value="false" />
+
+</project>

@@ -1,0 +1,508 @@
+<xsd:schema targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+xmlns:esempio1="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+     <!-- Types -->
+     <xsd:include schemaLocation="types.xsd"/>
+
+
+
+     <!-- Esempio 1. 
+     	  WebService con nome port type 'GestioneUtentiWrappedDocumentLiteral':  
+     	  - operation 'registrazioneUtenteWDL' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+	  - operation 'eliminazioneUtenteWDL' 
+	    	   input  (argomento1:nominativo)
+		   output (argomento1:esito)
+
+	  Essendo in stile WrappedDocumentLiteral, i parametri vengono wrappati in un elemento radice
+	  che prende il nome dell'operazione. La risposta per convenzione prende il nome dell'operazione
+	  piu' il suffisso 'Response'.
+
+	  esempio richiesta di operation 'registrazioneUtenteWDL':
+	  <soapenv:body>
+		<registrazioneUtenteWDLRequest>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'registrazioneUtenteWDLResponse':
+	  <soapenv:body>
+		<registrazioneUtenteWDLResponse>
+			<esito>OK</esito>
+		</registrazioneUtenteWDLResponse>
+	  </soapenv:body>
+
+	  esempio richiesta di operation 'eliminazioneUtenteWDL':
+	  <soapenv:body>
+		<eliminazioneUtenteWDLRequest>
+			<nominativo>Mario Rossi</nominativo>
+	  	</eliminazioneUtenteWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'eliminazioneUtenteWDLResponse':
+	  <soapenv:body>
+		<eliminazioneUtenteWDLResponse>
+			<esito>OK</esito>
+	  	</eliminazioneUtenteWDLResponse>
+	  </soapenv:body>
+     -->
+     <xsd:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1" schemaLocation="wrappedDocumentLiteralEsempio1.xsd" />
+     <xsd:element name="registrazioneUtenteWDLRequest" type="esempio1:registrazioneUtenteWDLRequestType"/>
+     <xsd:element name="registrazioneUtenteWDLResponse" type="esempio1:registrazioneUtenteWDLResponseType"/>
+     <xsd:element name="eliminazioneUtenteWDLRequest" type="esempio1:eliminazioneUtenteWDLRequestType"/>
+     <xsd:element name="eliminazioneUtenteWDLResponse" type="esempio1:eliminazioneUtenteWDLResponseType"/>
+
+
+
+
+      <!-- Esempio 2. 
+     	  WebService con nome port type 'AggiornamentoUtentiWrappedDocumentLiteral':  
+     	  - operation 'notificaAggiornamentoUtenteWDL' 
+	    	   input  (argomento1:aggiornamento-nominativo) (argomento2:indirizzo)
+	  - operation 'aggiornamentoUtenteWDL' 
+	    	   input  (argomento1:aggiornamento-nominativo) (argomento2:indirizzo)
+		   output (argomento1:esito) (argomento2:ora-registrazione)
+
+	  Essendo in stile WrappedDocumentLiteral, i parametri vengono wrappati in un elemento radice
+	  che prende il nome dell'operazione. La risposta per convenzione prende il nome dell'operazione
+	  piu' il suffisso 'Response'.
+	  Il PortType possiede un'azione oneway e una sincrona
+
+	  esempio richiesta di operation 'notificaAggiornamentoUtenteWDL':
+	  <soapenv:body>
+		<notificaAggiornamentoUtenteWDLRequest>
+			<aggiornamento-nominativo nomePrecedente="Mario Rossi">Mario Verdi</aggiornamento-nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+	  	<notificaAggiornamentoUtenteWDLRequest/>
+	  </soapenv:body>
+
+          esempio richiesta di operation 'aggiornamentoUtenteWDL':
+	  <soapenv:body>
+		<aggiornamentoUtenteWDLRequest>
+			<aggiornamento-nominativo nomePrecedente="Mario Rossi">Mario Verdi</aggiornamento-nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+	  	</aggiornamentoUtenteWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'aggiornamentoUtenteWDLResponse':
+	  <soapenv:body>
+		<aggiornamentoUtenteWDLResponse>
+			<esito>OK</esito>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</aggiornamentoUtenteWDLResponse>
+	  </soapenv:body>
+     -->
+     <!-- IMPORTATO DA WSDL --> 
+
+
+     
+
+     <!-- Esempio 3. 
+     	  Profilo Asincrono (usato sia per Simmetrico che Asimmetrico)     	 
+
+	  WebService con nome port type 'AggiornamentoAsincronoWrappedDocumentLiteral':  
+     	  - operation 'richiestaAggiornamentoUtenteAsincronoSimmetricoWDL' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:ack-richiesta-asincrona)
+          - operation 'richiestaAggiornamentoUtenteAsincronoAsimmetricoWDL' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:ack-richiesta-asincrona)
+		   
+          WebService con nome port type 'EsitoAggiornamentoAsincronoWrappedDocumentLiteral':  
+     	  - operation 'esitoAggiornamentoUtenteAsincronoSimmetricoWDL' 
+	    	   input  (argomento1:esito) 
+		   output (argomento1:ack-richiesta-asincrona)
+          - operation 'esitoAggiornamentoUtenteAsincronoAsimmetricoWDL' 
+	    	   input  (argomento1:esito) 
+		   output (argomento1:ack-richiesta-asincrona)
+
+	  Essendo in stile WrappedDocumentLiteral, i parametri vengono wrappati in un elemento radice
+	  che prende il nome dell'operazione. La risposta per convenzione prende il nome dell'operazione
+	  piu' il suffisso 'Response'.
+
+	  esempio richiesta di operation 'richiestaAggiornamentoUtenteAsincronoSimmetricoWDL':
+	  <soapenv:body>
+		<richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse'
+	  <soapenv:body>
+		<richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse>
+			<ack-richiesta-asincrona>ACK OK</ack-richiesta-asincrona>
+	  	</richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse>
+	  </soapenv:body>
+
+          esempio richiesta di operation 'richiestaAggiornamentoUtenteAsincronoAsimmetricoWDL':
+	  <soapenv:body>
+		<richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse'
+	  <soapenv:body>
+		<richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse>
+			<ack-richiesta-asincrona>ACK OK</ack-richiesta-asincrona>
+	  	</richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse>
+	  </soapenv:body>
+
+	  esempio richiesta di operation 'esitoAggiornamentoUtenteAsincronoSimmetricoWDL':
+	  <soapenv:body>
+		<esitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest>
+			<esito>OK</esito>
+	  	</esitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'esitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse'
+	  <soapenv:body>
+		<esitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse>
+			<ack-richiesta-asincrona>ACK OK</ack-richiesta-asincrona>
+	  	</esitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse>
+	  </soapenv:body>
+
+	  esempio richiesta di operation 'esitoAggiornamentoUtenteAsincronoAsimmetricoWDL':
+	  <soapenv:body>
+		<esitoAggiornamentoUtenteAsincronoAsimmetricoWDLRequest>
+			<esito>OK</esito>
+	  	</esitoAggiornamentoUtenteAsincronoAsimmetricoWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'esitoAggiornamentoUtenteAsincronoAsimmetricoWDLResponse'
+	  <soapenv:body>
+		<esitoAggiornamentoUtenteAsincronoAsimmetricoWDLResponse>
+			<ack-richiesta-asincrona>ACK OK</ack-richiesta-asincrona>
+	  	</esitoAggiornamentoUtenteAsincronoAsimmetricoWDLResponse>
+	  </soapenv:body>
+     -->
+     <xsd:element name="richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="nominativo" maxOccurs="1" minOccurs="1"/>
+		 <xsd:element ref="indirizzo" maxOccurs="1" minOccurs="1"/>
+                 <xsd:element ref="ora-registrazione" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="ack-richiesta-asincrona" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="esitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="esito" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="esitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="ack-richiesta-asincrona" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="nominativo" maxOccurs="1" minOccurs="1"/>
+		 <xsd:element ref="indirizzo" maxOccurs="1" minOccurs="1"/>
+                 <xsd:element ref="ora-registrazione" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="ack-richiesta-asincrona" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="esitoAggiornamentoUtenteAsincronoAsimmetricoWDLRequest">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="esito" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="esitoAggiornamentoUtenteAsincronoAsimmetricoWDLResponse">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="ack-richiesta-asincrona" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     
+    
+
+
+
+
+
+    <!-- Esempio 4. 
+     	  WebService con nome port type 'GestioneUtentiDocumentLiteral':  
+     	  - operation 'registrazioneUtenteDL' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+	  - operation 'eliminazioneUtenteDL' 
+	    	   input  (argomento1:nominativo)
+		   output (argomento1:esito)
+
+	  Essendo in stile DocumentLiteral, i parametri vengono definiti DIRETTAMENTE (senza un elemento radice che li wrappa) 
+	  negli argomenti dell'operazione. Quindi non serve definire ulteriori elementi, gli elementi radice definiti in testa all'xsd 
+	  definiscono i parametri.
+
+	  esempio richiesta di operation 'registrazioneUtenteDL':
+	  <soapenv:body>
+		<nominativo>Mario Rossi</nominativo>
+	  	<indirizzo>via Roma 13</indirizzo>
+	  	<ora-registrazione>2008-01-01</ora-registrazione>
+	  </soapenv:body>
+	 
+	  esempio risposta di operation 'registrazioneUtenteDLResponse':
+	  <soapenv:body>
+		<esito>OK</esito>
+	  </soapenv:body>
+	  
+	  esempio richiesta di operation 'eliminazioneUtenteDL':
+	  <soapenv:body>
+		<nominativo>Mario Rossi</nominativo>
+	  </soapenv:body>
+	  
+	  esempio risposta di operation 'eliminazioneUtenteDLResponse':
+	  <soapenv:body>
+		<esito>OK</esito>
+	  </soapenv:body>
+     -->
+
+
+     
+     
+     <!-- Esempio 5. 
+     	  WebService con nome port type 'GestioneUtentiRPCLiteral':  
+     	  - operation 'registrazioneUtenteRPCL' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+	  - operation 'eliminazioneUtenteRPCL' 
+	    	   input  (argomento1:nominativo)
+		   output (argomento1:esito)
+
+	  Essendo in stile RPCLiteral, i parametri vengono definiti DIRETTAMENTE (senza un elemento radice che li wrappa) 
+	  negli argomenti dell'operazione. Quindi non serve definire ulteriori elementi, gli elementi radice definiti in testa all'xsd 
+	  definiscono i parametri.
+	  Il contenuto applicativo che viaggera' a runtime, conterra' cmq il nome dell'operazione come root element
+
+	  esempio richiesta di operation 'registrazioneUtenteRPCL':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCL>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteRPCL>
+     	  </soapenv:body>
+
+     	  esempio risposta di operation 'registrazioneUtenteRPCLResponse':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCLResponse>
+			<esito>OK</esito>
+	  	</registrazioneUtenteRPCLResponse>
+     	  </soapenv:body>
+
+     	  esempio richiesta di operation 'eliminazioneUtenteRPCL':
+     	  <soapenv:body>
+		<eliminazioneUtenteRPCL>
+			<nominativo>Mario Rossi</nominativo>
+	  	</eliminazioneUtenteRPCL>
+     	  </soapenv:body>
+
+     	  esempio risposta di operation 'eliminazioneUtenteRPCLResponse':
+     	  <soapenv:body>
+		<eliminazioneUtenteRPCLResponse>
+			<esito>OK</esito>
+	  	</eliminazioneUtenteRPCLResponse>
+     	  </soapenv:body>
+     -->
+     
+
+
+
+
+
+
+     <!-- Esempio 6. 
+     	  WebService con nome port type 'GestioneUtentiRPCEncoded':  
+     	  - operation 'registrazioneUtenteRPCE' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+	  - operation 'eliminazioneUtenteRPCE' 
+	    	   input  (argomento1:nominativo)
+		   output (argomento1:esito)
+
+	  Essendo in stile RPCLiteral, i parametri vengono definiti DIRETTAMENTE (senza un elemento radice che li wrappa) 
+	  negli argomenti dell'operazione. Quindi non serve definire ulteriori elementi, gli elementi radice definiti in testa all'xsd 
+	  definiscono i parametri.
+	  Il contenuto applicativo che viaggera' a runtime, conterra' cmq il nome dell'operazione come root element
+	  Inoltre essendo Encoded, e' presente l'informazione di type encoding
+
+	  esempio richiesta di operation 'registrazioneUtenteRPCE':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCE>
+			<nominativo xsi:type="xsd:string">Mario Rossi</nominativo>
+			<indirizzo xsi:type="xsd:string">via Roma 13</indirizzo>
+			<ora-registrazione xsi:type="xsd:date">2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteRPCE>
+     	  </soapenv:body>
+
+     	  esempio risposta di operation 'registrazioneUtenteRPCEResponse':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCEResponse>
+			<esito xsi:type="xsd:string">OK</esito>
+	  	</registrazioneUtenteRPCEResponse>
+     	  </soapenv:body>
+
+     	  esempio richiesta di operation 'eliminazioneUtenteRPCE':
+     	  <soapenv:body>
+		<eliminazioneUtenteRPCE>
+			<nominativo xsi:type="xsd:string">Mario Rossi</nominativo>
+	  	</eliminazioneUtenteRPCE>
+     	  </soapenv:body>
+
+     	  esempio risposta di operation 'eliminazioneUtenteRPCEResponse':
+     	  <soapenv:body>
+		<eliminazioneUtenteRPCEResponse>
+			<esito xsi:type="xsd:string">OK</esito>
+	  	</eliminazioneUtenteRPCEResponse>
+     	  </soapenv:body>
+     -->
+     
+
+
+
+
+     <!-- Esempio 7. 
+     	  WebService con nome port type 'GestioneUtentiStileIbrido':  
+     	  - operation 'registrazioneUtenteWDL' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+          - operation 'registrazioneUtenteRPCL' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+	  - operation 'registrazioneUtenteRPCE' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+
+	  Il contenuto applicativo che viaggera' a runtime, cambiera' a runtime a seconda dell'operazione, in funzione dello stile e dell'uso.
+	  Esempio che mostra come sia possibile associare stili e usi diversi a operation diverse
+
+	  esempio richiesta di operation 'registrazioneUtenteWDL':
+	  <soapenv:body>
+		<registrazioneUtenteWDLRequest>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteWDLRequest>
+	  </soapenv:body>
+
+	  esempio risposta di operation 'registrazioneUtenteWDLResponse':
+	  <soapenv:body>
+		<registrazioneUtenteWDLResponse>
+			<esito>OK</esito>
+		</registrazioneUtenteWDLResponse>
+	  </soapenv:body>
+
+	  esempio richiesta di operation 'registrazioneUtenteRPCL':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCL>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteRPCL>
+     	  </soapenv:body>
+
+     	  esempio risposta di operation 'registrazioneUtenteRPCLResponse':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCLResponse>
+			<esito>OK</esito>
+	  	</registrazioneUtenteRPCLResponse>
+     	  </soapenv:body>
+
+	  esempio richiesta di operation 'registrazioneUtenteRPCE':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCE>
+			<nominativo xsi:type="xsd:string">Mario Rossi</nominativo>
+			<indirizzo xsi:type="xsd:string">via Roma 13</indirizzo>
+			<ora-registrazione xsi:type="xsd:date">2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteRPCE>
+     	  </soapenv:body>
+
+     	  esempio risposta di operation 'registrazioneUtenteRPCEResponse':
+     	  <soapenv:body>
+		<registrazioneUtenteRPCEResponse>
+			<esito xsi:type="xsd:string">OK</esito>
+	  	</registrazioneUtenteRPCEResponse>
+     	  </soapenv:body>
+     -->
+
+
+
+
+
+
+
+     <!-- Esempio 8. 
+     	  WebService con nome port type 'GestioneUtentiOverloadedOperations':  
+     	  - operation 'registrazioneUtenteOverloadedOperations' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) (argomento3:ora-registrazione) 
+		   output (argomento1:esito)
+          - operation 'registrazioneUtenteOverloadedOperations' 
+	    	   input  (argomento1:nominativo) (argomento2:indirizzo) 
+		   output (argomento1:esito)
+          - operation 'registrazioneUtenteOverloadedOperations' 
+	    	   input  (argomento1:nominativo) (argomento2:ora-registrazione) 
+		   output (argomento1:esito)
+
+	  Essendo in stile RPCLiteral, i parametri vengono definiti DIRETTAMENTE (senza un elemento radice che li wrappa) 
+	  negli argomenti dell'operazione. Quindi non serve definire ulteriori elementi, gli elementi radice definiti in testa all'xsd 
+	  definiscono i parametri.
+	  Il contenuto applicativo che viaggera' a runtime, conterra' cmq il nome dell'operazione come root element
+
+	  esempio richieste di operation 'registrazioneUtente':
+
+     	  <soapenv:body>
+		<registrazioneUtenteOverloadedOperations>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteOverloadedOperations>
+     	  </soapenv:body>
+
+     	  <soapenv:body>
+		<registrazioneUtenteOverloadedOperations>
+			<nominativo>Mario Rossi</nominativo>
+			<indirizzo>via Roma 13</indirizzo>
+	  	</registrazioneUtenteOverloadedOperations>
+     	  </soapenv:body>
+
+	  <soapenv:body>
+		<registrazioneUtenteOverloadedOperations>
+			<nominativo>Mario Rossi</nominativo>
+			<ora-registrazione>2008-01-01</ora-registrazione>
+	  	</registrazioneUtenteOverloadedOperations>
+     	  </soapenv:body>
+     -->
+
+
+</xsd:schema>

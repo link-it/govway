@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="User" default="build" basedir=".">
+	
+	<description>
+        File di Script per la compilazione della libreria User
+    </description>
+
+	<import file="local_env.xml" />
+	<import file="./local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/sql-build.xml" />
+
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+	
+	<!-- set properties for this build -->
+	<property name="src_users" location="src" />
+	<property name="build_users" location="build/users" />
+	<property name="dist_users" location="dist" />
+	<property name="doc_users" location="doc" />
+	<property name="sql_users" location="deploy/sql" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_users">
+		<delete dir="${build_users}" />
+		<delete dir="build" />
+		<delete dir="${dist_users}" />
+		<delete dir="${doc_users}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_users">
+		<mkdir dir="${build_users}" />
+		<mkdir dir="${dist_users}" />
+	</target>
+
+	<!-- Compilazione -->
+	<target name="compile_users" depends="init_compile_users" description="compila la libreria Users">
+
+		<!-- Info svn -->
+		<runtarget target="checksvn" />
+		
+		<!-- org.openspcoop2.web.lib.users -->
+		<var name="packagesCompiled" value="org.openspcoop2.web.lib.users" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.users.dao" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_users}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-users"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.users"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="dist" value="${dist_users}"/>
+			<param name="build" value="${build_users}"/>
+		</antcall>
+				
+		<!-- Jar Complessivo -->
+		<!-- <antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-users"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="web-lib-users"/>
+			<param name="svn_rootDir" value="."/>
+		</antcall> -->
+		
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc_users}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_users}/api"/>
+			<param name="src" value="${src_users}"/>
+			<param name="doc" value="${doc_users}"/>
+			<param name="dist" value="${dist_users}"/>
+		</antcall>
+		
+	</target>
+
+	<!-- alias -->
+	<target name="build" depends="compile_users" description="compila la libreria Users"/>
+	<target name="clean" depends="clean_users" description="elimina la libreria Users"/>
+	
+	<target name="build_script_sql_users" depends="init_compile_users">
+		<copy todir="${sql_users}">
+		    <fileset dir="${sql}"/>
+		    <globmapper from="*DBInfo.sql" to="*DBInfo.sql"/>
+		</copy>
+		<copy todir="${sql_users}">
+		    <fileset dir="${sql}"/>
+		    <globmapper from="*DBInfo_delete.sql" to="*DBInfo_delete.sql"/>
+		</copy>
+		<copy todir="${sql_users}">
+		    <fileset dir="${sql}"/>
+		    <globmapper from="*DBInfo_drop.sql" to="*DBInfo_drop.sql"/>
+		</copy>
+		<antcall target="build_sql">
+			<param name="SQLDirectory" value="${sql_users}"/>
+			<param name="SQLDestFile" value="${dist_users}/RepositoryUtentiOpenSPCoop2.sql"/>
+			<param name="SQLSourceFiles" value="Users.sql DBInfo.sql"/>
+			<param name="SQLDataFiles" value="users_data.sql"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Utenti registrati sul database della Porta di Dominio OpenSPCoop2');"/>
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql_users}"/>
+			<param name="SQLDestFile" value="${dist_users}/RepositoryUtentiOpenSPCoop2_delete.sql"/>
+			<param name="SQLSourceFiles" value="Users_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql_users}"/>
+			<param name="SQLDestFile" value="${dist_users}/RepositoryUtentiOpenSPCoop2_drop.sql"/>
+			<param name="SQLSourceFiles" value="Users_drop.sql DBInfo_drop.sql"/>
+		</antcall>
+		<delete dir="${sql_users}">
+			<include name="**/DBInfo.sql"/>
+			<include name="**/DBInfo_delete.sql"/>
+			<include name="**/DBInfo_drop.sql"/>
+		</delete>
+	</target>
+
+</project>

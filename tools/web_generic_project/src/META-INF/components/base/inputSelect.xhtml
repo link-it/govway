@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+	
+	<c:if test="#{empty required}">
+		<c:set var="required" value="false" />
+	</c:if>
+
+	<op2web:prop label="#{field.label}" required="#{field.required == 'true'}"
+		rendered="#{field.rendered == 'true'}">
+
+
+		<c:if test="#{field.autoComplete == 'true'}">
+			<a4j:outputPanel layout="block" id="#{field.name}ComboCtr">
+			<h:inputText id="input_#{field.name}Combo" value="#{field.value}" 
+				style="#{field.style}" />
+			<rich:suggestionbox id="input_#{field.name}Suggestion" width="#{field.width}"
+				for="input_#{field.name}Combo"
+				suggestionAction="#{field.fieldAutoComplete}" var="selectItem"
+				ajaxSingle="true" nothingLabel="--" param="input_#{field.name}Combo">
+				<h:column>
+					<h:outputText value="#{selectItem.value}" rendered="true" />
+				</h:column>
+				<a4j:support status="mainStatus" event="onselect" rendered="#{!empty field.fieldsToUpdate}"
+					actionListener="#{field.fieldSelected}"
+					reRender="#{field.fieldsToUpdate}" />
+			</rich:suggestionbox>
+			</a4j:outputPanel>
+		</c:if>
+
+		<c:if
+			test="#{field.autoComplete == 'false' and empty field.fieldsToUpdate}">
+			<!-- 			<h:selectOneMenu value="#{field.value}" id="input_#{field.name}" -->
+			<!-- 				style="width:412px;" rendered="#{field.rendered == 'true'}"> -->
+			<!-- 				<f:selectItems value="#{field.elencoSelectItems}" /> -->
+			<!-- 			</h:selectOneMenu> -->
+			<rich:comboBox id="input_#{field.name}Combo" style="#{field.style}"
+			 value="#{field.value}" converter="selectItemConverter" directInputSuggestions="true"
+				defaultLabel="#{commonsMsg['inputSelect.component.seleziona']} #{field.label}" 
+				enableManualInput="#{field.enableManualInput}"
+				required="#{field.required}"
+				requiredMessage="#{field.requiredMessage}" width="#{field.width}"   >
+				<f:selectItems value="#{field.elencoSelectItems}" />
+			</rich:comboBox>
+		</c:if>
+
+		<c:if
+			test="#{field.autoComplete == 'false' and !empty field.fieldsToUpdate}">
+			<rich:comboBox id="input_#{field.name}Combo" value="#{field.value}" converter="selectItemConverter" 
+			directInputSuggestions="true" style="#{field.style}"
+				defaultLabel="#{commonsMsg['inputSelect.component.seleziona']} #{field.label}" enableManualInput="#{field.enableManualInput}"
+				required="#{field.required}"
+				requiredMessage="#{field.requiredMessage}" width="#{field.width}"   >
+				<f:selectItems value="#{field.elencoSelectItems}" />
+				<a4j:support status="mainStatus" event="onselect"
+					reRender="#{field.fieldsToUpdate}"
+					actionListener="#{field.fieldSelected}" />
+			</rich:comboBox>
+		</c:if>
+
+	</op2web:prop>
+</ui:composition>

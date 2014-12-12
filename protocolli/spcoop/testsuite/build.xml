@@ -1,0 +1,293 @@
+<project name="TestSuite_OpenSPCoop" basedir="." default="compile_testunits">
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-spcoop-testsuite-build.xml" />
+	<import file="./ant/openspcoop2-spcoop-testsuite-config.xml" />
+	<import file="./ant/openspcoop2-spcoop-testsuite-run.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${openspcoop2_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+	
+	<!-- Sorgenti della testsuite -->
+	<property name="src_testunits"     value="${basedir}/src"/>
+	<!-- Build directory -->
+	<property name="build_testunits"   value="${basedir}/build"/>
+	<!-- Dist directory -->
+	<property name="dist_testunits"   value="${basedir}/dist"/>
+	<!-- Doc directory -->
+	<property name="doc_testunits"   value="${basedir}/doc"/>
+
+	<!-- buildNumber per backup -->
+	<property file="build.number" />
+
+	<!-- Indicazione se produrre la versione per server non j2ee -->
+	<var name="j2ee" value="true"/>
+	<var name="jboss_jars" value="jbossas/${as}"/>
+	<runtarget target="check_as_version" />	
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
+			<var name="j2ee" value="false"/>
+			<var name="jboss_jars" value="jbossas"/> <!-- In modo da non rilevare nessun jar -->
+		</then>
+	</if>	
+	
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${openspcoop2_lib}" >
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="deploy/lib" >
+			<include name="*.jar"/>
+		</fileset>	
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_testsuite_dist}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_protocol_spcoop}" >
+			<include name="*.jar"/>
+		</fileset>	
+	</path>	
+	<path id="classpath_run">
+						
+		<pathelement path="${build_testunits}/NG_UNITS"/>
+		
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+		
+		<fileset dir="${openspcoop2_testsuite_dist}" >
+			<include name="*.jar"/>
+		</fileset>
+		
+		<fileset dir="${openspcoop2_protocol_spcoop}" >
+			<include name="*.jar"/>
+		</fileset>
+				
+		<pathelement path="${openspcoop2_lib}/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
+		<pathelement path="${openspcoop2_lib}/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>
+		
+		<pathelement path="deploy/lib/validazioneContenutiWS_stub.jar"/>
+		
+		<pathelement path="${jdbc_lib}"/>
+		
+		<fileset dir="${openspcoop2_lib}/ant" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/testsuite" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/axis14" >
+			<include name="*.jar"/>
+			<exclude name="neethi-2.0.4.jar"/> <!-- Includendolo causa un errore "org.apache.cxf.bus.extension.ExtensionException  java.lang.IncompatibleClassChangeError: Implementing class" usando gli stub di cxf -->
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/javax" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/log" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/jibx" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/commons" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/security" >
+			<include name="bcprov-ext-jdk15on-147.jar"/>
+			<include name="neethi-3.0.2.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/shared" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/httpcore" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/${jboss_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/cxf" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/jax" >
+			<include name="jaxb*.jar"/>
+		</fileset>
+
+	</path>
+	
+	<!-- estensione per testNG -->
+	<taskdef classpathref="classpath_run"
+             name="testng"
+             classname="org.testng.TestNGAntTask"/>
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_testunits">
+		<delete dir="${build_testunits}" />
+		<delete dir="build" />
+		<delete dir="${dist_testunits}" />
+		<delete dir="${doc_testunits}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_testunits">
+		<mkdir dir="${build_testunits}" />
+		<mkdir dir="${build_testunits}/tmp" />
+		<mkdir dir="${dist_testunits}" />
+		<mkdir dir="${doc_testunits}" />
+	</target>
+	
+	
+	
+	<!-- Compilazione della testsuite -->
+	<target name="compile_testunits" depends="init_compile_testunits,compile_openspcoop2_testsuite_spcoop" description="compila la testsuite">
+		<unjar dest="${build_testunits}/NG_UNITS" >
+		    <fileset dir="${dist_testunits}">
+		        <include name="openspcoop2_spcoop-testsuite_BUILD-*.jar"/>
+		    </fileset>
+		</unjar>
+		<if>
+			<or>
+				<matches string="${as}" pattern="tomcat.*"/>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<copy file="deploy/properties/database_testunits_connections.properties" todir="${build_testunits}/NG_UNITS" />
+			</then>
+			<else>
+				<copy file="deploy/properties/database_testunits.properties" todir="${build_testunits}/NG_UNITS" />				
+			</else>
+		</if>
+		<copy file="deploy/properties/testsuite_testunits.properties" todir="${build_testunits}/NG_UNITS" />
+		<copy file="deploy/properties/testsuite_spcoop.log4j.properties" todir="${build_testunits}/NG_UNITS" />
+		<copy file="${openspcoop2_testsuite_properties}/testsuite.properties" todir="${build_testunits}/NG_UNITS" />
+		<copy file="deploy/properties/testsuiteClient-crypto.properties" todir="${build_testunits}/NG_UNITS" />
+		<copy file="${openspcoop2}/testsuite/deploy/properties/testsuite.log4j.properties" todir="${build_testunits}/NG_UNITS" />
+		
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+			</or>
+			<then>
+				<concat destfile="${build_testunits}/NG_UNITS/testsuite_testunits.properties" append="yes" >
+
+# ----- Personalizzazione JMS (jboss 7.x) -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.provider.url"/>
+					<param name="value" value="remote://127.0.0.1:4447"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.initial"/>
+					<param name="value" value="org.jboss.naming.remote.client.InitialContextFactory"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.url.pkgs"/>
+					<param name="value" value="#org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.url.pkgs"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms.connectionFactory"/>
+					<param name="value" value="jms/RemoteConnectionFactory"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms.username"/>
+					<param name="value" value="openspcoop2"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms.password"/>
+					<param name="value" value="op3n.spc00p"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<concat destfile="${build_testunits}/NG_UNITS/testsuite_testunits.properties" append="yes" >
+
+# ----- Personalizzazione JMS (jboss/wildfly 8.x) -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.provider.url"/>
+					<param name="value" value="http-remoting://127.0.0.1:8080"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.initial"/>
+					<param name="value" value="org.jboss.naming.remote.client.InitialContextFactory"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.url.pkgs"/>
+					<param name="value" value="#org.openspcoop2.testsuite.jms-lookup.property.java.naming.factory.url.pkgs"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms.connectionFactory"/>
+					<param name="value" value="jms/RemoteConnectionFactory"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms.username"/>
+					<param name="value" value="openspcoop2"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.jms.password"/>
+					<param name="value" value="op3n.spc00p"/>
+				</antcall>
+			</then>
+		</if>
+		
+	</target>
+	
+	<target name="clean" depends="clean_testunits"/>
+	<target name="build">
+		<runtarget target="compile_testunits" />	
+	</target>
+	
+	
+
+	<!--  Configurazione dei test -->
+	<target name="preparazioneAmbiente" depends="init_compile_testunits,preparazioneAmbienteDefault_engine" />
+	<target name="preparazioneAmbienteNewConnection" depends="init_compile_testunits,preparazioneAmbienteNewConnection_engine" />
+	<target name="ripristinoAmbiente" depends="init_compile_testunits,ripristinoAmbiente_engine" />
+
+
+
+	<!--  Esecuzione dei test -->
+	<target name="run_test"
+        depends="init_compile_testunits,run_testsuite_default" description="Esegue la testsuite con gruppo indicato" />
+	<target name="run_test_connectionNew"
+	        depends="init_compile_testunits,run_testsuite_connectionNew" description="Esegue la testsuite con gruppo indicato" />
+	<target name="run_all_tests"
+	        depends="init_compile_testunits,run_testsuite_completa" description="Esegue la testsuite completa" />
+
+</project>

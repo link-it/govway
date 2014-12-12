@@ -1,0 +1,74 @@
+<jboss xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:p="urn:ejb-pool:1.0"
+   xmlns:mdb="urn:resource-adapter-binding">
+    <assembly-descriptor>
+
+	<!-- Moduli di Imbustamento -->
+        <p:pool>
+            <ejb-name>Imbustamento</ejb-name>
+            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+        </p:pool>
+        <p:pool>
+            <ejb-name>ImbustamentoRisposte</ejb-name>
+            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+        </p:pool>
+	<!-- Moduli di Sbustamento -->
+        <p:pool>
+            <ejb-name>Sbustamento</ejb-name>
+            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+        </p:pool>
+        <p:pool>
+            <ejb-name>SbustamentoRisposte</ejb-name>
+            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+        </p:pool>
+	<!-- Moduli di Inoltro buste -->
+        <p:pool>
+            <ejb-name>InoltroBuste</ejb-name>
+            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+        </p:pool>
+        <p:pool>
+            <ejb-name>InoltroRisposte</ejb-name>
+            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+        </p:pool>
+	<!-- Moduli di consegna contenuti applicativi -->
+        <p:pool>
+            <ejb-name>ConsegnaContenutiApplicativi</ejb-name>
+            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+        </p:pool>
+
+	<!-- Moduli di Imbustamento -->
+	<mdb:resource-adapter-binding>
+	    <ejb-name>Imbustamento</ejb-name>
+	    <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+	</mdb:resource-adapter-binding>
+	<mdb:resource-adapter-binding>
+            <ejb-name>ImbustamentoRisposte</ejb-name>
+            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+        </mdb:resource-adapter-binding>
+	<!-- Moduli di Sbustamento -->
+	<mdb:resource-adapter-binding>
+            <ejb-name>Sbustamento</ejb-name>
+            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+        </mdb:resource-adapter-binding>
+        <mdb:resource-adapter-binding>
+            <ejb-name>SbustamentoRisposte</ejb-name>
+            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+        </mdb:resource-adapter-binding>
+	<!-- Moduli di Inoltro buste -->
+	<mdb:resource-adapter-binding>
+            <ejb-name>InoltroBuste</ejb-name>
+            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+        </mdb:resource-adapter-binding>
+        <mdb:resource-adapter-binding>
+            <ejb-name>InoltroRisposte</ejb-name>
+            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+        </mdb:resource-adapter-binding>
+	<!-- Moduli di consegna contenuti applicativi -->
+	<mdb:resource-adapter-binding>
+            <ejb-name>ConsegnaContenutiApplicativi</ejb-name>
+            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+        </mdb:resource-adapter-binding>
+
+    </assembly-descriptor>
+</jboss>
+

@@ -1,0 +1,138 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+
+  <accordo-cooperazione nome="EsempioAccordoCooperazione"
+			descrizione="Esempio di accordo cooperazione"
+			versione="1">
+	<soggetto-referente tipo="SPC" nome="MinisteroReferente" />
+	<elenco-partecipanti>
+		<soggetto-partecipante tipo="SPC" nome="MinisteroErogatoreServizioComponente1" />
+                <soggetto-partecipante tipo="SPC" nome="MinisteroErogatoreServizioComponente2" />
+		<soggetto-partecipante tipo="SPC" nome="MinisteroErogatoreServizioComposto" />
+	</elenco-partecipanti>
+        <allegato tipo="doc" file="./EsempioAccordoCooperazione/allegati/ContestoUtilizzo.doc" />
+        <allegato tipo="txt" file="./EsempioAccordoCooperazione/allegati/README.txt" />
+        <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoCooperazione/specificaSemiformale/DocumentoIstitutivo.doc"/>
+        <specifica-semiformale tipo="XML" file="./EsempioAccordoCooperazione/specificaSemiformale/soggettiPartecipanti.xml"/>
+  </accordo-cooperazione>
+
+
+  <accordo-servizio-parte-comune nome="EsempioAccordoServizioComposto" 
+                     descrizione="Esempio di accordo servizio composto"
+                     versione="1"
+                     profilo-collaborazione="oneway"
+                     wsdl-definitorio="./EsempioAccordoServizioComposto/allegati/InterfacciaDefinitoria.xsd"
+                     wsdl-concettuale="./EsempioAccordoServizioComposto/specificaInterfaccia/InterfacciaConcettuale.wsdl"
+                     wsdl-logico-erogatore="./EsempioAccordoServizioComposto/specificaInterfaccia/InterfacciaLogicaErogatore.wsdl">
+        <soggetto-referente tipo="SPC" nome="MinisteroReferente" />
+        <servizio-composto accordo-cooperazione="EsempioAccordoCooperazione:1" >
+		<servizio-componente tipo-soggetto="SPC" nome-soggetto="MinisteroErogatoreServizioComponente1"
+				     tipo="SPC" nome="Sincrono" />
+		<servizio-componente tipo-soggetto="SPC" nome-soggetto="MinisteroErogatoreServizioComponente2"
+                                     tipo="SPC" nome="Sincrono" />
+		<specifica-coordinamento tipo="BPEL" file="./EsempioAccordoServizioComposto/specificaCoordinamento/example.bpel" />
+	</servizio-composto>
+        <port-type nome="EsempioServizioComposto" profilo-collaborazione="sincrono" descrizione="Esempio di servizio composto">
+            <azione nome="servizioComposto" />
+        </port-type>
+        <allegato tipo="doc" file="./EsempioAccordoServizioComposto/allegati/ContestoUtilizzo.doc" />
+        <allegato tipo="txt" file="./EsempioAccordoServizioComposto/allegati/README.txt" />
+        <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioComposto/specificaSemiformale/SpecificaSemiformale.doc"/>
+        <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioComposto/specificaSemiformale/types.xml"/>
+   </accordo-servizio-parte-comune> 
+
+
+   <soggetto tipo="SPC" nome="MinisteroErogatoreServizioComponente1">
+        <connettore tipo="http" nome="PdDMinisteroErogatoreServizioComponente1">
+             <property nome="location" valore="http://pddErogatoreServizioComponente1:8080/openspcoop/PA" />
+         </connettore>
+
+         <!-- Servizio componente -->
+	 <accordo-servizio-parte-specifica
+		nome="Sincrono"
+		accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+		port-type="Sincrono"
+		descrizione="Esempio di accordo di servizio parte specifica (Sincrono)"
+		wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+		versione="1"
+		>
+            <servizio tipo="SPC" nome="Sincrono" />
+            <fruitore tipo="SPC" nome="MinisteroErogatoreServizioComposto" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSicurezza/usernametoken.xml" />
+         </accordo-servizio-parte-specifica>
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="MinisteroErogatoreServizioComponente2">
+        <connettore tipo="http" nome="PdDMinisteroErogatoreServizioComponente2">
+             <property nome="location" valore="http://pddErogatoreServizioComponente2:8080/openspcoop/PA" />
+        </connettore>
+
+        <!-- Servizio componente -->
+	<accordo-servizio-parte-specifica
+                nome="Sincrono"
+                accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioASParteComune:1"
+                port-type="Sincrono"
+                descrizione="Esempio di accordo di servizio parte specifica (Sincrono)"
+                wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+                versione="1"
+                >
+            <servizio tipo="SPC" nome="Sincrono" />
+            <fruitore tipo="SPC" nome="MinisteroErogatoreServizioComposto" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioSincrono/specificaSicurezza/usernametoken.xml" />
+         </accordo-servizio-parte-specifica>
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="MinisteroErogatoreServizioComposto">
+        <connettore tipo="http" nome="PdDMinisteroErogatoreServizioComposto ">
+             <property nome="location" valore="http://pddErogatoreServizioComposto:8080/openspcoop/PA" />
+        </connettore>
+
+        <!-- Servizio composto -->
+        <accordo-servizio-parte-specifica
+                nome="EsempioServizioComposto"
+                accordo-servizio-parte-comune="SPC/MinisteroReferente:EsempioAccordoServizioComposto:1"
+                port-type="EsempioServizioComposto"
+		descrizione="Esempio di accordo di servizio parte specifica (Servizio Composto)"
+		wsdl-implementativo-erogatore="./EsempioAccordoServizioParteSpecifica_ServizioComposto/specificaPortiAccesso/PortiAccessoErogatore.wsdl"
+                versione="1"
+                >
+            <servizio tipo="SPC" nome="EsempioServizioComposto" />
+            <fruitore tipo="SPC" nome="MinisteroFruitore" />
+            <allegato tipo="doc" file="./EsempioAccordoServizioParteSpecifica_ServizioComposto/allegati/ContestoUtilizzo.doc" />
+            <allegato tipo="txt" file="./EsempioAccordoServizioParteSpecifica_ServizioComposto/allegati/README.txt" />
+            <specifica-semiformale tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioComposto/specificaSemiformale/SpecificaSemiformale.doc"/>
+            <specifica-semiformale tipo="XML" file="./EsempioAccordoServizioParteSpecifica_ServizioComposto/specificaSemiformale/types.xml"/>
+            <specifica-livello-servizio tipo="WSLA" file="./EsempioAccordoServizioParteSpecifica_ServizioComposto/specificaLivelliServizio/sample-outsourced.wsla" />
+            <specifica-sicurezza tipo="Linguaggio Naturale" file="./EsempioAccordoServizioParteSpecifica_ServizioComposto/specificaSicurezza/SpecificaSicurezza.doc" />
+            <specifica-sicurezza tipo="WS-Policy" file="./EsempioAccordoServizioParteSpecifica_ServizioComposto/specificaSicurezza/usernametoken.xml" />
+         </accordo-servizio-parte-specifica>
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="MinisteroReferente">
+        <connettore tipo="http" nome="PdDMinisteroReferente">
+             <property nome="location" valore="http://pddReferente:8080/openspcoop/PA" />
+        </connettore>
+   </soggetto>
+ 
+   <soggetto tipo="SPC" nome="MinisteroFruitore">
+        <connettore tipo="http" nome="PdDMinisteroFruitore">
+             <property nome="location" valore="http://pddFruitore:8080/openspcoop/PA" />
+        </connettore>
+   </soggetto> 
+
+</registro-servizi>

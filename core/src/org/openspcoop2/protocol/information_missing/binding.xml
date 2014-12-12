@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="openspcoop2" class="org.openspcoop2.protocol.information_missing.Openspcoop2">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure field="wizard" usage="optional" map-as="org.openspcoop2.protocol.information_missing.Wizard"/>
+    <collection field="soggetto" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.Soggetto"/>
+    </collection>
+    <collection field="input" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.Input"/>
+    </collection>
+    <collection field="servizioApplicativo" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.ServizioApplicativo"/>
+    </collection>
+    <collection field="accordoCooperazione" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.AccordoCooperazione"/>
+    </collection>
+    <collection field="accordoServizioParteComune" create-type="java.util.ArrayList">
+      <structure name="accordo-servizio-parte-comune" map-as="_AccordoServizioParteComune_Type"/>
+    </collection>
+    <collection field="accordoServizioParteSpecifica" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica"/>
+    </collection>
+    <collection field="accordoServizioComposto" create-type="java.util.ArrayList">
+      <structure name="accordo-servizio-composto" map-as="_AccordoServizioParteComune_Type"/>
+    </collection>
+    <collection field="fruitore" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.Fruitore"/>
+    </collection>
+  </mapping>
+  <mapping name="replace-match" class="org.openspcoop2.protocol.information_missing.ReplaceMatchType" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="nome" field="nome" usage="optional" map-as="_ReplaceMatchFieldType_Type"/>
+    <structure name="tipo" field="tipo" usage="optional" map-as="_ReplaceMatchFieldType_Type"/>
+  </mapping>
+
+  <mapping type-name="_ReplaceMatchType_Type" class="org.openspcoop2.protocol.information_missing.ReplaceMatchType" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="nome" field="nome" usage="optional" map-as="_ReplaceMatchFieldType_Type"/>
+    <structure name="tipo" field="tipo" usage="optional" map-as="_ReplaceMatchFieldType_Type"/>
+  </mapping>
+  <mapping name="nome" class="org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <value name="valore" field="valore" usage="optional" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_ReplaceMatchFieldType_Type" class="org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <value name="valore" field="valore" usage="optional" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="soggetto" class="org.openspcoop2.protocol.information_missing.Soggetto">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="replace-match" field="replaceMatch" usage="required" map-as="_ReplaceMatchType_Type"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="protocollo" field="protocollo" usage="optional" style="attribute"/>
+    <value name="tipo-pdd" field="tipoPdd" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="servizio-applicativo" class="org.openspcoop2.protocol.information_missing.ServizioApplicativo">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="replace-match" field="replaceMatch" usage="required" map-as="_ReplaceMatchType_Type"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="accordo-cooperazione" class="org.openspcoop2.protocol.information_missing.AccordoCooperazione">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="replace-match" field="replaceMatch" usage="required" map-as="_ReplaceMatchType_Type"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="stato" field="stato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="accordo-servizio-parte-comune" class="org.openspcoop2.protocol.information_missing.AccordoServizioParteComune" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="replace-match" field="replaceMatch" usage="required" map-as="_ReplaceMatchType_Type"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="stato" field="stato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_AccordoServizioParteComune_Type" class="org.openspcoop2.protocol.information_missing.AccordoServizioParteComune" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="replace-match" field="replaceMatch" usage="required" map-as="_ReplaceMatchType_Type"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="stato" field="stato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="accordo-servizio-parte-specifica" class="org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="replace-match" field="replaceMatch" usage="required" map-as="_ReplaceMatchType_Type"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="stato" field="stato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="fruitore" class="org.openspcoop2.protocol.information_missing.Fruitore">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure name="replace-match" field="replaceMatch" usage="required" map-as="_ReplaceMatchType_Type"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="stato" field="stato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="input" class="org.openspcoop2.protocol.information_missing.Input">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <collection field="proprieta" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.Proprieta"/>
+    </collection>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="proprieta" class="org.openspcoop2.protocol.information_missing.Proprieta">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <value name="placeholder" field="placeholder" usage="required" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="default" field="_default" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="wizard" class="org.openspcoop2.protocol.information_missing.Wizard">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <structure field="requisiti" usage="optional" map-as="org.openspcoop2.protocol.information_missing.Requisiti"/>
+    <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
+    <value name="step" field="step" usage="optional" style="attribute"/>
+    <value name="intestazione-originale" field="intestazioneOriginale" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="requisiti" class="org.openspcoop2.protocol.information_missing.Requisiti">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <collection field="protocollo" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.information_missing.RequisitoProtocollo"/>
+    </collection>
+  </mapping>
+  <mapping name="protocollo" class="org.openspcoop2.protocol.information_missing.RequisitoProtocollo">
+    <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+  </mapping>
+</binding>

@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Body>
+<ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:se="http://schemas.xmlsoap.org/soap/envelope/" se:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+	<symbol xsi:type="xsd:string">IBM</symbol>
+	<prova2>CIAOCIAO</prova2>
+	<bo><si>234</si></bo>
+</ns1:getQuote>
+<test/>
+<test2/>
+</soapenv:Body>
+</soapenv:Envelope>

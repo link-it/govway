@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.openspcoop2.org/PA"
+   xmlns:impl="http://www.openspcoop2.org/PA" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+   <wsdl:message name="request_msg">
+
+      <wsdl:part type="xsd:anyType" name="request_msg"> </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="response_msg">
+
+      <wsdl:part type="xsd:anyType" name="response_msg"> </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:portType name="PA">
+
+      <wsdl:operation name="anyOperation">
+
+         <wsdl:input message="impl:request_msg" name="request"> </wsdl:input>
+
+         <wsdl:output message="impl:response_msg" name="response"> </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="PASoapBinding" type="impl:PA">
+
+      <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="anyOperation">
+
+         <wsdl:input name="request"/>
+
+         <wsdl:output name="response"/>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="PAService">
+
+      <wsdl:port binding="impl:PASoapBinding" name="PA">
+
+         <wsdlsoap:address location="http://localhost:8080/openspcoop2/PA"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

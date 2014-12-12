@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="Validator_LocalEnv" basedir=".">
+
+	<!-- Libreria jdbc verso i database -->
+	<property name="jdbc_lib" location="JDBC_LIB" />
+	
+	<!-- ApplicationServer version -->
+	<property name="as" value="jboss/tomcat" />
+
+	<!-- common.properties -->
+	<property name="proprietaComuni" location="deploy/properties/commons.properties" />
+
+	<!-- Configurazione -->
+	<property name="validazioneConfigurazione" value="true"/>
+	<!-- Tipo di configurazione, valori possibili: xml/db -->
+	<property name="tipoConfigurazione" value="xml" />
+	<!-- Configuration.properties -->
+	<property name="proprietaConfigurazione" location="deploy/properties/configurazione.properties" />
+	<!-- ValidazioneConfigurazione -->
+	<property name="validazioneSezioneConfigurazione" value="true" />
+      
+	<!-- Registro dei Servizi -->
+	<property name="validazioneRegistroServizi" value="true"/>
+	<!-- Tipo del registroServizi, valori possibili: xml/db/uddi/web/ws -->
+	<property name="tipoRegistroServizi" value="xml" />	
+	<!-- RegistroServizi.properties -->
+	<property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" />
+	<!-- Indicazione se devono essere verificate le URI che definiscono le risorse presenti negli accordi, servizi ... -->
+	<property name="verificaURIRegistroServizi" value="false" />
+     
+	<!-- OpenSPCoop Location and Library -->
+	<property name="openspcoop2" location="../../" />
+	<property name="openspcoop2_lib" location="${openspcoop2}/lib" />
+	<property name="openspcoop2_dist" location="${openspcoop2}/core/dist" />
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+
+</project>

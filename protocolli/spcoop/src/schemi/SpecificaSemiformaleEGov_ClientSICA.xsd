@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+       targetNamespace="http://spcoop.gov.it/sica/wscp"
+       xmlns:tns="http://spcoop.gov.it/sica/wscp" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+   <complexType name="operationType">
+       <attribute name="servizio" type="QName" use="required"></attribute>
+       <attribute name="operazione" type="QName" use="required"></attribute>
+       <attribute name="profiloDiCollaborazione" type="tns:profiloDiCollaborazioneType"
+        use="required"></attribute>
+       <attribute name="servizioCorrelato" type="QName" use="optional"></attribute>
+       <attribute name="operazioneCorrelata" type="QName" use="optional"></attribute>
+   </complexType>
+
+   <complexType name="operationListType">
+       <sequence>
+          <element name="collaborazione" type="tns:operationType" maxOccurs="unbounded"></element>
+       </sequence>
+   </complexType>
+
+   <element name="profiloCollaborazioneEGOV">
+     <complexType>
+       <sequence>
+          <element name="versioneEGOV" type="string"/>
+          <element name="riferimentoDefinizioneInterfaccia" type="anyURI"/>
+          <element name="listaCollaborazioni" type="tns:operationListType"/>
+       </sequence>
+     </complexType>
+   </element>
+   <simpleType name="profiloDiCollaborazioneType">
+       <restriction base="string">
+          <enumeration value="EGOV_IT_MessaggioSingoloOneWay"></enumeration>
+          <enumeration value="EGOV_IT_ServizioSincrono"></enumeration>
+          <enumeration value="EGOV_IT_ServizioAsincronoSimmetrico"></enumeration>
+          <enumeration value="EGOV_IT_ServizioAsincronoAsimmetrico"></enumeration>
+       </restriction>
+   </simpleType>
+</schema>

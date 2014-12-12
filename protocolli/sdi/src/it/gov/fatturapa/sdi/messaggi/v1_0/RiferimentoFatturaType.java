@@ -1,0 +1,125 @@
+/*
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved.
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package it.gov.fatturapa.sdi.messaggi.v1_0;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import java.io.Serializable;
+
+
+/** <p>Java class for RiferimentoFattura_Type complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="RiferimentoFattura_Type">
+ * 		&lt;sequence>
+ * 			&lt;element name="NumeroFattura" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="AnnoFattura" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}nonNegativeInteger" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="PosizioneFattura" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * @version $Rev$, $Date$
+ * 
+ * @author Poli Andrea (poli@link.it)
+ * @author $Author$
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "RiferimentoFattura_Type", 
+  propOrder = {
+  	"numeroFattura",
+  	"annoFattura",
+  	"posizioneFattura"
+  }
+)
+
+@XmlRootElement(name = "RiferimentoFattura_Type")
+
+public class RiferimentoFatturaType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public RiferimentoFatturaType() {
+  }
+
+  public Long getId() {
+    if(this.id!=null)
+		return this.id;
+	else
+		return new Long(-1);
+  }
+
+  public void setId(Long id) {
+    if(id!=null)
+		this.id=id;
+	else
+		this.id=new Long(-1);
+  }
+
+  public java.lang.String getNumeroFattura() {
+    return this.numeroFattura;
+  }
+
+  public void setNumeroFattura(java.lang.String numeroFattura) {
+    this.numeroFattura = numeroFattura;
+  }
+
+  public java.lang.Integer getAnnoFattura() {
+    return this.annoFattura;
+  }
+
+  public void setAnnoFattura(java.lang.Integer annoFattura) {
+    this.annoFattura = annoFattura;
+  }
+
+  public java.lang.Integer getPosizioneFattura() {
+    return this.posizioneFattura;
+  }
+
+  public void setPosizioneFattura(java.lang.Integer posizioneFattura) {
+    this.posizioneFattura = posizioneFattura;
+  }
+
+  private static final long serialVersionUID = 1L;
+
+  @XmlTransient
+  private Long id;
+
+
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
+  @XmlElement(name="NumeroFattura",required=true,nillable=false)
+  protected java.lang.String numeroFattura;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="nonNegativeInteger")
+  @XmlElement(name="AnnoFattura",required=true,nillable=false)
+  protected java.lang.Integer annoFattura;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="positiveInteger")
+  @XmlElement(name="PosizioneFattura",required=false,nillable=false)
+  protected java.lang.Integer posizioneFattura;
+
+}

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+				  xmlns:tns="http://www.openspcoop2.org/core/config/management" 
+				  xmlns:soap11="http://schemas.xmlsoap.org/wsdl/soap/"
+				  name="PortaApplicativaService"
+				  targetNamespace="http://www.openspcoop2.org/core/config/management">
+
+	<wsdl:import namespace="http://www.openspcoop2.org/core/config/management" 
+				 location="PortaApplicativaCRUD.wsdl"/>
+	
+	<!-- BINDING (SOAP11) --> 
+	
+	<wsdl:binding name="PortaApplicativaServiceSoap11Binding" type="tns:PortaApplicativa">
+		<soap11:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+
+
+		<wsdl:operation name="create">
+			<soap11:operation soapAction="create" style="document"/>
+			<wsdl:input name="create">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="createResponse">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap11:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap11:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap11:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<wsdl:operation name="update">
+			<soap11:operation soapAction="update" style="document"/>
+			<wsdl:input name="update">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="updateResponse">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap11:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-found-exception">
+				<soap11:fault name="config-not-found-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap11:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap11:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="updateOrCreate">
+			<soap11:operation soapAction="updateOrCreate" style="document"/>
+			<wsdl:input name="updateOrCreate">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="updateOrCreateResponse">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap11:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap11:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap11:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="deleteById">
+			<soap11:operation soapAction="deleteById" style="document"/>
+			<wsdl:input name="deleteById">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="deleteByIdResponse">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap11:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap11:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap11:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<wsdl:operation name="deleteAll">
+			<soap11:operation soapAction="deleteAll" style="document"/>
+			<wsdl:input name="deleteAll">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="deleteAllResponse">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap11:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap11:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap11:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="deleteAllByFilter">
+			<soap11:operation soapAction="deleteAllByFilter" style="document"/>
+			<wsdl:input name="deleteAllByFilter">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="deleteAllByFilterResponse">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap11:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap11:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap11:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	
+		<wsdl:operation name="delete">
+			<soap11:operation soapAction="delete" style="document"/>
+			<wsdl:input name="delete">
+				<soap11:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="deleteResponse">
+				<soap11:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap11:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap11:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap11:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+    
+
+	</wsdl:binding>
+
+	<!-- SERVICE -->	
+	<wsdl:service name="PortaApplicativaSoap11Service">	
+
+		<wsdl:port binding="tns:PortaApplicativaServiceSoap11Binding" name="PortaApplicativaPortSoap11">
+			<soap11:address location="http://localhost:8080/config/PortaApplicativa/Soap11"/>
+		</wsdl:port>	
+			
+	</wsdl:service>
+	
+</wsdl:definitions>

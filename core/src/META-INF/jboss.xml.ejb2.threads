@@ -1,0 +1,25 @@
+<jboss>
+
+    <enterprise-beans>
+
+      <!-- TimerEJB di OpenSPCoop -->
+      <session>
+          <ejb-name>GestoreBusteNonRiscontrate</ejb-name>
+          <jndi-name>ejb/GestoreBusteNonRiscontrate</jndi-name>
+      </session>
+      <session>
+          <ejb-name>GestoreMessaggi</ejb-name>
+          <jndi-name>ejb/GestoreMessaggi</jndi-name>
+      </session>
+      <session>
+          <ejb-name>GestorePuliziaMessaggiAnomali</ejb-name>
+          <jndi-name>ejb/GestorePuliziaMessaggiAnomali</jndi-name>
+      </session>
+      <session>
+          <ejb-name>GestoreRepositoryBuste</ejb-name>
+          <jndi-name>ejb/GestoreRepositoryBuste</jndi-name>
+      </session>
+    
+   </enterprise-beans>
+
+</jboss>

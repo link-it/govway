@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsbl:MessageBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsbl="http://spcoop.gov.it/sica/wsbl" xmlns:spc="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto" xsi:schemaLocation="http://spcoop.gov.it/sica/wsbl wsbl.xsd">
+  <name>ServizioAsincronoSimmetricoErogatore</name>
+  <states>
+    <state-initial name="TransazioneRichiestaAsincronaSimmetrica"/>
+    <state-final name="TransazioneAsincronaSimmetricaTerminata"/>
+    <state name="invioRicevutaRichiestaAsincrona"/>
+    <state name="TransazioneRispostaAsincronaSimmetrica"/>
+    <state name="ricezioneRicevutaRispostaAsincrona"/>
+  </states>
+  <messages>
+    <message name="spc:identificaRequest" source="TransazioneRichiestaAsincronaSimmetrica" target="invioRicevutaRichiestaAsincrona" type="RECEIVE"/>
+    <message name="spc:identificaResponse" source="invioRicevutaRichiestaAsincrona" target="TransazioneRispostaAsincronaSimmetrica" type="SEND"/>
+    <message name="spc:risultatoIdentificaRequest" source="TransazioneRispostaAsincronaSimmetrica" target="ricezioneRicevutaRispostaAsincrona" type="SEND"/>
+    <message name="spc:risultatoIdentificaResponse" source="ricezioneRicevutaRispostaAsincrona" target="TransazioneAsincronaSimmetricaTerminata" type="RECEIVE"/>
+  </messages>
+</wsbl:MessageBehavior>

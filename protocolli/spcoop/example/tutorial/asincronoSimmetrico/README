@@ -1,0 +1,31 @@
+*** SERVER ***
+
+Editare il file di configurazione Server.properties per impostare l'endpoint su cui accetta connessioni il server
+
+Indicare nella proprietà 'informazioniIntegrazione.identificativoEGov' il nome dell'header HTTP contenente l'identificativo egov della cooperazione 
+
+Per avviare il server utilizzare il comando:
+-  ant run_server 
+
+
+*** CLIENT ***
+
+Editare il file di configurazione Client.properties per impostare i parametri di accesso al servizio erogatore.
+- invocazioneTramitePdD (true/false): indica se l'invocazione del server viene mediata da una porta di dominio.
+- username.cerca: username utilizzato in una autenticazione http basic per l'operazione cerca
+- password.cerca: password utilizzata in una autenticazione http basic per l'operazione cerca
+- username.risultato: username utilizzato in una autenticazione http basic per l'operazione risultato
+- password.risultato: password utilizzata in una autenticazione http basic per l'operazione risultato
+
+Nel caso l'invocazione venga mediata da una porta di dominio (invocazioneTramitePdD=true):
+- portaDiDominio: indirizzo del servizio di ricezione contenuti applicativi della PdD
+- portaDelegata.cerca: nome della porta delegata che permette di effettuare una richiesta asincrona simmetrica
+- portaDelegata.risultato: nome della porta delegata che permette di effettuare una risposta asincrona simmetrica
+- informazioniIntegrazione.riferimentoAsincrono: nome utilizzato per indicare nella url l'id egov di correlazione asincrona
+
+Nel caso l'invocazione sia diretta verso il server (invocazioneTramitePdD=false):
+- endpoint.cerca: endpoing su cui accetta connessioni il server che implementa la richiesta asincrona simmetrica
+- endpoint.risultato: endpoing su cui accetta connessioni il server che implementa la risposta asincrona simmetrica
+
+Per avviare il client utilizzare il comando:
+-  ant run_client

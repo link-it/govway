@@ -1,0 +1,122 @@
+<jboss>
+
+   <enterprise-beans>
+
+      <!-- Moduli di Imbustamento -->
+      <message-driven>
+         <ejb-name>Imbustamento</ejb-name>
+         <destination-jndi-name>queue/toImbustamento</destination-jndi-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>message-driven-bean-no-dlq</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+      <message-driven>
+         <ejb-name>ImbustamentoRisposte</ejb-name>
+         <destination-jndi-name>queue/toImbustamentoRisposte</destination-jndi-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>message-driven-bean-no-dlq</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+
+      <!-- Moduli di Sbustamento -->
+      <message-driven>
+         <ejb-name>Sbustamento</ejb-name>
+         <destination-jndi-name>queue/toSbustamento</destination-jndi-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>message-driven-bean-no-dlq</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+      <message-driven>
+         <ejb-name>SbustamentoRisposte</ejb-name>
+         <destination-jndi-name>queue/toSbustamentoRisposte</destination-jndi-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>message-driven-bean-no-dlq</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+
+      <!-- Moduli di Inoltro buste -->
+      <message-driven>
+         <ejb-name>InoltroRisposte</ejb-name>
+         <destination-jndi-name>queue/toInoltroRisposte</destination-jndi-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>message-driven-bean-no-dlq</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+      <message-driven>
+         <ejb-name>InoltroBuste</ejb-name>
+         <destination-jndi-name>queue/toInoltroBuste</destination-jndi-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>message-driven-bean-no-dlq</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+
+      <!-- Moduli di consegna contenuti applicativi -->
+      <message-driven>
+         <ejb-name>ConsegnaContenutiApplicativi</ejb-name>
+         <destination-jndi-name>queue/toConsegnaContenutiApplicativi</destination-jndi-name>
+         <invoker-bindings>
+            <invoker>
+               <invoker-proxy-binding-name>message-driven-bean-no-dlq</invoker-proxy-binding-name>
+            </invoker>
+         </invoker-bindings>
+      </message-driven>
+
+      <!-- TimerEJB di OpenSPCoop -->
+      <session>
+         <ejb-name>GestoreBusteNonRiscontrate</ejb-name>
+         <jndi-name>ejb/GestoreBusteNonRiscontrate</jndi-name>
+      </session>
+      <session>
+         <ejb-name>GestoreMessaggi</ejb-name>
+         <jndi-name>ejb/GestoreMessaggi</jndi-name>
+      </session>
+      <session>
+         <ejb-name>GestorePuliziaMessaggiAnomali</ejb-name>
+         <jndi-name>ejb/GestorePuliziaMessaggiAnomali</jndi-name>
+      </session>
+      <session>
+         <ejb-name>GestoreRepositoryBuste</ejb-name>
+         <jndi-name>ejb/GestoreRepositoryBuste</jndi-name>
+      </session>
+
+   </enterprise-beans>
+
+
+   <invoker-proxy-bindings>
+
+      <!--  affidabilita di OpenSPCoop -->
+      <invoker-proxy-binding>
+         <name>message-driven-bean-no-dlq</name>
+         <invoker-mbean>default</invoker-mbean>
+         <proxy-factory>org.jboss.ejb.plugins.jms.JMSContainerInvoker</proxy-factory>
+         <proxy-factory-config>
+            <JMSProviderAdapterJNDI>DefaultJMSProvider</JMSProviderAdapterJNDI>
+            <ServerSessionPoolFactoryJNDI>StdJMSPool</ServerSessionPoolFactoryJNDI>
+            <CreateJBossMQDestination>true</CreateJBossMQDestination>
+            <!-- WARN: Don't set this to zero until a bug in the pooled executor is fixed -->
+            <MinimumSize>10</MinimumSize>
+            <MaximumSize>50</MaximumSize>
+            <KeepAliveMillis>30000</KeepAliveMillis>
+            <MaxMessages>1</MaxMessages>
+            <MDBConfig>
+               <ReconnectIntervalSec>10</ReconnectIntervalSec>
+            </MDBConfig>
+         </proxy-factory-config>
+      </invoker-proxy-binding>
+      <!--  OpenSPCoop -->
+
+   </invoker-proxy-bindings>
+
+</jboss>

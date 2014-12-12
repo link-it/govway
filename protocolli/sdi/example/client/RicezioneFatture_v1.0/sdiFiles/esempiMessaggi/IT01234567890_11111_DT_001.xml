@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="DT_v1.0.xsl"?>
+<types:NotificaDecorrenzaTermini xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" IntermediarioConDupliceRuolo="Si" versione="1.0">
+	<IdentificativoSdI>111</IdentificativoSdI>
+	<NomeFile>IT01234567890_11111.xml.p7m</NomeFile>
+	<Descrizione>Notifica di esempio</Descrizione>
+	<MessageId>123456</MessageId>
+	<Note>Esempio</Note>
+</types:NotificaDecorrenzaTermini>

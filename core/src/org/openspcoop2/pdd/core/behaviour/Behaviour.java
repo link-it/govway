@@ -1,0 +1,55 @@
+/*
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved. 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package org.openspcoop2.pdd.core.behaviour;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Behaviour
+ *
+ * @author Andrea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
+public class Behaviour {
+
+	private BehaviourResponseTo responseTo = new BehaviourResponseTo();
+	private List<BehaviourForwardTo> forwardTo = new ArrayList<BehaviourForwardTo>();
+	
+	public boolean isResponseTo() {
+		return this.responseTo!=null && this.responseTo.isResponseTo();
+	}
+	public BehaviourResponseTo getResponseTo() {
+		return this.responseTo;
+	}
+	public void setResponseTo(BehaviourResponseTo responseTo) {
+		this.responseTo = responseTo;
+	}
+		
+	public List<BehaviourForwardTo> getForwardTo() {
+		return this.forwardTo;
+	}
+	public void setForwardTo(List<BehaviourForwardTo> forwardTo) {
+		this.forwardTo = forwardTo;
+	}
+	
+}

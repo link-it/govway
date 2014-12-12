@@ -1,0 +1,129 @@
+<project name="openspcoop2-integrationManagerStub">
+    <description>
+        Creazione degli Stub per l'integrationManager
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+
+	
+	<!-- Create the build directory structure used by stub generator -->
+	<target name="init_stub">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>
+	
+
+
+	
+	<!-- IntegrationManager  AXIS14-->
+	<target name="build_stub_integration_manager_axis14" depends="init_stub">
+		
+		<!-- generazione Stub IntegrationManager.MessageBox -->
+		<echo message="${build}"/>
+		<mkdir dir="${build}/srcStubMessageBoxAxis14" />
+		<mkdir dir="${build}/buildStubMessageBoxAxis14" />
+		<antcall target="build_axis14">
+			<param name="stubBuild.srcDir" value="${build}/srcStubMessageBoxAxis14"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="${appServer_url}/openspcoop2/IntegrationManager/MessageBox?wsdl"/>
+			<param name="stubBuild.buildDir" value="${build}/buildStubMessageBoxAxis14"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist}/openspcoop2_integrationManagerStub_messageBox_axis14.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.pdd.services.axis14"/>
+		</antcall>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/openspcoop2_integrationManagerStub_messageBox_axis14.jar" todir="${required_lib}/stub/axis14" />
+		
+		
+		<!-- generazione Stub IntegrationManager.PD -->
+		<mkdir dir="${build}/srcStubPDAxis14" />
+		<mkdir dir="${build}/buildStubPDAxis14" />
+		<antcall target="build_axis14">
+			<param name="stubBuild.srcDir" value="${build}/srcStubPDAxis14"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="${appServer_url}/openspcoop2/IntegrationManager/PD?wsdl"/>
+			<param name="stubBuild.buildDir" value="${build}/buildStubPDAxis14"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist}/openspcoop2_integrationManagerStub_pd_axis14.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.pdd.services.axis14"/>
+		</antcall>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/openspcoop2_integrationManagerStub_pd_axis14.jar" todir="${required_lib}/stub/axis14" />
+		
+		
+		<!-- Genero JAR Complessivo -->
+		<jar jarfile="${dist}/openspcoop2_integrationManagerStub_axis14.jar">
+			<zipfileset dir="${build}/buildStubMessageBoxAxis14" />
+			<zipfileset dir="${build}/buildStubPDAxis14" />
+		</jar>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/openspcoop2_integrationManagerStub_axis14.jar" todir="${required_lib}/stub/axis14" />
+		
+	</target>
+	
+	
+	
+	
+	
+	
+	<!-- IntegrationManager  CXF-->
+	<target name="build_stub_integration_manager_cxf" depends="init_stub">
+		
+		<!-- generazione Stub IntegrationManager.MessageBox -->
+		<echo message="${build}"/>
+		<mkdir dir="${build}/srcStubMessageBoxCXF" />
+		<mkdir dir="${build}/buildStubMessageBoxCXF" />
+		<antcall target="build_cxf">
+			<param name="stubBuild.srcDir" value="${build}/srcStubMessageBoxCXF"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="${appServer_url}/openspcoop2/IntegrationManager/MessageBox?wsdl"/>
+			<param name="stubBuild.buildDir" value="${build}/buildStubMessageBoxCXF"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist}/openspcoop2_integrationManagerStub_messageBox_cxf.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.pdd.services.cxf"/>
+		</antcall>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/openspcoop2_integrationManagerStub_messageBox_cxf.jar" todir="${required_lib}/stub/cxf" />
+		
+		
+		<!-- generazione Stub IntegrationManager.PD -->
+		<mkdir dir="${build}/srcStubPDCXF" />
+		<mkdir dir="${build}/buildStubPDCXF" />
+		<antcall target="build_cxf">
+			<param name="stubBuild.srcDir" value="${build}/srcStubPDCXF"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="${appServer_url}/openspcoop2/IntegrationManager/PD?wsdl"/>
+			<param name="stubBuild.buildDir" value="${build}/buildStubPDCXF"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist}/openspcoop2_integrationManagerStub_pd_cxf.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.pdd.services.cxf"/>
+		</antcall>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/openspcoop2_integrationManagerStub_pd_cxf.jar" todir="${required_lib}/stub/cxf" />
+		
+		
+		<!-- Genero JAR Complessivo -->
+		<jar jarfile="${dist}/openspcoop2_integrationManagerStub_cxf.jar">
+			<zipfileset dir="${build}/buildStubMessageBoxCXF" />
+			<zipfileset dir="${build}/buildStubPDCXF" />
+		</jar>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/openspcoop2_integrationManagerStub_cxf.jar" todir="${required_lib}/stub/cxf" />
+		
+	</target>
+	
+	
+	
+	
+	
+	
+</project>

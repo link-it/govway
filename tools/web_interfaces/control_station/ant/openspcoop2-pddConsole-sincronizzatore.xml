@@ -1,0 +1,57 @@
+<project name="openspcoop2-sincronizzatore-pddConsole">
+    <description>
+        Avvia il sincronizzatore
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<!-- Indicazione sulla versione di jboss -->
+	<var name="jboss_jars" value="jbossas/${as}"/>
+	<runtarget target="check_as_version" />	
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<var name="jboss_jars" value="jbossas"/> <!-- In modo da non rilevare nessun jar -->
+		</then>
+	</if>
+	
+	<path id="classpath_script">
+		<fileset dir="${openspcoop2_lib}/${jboss_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement path="${required_lib_pddConsole}/jibx/jibx-run-1.2.3.jar" />
+		<pathelement path="${required_lib_pddConsole}/jibx/xpp3-1.2.3.jar" />
+		<pathelement path="${required_lib_pddConsole}/log/log4j-1.2.16.jar" />
+		<pathelement path="${required_lib_pddConsole}/commons/commons-logging-1.1.1.jar" />
+		<pathelement path="${required_lib_pddConsole}/commons/commons-discovery-0.5.jar" />
+		<pathelement path="${required_lib_pddConsole}/shared/xercesImpl-2.9.1.jar" />
+		<pathelement path="${required_lib_pddConsole}/shared/wsdl4j-1.6.2.jar" />
+		<pathelement path="${required_lib_pddConsole}/shared/soap.jar" />
+		<pathelement path="${required_lib_pddConsole}/shared/uddi4j-2.0.5.jar" />
+		<pathelement path="${required_lib_pddConsole}/shared/mailapi-1.4.4.jar" />
+		<pathelement path="${required_lib_pddConsole}/shared/activation-1.1.1.jar" />
+	</path>
+	
+	
+	<target name="runSincronizzatore_openspcoop2_pddConsole">
+
+		<java classname="org.openspcoop2.web.ctrlstat.core.Sincronizzatore" fork="false">
+			<classpath>
+				<path refid="classpath_script" />
+				<fileset dir="${dist_pddConsole}" includes="**/*.jar" />
+				<pathelement path="${Jdbclib}" />
+				<pathelement path="deploy/cfg" />
+				<pathelement path="${ws_stub_gestore_eventi}/openspcoop_gestoreEventi_stub.jar" />
+				<pathelement path="${ws_stub_management}/openspcoop_management_configurazione_stub.jar" />
+				<pathelement path="${ws_stub_management}/openspcoop_management_registro_stub.jar" />
+			</classpath>
+		</java>
+		
+	</target>
+	
+</project>

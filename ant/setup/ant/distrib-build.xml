@@ -1,0 +1,317 @@
+
+<project name="setup-distrib" basedir=".">
+	
+	<description>
+        	SETUP DISTRIB
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<target name="make-distrib">
+		
+		<!-- Istruzioni -->
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="jboss.*"/>
+				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			</or>	
+			<then>
+				<if>
+					<or>
+						<equals arg1="${antinstaller_as}" arg2="jboss4" />
+						<equals arg1="${antinstaller_as}" arg2="jboss5" />
+						<equals arg1="${antinstaller_as}" arg2="jboss6" />
+					</or>
+					<then>
+						<copy file="${deploy_resources}/INSTALL_JBOSS_v4_v5_v6" tofile="${dist}/INSTALL.txt" />
+					</then>
+					<else>
+						<copy file="${deploy_resources}/INSTALL_JBOSS_v7_v8" tofile="${dist}/INSTALL.txt" />
+					</else>
+				</if>
+			</then>
+			<else>
+				<copy file="${deploy_resources}/INSTALL_TOMCAT" tofile="${dist}/INSTALL.txt" />
+			</else>
+		</if>
+		
+		<!-- Datasource -->
+		<mkdir dir="${dist}/datasource"/>
+		<copy todir="${dist}/datasource">
+		    <fileset dir="${tmp_ds}">
+		      <include name="*.xml"/>
+		    </fileset>
+		</copy>
+		
+		<!-- SQL -->
+		<mkdir dir="${dist}/sql"/>
+		<copy file="${tmp_sql}/OpenSPCoop2.sql" todir="${dist}/sql"/>
+		<mkdir dir="${dist}/sql/utilities"/>
+		<copy todir="${dist}/sql/utilities">
+			<fileset dir="${tmp_sql}">
+		    	<include name="OpenSPCoop2_*drop.sql"/>
+				<include name="OpenSPCoop2_*delete.sql"/>
+			</fileset>
+		</copy>
+		
+		<!-- Archivio -->
+		<mkdir dir="${dist}/archivi"/>
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="jboss.*"/>
+				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			</or>	
+			<then>
+				<antcall target="_prepareArchivioJboss"/>
+			</then>
+			<else>
+				<antcall target="_prepareArchivioTomcat"/>
+			</else>		
+		</if>
+		
+	</target>
+	
+	<target name="_prepareArchivioJboss">
+		<copy todir="${dist}/archivi/OpenSPCoop2">
+		    <fileset dir="${tmp_archivi}/OpenSPCoop2.ear"/>
+		</copy>
+		
+		<!-- *** Aggiunta dell'applicazione pddConsole ***-->
+		<if>
+			<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+			<then>
+				<fileset dir="${tmp_archivi}/pddConsole.war/WEB-INF/lib" id="pddConsole.jar">
+					<include name="*.jar"/>
+				</fileset>
+				<pathconvert pathsep=" " property="pddConsole.classpath" refid="pddConsole.jar">
+					<map from="${tmp_archivi}/pddConsole.war/WEB-INF/lib/" to="lib/"/>
+				</pathconvert>
+				<var name="manifest.classpath.pddConsole" value="${pddConsole.classpath}" />	
+				<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
+				    <fileset dir="${tmp_archivi}/pddConsole.war/WEB-INF/lib"/>
+				</move>
+				<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
+				    <fileset dir="${tmp_archivi}/pddConsole.war/WEB-INF/classes"/>
+				</move>
+				<war destfile="${dist}/archivi/OpenSPCoop2/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war">
+					<manifest>
+						<attribute name="Class-Path" value="${manifest.classpath.pddConsole} properties/" />
+					</manifest>
+				</war>
+			</then>
+			<else>
+				<zip destfile="${dist}/archivi/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war"/>
+			</else>
+		</if>
+				
+		<!-- *** Aggiunta dell'applicazione pddLoader ***-->
+		<if>
+			<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+			<then>
+				<fileset dir="${tmp_archivi}/pddLoader.war/WEB-INF/lib" id="openspcoop2_loader.jar">
+					<include name="*.jar"/>
+				</fileset>
+				<pathconvert pathsep=" " property="openspcoop2_loader.classpath" refid="openspcoop2_loader.jar">
+					<map from="${tmp_archivi}/pddLoader.war/WEB-INF/lib/" to="lib/"/>
+				</pathconvert>
+				<var name="manifest.classpath.openspcoop2_loader" value="${openspcoop2_loader.classpath}" />	
+				<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
+				    <fileset dir="${tmp_archivi}/pddLoader.war/WEB-INF/lib"/>
+				</move>
+				<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
+				    <fileset dir="${tmp_archivi}/pddLoader.war/WEB-INF/classes"/>
+				</move>
+				<war destfile="${dist}/archivi/OpenSPCoop2/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war">
+					<manifest>
+						<attribute name="Class-Path" value="${manifest.classpath.openspcoop2_loader} properties/" />
+					</manifest>
+				</war>
+			</then>
+			<else>
+				<zip destfile="${dist}/archivi/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war"/>
+			</else>
+		</if>
+				
+		<!-- *** Correzione Application.xml ***-->
+		<if>
+			<or>
+				<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+				<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+			</or>
+			<then>
+		        <replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
+				<if>
+					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+					<then>
+		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[
+	<module>
+		<web>
+			<web-uri>pddConsole.war</web-uri>
+			<context-root>pddConsole</context-root>
+		</web>
+	</module>
+]]>
+		        		</concat>
+					</then>
+				</if>
+				<if>
+					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+					<then>
+		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[
+	<module>
+		<web>
+			<web-uri>pddLoader.war</web-uri>
+			<context-root>pddLoader</context-root>
+		</web>
+	</module>
+]]>
+		        		</concat>
+					</then>
+				</if>
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[
+</application>
+]]>
+		        </concat>
+				<antcall target="dos2unix">
+					<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
+				    <param name="file" value="application.xml"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<!--*** Correzione jboss-deployment-structure *** -->
+		<if>
+			<and>
+				<or>
+					<equals arg1="${antinstaller_as}" arg2="jboss7" />
+					<equals arg1="${antinstaller_as}" arg2="jboss8" />
+					<equals arg1="${antinstaller_as}" arg2="wildfly8" />
+				</or>
+				<or>
+					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+				</or>
+			</and>
+			<then>
+				<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
+				<if>
+					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+					<then>
+						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+<![CDATA[
+    <sub-deployment name="pddConsole.war">
+        <exclusions>
+                <module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.log4j"/>  
+                <module name="org.jboss.logging"/>
+        </exclusions>
+    </sub-deployment>
+]]>
+						</concat>
+					</then>
+				</if>
+				<if>
+					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+					<then>
+						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+<![CDATA[							
+    <sub-deployment name="pddLoader.war">
+        <exclusions>
+                <module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.log4j"/>  
+                <module name="org.jboss.logging"/>
+        </exclusions>
+    </sub-deployment>
+]]>
+						</concat>
+					</then>
+				</if>		
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+<![CDATA[
+</jboss-deployment-structure>
+]]>
+
+				</concat>
+				<antcall target="dos2unix">
+					<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
+				    <param name="file" value="jboss-deployment-structure.xml"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<!-- *** Aggiunta dell'applicazione OpenSPCoopV1BackwardCompatibility.war ***-->
+		<if>
+			<and>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<istrue value="${antinstaller_backward_compatibility}"/>
+			</and>
+			<then>
+				<war destfile="${dist}/archivi/OpenSPCoop2/OpenSPCoopV1BackwardCompatibility.war" basedir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war" />
+				
+		        <replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
+		        <concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+	&lt;module&gt;
+		&lt;web&gt;
+			&lt;web-uri&gt;OpenSPCoopV1BackwardCompatibility.war&lt;/web-uri&gt;
+			&lt;context-root&gt;openspcoop&lt;/context-root&gt;
+		&lt;/web&gt;
+	&lt;/module&gt;
+&lt;/application&gt;
+		        </concat>
+				<antcall target="dos2unix">
+					<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
+				    <param name="file" value="application.xml"/>
+				</antcall>
+				
+				<if>
+					<or>
+						<equals arg1="${antinstaller_as}" arg2="jboss7" />
+						<equals arg1="${antinstaller_as}" arg2="jboss8" />
+						<equals arg1="${antinstaller_as}" arg2="wildfly8" />
+					</or>
+					<then>
+						<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
+						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+					<![CDATA[
+    <sub-deployment name="OpenSPCoopV1BackwardCompatibility.war">
+        <exclusions>
+                <module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.log4j"/>  
+                <module name="org.jboss.logging"/>
+        </exclusions>
+    </sub-deployment>
+</jboss-deployment-structure>
+]]>
+						</concat>
+						<antcall target="dos2unix">
+							<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
+						    <param name="file" value="jboss-deployment-structure.xml"/>
+						</antcall>
+					</then>
+				</if>
+				
+			</then>
+		</if>
+		
+		<!-- ** end ** -->
+		<zip destfile="${dist}/archivi/OpenSPCoop2.ear" basedir="${dist}/archivi/OpenSPCoop2"/>
+		<delete dir="${dist}/archivi/OpenSPCoop2"/>
+		
+	</target>
+	
+	<target name="_prepareArchivioTomcat">
+		<zip destfile="${dist}/archivi/openspcoop2.war" basedir="${tmp_archivi}/openspcoop2.war"/>
+		<zip destfile="${dist}/archivi/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war"/>
+		<zip destfile="${dist}/archivi/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war"/>
+	</target>
+		
+</project>

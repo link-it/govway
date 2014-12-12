@@ -1,0 +1,89 @@
+<project name="openspcoop2-build-pools">
+    <description>
+        Produzione del war della PddConsole
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.pools.*' -->
+	<target name="war_openspcoop2Pools">
+
+		<!-- driver_jdbc -->
+		<mkdir dir="${build_openspcoop2Pools}/tmp_driver_jdbc"/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${driverJDBC}" arg2="$${driverJDBC}"/>
+						<equals arg1="${driverJDBC}" arg2="driverJDBC"/>
+						<equals arg1="${driverJDBC}" arg2="PATH_DRIVER_JDBC"/>
+					</or>
+					<then>
+						<fail message="Parametro driverJDBC non correttamente inizializzato nel local_env.xml"/>
+					</then>
+					<else>
+						<copy file="${driverJDBC}" todir="${build_openspcoop2Pools}/tmp_driver_jdbc" />
+					</else>
+				</if>
+			</then>
+		</if>
+		
+		<war destfile="${dist_openspcoop2Pools}/openspcoop2Pools.war" webxml="${src_openspcoop2Pools}/WEB-INF/web.xml">
+			<!-- Informazioni sulla versione -->
+			<fileset dir="${openspcoop2}">
+				<include name="README.txt"/>
+				<include name="COPYING"/>
+			</fileset>
+
+			<webinf dir="${src_openspcoop2Pools}/WEB-INF" >
+				<include name="${jboss_classloading}" />
+				<include name="${jboss_scanning}" />
+				<include name="${jboss_deployment_structure}" />
+			</webinf>
+			<classes dir="deploy/properties/">
+				<include name="openspcoop2_pools.log4j.properties"/>
+				<include name="openspcoop2_pools.properties"/>
+				<include name="${log4j_properties}" />
+			</classes>
+			<lib dir="${dist_openspcoop2Pools}">
+				<include name="openspcoop2_pools-core_*.jar"/>
+				<include name="${openspcoop2_pool_driver_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2}/core/dist">
+				<include name="openspcoop2_utils*.jar"/>
+			</lib>
+			<lib dir="${required_lib_openspcoop2Pools}/jibx">
+				<include name="xpp3-1.2.3.jar"/>
+				<include name="jibx-run-1.2.3.jar"/>
+			</lib>
+			<lib dir="${required_lib_openspcoop2Pools}/log">
+				<include name="${log4j_jar}"/>
+			</lib>
+			<lib dir="${required_lib_openspcoop2Pools}/jax">
+				<include name="${jaxp_ri_jar}" />
+			</lib>
+			<lib dir="${required_lib_openspcoop2Pools}/commons">
+				<include name="${commons_pool_jar}" />
+				<include name="${commons_dbcp_jar}" />
+			</lib>
+			<lib dir="${build_openspcoop2Pools}/tmp_driver_jdbc">
+				<include name="*"/>
+			</lib>
+		</war>
+		
+		<delete dir="${build_openspcoop2Pools}/tmp_driver_jdbc"/>
+		
+	</target>
+	
+</project>

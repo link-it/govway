@@ -1,0 +1,352 @@
+# Punto di accesso della porta di dominio
+urlPortaDiDominio=http://localhost:8080/openspcoop2/spcoop/PD/
+
+# Se si indica la validazione openspcoop, sara' utilizzata la PD 'PDValOpenSPCoop'.
+# Se si indica la validazione wsdl, sara' utilizzata la PD 'PDValWSDL'
+# I valori indicati nella proprieta' PD saranno usati come input url based delle porte.
+# Se invece si indica 'PD', verra' utilizzata proprio la porte delegata indicata nella proprieta'.
+tipoPD=wsdl
+#tipoPD=openspcoop
+#tipoPD=PD
+
+#------------------------------------------------------------------------
+# Test 1 Invocazione servizio GestioneUtentiWrappedDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile wrapped document literal
+#
+
+# operation: registrazione
+#PD = GestioneUtentiWrappedDocumentLiteral@TIPO@/registrazioneUtenteWDL
+#operazione = GestioneUtentiWrappedDocumentLiteral_registrazione
+
+# operation: eliminazione
+#PD = GestioneUtentiWrappedDocumentLiteral@TIPO@/eliminazioneUtenteWDL
+#operazione = GestioneUtentiWrappedDocumentLiteral_eliminazione 
+#------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+# Test 2 Invocazione servizio GestioneUtentiWrappedDocumentLiteral
+# Scopo del test: identificazione contenuto applicativo non corretto
+#                 secondo il wsdl definitorio (xsd)
+#PD = GestioneUtentiWrappedDocumentLiteral@TIPO@/registrazioneUtenteWDL
+#operazione = readFileXML
+#file = files/operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml
+#------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+# Test 3 Invocazione servizio GestioneUtentiWrappedDocumentLiteral
+# Scopo del test: corretta validazione del contenuto 
+#                 ma invocazione della porta delegata, con azione 'eliminazione'
+#                 mentre contenuto applicativo dell'operation 'registrazione'
+#                 Viene riconosciuto che il contenuto e' di un'altra operation
+#                 del port type
+#PD = GestioneUtentiWrappedDocumentLiteral@TIPO@/registrazioneUtenteWDL
+#operazione = GestioneUtentiWrappedDocumentLiteral_eliminazione
+#------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+# Test 4 Invocazione servizio GestioneUtentiWrappedDocumentLiteral
+# Scopo del test: corretta validazione del contenuto
+#                 ma invocazione con una SOAPAction non conforme
+#                 a quanto indicato nel wsdl
+#PD = GestioneUtentiWrappedDocumentLiteral@TIPO@/registrazioneUtenteWDL
+#operazione = readFileXML
+#soapAction = SOAP_ACTION_ERRATA
+#file = files/operazioneRegistrazioneUtenteWDL.xml
+#------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+# Test 5 Invocazione servizio AggiornamentoUtentiWrappedDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile wrapped document literal
+#                 Il portType ridefinisce il profilo collaborazione
+
+# operation: notificaAggiornamento
+#PD = AggiornamentoUtentiWrappedDocumentLiteral@TIPO@/notificaAggiornamentoUtenteWDL
+#operazione = AggiornamentoUtentiWrappedDocumentLiteral_notifica
+
+# operation: aggiornamento
+#PD = AggiornamentoUtentiWrappedDocumentLiteral@TIPO@/aggiornamentoUtenteWDL
+#operazione = AggiornamentoUtentiWrappedDocumentLiteral_aggiornamento
+#------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+# Test 6 Invocazione servizio AggiornamentoAsincronoWrappedDocumentLiteral e EsitoAggiornamentoAsincronoWrappedDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile wrapped document literal
+#                 E' stato implementato il profilo Asincrono Simmetrico
+# operation: richiestaAsincronaSimmetrica
+
+# ---- Validazione WSDL ---:
+
+# operation: richiestaAsincronaSimmetrica
+#tipoPD=PD
+#PD = AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral
+#operazione = AggiornamentoAsincronoWrappedDocumentLiteral_as
+#username=AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral
+#password=123456
+
+# operation: rispostaAsincronaSimmetrica
+#tipoPD=PD
+#PD = EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral
+#operazione = readFileXML
+#soapAction = esitoAggiornamentoUtenteAsincronoSimmetricoWDL
+#file = files/esitoAggiornamentoUtenteAsincronoSimmetricoWDL.xml
+#riferimentoMessaggio=
+
+# ---- Validazione OpenSPCoop ---:
+
+# operation: richiestaAsincronaSimmetrica
+#tipoPD=PD
+#PD = AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop
+#operazione = AggiornamentoAsincronoWrappedDocumentLiteral_as
+#username=AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral
+#password=123456
+
+# operation: rispostaAsincronaSimmetrica
+#tipoPD=PD
+#PD = EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop
+#operazione = readFileXML
+#soapAction = esitoAggiornamentoUtenteAsincronoSimmetricoWDL
+#file = files/esitoAggiornamentoUtenteAsincronoSimmetricoWDL.xml
+#riferimentoMessaggio=
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 7 Invocazione servizio AggiornamentoAsincronoWrappedDocumentLiteral e EsitoAggiornamentoAsincronoWrappedDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile wrapped document literal
+#                 E' stato implementato il profilo Asincrono Asimmetrico
+
+# ---- Validazione WSDL ---:
+
+# operation: richiestaAsincronaAsimmetrica
+#tipoPD=PD
+#PD = AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral
+#operazione = AggiornamentoAsincronoWrappedDocumentLiteral_aa
+
+# operation: rispostaAsincronaAsimmetrica
+#tipoPD=PD
+#PD = EsitoAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral
+#operazione = readFileXML
+#soapAction = esitoAggiornamentoUtenteAsincronoAsimmetricoWDL
+#file = files/esitoAggiornamentoUtenteAsincronoAsimmetricoWDL.xml
+#riferimentoMessaggio=
+
+# ---- Validazione OpenSPCoop ---:
+
+# operation: richiestaAsincronaAsimmetrica
+#tipoPD=PD
+#PD = AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop
+#operazione = AggiornamentoAsincronoWrappedDocumentLiteral_aa
+
+# operation: rispostaAsincronaAsimmetrica
+#tipoPD=PD
+#PD = EsitoAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop
+#operazione = readFileXML
+#soapAction = esitoAggiornamentoUtenteAsincronoAsimmetricoWDL
+#file = files/esitoAggiornamentoUtenteAsincronoAsimmetricoWDL.xml
+#riferimentoMessaggio=
+
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 8 Invocazione servizio GestioneUtentiDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile document literal (no wrapped)
+#		  Il body e' formato da tre root-element:
+#                 - nominativo
+#                 - indirizzo
+#                 - ora-registrazione
+
+# operation: registrazione
+#PD = GestioneUtentiDocumentLiteral@TIPO@/registrazioneUtenteDL
+#operazione = GestioneUtentiDocumentLiteral_registrazione
+
+# operation: eliminazione
+#PD = GestioneUtentiDocumentLiteral@TIPO@/eliminazioneUtenteDL
+#operazione = GestioneUtentiDocumentLiteral_eliminazione 
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 9 Invocazione servizio GestioneUtentiDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile document literal (no wrapped)
+#                 Il  body e' pero formato da piu' root-element di quanti
+#                 sono quelli attesi:
+#                 - nominativo
+#                 - indirizzo
+#                 - ora-registrazione
+#                 - nominativo (!in PIU'!)
+
+# operation: registrazione
+#PD = GestioneUtentiDocumentLiteral@TIPO@/registrazioneUtenteDL
+#operazione = readFileXML
+#file = files/registrazioneDocumentLiteralConTroppiParametriInput.xml
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 10 Invocazione servizio GestioneUtentiDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile document literal (no wrapped)
+#                 Il  body e' pero formato da meno root-element di quanti
+#                 sono quelli attesi:
+#                 - nominativo
+#                 - indirizzo
+#                 - ora-registrazione (!ASSENTE!)
+
+# operation: registrazione
+#PD = GestioneUtentiDocumentLiteral@TIPO@/registrazioneUtenteDL
+#operazione = readFileXML
+#file = files/registrazioneDocumentLiteralConPochiParametriInput.xml
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 11 Invocazione servizio GestioneUtentiDocumentLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile document literal (no wrapped)
+#                 Il  body e' pero formato da root-element di cui 
+#                 uno non e' quello atteso:
+#                 - aggiorna-nominativo (!Atteso era nominativo!)
+#                 - indirizzo
+#                 - ora-registrazione
+
+# operation: registrazione
+#PD = GestioneUtentiDocumentLiteral@TIPO@/registrazioneUtenteDL
+#operazione = readFileXML
+#file = files/registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 12 Invocazione servizio GestioneUtentiRPCLiteral
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile rpc literal
+
+# operation: registrazione
+#PD = GestioneUtentiRPCLiteral@TIPO@/registrazioneUtenteRPCL
+#operazione = GestioneUtentiRPCLiteral_registrazione
+
+# operation: eliminazione
+#PD = GestioneUtentiRPCLiteral@TIPO@/eliminazioneUtenteRPCL
+#operazione = GestioneUtentiRPCLiteral_eliminazione 
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 13 Invocazione servizio GestioneUtentiRPCEncoded
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile rpc encoded
+
+# operation: registrazione
+#PD = GestioneUtentiRPCEncoded@TIPO@/registrazioneUtenteRPCE
+#operazione = GestioneUtentiRPCEncoded_registrazione
+
+# operation: eliminazione
+#PD = GestioneUtentiRPCEncoded@TIPO@/eliminazioneUtenteRPCE
+#operazione = GestioneUtentiRPCEncoded_eliminazione 
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 14 Invocazione servizio GestioneUtentiOverloadedOperations
+# Scopo del test: corretta validazione del contenuto applicativo 
+#                 realizzato in stile rpc encoded
+#                 Le operation comprendono tre operazioni con lo stesso nome
+#                 e argomento diverso
+
+# operation: argomenti (nominativo,indirizzo,ora-registrazione)
+#PD = GestioneUtentiOverloadedOperations@TIPO@/registrazioneUtenteOverloadedOperations
+#operazione = GestioneUtentiOverloadedOperations_Signature1
+
+# operation: argomenti (nominativo,indirizzo)
+#PD = GestioneUtentiOverloadedOperations@TIPO@/registrazioneUtenteOverloadedOperations
+#operazione = GestioneUtentiOverloadedOperations_Signature2
+
+# operation: argomenti (nominativo,ora-registrazione)
+#PD = GestioneUtentiOverloadedOperations@TIPO@/registrazioneUtenteOverloadedOperations
+#operazione = GestioneUtentiOverloadedOperations_Signature3
+#------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------
+# Test 15 Invocazione servizio GestioneUtentiStileIbrido
+# Scopo del test: Ridefinizione dello style nelle operation:
+#                 - registrazioneUtenteWDL realizzato in stile wrapped document literal
+#                 - registrazioneUtenteRPCL realizzato in stile rpc literal
+#                 - registrazioneUtenteRPCE realizzato in stile rpc encoded
+
+# operation: registrazione realizzato come WrappedDocumentLiteral
+#PD = GestioneUtentiStileIbrido@TIPO@/registrazioneUtenteWDL
+#operazione=GestioneUtentiStileIbrido_WrappedDocumentLiteral
+
+# operation: registrazione realizzato come RPCLiteral
+#PD = GestioneUtentiStileIbrido@TIPO@/registrazioneUtenteRPCL
+#operazione=GestioneUtentiStileIbrido_RPCLiteral
+
+# operation: registrazione realizzato come RPCEncoded
+#PD = GestioneUtentiStileIbrido@TIPO@/registrazioneUtenteRPCE
+#operazione=GestioneUtentiStileIbrido_RPCEncoded
+#------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+# ---------------- TestWS diretti ----------------
+
+# Servizio GestioneUtentiWrappedDocumentLiteral 
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiWrappedDocumentLiteral
+#operazione=GestioneUtentiWrappedDocumentLiteral_registrazione
+#operazione=GestioneUtentiWrappedDocumentLiteral_eliminazione
+
+# Servizio AggiornamentoUtentiWrappedDocumentLiteral
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/AggiornamentoUtentiWrappedDocumentLiteral
+#operazione=AggiornamentoUtentiWrappedDocumentLiteral_notifica
+#operazione=AggiornamentoUtentiWrappedDocumentLiteral_aggiornamento
+
+# Servizio AggiornamentoAsincronoWrappedDocumentLiteral
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral
+#operazione=AggiornamentoAsincronoWrappedDocumentLiteral_as
+#operazione=AggiornamentoAsincronoWrappedDocumentLiteral_aa
+
+# Servizio EsitoAggiornamentoAsincronoWrappedDocumentLiteral
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/EsitoAggiornamentoAsincronoWrappedDocumentLiteral
+#operazione=EsitoAggiornamentoAsincronoWrappedDocumentLiteral_as
+#operazione=EsitoAggiornamentoAsincronoWrappedDocumentLiteral_aa
+
+# Servizio GestioneUtentiDocumentLiteral
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiDocumentLiteral
+#operazione=GestioneUtentiDocumentLiteral_registrazione
+#operazione=GestioneUtentiDocumentLiteral_eliminazione
+
+# Servizio GestioneUtentiRPCLiteral
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCLiteral
+#operazione=GestioneUtentiRPCLiteral_registrazione
+#operazione=GestioneUtentiRPCLiteral_eliminazione
+
+# Servizio GestioneUtentiRPCEncoded
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCEncoded
+#operazione=GestioneUtentiRPCEncoded_registrazione
+#operazione=GestioneUtentiRPCEncoded_eliminazione
+
+# Servizio GestioneUtentiStileIbrido
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiStileIbrido
+#operazione=GestioneUtentiStileIbrido_WrappedDocumentLiteral
+#operazione=GestioneUtentiStileIbrido_RPCLiteral
+#operazione=GestioneUtentiStileIbrido_RPCEncoded
+
+# Servizio GestioneUtentiOverloadedOperations
+#urlPortaDiDominio=http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiOverloadedOperations
+#operazione=GestioneUtentiOverloadedOperations_Signature1
+#operazione=GestioneUtentiOverloadedOperations_Signature2
+#operazione=GestioneUtentiOverloadedOperations_Signature3

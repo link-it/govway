@@ -1,0 +1,84 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:messaging:1.X">
+		...
+                <address-settings>
+		    ...
+                    <address-setting match="jms.queue.toImbustamento">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toInoltroBuste">
+                        <redelivery-delay>60000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toInoltroRisposte">
+                        <redelivery-delay>60000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toSbustamento">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toConsegnaContenutiApplicativi">
+                        <redelivery-delay>60000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toImbustamentoRisposte">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toSbustamentoRisposte">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toRicezioneBuste">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.toRicezioneContenutiApplicativi">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                </address-settings>
+		...
+                <jms-destinations>
+		    ...
+                    <jms-queue name="toImbustamento">
+                        <entry name="/queue/toImbustamento"/>
+                    </jms-queue>
+                    <jms-queue name="toInoltroBuste">
+                        <entry name="/queue/toInoltroBuste"/>
+                    </jms-queue>
+                    <jms-queue name="toInoltroRisposte">
+                        <entry name="/queue/toInoltroRisposte"/>
+                    </jms-queue>
+                    <jms-queue name="toSbustamento">
+                        <entry name="/queue/toSbustamento"/>
+                    </jms-queue>
+                    <jms-queue name="toConsegnaContenutiApplicativi">
+                        <entry name="/queue/toConsegnaContenutiApplicativi"/>
+                    </jms-queue>
+                    <jms-queue name="toImbustamentoRisposte">
+                        <entry name="/queue/toImbustamentoRisposte"/>
+                    </jms-queue>
+                    <jms-queue name="toSbustamentoRisposte">
+                        <entry name="/queue/toSbustamentoRisposte"/>
+                    </jms-queue>
+                    <jms-queue name="toRicezioneBuste">
+                        <entry name="/queue/toRicezioneBuste"/>
+                    </jms-queue>
+                    <jms-queue name="toRicezioneContenutiApplicativi">
+                        <entry name="/queue/toRicezioneContenutiApplicativi"/>
+                    </jms-queue>
+                    <jms-topic ...>
+		    ...
+                </jms-destinations>
+		...
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/audit/appender" targetNamespace="http://www.openspcoop2.org/audit/appender"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xsd:annotation>
+        <xsd:appinfo>
+            <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:info version="1.0" project-name="AuditAppender">
+                    <linkit:authors>
+                        <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                    </linkit:authors>
+                </linkit:info>
+                <linkit:jax-ws xml-annotations="false" ws="false"/>
+            </linkit:project_generator>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:dao>
+                    <linkit:sql>
+                        <linkit:sql-script generate="true">
+                            <linkit:sql-table-list>
+                                <linkit:sql-comment><![CDATA[**** Audit Appenders ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="audit-operations" object-type="audit-operations"/>
+                                <linkit:sql-table object-name="audit-binaries" object-type="audit-binaries"/>
+                            </linkit:sql-table-list>
+                        </linkit:sql-script>
+                        <linkit:sql-mapping single-table-mapping="false"
+                            on-delete-cascade="false" force-tolowercase-sqlname="false"/>
+                    </linkit:sql>
+                </linkit:dao>
+            </linkit:generator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    
+    
+    
+    <xsd:element name="audit-operations">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="audit_operations" sequence-cycle="true">
+                        <linkit:sql-table-index name="audit_filter">
+                            <linkit:sql-table-index-field name="tipo_operazione"/>
+                            <linkit:sql-table-index-field name="tipo"/>
+                            <linkit:sql-table-index-field name="object_id"/>
+                            <linkit:sql-table-index-field name="utente"/>
+                            <linkit:sql-table-index-field name="stato"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>    
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tipo_operazione" type="TipoOperazione">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo_operazione"/>
+                           </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-column-comment><![CDATA[non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="object_id" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="object_id" text="true"/>
+                                <linkit:sql-column-comment><![CDATA[non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="object_old_id" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="object_old_id" text="true"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="utente" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="utente"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stato" type="Stato">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stato"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="object_details" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="object_details" medium-text="true"/>
+                                <linkit:sql-column-comment><![CDATA[Dettaglio oggetto in gestione (Rappresentazione tramite JSON o XML format)]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="object_class" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="object_class"/>
+                                <linkit:sql-column-comment><![CDATA[Class, serve eventualmente per riottenere l'oggetto dal dettaglio
+non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="error" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="error" text="true"/>
+                                <linkit:sql-column-comment><![CDATA[Eventuale messaggio di errore]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="time_request" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="time_request"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="time_execute" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="time_execute"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:simpleType name="TipoOperazione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="LOGIN"/>
+            <xsd:enumeration value="LOGOUT"/>
+            <xsd:enumeration value="ADD"/>
+            <xsd:enumeration value="CHANGE"/>
+            <xsd:enumeration value="DEL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="Stato">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="requesting"/>
+            <xsd:enumeration value="error"/>
+            <xsd:enumeration value="completed"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+
+    <xsd:element name="audit-binaries">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="audit_binaries" sequence-cycle="true">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="audit-operations"
+                            reference-object-type="audit-operations"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_audit_operation"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="binary_id"/>
+                            <linkit:sql-table-unique-field name="id_audit_operation"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="binary_id" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="binary_id"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="checksum" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="checksum"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_audit_operation" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_audit_operation"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="time_rec" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="time_rec" default-current-time="true"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+</xsd:schema>

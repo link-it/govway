@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.openspcoop2.org/example" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:spc="http://www.openspcoop2.org/example" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:allegatoimportwsdl="http://www.openspcoop2.org/example/allegato/importwsdl" xmlns:specificasemiformaleimportwsdl="http://www.openspcoop2.org/example/specificasemiformale/importwsdl">
+ 
+  <wsdl:types>
+  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.openspcoop2.org/example">
+     <xsd:import namespace="http://www.openspcoop2.org/example" schemaLocation="InterfacciaDefinitoria.xsd"/>
+  </xsd:schema>
+  </wsdl:types>
+ 
+  <wsdl:import namespace="http://www.openspcoop2.org/example/allegato/importwsdl" location="allegatoImportFromWSDL.xsd"/>
+  <!--<wsdl:import namespace="http://www.openspcoop2.org/example/specificasemiformale/importwsdl" location="specificaSemiformaleImportFromWSDL.xsd"/>-->
+
+  <!-- Es. OneWay -->
+  <wsdl:message name="notificaRequest">
+    <wsdl:part name="notificaRequestPart" element="spc:notificaRequest">
+    </wsdl:part>
+    <wsdl:part name="notificaRequestPart2" element="allegatoimportwsdl:AllegatoImportatoDirettamenteInWSDL">
+    </wsdl:part>
+    <!--<wsdl:part name="notificaRequestPart3" element="specificasemiformaleimportwsdl:SpecificaSemiformaleImportatoDirettamenteInWSDL">
+    </wsdl:part>-->
+  </wsdl:message>
+
+  <!-- Es. Sincrono -->
+  <wsdl:message name="aggiornamentoRequest">
+    <wsdl:part name="aggiornamentoRequestPart" element="spc:aggiornamentoRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="aggiornamentoResponse">
+    <wsdl:part name="aggiornamentoResponsePart" element="spc:aggiornamentoResponse">
+    </wsdl:part>
+  </wsdl:message>
+
+  <!-- Es. AsincronoSimmetrico -->
+  <wsdl:message name="richiestaAggiornamentoRequest">
+    <wsdl:part name="richiestaAggiornamentoRequestPart" element="spc:richiestaAggiornamentoRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaAggiornamentoResponse">
+    <wsdl:part name="richiestaAggiornamentoResponsePart" element="spc:richiestaAggiornamentoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="esitoAggiornamentoRequest">
+    <wsdl:part name="esitoAggiornamentoRequestPart" element="spc:esitoAggiornamentoRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="esitoAggiornamentoResponse">
+    <wsdl:part name="esitoAggiornamentoResponsePart" element="spc:esitoAggiornamentoResponse">
+    </wsdl:part>
+  </wsdl:message>
+
+  <!-- Es. AsincronoAsimmetrico -->
+  <wsdl:message name="richiestaRegistrazioneRequest">
+    <wsdl:part name="richiestaRegistrazioneRequestPart" element="spc:richiestaRegistrazioneRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaRegistrazioneResponse">
+    <wsdl:part name="richiestaRegistrazioneResponsePart" element="spc:richiestaRegistrazioneResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaStatoRegistrazioneRequest">
+    <wsdl:part name="richiestaStatoRegistrazioneRequestPart" element="spc:richiestaStatoRegistrazioneRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaStatoRegistrazioneResponse">
+    <wsdl:part name="richiestaStatoRegistrazioneResponsePart" element="spc:richiestaStatoRegistrazioneResponse">
+    </wsdl:part>
+  </wsdl:message> 
+  
+  <!-- Es. OneWay -->
+  <wsdl:portType name="Oneway">
+    <wsdl:operation name="notifica">
+      <wsdl:input message="spc:notificaRequest">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Es. Sincrono -->
+  <wsdl:portType name="Sincrono">
+    <wsdl:operation name="aggiornamento">
+      <wsdl:input message="spc:aggiornamentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:aggiornamentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Es. AsincronoSimmetrico -->
+  <wsdl:portType name="AsincronoSimmetricoRichiesta">
+    <wsdl:operation name="richiestaAggiornamento">
+      <wsdl:input message="spc:richiestaAggiornamentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaAggiornamentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="AsincronoSimmetricoRisposta">
+    <wsdl:operation name="esitoAggiornamento">
+      <wsdl:input message="spc:esitoAggiornamentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:esitoAggiornamentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Es. AsincronoAsimmetrico con port Type diversi -->
+  <wsdl:portType name="AsincronoAsimmetricoRichiesta">
+    <wsdl:operation name="richiestaRegistrazione">
+      <wsdl:input message="spc:richiestaRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="AsincronoAsimmetricoRisposta">
+    <wsdl:operation name="richiestaStatoRegistrazione">
+      <wsdl:input message="spc:richiestaStatoRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaStatoRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Es. AsincronoAsimmetrico con port Type uguale -->
+  <wsdl:portType name="AsincronoAsimmetrico">
+     <wsdl:operation name="richiestaRegistrazione">
+      <wsdl:input message="spc:richiestaRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="richiestaStatoRegistrazione">
+      <wsdl:input message="spc:richiestaStatoRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaStatoRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+
+</wsdl:definitions>

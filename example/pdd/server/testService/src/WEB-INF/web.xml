@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <display-name>TestService</display-name>
+  <description> Semplice applicazione di test</description>
+
+  <servlet>
+    <servlet-name>EchoService</servlet-name>
+    <servlet-class>org.openspcoop2.example.pdd.server.testservice.EchoService</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>PingService</servlet-name>
+    <servlet-class>org.openspcoop2.example.pdd.server.testservice.PingService</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>Soap11StresstestService</servlet-name>
+    <servlet-class>org.openspcoop2.example.pdd.server.testservice.Soap11StresstestService</servlet-class>
+  </servlet>
+    <servlet>
+    <servlet-name>Soap12StresstestService</servlet-name>
+    <servlet-class>org.openspcoop2.example.pdd.server.testservice.Soap12StresstestService</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>EchoService</servlet-name>
+    <url-pattern>/echo</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>PingService</servlet-name>
+    <url-pattern>/ping</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Soap11StresstestService</servlet-name>
+    <url-pattern>/stresstestSoap11</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Soap12StresstestService</servlet-name>
+    <url-pattern>/stresstestSoap12</url-pattern>
+  </servlet-mapping>
+
+</web-app>

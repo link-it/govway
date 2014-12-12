@@ -1,0 +1,19 @@
+   <xs:schema targetNamespace="http://www.openspcoop2.org/example"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                                >
+        <xs:element name="aggiornamentoNamespaceWSDLRequest">
+           <xs:complexType>
+               <xs:sequence>
+                  <xs:element maxOccurs="1" minOccurs="1" type="xs:string" name="req"/>
+               </xs:sequence>
+           </xs:complexType>
+        </xs:element>
+       
+	<xs:element name="aggiornamentoNamespaceWSDLResponse">
+           <xs:complexType>
+               <xs:sequence>
+		  <xs:element maxOccurs="1" minOccurs="1" type="xs:string" name="res"/>
+               </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+    </xs:schema>

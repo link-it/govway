@@ -1,0 +1,30 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header>
+	 <eGov_IT:Intestazione SOAP_ENV:actor="http://www.cnipa.it/eGov_it/portadominio" SOAP_ENV:mustUnderstand="1" xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eGov_IT="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/">
+   <eGov_IT:IntestazioneMessaggio>
+    <eGov_IT:Mittente>
+	    <eGov_IT:IdentificativoParte tipo="SPC">MinisteroFruitoreLineeGuida</eGov_IT:IdentificativoParte>
+    </eGov_IT:Mittente>
+    <eGov_IT:Destinatario>
+	    <eGov_IT:IdentificativoParte tipo="SPC">MinisteroErogatoreLineeGuida</eGov_IT:IdentificativoParte>
+    </eGov_IT:Destinatario>
+    <eGov_IT:ProfiloCollaborazione>EGOV_IT_ServizioSincrono</eGov_IT:ProfiloCollaborazione>
+    <eGov_IT:Servizio tipo="SPC">RichiestaStatoAvanzamento</eGov_IT:Servizio>
+    <eGov_IT:Azione>Collaborazione</eGov_IT:Azione>
+    <eGov_IT:Messaggio>
+	    <eGov_IT:Identificatore>MinisteroFruitoreLineeGuida_MinisteroFruitoreLineeGuidaSPCoopIT_6416206_2005-11-10_11:35</eGov_IT:Identificatore>
+	    <eGov_IT:OraRegistrazione tempo="EGOV_IT_SPC">2005-11-10T12:35:35</eGov_IT:OraRegistrazione>
+    </eGov_IT:Messaggio>
+    <eGov_IT:ProfiloTrasmissione confermaRicezione="false" inoltro="EGOV_IT_ALPIUUNAVOLTA"/>
+    <eGov_IT:Sequenza numeroProgressivo="3"/> 
+  </eGov_IT:IntestazioneMessaggio>
+ </eGov_IT:Intestazione>
+ </soapenv:Header>
+ <soapenv:Body>
+      <ns1:getQuote soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="urn:xmethods-delayed-quotes">
+   <symbol xmlns="" xmlns:se="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">IBM</symbol>
+  </ns1:getQuote>
+</soapenv:Body>
+</soapenv:Envelope>
+
+

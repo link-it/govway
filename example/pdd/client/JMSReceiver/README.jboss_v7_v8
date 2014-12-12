@@ -1,0 +1,36 @@
+/* ***** jboss 7.x e 8.x *****
+
+In jboss7 e wildfly8 (jboss8) è obbligatoria l'autenticazione per accedere alle code.
+Di seguito vengono fornite le indicazioni.
+
+In Jboss7 e wildfly8 (jboss8) è necessario creare un application user:
+Also you need to create a user for “Application User” using the “/jboss-as-7.1.0.Final/bin/add-user.sh” which would be used for getting the connection with the JBoss on remote box
+
+Fornire anche un ruolo (o group), es. 'testrole' poi da personalizzare nel file di configurazione in standalone/configuration/standalone-full.xml
+
+NOTA: per la testsuite è necessario creare una utenza 'openspcoop2' con password 'op3n.spc00p'
+
+L'application user viene creato nei files:
+Added user 'openspcoop2' to file 'jboss-as-7.x/standalone/configuration/application-users.properties'
+Added user 'openspcoop2' to file 'jboss-as-7.x/domain/configuration/application-users.properties'
+Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/standalone/configuration/application-roles.properties'
+Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/domain/configuration/application-roles.properties'
+
+Nel file standalone/configuration/standalone-full.xml aggiungere il ruolo:
+
+<security-settings>
+  <security-setting match="#">
+     <permission type="send" roles="guest testrole"/>
+     <permission type="consume" roles="guest testrole"/>
+     <permission type="createNonDurableQueue" roles="guest testrole"/>
+     <permission type="deleteNonDurableQueue" roles="guest testrole"/>
+     .
+     .
+  </security-setting>
+</security-settings>
+
+!! NOTA !!: in wildfly8 non avviare il server con binding su 0.0.0.0, altrimenti la connessione remota non funziona e si ottiene l'errore:
+Caused by: HornetQNotConnectedException[errorType=NOT_CONNECTED message=HQ119007: Cannot connect to server(s). Tried with all available servers.]
+Se non si vuole fare il binding su localhost, indicare esattamente l'indirizzo ip della macchina.
+
+NOTA: Per avviare jboss su di un particolare binding usare -Djboss.bind.address=10.10.10.10

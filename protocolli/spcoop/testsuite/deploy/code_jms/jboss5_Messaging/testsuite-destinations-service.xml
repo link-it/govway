@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=openspcoop2TestQueue"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>
+    <mbean code="org.jboss.jms.server.destination.TopicService"
+         name="jboss.messaging.destination:service=Topic,name=openspcoop2TestTopic"
+      xmbean-dd="xmdesc/Topic-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>
+
+</server>

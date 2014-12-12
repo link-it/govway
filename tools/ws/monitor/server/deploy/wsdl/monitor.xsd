@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/pdd/monitor" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/pdd/monitor">
+
+	
+
+
+
+
+	<!-- Soggetti e la Configurazione della porta di dominio OpenSPCoop2 -->
+	<xsd:element name="openspcoop2">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="stato-pdd" type="stato-pdd"/>
+				<xsd:element name="messaggio" type="messaggio"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+	<!-- *** Oggetti di primo livello *** -->
+
+	<!-- Stato PdD -->
+	<xsd:element name="stato-pdd" type="stato-pdd"/>
+	<xsd:complexType name="stato-pdd">
+		
+		<xsd:sequence>
+			
+			<!-- Messaggi in Consegna -->
+			<xsd:element default="0" name="num-msg-in-consegna" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-medio-attesa-in-consegna" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-max-attesa-in-consegna" type="xsd:long">
+				
+			</xsd:element>
+			
+			<!-- Messaggi in Spedizione -->
+			<xsd:element default="0" name="num-msg-in-spedizione" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-medio-attesa-in-spedizione" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-max-attesa-in-spedizione" type="xsd:long">
+				
+			</xsd:element>
+			
+			<!-- Messaggi in Processamento -->
+			<xsd:element default="0" name="num-msg-in-processamento" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-medio-attesa-in-processamento" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-max-attesa-in-processamento" type="xsd:long">
+				
+			</xsd:element>
+			
+			<!-- Totale Messaggi -->
+			<xsd:element default="0" name="tot-messaggi" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-medio-attesa" type="xsd:long">
+				
+			</xsd:element>
+			<xsd:element default="-1" name="tempo-max-attesa" type="xsd:long">
+				
+			</xsd:element>
+			
+			<!-- Messaggi Duplicati -->
+			<xsd:element default="0" name="tot-messaggi-duplicati" type="xsd:long">
+				
+			</xsd:element>
+			
+			<!-- Filtro -->
+			<xsd:element minOccurs="0" name="filtro" type="filtro">
+				
+			</xsd:element>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<!-- Messaggio -->
+	<xsd:element name="messaggio" type="messaggio"/>
+	<xsd:complexType name="messaggio">
+		
+		<xsd:sequence>
+			
+			<!-- Dettaglio -->
+			<xsd:element name="dettaglio" type="dettaglio">
+				
+			</xsd:element>
+			<xsd:element name="busta-info" type="busta">
+				
+			</xsd:element>
+			
+			<!-- IdMessaggio -->
+			<xsd:element name="id-messaggio" type="xsd:string">
+				
+			</xsd:element>
+			
+			<!-- Tempi -->
+			<xsd:element name="ora-attuale" type="xsd:dateTime">
+				
+			</xsd:element>
+			<xsd:element name="ora-registrazione" type="xsd:dateTime">
+				
+			</xsd:element>
+			
+			<!-- Stato -->
+			<xsd:element name="stato" type="StatoMessaggio">
+				
+			</xsd:element>
+			
+			
+			<!-- Filtro -->
+			<xsd:element minOccurs="0" name="filtro" type="filtro">
+				
+			</xsd:element>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	
+	<!-- *** CriteriRicerca *** -->
+	
+	<xsd:complexType name="filtro">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="correlazione-applicativa" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="busta" type="busta"/>
+			<xsd:element minOccurs="0" name="id-messaggio" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="message-pattern" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="soglia" type="xsd:long"/>
+			<xsd:element minOccurs="0" name="stato" type="StatoMessaggio"/>
+			<xsd:element minOccurs="0" name="tipo" type="xsd:string"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="soggetto" type="busta-soggetto"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+	<!-- *** Oggetti Comuni *** -->
+	
+	<xsd:complexType name="dettaglio">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="errore-processamento" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="id-correlazione-applicativa" type="xsd:string"/>
+			<xsd:element name="id-modulo" type="xsd:string"/>
+			<xsd:element name="tipo" type="xsd:string"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo-consegna" type="servizio-applicativo-consegna"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="servizio-applicativo-consegna">
+		<xsd:sequence>
+			<xsd:element default="false" name="autorizzazione-integration-manager" type="xsd:boolean"/>
+			<xsd:element minOccurs="0" name="errore-processamento" type="xsd:string"/>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element default="false" name="sbustamento-soap" type="xsd:boolean"/>
+			<xsd:element name="tipo-consegna" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="busta">
+		<xsd:sequence>
+			<xsd:element default="false" minOccurs="0" name="attesa-riscontro" type="xsd:boolean"/>
+			<xsd:element minOccurs="0" name="mittente" type="busta-soggetto"/>
+			<xsd:element minOccurs="0" name="destinatario" type="busta-soggetto"/>
+			<xsd:element minOccurs="0" name="servizio" type="busta-servizio"/>
+			<xsd:element minOccurs="0" name="azione" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="profilo-collaborazione" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="collaborazione" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="riferimento-messaggio" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="busta-soggetto">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="tipo" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="nome" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="busta-servizio">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="tipo" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="nome" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="proprieta">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="valore" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Enumeration -->
+	
+	<xsd:simpleType name="StatoMessaggio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="consegna"/>
+			<xsd:enumeration value="spedizione"/>
+			<xsd:enumeration value="processamento"/>
+			<xsd:enumeration value="cancellato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+
+</xsd:schema>

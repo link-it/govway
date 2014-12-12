@@ -1,0 +1,31 @@
+
+<project name="utils" basedir=".">
+	
+	<description>
+        	UTILS
+	</description>
+
+	<target name="replace_token">
+		<replace file="${file}" token="${token}" value="${value}"/>
+	</target>
+	
+	<target name="set_property">
+		<replace file="${file}" token="${token}=" value="#${token}="/>
+		<replace file="${file}" token="${token} =" value="#${token} ="/>
+		<if>
+			<not>
+				<equals arg1="${value}" arg2="@unset@" />
+			</not>
+			<then>
+				<concat destfile="${file}" append="yes" >
+${token}=${value}
+				</concat>
+			</then>
+		</if>
+	</target>
+	
+	<target name="dos2unix">
+		<fixcrlf srcdir="${dir}" includes="${file}" eol="lf" eof="remove" />
+	</target>
+	
+</project>

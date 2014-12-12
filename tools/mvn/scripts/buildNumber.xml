@@ -1,0 +1,9 @@
+<project name="buildNumer" default="buildNumber">
+
+        <target name="buildNumber">
+
+                <buildnumber file="../${buildNumberFile}"/>
+
+        </target>
+
+</project>

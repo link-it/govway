@@ -1,0 +1,8 @@
+<module xmlns="urn:jboss:module:1.0" name="org.openspcoop2.jdbc">
+  <resources>
+    <resource-root path="NOME_DRIVER_JDBC.jar"/>
+  </resources>
+  <dependencies>
+    <module name="javax.api"/>
+  </dependencies>
+</module>

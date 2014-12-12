@@ -1,0 +1,74 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+   <accordo-servizio-parte-comune nome="AS_RichiestaStatoFamiglia" 
+		     descrizione="Esempio di Servizio OneWay"
+		     versione="1"
+		     profilo-collaborazione="sincrono"
+		     wsdl-definitorio="wsdl/definitorio.xsd"
+		     wsdl-concettuale="wsdl/concettuale.wsdl"
+		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl">
+	<soggetto-referente tipo="PROXY" nome="CentroAnagrafico" />
+	<port-type nome="RichiestaStatoFamiglia" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
+           <azione nome="Acquisisci" />
+        </port-type>
+   </accordo-servizio-parte-comune>
+
+
+   <soggetto tipo="PROXY" nome="CentroAnagrafico">
+
+        <connettore tipo="http" nome="PdDCentroAnagrafico">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/PA" />
+         </connettore>
+
+	<accordo-servizio-parte-specifica
+		 nome="RichiestaStatoFamigliaSOAP11"
+		 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_RichiestaStatoFamiglia:1"
+		 port-type="RichiestaStatoFamiglia"
+		 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11"
+		 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11.wsdl">
+	    <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11"/> 
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+        <accordo-servizio-parte-specifica
+                 nome="RichiestaStatoFamigliaSOAP12"
+                 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_RichiestaStatoFamiglia:1"
+                 port-type="RichiestaStatoFamiglia"
+                 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12"
+                 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12.wsdl">
+            <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12"/>
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+        <accordo-servizio-parte-specifica
+                 nome="RichiestaStatoFamigliaSOAP11Sec"
+                 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_RichiestaStatoFamiglia:1"
+                 port-type="RichiestaStatoFamiglia"
+                 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11 con WSSecurity"
+                 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11Security.wsdl">
+            <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11Sec"/>
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+        <accordo-servizio-parte-specifica
+                 nome="RichiestaStatoFamigliaSOAP12Sec"
+                 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_RichiestaStatoFamiglia:1"
+                 port-type="RichiestaStatoFamiglia"
+                 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12 con WSSecurity"
+                 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12Security.wsdl">
+            <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12Sec"/>
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+
+   <soggetto tipo="PROXY" nome="Comune">
+
+        <connettore tipo="http" nome="PdDComune">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/PA" />
+        </connettore>
+
+   </soggetto>
+
+</registro-servizi>

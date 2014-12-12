@@ -1,0 +1,15 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config">
+
+    <soggetto tipo="SPC" nome="PROVA" />
+
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+
+</openspcoop2>

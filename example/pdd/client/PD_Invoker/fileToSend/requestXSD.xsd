@@ -1,0 +1,20 @@
+<xsd:schema targetNamespace="http://www.openspcoop2.org/example/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/example/"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+     <!-- Dati -->
+     <xsd:element name="nominativo" type="xsd:string"/>
+
+     <!-- ID Applicativo -->
+     <xsd:element name="idApplicativo" type="xsd:string"/>
+
+     <!-- Wrapped Style -->
+     <xsd:element name="operation">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="nominativo" maxOccurs="unbounded" minOccurs="1"/>
+                 <xsd:element ref="idApplicativo" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+</xsd:schema>

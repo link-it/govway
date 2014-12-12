@@ -1,0 +1,36 @@
+
+<project name="prepare-setup-sdi" basedir=".">
+	
+	<description>
+        	PREPARE SETUP SDI
+	</description>
+
+	
+	<!-- Protocollo SDI -->
+	<target name="prepare_sdi_setup">
+		
+		<if>
+			<not>
+				<available file="${sdi}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${sdi}/local_env.xml.template" tofile="${sdi}/local_env.xml" />
+			</then>
+		</if>
+				
+		<antcall target="compile_sdi_plugin" >
+	    	<param name="dist" value="${deploy_sw}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_sdi" value="${src_sdi}"/>
+	 	</antcall>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/sdi" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/sdi"/>
+		<delete dir="it"/>
+		
+	</target>
+	
+	
+</project>

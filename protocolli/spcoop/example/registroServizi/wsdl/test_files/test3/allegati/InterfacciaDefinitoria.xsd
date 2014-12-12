@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:allegatoimport="http://www.openspcoop2.org/example/allegato/import">
+     
+      <!-- Es. Include from allegati -->
+      <xs:include schemaLocation="../allegati/allegatoIncludeFromDefinitorio.xsd"/>
+      <!-- Es. Import from allegati -->
+      <xs:import namespace="http://www.openspcoop2.org/example/allegato/import" schemaLocation="../allegati/allegatoImportFromDefinitorio.xsd"/>
+ 
+      <xs:element name="notificaRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="aaa" maxOccurs="1" minOccurs="1" type="xs:string"/>
+            <xs:element ref="esempioAllegatoInclude1"/>
+            <xs:element ref="esempioAllegatoInclude2"/>
+            <xs:element ref="allegatoimport:esempioAllegatoImport1"/>
+            <xs:element ref="allegatoimport:esempioAllegatoImport2"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+</xs:schema>

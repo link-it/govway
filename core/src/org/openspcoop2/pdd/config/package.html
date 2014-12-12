@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.openspcoop2.pdd.config package</title>
+<!--
+  @(#)package.html      $Rev$, $Date$
+ 
+OpenSPCoop v2 - Customizable SOAP Message Broker 
+http://www.openspcoop2.org
+ 
+Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved. 
+ 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+</head>
+<body bgcolor="white">
+
+Gestione della configurazione di OpenSPCoop (xml o DB).
+Nella configurazione sono
+registrate le seguenti informazioni :
+<ul>
+<li> Porte Delegate.
+<li> Porte Applicative
+<li> Dati della porta di dominio
+<li> Servizi Applicativi
+</ul>
+<p>
+All'interno di questo package sono definite classi che sono il mapping delle informazioni presenti nel file di configurazione.
+<p>
+Vengono fornite classi per la gestione delle risorse esterne utilizzata da OpenSPCoop:
+<ul>
+<li> <code>DBManager</code>: gestisce le connessioni al DB
+<li> <code>QueueManager</code>: gestisce le connessioni al broker JMS
+</ul>
+Altre classi fornite gestiscono pool alle risorse DB e JMS.
+<p>
+Vengono forniti reader di file properties utilizzati da OpenSPCoop:
+<ul>
+<li> <code>OpenSPCoopProperties</code>: gestisce le proprieta' di configurazione di OpenSPCoop
+<li> <code>ClassNameProperties</code>: gestisce i nomi di classi istanziate dinamicamente da OpenSPCoop
+</ul>
+<p>
+
+
+
+<p>
+<h3>See Also...</h3>
+<p>
+<p>
+Per altra documentazione, tutorials, esempi, guide guarda :
+<ul>
+  <li><a href="http://www.openspcoop2.org">Sito ufficiale del progetto OpenSPCoop2</a>
+</ul>
+<br>
+
+
+
+</body>
+</html>

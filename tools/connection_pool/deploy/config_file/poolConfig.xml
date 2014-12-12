@@ -1,0 +1,219 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/pools/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/pools/core connectionPool.xsd">
+
+   <jndi > 
+      <context-property name="java.naming.provider.url" value="127.0.0.1" />
+   </jndi>
+
+
+   <!-- Postgres v8: DB di riferimento nello sviluppo -->
+   <!-- -->
+   <datasource jndi-name="org.openspcoop2.dataSource" 
+               connection-url="jdbc:postgresql://localhost/openspcoop2"
+               driver-class="org.postgresql.Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="50" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   <!-- -->
+
+   <!-- Postgres v7: non supporta il livello readUncommitted -->
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource"
+               connection-url="jdbc:postgresql://localhost/openspcoop2"
+               driver-class="org.postgresql.Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readCommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+   <!-- Oracle -->
+   <!--  
+   <datasource jndi-name="org.openspcoop2.dataSource"
+               connection-url="jdbc:oracle:thin:@localhost:1521:XE"
+               driver-class="oracle.jdbc.OracleDriver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readCommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT COUNT(*) FROM ID_EGOV" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+   <!-- MySQL  -->
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource" 
+               connection-url="jdbc:mysql://localhost/openspcoop2"
+               driver-class="com.mysql.jdbc.Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+   <!-- HSQL  -->
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource" 
+               connection-url="jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/openspcoop2]"
+               driver-class="org.hsqldb.jdbcDriver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+   <!-- SQLSERVER  -->
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource" 
+               connection-url="jdbc:sqlserver://localhost:1433;databaseName=openspcoop2"
+               driver-class="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+   <!-- DB2  -->
+   <!--
+   <datasource jndi-name="org.openspcoop2.dataSource"
+               connection-url="jdbc:db2://localhost:50000/openspcoop2"
+               driver-class="com.ibm.db2.jcc.DB2Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1 from SYSIBM.SYSDUMMY1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+
+   <!-- Postgres v8: DB per interfaccia di Gestione Centralizzata (PddConsole) --> 
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource.pddConsole" 
+               connection-url="jdbc:postgresql://localhost/pddConsole"
+               driver-class="org.postgresql.Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+
+   <!-- Postgres v8: DB per tracciamento: N.B. per usare il tracciamento con interfaccia PDD usare stesso Database -->
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource.tracciamento" 
+               connection-url="jdbc:postgresql://localhost/tracciamento"
+               driver-class="org.postgresql.Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+   <!-- Postgres v8: DB per msgDiagnostico: N.B. per usare il msgDiagnostico con interfaccia PDD usare stesso Database -->
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource.msgDiagnostici" 
+               connection-url="jdbc:postgresql://localhost/msgdiagnostici"
+               driver-class="org.postgresql.Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+   <!-- Postgres v8: GestoreEventi -->
+   <!-- 
+   <datasource jndi-name="org.openspcoop2.dataSource.ge" 
+               connection-url="jdbc:postgresql://localhost/ge"
+               driver-class="org.postgresql.Driver"
+               username="openspcoop2" password="openspcoop2"
+               prepared-statement-pool="true"
+               read-only="false" auto-commit="true"
+               transaction-isolation="readUncommitted" >
+       <pool-size initial="10" min="10" max="40" />
+       <validation operation="SELECT 1" test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </datasource>
+   -->
+
+
+   <!-- JBossMQ: BrokerMQ di riferimento nello sviluppo -->
+   <!-- -->
+   <connection-factory jndi-name="org.openspcoop2.jmsPool"
+                        connection-factory="ConnectionFactory"
+                        auto-commit="true" acknowledgment-type="autoAcknowledgment" >
+       <pool-size initial="10" min="10" max="50" />
+       <validation test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+    </connection-factory>
+    <!-- -->
+
+    <!-- Configurazione BrokerJMS ActiveMQ -->
+    <!--
+    <connection-factory jndi-name="org.openspcoop2.jmsPoolExternalAMQ"
+                        connection-factory="queueConnectionFactory"
+                        auto-commit="true" acknowledgment-type="autoAcknowledgment" >
+       <context-property name="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory" />
+       <context-property name="connectionFactoryNames" value="queueConnectionFactory, topicConnectionFactory" />
+       <context-property name="java.naming.provider.url" value="tcp://127.0.0.1:61616" />
+        <pool-size initial="10" min="10" max="30" />
+       <validation test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </connection-factory>
+   -->
+
+   <!-- altro es. di configurazione -->
+   <!--
+   <connection-factory jndi-name="org.openspcoop2.poolBrokerEventi"
+                        connection-factory="ConnectionFactory"
+                        username="guest" password="guest"
+                        auto-commit="true" acknowledgment-type="autoAcknowledgment" >
+       <context-property name="java.naming.factory.initial" value="org.jnp.interfaces.NamingContextFactory" />
+       <context-property name="java.naming.factory.url.pkgs" value="org.jnp.interfaces" />
+       <context-property name="java.naming.provider.url" value="127.0.0.1" />
+       <pool-size initial="5" min="5" max="10" />
+       <validation test-on-get="true" test-on-release="true" />
+       <when-exhausted action="block" blocking-timeout="120000" />
+   </connection-factory>
+    -->
+
+
+   
+
+</openspcoop2>

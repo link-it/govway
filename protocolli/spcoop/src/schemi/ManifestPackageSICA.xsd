@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:mf="http://spcoop.gov.it/sica/manifest" 
+	elementFormDefault="qualified" 
+	targetNamespace="http://spcoop.gov.it/sica/manifest">
+	
+	
+	<!-- Gli elementi radice sono uno dei tre seguenti elementi: -->
+	<element name="accordoServizio" type="mf:accordoServizio" />
+	<element name="accordoCooperazione" type="mf:accordoCooperazione" />
+	<element name="servizioComposto" type="mf:servizioComposto" />
+	
+	
+	<!-- ========================================= -->
+	<!-- Definizione della struttura dei manifesti -->
+	<!-- ========================================= -->
+	
+	<!-- Accordo di Servizio -->
+	<complexType name="accordoServizio">
+		<sequence>
+			<element name="descrizione" type="mf:FormatoDescrizione" nillable="false"/>
+			<element name="specificaSemiformale" type="mf:SpecificaSemiformale" minOccurs="0"  />
+			<element name="allegati" type="mf:ElencoAllegati" minOccurs="0" />  
+			<element name="parteComune" type="mf:accordoServizioParteComune" minOccurs="0"/>
+			<element name="parteSpecifica" type="mf:accordoServizioParteSpecifica" minOccurs="0"/>
+		</sequence>
+		<attribute name="nome" type="mf:FormatoNome" use="required"/>
+		<attribute name="versione" type="mf:FormatoVersione" use="optional"/>
+		<attribute name="dataCreazione" type="dateTime" use="required"/>
+		<attribute name="dataPubblicazione" type="dateTime" use="optional"/>
+		<attribute name="firmato" type="boolean" use="optional" default="false"/>
+		<attribute name="riservato" type="boolean" use="optional" default="false"/>
+	</complexType>
+	<complexType name="accordoServizioParteComune">
+		<sequence>
+			<element name="specificaInterfaccia" type="mf:SpecificaInterfaccia" minOccurs="1"/>
+			<element name="specificaConversazione" type="mf:SpecificaConversazione" minOccurs="0" />
+		</sequence>
+		<attribute name="pubblicatore" type="mf:RiferimentoSoggettoOrganizzativo" use="optional"/>
+	</complexType>
+	<complexType name="accordoServizioParteSpecifica">
+		<sequence>
+			<element name="riferimentoParteComune" type="mf:RiferimentoParteComune" minOccurs="1"/>
+			<element name="specificaPortiAccesso" type="mf:SpecificaPortiAccesso" minOccurs="1"/>
+			<element name="specificaSicurezza" type="mf:SpecificaSicurezza" minOccurs="0"  />     
+			<element name="specificaLivelliServizio" type="mf:SpecificaLivelliServizio" minOccurs="0"  />
+		</sequence> 
+		<attribute name="adesione" type="mf:TipoAdesione" use="required"/>
+		<attribute name="erogatore" type="mf:RiferimentoSoggettoOrganizzativo" use="optional"/>
+	</complexType>
+	
+	<!-- Accordo di Cooperazione -->	
+	<complexType name="accordoCooperazione">
+		<sequence>
+			<element name="descrizione" type="mf:FormatoDescrizione" nillable="false"/>
+			<element name="specificaSemiformale" type="mf:SpecificaSemiformale" minOccurs="0" />
+			<element name="allegati" type="mf:ElencoAllegati" minOccurs="0" />
+			<element name="elencoPartecipanti" type="mf:ElencoPartecipanti" minOccurs="1" />
+			<element name="serviziComposti" type="mf:ElencoServiziComposti" minOccurs="0" />
+		</sequence>
+		<attribute name="nome" type="mf:FormatoNome" use="required"/>
+		<attribute name="versione" type="mf:FormatoVersione" use="optional"/>
+		<attribute name="dataCreazione" type="dateTime" use="required"/>
+		<attribute name="dataPubblicazione" type="dateTime" use="optional"/>
+		<attribute name="firmato" type="boolean" use="optional" default="false"/>
+		<attribute name="riservato" type="boolean" use="optional" default="false"/>
+		<attribute name="coordinatore" type="mf:RiferimentoSoggettoOrganizzativo"  use="optional"/>
+	</complexType>
+	
+	<!-- Servizio Composto -->	
+	<complexType name="servizioComposto">
+		<sequence>
+			<element name="descrizione" type="mf:FormatoDescrizione" nillable="false"/>
+			<element name="specificaSemiformale" type="mf:SpecificaSemiformale" minOccurs="0" />
+			<element name="allegati" type="mf:ElencoAllegati" minOccurs="0" />
+			<element name="specificaInterfaccia" type="mf:SpecificaInterfaccia"/>
+			<element name="specificaConversazione" type="mf:SpecificaConversazione" minOccurs="0" />
+			<element name="riferimentoAccordoCooperazione" type="mf:RiferimentoAccordoCooperazione"/>
+			<element name="serviziComponenti" type="mf:ElencoServiziComponenti"  minOccurs="1" />
+			<element name="specificaCoordinamento" type="mf:SpecificaCoordinamento" minOccurs="0" />
+		</sequence>
+		<attribute name="nome" type="mf:FormatoNome" use="required"/>
+		<attribute name="versione" type="mf:FormatoVersione" use="optional"/>
+		<attribute name="dataCreazione" type="dateTime" use="required"/>
+		<attribute name="dataPubblicazione" type="dateTime" use="optional"/>
+		<attribute name="firmato" type="boolean" use="optional" default="false"/>
+		<attribute name="riservato" type="boolean" use="optional" default="false"/>
+		<attribute name="pubblicatore" type="mf:RiferimentoSoggettoOrganizzativo" use="optional"/>
+	</complexType>
+	
+	
+	<!-- =========================================== -->
+	<!-- Tipi complessi utilizzati nella definizione -->
+	<!-- della struttura dei manifesti               -->
+	<!-- =========================================== -->
+	
+	<complexType name="SpecificaPortiAccesso">
+		<sequence>
+			<element name="portiAccessoFruitore" type="mf:DocumentoInterfaccia" minOccurs="0"/>
+			<element name="portiAccessoErogatore" type="mf:DocumentoInterfaccia" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SpecificaSemiformale">
+		<sequence>
+			<element name="documentoSemiformale" type="mf:DocumentoSemiformale" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SpecificaInterfaccia">
+		<sequence>
+			<element name="interfacciaConcettuale" type="mf:DocumentoInterfaccia" />
+			<element name="interfacciaLogicaLatoErogatore" type="mf:DocumentoInterfaccia" />
+			<element name="interfacciaLogicaLatoFruitore" type="mf:DocumentoInterfaccia" minOccurs="0" />
+		</sequence>
+	</complexType>
+	
+	<complexType name="SpecificaConversazione">
+		<sequence>
+			<element name="conversazioneConcettuale" type="mf:DocumentoConversazione" minOccurs="0" />
+			<element name="conversazioneLogicaLatoFruitore" type="mf:DocumentoConversazione" minOccurs="0" />
+			<element name="conversazioneLogicaLatoErogatore" type="mf:DocumentoConversazione" minOccurs="0" />
+		</sequence>
+	</complexType>
+	
+	<complexType name="SpecificaCoordinamento">
+		<sequence>
+			<element name="documentoCoordinamento" type="mf:DocumentoCoordinamento"  minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SpecificaSicurezza">
+		<sequence>
+			<element name="documentoSicurezza" type="mf:DocumentoSicurezza" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SpecificaLivelliServizio">
+		<sequence>
+			<element name="documentoLivelloServizio" type="mf:DocumentoLivelloServizio" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	
+	<!-- =========================================== -->
+	<!-- Documenti                                   -->
+	<!-- =========================================== -->
+	
+	<complexType name="DocumentoSemiformale">
+		<simpleContent>
+			<extension base="string">
+				<attribute name="tipo" type="mf:TipoDocumentoSemiformale" use="required"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	
+	<complexType name="DocumentoLivelloServizio">
+		<simpleContent>
+			<extension base="string">
+				<attribute name="tipo" type="mf:TipoDocumentoLivelloServizio" use="required"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	
+	<complexType name="DocumentoSicurezza">
+		<simpleContent>
+			<extension base="string">
+				<attribute name="tipo" type="mf:TipoDocumentoSicurezza" use="required"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	
+	<complexType name="DocumentoInterfaccia">
+		<simpleContent>
+			<extension base="string">
+				<attribute default="WSDL" name="tipo" type="mf:TipoDocumentoInterfaccia" 
+					use="optional"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	
+	<complexType name="DocumentoConversazione">
+		<simpleContent>
+			<extension base="string">
+				<attribute default="WSBL" name="tipo" type="mf:TipoDocumentoConversazione" 
+					use="optional"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	
+	<complexType name="DocumentoCoordinamento">
+		<simpleContent>
+			<extension base="string">
+				<attribute name="tipo" type="mf:TipoDocumentoCoordinamento" use="required"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	
+	<complexType name="ElencoAllegati">
+		<sequence>
+			<element name="genericoDocumento" type="string" maxOccurs="unbounded" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="ElencoPartecipanti">
+		<sequence>
+			<element name="partecipante" type="mf:RiferimentoSoggettoOrganizzativo" minOccurs="2" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="ElencoServiziComposti">
+		<sequence>
+			<element name="servizioComposto" type="mf:RiferimentoServizioComposto" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="ElencoServiziComponenti">
+		<sequence>
+			<element name="servizioComponente" type="mf:RiferimentoParteSpecifica" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	
+	<!-- ============================================ -->
+	<!-- Formato dei riferimenti tra parti di accordo -->
+	<!-- e tra questi ed i soggetti organizzativi     -->
+	<!-- ============================================ -->
+	
+	<simpleType name="RiferimentoSoggettoOrganizzativo">
+		<restriction base="anyURI">
+			<pattern value="uri:dn:[^ \n\r]+"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="RiferimentoParteComune">
+		<restriction base="anyURI">
+			<pattern value="urn:adsc:[^ \n\r]+"/>
+			<pattern value="urn:sc:[^ \n\r]+"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="RiferimentoParteSpecifica">
+		<restriction base="anyURI">
+			<pattern value="urn:ads:[^ \n\r]+"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="RiferimentoAccordoCooperazione">
+		<restriction base="anyURI">
+			<pattern value="urn:adc:[^ \n\r]+"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="RiferimentoServizioComposto">
+		<restriction base="anyURI">
+			<pattern value="urn:sc:[^ \n\r]+"/>
+		</restriction>
+	</simpleType>
+	
+	
+	<!-- =========================================== -->
+	<!-- Tipi di documento che è possibile includere -->
+	<!-- in un accordo                               -->
+	<!-- =========================================== -->
+	
+	<simpleType name="TipoDocumentoConversazione">
+		<restriction base="string">
+			<enumeration value="WSBL"/>
+			<enumeration value="BPEL"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoDocumentoInterfaccia">
+		<restriction base="string">
+			<enumeration value="WSDL"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoDocumentoSemiformale">
+		<restriction base="string">
+			<enumeration value="UML"/>
+			<enumeration value="HTML"/>
+			<enumeration value="XML"/>
+			<enumeration value="Linguaggio Naturale"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoDocumentoSicurezza">
+		<restriction base="string">
+			<enumeration value="WS-Policy"/>
+			<enumeration value="Linguaggio Naturale"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoDocumentoLivelloServizio">
+		<restriction base="string">
+			<enumeration value="WS-Agreement"/>
+			<enumeration value="WSLA"/>
+		</restriction>
+	</simpleType>
+	
+	
+	<simpleType name="TipoDocumentoCoordinamento">
+		<restriction base="string">
+			<enumeration value="BPEL"/>
+			<enumeration value="WS-CDL"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoSpecificaInterfaccia">
+		<restriction base="string">
+			<enumeration value="CONCETTUALE"/>
+			<enumeration value="LOGICA-EROGATORE"/>
+			<enumeration value="LOGICA-FRUITORE"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoSpecificaPortiAccesso">
+		<restriction base="string">
+			<enumeration value="EROGATORE"/>
+			<enumeration value="FRUITORE"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoSpecificaConversazione">
+		<restriction base="string">
+			<enumeration value="CONCETTUALE"/>
+			<enumeration value="LOGICA-EROGATORE"/>
+			<enumeration value="LOGICA-FRUITORE"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="TipoAdesione">
+		<restriction base="string">
+			<enumeration value="AUTOMATICA"/>
+			<enumeration value="MANUALE"/>
+		</restriction>
+	</simpleType>
+	
+	<!-- =============================================== -->
+	<!-- Restrizioni sul formato dei valori di attributi  ed elementi di un manifesto -->
+	<!-- =============================================== -->
+	
+	<simpleType name="FormatoNome">
+		<restriction base="string">
+			<maxLength value="128"/>
+			<whiteSpace value="preserve"/>
+			<minLength value="1"/>
+		</restriction>
+	</simpleType>	
+	<simpleType name="FormatoVersione">
+		<restriction base="string">
+			<!-- <pattern value="[1-9]+\.?[0-9]*"/> -->
+			<pattern value="[1-9]+[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="FormatoDescrizione">
+		<restriction base="string">
+			<minLength value="1"/>
+		</restriction>
+	</simpleType>	
+	
+</schema>

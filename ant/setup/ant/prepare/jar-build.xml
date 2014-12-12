@@ -1,0 +1,66 @@
+
+<project name="prepare-setup-jar" basedir=".">
+	
+	<description>
+        	PREPARE JAR
+	</description>
+
+	<var name="jarsDir" value="${deploy_sw}/jars" />
+	
+	<!-- Predispone i jar -->
+	<target name="read_jar">
+		
+		<!-- inizializza directory jarsDir (se non esiste) -->
+		<mkdir dir="${jarsDir}" />
+		
+		<!-- Apertura archivio -->
+		<delete file="${archiveFile}.tmp" />
+		<unzip src="${archiveFile}" dest="${archiveFile}.tmp"/>
+		<var name="archiveFileJarLocation" value="" />
+		<if>
+			<or>
+				<matches string="${as}" pattern="tomcat.*"/>
+				<equals arg1="${archiveType}" arg2="WAR"/>
+			</or>
+			<then>
+				<var name="archiveFileJarLocation" value="${archiveFile}.tmp/WEB-INF/lib" />
+			</then>
+			<else>
+				<var name="archiveFileJarLocation" value="${archiveFile}.tmp/lib" />
+			</else>
+		</if>
+		
+		<!-- Esamina jars presenti nell'archivio -->
+		<fileset dir="${archiveFileJarLocation}" id="archiveFile.jar">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathconvert pathsep=" " property="archiveFile_list.jar" refid="archiveFile.jar">
+			<map from="${archiveFileJarLocation}/" to=""/>
+		</pathconvert>
+		
+		<!-- Move jars nella jarsDir -->
+		<move todir="${deploy_sw}/jars" overwrite="true" >
+			<fileset dir="${archiveFileJarLocation}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</move>
+		
+		<!-- Creazione file vuoto jar txt -->
+		<foreach list="${archiveFile_list.jar}" delimiter=" " param="fileName" target="create_txt_jar_file" inheritall="true"/>
+		
+		<!-- Ripristino archivio in formato compresso con txt al posto dei jar -->
+		<zip destfile="${archiveFile}">
+		    <fileset dir="${archiveFile}.tmp"/>
+		</zip>
+		
+		<!-- Eliminazione archivio decompresso temporaneo -->
+		<delete dir="${archiveFile}.tmp" />
+		
+	</target>
+	
+	<target name="create_txt_jar_file">
+		<touch file="${archiveFileJarLocation}/${fileName}.txt" />
+	</target>
+	
+	
+</project>

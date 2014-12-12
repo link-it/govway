@@ -1,0 +1,172 @@
+
+<project name="prepare-setup-shared-jar" basedir=".">
+	
+	<description>
+        	PREPARE SETUP JARS
+	</description>
+
+	
+	<target name="prepare_shared_jar_setup">
+		
+		<antcall target="_jar_core" />
+		
+		<antcall target="_jar_weblib_users" />
+		<antcall target="_jar_weblib_mvc" />
+		<antcall target="_jar_weblib_queue" />
+		<antcall target="_jar_weblib_audit" />
+	    	
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw_openspcoop2_jars}" excludes="*.jar"/>
+		</delete>
+		
+	</target>
+	
+	<target name="_jar_core">
+			
+		<if>
+			<not>
+				<available file="${core}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${core}/local_env.xml.template" tofile="${core}/local_env.xml" />
+			</then>
+		</if>
+				
+		<antcall target="clean_porta_dominio" >
+			<param name="src_eclipse" value="${core}/src"/>
+		</antcall>
+		
+		<antcall target="build_openspcoop2_utils_jar" >
+	    	<param name="dist_utils" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="openspcoop2" value="${openspcoop2}"/>
+			<param name="src_utils" value="${src_utils}"/>
+	 	</antcall>
+		
+		<antcall target="build_openspcoop2_genericProject_jar" >
+	    	<param name="dist_genericProject" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="openspcoop2" value="${openspcoop2}"/>
+			<param name="src_genericProject" value="${src_genericProject}"/>
+	 	</antcall>
+				
+		<antcall target="build_openspcoop2_schemi_jar" >
+	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>
+		<antcall target="build_openspcoop2_message_jar" >
+	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>	
+		<antcall target="build_openspcoop2_core_jar" >
+	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>	
+		<antcall target="build_openspcoop2_protocol-api_jar" >
+	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>
+		<antcall target="build_openspcoop2_security_jar" >
+	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>	
+		<antcall target="build_openspcoop2_protocol_jar" >
+	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>
+		<antcall target="build_openspcoop2_pdd_jar" >
+	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>
+
+		
+	</target>
+	
+	<target name="_jar_weblib_users">
+					
+		<if>
+			<not>
+				<available file="${users}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${users}/local_env.xml.template" tofile="${users}/local_env.xml" />
+			</then>
+		</if>
+						
+		<antcall target="compile_users" >
+	    	<param name="dist_users" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_users" value="${src_users}"/>
+	 	</antcall>
+	
+	</target>
+	
+	<target name="_jar_weblib_mvc">
+					
+		<if>
+			<not>
+				<available file="${mvc}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${mvc}/local_env.xml.template" tofile="${mvc}/local_env.xml" />
+			</then>
+		</if>
+						
+		<antcall target="compile_mvc" >
+	    	<param name="dist_mvc" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_mvc" value="${src_mvc}"/>
+	 	</antcall>
+	
+	</target>
+	
+	<target name="_jar_weblib_queue">
+					
+		<if>
+			<not>
+				<available file="${queue}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${queue}/local_env.xml.template" tofile="${queue}/local_env.xml" />
+			</then>
+		</if>
+						
+		<antcall target="compile_queue" >
+	    	<param name="dist_queue" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_queue" value="${src_queue}"/>
+	 	</antcall>
+	
+	</target>
+		
+	<target name="_jar_weblib_audit">
+				
+		<if>
+			<not>
+				<available file="${audit}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${audit}/local_env.xml.template" tofile="${audit}/local_env.xml" />
+			</then>
+		</if>
+						
+		<antcall target="compile_audit" >
+	    	<param name="dist_audit" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_audit" value="${src_audit}"/>
+	 	</antcall>
+	
+	</target>
+	
+</project>

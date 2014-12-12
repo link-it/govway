@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="esito-richiesta" class="org.openspcoop2.core.integrazione.EsitoRichiesta">
+    <namespace uri="http://www.openspcoop2.org/core/integrazione" default="elements"/>
+    <value name="identificativo-messaggio" field="identificativoMessaggio" usage="required"/>
+    <value name="stato" field="stato" usage="required" style="attribute"/>
+  </mapping>
+</binding>

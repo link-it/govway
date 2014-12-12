@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="core/src"/>
+	<classpathentry kind="src" path="core/deploy/deploy_web/web_app/WEB-INF"/>
+	<classpathentry kind="src" path="protocolli/spcoop/src"/>
+	<classpathentry excluding="*/web.xml" kind="src" path="protocolli/spcoop/tools/backward_compatibility/src"/>
+	<classpathentry kind="src" path="protocolli/spcoop/example/registroServizi/wsdl/src"/>
+	<classpathentry excluding="*/*.xml" kind="src" path="protocolli/spcoop/example/server/ValidazioneContenutiWS/src"/>
+	<classpathentry excluding="*/*.xml" kind="src" path="protocolli/spcoop/example/client/ValidazioneContenutiWS/src"/>
+	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/oneway/src"/>
+	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/sincrono/src"/>
+	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/asincronoSimmetrico/src"/>
+	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/asincronoAsimmetrico/src"/>
+	<classpathentry excluding="openspcoop2-manifest.xml" kind="src" path="protocolli/trasparente/src"/>
+	<classpathentry kind="src" path="protocolli/trasparente/example/tutorial/oneway/src"/>
+	<classpathentry kind="src" path="protocolli/trasparente/example/tutorial/sincrono/src"/>
+	<classpathentry excluding="openspcoop2-manifest.xml" kind="src" path="protocolli/sdi/src"/>
+	<classpathentry kind="src" path="protocolli/sdi/example/client/RicezioneFatture_v1.0/src"/>
+	<classpathentry kind="src" path="protocolli/sdi/example/client/TrasmissioneFatture_v1.0/src"/>
+	<classpathentry excluding="handler-chain.xml" kind="src" path="protocolli/sdi/example/server/SdIRiceviNotifica_v1.0/src"/>
+	<classpathentry excluding="handler-chain.xml" kind="src" path="protocolli/sdi/example/server/SdIRiceviFile_v1.0/src"/>
+	<classpathentry kind="src" path="tools/web_interfaces/lib/audit/src"/>
+	<classpathentry kind="src" path="tools/web_interfaces/lib/mvc/src"/>
+	<classpathentry kind="src" path="tools/web_interfaces/lib/queue/src"/>
+	<classpathentry kind="src" path="tools/web_interfaces/lib/users/src"/>
+	<classpathentry excluding="*/jboss*.xml|*/web.xml" kind="src" path="tools/web_interfaces/control_station/src"/>
+	<classpathentry excluding="*/jboss*.xml|*/struts-config.xml|*/web.xml" kind="src" path="tools/web_interfaces/loader/src"/>
+	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/registry/server/src"/>
+	<classpathentry kind="src" path="tools/ws/registry/client/src"/>
+	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/config/server/src"/>
+	<classpathentry kind="src" path="tools/ws/config/client/src"/>
+	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/monitor/server/src"/>
+	<classpathentry kind="src" path="tools/ws/monitor/client/src"/>
+	<classpathentry kind="src" path="tools/command_line_interfaces/monitor_pdd/src"/>
+	<classpathentry excluding="*/*.xml" kind="src" path="tools/connection_pool/src"/>
+	<classpathentry kind="src" path="tools/generic_project/src"/>
+	<classpathentry kind="src" path="tools/web_generic_project/src"/>
+	<classpathentry kind="src" path="tools/utils/src"/>
+	<classpathentry kind="src" path="example/pdd/client/PA_Invoker/src"/>
+	<classpathentry kind="src" path="example/pdd/client/PD_Invoker/src"/>
+	<classpathentry kind="src" path="example/pdd/client/IntegrationManagerClient/axis14/src"/>
+	<classpathentry kind="src" path="example/pdd/client/IntegrationManagerClient/cxf/src"/>
+	<classpathentry kind="src" path="example/pdd/client/JMSReceiver/src"/>
+	<classpathentry kind="src" path="example/pdd/client/JMXClient/src"/>
+	<classpathentry kind="src" path="example/pdd/server/testService/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_1.1_lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_1.1_lib_axis14"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_1.1_lib_stub"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_1.1_lib_jboss6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

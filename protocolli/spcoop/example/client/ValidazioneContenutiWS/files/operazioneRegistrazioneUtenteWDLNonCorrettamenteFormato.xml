@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body>
+<registrazioneUtenteWDLRequest xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types">
+<nominativoERRATO>Mario Rossi</nominativoERRATO>
+<indirizzo>viale Roma 26</indirizzo>
+<ora-registrazione>2008-04-09</ora-registrazione>
+</registrazioneUtenteWDLRequest>
+<elemento-aggiunto-ERRATO/>
+</soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+				  xmlns:tns="http://www.openspcoop2.org/core/registry/management" 
+				  name="PortaDominioService"
+				  targetNamespace="http://www.openspcoop2.org/core/registry/management">
+
+	<!-- TYPES -->
+	
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://www.openspcoop2.org/core/registry/management"
+						schemaLocation="PortaDominioCRUD.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+  
+	<!-- MESSAGES -->
+	  
+
+
+	<wsdl:message name="create">
+		<wsdl:part element="tns:create" name="create"/>
+	</wsdl:message>
+	<wsdl:message name="createResponse">
+		<wsdl:part element="tns:createResponse" name="createResponse"/>
+	</wsdl:message>
+		
+	<wsdl:message name="update">
+		<wsdl:part element="tns:update" name="update"/>
+	</wsdl:message>
+	<wsdl:message name="updateResponse">
+		<wsdl:part element="tns:updateResponse" name="updateResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="updateOrCreate">
+		<wsdl:part element="tns:updateOrCreate" name="updateOrCreate"/>
+	</wsdl:message>
+	<wsdl:message name="updateOrCreateResponse">
+		<wsdl:part element="tns:updateOrCreateResponse" name="updateOrCreateResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="deleteById">
+		<wsdl:part element="tns:deleteById" name="deleteById"/>
+	</wsdl:message>
+	<wsdl:message name="deleteByIdResponse">
+		<wsdl:part element="tns:deleteByIdResponse" name="deleteByIdResponse"/>
+	</wsdl:message>
+		
+	<wsdl:message name="deleteAll">
+		<wsdl:part element="tns:deleteAll" name="deleteAll"/>
+	</wsdl:message>
+	<wsdl:message name="deleteAllResponse">
+		<wsdl:part element="tns:deleteAllResponse" name="deleteAllResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="deleteAllByFilter">
+		<wsdl:part element="tns:deleteAllByFilter" name="deleteAllByFilter"/>
+	</wsdl:message>
+	<wsdl:message name="deleteAllByFilterResponse">
+		<wsdl:part element="tns:deleteAllByFilterResponse" name="deleteAllByFilterResponse"/>
+	</wsdl:message>
+	
+	<wsdl:message name="delete">
+		<wsdl:part element="tns:delete" name="delete"/>
+	</wsdl:message>
+	<wsdl:message name="deleteResponse">
+		<wsdl:part element="tns:deleteResponse" name="deleteResponse"/>
+	</wsdl:message>
+    
+
+	<wsdl:message name="registry-service-exception">
+		<wsdl:part element="tns:registry-service-exception" name="registry-service-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="registry-not-found-exception">
+		<wsdl:part element="tns:registry-not-found-exception" name="registry-not-found-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="registry-multiple-result-exception">
+		<wsdl:part element="tns:registry-multiple-result-exception" name="registry-multiple-result-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="registry-not-implemented-exception">
+		<wsdl:part element="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="registry-not-authorized-exception">
+		<wsdl:part element="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+	</wsdl:message>
+
+
+	<!-- INTERFACE --> 
+	 
+	<wsdl:portType name="PortaDominio">
+
+
+
+		<wsdl:operation name="create">
+			<wsdl:input message="tns:create" name="create"/>
+			<wsdl:output message="tns:createResponse" name="createResponse"/>
+			<wsdl:fault message="tns:registry-service-exception" name="registry-service-exception"/>
+			<wsdl:fault message="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+			<wsdl:fault message="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="update">
+			<wsdl:input message="tns:update" name="update"/>
+			<wsdl:output message="tns:updateResponse" name="updateResponse"/>
+			<wsdl:fault message="tns:registry-service-exception" name="registry-service-exception"/>
+			<wsdl:fault message="tns:registry-not-found-exception" name="registry-not-found-exception"/>
+			<wsdl:fault message="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+			<wsdl:fault message="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="updateOrCreate">
+			<wsdl:input message="tns:updateOrCreate" name="updateOrCreate"/>
+			<wsdl:output message="tns:updateOrCreateResponse" name="updateOrCreateResponse"/>
+			<wsdl:fault message="tns:registry-service-exception" name="registry-service-exception"/>
+			<wsdl:fault message="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+			<wsdl:fault message="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="deleteById">
+			<wsdl:input message="tns:deleteById" name="deleteById"/>
+			<wsdl:output message="tns:deleteByIdResponse" name="deleteByIdResponse"/>
+			<wsdl:fault message="tns:registry-service-exception" name="registry-service-exception"/>
+			<wsdl:fault message="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+			<wsdl:fault message="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+		</wsdl:operation>
+		
+		<wsdl:operation name="deleteAll">
+			<wsdl:input message="tns:deleteAll" name="deleteAll"/>
+			<wsdl:output message="tns:deleteAllResponse" name="deleteAllResponse"/>
+			<wsdl:fault message="tns:registry-service-exception" name="registry-service-exception"/>
+			<wsdl:fault message="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+			<wsdl:fault message="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="deleteAllByFilter">
+			<wsdl:input message="tns:deleteAllByFilter" name="deleteAllByFilter"/>
+			<wsdl:output message="tns:deleteAllByFilterResponse" name="deleteAllByFilterResponse"/>
+			<wsdl:fault message="tns:registry-service-exception" name="registry-service-exception"/>
+			<wsdl:fault message="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+			<wsdl:fault message="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+		</wsdl:operation>
+	
+		<wsdl:operation name="delete">
+			<wsdl:input message="tns:delete" name="delete"/>
+			<wsdl:output message="tns:deleteResponse" name="deleteResponse"/>
+			<wsdl:fault message="tns:registry-service-exception" name="registry-service-exception"/>
+			<wsdl:fault message="tns:registry-not-implemented-exception" name="registry-not-implemented-exception"/>
+			<wsdl:fault message="tns:registry-not-authorized-exception" name="registry-not-authorized-exception"/>
+		</wsdl:operation>
+    
+
+	</wsdl:portType>
+	
+</wsdl:definitions>

@@ -1,0 +1,12 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header>
+	 <eGov_IT:Errato SOAP_ENV:actor="http://www.cnipa.it/eGov_it/portadominio" SOAP_ENV:mustUnderstand="1" xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eGov_IT="http://Errato"/>
+ </soapenv:Header>
+ <soapenv:Body>
+	 <ns1:getQuote soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="urn:xmethods-delayed-quotes">
+   <symbol xmlns="" xmlns:se="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">IBM</symbol>
+  </ns1:getQuote>
+ </soapenv:Body>
+</soapenv:Envelope>
+
+

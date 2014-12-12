@@ -1,0 +1,233 @@
+
+<project name="prepare-setup-sql" basedir=".">
+	
+	<description>
+        	PREPARE SETUP SQL
+	</description>
+
+	<!-- SQL -->
+	<target name="prepare_sql_setup">
+				
+		<if>
+			<not>
+				<available file="${core}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${core}/local_env.xml.template" tofile="${core}/local_env.xml" />
+			</then>
+		</if>
+			
+		<!-- Postgresql -->
+		<antcall target="_buildSQL" >
+			<param name="TIPO_DB" value="postgresql" />
+		</antcall>
+		
+		<!-- Mysql -->
+		<antcall target="_buildSQL" >
+			<param name="TIPO_DB" value="mysql" />
+		</antcall>
+		
+		<!-- Oracle -->
+		<antcall target="_buildSQL" >
+			<param name="TIPO_DB" value="oracle" />
+		</antcall>
+								
+		<!-- Hsql -->
+		<antcall target="_buildSQL" >
+			<param name="TIPO_DB" value="hsql" />
+		</antcall>
+				
+		<!-- SQLServer -->
+		<antcall target="_buildSQL" >
+			<param name="TIPO_DB" value="sqlserver" />
+		</antcall>
+		
+		<!-- DB2 -->
+		<antcall target="_buildSQL" >
+			<param name="TIPO_DB" value="db2" />
+		</antcall>
+	
+	</target>
+	
+	<target name="_buildSQL">
+		<antcall target="build_script_sql" >
+			<param name="tipoDatabase" value="${TIPO_DB}"/>
+			<param name="sql" value="${core}/deploy/sql"/>
+			<param name="dist" value="${deploy_sql}/${TIPO_DB}/"/>
+		</antcall>
+		<antcall target="build_script_sql_pddConsole_singlePdD" >
+			<param name="pddConsole" value="${pddConsole}"/>
+			<param name="tipoDatabase" value="${TIPO_DB}"/>
+			<param name="sql" value="${core}/deploy/sql"/>
+			<param name="sql_pddConsole" value="${pddConsole}/deploy/sql"/>
+			<param name="sql_queue" value="${sql_queue}"/>
+			<param name="sql_audit" value="${sql_audit}"/>
+			<param name="sql_users" value="${sql_users}"/>
+			<param name="dist_pddConsole" value="${deploy_sql}/${TIPO_DB}/"/>
+		</antcall>
+		
+		<!-- Pulizia file non utilizzati -->
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RegistroServizi.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/RegistroServizi_delete.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/RegistroServizi_drop.sql" />
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/ConfigurazionePdD.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/ConfigurazionePdD_delete.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/ConfigurazionePdD_drop.sql" />
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_drop.sql" />
+		
+		
+		<!-- gestione db_info -->
+		
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE TABLE db_info" 
+				                                 value="CREATE TABLE db_info_console"/>
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql" token="CONSTRAINT pk_db_info" 
+						                         value="CONSTRAINT pk_db_info_console"/>
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql" token="INSERT INTO db_info" 
+								                 value="INSERT INTO db_info_console"/>
+		
+		<antcall target="_correctSQL_${TIPO_DB}" />
+		
+		<!-- creo OpenSPCoop2.sql -->
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- OpenSPCoop2
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryOpenSPCoop2.sql RepositoryPddConsoleOpenSPCoop2.sql RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryOpenSPCoop2.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2.sql"/>
+		
+		<!-- creo OpenSPCoop2_drop.sql -->
+				
+		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_drop.sql"/>
+
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql" token="DROP TABLE db_info_init_seq" 
+				                                 value="DROP TABLE db_info_init_seq_console"/>
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql" token="DROP TABLE db_info" 
+				                                 value="DROP TABLE db_info_console"/>
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql" token="DROP SEQUENCE seq_db_info" 
+				                                 value="DROP SEQUENCE seq_db_info_console"/>
+		
+		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_drop.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- OpenSPCoop2
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryOpenSPCoop2_drop.sql RepositoryPddConsoleOpenSPCoop2_drop.sql RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_drop.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryOpenSPCoop2_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_drop.sql"/>
+		
+		<!-- creo OpenSPCoop2_delete.sql -->
+				
+		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_runtime_delete.sql"/>		
+		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_runtime_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- OpenSPCoop2
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryOpenSPCoop2_delete.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_tracceDiagnostici_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_tracceDiagnostici_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- OpenSPCoop2
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryTracceDiagnostici_delete.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_registro_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_registro_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- OpenSPCoop2
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryPddConsoleOpenSPCoop2_delete.sql"/>
+		</concat>		
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_configPdD_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_configPdD_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- OpenSPCoop2
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryPddConsoleOpenSPCoop2_config_delete.sql RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_config_delete.sql"/>
+		</concat>
+		
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryOpenSPCoop2_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_config_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_delete.sql"/> <!-- ci sono le tracce e i diagnostici -->
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_config_delete.sql" />
+		
+		
+	</target>
+	
+	<!-- Postgresql -->
+	<target name="_correctSQL_postgresql">
+		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE SEQUENCE seq_db_info" 
+		                                         value="CREATE SEQUENCE seq_db_info_console"/>
+		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleOpenSPCoop2.sql" token="id BIGINT DEFAULT nextval('seq_db_info')" 
+						                         value="id BIGINT DEFAULT nextval('seq_db_info_console')"/>
+	</target>
+	
+	<!-- Mysql -->
+	<target name="_correctSQL_mysql">
+	</target>
+	
+	<!-- Oracle -->
+	<target name="_correctSQL_oracle">
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE SEQUENCE seq_db_info" 
+		                                         value="CREATE SEQUENCE seq_db_info_console"/>
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="insert on db_info" 
+						                         value="insert on db_info_console"/>
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="SELECT seq_db_info.nextval" 
+								                 value="SELECT seq_db_info_console.nextval"/>
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE TRIGGER trg_db_info" 
+								                 value="CREATE TRIGGER trg_db_info_console"/>
+	</target>
+	
+	<!-- Hsql -->
+	<target name="_correctSQL_hsql">
+		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE SEQUENCE seq_db_info" 
+		                                         value="CREATE SEQUENCE seq_db_info_console"/>
+		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleOpenSPCoop2.sql" token="(NEXT VALUE FOR seq_db_info)" 
+						                         value="(NEXT VALUE FOR seq_db_info_console)"/>
+	</target>
+	
+	<!-- SQLServer -->
+	<target name="_correctSQL_sqlserver">
+	</target>
+	
+	<!-- DB2 -->
+	<target name="_correctSQL_db2">
+	</target>
+
+</project>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="errore-applicativo" class="org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <structure field="dominio" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.Dominio"/>
+    <value name="ora-registrazione" field="oraRegistrazione" usage="required"/>
+    <structure field="datiCooperazione" usage="optional" map-as="org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione"/>
+    <structure field="eccezione" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.Eccezione"/>
+  </mapping>
+  <mapping name="dominio" class="org.openspcoop2.core.eccezione.errore_applicativo.Dominio">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
+    <structure field="soggetto" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.DominioSoggetto"/>
+    <value name="funzione" field="funzione" usage="optional" style="attribute"/>
+    <value name="modulo" field="modulo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="soggetto" class="org.openspcoop2.core.eccezione.errore_applicativo.DominioSoggetto">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="dati-cooperazione" class="org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <structure name="fruitore" field="fruitore" usage="optional" map-as="_Soggetto_Type"/>
+    <structure name="erogatore" field="erogatore" usage="optional" map-as="_Soggetto_Type"/>
+    <structure field="servizio" usage="optional" map-as="org.openspcoop2.core.eccezione.errore_applicativo.Servizio"/>
+    <value name="azione" field="azione" usage="optional"/>
+    <value name="servizio-applicativo" field="servizioApplicativo" usage="optional"/>
+  </mapping>
+  <mapping name="fruitore" class="org.openspcoop2.core.eccezione.errore_applicativo.Soggetto" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
+  </mapping>
+
+  <mapping type-name="_Soggetto_Type" class="org.openspcoop2.core.eccezione.errore_applicativo.Soggetto" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
+  </mapping>
+  <mapping name="identificativo" class="org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="servizio" class="org.openspcoop2.core.eccezione.errore_applicativo.Servizio">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="eccezione" class="org.openspcoop2.core.eccezione.errore_applicativo.Eccezione">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <structure field="codice" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione"/>
+    <value name="descrizione" field="descrizione" usage="required"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="codice" class="org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione">
+    <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+    <value name="sottotipo" field="sottotipo" usage="optional" style="attribute"/>
+  </mapping>
+</binding>

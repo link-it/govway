@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:spc="http://openspcoop2.org/example/pdd/server/StampaDocumento"
+	targetNamespace="http://openspcoop2.org/example/pdd/server/StampaDocumento">
+
+   <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/StampaDocumento" location="logicoErogatore.wsdl">
+    </wsdl:import>
+  <wsdl:binding name="StampaDocumentoBinding" type="spc:StampaDocumento">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Stampa">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Stato">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="StampaDocumentoService">
+    <wsdl:port name="StampaDocumentoInterfaceEndpoint" binding="spc:StampaDocumentoBinding">
+      <soap:address location="http://localhost:8888/tutorial/asincronoAsimmetrico"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

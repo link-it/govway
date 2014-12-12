@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoop2">
+	
+	<description>
+        Ambiente di compilazione della porta di dominio OpenSPCoop2
+    </description>
+
+	<import file="./local_env.xml" />
+	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/as-check.xml" />
+	<import file="./ant/openspcoop2-schemi-build.xml" />
+	<import file="./ant/openspcoop2-message-build.xml" />
+	<import file="./ant/openspcoop2-core-build.xml" />
+	<import file="./ant/openspcoop2-protocol-api-build.xml" />
+	<import file="./ant/openspcoop2-security-build.xml" />
+	<import file="./ant/openspcoop2-protocol-build.xml" />
+	<import file="./ant/openspcoop2-pdd-build.xml" />
+	<import file="./ant/openspcoop2-ear.xml" />
+	<import file="./ant/openspcoop2-war.xml" />
+	<import file="./ant/openspcoop2-integrationManagerStub.xml" />
+	<import file="${rootDir}/ant/commons/sql-build.xml" />
+	<import file="${rootDir}/ant/commons/stub-build.xml" />
+	<import file="${utils}/build.xml" />
+	<import file="${genericProject}/build.xml" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
+	<var name="j2ee" value="true"/>
+	<runtarget target="check_as_version" />	
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
+			<var name="j2ee" value="false"/>
+		</then>
+	</if>
+	
+	<!-- CLASSPATH -->
+	<!-- <copy file="${java_home}/jre/lib/rt.jar" todir="${required_lib}" /> -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="jax/jaxb*"/>
+			<include name="javax/*"/>
+			<include name="jibx/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/*"/>
+			<include name="httpcore/*"/>
+			<include name="wadl/*"/>
+			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>
+			<!-- <include name="rt.jar"/> -->
+		</fileset>
+	</path>		
+	<path id="classpath_dist" >
+		<fileset dir="${dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+
+	<!-- set global properties for this build -->
+	<!-- Indicazione se effettuare la compilazione dei sorgenti -->
+	<var name="compile-src" value="true"/>
+	<!-- Indicazione se produrre la versione Threads -->
+	<var name="build_openspcoop_with_linkit_threads" value="false"/>	
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${rootDir}" />
+	<!-- directory sorgente -->
+	<property name="src" location="src" />
+	<!-- directory da dove ripulire i .class di un ambiente di editing -->
+	<property name="src_eclipse" location="${src}/org" />
+	<!-- directory documentazione -->
+	<property name="doc" location="doc" />
+	<!-- directory di compilazione -->
+	<property name="build" location="build" />
+	<!-- directory di distribuzione -->
+	<property name="dist" location="dist" />
+	<!-- directory script SQL -->
+	<property name="sql" location="deploy/sql" />
+
+	
+	<!-- Ripulisce la distribuzione 
+             e ripulisce eventuali .class generati da ambienti di sviluppo-->
+	<target name="clean_porta_dominio">
+		<delete dir="${dist}" />
+		<delete dir="${build}" />
+		<delete dir="${doc}" />
+		<delete>
+			<fileset dir="${src_eclipse}" includes="**/*.class"/>
+		</delete>
+	</target>
+	<target name="clean" depends="clean_porta_dominio"/>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>		
+		
+	
+	
+	<!-- Compilazione dei JAR del progetto OpenSPCoop 2 -->
+	<target name="build_openspcoop2_schemi_jar">
+		<antcall target="compile_openspcoop2_schemi">
+			<param name="buildSchemi" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_message_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_message_*.jar"/>
+			<fileset dir="${dist}" includes="message/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_message">
+			<param name="buildMessage" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_core_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_core_*.jar"/>
+			<fileset dir="${dist}" includes="core/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_core">
+			<param name="buildCore" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_protocol-api_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_protocol-api_*.jar"/>
+			<fileset dir="${dist}" includes="protocol-api/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_protocol-api">
+			<param name="buildProtocolAPI" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_security_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_security_*.jar"/>
+			<fileset dir="${dist}" includes="security/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_security">
+			<param name="buildSecurity" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_protocol_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_protocol_*.jar"/>
+			<fileset dir="${dist}" includes="protocol/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_protocol">
+			<param name="buildProtocolEngine" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_pdd_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_pdd_*.jar"/>
+			<fileset dir="${dist}" includes="pdd/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_pdd">
+			<param name="buildPdd" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_all" 
+		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_openspcoop2_protocol-api,
+			     compile_openspcoop2_security,compile_openspcoop2_protocol,compile_openspcoop2_pdd">
+	
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<!-- carico packages -->
+				<loadfile property="packagesCompiled.message.read" srcFile="${doc}/api/message/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.message.read}" />
+				<loadfile property="packagesCompiled.core.read" srcFile="${doc}/api/core/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.core.read}" />
+				<loadfile property="packagesCompiled.protocol-api.read" srcFile="${doc}/api/protocol-api/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.protocol-api.read}" />
+				<loadfile property="packagesCompiled.security.read" srcFile="${doc}/api/security/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.security.read}" />
+				<loadfile property="packagesCompiled.protocol.read" srcFile="${doc}/api/protocol/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.protocol.read}" />
+				<loadfile property="packagesCompiled.pdd.read" srcFile="${doc}/api/pdd/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.pdd.read}" />
+				
+				<!-- API -->
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="all-packages"/>
+					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api/all-packages"/>
+				</antcall>
+			</then>
+		</if>
+		
+	</target>	
+	
+
+
+	
+	<!-- Creazione Plugins di OpenSPCoop2 -->
+	<target name="plugins" description="Crea l'elenco dei jar/properties installati come plugins di OpenSPCoop2">
+		<!-- jar -->
+		<fileset dir="${plugins}" id="plugins.jar">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath" refid="plugins.jar">
+			<map from="${plugins}/" to="lib/"/>
+		</pathconvert>
+		<pathconvert pathsep=" " property="plugins.classpath.jar" refid="plugins.jar">
+			<map from="${plugins}/" to=""/>
+		</pathconvert>
+		<echo message="Plugins-jar di OpenSPCoop: ${plugins.classpath.jar}"/>
+
+		<!-- properties -->
+		<fileset dir="${plugins}" id="plugins.properties">
+			<include name="**/*.properties"/>
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.properties" refid="plugins.properties">
+			<map from="${plugins}/" to=""/>
+		</pathconvert>
+		<echo message="Plugins-properties di OpenSPCoop: ${plugins.classpath.properties}"/>
+
+		<!-- applicazioni -->
+		<fileset dir="${application_plugins}" id="plugins.application.listDir">
+			<include name="**/*.jar"/>
+			<include name="**/*.war"/>
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.application.list" refid="plugins.application.listDir">
+			<map from="${application_plugins}/" to=""/>
+		</pathconvert>
+		<echo message="Plugins-application di OpenSPCoop: ${plugins.application.list}"/>
+		<fileset dir="${application_plugins}/META-INF" id="plugins.application.listApplicationXMLDir">
+			<include name="**/*.xml"/>
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.application.listApplicationXML" refid="plugins.application.listApplicationXMLDir">
+			<map from="${application_plugins}/META-INF/" to=""/>
+		</pathconvert>
+		<echo message="Plugins-application di OpenSPCoop (definizioni xml): ${plugins.application.listApplicationXML}"/>
+	</target>
+
+
+
+	
+	
+	<!-- Creazione archivio -->
+	<target name="build_porta_dominio">
+		<runtarget target="plugins" />
+		<runtarget target="compile_genericProject" />
+		<runtarget target="build_openspcoop2_all" />
+		<runtarget target="_build_archivio" />
+	</target>
+	<target name="build" depends="build_porta_dominio"/>
+	<target name="build_threads" description="Crea OpenSPCoop2 con il threads pool">
+		<var name="build_openspcoop_with_linkit_threads" value="true"/>
+		<runtarget target="build_porta_dominio" />
+	</target>
+	<target name="build_without_compile" depends="plugins,_build_archivio" />
+	<target name="_build_archivio">
+		<if>
+			<or>
+				<matches string="${as}" pattern="jboss.*"/>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<runtarget target="build_archivio_ear" />
+			</then>
+			<elseif>
+				<or>
+					<matches string="${as}" pattern="tomcat.*"/>
+				</or>
+				<then>
+					<runtarget target="make_openspcoop_web" />
+				</then>	
+			</elseif>
+		</if>
+		
+	</target>
+	
+	<!-- Deploy archivio -->
+	<target name="deploy" depends="build,_deploy_as" description="Pubblica OpenSPCoop."/>
+	<target name="deploy_threads" depends="build_threads,_deploy_as" description="Pubblica OpenSPCoop in versione threads."/>
+	<target name="deploy_without_compile" depends="build_without_compile,_deploy_as"/>
+	<target name="_deploy_as">
+		<if>
+			<or>
+				<matches string="${as}" pattern="jboss.*"/>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<copy file="${dist}/OpenSPCoop2.ear" todir="${appServer_deploy_dir}" />
+			</then>
+			<elseif>
+				<or>
+					<matches string="${as}" pattern="tomcat.*"/>
+				</or>
+				<then>
+					<copy file="${dist}/openspcoop2.war" todir="${appServer_deploy_dir}" />
+				</then>	
+			</elseif>
+		</if>
+	</target>
+	
+	
+
+
+	
+	
+	
+	<!-- Effettua la costruzione della Versione 'JRat' di OpenSPCoop. -->
+	<target name="jrat" description="Costruisce la versione 'JRat' di OpenSPCoop2.">
+		<if>
+			<or>
+				<matches string="${as}" pattern="jboss.*"/>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<java jar="${jrat_lib}/shiftone-jrat.jar" fork="true">
+					<arg value="inject" />
+					<arg value="${dist}/OpenSPCoop2.ear" />
+					<classpath>
+						<fileset dir="${jrat_lib}" />
+					</classpath>
+				</java>	
+			</then>
+			<elseif>
+				<or>
+					<matches string="${as}" pattern="tomcat.*"/>
+				</or>
+				<then>
+					<java jar="${jrat_lib}/shiftone-jrat.jar" fork="true">
+						<arg value="inject" />
+						<arg value="${dist}/openspcoop2.war" />
+						<classpath>
+							<fileset dir="${jrat_lib}" />
+						</classpath>
+					</java>
+				</then>	
+			</elseif>
+		</if>
+	</target>
+
+	
+
+		
+
+	<!-- Effettua un touch dell'OpenSPCoop.ear deployato nell'application server -->
+	<target name="touch">
+		<if>
+			<or>
+				<matches string="${as}" pattern="jboss.*"/>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<touch file="${appServer_deploy_dir}/OpenSPCoop2.ear"/>
+			</then>
+			<elseif>
+				<or>
+					<matches string="${as}" pattern="tomcat.*"/>
+				</or>
+				<then>
+					<touch file="${appServer_deploy_dir}/openspcoop2.war"/>
+				</then>	
+			</elseif>
+		</if>
+		
+	</target>
+
+	
+	
+	
+	
+	
+	<!-- Creazione Stub per Servizio di IntegrationManager -->
+	<target name="build_stub_integration_manager">
+		
+		<antcall target="build_stub_integration_manager_axis14">
+			<param name="build" value="${build}"/>
+			<param name="dist" value="${dist}"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+			
+		<antcall target="build_stub_integration_manager_cxf">
+			<param name="build" value="${build}"/>
+			<param name="dist" value="${dist}"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+			
+	</target>
+	
+	
+
+
+	
+	<!-- Creazione SQL -->
+	<target name="build_script_sql" depends="init_compile">
+		
+		<!-- Repository Messaggi e Buste -->
+		<antcall target="build_sql">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2.sql"/>
+			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste.sql runtimePdD/RepositoryMessaggi.sql DBInfo.sql"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database della Porta di Dominio OpenSPCoop2');"/>
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2_delete.sql"/>
+			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste_delete.sql runtimePdD/RepositoryMessaggi_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2_drop.sql"/>
+			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste_drop.sql runtimePdD/RepositoryMessaggi_drop.sql DBInfo_drop.sql"/>
+		</antcall>
+		
+		<!-- Tracce e Diagnostici -->
+		<antcall target="build_sql">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici.sql"/>
+			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici.sql archiviComunicazioni/ArchivioTracce.sql DBInfo.sql"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Archivio delle tracce e dei messaggi diagnostici emessi dalla Porta di Dominio OpenSPCoop2');" />
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici_delete.sql"/>
+			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici_delete.sql archiviComunicazioni/ArchivioTracce_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici_drop.sql"/>
+			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici_drop.sql archiviComunicazioni/ArchivioTracce_drop.sql DBInfo_drop.sql"/>
+		</antcall>
+		
+		<!-- ConfigurazionePdD -->
+		<antcall target="build_sql">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/ConfigurazionePdD.sql"/>
+			<param name="SQLSourceFiles" value="configurazionePdD/configurazionePdD_Connettori.sql configurazionePdD/configurazionePdD_ConnettoriGestioneErrore.sql configurazionePdD/configurazionePdD_Soggetti.sql configurazionePdD/configurazionePdD_ServiziApplicativi.sql configurazionePdD/configurazionePdD_PorteDelegate.sql configurazionePdD/configurazionePdD_PorteApplicative.sql configurazionePdD/configurazionePdD.sql DBInfo.sql"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Configurazione della PdD OpenSPCoop2');" />
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/ConfigurazionePdD_delete.sql"/>
+			<param name="SQLSourceFiles" value="configurazionePdD/configurazionePdD_PorteApplicative_delete.sql configurazionePdD/configurazionePdD_PorteDelegate_delete.sql configurazionePdD/configurazionePdD_ServiziApplicativi_delete.sql configurazionePdD/configurazionePdD_Soggetti_delete.sql configurazionePdD/configurazionePdD_Connettori_delete.sql configurazionePdD/configurazionePdD_delete.sql configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/ConfigurazionePdD_drop.sql"/>
+			<param name="SQLSourceFiles" value="configurazionePdD/configurazionePdD_PorteApplicative_drop.sql configurazionePdD/configurazionePdD_PorteDelegate_drop.sql configurazionePdD/configurazionePdD_ServiziApplicativi_drop.sql configurazionePdD/configurazionePdD_Soggetti_drop.sql configurazionePdD/configurazionePdD_Connettori_drop.sql configurazionePdD/configurazionePdD_drop.sql configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_drop.sql DBInfo_drop.sql"/>
+		</antcall>
+
+		
+		<!-- RegistroServizi -->
+		<antcall target="build_sql">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RegistroServizi.sql"/>
+			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Connettori.sql registroServizi/registroServizi_PorteDominio.sql registroServizi/registroServizi_Soggetti.sql registroServizi/registroServizi_Accordi.sql DBInfo.sql"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Registro dei Servizi di OpenSPCoop2');" />
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RegistroServizi_delete.sql"/>
+			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Accordi_delete.sql registroServizi/registroServizi_Soggetti_delete.sql registroServizi/registroServizi_Connettori_delete.sql registroServizi/registroServizi_PorteDominio_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql}"/>
+			<param name="SQLDestFile" value="${dist}/RegistroServizi_drop.sql"/>
+			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Accordi_drop.sql registroServizi/registroServizi_Soggetti_drop.sql registroServizi/registroServizi_Connettori_drop.sql registroServizi/registroServizi_PorteDominio_drop.sql DBInfo_drop.sql"/>
+		</antcall>
+			
+	</target>
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- Classi Test Standalone -->
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_run_lib" >
+		<fileset dir="${required_lib}" >
+			<include name="**/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_run_dist" >
+		<fileset dir="${dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+
+	<!-- Per il driver JDBC creare una directory 'jdbc' nelle lib ed inserire i vari jar -->
+	<target name="runGestoreRepositoryTest">
+		<if>
+			<equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
+			<then>
+				<fail message="Parametro tipoDatabase non fornito"/>
+			</then>
+		</if>
+        <!-- Run the java code  -->
+        <java classname="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" fork="true">
+                <arg value="${tipoDatabase}" />
+        		<arg value="${url}" /> <!-- opzionale -->
+        		<arg value="${username}" /> <!-- opzionale -->
+        		<arg value="${password}" /> <!-- opzionale -->
+                <classpath>
+                	<path refid="classpath_run_lib" />
+                	<path refid="classpath_run_dist" />
+                </classpath>
+        </java>
+	</target>
+	
+	<target name="test_serialization">
+		<if>
+			<equals arg1="${DirOutput}" arg2="$${DirOutput}"/>
+			<then>
+				<fail message="Parametro DirOutput non fornito"/>
+			</then>
+		</if>
+        <!-- Run the java code  -->
+        <java classname="org.openspcoop2.core.registry.driver.utils.SerializationClientTest" fork="true">
+                <arg value="${DirOutput}" />
+                <classpath>
+                		<path refid="classpath_run_dist" />
+                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
+                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                </classpath>
+        </java>
+	</target>
+	
+	<target name="test_validazione_semantica_configurazione">
+		<if>
+			<equals arg1="${tipoConfigurazione}" arg2="$${tipoConfigurazione}"/>
+			<then>
+				<fail message="Parametro tipoConfigurazione non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${proprietaConfigurazione}" arg2="$${proprietaConfigurazione}"/>
+			<then>
+				<fail message="Parametro proprietaConfigurazione non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${validazioneConfigurazione}" arg2="$${validazioneConfigurazione}"/>
+			<then>
+				<fail message="Parametro validazioneConfigurazione non fornito"/>
+			</then>
+		</if>
+        <!-- Run the java code  -->
+        <java classname="org.openspcoop2.core.config.driver.utils.TestValidazioneSemantica" fork="true">
+                <arg value="${tipoConfigurazione}" />
+        	 	<arg value="${proprietaConfigurazione}" />
+                <arg value="${validazioneConfigurazione}" />
+                <classpath>
+                		<path refid="classpath_run_dist" />
+                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
+                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                </classpath>
+        </java>
+	</target>
+	
+	<target name="test_validazione_semantica_registro">
+		<if>
+			<equals arg1="${tipoRegistro}" arg2="$${tipoRegistro}"/>
+			<then>
+				<fail message="Parametro tipoRegistro non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${proprietaRegistro}" arg2="$${proprietaRegistro}"/>
+			<then>
+				<fail message="Parametro proprietaRegistro non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${checkURI}" arg2="$${checkURI}"/>
+			<then>
+				<fail message="Parametro checkURI non fornito"/>
+			</then>
+		</if>
+        <!-- Run the java code  -->
+        <java classname="org.openspcoop2.core.registry.driver.utils.TestValidazioneSemantica" fork="true">
+                <arg value="${tipoRegistro}" />
+        	 	<arg value="${proprietaRegistro}" />
+                <arg value="${checkURI}" />
+                <classpath>
+                		<path refid="classpath_run_dist" />
+                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
+                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                </classpath>
+        </java>
+	</target>
+	
+	
+	
+	
+</project>

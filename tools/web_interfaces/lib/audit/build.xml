@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="Auditing" default="build" basedir=".">
+	<description>
+        File di Script per la compilazione della libreria Auditing
+    </description>
+
+	<import file="local_env.xml" />
+	<import file="./local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/sql-build.xml" />
+	<import file="${mvc}/build.xml" />
+
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+
+	<!-- set properties for this build -->
+	<property name="src_audit" location="src" />
+	<property name="build_audit" location="build/audit" />
+	<property name="dist_audit" location="dist" />
+	<property name="doc_audit" location="doc" />
+	<property name="sql_audit" location="deploy/sql" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_audit">
+		<delete dir="${build_audit}" />
+		<delete dir="build" />
+		<delete dir="${dist_audit}" />
+		<delete dir="${doc_audit}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_audit">
+		<mkdir dir="${build_audit}" />
+		<mkdir dir="${dist_audit}" />
+	</target>
+	
+	<!-- Compilazione -->
+	<target name="compile_audit" depends="init_compile_audit,compile_mvc" description="compila la libreria">
+
+		<!-- Info svn -->
+		<runtarget target="checksvn" />
+		
+		<!-- org.openspcoop2.web.lib.audit.dao -->
+		<var name="packagesCompiled" value="org.openspcoop2.web.lib.audit.costanti" />	
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}/org/openspcoop2/web/lib/audit/costanti"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit-costanti"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit.costanti"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
+			<param name="dist" value="${dist_audit}"/>
+			<param name="build" value="${build_audit}"/>
+		</antcall>
+		
+		<!-- org.openspcoop2.web.lib.audit.dao -->
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.dao" />	
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}/org/openspcoop2/web/lib/audit/dao"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit-dao"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit.dao"/>
+			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
+			<param name="dist" value="${dist_audit}"/>
+			<param name="build" value="${build_audit}"/>
+		</antcall>
+		
+		<!-- org.openspcoop2.web.lib.audit -->
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.appender" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.web" />		
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/audit/dao/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES_2" value="**/audit/costanti/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
+			<param name="dist" value="${dist_audit}"/>
+			<param name="build" value="${build_audit}"/>
+		</antcall>
+				
+		<!-- Jar Complessivo -->
+		<antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
+			<param name="svn_rootDir" value="."/>
+			<param name="dist" value="${dist_audit}"/>
+			<param name="build" value="${build_audit}"/>
+		</antcall>
+		
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc_audit}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_audit}/api"/>
+			<param name="src" value="${src_audit}"/>
+			<param name="doc" value="${doc_audit}"/>
+			<param name="dist" value="${dist_audit}"/>
+		</antcall>
+		
+	</target>
+
+	<!-- alias -->
+	<target name="build" depends="compile_audit" description="compila la libreria Audit"/>
+	<target name="clean" depends="clean_audit" description="elimina la libreria Audit"/>
+	
+	<target name="build_script_sql_audit" depends="init_compile_audit">
+		<copy todir="${sql_audit}">
+		    <fileset dir="${sql}"/>
+		    <globmapper from="*DBInfo.sql" to="*DBInfo.sql"/>
+		</copy>
+		<copy todir="${sql_audit}">
+		    <fileset dir="${sql}"/>
+		    <globmapper from="*DBInfo_delete.sql" to="*DBInfo_delete.sql"/>
+		</copy>
+		<copy todir="${sql_audit}">
+		    <fileset dir="${sql}"/>
+		    <globmapper from="*DBInfo_drop.sql" to="*DBInfo_drop.sql"/>
+		</copy>
+		<antcall target="build_sql">
+			<param name="SQLDirectory" value="${sql_audit}"/>
+			<param name="SQLDestFile" value="${dist_audit}/RepositoryAuditingOpenSPCoop2.sql"/>
+			<param name="SQLSourceFiles" value="Audit.sql AuditAppender.sql DBInfo.sql"/>
+			<param name="SQLDataFiles" value="audit_data.sql audit_appender_db_data.sql  audit_appender_log4j_data.sql"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Audit delle operazioni effettuate sulla console della Porta di Dominio OpenSPCoop2');"/>
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql_audit}"/>
+			<param name="SQLDestFile" value="${dist_audit}/RepositoryAuditingOpenSPCoop2_delete.sql"/>
+			<param name="SQLSourceFiles" value="Audit_delete.sql AuditAppender_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+		</antcall>
+		<antcall target="build_sql_utility">
+			<param name="SQLDirectory" value="${sql_audit}"/>
+			<param name="SQLDestFile" value="${dist_audit}/RepositoryAuditingOpenSPCoop2_drop.sql"/>
+			<param name="SQLSourceFiles" value="Audit_drop.sql AuditAppender_drop.sql DBInfo_drop.sql"/>
+		</antcall>
+		<delete dir="${sql_audit}">
+			<include name="**/DBInfo.sql"/>
+			<include name="**/DBInfo_delete.sql"/>
+			<include name="**/DBInfo_drop.sql"/>
+		</delete>
+	</target>
+
+</project>

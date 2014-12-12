@@ -1,0 +1,32 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione"
+			xmlns:so="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione">
+
+			<xs:element name="comunicazioneVariazione">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="so:personaType">
+							<xs:attribute name="CF" type="so:codiceFiscaleType"
+								use="required" />
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:simpleType name="codiceFiscaleType">
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[a-zA-Z]{6}\d\d[a-zA-Z]\d\d[a-zA-Z]\d\d\d[a-zA-Z]" />
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:complexType name="personaType">
+				<xs:sequence>
+					<xs:element name="nome" type="xs:string" />
+					<xs:element name="cognome" type="xs:string" />
+					<xs:element name="codiceFiscale" type="so:codiceFiscaleType" />
+					<xs:element name="nascita" type="xs:date" />
+					<xs:element name="statoCivile" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+
+</xs:schema>

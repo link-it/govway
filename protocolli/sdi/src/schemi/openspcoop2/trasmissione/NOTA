@@ -1,0 +1,4 @@
+NOTA: I due schema 1.0 e 1.1 possiedono lo stesso namespace.
+Differiscono solo per un elemento:
+- notificaFileNonRecapitabile (in 1.0)
+- attestazioneTrasmissioneFattura (in 1.1)

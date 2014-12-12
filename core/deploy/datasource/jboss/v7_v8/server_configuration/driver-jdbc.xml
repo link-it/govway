@@ -1,0 +1,31 @@
+<server>
+   ...
+   <profile>
+      ...
+      <subsystem xmlns="urn:jboss:domain:datasources:1.0">
+         <datasources>
+             ...
+	     <drivers>
+		     ...
+		    <driver name="openspcoop2-modulo-driver-jdbc" module="org.openspcoop2.jdbc">
+		           <!-- Indicare il DriverJDBC -->
+		           <!-- 
+		           	Questa definizione risolve il problema di installare non-JDBC-compliant driver (es. mysql)
+		                   Vedi https://developer.jboss.org/message/866635
+		           -->
+		           <!-- <driver-class>org.postgresql.Driver</driver-class> -->
+		           <!-- <driver-class>com.mysql.jdbc.Driver</driver-class> -->
+		           <!-- <driver-class>oracle.jdbc.OracleDriver</driver-class> -->
+		           <!-- <driver-class>org.hsqldb.jdbcDriver</driver-class> -->
+		           <!-- <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class> -->
+		           <!-- <driver-class>com.ibm.db2.jcc.DB2Driver</driver-class> -->
+		    </driver>
+		     ...
+	     </drivers>
+             ...
+         </datasources>
+      </subsystem>
+      ...
+   </profile>
+   ...
+</server>

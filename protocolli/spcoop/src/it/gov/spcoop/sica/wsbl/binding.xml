@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="ConceptualBehavior" class="it.gov.spcoop.sica.wsbl.ConceptualBehavior">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required"/>
+    <structure name="states" field="states" usage="required" map-as="_StatesType_Type"/>
+    <structure field="transitions" usage="required" map-as="it.gov.spcoop.sica.wsbl.TransitionsType"/>
+  </mapping>
+  <mapping name="MessageBehavior" class="it.gov.spcoop.sica.wsbl.MessageBehavior">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required"/>
+    <structure name="states" field="states" usage="required" map-as="_StatesType_Type"/>
+    <structure field="messages" usage="required" map-as="it.gov.spcoop.sica.wsbl.MessagesTypes"/>
+  </mapping>
+  <mapping name="states" class="it.gov.spcoop.sica.wsbl.StatesType" abstract="false">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <structure field="stateInitial" usage="required" map-as="it.gov.spcoop.sica.wsbl.StateTypeInitial"/>
+    <structure field="stateFinal" usage="required" map-as="it.gov.spcoop.sica.wsbl.StateTypeFinal"/>
+    <collection field="state" create-type="java.util.ArrayList">
+      <structure map-as="it.gov.spcoop.sica.wsbl.StateTypeNormal"/>
+    </collection>
+  </mapping>
+
+  <mapping type-name="_StatesType_Type" class="it.gov.spcoop.sica.wsbl.StatesType" abstract="true">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <structure field="stateInitial" usage="required" map-as="it.gov.spcoop.sica.wsbl.StateTypeInitial"/>
+    <structure field="stateFinal" usage="required" map-as="it.gov.spcoop.sica.wsbl.StateTypeFinal"/>
+    <collection field="state" create-type="java.util.ArrayList">
+      <structure map-as="it.gov.spcoop.sica.wsbl.StateTypeNormal"/>
+    </collection>
+  </mapping>
+  <mapping name="transitions" class="it.gov.spcoop.sica.wsbl.TransitionsType">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <collection field="transition" create-type="java.util.ArrayList">
+      <structure map-as="it.gov.spcoop.sica.wsbl.TransitionType"/>
+    </collection>
+  </mapping>
+  <mapping name="messages" class="it.gov.spcoop.sica.wsbl.MessagesTypes">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <collection field="message" create-type="java.util.ArrayList">
+      <structure map-as="it.gov.spcoop.sica.wsbl.MessagesTypesMessage"/>
+    </collection>
+  </mapping>
+  <mapping name="message" class="it.gov.spcoop.sica.wsbl.MessagesTypesMessage">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="type" field="type" usage="required" style="attribute"/>
+    <value name="source" field="source" usage="required" style="attribute"/>
+    <value name="target" field="target" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="completionMode" class="it.gov.spcoop.sica.wsbl.CompletionModeType">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="mode" field="mode" usage="required"/>
+    <structure field="compensateMessage" usage="optional" map-as="it.gov.spcoop.sica.wsbl.CompletionModeTypeCompensateMessage"/>
+  </mapping>
+  <mapping name="compensateMessage" class="it.gov.spcoop.sica.wsbl.CompletionModeTypeCompensateMessage">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="type" field="type" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="event" class="it.gov.spcoop.sica.wsbl.EventType">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <structure field="message" usage="optional" map-as="it.gov.spcoop.sica.wsbl.EventTypeMessage"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="message" class="it.gov.spcoop.sica.wsbl.EventTypeMessage">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="type" field="type" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="events" class="it.gov.spcoop.sica.wsbl.EventListType">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <collection field="event" create-type="java.util.ArrayList">
+      <structure map-as="it.gov.spcoop.sica.wsbl.EventType"/>
+    </collection>
+  </mapping>
+  <mapping name="guard" class="it.gov.spcoop.sica.wsbl.GuardType">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="description" field="description" usage="required"/>
+    <value name="rule" field="rule" usage="required"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="temporalCondition" class="it.gov.spcoop.sica.wsbl.TemporalConditionType">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="predicate" field="predicate" usage="required"/>
+    <value name="boolop" field="boolop" usage="required"/>
+    <value name="data" field="data" usage="required"/>
+    <value name="description" field="description" usage="optional"/>
+  </mapping>
+  <mapping name="transition" class="it.gov.spcoop.sica.wsbl.TransitionType">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="activationMode" field="activationMode" usage="required"/>
+    <structure field="completionMode" usage="required" map-as="it.gov.spcoop.sica.wsbl.CompletionModeType"/>
+    <structure field="guard" usage="optional" map-as="it.gov.spcoop.sica.wsbl.GuardType"/>
+    <structure field="events" usage="optional" map-as="it.gov.spcoop.sica.wsbl.EventListType"/>
+    <structure field="temporalCondition" usage="optional" map-as="it.gov.spcoop.sica.wsbl.TemporalConditionType"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="source" field="source" usage="required" style="attribute"/>
+    <value name="target" field="target" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="state-initial" class="it.gov.spcoop.sica.wsbl.StateTypeInitial">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="state-final" class="it.gov.spcoop.sica.wsbl.StateTypeFinal">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="state" class="it.gov.spcoop.sica.wsbl.StateTypeNormal">
+    <namespace uri="http://spcoop.gov.it/sica/wsbl" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+</binding>

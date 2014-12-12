@@ -1,0 +1,72 @@
+
+<project name="prepare-setup-loader" basedir=".">
+	
+	<description>
+        	PREPARE SETUP LOADER
+	</description>
+
+	<import file="jar-build.xml" />
+	
+	<target name="prepare_loader_setup">
+		
+		<if>
+			<not>
+				<available file="${loaderConsole}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${loaderConsole}/local_env.xml.template" tofile="${loaderConsole}/local_env.xml" />
+			</then>
+		</if>
+				
+		<foreach list="${application_server_version}" param="TIPO_AS" target="_buildLoader" />
+				
+	</target>
+	
+	<target name="_buildLoader">
+
+		<mkdir dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<antcall target="compile_openspcoop2_loaderConsole">
+			<param name="dist_loaderConsole" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_loaderConsole" value="${src_loaderConsole}"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+	 	</antcall>
+		<antcall target="war_openspcoop2_loaderConsole">
+	    	<param name="as" value="${TIPO_AS}" />
+			<param name="dist_loaderConsole" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_loaderConsole" value="${src_loaderConsole}"/>
+			<param name="commons_images" value="${commons_images}"/>
+			<param name="images" value="${loaderConsole}/deploy/images"/>
+			<param name="jsp" value="${loaderConsole}/deploy/jsp"/>
+			<param name="jsplib" value="${jsplib}"/>
+			<param name="js" value="${loaderConsole}/deploy/js"/>
+			<param name="jslib" value="${jslib}"/>
+			<param name="deploy.dir" value="${loaderConsole}/deploy"/>
+			<param name="cfg" value="${loaderConsole}/deploy/properties"/>
+			<param name="required_lib_loaderConsole" value="${required_lib_loaderConsole}"/>
+			<param name="printServerInfo" value="true"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+	 	</antcall>
+		<move file="${deploy_sw}/${TIPO_AS}/dist/pddLoader.war" todir="${deploy_sw}/${TIPO_AS}"/>
+	
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/${TIPO_AS}/dist" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<delete dir="build"/>
+			
+		<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/pddLoader.war" />
+		
+		<antcall target="read_jar">
+		    <param name="archiveFile" value="${archiveFile}"/>
+			<param name="as" value="${TIPO_AS}"/>
+			<param name="archiveType" value="WAR"/>
+		</antcall>
+		
+	</target>
+	
+	
+</project>

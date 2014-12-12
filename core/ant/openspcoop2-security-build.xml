@@ -1,0 +1,131 @@
+<project name="openspcoop2-compile-security">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.security
+    </description>
+
+	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/compile-build.xml" />
+	<import file="${rootDir}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.security.*' -->
+	<target name="compile_openspcoop2_security" description="compila la libreria org.openspcoop.security.*">
+
+		<if>
+			<istrue value="${buildSecurity}"/>
+			<then>
+		
+				<!-- Info svn -->
+				<runtarget target="checksvn" />
+				<!-- <echo security="SVN:[${svnant.jar.presente}]"/> -->
+								
+				<!-- org.openspcoop2.security.core -->
+				<var name="packagesCompiled" value="org.openspcoop2.security" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.keystore" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.keystore.cache" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/security"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="security-core"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="message/**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="keystore/*.cer"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="keystore/*.properties"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/security"/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.security"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
+				</antcall>
+				
+				<!-- org.openspcoop2.security.message -->
+				<var name="engine" value="engine/*.java" />
+				<var name="soapBox" value="soapbox/*.java" />
+				<var name="wss4j" value="wss4j/*.java" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.constants" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.authorization" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.signature" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.utils" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/security/message"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="security-message"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${engine}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_2" value="${wss4j}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_3" value="${soapBox}"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/security/message"/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.security.message"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
+				</antcall>
+				
+				<!-- org.openspcoop2.security.message.engine -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.engine" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/security/message/engine"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="security-message-engine"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.security.message.engine"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
+				</antcall>
+				
+				<!-- org.openspcoop2.security.message.wss4j -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.wss4j" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/security/message/wss4j"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="security-message-wss4j"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.security.message.wss4j"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
+				</antcall>
+				
+				<!-- org.openspcoop2.security.message.soapbox -->
+				<if>
+					<istrue value="${buildSecurity_soapbox}"/>
+					<then>
+						<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.soapbox" />
+						<antcall target="compile_src_openspcoop2">
+							<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+							<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/security/message/soapbox"/>
+							<param name="compile_src_openspcoop2.SVN_ID_NAME" value="security-message-soapbox"/>
+							<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+							<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+							<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+							<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.security.message.soapbox"/>
+							<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
+						</antcall>
+					</then>
+				</if>
+					
+				<!-- Jar Complessivo -->
+				<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="security"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
+				</antcall>
+				
+				<!-- API -->
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
+					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api/security"/>
+				</antcall>
+
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

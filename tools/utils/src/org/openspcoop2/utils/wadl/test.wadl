@@ -1,0 +1,160 @@
+<application xmlns="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns:include="http://www.openspcoop.org/example/wadl/inline/importInclude"
+		xmlns:inline="http://www.openspcoop.org/example/wadl/inline"
+		xmlns:test2="http://www.openspcoop.org/example/wadl/interno">
+    <grammars>
+    
+        <include href="test.xsd"/>
+        
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		    xmlns="http://www.openspcoop.org/example/wadl/inline"
+		    attributeFormDefault="unqualified" elementFormDefault="qualified"
+		    targetNamespace="http://www.openspcoop.org/example/wadl/inline">
+		    
+		    <xsd:element name="film" type="film"/>
+		    <xsd:complexType name="film">
+		        <xsd:sequence>
+		            <xsd:element name="id-film" type="xsd:int"/>
+		            <xsd:element name="film" type="xsd:string"/>
+		            <xsd:element name="autore" type="xsd:string"/>
+		         </xsd:sequence>
+		    </xsd:complexType>
+		    
+		</xsd:schema>
+        
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		    xmlns="http://www.openspcoop.org/example/wadl/inline/importInclude"
+		    xmlns:test2="http://www.openspcoop.org/example/wadl/interno"
+		    attributeFormDefault="unqualified" elementFormDefault="qualified"
+		    targetNamespace="http://www.openspcoop.org/example/wadl/inline/importInclude">
+		       
+		    <!-- <xsd:include schemaLocation="test2.xsd"/> -->
+		    
+		    <xsd:import namespace="http://www.openspcoop.org/example/wadl/interno" schemaLocation="test2.xsd"/>
+		    
+		    <xsd:element name="raccolta" type="raccolta"/>
+		    <xsd:complexType name="raccolta">
+		        <xsd:sequence>
+		            <xsd:element name="id-raccolta" type="xsd:int"/>
+		            <xsd:element ref="test2:test"/>
+		         </xsd:sequence>
+		    </xsd:complexType>
+		    
+		</xsd:schema>
+        
+    </grammars>
+    <resources base="http://localhost:8080/smartproxy/ws/rest">
+        <resource path="/prova2">
+            <method name="GET">
+                <request>
+                    <param name="idTrasmissionePROVA2Required" style="query" required="true" type="xs:long"/>
+                    <param name="idTrasmissionePROVA2headerRequired" style="header" required="true" type="xs:long"/>
+                    <param name="idTrasmissionePROVA2" style="query" type="xs:long"/>
+                    <param name="idTrasmissionePROVA2header" style="header" type="xs:long"/>
+                </request>
+                <response>
+                    <representation mediaType="text/plain"/>
+                </response>
+            </method>
+            <method href="#provaEsterna"/>
+        </resource>
+        <resource path="/allineamentopendenze">
+            <method name="GET">
+                <request>
+                    <param name="idTrasmissione" style="query" type="xs:long"/>
+                </request>
+                <response>
+                    <representation mediaType="text/plain"/>
+                </response>
+            </method>
+            <resource path="/getStatoTrasmissione">
+                <method name="GET">
+                    <request>
+                        <param name="idTrasmissione" style="query" type="xs:long"/>
+                    </request>
+                    <response>
+                        <representation mediaType="text/plain"/>
+                    </response>
+                </method>
+            </resource>
+            <resource path="/getStatoTrasmissioni">
+                <method name="GET">
+                    <response>
+                        <representation mediaType="application/xml" element="inline:film"/>
+                    </response>
+                </method>
+                <method name="POST">
+                    <request>
+                        <representation mediaType="application/xml" element="test2:test"/>
+                    </request>
+                    <response>
+                        <representation mediaType="application/xml" element="test2:test"/>
+                    </response>
+                </method>
+            </resource>
+            <resource path="/getStatoTrasmissioniConPiuResponse">
+                <method name="GET">
+                    <response>
+                        <representation mediaType="application/xml" element="inline:film"/>
+                    </response>
+                </method>
+                <method name="POST">
+                    <request>
+                        <representation mediaType="application/xml" element="include:raccolta"/>
+                    </request>
+                    <response status="200">
+                        <representation mediaType="application/xml" element="test2:test"/>
+                    </response>
+                    <response status="202">
+                        <representation mediaType="application/xml" element="include:raccolta"/>
+                    </response>
+                    <response status="400">
+                        <representation mediaType="application/xml" element="include:raccolta"/>
+                    </response>
+                    <response status="500">
+                        <representation mediaType="application/xml" element="include:raccolta"/>
+                    </response>
+                    <response status="503">
+                        <representation mediaType="application/xml" element="include:raccolta"/>
+                    </response>
+                </method>
+            </resource>
+             <resource path="${idDinamico}">
+                <method name="GET">
+                 	<request>
+                        <param required="true" style="template" name="idDinamico"/>
+                    </request>
+                    <response>
+                        <representation mediaType="application/xml" element="inline:film"/>
+                    </response>
+                </method>
+            </resource>
+            <resource path="/getStatoTrasmissioniJSON">
+                <method name="GET">
+                    <response>
+                        <representation mediaType="application/json" element="inline:film"/>
+                    </response>
+                </method>
+                <method name="POST">
+                    <request>
+                        <representation mediaType="application/json" element="include:raccolta"/>
+                    </request>
+                    <response>
+                        <representation mediaType="application/json" element="inline:film"/>
+                    </response>
+                </method>
+            </resource>
+        </resource>
+    </resources>
+    
+    
+    <method name="POST" id="provaEsterna">
+        <request>
+            <param name="idTrasmissionePROVAEsterna" style="query" type="xs:long"/>
+        </request>
+        <response>
+            <representation mediaType="text/plain"/>
+        </response>
+    </method>
+    
+</application>

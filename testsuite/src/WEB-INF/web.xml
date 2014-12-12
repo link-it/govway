@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+	<display-name>TestSuiteServer</display-name>
+  <description>
+	  Server utilizzati nella TestSuite
+  </description>
+
+  <!-- OpenSPCoop2TestsuiteStartup  -->
+  <listener>
+        <listener-class> org.openspcoop2.testsuite.server.OpenSPCoop2TestsuiteStartup </listener-class>
+  </listener>
+
+
+  <!-- Server Generico -->
+  <servlet>
+	<servlet-name>TestSuiteServerGenerico</servlet-name>
+	<servlet-class>org.openspcoop2.testsuite.server.ServerGenerico</servlet-class>
+  </servlet>
+
+  <!-- Server Raccolta info integrazione -->
+  <servlet>
+        <servlet-name>TestSuiteServerInfoIntegrazione</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerRaccoltaInfoIntegrazione</servlet-class>
+  </servlet>
+
+  <!-- Server Tunnel SOAP -->
+  <servlet>
+        <servlet-name>TestSuiteServerTunnelSOAP</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerTunnelSOAP</servlet-class>
+  </servlet>
+  
+  <!-- Server per la gestione del profilo asincrono simmetrico, in modalita asincrona -->
+  <servlet>
+        <servlet-name>TestSuiteServerAS_modalitaAsincrona</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerAsincronoSimmetrico_modalitaAsincrona</servlet-class>
+  </servlet>
+
+  <!-- Server per la gestione del profilo asincrono simmetrico, in modalita sincrona -->
+  <servlet>
+        <servlet-name>TestSuiteServerAS_modalitaSincrona</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerAsincronoSimmetrico_modalitaSincrona</servlet-class>
+  </servlet>
+
+  <!-- Server per la gestione WS-Security -->
+  <servlet>
+        <servlet-name>TestSuiteServerWSSecurity</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerWSSecurity</servlet-class>
+  </servlet>
+
+  <!-- Server per la generazione di SoapFault -->
+  <servlet>
+        <servlet-name>TestSuiteServerSOAPFault</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerSOAPFault</servlet-class>
+  </servlet>
+
+  <!-- Servlet per congelamento buste per Test di consegna in ordine -->
+  <servlet>
+        <servlet-name>TestSuiteServerCongelamentoBuste</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerCongelamentoBuste</servlet-class>
+  </servlet>
+
+  <!-- Servlet per alterazione msg per WSSecurity -->
+  <servlet>
+        <servlet-name>TestSuiteServerAlterazioneMsgWSS</servlet-name>
+        <servlet-class>org.openspcoop2.testsuite.server.ServerAlterazioneWSS</servlet-class>
+  </servlet>
+
+  <!-- Servlet per alterazione msg di risposta -->
+  <servlet>
+          <servlet-name>TestSuiteServerAlterazioneRisposta</servlet-name>
+          <servlet-class>org.openspcoop2.testsuite.server.ServerAlterazioneMessaggioRisposta</servlet-class>
+  </servlet>
+
+  <!-- Servlet per verifica funzionalita' allega body -->
+  <servlet>
+  	  <servlet-name>TestSuiteServerVerificaFunzionalitaAllegaBody</servlet-name>
+  	  <servlet-class>org.openspcoop2.testsuite.server.ServerVerificaFunzionalitaAllegaBody</servlet-class>
+  </servlet>
+
+  <!-- Servlet per verifica funzionalita' scarta body -->
+  <servlet>
+  	  <servlet-name>TestSuiteServerVerificaFunzionalitaScartaBody</servlet-name>
+  	  <servlet-class>org.openspcoop2.testsuite.server.ServerVerificaFunzionalitaScartaBody</servlet-class>
+  </servlet>
+
+  <!-- Servlet per verifica malformazione XML -->
+  <servlet>
+          <servlet-name>TestSuiteServerVerificaMalformazioneXML</servlet-name>
+          <servlet-class>org.openspcoop2.testsuite.server.ServerMalformazioneXML</servlet-class>
+  </servlet>
+
+  <!-- Servlet per ReadTimeout -->
+  <servlet>
+            <servlet-name>TestSuiteServerReadTimeout</servlet-name>
+	    <servlet-class>org.openspcoop2.testsuite.server.ServerReadTimeout</servlet-class>
+  </servlet>
+
+  <!-- Servlet per Generazione header integrazione risposta -->
+  <servlet>
+	    <servlet-name>TestSuiteServerHeaderIntegrazioneRisposta</servlet-name>
+	    <servlet-class>org.openspcoop2.testsuite.server.ServerHeaderIntegrazioneRisposta</servlet-class>
+  </servlet>
+  
+  <!-- Servlet OpenSPCoop2 EchoService -->
+  <servlet>
+	    <servlet-name>TestSuiteServerOpenSPCoop2EchoService</servlet-name>
+	    <servlet-class>org.openspcoop2.testsuite.server.ServerOpenSPCoop2EchoService</servlet-class>
+  </servlet>
+
+
+  <!-- Server Generico -->
+  <servlet-mapping>
+	  <servlet-name>TestSuiteServerGenerico</servlet-name>
+	  <url-pattern>/server</url-pattern>
+  </servlet-mapping>
+
+  <!-- Server Raccolta info integrazione -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerInfoIntegrazione</servlet-name>
+          <url-pattern>/server_checkInfoIntegrazione</url-pattern>
+  </servlet-mapping>
+
+  <!-- Server Tunnel SOAP -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerTunnelSOAP</servlet-name>
+          <url-pattern>/server_tunnelSOAP</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Server per la gestione del profilo asincrono simmetrico, in modalita asincrona -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerAS_modalitaAsincrona</servlet-name>
+          <url-pattern>/serverAS_asincrono</url-pattern>
+  </servlet-mapping>
+
+  <!-- Server per la gestione del profilo asincrono simmetrico, in modalita sincrona -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerAS_modalitaSincrona</servlet-name>
+          <url-pattern>/serverAS_sincrono</url-pattern>
+  </servlet-mapping>
+
+  <!-- Server per la gestione WS-Security -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerWSSecurity</servlet-name>
+          <url-pattern>/wssecurity</url-pattern>
+  </servlet-mapping>
+
+  <!-- Server per la generazione di SoapFault -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerSOAPFault</servlet-name>
+          <url-pattern>/soapfault</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per congelamento buste per Test di consegna in ordine -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerCongelamentoBuste</servlet-name>
+          <url-pattern>/congelamentoBusta</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per alterazione msg per WSSecurity -->
+  <servlet-mapping>
+          <servlet-name>TestSuiteServerAlterazioneMsgWSS</servlet-name>
+          <url-pattern>/alterazioneMsgWSS</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per alterazione msg di risposta -->
+  <servlet-mapping>
+           <servlet-name>TestSuiteServerAlterazioneRisposta</servlet-name>
+           <url-pattern>/alterazioneMsgRisposta</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per verifica funzionalita' allega body -->
+  <servlet-mapping>
+           <servlet-name>TestSuiteServerVerificaFunzionalitaAllegaBody</servlet-name>
+           <url-pattern>/verificaFunzionalitaAllegaBody</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per verifica funzionalita' scarta body -->
+  <servlet-mapping>
+  	   		<servlet-name>TestSuiteServerVerificaFunzionalitaScartaBody</servlet-name>
+  	    	<url-pattern>/verificaFunzionalitaScartaBody</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per verifica malformazione XML -->
+  <servlet-mapping>
+            <servlet-name>TestSuiteServerVerificaMalformazioneXML</servlet-name>
+            <url-pattern>/verificaXMLMalformati</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per ReadTimeout -->
+  <servlet-mapping>
+            <servlet-name>TestSuiteServerReadTimeout</servlet-name>
+            <url-pattern>/verificaReadTimeout</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet per Generazione header integrazione risposta -->
+  <servlet-mapping>
+            <servlet-name>TestSuiteServerHeaderIntegrazioneRisposta</servlet-name>
+	    	<url-pattern>/generaHeaderIntegrazioneRisposta</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet OpenSPCoop2 EchoService -->
+  <servlet-mapping>
+	    	<servlet-name>TestSuiteServerOpenSPCoop2EchoService</servlet-name>
+	    	<url-pattern>/echoService</url-pattern>
+  </servlet-mapping>
+
+</web-app>

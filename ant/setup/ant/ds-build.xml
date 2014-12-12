@@ -1,0 +1,50 @@
+
+<project name="setup-ds" basedir=".">
+	
+	<description>
+        	SETUP DS
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<target name="ds_settings">
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@DATABASE@"/>
+			<param name="value" value="${antinstaller_dbname}"/>
+		</antcall>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
+			<then>
+				<antcall target="replace_token">
+		    		<param name="file" value="${file}"/>
+					<param name="token" value="@INSTANCE@"/>
+					<param name="value" value="${antinstaller_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@HOST@"/>
+			<param name="value" value="${antinstaller_dbhost}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PORT@"/>
+			<param name="value" value="${antinstaller_dbport}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@USERNAME@"/>
+			<param name="value" value="${antinstaller_dbusername}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PASSWORD@"/>
+			<param name="value" value="${antinstaller_dbpassword}"/>
+		</antcall>
+
+	</target>
+		
+</project>

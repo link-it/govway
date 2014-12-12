@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdlprefix:definitions targetNamespace="http://www.openspcoop2.org/example/impl" 
+   xmlns:wrap="http://www.openspcoop2.org/example/wrapper" 
+   xmlns:impl="http://www.openspcoop2.org/example/impl" 
+   xmlns:wsdlprefix="http://schemas.xmlsoap.org/wsdl/" 
+   xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+   xmlns:xsdprefix="http://www.w3.org/2001/XMLSchema">
+
+   <wsdlprefix:types xmlns="http://www.w3.org/2001/XMLSchema" xmlns:types="http://www.openspcoop2.org/example/types">
+
+    <!-- Schema dei Tipi -->    
+    <schema elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/example/types">
+      <include schemaLocation="InterfacciaDefinitoria.xsd"/>
+      <complexType name="SPCoopHeaderInfo">
+       <sequence>
+        <element name="ID" nillable="true" type="xsdprefix:string"/>
+       </sequence>
+      </complexType>
+      <complexType name="SPCoopMessage">
+       <sequence>
+        <element name="spcoopHeaderInfo" nillable="true" type="types:SPCoopHeaderInfo"/>
+       </sequence>
+      </complexType>
+      <complexType name="SPCoopException">
+       <sequence>
+        <element name="codiceEccezione" nillable="true" type="xsdprefix:string"/>
+       </sequence>
+      </complexType>
+     </schema>
+    
+    <!-- Schema dei Wrappers -->    
+    <schema elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/example/wrapper">
+       <element name="getMessage">
+          <complexType>
+             <sequence>
+                <element name="idEGov" type="xsdprefix:string"/>
+             </sequence>
+          </complexType>
+       </element>
+       <element name="getMessageResponse">
+          <complexType>
+             <sequence>
+                <element name="getMessageReturn" type="types:SPCoopMessage"/>
+             </sequence>
+          </complexType>
+       </element>
+       <element name="getMessageException" >
+          <complexType>
+             <sequence>
+                <element name="SPCoopException" type="types:SPCoopException"/>
+             </sequence>
+          </complexType>
+       </element>
+    </schema>
+ </wsdlprefix:types>
+
+
+   <!-- Messaggi -->    
+   <wsdlprefix:message name="getMessageRequest">
+      <wsdlprefix:part element="wrap:getMessage" name="parameters" />
+   </wsdlprefix:message>
+
+   <wsdlprefix:message name="getMessageResponse">
+      <wsdlprefix:part element="wrap:getMessageResponse" name="parameters"/>
+   </wsdlprefix:message>
+
+   <wsdlprefix:message name="SPCoopException">
+      <wsdlprefix:part element="wrap:getMessageException" name="parameters"/>
+   </wsdlprefix:message>
+
+   <!-- PortType -->    
+   <wsdlprefix:portType name="IntegrationManager">
+      <wsdlprefix:operation name="getMessage">
+         <wsdlprefix:input message="impl:getMessageRequest" name="getMessageRequest"/>
+         <wsdlprefix:output message="impl:getMessageResponse" name="getMessageResponse"/>
+         <wsdlprefix:fault message="impl:SPCoopException" name="SPCoopException"/>
+      </wsdlprefix:operation>
+   </wsdlprefix:portType>
+
+   <wsdlprefix:binding name="IntegrationManagerBinding" type="impl:IntegrationManager">
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsdlprefix:operation name="getMessage">
+         <wsdlsoap:operation soapAction=""/>
+         <wsdlprefix:input name="getMessageRequest">
+            <wsdlsoap:body use="literal"/>
+         </wsdlprefix:input>
+         <wsdlprefix:output name="getMessageResponse">
+            <wsdlsoap:body use="literal"/>
+         </wsdlprefix:output>
+         <wsdlprefix:fault name="SPCoopException">
+            <wsdlsoap:fault name="SPCoopException" use="literal"/>
+         </wsdlprefix:fault>
+      </wsdlprefix:operation>
+   </wsdlprefix:binding>
+
+   <wsdlprefix:service name="IntegrationManagerService">
+      <wsdlprefix:port binding="impl:IntegrationManagerBinding" name="IntegrationManagerPort">
+         <wsdlsoap:address location="http://host/service"/>
+      </wsdlprefix:port>
+   </wsdlprefix:service>
+
+</wsdlprefix:definitions>

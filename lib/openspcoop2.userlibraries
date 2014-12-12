@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="openspcoop2_1.1_lib" systemlibrary="false">
+	<!-- ant -->
+        <archive path="/op2_1.1.dev/lib/ant/ant-contrib-1.0b3.jar"/>
+	<!-- commons -->
+        <archive path="/op2_1.1.dev/lib/commons/commons-pool-1.5.6.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-net-3.0.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-logging-1.1.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-lang-2.6.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-io-2.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-httpclient-3.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-fileupload-1.2.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-discovery-0.5.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-digester-2.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-dbcp-1.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-collections-3.2.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-codec-1.5.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-chain-1.2.jar"/>
+        <archive path="/op2_1.1.dev/lib/commons/commons-beanutils-1.8.3.jar"/>
+	<!-- cxf -->
+        <archive path="/op2_1.1.dev/lib/cxf/xmlschema-core-2.0.3.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/xml-resolver-1.2.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/woodstox-core-asl-4.2.0.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/stax2-api-3.1.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/saaj-impl-1.3.19.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/saaj-api-1.3.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/geronimo-ws-metadata_2.0_spec-1.1.3.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/geronimo-jaxws_2.2_spec-1.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/geronimo-annotation_1.0_spec-1.1.1.jar"/>
+	<archive path="/op2_1.1.dev/lib/cxf/javax.ws.rs-api-2.0.jar"/>
+        <archive path="/op2_1.1.dev/lib/cxf/cxf-2.7.4.jar"/>
+	<!-- httpcore -->
+        <archive path="/op2_1.1.dev/lib/httpcore/httpmime-4.2.5.jar"/>
+        <archive path="/op2_1.1.dev/lib/httpcore/httpcore-nio-4.2.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/httpcore/httpcore-4.2.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/httpcore/httpclient-cache-4.2.5.jar"/>
+        <archive path="/op2_1.1.dev/lib/httpcore/httpclient-4.2.5.jar"/>
+        <archive path="/op2_1.1.dev/lib/httpcore/httpasyncclient-4.0-beta3.jar"/>
+	<!-- javax -->
+        <archive path="/op2_1.1.dev/lib/javax/javax.el.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.xml.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.transaction.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.sql.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.servlet.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.security.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.resource.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.management.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.jms.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.enterprise.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.ejb.jar"/>
+        <archive path="/op2_1.1.dev/lib/javax/javax.persistence.jar"/>
+	<!-- jax -->
+        <archive path="/op2_1.1.dev/lib/jax/jaxp-ri-1.4.5.jar"/>
+        <archive path="/op2_1.1.dev/lib/jax/jaxb-xjc-2.2.5.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/jax/jaxb-impl-2.2.5.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/jax/jaxb-api-2.2.6.jar"/>
+	<!-- jibx -->
+        <archive path="/op2_1.1.dev/lib/jibx/xpp3-1.2.3.jar"/>
+        <archive path="/op2_1.1.dev/lib/jibx/jibx-run-1.2.3.jar"/>
+        <archive path="/op2_1.1.dev/lib/jibx/jibx-bind-1.2.3.jar"/>
+        <archive path="/op2_1.1.dev/lib/jibx/bcel-5.2.jar"/>
+	<!-- log -->
+        <archive path="/op2_1.1.dev/lib/log/slf4j-jdk14-1.6.2.jar"/>
+        <archive path="/op2_1.1.dev/lib/log/slf4j-api-1.6.2.jar"/>
+        <archive path="/op2_1.1.dev/lib/log/log4j-1.2.16.jar"/>
+	<!-- faces -->
+        <archive path="/op2_1.1.dev/lib/faces/richfaces-api-3.3.4.Final.jar"/>
+        <archive path="/op2_1.1.dev/lib/faces/richfaces-impl-3.3.4.Final.jar"/>
+        <archive path="/op2_1.1.dev/lib/faces/richfaces-impl-jsf2-3.3.4.Final.jar"/>
+        <archive path="/op2_1.1.dev/lib/faces/richfaces-ui-3.3.4.Final.jar"/>
+	<archive path="/op2_1.1.dev/lib/faces/javax.faces-2.2.3.jar"/>
+	<!-- security -->
+        <archive path="/op2_1.1.dev/lib/security/xmlsec-1.5.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/security/wss4j-1.6.10.jar"/>
+        <archive path="/op2_1.1.dev/lib/security/openws-1.4.2-1.jar"/>
+        <archive path="/op2_1.1.dev/lib/security/opensaml-2.5.1-1.jar"/>
+        <archive path="/op2_1.1.dev/lib/security/neethi-3.0.2.jar"/>
+        <archive path="/op2_1.1.dev/lib/security/bcprov-ext-jdk15on-147.jar"/>
+	<!-- shared -->
+        <archive path="/op2_1.1.dev/lib/shared/xom-1.2.7.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/xmldb.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/xercesImpl-2.9.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/xalan-2.7.1_serializer.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/xalan-2.7.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/wsdl4j-1.6.2.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/velocity-1.6.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/uddi4j-2.0.5.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/struts-core-1.3.10.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/soap.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/mailapi-1.4.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/ldapjdk-4.17.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/json-lib-2.4-jdk15.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/jfreechart-1.0.13.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/jcs-1.3.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/jcommon-1.0.17.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/ezmorph-1.0.6.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/concurrent-1.0.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/addressing-1.0.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/activation-1.1.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/shared/aspectjrt-1.7.3.jar"/>
+	<!-- soapbox -->
+        <archive path="/op2_1.1.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/soapbox/metro2.2-webservices_xwss_com_sun_xml.jar"/>
+	<!-- spring -->
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.web-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.transaction-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.expression-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.core-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.context-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.beans-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.asm-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.aop-3.1.1.RELEASE.jar"/>
+        <archive path="/op2_1.1.dev/lib/spring/org.springframework.orm-3.1.1.RELEASE.jar"/>
+	<!-- spring-security -->
+	<archive path="/op2_1.1.dev/lib/spring-security/spring-security-core-3.1.0.RELEASE.jar"/>
+	<archive path="/op2_1.1.dev/lib/spring-security/spring-security-web-3.1.0.RELEASE.jar"/>
+	<!-- testsuite-->
+        <archive path="/op2_1.1.dev/lib/testsuite/testng-6.3.jar"/>
+        <archive path="/op2_1.1.dev/lib/testsuite/selenium-server-1.0.1.jar"/>
+        <archive path="/op2_1.1.dev/lib/testsuite/selenium-java-client-driver-1.0.1.jar"/>
+	<!-- wadl -->
+	<archive path="/op2_1.1.dev/lib/wadl/wadl-core-1.1.6.jar"/>
+	<archive path="/op2_1.1.dev/lib/wadl/wadl-xslt-1.1.6.jar"/>
+	<archive path="/op2_1.1.dev/lib/wadl/localizer-1.0.jar"/>
+    </library>
+    <library name="openspcoop2_1.1_lib_axis14" systemlibrary="false">
+        <archive path="/op2_1.1.dev/lib/axis14/wss4j-1.5.11.jar"/>
+        <archive path="/op2_1.1.dev/lib/axis14/opensaml-1.1b.jar"/>
+        <archive path="/op2_1.1.dev/lib/axis14/neethi-2.0.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/axis14/axis-saaj-1.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/axis14/axis-jaxrpc-1.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/axis14/axis-ant-1.4.jar"/>
+        <archive path="/op2_1.1.dev/lib/axis14/axis-1.4.jar"/>
+    </library>
+    <library name="openspcoop2_1.1_lib_axiom" systemlibrary="false">
+	<archive path="/op2_1.1.dev/lib/axiom/apache-mime4j-core-0.7.2.jar"/>
+	<archive path="/op2_1.1.dev/lib/axiom/axiom-api-1.2.13.jar"/>
+	<archive path="/op2_1.1.dev/lib/axiom/axiom-common-impl-1.2.13.jar"/>
+	<archive path="/op2_1.1.dev/lib/axiom/axiom-dom-1.2.13.jar"/>
+	<archive path="/op2_1.1.dev/lib/axiom/axiom-impl-1.2.13.jar"/>
+    </library>
+    <library name="openspcoop2_1.1_lib_jboss4" systemlibrary="false">
+        <archive path="/op2_1.1.dev/lib/jbossas/jboss4/jbossall-client.jar"/>
+    </library>
+    <library name="openspcoop2_1.1_lib_jboss6" systemlibrary="false">
+        <archive path="/op2_1.1.dev/lib/jbossas/jboss6/jbosssx-client.jar"/>
+    </library>
+    <library name="openspcoop2_1.1_lib_stub" systemlibrary="false">
+        <archive path="/op2_1.1.dev/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
+        <archive path="/op2_1.1.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>
+	<archive path="/op2_1.1.dev/lib/stub/cxf/openspcoop2_configStub_cxf.jar"/>
+	<archive path="/op2_1.1.dev/lib/stub/cxf/openspcoop2_registryStub_cxf.jar"/>
+	<archive path="/op2_1.1.dev/lib/stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
+    </library>
+</eclipse-userlibraries>

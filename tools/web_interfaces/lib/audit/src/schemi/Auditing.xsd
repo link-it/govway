@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/web/lib/audit/dao"  
+targetNamespace="http://www.openspcoop2.org/web/lib/audit/dao" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" 
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+        <!-- Auditing -->
+	<xsd:element name="operation">
+    		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="object_details" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+				<xsd:element ref="binary" maxOccurs="unbounded" minOccurs="0"/>
+			</xsd:sequence>	
+			<xsd:attribute name="tipologia" use="required" >
+                                 <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                                <xsd:enumeration value="LOGIN"/>
+                                                <xsd:enumeration value="LOGOUT"/>
+                                                <xsd:enumeration value="ADD"/>
+                                                <xsd:enumeration value="CHANGE"/>
+						<xsd:enumeration value="DEL"/>
+                                        </xsd:restriction>
+                                </xsd:simpleType>
+                        </xsd:attribute>
+			<xsd:attribute name="tipo-oggetto" type="xsd:string" />
+			<xsd:attribute name="object-id" type="xsd:string" />
+			<xsd:attribute name="object-old-id" type="xsd:string" />
+			<xsd:attribute name="utente" type="xsd:string" use="required"/>
+			<xsd:attribute name="stato" use="required" >
+                                 <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                                <xsd:enumeration value="requesting"/>
+                                                <xsd:enumeration value="error"/>
+                                                <xsd:enumeration value="completed"/>
+                                        </xsd:restriction>
+                                </xsd:simpleType>
+                        </xsd:attribute>
+			<xsd:attribute name="object_class" type="xsd:string" />
+			<xsd:attribute name="error" type="xsd:string" />
+			<xsd:attribute name="time-request" type="xsd:dateTime" use="required"/>
+			<xsd:attribute name="time-execute" type="xsd:dateTime" use="required"/>
+    		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="binary">
+                <xsd:complexType>
+			<xsd:attribute name="binary-id" type="xsd:string" use="required"/>
+			<xsd:attribute name="checksum" type="xsd:integer" use="required"/>
+		</xsd:complexType>
+        </xsd:element>
+
+	
+</xsd:schema>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:specificasemiformaleimportspecificasemiformaleinterno="http://www.openspcoop2.org/example/specificasemiformale/import/specificasemiformale/interno" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.openspcoop2.org/example/specificasemiformale/import/specificasemiformale/interno">
+         
+        <xs:element name="esempioSpecificaSemiformaleInterno">
+           <xs:complexType>
+              <xs:sequence>
+		 <xs:element name="nome" type="xs:string" minOccurs="1" maxOccurs="1"/>
+              </xs:sequence>
+           </xs:complexType>
+        </xs:element>
+         
+</xs:schema>

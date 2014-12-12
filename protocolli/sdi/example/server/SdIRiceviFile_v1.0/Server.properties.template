@@ -1,0 +1,15 @@
+# MTOM Enabled
+mtom=true
+
+# Busta (se scommentato aggiunge una busta eGov)
+busta=spcoopFiles/riceviFile.xml
+
+# Endpoint
+endpoint=http://localhost:8888/ricevi_file
+
+# [Opzionale] Errore
+# EI01 = FILE VUOTO
+# EI02 = SERVIZIO NON DISPONIBILE
+# EI03 = UTENTE NON ABILITATO
+#errore=EI01
+

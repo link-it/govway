@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoopLoader" basedir=".">
+	<description>
+        File di Script per la compilazione dell'interfaccia OpenSPCoopLoader
+    </description>
+
+	<import file="local_env.xml" />
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-loaderConsole-build.xml" />
+	<import file="./ant/openspcoop2-loaderConsole-war.xml" />
+	<import file="${mvc}/build.xml" />
+	<import file="${users}/build.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+
+	<!-- set properties for this build -->
+	<property name="src_loaderConsole" location="src" />
+	<property name="build_loaderConsole" location="build/loaderConsole" />
+	<property name="dist_loaderConsole" location="dist" />
+	<property name="doc_loaderConsole" location="doc" />
+	<property name="cfg" location="${basedir}/deploy/properties" />
+	<property name="deploy.dir" location="${basedir}/deploy" />
+
+	<!-- Directory per librerie -->
+	<property name="lib" location="${deploy.dir}/lib" />
+	<property name="jsp" location="${deploy.dir}/jsp" />
+	<property name="js" location="${deploy.dir}/js" />
+	<property name="images" location="${deploy.dir}/images" />
+
+	<!-- Indicazione se produrre la versione per server non j2ee -->
+	<var name="j2ee" value="true" />
+	<var name="log4j_jar" value="" />
+	<var name="log4j_properties" value=""/>
+	<var name="commons_logging_jar" value="" />
+	<var name="jaxp_ri_jar" value=""/>
+	<var name="jboss_classloading" value="" />
+	<var name="jboss_scanning" value="" />
+	<var name="jboss_deployment_structure" value="" />
+	<runtarget target="check_as_version" />	
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
+			<var name="j2ee" value="false"/>
+		</then>
+	</if>
+	<!-- commons_logging -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="commons_logging_jar" value="commons-logging-1.1.1.jar" />
+		</then>
+	</if>
+	<!-- log -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="log4j_jar" value="log4j-1.2.16.jar" />
+		</then>
+	</if>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+		</or>
+		<then>
+			<var name="log4j_properties" value="log4j.properties"/>
+		</then>
+	</if>
+	<!-- jaxp_ri -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+		</then>
+	</if>
+	<!-- jboss_classloading -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_classloading" value="jboss-classloading.xml" />
+		</then>
+	</if>
+	<!-- jboss_scanning -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_scanning" value="jboss-scanning.xml" />
+		</then>
+	</if>
+	<!-- jboss_deployment_structure -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>	
+
+	
+	
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_loaderConsole">
+		<delete dir="${build_loaderConsole}" />
+		<delete dir="build" />
+		<delete dir="${dist_loaderConsole}" />
+		<delete dir="${doc_loaderConsole}" />
+	</target>
+	
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_loaderConsole">
+		<mkdir dir="${build_loaderConsole}" />
+		<mkdir dir="${build_loaderConsole}/loaderConsole" />
+		<mkdir dir="${build_loaderConsole}/tmp" />
+		<mkdir dir="${dist_loaderConsole}" />
+	</target>
+	
+
+	<!-- Compilazioni dipendenze -->
+	<target name="compile_dipendenze">
+		<if>
+			<istrue value="${buildLoaderConsole}"/>
+			<then>
+				<runtarget target="compile_dipendenze_invoke" />
+			</then>
+		</if>
+	</target>
+	<target name="compile_dipendenze_invoke" depends="compile_mvc,compile_users" description="compila le dipendenze" />
+
+	<!-- Compilazione della LoaderConsole-->
+	<target name="compile_loaderConsole" depends="init_compile_loaderConsole,compile_dipendenze,compile_openspcoop2_loaderConsole" description="compila loaderConsole"/>
+
+	<!-- Creazione del modulo .WAR -->
+	<target name="build_loaderConsole" depends="compile_loaderConsole,war_openspcoop2_loaderConsole" description="Crea la struttura del modulo WAR" />
+		
+	<!-- alias -->
+	<target name="build" depends="build_loaderConsole"/>
+	<target name="clean" depends="clean_loaderConsole"/>
+
+</project>

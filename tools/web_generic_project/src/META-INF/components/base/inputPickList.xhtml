@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+
+	<c:if test="#{empty required}">
+		<c:set var="required" value="#{field.required}" />
+	</c:if>
+	<c:if test="#{empty disabled}">
+		<c:set var="disabled" value="#{field.disabled}" />
+	</c:if>
+
+	<op2web:prop label="#{field.label}" required="#{required}"
+		rendered="#{field.rendered}" note="#{field.note}">
+		<a4j:outputPanel id="#{field.name}_pckListCtr" layout="block">
+
+			<rich:listShuttle id="input_pckLst_#{field.name}"
+				sourceValue="#{field.elencoCustomTypeSelectItems}"
+				targetValue="#{field.value}" var="selectItem" listsHeight="150"
+				sourceListWidth="180" targetListWidth="180" label="#{field.label}"
+				sourceCaptionLabel="#{field.sourceCaptionLabel}"
+				targetCaptionLabel="#{field.targetCaptionLabel}"
+				copyAllControlLabel="#{commonsMsg['inpuPickList.component.copyAllControlLabel']}"
+				copyControlLabel="#{commonsMsg['inpuPickList.component.copyControlLabel']}"
+				removeAllControlLabel="#{commonsMsg['inpuPickList.component.removeAllControlLabel']}"
+				removeControlLabel="#{commonsMsg['inpuPickList.component.removeControlLabel']}"
+				converter="multipleChoiceItemConverter"
+				fastMoveControlsVisible="#{field.fastMoveControlsVisible}"
+				fastOrderControlsVisible="#{field.fastOrderControlsVisible}"
+				moveControlsVisible="#{field.moveControlsVisible}"
+				orderControlsVisible="#{field.orderControlsVisible}">
+				<rich:column>
+					<h:outputText value="#{selectItem.label}"></h:outputText>
+				</rich:column>
+				<a4j:support event="onlistchange" ajaxSingle="true" />
+			</rich:listShuttle>
+		</a4j:outputPanel>
+	</op2web:prop>
+</ui:composition>

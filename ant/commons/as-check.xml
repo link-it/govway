@@ -1,0 +1,74 @@
+<project name="openspcoop2-asCheck">
+	
+    <description>
+        Verifica la versione del Server fornita
+    </description>
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>	
+	
+	<target name="check_as_version">
+		<if>
+			<equals arg1="${as}" arg2="$${as}"/>
+			<then>
+				<fail message="Parametro as non fornito nel local_env.xml"/>
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="jboss.*"/>
+			<then>
+				<if>
+					<not>
+						<or>
+							<equals arg1="${as}" arg2="jboss4"/>
+							<equals arg1="${as}" arg2="jboss5"/>
+							<equals arg1="${as}" arg2="jboss6"/>
+							<equals arg1="${as}" arg2="jboss7"/>
+							<equals arg1="${as}" arg2="jboss8"/>
+						</or>
+					</not>
+					<then>
+						<fail message="OpenSPCoop2 supporta, per quanto concerne l'application server jboss, le versioni 4.x (jboss4), 5.x (jboss5), 6.x (jboss6), 7.x (jboss7) e WildFly 8.x (jboss8), versione fornita: [${as}]"/>
+					</then>
+				</if>
+			</then>
+			<elseif>
+				<matches string="${as}" pattern="wildfly.*"/>
+				<then>
+					<if>
+						<not>
+							<or>
+								<equals arg1="${as}" arg2="wildfly8"/>
+							</or>
+						</not>
+						<then>
+							<fail message="OpenSPCoop2 supporta, per quanto concerne l'application server wildFly, le versioni 8.x (wildfly8), versione fornita: [${as}]"/>
+						</then>
+					</if>
+				</then>	
+			</elseif>
+			<elseif>
+				<matches string="${as}" pattern="tomcat.*"/>
+				<then>
+					
+				</then>	
+			</elseif>
+			<else>
+				<fail message="OpenSPCoop2 non supporta il server indicato [${as}], richiede uno dei seguenti server: tomcat, jboss, wildfly"/>
+			</else>
+		</if>
+		<if>
+			<istrue value="${printServerInfo}" />
+			<then>
+				<echo message="****************************************" />
+				<echo message="         SERVER [${as}]         " />
+				<echo message="****************************************" />
+			</then>
+		</if>
+	</target>
+		
+</project>

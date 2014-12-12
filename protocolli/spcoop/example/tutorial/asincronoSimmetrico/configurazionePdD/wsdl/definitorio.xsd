@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                        targetNamespace="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto"
+                        xmlns:so="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto">
+
+         
+         <xs:element name="identifica">
+            <xs:complexType>
+               <xs:sequence maxOccurs="1">
+                  <xs:element name="tipoDocumento" type="xs:string"/>
+                  <xs:element name="codiceDocumento" type="xs:string"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         
+         <xs:element name="presaConsegnaIdentifica" type="xs:string"/>
+
+         <xs:simpleType name="codiceFiscaleType">
+            <xs:restriction base="xs:string">
+               <xs:pattern value="[a-zA-Z]{6}\d\d[a-zA-Z]\d\d[a-zA-Z]\d\d\d[a-zA-Z]"/>
+            </xs:restriction>
+         </xs:simpleType>
+
+
+
+         <xs:complexType name="personaType">
+            <xs:sequence>
+               <xs:element name="nome" type="xs:string"/>
+               <xs:element name="cognome" type="xs:string"/>
+               <xs:element name="codiceFiscale" type="so:codiceFiscaleType"/>
+               <xs:element name="nascita" type="xs:date"/>
+               <xs:element name="statoCivile" type="xs:string"/>
+            </xs:sequence>
+         </xs:complexType>
+
+
+         <xs:element name="risultato" type="so:personaType"/>
+
+         <xs:element name="risultatoResponse" type="xs:string"/>
+         
+
+</xs:schema>

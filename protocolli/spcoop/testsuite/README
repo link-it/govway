@@ -1,0 +1,309 @@
+TestSuite di OpenSPCoop2 per il protocollo SPCoop
+location: protocolli/spcoop/testsuite
+
+
+
+1. Overview
+
+L'applicazione permette di testare le funzionalita' base della Porta di Dominio OpenSPCoop2 con il protocollo SPCoop
+
+L'applicazione e' suddivisa in
+- Servizio Applicativo OpenSPCoop2TestSuiteServer (server fornito con la testsuite base di OpenSPCoop2)
+- Batteria di test (TestNG) che verificano le varie funzionalita'
+
+
+
+
+1.1 Quick Start
+
+Questo paragrafo illustra come utilizzare la testsuite su di una Porta di Dominio con configurazione e registro dei servizi in formato XML.
+La porta di dominio deve essere configurata per tracciare le buste gestite sul database tracciamento (./core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioTracce.sql) e i messaggi diagnostici gestiti sul database msg diagnostici (core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioMessaggiDiagnostici.sql).
+Deve essere attivata la registrazione delle tracce e dei msg diagnostici per mezzo degli 'OpenSPCoopAppender'.
+Un esempio lo si puo' trovare in ./protocolli/spcoop/testsuite/deploy/config_file/configurazioneDefault.xml 
+
+
+Installare l'applicazione OpenSPCoop2TestSuiteServer copiando il file testsuite/dist/OpenSPCoop2TestSuite.war nell'Application Server in JBOSS/server/default/deploy/
+L'applicazione richiede l'installazione dei datasource
+- org.openspcoop2.dataSource: database di gestione dei messaggi della Porta di Dominio
+- org.openspcoop2.dataSource.tracciamento: database di tracciamento della Porta di Dominio
+Esempi di datasource sono forniti in 
+- ./testsuite/deploy/datasource/jboss/openspcoop2-ds.xml
+- ./testsuite/deploy/datasource/jboss/tracciamento-ds.xml
+
+
+L'esecuzione dei test comporta una fase di pre-configurazione dove vengono installati in /etc/openspcoop le configurazioni necessarie per i test
+Per configurare la porta con gli scenari di esempio utilizzare il comando:
+  ant preparazioneAmbiente -DtipoDatabase=<tipo_database>
+NOTA: per gli utenti Windows, cambiare il path di default della configurazione in ./protocolli/spcoop/testsuite/local_env.xml attraverso la proprieta': openspcoop_configuration_dir
+NOTA: Per default vengono soscritti i file di configurazione XML della porta. Se si desidera' configurare una porta configurata tramite un registro dei servizi od una configurazione non XML, e' possibile agire nel file ./protocolli/spcoop/testsuite/local_env.xml, attraverso le proprieta' tipoConfigurazione e tipoRegistroServizi.
+I parametri di resetConfigurazione/resetRegistroServizi indicano se deve essere effettuata prima della configurazione un reset.
+I parametri proprietaConfigurazione/proprietaRegistroServizi indicano come la testsuite puo' collegarsi alla configurazione/registro 
+
+Lanciare i test spostandosi in ./protocolli/spcoop/testsuite/ e lanciando il comando:
+  ant run_test -Dgroup=FUNZIONALITADATESTARE
+
+Ad esempio 'ant run_testsuite -Dgroup=ProfiliDiCollaborazione' verifica le funzionalita' dei 4 protocolli supportati da SPCoop: oneway, sincrono, asincrono simmetrico e asincrono asimmetrico.
+
+L'elenco completo delle funzionalita' da testare sono descritte nel paragrafo 1.3
+
+
+
+
+1.2 Servizio Applicativo OpenSPCoop2TestSuiteServer
+
+Il servizio applicativo e' una servlet che fornisce i servizi funzionali ai test del protocollo SPCoop
+
+L'applicazione necessita di accedere al database dei messaggi della porta di dominio ( org.openspcoop2.dataSource ) e al database del tracciamento ( org.openspcoop2.dataSource.tracciamento )
+Le configurazioni di accesso ai dataSource possono essere indicati:
+- versione sorgente, ./testsuite/deploy/properties/database.properties prima della compilazione
+- versione binaria, file database.properties presente in OpenSPCoop2TestSuite.war/WEB-INF/classes
+
+L'applicazione puo' essere configurata nei parametri di integrazione con la porta di dominio attraverso:
+- versione sorgente, ./testsuite/deploy/properties/testsuite.properties prima della compilazione
+- versione binaria, file testsuite.properties presente in OpenSPCoop2TestSuite.war/WEB-INF/classes
+
+L'applicazione produce un file di log che registra le operazioni effettuate, in /var/openspcoop2/log/openspcoop2_testsuite.log. 
+È possibile personalizzare la produzione dei log attraverso la modifica del file ./testsuite/deploy/properties/testsuite.log4j.properties
+prima della compilazione dei sorgenti o modificando il file all'interno dell'applicazione OpenSPCoop2TestSuite.war
+
+Prerequisito:
+La porta di dominio deve essere configurata in maniera che le tracce e i messaggi diagnostici vengano registrati su Database
+Le tabelle tracciamento e messaggi diagnostici sono definiti in:
+- ./core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioTracce.sql
+- ./core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioMessaggiDiagnostici.sql
+Deve essere attivata la registrazione delle tracce e dei msg diagnostici per mezzo degli 'OpenSPCoopAppender'.
+Un esempio lo si puo' trovare in ./protocolli/spcoop/testsuite/deploy/config_file/configurazioneDefault.xml
+
+
+
+
+1.3 Batteria di Test (TestNG)
+
+Le batterie di test sono situate nella distribuzione in ./protocolli/spcoop/testsuite/
+
+Le configurazioni dei test, comprendenti soggetti/servizi/porteDelegate/porteApplicative sono presenti in:
+- protocolli/spcoop/testsuite/deploy/config_file/registroServizi.xml
+- protocolli/spcoop/testsuite/deploy/config_file/configurazioneSoggetti.xml
+Le configurazioni assumono che i vari soggetti dei test sia gestiti da un unica porta di dominio multisoggetto.
+Inoltre la configurazione della Porta viene gestita da una delle seguenti configurazioni (a seconda del test lanciato):
+- protocolli/spcoop/testsuite/configurazioneDefault.xml
+- protocolli/spcoop/testsuite/configurazioneNewConnectionForResponse.xml: dove la porta e' configurata per far tornare le risposte su connessioni http nuove, e non sulla connection reply (a meno del profilo sincrono)
+
+La configurazione della porta di dominio e del registro possono essere create (a meno di impostazione a 'none') dal task 'preparazioneAmbiente -DtipoDatabase=TIPODATABASE'.
+Il task ant utilizza la configurazione indicata nel file local_env.xml:
+CONFIGURAZIONE
+  - <property name="tipoConfigurazione" value="xml" /> indica il tipo di configurazione da creare, xml, db o none.
+  - <property name="proprietaConfigurazione" location="deploy/properties/configurazione.properties" /> contiene i parametri di accesso alla configurazione (per db)
+  - <property name="gestioneSezioneConfigurazione" value="false" /> Indicazione se deve essere gestita la configurazione della Porta di Dominio (lasciare a false per db)
+REGISTRO
+  - <property name="tipoRegistroServizi" value="xml" /> indica il tipo di registro da creare, xml, web, uddi, db o none.
+  - <property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" /> contiene i parametri di accesso al registro (per uddi,web o db)
+
+Per lanciare i test e' possibile utilizzare in testsuite/test il comando:
+  ant run_testsuite -Dgroup=FUNZIONALITADATESTARE
+
+NOTA: 
+Al termino di una batteria di test vieno verificato la consistenza dell'ambiente, attraverso i seguenti controlli:
+- Controllo che le tabelle 'runtime' di OpenSPCoop non possiedano messaggi e/o buste in carico
+- I messaggi diagnostici non contengano:
+  . NullPointer message
+  . @KEYWORD@ non risolte
+  . messaggi senza un codice
+  . messaggi che indicano un tracciamento non riuscito
+- Controllo risorse JMX:
+  . non siano rimaste connessioni al database allocate
+  . non siano rimaste connessioni http attive verso PD e PA
+  . non siano rimaste connessioni al broker jms
+La batteria di verifica dell'ambiente può anche essere eseguita singolarmente usando come nome del gruppo 'RisorseEsterne' 
+!! Requesito !! : si richiede che sia disponibile un accesso remoto sulle risorse jmx dell'application server (tomcat o jboss).
+Eventuali indicazioni su come abilitare l'accesso remoto sono indicate in protocolli/spcoop/testsuite/deploy/jmx/README
+
+Le batterie di test fornite permettono di testare diverse funzionalita' elencate di seguito.
+
+Requisiti globali:
+1) JMX protocolli/spcoop/testsuite/deploy/jmx/README
+2) Configurazione PdD. La configurazione della PdD richiesta dai test deve essere attuata attraverso i seguenti step:
+	2.a) Deve essere copiato il contenuto del file ./protocolli/spcoop/testsuite/src/className_local.properties in /etc/openspcoop2
+	2.b) Deve essere copiato il contenuto del file ./protocolli/spcoop/testsuite/src/openspcoop2_local.properties in /etc/openspcoop2
+3) Impostare un tempo di rispedizione per la coda JMS 'toInoltroBuste' e 'toConsegnaContenutiApplicativi' a 15 secondi
+   (<attribute name="RedeliveryDelay">15000</attribute>)
+
+** Protocollo e-Gov **
+
+Batterie di test che verificano la normale gestione del protocollo e-Gov
+- 'ProfiliDiCollaborazione' vengono provati i quattro profili di collaborazione oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico
+- 'PortTypes' vengono provati i quattro profili di collaborazione oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico
+              configurati tramite accordi con port types e operation
+- 'BusteEGovCampiDuplicati' vengono generate buste SPCoop che contengono campi duplicati, e viene controllato che la PdD gestisca l'errore
+- 'BusteEGovConEccezioni' vengono generate buste SPCoop con liste eccezioni, e viene controllato che la PdD gestisca le buste correttamente
+- 'BusteEGovNamespace' vengono generate buste SPCoop che contengono strutture particolari dove si annidano ridefinizioni di namespace
+- 'BusteEGovScorrette' vengono generate buste SPCoop che contengono anomalie, e viene controllato che la PdD gestisca l'errore
+- 'FiltroDuplicatiEGov' viene verificata la funzionalita' di filtro egov dei duplicati per i 4 profili di collaborazione
+- 'FunzionalitaEGov' vengono provate funzionalita eGov quali filtroDuplicati, scadenza, riscontri, consegna in ordine etc...
+
+
+** Protocollo e-Gov (Linee Guida 1.1) **
+
+Le seguenti batterie di test, coinvolgono il profilo di gestione dettato dalle LineeGuida1.1 della BustaEGov 1.1:
+- 'BusteEGov11LineeGuida11' vengono provate le anomalie relative alla LineeGuida1.1 della BustaEGov 1.1
+- 'ProfiliDiCollaborazioneLineeGuida11' vengono provati i quattro profili di collaborazione oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico
+- 'RiconoscimentoProfiloGestione' riconoscimento del profilo di gestone (vecchia versione egov o nuova con lineeguida), in base a fruitore/erogatore
+
+
+** Servizio di IntegrationManager **
+
+Batterie di test che verificano il servizio IntegrationManager per quanto concerne le funzioni 'PD' e 'MessageBox'
+- 'IntegrationManager' viene testata l'interfaccia di IntegrationManager
+
+
+** Integrazione con i servizi applicativi **
+
+Batterie di test che verificano le funzionalita' di integrazione con i servizi applicativi
+!!Pre-Requisito!! 
+a. Devono essere abilitate le seguenti opzioni nel file openspcoop2.properties:
+	.org.openspcoop2.pdd.repository.tipoDatabase deve essere impostato
+b. file wsdl/xsd (presenti in protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/wsdl) dell'applicazione da installare in /etc/openspcoop2
+- 'Integrazione' vengono testate le funzionalita di integrazione: header soap, header di trasporto, url, identificazione content/url/input based.
+- 'IntegrazioneCorrelazioneApplicativa' viene verificata la funzionalita' di integrazione riguardante la correlazione applicativa
+- 'RichiesteApplicativeScorrette' vengono generate richieste applicative scorrette che la Porta di Dominio deve riconoscere e gestire
+
+
+** Integrazione di errori in details di SOAPFault **
+
+Le seguenti batterie verificano le informazioni inserite nei Details dalla Porta di Dominio.
+!!Pre-Requisito!! Entrambi i test richiedono che sull'host '127.0.2.2' nella porta '7777', se viene instaurata una connessione,
+		  questa viene lasciata sospesa in modo da causare un 'ConnectTimedOut'.
+		  Su sistema operativo 'Fedora', ad esempio, si puo' utilizzare il comando, in caso si abbia attivo il servizio 'iptables':
+	         'iptables -A INPUT -p tcp -d 127.0.2.2 --dport 7777 -j DROP'
+- 'ErroreApplicativoCNIPA' verifica il detail eGov_IT_Ecc:MessaggioDiErroreApplicativo definito dal documento CNIPA 'Porta di Dominio'
+- 'OpenSPCoopDetail' verifica il detail dettaglio-eccezione aggiunto da openspcoop e definito dallo schema src/schemi/openspcoopDetail.xsd
+
+
+** Sicurezza **
+
+Batterie di test che verificano funzionalita' di sicurezza della Porta.
+!! Pre-requisiti descritti sotto!!
+- 'AutorizzazioneContenuto' vengono verificate le funzionalita' di autorizzazione dei contenuti per i servizi PD e PA
+- 'WSSecurity' vengono provate le funzionalita' di WSSecurity con i vari profili di collaborazione e riscontri (libreria wss4j)
+- 'WSSecuritySoapBox' vengono provate alcune funzionalità di WSSecurity tramite libreria 'soapbox', in particolar modo firma e cifratura degli attachments
+!! Pre-requisiti!!
+Il test richiede l'installazione di diversi keystore in /etc/openspcoop2/keys:
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pd.jks
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa.jks 
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/testsuiteClient.jks
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/testsuiteServer.jks
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_encrypt.jceks
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pa_signature_keystore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pa_signature_truststore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pd_signature_keystore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_pd_signature_truststore.jks
+Il test inoltre richiede l'installazione dei seguenti file di properties in /etc/openspcoop2/properties:
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_encrypt.properties
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pa_signature_keystore.properties
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pa_signature_truststore.properties
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_keystore.properties
+   - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_truststore.properties
+
+** Connettori **
+
+Batterie di test che verificano i connettori presenti nella Porta di Dominio
+!! Pre-requisiti descritti sotto!!
+- 'ConnettoriDiversiHTTP' [NonUtilizzabile su Tomcat] vengono verificati i connettori built-in della Porta di Dominio diversi da http e https.
+- 'HTTPS' verifica le autorizzazioni delle buste, che si basano sull'associazione dei subject alle porte di dominio nel registro. 
+   Verifica inoltre il corretto funzionamento del connettore https e dell'autenticazione 'ssl' lato porta delegata.
+- 'LetturaCredenzialiIngresso' verifica il meccasnimo di plugin per l'implementazione di un gestore delle credenziali
+- 'VerificaTimeoutGestioneContentLength' vengono verificate che le connessioni gestite tramite content-length impostato nell'header http di risposta non provochino attese dovute all'impostazione di un content length errato.
+
+!! Pre-requisiti!!
+a. Il test richiede l'installazione delle code jms presenti in ./protocolli/spcoop/testsuite/deploy/code_jms
+In jboss7 e wildfly8 (jboss8) è necessario seguire le indicazioni presenti in ./protocolli/spcoop/testsuite/deploy/code_jms/jbossX_HornetQ/README
+b. Aggiunta di connettori https specifici per i test nella configurazione web (in jboss in server.xml del tomcat integrato)
+- Un connettore HTTPS che non esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8443)
+  Esempio in ./protocolli/spcoop/testsuite/deploy/https_examples/ConnettoreHTTPS_noClientAuth.xml
+  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/openspcoop2/keys
+- un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
+  Esempio in ./protocolli/spcoop/testsuite/deploy/https_examples/ConnettoreHTTPS_withClientAuth.xml
+  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/openspcoop2/keys
+c. Installazione dei keystore in /etc/openspcoop2/keys
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/soggetto1.jks
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/soggetto2.jks
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/soggetto1_senzaCA.jks
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/sil1.jks
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/sil2.jks
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/sil3.jks
+d. Configurazione della JVM dell'A.S. in modo che utilizzi il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks
+  Indicazioni descritte per JBoss in ./protocolli/spcoop/testsuite/deploy/https_examples/configurazioneTrustStoreJBOSS.txt
+
+
+** Handler **
+
+I test presenti invece nella batteria 'Handlers' verificano gli handler dinamici della Porta di Dominio.
+!!Pre-requisito!!
+Il test richiede l'installazione del jar './protocolli/spcoop/testsuite/dist/openspcoop2_spcoop-testsuite_*.jar' all'interno delle lib di OpenSPCoop2.ear
+ Il JAR e' ottenibile tramite la compilazione del progetto dei test sul protocollo spcoop.
+
+
+** SOAPMessage **
+
+I test presenti verificano il corretto funzionamento della Porta di Dominio rispetto a diversi formati di Messaggi SOAP:
+- 'SOAPWithAttachments' vengono provati i quattro profili di collaborazione con Messaggi SOAP With Attachments
+- 'SOAPAction' viene verificato che la PdD gestisca correttamente le possibili SOAPAction ricevute nell'header di trasporto HTTP
+- 'SOAPBodyEmpty' viene verificato che la PdD gestisca correttamente messaggi soap senza Body
+- 'SOAPHeaderEmpty' viene verificato che la PdD gestisca correttamente messaggi soap senza Header
+- 'SOAPMessageScorretti' viene verificato che la PdD gestisca correttamente messaggi Soap scorretti (es. ContentType/Namespace diverso da quello atteso, headers non gestiti dalla PdD)
+
+
+** Validazione Contenuti Applicativi **
+
+I test presenti nella batteria 'ValidazioneContenutiApplicativi' verificano la funzionalita' di validazione dei contenuti applicativi della Porta di Dominio. La validazione viene effettuata tramite gli schemi xsd di un servizio realizzato ad hoc per il test. Inoltre viene controllata la conformita' dei messaggi rispetto agli stili ed usi definiti nel wsdl del servizio.
+!!Pre-requisito!!
+a. server disponibile nella root di openspcoop in protocolli/spcoop/example/server/ValidazioneContenutiWS/dist/ValidazioneContenutiWS.war (configurazione del property 'validazione.properties' dove deve essere indicato il datasource del tracciamento)
+b. file wsdl/xsd (presenti in protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/wsdl) dell'applicazione da installare in /etc/openspcoop2
+
+
+** Local Forward **
+
+I test verificano la funzionalita' di LocalForward
+- 'LocalForward' viene verificata la funzionalita' per quanto concerne casi corretti, casi errati, wssecurity
+
+
+** Altro **
+
+Batterie di test che verificano funzionalita' base nella Porta di Dominio
+- 'TunnelSOAP' vengono testate le funzionalita' di sbustamento e imbustamento
+- 'TunnelSOAP' con dump disabilitato (NOTA: provare anche con questa configurazione, vi sono differenze)
+- 'UrlPrefixRewriter' vengono verificate le funzionalita' di pd-url-prefix-rewriter e pa-url-prefix-rewriter
+- 'VersionamentoAccordiServizio' vengono verificate le funzionalità di versionamento degli accordi
+- 'XMLEncoding' vengono utilizzati messaggi che contengono caratteri non compresi nel set ASCII
+- 'CooperazioneConErrori' [NonUtilizzabile su Tomcat] vengono testati le varie condizioni di errore:
+   a. PdD non disponibile o che genera SoapFault
+   b. Servizio Applicativo non disponibile o che genera SoapFault
+   c. PdD Destinazione che genera busta per errori processamento o validazione
+   d. Controlli ri-spedizione per oneway/asincroni.
+- 'LogXML' vengono verificati i messaggi diagnostici (formato xml) e le tracce emessi da precedenti test, rispettivamente nei log 
+	- openspcoop2_msgdiagnostico.log*
+	- openspcoop2_tracciamento.log*
+
+
+
+
+2. Installazione
+
+
+
+2.1 Versione Sorgente
+
+Per creare il servizio applicativo di test, eseguire in testsuite/ il comando 'ant build'.
+Verra creato:
+- OpenSPCoop2TestSuite.war
+Copiare il file OpenSPCoop2TestSuite.war in JBOSS/server/default/deploy/
+Inoltre copiare in OpenSPCoop2TestSuite.war/WEB-INF/lib il jar relativo al protocollo 'spcoop'.
+Tale jar lo si puo' produrre eseguendo in protocolli/spcoop il comando 'ant build'.
+
+Per creare i binari della batteria di test eseguire in protocolli/spcoop/testsuite il comando 'ant build'.
+
+
+
+2.2 Versione Binaria
+
+Copiare il file testsuite/OpenSPCoop2TestSuite.war in JBOSS/server/default/deploy/ ed installare in OpenSPCoop2TestSuite.war/WEB-INF/lib il jar relativo al protocollo 'spcoop' situato in protocolli/spcoop/dist/

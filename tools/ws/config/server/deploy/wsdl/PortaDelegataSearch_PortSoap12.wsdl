@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+				  xmlns:tns="http://www.openspcoop2.org/core/config/management" 
+				  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+				  name="PortaDelegataService"
+				  targetNamespace="http://www.openspcoop2.org/core/config/management">
+
+	<wsdl:import namespace="http://www.openspcoop2.org/core/config/management" 
+				 location="PortaDelegataSearch.wsdl"/>
+	
+	<!-- BINDING (SOAP12) --> 
+	
+	<wsdl:binding name="PortaDelegataServiceSoap12Binding" type="tns:PortaDelegata">
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<wsdl:operation name="findAll">
+			<soap12:operation soapAction="findAll" soapActionRequired="true" style="document"/>
+			<wsdl:input name="findAll">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="findAllResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap12:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap12:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap12:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="find">
+			<soap12:operation soapAction="find" soapActionRequired="true" style="document"/>
+			<wsdl:input name="find">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="findResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap12:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-found-exception">
+				<soap12:fault name="config-not-found-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-multiple-result-exception">
+				<soap12:fault name="config-multiple-result-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap12:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap12:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="count">
+			<soap12:operation soapAction="count" soapActionRequired="true" style="document"/>
+			<wsdl:input name="count">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="countResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap12:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap12:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap12:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="get">
+			<soap12:operation soapAction="get" soapActionRequired="true" style="document"/>
+			<wsdl:input name="get">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="getResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap12:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-found-exception">
+				<soap12:fault name="config-not-found-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-multiple-result-exception">
+				<soap12:fault name="config-multiple-result-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap12:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap12:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="exists">
+			<soap12:operation soapAction="exists" soapActionRequired="true" style="document"/>
+			<wsdl:input name="exists">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="existsResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap12:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-multiple-result-exception">
+				<soap12:fault name="config-multiple-result-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap12:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap12:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="findAllIds">
+			<soap12:operation soapAction="findAllIds" soapActionRequired="true" style="document"/>
+			<wsdl:input name="findAllIds">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="findAllIdsResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap12:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap12:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap12:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="inUse">
+			<soap12:operation soapAction="inUse" soapActionRequired="true" style="document"/>
+			<wsdl:input name="inUse">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="inUseResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="config-service-exception">
+				<soap12:fault name="config-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-found-exception">
+				<soap12:fault name="config-not-found-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-implemented-exception">
+				<soap12:fault name="config-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="config-not-authorized-exception">
+				<soap12:fault name="config-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+
+	</wsdl:binding>
+
+	<!-- SERVICE -->	
+	<wsdl:service name="PortaDelegataSoap12Service">	
+	
+		<wsdl:port binding="tns:PortaDelegataServiceSoap12Binding" name="PortaDelegataPortSoap12">
+			<soap12:address location="http://localhost:8080/config/PortaDelegata/Soap12"/>
+		</wsdl:port>
+					
+	</wsdl:service>
+	
+</wsdl:definitions>

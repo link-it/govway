@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:spc="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto"
+        targetNamespace="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto">
+
+  <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto" location="logicoErogatore.wsdl">
+    </wsdl:import>
+
+  <wsdl:binding name="IdentificaSoggettoBinding" type="spc:IdentificaSoggetto">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Cerca">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="IdentificaSoggettoService">
+    <wsdl:port name="IdentificaSoggettoInterfaceEndpoint" binding="spc:IdentificaSoggettoBinding">
+      <soap:address location="http://localhost:8888/tutorial/asincronoSimmetricoRichiesta"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

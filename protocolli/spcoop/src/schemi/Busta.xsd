@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/"
+xmlns:eGov_IT="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/"
+xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+xmlns="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" elementFormDefault="qualified"
+attributeFormDefault="unqualified">
+
+     <xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+		 schemaLocation="soapEnvelope.xsd"/>
+
+     <xsd:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                 schemaLocation="wssecurityUtility.xsd"/>
+
+     <xsd:element name="Azione" type="xsd:string"/>
+     <xsd:element name="Collaborazione" type="IdentificatoreType"/>
+     <xsd:element name="ConfermaRicezione">
+        <xsd:complexType>
+            <xsd:sequence>
+               <xsd:element ref="OraRegistrazione"/>
+            </xsd:sequence>
+        </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="Descrizione">
+        <xsd:complexType>
+            <xsd:sequence>
+               <xsd:element ref="DescrizioneMessaggio" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="DescrizioneMessaggio">
+        <xsd:complexType>
+            <xsd:sequence>
+               <xsd:element ref="Riferimento"/>
+            </xsd:sequence>
+        </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="Destinatario">
+        <xsd:complexType>
+            <xsd:sequence>
+               <xsd:element ref="IdentificativoParte"/>
+            </xsd:sequence>
+        </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="Destinazione">
+        <xsd:complexType>
+            <xsd:sequence>
+               <xsd:element ref="IdentificativoParte"/>
+            </xsd:sequence>
+        </xsd:complexType>
+     </xsd:element>
+     <xsd:simpleType name="codiceEccezioneType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EGOV_IT_001">
+               <xsd:annotation>
+                    <xsd:appinfo>
+                        Formato Busta non corretto
+                    </xsd:appinfo>
+               </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_002">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Formato Intestazione non corretto
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_003">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Formato Corpo non corretto
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_100">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Errore nel contenuto della Intestazione della busta
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_101">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Identificativo della parte Mittente sconosciuto
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_102">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Identificativo della parte Destinatario sconosciuto
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_103">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Profilo di Collaborazione non valido
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_104">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Identificativo di Collaborazione non valido
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_105">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Servizio sconosciuto
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_106">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Azione sconosciuta
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_107">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Identificatore messaggio non definito
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_108">
+   <xsd:annotation>
+       <xsd:appinfo>
+          OraRegistrazione messaggio non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_109">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Riferimento messaggio non definito
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_110">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Identificatore messaggio non valido
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_111">
+   <xsd:annotation>
+       <xsd:appinfo>
+          RiferimentoMessaggio non valido
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_112">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Scadenza messaggio non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_113">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Profilo di Trasmissione non valido
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_114">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Sequenza non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_115">
+   <xsd:annotation>
+       <xsd:appinfo>
+          ListaRiscontri non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_116">
+   <xsd:annotation>
+       <xsd:appinfo>
+          ListaTrasmissioni non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_117">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Firma non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_118">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Riferimento all'allegato non valido
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_119">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Allegato non presente
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_120">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Allegato non definito
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_200">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Errore nelle politiche di sicurezza del Servizio
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_201">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Mittente non Autorizzato
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_202">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Firma XML non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_203">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Firma PKCS#7 non valida
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_300">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Errore nel processamento del messaggio
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_301">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Messaggio scaduto
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_400">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Errore nella gestione della trasparenza temporale
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_401">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Trasparenza temporale non supportata
+       </xsd:appinfo>
+   </xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="EGOV_IT_402">
+   <xsd:annotation>
+       <xsd:appinfo>
+          Trasparenza temporale non gestibile: attributi del Profilo di trasmissione non validi
+       </xsd:appinfo>
+   </xsd:annotation>
+       </xsd:enumeration>
+   </xsd:restriction>
+</xsd:simpleType>
+<xsd:element name="Eccezione">
+   <xsd:complexType>
+       <xsd:attribute name="contestoCodifica" type="xsd:string" use="required"/>
+       <xsd:attribute name="codiceEccezione" type="codiceEccezioneType" use="required"/>
+       <xsd:attribute name="rilevanza" use="required">
+          <xsd:simpleType>
+               <xsd:restriction base="xsd:string">
+                   <xsd:enumeration value="INFO"/>
+                   <xsd:enumeration value="LIEVE"/>
+                   <xsd:enumeration value="GRAVE"/>
+               </xsd:restriction>
+          </xsd:simpleType>
+       </xsd:attribute>
+       <xsd:attribute name="posizione" type="xsd:string" use="required"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="IdentificativoParte">
+   <xsd:complexType>
+       <xsd:simpleContent>
+          <xsd:extension base="xsd:string">
+               <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+               <xsd:attribute name="indirizzoTelematico" type="xsd:string"/>
+          </xsd:extension>
+       </xsd:simpleContent>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Identificatore" type="IdentificatoreType"/>
+<xsd:simpleType name="IdentificatoreType">
+   <xsd:restriction base="xsd:string">
+       <xsd:pattern value="[\w]+_[\w]+_\d{7}_\d{4}\-\d{2}\-\d{2}_\d{2}:\d{2}"/>
+   </xsd:restriction>
+</xsd:simpleType>
+<xsd:element name="Intestazione">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="IntestazioneMessaggio"/>
+          <xsd:element ref="ListaRiscontri" minOccurs="0"/>
+          <xsd:element ref="ListaTrasmissioni" minOccurs="0"/>
+          <xsd:element ref="ListaEccezioni" minOccurs="0"/>
+       </xsd:sequence>
+       <xsd:attribute ref="SOAP_ENV:actor" use="required" fixed="http://www.cnipa.it/eGov_it/portadominio"/>
+       <xsd:attribute ref="SOAP_ENV:mustUnderstand" use="required" fixed="1"/>
+       <!-- Per permettere validazione xsd con wssecurity reference -->
+       <xsd:attribute ref="wsu:Id" use="optional"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="IntestazioneMessaggio">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Mittente"/>
+          <xsd:element ref="Destinatario"/>
+          <xsd:element ref="ProfiloCollaborazione" minOccurs="0"/>
+          <xsd:element ref="Collaborazione" minOccurs="0"/>
+          <xsd:element ref="Servizio" minOccurs="0"/>
+          <xsd:element ref="Azione" minOccurs="0"/>
+          <xsd:element ref="Messaggio"/>
+          <xsd:element ref="ProfiloTrasmissione" minOccurs="0"/>
+          <xsd:element ref="Sequenza" minOccurs="0"/>
+       </xsd:sequence>
+       <!-- Per permettere validazione xsd con wssecurity reference -->
+       <xsd:attribute ref="wsu:Id" use="optional"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="ListaEccezioni">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Eccezione" maxOccurs="unbounded"/>
+       </xsd:sequence>
+       <!-- Per permettere validazione xsd con wssecurity reference -->
+       <xsd:attribute ref="wsu:Id" use="optional"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="ListaRiscontri">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Riscontro" maxOccurs="unbounded"/>
+       </xsd:sequence>
+       <!-- Per permettere validazione xsd con wssecurity reference -->
+       <xsd:attribute ref="wsu:Id" use="optional"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="ListaTrasmissioni">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Trasmissione" maxOccurs="unbounded"/>
+       </xsd:sequence>
+       <!-- Per permettere validazione xsd con wssecurity reference -->
+       <xsd:attribute ref="wsu:Id" use="optional"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Messaggio">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Identificatore"/>
+          <xsd:element ref="OraRegistrazione"/>
+          <xsd:element ref="RiferimentoMessaggio" minOccurs="0"/>
+          <xsd:element ref="Scadenza" minOccurs="0"/>
+       </xsd:sequence>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Mittente">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="IdentificativoParte" maxOccurs="unbounded"/>
+       </xsd:sequence>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="OraRegistrazione">
+   <xsd:complexType>
+       <xsd:simpleContent>
+          <xsd:extension base="xsd:dateTime">
+              <xsd:attribute name="tempo" use="required">
+                 <xsd:simpleType>
+                     <xsd:restriction base="xsd:string">
+                         <xsd:enumeration value="EGOV_IT_Locale"/>
+                         <xsd:enumeration value="EGOV_IT_SPC"/>
+                     </xsd:restriction>
+                 </xsd:simpleType>
+              </xsd:attribute>
+          </xsd:extension>
+       </xsd:simpleContent>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Origine">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="IdentificativoParte"/>
+       </xsd:sequence>
+   </xsd:complexType>
+</xsd:element>
+<xsd:simpleType name="ProfiloCollaborazioneBaseType">
+   <xsd:restriction base="xsd:string">
+       <xsd:enumeration value="EGOV_IT_MessaggioSingoloOneWay"/>
+       <xsd:enumeration value="EGOV_IT_ServizioSincrono"/>
+       <xsd:enumeration value="EGOV_IT_ServizioAsincronoSimmetrico"/>
+       <xsd:enumeration value="EGOV_IT_ServizioAsincronoAsimmetrico"/>
+   </xsd:restriction>
+</xsd:simpleType>
+<xsd:element name="ProfiloCollaborazione">
+   <xsd:complexType>
+       <xsd:simpleContent>
+          <xsd:extension base="ProfiloCollaborazioneBaseType">
+               <xsd:attribute name="servizioCorrelato" type="xsd:string" use="optional"/>
+               <xsd:attribute name="tipo" use="optional">
+                   <xsd:simpleType>
+                       <xsd:restriction base="xsd:string">
+			   <!-- Aggiunti da OpenSPCoop (SPC/TEST) -->
+                           <xsd:enumeration value="SPC"/>
+			   <xsd:enumeration value="TEST"/>
+			   <!-- Aggiunti da OpenSPCoop -->
+                           <xsd:enumeration value="URL"/>
+                           <xsd:enumeration value="WSDL"/>
+                           <xsd:enumeration value="LDAP"/>
+                           <xsd:enumeration value="UDDI"/>
+                           <xsd:enumeration value="ebXMLRegistry"/>
+                       </xsd:restriction>
+                   </xsd:simpleType>
+               </xsd:attribute>
+          </xsd:extension>
+       </xsd:simpleContent>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="ProfiloTrasmissione">
+   <xsd:complexType>
+       <xsd:attribute name="inoltro" default="EGOV_IT_PIUDIUNAVOLTA">
+          <xsd:simpleType>
+               <xsd:restriction base="xsd:string">
+                   <xsd:enumeration value="EGOV_IT_ALPIUUNAVOLTA"/>
+                   <xsd:enumeration value="EGOV_IT_PIUDIUNAVOLTA"/>
+               </xsd:restriction>
+          </xsd:simpleType>
+       </xsd:attribute>
+       <xsd:attribute name="confermaRicezione" type="xsd:boolean" default="false"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Riferimento">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Schema"/>
+          <xsd:element ref="Titolo"/>
+       </xsd:sequence>
+       <xsd:attribute name="href" type="xsd:anyURI" use="required"/>
+       <xsd:attribute name="role" type="xsd:string" use="required"/>
+       <xsd:attribute ref="id" use="required"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="RiferimentoMessaggio" type="IdentificatoreType"/>
+<xsd:element name="Riscontro">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Identificatore"/>
+          <xsd:element ref="OraRegistrazione"/>
+       </xsd:sequence>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Scadenza" type="xsd:dateTime"/>
+<xsd:element name="Schema">
+   <xsd:complexType>
+       <xsd:attribute name="posizione" type="xsd:anyURI" use="required"/>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Sequenza">
+   <xsd:complexType>
+       <xsd:attribute name="numeroProgressivo" use="required">
+          <xsd:simpleType>
+              <xsd:restriction base="xsd:positiveInteger">
+                  <xsd:pattern value="\d{7}"/>
+              </xsd:restriction>
+          </xsd:simpleType>
+       </xsd:attribute>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Servizio">
+   <xsd:complexType>
+       <xsd:simpleContent>
+          <xsd:extension base="xsd:string">
+              <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+          </xsd:extension>
+       </xsd:simpleContent>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Titolo">
+   <xsd:complexType>
+       <xsd:simpleContent>
+          <xsd:extension base="xsd:string">
+              <xsd:attribute name="Lingua" type="xsd:language" use="optional" default="it"/>
+          </xsd:extension>
+       </xsd:simpleContent>
+   </xsd:complexType>
+</xsd:element>
+<xsd:element name="Trasmissione">
+   <xsd:complexType>
+       <xsd:sequence>
+          <xsd:element ref="Origine"/>
+          <xsd:element ref="Destinazione"/>
+              <xsd:element ref="OraRegistrazione"/>
+          </xsd:sequence>
+       </xsd:complexType>
+   </xsd:element>
+   <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:schema>

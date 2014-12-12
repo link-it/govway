@@ -1,0 +1,85 @@
+
+<project name="setup-sql" basedir=".">
+	
+	<description>
+        	SETUP SQL
+	</description>
+
+	<import file="../../commons/utils.xml" />
+
+	<target name="sql_settings">
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@TIPO_DATABASE@"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.dataSource.pddConsole"/>
+			<param name="value" value="org.openspcoop2.dataSource"/>
+		</antcall>
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="'java:/comp/env/org.openspcoop2.dataSource.pddConsole'"/>
+			<param name="value" value="'${datasource_console_name}'"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="'org.openspcoop2.dataSource.pddConsole'"/>
+			<param name="value" value="'${datasource_console_name}'"/>
+		</antcall>
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="'java:/comp/env/org.openspcoop2.dataSource'"/>
+			<param name="value" value="'${datasource_pdd_name}'"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="'org.openspcoop2.dataSource'"/>
+			<param name="value" value="'${datasource_pdd_name}'"/>
+		</antcall>
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@NOME_SOGGETTO@"/>
+			<param name="value" value="${antinstaller_nomesoggetto}"/>
+		</antcall>
+	
+	</target>
+	
+	
+	<target name="sql_settings_by_protocol">
+					
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@NOME_SOGGETTO@"/>
+			<param name="value" value="${sql_nome}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@TIPO_SOGGETTO@"/>
+			<param name="value" value="${sql_tipo}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@IDPORTA_SOGGETTO@"/>
+			<param name="value" value="${sql_idporta}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@CODICE_IPA@"/>
+			<param name="value" value="${sql_codiceipa}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@VERSIONE_PROTOCOLLO@"/>
+			<param name="value" value="${sql_protocollo_versione}"/>
+		</antcall>
+	
+	</target>
+		
+</project>

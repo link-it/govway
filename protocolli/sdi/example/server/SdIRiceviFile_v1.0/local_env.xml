@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="RiceviFile_v1.0_LocalEnv" basedir=".">
+
+	<property name="openspcoop2" location="../../../../.." />
+	<property name="openspcoop2_lib" location="${openspcoop2}/lib" />
+	<property name="openspcoop2_core_dist" location="${openspcoop2}/core/dist/" />
+	<property name="openspcoop2_sdi_dist" location="${openspcoop2}/protocolli/sdi/dist/" />
+
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+
+</project>

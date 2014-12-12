@@ -1,0 +1,53 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
+
+
+      <soggetto tipo="SPC" nome="Comune" > 
+
+          <porta-delegata nome="SPCComune/SPCCentroAnagrafico/SPCComunicazioneVariazione/Notifica" 
+	      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              <soggetto-erogatore tipo="SPC" nome="CentroAnagrafico" />
+              <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+              <azione nome="Notifica" />
+	      <servizio-applicativo nome="Comune_SA" />
+          </porta-delegata>
+
+         <servizio-applicativo nome="Comune_SA" >
+              <invocazione-porta>
+                 <credenziali tipo="basic" user="Comune_SA" password="123456" />
+              </invocazione-porta>
+          </servizio-applicativo>
+
+
+     </soggetto>
+
+
+
+      <soggetto tipo="SPC" nome="CentroAnagrafico" > 
+
+          <porta-applicativa nome="ComunicazioneVariazione_PA" stateless="abilitato">
+              <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+              <azione nome="Notifica" />
+              <servizio-applicativo nome="ComunicazioneVariazione_SA" /> 
+          </porta-applicativa>
+
+          <servizio-applicativo nome="ComunicazioneVariazione_SA" >
+                  <invocazione-servizio>
+                     <connettore tipo="http" nome="ConnettoreComunicazioneVariazioneSA">
+                         <property nome="location" valore="http://localhost:8888/tutorial/oneway" />
+                     </connettore>
+                 </invocazione-servizio>
+          </servizio-applicativo>
+
+     </soggetto>
+
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+
+</openspcoop2>

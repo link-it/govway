@@ -1,0 +1,23 @@
+# Punto di accesso della porta di dominio
+openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PA
+
+busta = XXX
+
+
+# ContentType SOAP 1.1
+openspcoop2.contentType = text/xml; charset=utf-8
+# ContentType SOAP 1.2
+#openspcoop2.contentType = application/soap+xml; charset=UTF-8
+
+# SOAPAction
+openspcoop2.soapAction = "TEST"
+
+# Print info
+openspcoop2.printFileSent = true
+openspcoop2.printFileReceived = true
+
+# Format
+openspcoop2.format.date = yyyy-MM-dd
+openspcoop2.format.time = HH:mm:ss.SSS
+openspcoop2.format.id.date = yyyy-MM-dd
+openspcoop2.format.id.time = HH:mm

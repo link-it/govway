@@ -1,0 +1,2 @@
+# OpenSPCoop2 content-handler:
+application/openspcoop2;;  x-java-content-handler=org.openspcoop2.message.OpenSPCoop2DataContentHandler

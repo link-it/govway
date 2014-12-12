@@ -1,0 +1,115 @@
+	
+	<jaxws:endpoint 
+		id="AccordoCooperazione_PortSoap11"
+		serviceName="AccordoCooperazioneSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.AccordoCooperazione@IMPLEMENTOR@Impl_PortSoap11"
+		address="/AccordoCooperazione/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/AccordoCooperazione@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="AccordoCooperazione_PortSoap12"
+		serviceName="AccordoCooperazioneSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.AccordoCooperazione@IMPLEMENTOR@Impl_PortSoap12"
+		address="/AccordoCooperazione/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/AccordoCooperazione@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
+		id="AccordoServizioParteComune_PortSoap11"
+		serviceName="AccordoServizioParteComuneSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.AccordoServizioParteComune@IMPLEMENTOR@Impl_PortSoap11"
+		address="/AccordoServizioParteComune/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/AccordoServizioParteComune@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="AccordoServizioParteComune_PortSoap12"
+		serviceName="AccordoServizioParteComuneSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.AccordoServizioParteComune@IMPLEMENTOR@Impl_PortSoap12"
+		address="/AccordoServizioParteComune/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/AccordoServizioParteComune@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
+		id="PortaDominio_PortSoap11"
+		serviceName="PortaDominioSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.PortaDominio@IMPLEMENTOR@Impl_PortSoap11"
+		address="/PortaDominio/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/PortaDominio@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="PortaDominio_PortSoap12"
+		serviceName="PortaDominioSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.PortaDominio@IMPLEMENTOR@Impl_PortSoap12"
+		address="/PortaDominio/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/PortaDominio@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
+		id="Soggetto_PortSoap11"
+		serviceName="SoggettoSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Soggetto@IMPLEMENTOR@Impl_PortSoap11"
+		address="/Soggetto/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Soggetto@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="Soggetto_PortSoap12"
+		serviceName="SoggettoSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Soggetto@IMPLEMENTOR@Impl_PortSoap12"
+		address="/Soggetto/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Soggetto@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
+		id="AccordoServizioParteSpecifica_PortSoap11"
+		serviceName="AccordoServizioParteSpecificaSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.AccordoServizioParteSpecifica@IMPLEMENTOR@Impl_PortSoap11"
+		address="/AccordoServizioParteSpecifica/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/AccordoServizioParteSpecifica@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="AccordoServizioParteSpecifica_PortSoap12"
+		serviceName="AccordoServizioParteSpecificaSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.AccordoServizioParteSpecifica@IMPLEMENTOR@Impl_PortSoap12"
+		address="/AccordoServizioParteSpecifica/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/AccordoServizioParteSpecifica@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>

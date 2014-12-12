@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.openspcoop2.org/example/specificasemiformale/import" xmlns:specificasemiformaleimport="http://www.openspcoop2.org/example/specificasemiformale/import" xmlns:specificasemiformaleimportspecificasemiformaleinterno="http://www.openspcoop2.org/example/specificasemiformale/import/specificasemiformale/interno" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<!-- Es. Import from SpecificaSemiformale -->
+        <xs:import namespace="http://www.openspcoop2.org/example/specificasemiformale/import/specificasemiformale/interno" schemaLocation="../../specificaSemiformale/specificaSemiformaleImportFromSpecificaSemiformale/types.xsd"/>         
+
+        <xs:element name="esempioSpecificaSemiformaleImport1">
+           <xs:complexType>
+              <xs:sequence>
+		 <xs:element maxOccurs="1" minOccurs="1" name="nome" type="xs:string"/>
+		 <xs:element maxOccurs="1" minOccurs="1" ref="specificasemiformaleimportspecificasemiformaleinterno:esempioSpecificaSemiformaleInterno"/>
+              </xs:sequence>
+           </xs:complexType>
+        </xs:element>
+
+        <xs:element name="esempioSpecificaSemiformaleImport2">
+           <xs:complexType>
+              <xs:sequence>
+		 <xs:element maxOccurs="1" minOccurs="1" name="nome" type="xs:string"/>
+		 <xs:element maxOccurs="1" minOccurs="1" ref="specificasemiformaleimportspecificasemiformaleinterno:esempioSpecificaSemiformaleInterno"/>
+              </xs:sequence>
+           </xs:complexType>
+        </xs:element>
+         
+</xs:schema>

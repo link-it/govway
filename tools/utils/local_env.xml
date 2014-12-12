@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoop2Utils_LocalEnv" basedir=".">
+
+	<!-- Librerie necessarie al progetto -->
+	<property name="openspcoop2" location="../.." />
+    <property name="required_lib" value="${openspcoop2}/lib/" />
+
+	<!-- Librerie esterne per le classi di test (es. jdbc driver) -->
+	<property name="ext_lib" value="lib" />
+	
+    <!-- Build-Options -->
+    <property name="buildAsRelease" value="false"/>
+    <property name="buildUtils" value="true"/>
+    <property name="buildAPI" value="true"/>
+	
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+</project>
+
+

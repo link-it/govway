@@ -1,0 +1,322 @@
+<!-- Definizione WSDL -->
+<wsdl:definitions targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:service="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:types="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+
+
+
+<!-- **** Import WSDLLogico ****-->
+<wsdl:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service" location="logicoErogatore.wsdl" />
+
+
+
+<!-- **** Binding **** -->
+
+<!-- Servizio GestioneUtentiWrappedDocumentLiteral -->
+<wsdl:binding name="GestioneUtentiWrappedDocumentLiteralSoapBinding" 
+              type="service:GestioneUtentiWrappedDocumentLiteral">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="registrazioneUtenteWDL">
+         <wsdlsoap:operation soapAction="registrazioneUtenteWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteWDL">
+         <wsdlsoap:operation soapAction="eliminazioneUtenteWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+<!-- Servizio AggiornamentoUtentiWrappedDocumentLiteral -->
+<wsdl:binding name="AggiornamentoUtentiWrappedDocumentLiteralSoapBinding" 
+              type="service:AggiornamentoUtentiWrappedDocumentLiteral">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="notificaAggiornamentoUtenteWDL">
+         <wsdlsoap:operation soapAction="notificaAggiornamentoUtenteWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+      </wsdl:operation>
+
+      <wsdl:operation name="aggiornamentoUtenteWDL">
+         <wsdlsoap:operation soapAction="aggiornamentoUtenteWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+<!-- Servizio AggiornamentoAsincronoWrappedDocumentLiteral -->
+<wsdl:binding name="AggiornamentoAsincronoWrappedDocumentLiteralSoapBinding" 
+              type="service:AggiornamentoAsincronoWrappedDocumentLiteral">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="richiestaAggiornamentoUtenteAsincronoSimmetricoWDL">
+         <wsdlsoap:operation soapAction="richiestaAggiornamentoUtenteAsincronoSimmetricoWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="richiestaAggiornamentoUtenteAsincronoAsimmetricoWDL">
+         <wsdlsoap:operation soapAction="richiestaAggiornamentoUtenteAsincronoAsimmetricoWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+<!-- Servizio GestioneUtentiDocumentLiteral -->
+<wsdl:binding name="GestioneUtentiDocumentLiteralSoapBinding" 
+              type="service:GestioneUtentiDocumentLiteral">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="registrazioneUtenteDL">
+         <wsdlsoap:operation soapAction="registrazioneUtenteDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteDL">
+         <wsdlsoap:operation soapAction="eliminazioneUtenteDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+<!-- Servizio GestioneUtentiRPCLiteral -->
+<wsdl:binding name="GestioneUtentiRPCLiteralSoapBinding" 
+              type="service:GestioneUtentiRPCLiteral">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="registrazioneUtenteRPCL">
+         <wsdlsoap:operation soapAction="registrazioneUtenteRPCL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteRPCL">
+         <wsdlsoap:operation soapAction="eliminazioneUtenteRPCL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+<!-- Servizio GestioneUtentiRPCEncoded -->
+<wsdl:binding name="GestioneUtentiRPCEncodedSoapBinding" 
+              type="service:GestioneUtentiRPCEncoded">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="registrazioneUtenteRPCE">
+         <wsdlsoap:operation soapAction="registrazioneUtenteRPCE"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteRPCE">
+         <wsdlsoap:operation soapAction="eliminazioneUtenteRPCE"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+<!-- Servizio GestioneUtentiStileIbrido  -->
+<wsdl:binding name="GestioneUtentiStileIbridoSoapBinding" 
+              type="service:GestioneUtentiStileIbrido">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="registrazioneUtenteWDL">
+         <wsdlsoap:operation soapAction="registrazioneUtenteWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="registrazioneUtenteRPCL">
+         <wsdlsoap:operation style="rpc" soapAction="registrazioneUtenteRPCL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="registrazioneUtenteRPCE">
+         <wsdlsoap:operation style="rpc" soapAction="registrazioneUtenteRPCE"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+<!-- Servizio GestioneUtentiOverloadedOperations -->
+<wsdl:binding name="GestioneUtentiOverloadedOperationsSoapBinding" 
+              type="service:GestioneUtentiOverloadedOperations">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="registrazioneUtenteOverloadedOperations">
+         <wsdlsoap:operation soapAction="registrazioneUtenteOverloadedOperations"/>
+         <wsdl:input name="richiestaSignature1">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:input>
+         <wsdl:output name="rispostaSignature1">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="registrazioneUtenteOverloadedOperations">
+         <wsdlsoap:operation soapAction="registrazioneUtenteOverloadedOperations"/>
+         <wsdl:input name="richiestaSignature2">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:input>
+         <wsdl:output name="rispostaSignature2">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="registrazioneUtenteOverloadedOperations">
+         <wsdlsoap:operation soapAction="registrazioneUtenteOverloadedOperations"/>
+         <wsdl:input name="richiestaSignature3">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:input>
+         <wsdl:output name="rispostaSignature3">
+            <wsdlsoap:body use="encoded" namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+
+
+<!-- ***** service ********* -->
+
+<!-- Servizio GestioneUtentiWrappedDocumentLiteral -->
+<wsdl:service name="GestioneUtentiWrappedDocumentLiteralService">
+      <wsdl:port binding="service:GestioneUtentiWrappedDocumentLiteralSoapBinding" name="GestioneUtentiWrappedDocumentLiteral">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+<!-- Servizio AggiornamentoUtentiWrappedDocumentLiteral -->
+<wsdl:service name="AggiornamentoUtentiWrappedDocumentLiteralService">
+      <wsdl:port binding="service:AggiornamentoUtentiWrappedDocumentLiteralSoapBinding" name="AggiornamentoUtentiWrappedDocumentLiteral">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+<!-- Servizio AggiornamentoAsincronoWrappedDocumentLiteral -->
+<wsdl:service name="AggiornamentoAsincronoWrappedDocumentLiteralService">
+      <wsdl:port binding="service:AggiornamentoAsincronoWrappedDocumentLiteralSoapBinding" name="AggiornamentoAsincronoWrappedDocumentLiteral">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+<!-- Servizio GestioneUtentiDocumentLiteral -->
+<wsdl:service name="GestioneUtentiDocumentLiteralService">
+      <wsdl:port binding="service:GestioneUtentiDocumentLiteralSoapBinding" name="GestioneUtentiDocumentLiteral">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+<!-- Servizio GestioneUtentiRPCLiteral -->
+<wsdl:service name="GestioneUtentiRPCLiteralService">
+      <wsdl:port binding="service:GestioneUtentiRPCLiteralSoapBinding" name="GestioneUtentiRPCLiteral">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+<!-- Servizio GestioneUtentiRPCEncoded -->
+<wsdl:service name="GestioneUtentiRPCEncodedService">
+      <wsdl:port binding="service:GestioneUtentiRPCEncodedSoapBinding" name="GestioneUtentiRPCEncoded">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+<!-- Servizio GestioneUtentiStileIbrido -->
+<wsdl:service name="GestioneUtentiStileIbridoService">
+      <wsdl:port binding="service:GestioneUtentiStileIbridoSoapBinding" name="GestioneUtentiStileIbrido">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+<!-- Servizio GestioneUtentiOverloadedOperations -->
+<wsdl:service name="GestioneUtentiOverloadedOperationsService">
+      <wsdl:port binding="service:GestioneUtentiOverloadedOperationsSoapBinding" name="GestioneUtentiOverloadedOperations">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+
+</wsdl:definitions>

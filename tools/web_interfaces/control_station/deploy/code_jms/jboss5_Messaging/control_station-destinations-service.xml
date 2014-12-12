@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+    <!--  toSmistatoreConfigurazioni -->
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=toSmistatoreConfigurazioni"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean> 
+    <!--  toSmistatoreConfigurazioni  -->
+
+    <!--  GestoreRegistroServizi di OpenSPCoop -->
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=toConfigurazioneRegistro"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>
+    <!--  GestoreRegistroServizi di OpenSPCoop --> 
+
+    <!--  GestoreRepositoryAutorizzazioni -->
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=toConfigurazioneGestoreAutorizzazioni"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>    
+    <!-- GestoreRepositoryAutorizzazioni -->
+
+    <!--  Gestore Eventi (Propagazione) -->
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=toConfigurazioneGestoreEventi"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>
+    <!-- Gestore Eventi (Propagazione) -->
+
+    <!--  Porte di Dominio -->
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=pdd1"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=pdd2"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>
+    <!-- ... -->
+    <mbean code="org.jboss.jms.server.destination.QueueService"
+         name="jboss.messaging.destination:service=Queue,name=pddN"
+      xmbean-dd="xmdesc/Queue-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="RedeliveryDelay">120000</attribute>
+         <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
+    </mbean>
+    <!--  Porte di Dominio -->
+
+</server>

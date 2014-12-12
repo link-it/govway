@@ -1,0 +1,55 @@
+<configuration xmlns="urn:hornetq"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="urn:hornetq /schema/hornetq-configuration.xsd">
+
+  <!-- 
+	In normal use, HornetQ does not update delivery count persistently until a message is rolled back (i.e. the delivery count is not updated before the message is delivered to the consumer). In most messaging use cases, the messages are consumed, acknowledged and forgotten as soon as they are consumed. In these cases, updating the delivery count persistently before delivering the message would add an extra persistent step for each message delivered, implying a significant performance penalty.
+
+	However, if the delivery count is not updated persistently before the message delivery happens, in the event of a server crash, messages might have been delivered but that will not have been reflected in the delivery count. During the recovery phase, the server will not have knowledge of that and will deliver the message with redelivered set to false while it should be true.
+
+	As this behavior breaks strict JMS semantics, HornetQ allows to persist delivery count before message delivery but disabled it by default for performance implications. 
+  -->
+  <persist-delivery-count-before-delivery>true</persist-delivery-count-before-delivery> 
+
+  <address-settings>
+   
+        <address-setting match="jms.queue.toImbustamento">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>120000</redelivery-delay>
+        </address-setting>
+        <address-setting match="jms.queue.toInoltroBuste">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>60000</redelivery-delay>
+        </address-setting>
+        <address-setting match="jms.queue.toInoltroRisposte">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>60000</redelivery-delay>
+        </address-setting>
+        <address-setting match="jms.queue.toSbustamento">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>120000</redelivery-delay>
+        </address-setting>
+	<address-setting match="jms.queue.toConsegnaContenutiApplicativi">
+        	<max-delivery-attempts>-1</max-delivery-attempts>
+        	<redelivery-delay>60000</redelivery-delay>
+     	</address-setting>
+        <address-setting match="jms.queue.toImbustamentoRisposte">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>120000</redelivery-delay>
+        </address-setting>
+        <address-setting match="jms.queue.toSbustamentoRisposte">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>120000</redelivery-delay>
+        </address-setting>
+        <address-setting match="jms.queue.toRicezioneBuste">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>120000</redelivery-delay>
+        </address-setting>
+        <address-setting match="jms.queue.toRicezioneContenutiApplicativi">
+                <max-delivery-attempts>-1</max-delivery-attempts>
+                <redelivery-delay>120000</redelivery-delay>
+        </address-setting>
+
+  </address-settings>
+
+</configuration>

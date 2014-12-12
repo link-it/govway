@@ -1,0 +1,142 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
+    
+    
+    <soggetto tipo="PROXY" nome="MinisteroFruitore">
+        
+        
+        <!-- Profilo OneWay stateless -->
+        <porta-delegata nome="ServizioOneWayStateless" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore"/>
+            <servizio tipo="PROXY" nome="ServizioOneWay"/>
+            <azione nome="stateless"/>
+        </porta-delegata>
+        
+        <!-- Profilo OneWay stateful -->
+        <porta-delegata nome="ServizioOneWayStateful" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="disabilitato">
+            <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore"/>
+            <servizio tipo="PROXY" nome="ServizioOneWay"/>
+            <azione nome="stateful"/>
+        </porta-delegata>
+        
+        <!-- Profilo Sincrono stateless -->
+        <porta-delegata nome="ServizioSincronoStateless" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore"/>
+            <servizio tipo="PROXY" nome="ServizioSincrono"/>
+            <azione nome="stateless"/>
+        </porta-delegata>
+        
+        <!-- Profilo Sincrono stateful -->
+        <porta-delegata nome="ServizioSincronoStateful" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="disabilitato">
+            <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore"/>
+            <servizio tipo="PROXY" nome="ServizioSincrono"/>
+            <azione nome="stateful"/>
+        </porta-delegata>
+        
+        <!-- Profilo Sincrono stateful -->
+        <porta-delegata nome="ServizioWSS" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="disabilitato">
+            <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore"/>
+            <servizio tipo="PROXY" nome="ServizioSincrono"/>
+            <azione nome="wss"/>
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Timestamp Encrypt Signature"/>
+                    <parameter nome="timeToLive" valore="600"/>
+                    <parameter nome="user" valore="pd"/>
+                    <parameter nome="encryptionUser" valore="pa"/>
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass"
+                        valore="org.openspcoop2.security.utils.PWCallbackSend"/>
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties"/>
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties"/>
+                    <parameter nome="mustUnderstand" valore="false"/>
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+        
+    </soggetto>
+    
+    
+    
+    <soggetto tipo="PROXY" nome="MinisteroErogatore">
+        
+        
+        <!-- Profilo OneWay stateless -->
+        <porta-applicativa nome="ServizioOneWayStateless" stateless="abilitato">
+            <servizio tipo="PROXY" nome="ServizioOneWay"/>
+            <azione nome="stateless"/>
+            <servizio-applicativo nome="TRACE_ECHO"/>
+        </porta-applicativa>
+        
+        <!-- Profilo OneWay stateful -->
+        <porta-applicativa nome="ServizioOneWayStateful" stateless="disabilitato">
+            <servizio tipo="PROXY" nome="ServizioOneWay"/>
+            <azione nome="stateful"/>
+            <servizio-applicativo nome="TRACE_ECHO"/>
+        </porta-applicativa>
+        
+        <!-- Profilo Sincrono stateless -->
+        <porta-applicativa nome="ServizioSincronoStateless" stateless="abilitato">
+            <servizio tipo="PROXY" nome="ServizioSincrono"/>
+            <azione nome="stateless"/>
+            <servizio-applicativo nome="TRACE_ECHO"/>
+        </porta-applicativa>
+        
+        <!-- Profilo Sincrono stateful -->
+        <porta-applicativa nome="ServizioSincronoStateful" stateless="disabilitato">
+            <servizio tipo="PROXY" nome="ServizioSincrono"/>
+            <azione nome="stateful"/>
+            <servizio-applicativo nome="TRACE_ECHO"/>
+        </porta-applicativa>
+        
+        <!-- Profilo WSS -->
+        <porta-applicativa nome="ServizioWSS" stateless="disabilitato">
+            <servizio tipo="PROXY" nome="ServizioSincrono"/>
+            <azione nome="wss"/>
+            <servizio-applicativo nome="TRACE_ECHO"/>
+            <message-security>
+                <request-flow>
+                    <parameter nome="authorizationClass"
+                        valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationOKDemo"/>
+                    <parameter nome="action" valore="Timestamp Encrypt Signature"/>
+                    <parameter nome="passwordCallbackClass"
+                        valore="org.openspcoop2.security.utils.PWCallbackSend"/>
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties"/>
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties"/>
+                    <parameter nome="mustUnderstand" valore="false"/>
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        
+        <servizio-applicativo nome="TRACE_ECHO">
+            <invocazione-servizio>
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location" valore="http://localhost:8080/TestService/echo"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+        
+        
+    </soggetto>
+    
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+    
+</openspcoop2>

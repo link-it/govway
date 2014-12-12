@@ -1,0 +1,42 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteralService WSDL service -->
+
+  <service name="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteralService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteralSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>esitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.EsitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>esitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.EsitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

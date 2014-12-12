@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+  "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>config</display-name>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>WEB-INF/jbossws-cxf.xml</param-value>
+    </context-param>
+
+	<!--  Loader startup -->
+	<listener>
+         <listener-class>
+                  org.openspcoop2.core.config.ws.server.config.WSStartup
+         </listener-class>
+	</listener>
+
+    <!-- CXF -->
+    <listener>
+        <listener-class> org.springframework.web.context.ContextLoaderListener </listener-class>
+    </listener>
+
+    <!-- Servlet: CXF -->
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <display-name>CXF Servlet</display-name>
+        <servlet-class> org.apache.cxf.transport.servlet.CXFServlet </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Servlet Mapping: CXF -->
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    
+
+    <!-- Altre configurazioni -->
+    <session-config>
+        <!-- Default to 5 minute session timeouts -->
+        <session-timeout>5</session-timeout>
+    </session-config>
+
+    <!-- currently the W3C havent settled on a media type for WSDL;
+		http://www.w3.org/TR/2003/WD-wsdl12-20030303/#ietf-draft
+		for now we go with the basic 'it's XML' response -->
+    <mime-mapping>
+        <extension>wsdl</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+
+
+    <mime-mapping>
+        <extension>xsd</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+
+    <welcome-file-list id="WelcomeFileList">
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    <!-- Altre configurazioni -->
+
+
+</web-app>

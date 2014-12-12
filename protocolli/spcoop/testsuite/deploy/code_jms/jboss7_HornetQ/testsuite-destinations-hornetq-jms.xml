@@ -1,0 +1,36 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:messaging:1.1">
+		...
+                <address-settings>
+		    ...
+                    <address-setting match="jms.queue.openspcoop2TestQueue">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.topic.openspcoop2TestTopic">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                </address-settings>
+		...
+                <jms-destinations>
+		    ...
+                    <jms-queue name="openspcoop2TestQueue">
+ 			<entry name="java:jboss/exported/queue/openspcoop2TestQueue"/>
+                        <entry name="/queue/openspcoop2TestQueue"/>
+                    </jms-queue>
+		    ....
+                    <jms-topic name="openspcoop2TestTopic">
+			<entry name="java:jboss/exported/topic/openspcoop2TestTopic"/>
+			<entry name="/topic/openspcoop2TestTopic"/>
+		    </jms-topic>
+                </jms-destinations>
+		...
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>

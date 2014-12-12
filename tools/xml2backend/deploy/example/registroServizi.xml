@@ -1,0 +1,9 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry">
+
+	<soggetto tipo="SPC" nome="PROVA">
+	        <connettore tipo="http" nome="PdD">
+        	    <property nome="location" valore="http://localhost:8080/openspcoop2/PA"/>
+	        </connettore>
+	</soggetto>
+
+</registro-servizi>

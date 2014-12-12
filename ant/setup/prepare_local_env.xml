@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="set_env" basedir=".">
+
+	<!-- root di OpenSPCoop -->
+	<property name="rootDir" location="../.." />
+	<property name="openspcoop2" value="${rootDir}" />
+	<property name="required_lib" value="${rootDir}/lib"/>
+	
+	<!-- Build-Options -->
+	<property name="buildAsRelease" value="true"/>
+	<property name="buildAPI" value="false"/>
+	<property name="forceDisableJ2eeMode" value="true" />
+
+	<!-- Utils -->
+	<property name="utils" location="${rootDir}/tools/utils"/>
+	<property name="src_utils" location="${utils}/src"/>
+	<import file="${utils}/build.xml"/>
+	
+	<!-- GenericProject -->
+ 	<property name="genericProject" location="${rootDir}/tools/generic_project"/>
+ 	<property name="src_genericProject" location="${genericProject}/src"/>
+ 	<import file="${genericProject}/build.xml"/>
+
+	<!-- CORE PdD -->
+	<property name="core" value="${rootDir}/core"/>
+	<import file="${core}/build.xml" />
+	
+	<!-- Libreria Users -->
+	<property name="users" value="${rootDir}/tools/web_interfaces/lib/users/"/>
+	<property name="src_users" value="${users}/src" />
+	<property name="sql_users" value="${users}/deploy/sql" />
+	<property name="required_lib_users" value="${required_lib}"/>
+	<import file="${users}/build.xml"/>
+	
+	<!-- Libreria MVC -->
+	<property name="mvc" value="${rootDir}/tools/web_interfaces/lib/mvc"/>
+	<property name="src_mvc" value="${mvc}/src" />
+	<property name="required_lib_mvc" value="${required_lib}"/>
+	<import file="${mvc}/build.xml"/>
+	
+	<!-- Libreria Queue -->
+	<property name="queue" value="${rootDir}/tools/web_interfaces/lib/queue/" />
+	<property name="src_queue" value="${queue}/src" />
+	<property name="sql_queue" value="${queue}/deploy/sql" />
+	<property name="required_lib_queue" value="${required_lib}"/>
+	<import file="${queue}/build.xml"/>
+		
+	<!-- Libreria Audit -->
+	<property name="audit" value="${rootDir}/tools/web_interfaces/lib/audit/" />
+	<property name="src_audit" value="${audit}/src" />
+	<property name="sql_audit" value="${audit}/deploy/sql" />
+	<property name="required_lib_audit" value="${required_lib}"/>
+	<import file="${audit}/build.xml"/>
+	
+	<!-- Libreria Web -->
+	<property name="jsplib" value="${rootDir}/tools/web_interfaces/lib/jsplib" />
+	<property name="jslib" value="${rootDir}/tools/web_interfaces/lib/js" />
+	<property name="commons_images" value="${rootDir}/tools/web_interfaces/lib/images" />
+	
+	<!-- PddConsole -->
+	<property name="pddConsole" value="${rootDir}/tools/web_interfaces/control_station/" />
+	<property name="src_pddConsole" value="${pddConsole}/src" />
+	<property name="required_lib_pddConsole" value="${required_lib}"/>
+	<import file="${pddConsole}/build.xml"/>
+	
+	<!-- Loader -->
+	<property name="loaderConsole" value="${rootDir}/tools/web_interfaces/loader/" />
+	<property name="src_loaderConsole" value="${loaderConsole}/src" />
+	<property name="required_lib_loaderConsole" value="${required_lib}"/>
+	<import file="${loaderConsole}/build.xml"/>
+	
+	<!-- SPCoop -->
+	<property name="spcoop" value="${rootDir}/protocolli/spcoop"/>
+	<property name="src_spcoop" value="${spcoop}/src" />
+	<import file="${spcoop}/build.xml" />
+	
+	<!-- SDI -->
+	<property name="sdi" value="${rootDir}/protocolli/sdi"/>
+	<property name="src_sdi" value="${sdi}/src" />
+	<import file="${sdi}/build.xml" />
+	
+	<!-- Trasparente -->
+	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>
+	<property name="src_trasparente" value="${trasparente}/src" />
+	<import file="${trasparente}/build.xml" />
+	
+	<!-- SPCoop BackwardCompatibility -->
+	<property name="backwardCompatibility" value="${spcoop}/tools/backward_compatibility"/>
+	<property name="src_backwardCompatibility" value="${spcoop}/tools/backward_compatibility/src" />
+	<import file="${backwardCompatibility}/build.xml" />
+	
+
+</project>
+

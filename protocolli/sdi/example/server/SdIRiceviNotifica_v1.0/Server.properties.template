@@ -1,0 +1,18 @@
+# MTOM Enabled
+mtom=true
+
+# Busta (se scommentato aggiunge una busta eGov)
+#busta=spcoopFiles/notificaEsito.xml
+
+# Endpoint
+endpoint=http://localhost:8888/ricevi_notifica
+
+# EsitoNotifica
+#ES00 = NOTIFICA NON ACCETTATA
+#ES01 = NOTIFICA ACCETTATA
+#ES02 = SERVIZIO NON DISPONIBILE
+esitoNotifica=ES01
+
+# Notifica di Scarto Esito Committente
+notificaScartoEsitoCommittente=sdiFiles/esempiMessaggi/IT01234567890_11111_SE_001.xml
+#notificaScartoEsitoCommittente=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_SE_001.xml

@@ -1,0 +1,29 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:tras="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia"
+	targetNamespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia">
+
+
+  <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia" location="definitorio.xsd">
+    </wsdl:import>
+
+	<!-- Definizione dei Messaggi -->
+
+
+	<wsdl:message name="statoFamigliaRequest">
+		<wsdl:part name="statoFamigliaRequestPart" element="tras:richiestaStatoFamiglia" />
+	</wsdl:message>
+
+	<wsdl:message name="statoFamigliaResponse">
+		<wsdl:part name="statoFamigliaResponsePart" element="tras:statoFamiglia" />
+	</wsdl:message>
+
+	<!-- Passa un CodiceFiscale e ritorna i dati di un soggetto -->
+	<wsdl:portType name="RichiestaStatoFamiglia">
+		<wsdl:operation name="Acquisisci">
+			<wsdl:input message="tras:statoFamigliaRequest" />
+			<wsdl:output message="tras:statoFamigliaResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+</wsdl:definitions>

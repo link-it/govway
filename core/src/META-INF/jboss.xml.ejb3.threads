@@ -1,0 +1,7 @@
+<jboss xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:p="urn:ejb-pool:1.0"
+   xmlns:mdb="urn:resource-adapter-binding">
+    <assembly-descriptor>
+    </assembly-descriptor>
+</jboss>
+

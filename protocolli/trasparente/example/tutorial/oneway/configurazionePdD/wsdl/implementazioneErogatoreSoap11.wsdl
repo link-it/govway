@@ -1,0 +1,29 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tras="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione"
+	targetNamespace="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione">
+
+        <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione"
+                location="logicoErogatore.wsdl">
+        </wsdl:import>
+
+
+	<wsdl:binding name="ComunicazioneVariazioneSOAP11Binding" type="tras:ComunicazioneVariazione">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="Notifica">
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="ComunicazioneVariazioneSOAP11Service">
+		<wsdl:port name="ComunicazioneVariazioneSOAP11InterfaceEndpoint"
+			binding="tras:ComunicazioneVariazioneSOAP11Binding">
+			<soap:address location="http://localhost:8888/tutorial/oneway11" />
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

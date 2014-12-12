@@ -1,0 +1,36 @@
+
+<project name="prepare-setup-trasparente" basedir=".">
+	
+	<description>
+        	PREPARE SETUP TRASPARENTE
+	</description>
+
+	
+	<!-- Protocollo Trasparente -->
+	<target name="prepare_trasparente_setup">
+		
+		<if>
+			<not>
+				<available file="${trasparente}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${trasparente}/local_env.xml.template" tofile="${trasparente}/local_env.xml" />
+			</then>
+		</if>
+				
+		<antcall target="compile_trasparente_plugin" >
+	    	<param name="dist" value="${deploy_sw}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_trasparente" value="${src_trasparente}"/>
+	 	</antcall>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/trasparente" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/trasparente"/>
+		<delete dir="it"/>
+		
+	</target>
+	
+	
+</project>

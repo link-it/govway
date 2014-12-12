@@ -1,0 +1,6 @@
+	<module>
+		<web>
+			<web-uri>OpenSPCoop2.war</web-uri>
+			<context-root>openspcoop2</context-root>
+		</web>
+	</module>

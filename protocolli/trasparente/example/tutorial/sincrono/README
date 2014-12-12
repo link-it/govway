@@ -1,0 +1,30 @@
+*** SERVER ***
+
+Editare il file di configurazione configurazionePdD/server/cxf.xml per impostare gli endpoints su cui accetta connessioni il server
+
+Per avviare il server utilizzare il comando:
+-  ant run_server 
+
+
+*** CLIENT ***
+
+Editare il file di configurazione Client.properties per impostare i parametri di accesso al servizio erogatore.
+- invocazioneTramitePdD (true/false): indica se l'invocazione del server viene mediata da una porta di dominio.
+- username: username utilizzato in una autenticazione http basic
+- password: password utilizzata in una autenticazione http basic
+
+Nel caso l'invocazione venga mediata da una porta di dominio (invocazioneTramitePdD=true):
+- portaDiDominio: indirizzo del servizio di ricezione contenuti applicativi della PdD
+- portaDelegata.soap11: nome della porta delegata per il binding SOAP 11
+- portaDelegata.soap12: nome della porta delegata per il binding SOAP 12
+- portaDelegata.soap11.security: nome della porta delegata per il binding SOAP 11 con WSSecurity
+- portaDelegata.soap12.security: nome della porta delegata per il binding SOAP 12 con WSSecurity
+
+Nel caso l'invocazione sia diretta verso il server (invocazioneTramitePdD=false):
+- endpoint.soap11: endpoing su cui accetta connessioni il server per il servizio con binding SOAP 11
+- endpoint.soap12: endpoing su cui accetta connessioni il server per il servizio con binding SOAP 12
+- endpoint.soap11.security: endpoing su cui accetta connessioni il server per il servizio con binding SOAP 11 con WSSecurity
+- endpoint.soap12.security: endpoing su cui accetta connessioni il server per il servizio con binding SOAP 12 con WSSecurity
+
+Per avviare il client utilizzare il comando:
+-  ant run_client

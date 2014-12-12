@@ -1,0 +1,140 @@
+<server>
+   ...
+   <profile>
+      ...
+      <subsystem xmlns="urn:jboss:domain:datasources:1.0">
+         <datasources>
+             ...
+		<datasource jta="false" use-ccm="false" jndi-name="java:/org.openspcoop2.dataSource" use-java-context="false" pool-name="org.openspcoop2.dataSource" enabled="true">
+
+			<!-- Connection URL -->
+			<connection-url>ConnectionURL</connection-url>
+			<!-- esempi -->
+			<!-- <connection-url>jdbc:postgresql://localhost/openspcoop2</connection-url> -->
+			<!-- <connection-url>jdbc:mysql://localhost/openspcoop2?zeroDateTimeBehavior=convertToNull</connection-url> -->
+			<!-- <connection-url>jdbc:oracle:thin:@localhost:1521:XE</connection-url> -->
+			<!-- <connection-url>jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/openspcoop2]</connection-url> -->
+			<!-- <connection-url>jdbc:sqlserver://localhost:1433;databaseName=openspcoop2</connection-url> -->
+			<!-- <connection-url>jdbc:db2://localhost:50000/openspcoop2</connection-url> -->
+
+			<!-- DriverJDBC -->
+			<driver>openspcoop2-modulo-driver-jdbc</driver>
+			<driver-class>DriverJDBC</driver-class>
+			<!-- esempi -->
+			<!-- <driver-class>org.postgresql.Driver</driver-class> -->
+			<!-- <driver-class>com.mysql.jdbc.Driver</driver-class> -->
+			<!-- <driver-class>oracle.jdbc.OracleDriver</driver-class> -->
+			<!-- <driver-class>org.hsqldb.jdbcDriver</driver-class> -->
+			<!-- <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class> -->
+			<!-- <driver-class>com.ibm.db2.jcc.DB2Driver</driver-class> -->
+
+			<!-- Credenziali -->
+			<security>
+				<user-name>openspcoop2</user-name>
+				<password>openspcoop2</password>
+			</security>
+
+			<!-- Livello di Isolamento delle Transazioni -->
+			<transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+
+			<!-- Minimo/Massimo numero di connessioni che un pool deve mantenere -->
+			<pool>
+				<prefill>true</prefill>
+				<use-strict-min>true</use-strict-min>
+				<min-pool-size>10</min-pool-size>
+				<max-pool-size>50</max-pool-size>
+			</pool>
+
+			<!--
+			Validazione della Connessione SQL.
+			Effettuata quando una connessione viene creata o su una esistente connessione quando questa viene ottenuta dal pool
+			-->
+
+			<!-- esempio postgresql -->
+			<!--
+			<new-connection-sql>SELECT 1</new-connection-sql>
+			<validation>
+				<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
+				<exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter"/>
+				<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+				<validate-on-match>true</validate-on-match>
+			</validation>
+			-->
+
+			<!-- esempio mysql -->
+			<!--
+			<new-connection-sql>SELECT 1</new-connection-sql>
+			<validation>
+				<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker"/>
+				<exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter"/>
+				<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+				<validate-on-match>true</validate-on-match>
+			</validation>
+			-->
+
+			<!-- esempio oracle -->
+			<!--
+			<new-connection-sql>SELECT 1 FROM DUAL</new-connection-sql>
+			<validation>
+				<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker"/>
+				<stale-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker"/>
+				<exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter"/>
+				<check-valid-connection-sql>SELECT 1 FROM DUAL</check-valid-connection-sql>
+				<validate-on-match>true</validate-on-match>
+			</validation>
+			-->
+
+			<!-- esempio hsql -->
+			<!--
+			<new-connection-sql>SELECT 1</new-connection-sql>
+			<validation>
+				<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+				<validate-on-match>true</validate-on-match>
+			</validation>
+			-->
+
+			<!-- esempio sqlserver -->
+			<!--
+			<new-connection-sql>SELECT 1</new-connection-sql>
+			<validation>
+				<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"/>
+				<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+				<validate-on-match>true</validate-on-match>
+			</validation>
+			-->
+
+			<!-- esempio db2 -->
+			<!--
+			<new-connection-sql>SELECT 1 from SYSIBM.SYSDUMMY1</new-connection-sql>
+			<validation>
+				<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker"/>
+				<stale-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2StaleConnectionChecker"/>
+				<exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2ExceptionSorter"/>
+				<check-valid-connection-sql>SELECT 1 from SYSIBM.SYSDUMMY1</check-valid-connection-sql>
+				<validate-on-match>true</validate-on-match>
+			</validation>
+			-->
+
+			<!-- Timeout -->
+			<timeout>
+				<idle-timeout-minutes>5</idle-timeout-minutes>
+				<blocking-timeout-millis>30000</blocking-timeout-millis>
+			</timeout>
+
+			<!--
+			Controllo degli Statements/ResultSet non chiusi. Viene effettuato quando una connessione viene ritornata al pool
+			o quando una PreparedStatement viene chiusa e quindi ritornata alla cache delle prepared statements
+			-->
+			<statement>
+				<track-statements>true</track-statements>
+				<prepared-statement-cache-size>100</prepared-statement-cache-size>
+			</statement>
+
+		</datasource>
+             ...
+         </datasources>
+      </subsystem>
+      ...
+   </profile>
+   ...
+</server>

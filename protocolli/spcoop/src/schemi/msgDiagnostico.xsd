@@ -1,0 +1,34 @@
+<xsd:schema targetNamespace="http://www.ctrupa.it/schemas/2003/eGovIT/Diag1_0/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ctrupa.it/schemas/2003/eGovIT/Diag1_0/"
+xmlns:eGov_IT_Diag="http://www.ctrupa.it/schemas/2003/eGovIT/Diag1_0/" elementFormDefault="qualified"
+attributeFormDefault="unqualified">
+     <xsd:element name="OraRegistrazione" type="xsd:dateTime"/>
+     <xsd:element name="IdentificativoPorta">
+         <xsd:simpleType>
+             <xsd:restriction base="xsd:anyURI"/>
+         </xsd:simpleType>
+     </xsd:element>
+     <xsd:element name="IdentificativoFunzione">
+         <xsd:simpleType>
+             <xsd:restriction base="xsd:anyURI"/>
+         </xsd:simpleType>
+     </xsd:element>
+     <xsd:element name="LivelloDiSeverita">
+         <xsd:simpleType>
+             <xsd:restriction base="xsd:positiveInteger">
+                 <xsd:pattern value="\d{1}"/>
+             </xsd:restriction>
+         </xsd:simpleType>
+     </xsd:element>
+     <xsd:element name="MessaggioDiagnostico">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="OraRegistrazione"/>
+                 <xsd:element ref="IdentificativoPorta"/>
+                 <xsd:element ref="IdentificativoFunzione"/>
+                 <xsd:element ref="LivelloDiSeverita"/>
+                 <xsd:element name="TestoDiagnostico" type="xsd:string"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+</xsd:schema>

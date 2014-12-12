@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web
+Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>OpenSPCoop2</display-name>
+
+
+	<!-- CXF -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>WEB-INF/jbossws-cxf.xml</param-value>
+    </context-param>
+
+
+	<!-- Se queste istruzioni vengono attivate, vengono utilizzate le regole di rewriter presenti nel file urlrewrite.xml -->	
+	<!--
+	<filter>
+    	<filter-name>UrlRewriteFilter</filter-name>
+    	<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>UrlRewriteFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	-->
+
+
+    <!-- CXF -->
+    <listener>
+        <listener-class> org.springframework.web.context.ContextLoaderListener </listener-class>
+    </listener>
+
+    <!-- OpenSPCoop -->
+    <listener>
+        <listener-class> org.openspcoop2.pdd.services.OpenSPCoop2Startup </listener-class>
+    </listener>
+
+    <!-- Servlet: CXF -->
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <display-name>CXF Servlet</display-name>
+        <servlet-class> org.apache.cxf.transport.servlet.CXFServlet </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+	<!-- JMXConsole embedded -->
+	<!--
+	<servlet>
+	    <servlet-name>JmxMiniConsoleServlet</servlet-name>
+	    <servlet-class>
+	        org.jminix.console.servlet.MiniConsoleServlet
+	    </servlet-class>
+	</servlet>
+	-->
+
+    <!-- OpenSPCoop: Servizio di check stato PdD -->
+    <servlet>
+        <servlet-name>checkPdD</servlet-name>
+        <servlet-class>org.openspcoop2.pdd.services.connector.CheckStatoPdD</servlet-class>
+    </servlet>
+    <!-- OpenSPCoop: Servizio di dispatching dei servizi della Porta -->
+    <servlet>
+        <servlet-name>OpenSPCoop2Servlet</servlet-name>
+        <display-name>OpenSPCoop2 Servlet</display-name>
+        <servlet-class>org.openspcoop2.pdd.services.connector.OpenSPCoop2Servlet</servlet-class>
+    </servlet>
+
+
+
+    <!-- servlet-mapping OpenSPCoop2 -->
+    <servlet-mapping>
+        <servlet-name>OpenSPCoop2Servlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>checkPdD</servlet-name>
+        <url-pattern>/checkPdD/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- servlet-mapping JMXConsole embedded -->
+    <!--
+    <servlet-mapping>
+	    <servlet-name>JmxMiniConsoleServlet</servlet-name>
+	    <url-pattern>/jmx-console/*</url-pattern>
+	</servlet-mapping>
+	-->
+
+    <!-- Servlet Mapping: CXF -->
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/IntegrationManager/*</url-pattern>
+    </servlet-mapping>
+    
+    
+    
+    <!-- Altre configurazioni -->
+    <session-config>
+        <!-- Default to 5 minute session timeouts -->
+        <session-timeout>5</session-timeout>
+    </session-config>
+
+    <!-- currently the W3C havent settled on a media type for WSDL;
+		http://www.w3.org/TR/2003/WD-wsdl12-20030303/#ietf-draft
+		for now we go with the basic 'it's XML' response -->
+    <mime-mapping>
+        <extension>wsdl</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+
+
+    <mime-mapping>
+        <extension>xsd</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+
+    <welcome-file-list id="WelcomeFileList">
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    <!-- Altre configurazioni -->
+
+
+
+	<!-- security constraint JMXConsole embedded -->
+    <!--
+    <security-constraint>
+            <web-resource-collection>
+                    <web-resource-name>Resources-Protected</web-resource-name>
+                    <url-pattern>/jmx-console/*</url-pattern>
+            </web-resource-collection>
+            <auth-constraint>
+                    <role-name>MYAPPL_ADMIN</role-name>
+            </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+            <web-resource-collection>
+                    <web-resource-name>Resources-Protected</web-resource-name>
+                    <url-pattern>/jmx-console/servers/0/domains/org.openspcoop2.pdd/*</url-pattern>
+            </web-resource-collection>
+    </security-constraint>
+    -->
+
+
+</web-app>

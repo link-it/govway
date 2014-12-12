@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/eccezione/router_details"
+       targetNamespace="http://www.openspcoop2.org/core/eccezione/router_details"
+       xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+       attributeFormDefault="unqualified">
+
+       <xsd:element name="dettaglio-routing">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <!-- Dati Porta di Comunicazione che ha emesso l'errore applicativo -->
+                            <xsd:element ref="dominio"/>
+                            <!-- OraRegistrazione -->
+                            <xsd:element name="ora-registrazione" type="xsd:dateTime"/>
+                            <!-- Errore -->
+                            <xsd:element ref="dettaglio"/>
+                     </xsd:sequence>
+              </xsd:complexType>
+       </xsd:element>
+       
+       <xsd:element name="dominio">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <xsd:element name="identificativo-porta" type="xsd:string"/>
+                            <xsd:element name="soggetto" type="dominio-soggetto"/>
+                     </xsd:sequence>
+                     <xsd:attribute name="modulo" type="xsd:string"/>
+              </xsd:complexType>
+       </xsd:element>
+       <xsd:complexType name="dominio-soggetto">
+              <xsd:simpleContent>
+                     <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                     </xsd:extension>
+              </xsd:simpleContent>
+       </xsd:complexType>
+       
+       <xsd:element name="dettaglio">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <xsd:element name="descrizione" type="xsd:string"/>
+                     </xsd:sequence>
+                     <xsd:attribute name="esito" type="xsd:string" fixed="ERRORE"/>
+              </xsd:complexType>
+       </xsd:element>
+       
+
+</xsd:schema>

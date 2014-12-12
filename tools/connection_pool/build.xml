@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoop2Pools" basedir=".">
+	<description>
+       OpenSPCoop2 Pools
+    </description>
+
+	<import file="local_env.xml" />
+	<import file="./ant/openspcoop2-pools-build.xml" />
+	<import file="./ant/openspcoop2-pools-war.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+	
+	<!-- set global properties for this build -->
+	<property name="src_openspcoop2Pools" location="src" />
+	<property name="build_openspcoop2Pools" location="build" />
+	<property name="dist_openspcoop2Pools" location="dist" />
+	<property name="doc_openspcoop2Pools" location="doc" />
+
+	<var name="openspcoop2_pool_driver_jar" value=""/>
+	<var name="log4j_jar" value="" />
+	<var name="log4j_properties" value=""/>
+	<var name="jaxp_ri_jar" value=""/>
+	<var name="commons_pool_jar" value=""/>
+	<var name="commons_dbcp_jar" value=""/>
+	<var name="jboss_classloading" value="" />
+	<var name="jboss_scanning" value="" />
+	<var name="jboss_deployment_structure" value="" />
+	<runtarget target="check_as_version" />	
+	<!-- openspcoop2_pool_driver -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="openspcoop2_pool_driver_jar" value="openspcoop2_pools-driver*.jar"/>
+		</then>
+	</if>
+	<!-- log -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="log4j_jar" value="log4j-1.2.16.jar" />
+		</then>
+	</if>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+		</or>
+		<then>
+			<var name="log4j_properties" value="log4j.properties"/>
+		</then>
+	</if>
+	<!-- jaxp_ri -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+		</then>
+	</if>
+	<!-- commons_pool -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="commons_pool_jar" value="commons-pool-1.5.6.jar"/>
+		</then>
+	</if>
+	<!-- commons_dbcp -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="commons_dbcp_jar" value="commons-dbcp-1.4.jar"/>
+		</then>
+	</if>
+	<!-- jboss_classloading -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_classloading" value="jboss-classloading.xml" />
+		</then>
+	</if>
+	<!-- jboss_scanning -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_scanning" value="jboss-scanning.xml" />
+		</then>
+	</if>
+	<!-- jboss_deployment_structure -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>	
+	
+	
+	
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_openspcoop2Pools">
+		<delete dir="${build_openspcoop2Pools}" />
+		<delete dir="build" />
+		<delete dir="${dist_openspcoop2Pools}" />
+		<delete dir="${doc_openspcoop2Pools}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_openspcoop2Pools">
+		<mkdir dir="${build_openspcoop2Pools}" />
+		<mkdir dir="${build_openspcoop2Pools}/tmp" />
+		<mkdir dir="${dist_openspcoop2Pools}" />
+	</target>
+	
+	
+	
+	
+	<!-- Compilazione della PddConsole-->
+	<target name="compile_openspcoop2Pools" depends="init_compile_openspcoop2Pools,compile_openspcoop2_pools_driver,compile_openspcoop2_pools" />
+	
+	<!-- alias -->
+	<target name="build" depends="compile_openspcoop2Pools,war_openspcoop2Pools"/>
+	<target name="clean" depends="clean_openspcoop2Pools"/>
+	
+
+</project>

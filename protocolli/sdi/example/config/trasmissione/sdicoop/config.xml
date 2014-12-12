@@ -1,0 +1,97 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config">
+
+    <soggetto tipo="SDI" nome="ENTE">
+
+        <porta-delegata nome="SDIENTE/SDICentroServiziFatturaPA/SDIRiceviFile/RiceviFile"
+            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            <soggetto-erogatore tipo="SDI" nome="CentroServiziFatturaPA"/>
+            <servizio tipo="SDI" nome="RiceviFile"/>
+            <azione nome="RiceviFile"/>
+            <servizio-applicativo nome="SDIENTE/SDICentroServiziFatturaPA/SDIRiceviFile/RiceviFile"/>
+            <mtom-processor>
+                <request-flow mode="packaging">
+                    <parameter nome="File"
+                        pattern="//File"
+                        required="false" content-type="text/xml"/>
+                </request-flow>
+            </mtom-processor>
+        </porta-delegata>
+
+
+        <porta-applicativa nome="SDIENTE/SDITrasmissioneFatture/RicevutaConsegna"
+            stateless="abilitato">
+            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
+            <azione nome="RicevutaConsegna"/>
+            <servizio-applicativo nome="SDIENTE/SDITrasmissioneFatture"/>
+        </porta-applicativa>
+
+        <porta-applicativa nome="SDIENTE/SDITrasmissioneFatture/NotificaMancataConsegna"
+            stateless="abilitato">
+            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
+            <azione nome="NotificaMancataConsegna"/>
+            <servizio-applicativo nome="SDIENTE/SDITrasmissioneFatture"/>
+        </porta-applicativa>
+
+        <porta-applicativa nome="SDIENTE/SDITrasmissioneFatture/NotificaScarto"
+            stateless="abilitato">
+            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
+            <azione nome="NotificaScarto"/>
+            <servizio-applicativo nome="SDIENTE/SDITrasmissioneFatture"/>
+        </porta-applicativa>
+
+        <porta-applicativa nome="SDIENTE/SDITrasmissioneFatture/NotificaEsito" stateless="abilitato">
+            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
+            <azione nome="NotificaEsito"/>
+            <servizio-applicativo nome="SDIENTE/SDITrasmissioneFatture"/>
+        </porta-applicativa>
+
+        <porta-applicativa nome="SDIENTE/SDITrasmissioneFatture/NotificaDecorrenzaTermini"
+            stateless="abilitato">
+            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
+            <azione nome="NotificaDecorrenzaTermini"/>
+            <servizio-applicativo nome="SDIENTE/SDITrasmissioneFatture"/>
+        </porta-applicativa>
+
+        <porta-applicativa nome="SDIENTE/SDITrasmissioneFatture/AttestazioneTrasmissioneFattura"
+            stateless="abilitato">
+            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
+            <azione nome="AttestazioneTrasmissioneFattura"/>
+            <servizio-applicativo nome="SDIENTE/SDITrasmissioneFatture"/>
+        </porta-applicativa>
+
+
+
+        <servizio-applicativo nome="SDIENTE/SDICentroServiziFatturaPA/SDIRiceviFile/RiceviFile">
+            <invocazione-porta sbustamento-informazioni-protocollo="abilitato">
+                <credenziali tipo="basic"
+                    user="SDIENTE_SDICentroServiziFatturaPA_SDIRiceviFile_RiceviFile"
+                    password="123456"/>
+            </invocazione-porta>
+        </servizio-applicativo>
+
+        <servizio-applicativo nome="SDIENTE/SDITrasmissioneFatture">
+            <invocazione-servizio sbustamento-informazioni-protocollo="abilitato"
+                sbustamento-soap="abilitato">
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location"
+                        valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/SDI"
+                    />
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+
+
+    </soggetto>
+
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <validazione-buste controllo="rigido"/>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+
+</openspcoop2>

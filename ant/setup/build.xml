@@ -1,0 +1,594 @@
+
+<project name="setup" basedir=".">
+	
+	<description>
+        	SETUP
+	</description>
+
+	<import file="local_env.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<import file="./ant/pdd-build.xml" />
+	<import file="./ant/sql-build.xml" />
+	<import file="./ant/ds-build.xml" />
+	<import file="./ant/pddConsole-build.xml" />
+	<import file="./ant/loader-build.xml" />
+	<import file="./ant/distrib-build.xml" />
+	<import file="./ant/jar-build.xml" />
+	
+	<property name="deploy_resources" location="deploy/resources" />
+	<property name="deploy_sw" location="deploy/sw" />
+	<property name="deploy_sql" location="deploy/sql" />
+	<property name="deploy_ds" location="deploy/datasource" />
+	<property name="tmp_archivi" location="${build}/archivi" />
+	<property name="tmp_sql" location="${build}/sql" />
+	<property name="tmp_ds" location="${build}/ds" />
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+	
+	<!-- Create the build directory structure used by compile -->
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${tmp_sql}" />
+		<mkdir dir="${tmp_ds}" />
+		<mkdir dir="${tmp_archivi}" />
+		<mkdir dir="${dist}" />
+	</target>
+	
+	
+	<!-- 
+		Impostazione variabili prelevate da SETUP antinstaller, esempio:
+		
+		Informazioni preliminari
+			antinstaller_directory_lavoro_openspcoop=/var/openspcoop2
+			antinstaller_tipo_database=postgresql
+			antinstaller_as=jboss5
+			
+		Il Database
+			antinstaller_driver_jdbc=org.postgresql.Driver
+			antinstaller_dbname=openspcoop
+			antinstaller_dbhost=127.0.0.1
+			antinstaller_dbport=5432
+			antinstaller_dbusername=openspcoop
+			antinstaller_dbpassword=openspcoop
+			
+		Cooperazione Applicativa
+			antinstaller_protocollo_spcoop=true
+			antinstaller_protocollo_sdi=false
+			antinstaller_protocollo_trasparente=false
+			antinstaller_nomesoggetto=NOMESOGGETTO
+			antinstaller_tiposoggetto_spcoop=SPC
+			antinstaller_tiposoggetto_sdi=SDI
+			antinstaller_tiposoggetto_trasparente=PROXY
+			
+		Compatibilità interfacce OpenSPCoop-v1
+			antinstaller_backward_compatibility=true
+			
+	 -->
+
+	
+	<if>
+		<or>
+			<matches string="${antinstaller_as}" pattern="jboss.*"/>
+			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="datasource_pdd_name" value="org.openspcoop2.dataSource"/>
+			<var name="datasource_console_name" value="org.openspcoop2.dataSource.pddConsole"/>
+		</then>
+		<else>
+			<var name="datasource_pdd_name" value="java:/comp/env/org.openspcoop2.dataSource"/>
+			<var name="datasource_console_name" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
+		</else>
+	</if>
+	
+	<target name="setup" depends="clean,init">
+
+        <if>
+                <equals arg1="${antinstaller_directory_lavoro_openspcoop}" arg2="" />
+                <then>
+                        <echo message="Errore: deve essere specificata una directory di lavoro" />
+                        <fail message="Errore: deve essere specificata una directory di lavoro"/>
+                </then>
+        </if>
+
+		
+		<!-- Impostazione slash per windows in stile unix -->
+	    <if>
+			<or>
+				<os family="windows"/>
+				<os family="dos"/>
+			</or>
+			<then>
+				<propertyregex property="work_dir" override="true" input="${antinstaller_directory_lavoro_openspcoop}" 
+					defaultValue="${antinstaller_directory_lavoro_openspcoop}" regexp="\\" replace="/" />
+			</then>
+	    	<else>
+	    		<property name="work_dir" value="${antinstaller_directory_lavoro_openspcoop}"/>
+
+	    	</else>
+		</if>	
+		
+	</target>
+		
+	<target name="setup_pdd" depends="_setup_pdd"/>
+	<target name="_setup_pdd">
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="jboss.*"/>
+				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<!-- unzip -->
+				<unzip src="${deploy_sw}/${antinstaller_as}/OpenSPCoop2.ear" dest="${tmp_archivi}/OpenSPCoop2.ear"/>
+				<!-- configuration -->
+				<antcall target="pdd_openspcoop2_properties_settings">
+				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.properties"/>
+				</antcall>
+				<antcall target="pdd_logger_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/logger.log4j.properties"/>
+				</antcall>
+				<antcall target="pdd_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/log4j.properties"/>
+				</antcall>
+				<antcall target="pdd_className_properties_settings">
+				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/className.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_archivi}/OpenSPCoop2.ear/properties"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}" />
+					<then>
+						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}" />
+					<then>
+						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_sdi-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+								
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_archivi}/OpenSPCoop2.ear"/>
+					<param name="as" value="${antinstaller_as}"/>
+				</antcall>
+			</then>
+			<else>
+				<!-- unzip -->
+				<unzip src="${deploy_sw}/${antinstaller_as}/openspcoop2.war" dest="${tmp_archivi}/openspcoop2.war"/>
+				<!-- configuration -->
+				<antcall target="pdd_openspcoop2_properties_settings">
+				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.properties"/>
+				</antcall>
+				<antcall target="pdd_logger_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/logger.log4j.properties"/>
+				</antcall>
+				<antcall target="pdd_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/log4j.properties"/>
+				</antcall>
+				<antcall target="pdd_className_properties_settings">
+				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/className.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}" />
+					<then>
+						<copy todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}" />
+					<then>
+						<copy todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_sdi-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_archivi}/openspcoop2.war"/>
+					<param name="as" value="${antinstaller_as}"/>
+				</antcall>
+			</else>
+		</if>		
+	</target>
+	
+	<target name="setup_sql" depends="_setup_sql"/>
+	<target name="_setup_sql">
+		
+		<copy todir="${tmp_sql}">
+			<fileset dir="${deploy_sql}/${antinstaller_tipo_database}">
+		    	<include name="OpenSPCoop2_*drop.sql"/>
+				<include name="OpenSPCoop2_*delete.sql"/>
+			</fileset>
+		</copy>
+		
+		<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- OpenSPCoop2
+	      	
+	      </header>
+		  <filelist dir="${deploy_sql}"
+                           files="${antinstaller_tipo_database}/OpenSPCoop2.sql init.sql"/>
+		</concat>
+		
+		<!-- spcoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/init_soggetto_spcoop.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/init_soggetto_spcoop.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_spcoop}"/>
+					<param name="sql_idporta" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="eGov1.1-lineeGuida1.1"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				  <header filtering="no" trimleading="yes">
+
+-- Protocol spcoop
+				      	
+				  </header>
+				  <filelist dir="${tmp_sql}"
+		                           files="init_soggetto_spcoop.sql"/>
+				</concat>
+				<delete file="${tmp_sql}/init_soggetto_spcoop.sql" failonerror="false"/>
+			</then>
+		</if>
+		
+		<!-- sdi -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/init_soggetto_sdi.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/init_soggetto_sdi.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_sdi}"/>
+					<param name="sql_idporta" value="${antinstaller_nomesoggetto}PdD"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_sdi}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				  <header filtering="no" trimleading="yes">
+
+-- Protocol sdi
+				      	
+				  </header>
+				  <filelist dir="${tmp_sql}"
+		                           files="init_soggetto_sdi.sql"/>
+				</concat>
+				<delete file="${tmp_sql}/init_soggetto_sdi.sql" failonerror="false"/>
+			</then>
+		</if>
+
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/init_soggetto_trasparente.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/init_soggetto_trasparente.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_trasparente}"/>
+					<param name="sql_idporta" value="${antinstaller_nomesoggetto}PdD"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_trasparente}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				  <header filtering="no" trimleading="yes">
+
+-- Protocol trasparente
+					      	
+				  </header>					
+				  <filelist dir="${tmp_sql}"
+		                           files="init_soggetto_trasparente.sql"/>
+				</concat>
+				<delete file="${tmp_sql}/init_soggetto_trasparente.sql" failonerror="false"/>
+			</then>
+		</if>
+		
+		<antcall target="sql_settings">
+		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
+		</antcall>
+	</target>
+	
+	<target name="setup_datasource" depends="_setup_datasource"/>
+	<target name="_setup_datasource">
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="jboss.*"/>
+				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<var name="jboss_datasource_dir_name" value=""/>
+				<if>
+					<or>
+						<equals arg1="${antinstaller_as}" arg2="jboss4" />
+						<equals arg1="${antinstaller_as}" arg2="jboss5" />
+						<equals arg1="${antinstaller_as}" arg2="jboss6" />
+					</or>
+					<then>
+						<var name="jboss_datasource_dir_name" value="v4_v5_v6"/>
+					</then>
+					<else>
+						<var name="jboss_datasource_dir_name" value="v7_v8"/>
+					</else>
+				</if>		
+				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/openspcoop2-ds.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/openspcoop2-ds.xml"/>
+				</antcall>
+				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/openspcoop2_console-ds.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/openspcoop2_console-ds.xml"/>
+				</antcall>
+			</then>
+			<else>
+				<copy file="${deploy_ds}/tomcat/${antinstaller_tipo_database}/openspcoop2.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/openspcoop2.xml"/>
+				</antcall>
+				<copy file="${deploy_ds}/tomcat/${antinstaller_tipo_database}/pddLoader.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/pddLoader.xml"/>
+				</antcall>
+				<copy file="${deploy_ds}/tomcat/${antinstaller_tipo_database}/pddConsole.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/pddConsole.xml"/>
+				</antcall>
+			</else>
+		</if>
+	</target>
+
+	<target name="setup_pddConsole" depends="_setup_pddConsole"/>
+	<target name="_setup_pddConsole">
+		<!-- unzip -->
+		<unzip src="${deploy_sw}/${antinstaller_as}/pddConsole.war" dest="${tmp_archivi}/pddConsole.war"/>
+		<!-- configuration -->
+		<antcall target="pddConsole_console_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.properties"/>
+		</antcall>
+		<antcall target="pddConsole_console_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.log4j.properties"/>
+		</antcall>
+		<antcall target="pddConsole_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/log4j.properties"/>
+		</antcall>
+		<antcall target="pddConsole_datasource_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.datasource.properties"/>
+		</antcall>
+		<antcall target="dos2unix">
+			<param name="dir" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes"/>
+		    <param name="file" value="*.properties"/>
+		</antcall>
+		<antcall target="dos2unix">
+			<param name="dir" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes"/>
+		    <param name="file" value="*.cfg"/>
+		</antcall>
+		<!-- spcoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}"/>
+			<then>
+				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- sdi -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}"/>
+			<then>
+				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_sdi-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- Ripristino jar -->
+		<antcall target="ripristina_jar">
+		    <param name="archiveFile" value="${tmp_archivi}/pddConsole.war"/>
+			<param name="as" value="${antinstaller_as}"/>
+			<param name="archiveType" value="WAR"/>
+		</antcall>
+	</target>
+	
+	<target name="setup_loader" depends="_setup_loader"/>
+	<target name="_setup_loader">
+		<unzip src="${deploy_sw}/${antinstaller_as}/pddLoader.war" dest="${tmp_archivi}/pddLoader.war"/>
+		<antcall target="loader_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.properties"/>
+		</antcall>
+		<antcall target="loader_datasource_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.datasource.properties"/>
+		</antcall>
+		<antcall target="loader_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.log4j.properties"/>
+		</antcall>
+		<antcall target="loader_default_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/log4j.properties"/>
+		</antcall>
+		<antcall target="dos2unix">
+			<param name="dir" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes"/>
+		    <param name="file" value="*.properties"/>
+		</antcall>
+		<!-- spcoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}"/>
+			<then>
+				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- sdi -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}"/>
+			<then>
+				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_sdi-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- Ripristino jar -->
+		<antcall target="ripristina_jar">
+		    <param name="archiveFile" value="${tmp_archivi}/pddLoader.war"/>
+			<param name="as" value="${antinstaller_as}"/>
+			<param name="archiveType" value="WAR"/>
+		</antcall>
+	</target>
+		
+	
+	<target name="setup_backward_compatibility" depends="_setup_backward_compatibility"/>
+	<target name="_setup_backward_compatibility">
+		<if>
+			<and>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<istrue value="${antinstaller_backward_compatibility}"/>
+			</and>
+			<then>
+				<unzip src="${deploy_sw}/${antinstaller_as}/OpenSPCoopV1BackwardCompatibility.war" dest="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war"/>
+				
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war"/>
+					<param name="as" value="${antinstaller_as}"/>
+					<param name="archiveType" value="WAR"/>
+				</antcall>
+				
+				<!-- Sposto configurazioni nella PdD -->
+				<if>
+					<or>
+						<matches string="${antinstaller_as}" pattern="jboss.*"/>
+						<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+					</or>
+					<then>
+						<move todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/lib">
+						    	<include name="*.jar"/>
+							</fileset>
+						</move>
+						<move todir="${tmp_archivi}/OpenSPCoop2.ear/properties">
+							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/classes">
+						    	<include name="*.properties"/>
+							</fileset>
+						</move>
+					</then>
+					<else>
+						<move todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
+							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/lib">
+						    	<include name="*.jar"/>
+							</fileset>
+						</move>
+						<move todir="${tmp_archivi}/openspcoop2.war/WEB-INF/classes">
+							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/classes">
+						    	<include name="*.properties"/>
+							</fileset>
+						</move>
+					</else>
+				</if>
+									
+			</then>
+		</if>
+	</target>
+	
+	
+	<target name="setup_finished" depends="_setup_finished"/>
+	<target name="_setup_finished">
+		<antcall target="make-distrib"/>
+		<delete dir="${build}"/>
+	</target>
+
+
+</project>

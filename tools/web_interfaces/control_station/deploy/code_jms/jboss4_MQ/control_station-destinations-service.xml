@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+
+    <!--  toSmistatoreConfigurazioni -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toSmistatoreConfigurazioni">
+         <depends
+optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <!--  toSmistatoreConfigurazioni  -->
+
+    <!--  GestoreRegistroServizi di OpenSPCoop -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toConfigurazioneRegistro">
+         <depends
+optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <!--  GestoreRegistroServizi di OpenSPCoop --> 
+
+    <!--  GestoreRepositoryAutorizzazioni -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toConfigurazioneGestoreAutorizzazioni">
+         <depends
+optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <!-- GestoreRepositoryAutorizzazioni -->
+
+    <!--  Gestore Eventi (Propagazione) -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=toConfigurazioneGestoreEventi">
+         <depends
+optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <!-- Gestore Eventi (Propagazione) -->
+
+    <!--  Porte di Dominio -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=pdd1">
+         <depends
+optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=pdd2">
+         <depends
+optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <!-- ... -->
+    <mbean code="org.jboss.mq.server.jmx.Queue"
+         name="jboss.mq.destination:service=Queue,name=pddN">
+         <depends
+optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+         <attribute name="RedeliveryDelay">120000</attribute>
+         <attribute name="RedeliveryLimit">-1</attribute>
+    </mbean>
+    <!--  Porte di Dominio -->
+
+</server>

@@ -1,0 +1,70 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
+
+
+      <soggetto tipo="SPC" nome="Comune" > 
+
+          <porta-delegata nome="SPCComune/SPCCentroAnagrafico/SPCIdentificaSoggetto/Cerca" 
+	      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              <soggetto-erogatore tipo="SPC" nome="CentroAnagrafico" />
+              <servizio tipo="SPC" nome="IdentificaSoggetto" />
+              <azione nome="Cerca" />
+	      <servizio-applicativo nome="IdentificaSoggettoComune_SA" />
+          </porta-delegata>
+
+         <servizio-applicativo nome="IdentificaSoggettoComune_SA" >
+              <invocazione-porta>
+                 <credenziali tipo="basic" user="IdentificaSoggettoComune_SA" password="123456" />
+              </invocazione-porta>
+              <risposta-asincrona>
+                     <connettore tipo="http" nome="ConnettoreRispostaIdentificaSoggettoSA">
+                         <property nome="location" valore="http://localhost:8889/tutorial/asincronoSimmetricoRisposta" />
+                     </connettore>
+              </risposta-asincrona>
+
+          </servizio-applicativo>
+
+
+     </soggetto>
+
+
+
+      <soggetto tipo="SPC" nome="CentroAnagrafico" > 
+
+          <porta-delegata nome="SPCCentroAnagrafico/SPCComune/SPCEsitoIdentificazione/Risultato"
+              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              <soggetto-erogatore tipo="SPC" nome="Comune" />
+              <servizio tipo="SPC" nome="EsitoIdentificazione" />
+              <azione nome="Risultato" />
+              <servizio-applicativo nome="IdentificaSoggetto_SA" />
+          </porta-delegata>
+
+          <porta-applicativa nome="IdentificaSoggetto_PA" stateless="abilitato">
+              <servizio tipo="SPC" nome="IdentificaSoggetto" />
+              <azione nome="Cerca" />
+              <servizio-applicativo nome="IdentificaSoggetto_SA" /> 
+          </porta-applicativa>
+
+          <servizio-applicativo nome="IdentificaSoggetto_SA" >
+              <invocazione-porta>
+                 <credenziali tipo="basic" user="IdentificaSoggetto_SA" password="123456" />
+              </invocazione-porta>
+              <invocazione-servizio>
+                     <connettore tipo="http" nome="ConnettoreRichiestaStampaDocumentoSA">
+                         <property nome="location" valore="http://localhost:8888/tutorial/asincronoSimmetricoRichiesta" />
+                     </connettore>
+              </invocazione-servizio>
+          </servizio-applicativo>
+
+     </soggetto>
+
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+
+</openspcoop2>

@@ -1,0 +1,892 @@
+<project name="openspcoop2-compileBuild">
+	
+    <description>
+        Compile e Build JAR
+    </description>
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>	
+	
+	<!-- Check JAVA VERSIONE -->
+	<!-- <import file="java-check.xml" /> -->
+	<!-- NOTA: se uso import java-check va in out of memory -->
+	<property environment="env"/>
+	<var name="java_home" value="${env.JAVA_HOME}"/>
+	<echo message="Java home: ${java_home}"/>
+	<!-- <echo message="Java version: ${ant.java.version}"/> L'informazione viene errata, stampa 1.6 anche per java 1.7-->
+	<if>
+		<equals arg1="${java_home}" arg2="$${env.JAVA_HOME}"/>
+		<then>
+			<fail message="JAVA_HOME non impostata"/>
+		</then>
+	</if>
+	<if>
+		<or>
+			<equals arg1="${ant.java.version}" arg2="1.3" />
+			<equals arg1="${ant.java.version}" arg2="1.4" />
+	     	<equals arg1="${ant.java.version}" arg2="1.5" />
+		</or>
+		<then>
+			<fail message="OpenSPCoop2 richiede java 6 o superiore"/>
+		</then>
+	</if>
+	
+	<!--  
+		Java 7 introduced a stricter verification and changed the class format a bit 
+	    to contain a stack map, used to verify that code is correct. 
+	    The exception can you see (java.lang.VerifyError: Expecting a stackmap frame at branch target XX in), 
+	    means that some method doesn't have a valid stack map.
+
+		Java version or bytecode instrumentation could both be to blame. 
+		Usually this means that a library that the application uses, generates invalid bytecode that doesn't pass the stricter verification. 
+		So nothing else than reporting it as a bug to the library can be done by the developer.
+
+		As a workaround you can add in java app
+		 -noverify, to disable verification, 
+		or -XX:-UseSplitVerifier,to go back to the previous behavior, to the JVM arguments.
+		
+		Otherwise compile in 1.6 mode
+	 -->
+	<var name="classSourceVersion" value="1.6"/>
+	<var name="classTargetVersion" value="1.6"/>
+	<if>
+		<not>
+			<equals arg1="${ant.java.version}" arg2="1.6" />
+		</not>
+		<then>
+			<echo message="WARN: enable 1.6 compatibility (workaround for java 7 stricter verification)" />
+		</then>
+	</if>
+	
+	<path id="classpath_jre" >
+		<fileset dir="${java_home}/jre/lib" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${java_home}/lib" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="init_compile-build">
+		<mkdir dir="${build}" />
+		<delete dir="${build}/compile-jar-openspcoop2" failonerror="false" />
+		<mkdir dir="${build}/compile-jar-openspcoop2" />
+		<mkdir dir="${dist}" />
+	</target>
+
+	
+	<!-- Compilazione della libreria di OpenSPCoop -->
+	<target name="compile_src_openspcoop2" depends="init_compile-build">
+
+		<if>
+			<istrue value="${debug}" />
+			<then>
+				<echo message="****************************************" />
+				<echo message="****         DEBUG MODE ON         *****" />
+				<echo message="****************************************" />
+			</then>
+		</if>
+		
+		<!-- init -->
+		<mkdir dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" />
+		
+		<!-- SVN Info -->
+		<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}] ROOT_DIR[${svn_rootDir}]"/> -->
+		<if>
+			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<then>
+				<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+				
+				<if>
+					<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+					<then>
+						<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+					</then>
+				</if>
+				
+				<svnSetting
+			          svnkit="true"
+			          username="${svnant.repository.user}"
+			          password="${svnant.repository.passwd}"
+			          id="svn.settings"
+				      javahl="false"
+			      />
+				<svn refid="svn.settings" >
+					<status path="${svn_rootDir}"
+                                		revisionProperty="svn.actualRevision"
+                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
+                                		lastChangedRevisionProperty="svn.lastChangedRev"
+                                		lastChangedDateProperty="svn.lastChangedDate" 
+										urlProperty="svn.url"/>
+				</svn>
+			</then>
+		</if>
+		<!--
+		<echo message="ACTUAL:[${svn.actualRevision}]"/>
+		<echo message="LAST_COMMIT[${svn.lastCommitAuthor}]"/>
+		<echo message="LAST_CHANGE[${svn.lastChangedRev}]"/>
+		<echo message="DATE:[${svn.lastChangedDate}]"/>
+		-->
+		
+
+		<!-- Compile the java code  -->
+		<if>
+			<equals arg1="${compile_src_openspcoop2.SRC_DIR_2}" arg2="$${compile_src_openspcoop2.SRC_DIR_2}"/>
+			<then>
+				<var name="compile_src_openspcoop2.SRC_DIR_2" value=""/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${compile_src_openspcoop2.SRC_DIR_3}" arg2="$${compile_src_openspcoop2.SRC_DIR_3}"/>
+			<then>
+				<var name="compile_src_openspcoop2.SRC_DIR_3" value=""/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${compile_src_openspcoop2.SRC_DIR_4}" arg2="$${compile_src_openspcoop2.SRC_DIR_4}"/>
+			<then>
+				<var name="compile_src_openspcoop2.SRC_DIR_4" value=""/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${compile_src_openspcoop2.SRC_DIR_5}" arg2="$${compile_src_openspcoop2.SRC_DIR_5}"/>
+			<then>
+				<var name="compile_src_openspcoop2.SRC_DIR_5" value=""/>
+			</then>
+		</if>
+		<echo message="compileSRC[${compile_src_openspcoop2.SRC_DIR}]" />
+		<javac destdir="${build}/compile-jar-openspcoop2" debug="${debug}" 
+			source="${classSourceVersion}" target="${classTargetVersion}">
+			<compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-Xlint:deprecation"/>
+			<src path="${compile_src_openspcoop2.SRC_DIR}"/>
+			<src path="${compile_src_openspcoop2.SRC_DIR_2}"/>
+			<src path="${compile_src_openspcoop2.SRC_DIR_3}"/>
+			<src path="${compile_src_openspcoop2.SRC_DIR_4}"/>
+			<src path="${compile_src_openspcoop2.SRC_DIR_5}"/>
+			
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_2}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_3}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_4}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_5}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_6}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_7}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_8}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_9}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_10}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_11}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_12}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_13}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_14}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_15}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_16}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_17}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_18}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_19}" />
+			<include name="${compile_src_openspcoop2.BUILD_INCLUDES_20}" />
+			
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_2}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_3}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_4}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_5}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_6}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_7}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_8}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_9}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_10}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_11}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_12}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_13}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_14}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_15}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_16}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_17}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_18}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_19}" />
+			<exclude name="${compile_src_openspcoop2.BUILD_EXCLUDES_20}" />
+			
+			<bootclasspath>
+				<path refid="classpath_jre" />
+			</bootclasspath>
+			<classpath>
+				<path refid="classpath_compile" />
+				<path refid="classpath_dist" />
+				<fileset dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" >
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${dist}" >
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	
+		
+		<!-- Creazione del Binding JIBX delle classi create -->
+		<if>
+			<istrue value="${compile_src_openspcoop2.JIBX_BINDING}"/>
+			<then>
+				<echo message="Jibx binding [${compile_src_openspcoop2.PACKAGE}] ..."/>
+				 <propertyregex property="packagePath"
+								input="${compile_src_openspcoop2.PACKAGE}"
+								regexp="\."
+								replace="/" />
+				<!-- <echo message="PATH[${packagePath}]"/> -->
+				<mkdir dir="${packagePath}" />
+				<var name="_jibx_binding_file" value=""/>
+				<var name="_jibx_binding_class" value=""/>
+				<if>
+					<equals arg1="${compile_src_openspcoop2.JIBX_BINDING.packageBinding}" arg2="$${compile_src_openspcoop2.JIBX_BINDING.packageBinding}"/>
+					<then>
+						<copy file="${compile_src_openspcoop2.SRC_DIR}/binding.xml" todir="${packagePath}" />
+						<var name="_jibx_binding_file" value="${packagePath}/binding.xml"/>
+						<var name="_jibx_binding_class" value="${packagePath}/${compile_src_openspcoop2.JIBX_CHECK}"/>
+					</then>
+					<else>
+						<copy file="${compile_src_openspcoop2.SRC_DIR}/binding.xml" todir="${compile_src_openspcoop2.JIBX_BINDING.packageBinding}" />		
+						<var name="_jibx_binding_file" value="${compile_src_openspcoop2.JIBX_BINDING.packageBinding}/binding.xml"/>
+						<var name="_jibx_binding_class" value="${compile_src_openspcoop2.JIBX_CHECK}"/>
+					</else>
+				</if>
+				<move todir="${packagePath}">
+					<fileset dir="${build}/compile-jar-openspcoop2/${packagePath}">
+						<include name="**/*.class" />
+					</fileset>
+				</move>
+				<!--<java jar="${required_lib}/jibx/jibx-bind-1.2.3.jar" fork="true">
+					<arg value="${_jibx_binding_file}" />
+					<classpath>
+						<path refid="classpath_compile" />
+					</classpath>
+				</java>-->
+				<java classname="org.jibx.binding.Compile" fork="true">
+					<arg value="${_jibx_binding_file}" />
+					<classpath>
+						<path refid="classpath_compile" />
+						<path refid="classpath_dist" />
+					</classpath>
+				</java>
+				<move todir="${build}/compile-jar-openspcoop2/${packagePath}">
+					<fileset dir="${packagePath}">
+						<include name="**/*.*" />
+					</fileset>
+				</move>
+				<delete dir="org" />
+				<available file="${build}/compile-jar-openspcoop2/${_jibx_binding_class}" property="jibx.binding.class"/>
+				<available file="${build}/compile-jar-openspcoop2/${_jibx_binding_file}" property="jibx.binding.xml"/>
+				<if>
+					<and>
+						<istrue value="${jibx.binding.class}"/>
+						<istrue value="${jibx.binding.xml}"/>
+					</and>
+					<then>
+						<echo message="Jibx binding [${_jibx_binding_file}] ok"/>
+					</then>
+					<else>
+						<fail message="Jibx binding [${_jibx_binding_file}] non riusciuto (Class:${jibx.binding.class} Binding:${jibx.binding.xml})"/>
+					</else>
+				</if>
+			</then>
+		</if>
+		
+		
+		<!-- Crezione informazioni svn -->
+		<if>
+			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<then>
+				<svnSetting
+			          svnkit="true"
+			          username="${svnant.repository.user}"
+			          password="${svnant.repository.passwd}"
+			          id="svn.settings"
+				      javahl="false"
+			      />
+				<if>
+					<istrue value="${svnInfo_openspcoop2.SRC_DIR}"/>
+					<then>
+						<svn refid="svn.settings">
+							<status path="${svnInfo_src_openspcoop2.SRC_DIR}"
+								revisionProperty="svn.package.actualRevision"
+								lastCommitAuthorProperty="svn.package.lastCommitAuthor"
+								lastChangedRevisionProperty="svn.package.lastChangedRev"
+								lastChangedDateProperty="svn.package.lastChangedDate" />
+						</svn>
+					</then>
+					<else>
+						<svn refid="svn.settings">
+							<status path="${compile_src_openspcoop2.SRC_DIR}"
+								revisionProperty="svn.package.actualRevision"
+								lastCommitAuthorProperty="svn.package.lastCommitAuthor"
+								lastChangedRevisionProperty="svn.package.lastChangedRev"
+								lastChangedDateProperty="svn.package.lastChangedDate" />
+						</svn>
+					</else>
+				</if>
+			</then>
+		</if>
+		
+		<!-- Release Name -->
+		<if>
+			<isfalse value="${buildAsRelease}"/>
+			<then>
+				<if>
+					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<then>
+							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+					</then>
+					<else>
+                        <if>
+							<isset property="env.BUILD_VERSION"/>
+                            <then>
+                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+                            </then>
+                            <else>
+                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+                            </else>
+                        </if>						
+					</else>
+				</if>
+			</then>
+			<else>
+				<if>
+					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<then>
+						<!-- <echo message="URL [${svn.url}]"/> -->
+						<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
+						<!-- <echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/> -->
+						<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
+						<!-- <echo message="Versione [${compileVersion}]"/> -->
+						<!-- <propertyregex property="compileVersion"
+										input="${compileVersionTmp2}"
+										regexp="/"
+										replace="_" /> -->
+						<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+					</then>
+					<else>
+						<if>
+							<isset property="env.RELEASE_VERSION"/>
+							<then>
+								<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
+							</then>
+							<else>
+								<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
+							</else>
+						</if>						
+					</else>
+				</if>
+			</else>
+		</if>
+		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
+		
+		<!-- Creazione jar Libreria Dao-->
+		<if>
+			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<then>
+				<available file="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" property="package-info-presente"/>
+				<if>
+					<isfalse value="${package-info-presente}"/>
+					<then>
+		                <concat destfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info">
+----------------------------------------
+[SVN] Version Information
+Url: ${svn.url}
+Actual-Revision-Number: ${svn.actualRevision}
+Last-Changed-Revision: ${svn.lastChangedRev}
+Last-Commit-Author: ${svn.lastCommitAuthor}
+Last-Changed-Date:  ${svn.lastChangedDate}   	
+----------------------------------------
+		                        
+		                </concat>
+					</then>
+				</if>
+                <concat destfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" append="yes">
+----------------------------------------
+[SVN] Package Details
+Package-Info: ${compile_src_openspcoop2.PACKAGE}
+Last-Changed-Revision: ${svn.package.lastChangedRev}
+Last-Commit-Author: ${svn.package.lastCommitAuthor}
+Last-Changed-Date:  ${svn.package.lastChangedDate}   	
+----------------------------------------
+                        
+                </concat>
+				
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+					<manifest>
+						<section name="[SVN] Version Information">
+							<attribute name="Url" value="${svn.url}" />
+							<attribute name="Actual-Revision-Number" value="${svn.actualRevision}"/>
+							<attribute name="Last-Changed-Revision" value="${svn.lastChangedRev}"/>
+							<attribute name="Last-Commit-Author" value="${svn.lastCommitAuthor}"/>
+							<attribute name="Last-Changed-Date" value="${svn.lastChangedDate}"/>
+						</section>
+						<section name="[SVN] Package Details">
+							<attribute name="Package-Info"  
+										value="${compile_src_openspcoop2.PACKAGE}"/>
+							<attribute name="Last-Changed-Revision"
+										value="${svn.package.lastChangedRev}"/>
+							<attribute name="Last-Commit-Author"
+										value="${svn.package.lastCommitAuthor}"/>
+							<attribute name="Last-Changed-Date"
+										value="${svn.package.lastChangedDate}"/>
+						</section>
+					</manifest>
+					<zipfileset dir="${build}/compile-jar-openspcoop2" />
+					<zipfileset dir="${compile_src_openspcoop2.SRC_DIR}" prefix="${compile_src_openspcoop2.SRC_PREFIX}">
+						
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_2}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_3}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_4}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_5}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_6}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_7}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_8}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_9}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_10}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_11}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_12}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_13}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_14}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_15}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_16}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_17}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_18}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_19}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_20}" />
+						
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_2}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_3}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_4}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_5}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_6}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_7}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_8}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_9}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_10}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_11}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_12}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_13}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_14}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_15}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_16}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_17}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_18}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_19}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_20}" />
+						
+					</zipfileset>
+				</jar>
+			</then>
+			<else>
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+					<zipfileset dir="${build}/compile-jar-openspcoop2" />
+					<zipfileset dir="${compile_src_openspcoop2.SRC_DIR}" prefix="${compile_src_openspcoop2.SRC_PREFIX}">
+						
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_2}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_3}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_4}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_5}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_6}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_7}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_8}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_9}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_10}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_11}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_12}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_13}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_14}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_15}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_16}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_17}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_18}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_19}" />
+						<include name="${compile_src_openspcoop2.SRC_INCLUDES_20}" />
+						
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_2}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_3}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_4}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_5}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_6}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_7}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_8}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_9}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_10}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_11}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_12}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_13}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_14}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_15}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_16}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_17}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_18}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_19}" />
+						<exclude name="${compile_src_openspcoop2.SRC_EXCLUDES_20}" />
+						
+					</zipfileset>
+				</jar>
+			</else>
+		</if>	
+		
+		<delete dir="${build}/compile-jar-openspcoop2" failonerror="false" />
+		
+	</target>
+	
+	
+	<!-- Compilazione della libreria per gli schemi -->
+	<target name="build_jar_schema" depends="init_compile-build">
+
+		<if>
+			<istrue value="${debug}" />
+			<then>
+				<echo message="****************************************" />
+				<echo message="****         DEBUG MODE ON         *****" />
+				<echo message="****************************************" />
+			</then>
+		</if>
+		
+		<!-- init -->
+		<mkdir dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" />
+		
+		<!-- SVN Info -->
+		<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}]"/> -->
+		<if>
+			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<then>
+				<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+
+				<if>
+					<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+					<then>
+						<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+					</then>
+				</if>
+				
+				<svnSetting
+			          svnkit="true"
+			          username="${svnant.repository.user}"
+			          password="${svnant.repository.passwd}"
+			          id="svn.settings"
+				      javahl="false"
+			      />
+				<svn refid="svn.settings">
+					<status path="${svn_rootDir}"
+                                		revisionProperty="svn.actualRevision"
+                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
+                                		lastChangedRevisionProperty="svn.lastChangedRev"
+                                		lastChangedDateProperty="svn.lastChangedDate" 
+										urlProperty="svn.url"/>
+				</svn>
+			</then>
+		</if>
+		
+		<!-- Release Name -->
+		<if>
+			<isfalse value="${buildAsRelease}"/>
+			<then>
+				<if>
+					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<then>
+							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+					</then>
+					<else>					
+                        <if>
+							<isset property="env.BUILD_VERSION"/>
+                            <then>
+                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+                            </then>
+                            <else>
+                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+                            </else>
+                        </if>
+					</else>
+				</if>
+			</then>
+			<else>
+				<if>
+					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<then>
+						<!-- <echo message="URL [${svn.url}]"/> -->
+						<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
+						<!-- <echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/> -->
+						<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
+						<!-- <echo message="Versione [${compileVersion}]"/> -->
+						<!-- <propertyregex property="compileVersion"
+										input="${compileVersionTmp2}"
+										regexp="/"
+										replace="_" /> -->
+						<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+					</then>
+					<else>
+						<if>
+							<isset property="env.RELEASE_VERSION"/>
+							<then>
+								<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
+							</then>
+							<else>
+								<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
+							</else>
+						</if>
+					</else>
+				</if>
+			</else>
+		</if>
+		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
+		
+		<!-- Creazione jar Libreria Dao-->
+		<if>
+			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<then>
+				<available file="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" property="package-info-presente"/>
+				<if>
+					<isfalse value="${package-info-presente}"/>
+					<then>
+		                <concat destfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info">
+----------------------------------------
+[SVN] Version Information
+Url: ${svn.url}
+Actual-Revision-Number: ${svn.actualRevision}
+Last-Changed-Revision: ${svn.lastChangedRev}
+Last-Commit-Author: ${svn.lastCommitAuthor}
+Last-Changed-Date:  ${svn.lastChangedDate}   	
+----------------------------------------
+		                        
+		                </concat>
+					</then>
+				</if>
+				
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+					<manifest>
+						<section name="[SVN] Version Information">
+							<attribute name="Url" value="${svn.url}" />
+							<attribute name="Actual-Revision-Number" value="${svn.actualRevision}"/>
+							<attribute name="Last-Changed-Revision" value="${svn.lastChangedRev}"/>
+							<attribute name="Last-Commit-Author" value="${svn.lastCommitAuthor}"/>
+							<attribute name="Last-Changed-Date" value="${svn.lastChangedDate}"/>
+						</section>
+					</manifest>
+					<zipfileset dir="${compile_src_openspcoop2.JAR_SRC_DIR}" prefix="${compile_src_openspcoop2.JAR_SRC_PREFIX}">
+						
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_2}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_3}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_4}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_5}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_6}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_7}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_8}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_9}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_10}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_11}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_12}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_13}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_14}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_15}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_16}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_17}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_18}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_19}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_20}" />
+						
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_2}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_3}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_4}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_5}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_6}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_7}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_8}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_9}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_10}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_11}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_12}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_13}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_14}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_15}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_16}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_17}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_18}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_19}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_20}" />
+							
+					</zipfileset>
+				</jar>
+			</then>
+			<else>
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+					<zipfileset dir="${compile_src_openspcoop2.JAR_SRC_DIR}" prefix="${compile_src_openspcoop2.JAR_SRC_PREFIX}">
+
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_2}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_3}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_4}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_5}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_6}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_7}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_8}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_9}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_10}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_11}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_12}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_13}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_14}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_15}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_16}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_17}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_18}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_19}" />
+						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES_20}" />
+						
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_2}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_3}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_4}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_5}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_6}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_7}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_8}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_9}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_10}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_11}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_12}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_13}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_14}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_15}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_16}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_17}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_18}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_19}" />
+						<exclude name="${compile_src_openspcoop2.JAR_SRC_EXCLUDES_20}" />
+						
+					</zipfileset>
+				</jar>
+			</else>
+		</if>	
+		
+	</target>
+	
+	
+	<target name="jar_2_jar_openspcoop2">
+
+		<!-- SVN Info -->
+		<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}]"/> -->
+		<if>
+			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<then>
+				<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+
+				<if>
+					<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+					<then>
+						<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+					</then>
+				</if>
+				
+				<svnSetting
+			          svnkit="true"
+			          username="${svnant.repository.user}"
+			          password="${svnant.repository.passwd}"
+			          id="svn.settings"
+				      javahl="false"
+			      />
+				<svn refid="svn.settings">
+					<status path="${svn_rootDir}"
+                                		revisionProperty="svn.actualRevision"
+                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
+                                		lastChangedRevisionProperty="svn.lastChangedRev"
+                                		lastChangedDateProperty="svn.lastChangedDate" 
+										urlProperty="svn.url"/>
+				</svn>
+			</then>
+		</if>
+		
+		<!-- Release Name -->
+		<if>
+			<isfalse value="${buildAsRelease}"/>
+			<then>
+				<if>
+					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<then>
+							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+					</then>
+					<else>
+                        <if>
+							<isset property="env.BUILD_VERSION"/>
+                            <then>
+                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+                            </then>
+                            <else>
+                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+                            </else>
+                        </if>
+					</else>
+				</if>
+			</then>
+			<else>
+				<if>
+					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<then>
+						<!--<echo message="URL [${svn.url}]"/>-->
+						<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
+						<!--<echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/>-->
+						<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
+						<!--<echo message="Versione [${compileVersion}]"/>--> 
+						<!-- <propertyregex property="compileVersion"
+										input="${compileVersionTmp2}"
+										regexp="/"
+										replace="_" /> -->
+						<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+					</then>
+					<else>
+						<if>
+							<isset property="env.RELEASE_VERSION"/>
+							<then>
+								<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
+							</then>
+							<else>
+								<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
+							</else>
+						</if>					
+					</else>
+				</if>
+			</else>
+		</if>
+		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
+	
+		<!-- Creazione jar Libreria Dao-->
+		<if>
+			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<then>
+				<jar jarfile="${dist}/${build.jar.name}">
+					<manifest>
+						<section name="[SVN] Version Information">
+							<attribute name="Url" value="${svn.url}" />
+							<attribute name="Actual-Revision-Number" value="${svn.actualRevision}"/>
+							<attribute name="Last-Changed-Revision" value="${svn.lastChangedRev}"/>
+							<attribute name="Last-Commit-Author" value="${svn.lastCommitAuthor}"/>
+							<attribute name="Last-Changed-Date" value="${svn.lastChangedDate}"/>
+						</section>
+					</manifest>
+					<zipfileset file="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" prefix="META-INF"/>
+					<zipgroupfileset dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" excludes="**/package.info" />
+				</jar>
+			</then>
+			<else>
+				<jar jarfile="${dist}/${build.jar.name}">
+					<zipgroupfileset dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" />
+				</jar>
+			</else>
+		</if>	
+		
+		
+	</target>
+		
+		
+</project>

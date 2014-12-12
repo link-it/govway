@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:set var="id" value="#{field.name}" />
+
+	<c:if test="#{empty insideGroup}">
+		<c:set var="insideGroup" value="#{field.insideGroup}" />
+	</c:if>
+	
+	<c:if test="#{insideGroup == 'false'}">
+		<h:panelGrid id="panelOut_#{id}"
+			columnClasses="gridContent verticalAlignTop"
+			rendered="#{!empty field.value}"
+			columns="#{!empty field.label ? 2 : 1}">
+			<h:outputText id="out_#{id}_Label" style="font-weight: bold;"
+				value="#{field.label}:" rendered="#{!empty field.label}" />
+
+			<h:outputText id="out_#{id}_NoValue" value="--"
+				rendered="#{empty field.value}" />
+
+			<h:outputText id="out_#{id}_TextValue" value="#{field.value}"
+				rendered="#{not empty field.value and field.secret == false}" />
+				
+			<h:outputText id="out_#{id}_TextValueSecret" value="#{field.secretValue}"
+				rendered="#{not empty field.value and field.secret == true}" />
+		</h:panelGrid>
+	</c:if>
+	
+	<c:if test="#{insideGroup == 'true'}">
+			<h:outputText id="out_#{id}_Label" style="font-weight: bold;"
+				value="#{field.label}:" rendered="#{!empty field.label}" />
+
+			<h:outputText id="out_#{id}_NoValue" value="--"
+				rendered="#{empty field.value}" />
+
+			<h:outputText id="out_#{id}_TextValue" value="#{field.value}"
+				rendered="#{not empty field.value and field.secret == false}" />
+				
+			<h:outputText id="out_#{id}_TextValueSecret" value="#{field.secretValue}"
+				rendered="#{not empty field.value and field.secret == true}" />
+
+	</c:if>
+
+</ui:composition>

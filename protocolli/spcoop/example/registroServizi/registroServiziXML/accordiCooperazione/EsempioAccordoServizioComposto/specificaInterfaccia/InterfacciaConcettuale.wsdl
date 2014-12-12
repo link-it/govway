@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.openspcoop2.org/example" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:spc="http://www.openspcoop2.org/example" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  
+  <wsdl:import namespace="http://www.openspcoop2.org/example" location="definitorio.xsd">
+  </wsdl:import>
+
+  <!-- Es. SincronoComposto -->
+  <wsdl:message name="servizioCompostoRequest">
+    <wsdl:part name="servizioCompostoRequestPart" element="spc:servizioCompostoRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="servizioCompostoResponse">
+    <wsdl:part name="servizioCompostoResponsePart" element="spc:servizioCompostoResponse">
+    </wsdl:part>
+  </wsdl:message>
+
+  <!-- Es. Sincrono -->
+  <wsdl:portType name="EsempioServizioComposto">
+    <wsdl:operation name="servizioComposto">
+      <wsdl:input message="spc:servizioCompostoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:servizioCompostoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+
+</wsdl:definitions>

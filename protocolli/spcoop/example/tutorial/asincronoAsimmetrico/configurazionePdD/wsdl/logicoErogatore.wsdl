@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:spc="http://openspcoop2.org/example/pdd/server/StampaDocumento"
+	targetNamespace="http://openspcoop2.org/example/pdd/server/StampaDocumento">
+
+  <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/StampaDocumento" location="definitorio.xsd">
+     </wsdl:import>
+  <wsdl:message name="stampaDocumentoResponse">
+    <wsdl:part name="stampaDocumentoResponsePart" element="spc:presaConsegnaStampa">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="statoDocumentoRequest">
+    <wsdl:part name="statoDocumentoRequestPart" element="spc:statoDocumento">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="stampaDocumentoRequest">
+    <wsdl:part name="stampaDocumentoRequestPart" element="spc:stampaDocumento">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="statoDocumentoResponse">
+    <wsdl:part name="statoDocumentoResponsePart" element="spc:esito">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="StampaDocumento">
+    <wsdl:operation name="Stampa">
+      <wsdl:input message="spc:stampaDocumentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:stampaDocumentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Stato">
+      <wsdl:input message="spc:statoDocumentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:statoDocumentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

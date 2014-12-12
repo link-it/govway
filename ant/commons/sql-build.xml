@@ -1,0 +1,155 @@
+<project name="openspcoop2-sql">
+    <description>
+        Produzione script SQL
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+	<!-- SCRIPT SQL -->
+	<target name="svn-version-sql-replace">
+						
+		<!-- Info svn -->
+		<runtarget target="checksvn" />
+		
+		<if>
+			<istrue value="${svnant.jar.presente}"/>
+			<then>
+				<svnSetting
+			          svnkit="true"
+			          username="${svnant.repository.user}"
+			          password="${svnant.repository.passwd}"
+			          id="svn.settings"
+				      javahl="false"
+			      />
+				<svn refid="svn.settings">
+					<status path="${src}/../"
+		                revisionProperty="svn.actualRevision"
+		                lastCommitAuthorProperty="svn.lastCommitAuthor"
+		                lastChangedRevisionProperty="svn.lastChangedRev"
+		                lastChangedDateProperty="svn.lastChangedDate" 
+						urlProperty="svn.url"
+						/>
+				</svn>
+				<!--<echo message="TEST A[${svn.actualRevision}] B[${svn.lastCommitAuthor}] C[${svn.lastChangedRev}] D[${svn.lastChangedDate}] E[${svn.url}]"/>-->
+				
+				<propertyregex property="pddVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(.*)" replace="\1" />
+				<propertyregex property="pddVersion"
+				               input="${pddVersionTmp}"
+				               regexp="/"
+				               replace="_" />
+				
+				<property name="pddDetails" value="OpenSPCoop_${pddVersion} Revision N.${svn.actualRevision}, LastChangedRevision N.${svn.lastChangedRev}, ${svn.lastChangedDate}" />
+				
+				<propertyregex property="pddVersionMajorMinorTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(.*)" replace="\1" />
+				<propertyregex property="pddVersionMajor" input="${pddVersionMajorMinorTmp}" regexp="(branches|tags)/(\d)\.(\d).*" replace="\2" />
+				<propertyregex property="pddVersionMinor" input="${pddVersionMajorMinorTmp}" regexp="(branches|tags)/(\d)\.(\d).*" replace="\3" />				
+				
+				<!--<echo message="DETAILS[${pddDetails}] FULL_VERSION[${pddVersion}] MAJOR[${pddVersionMajor}] MINOR[${pddVersionMinor}]"/>-->
+				
+				<replace file="${SQLDestFile}" 
+						 token="@MAJOR_VERSION@" 
+						 value="${pddVersionMajor}" />
+				<replace file="${SQLDestFile}" 
+						 token="@MINOR_VERSION@" 
+						 value="${pddVersionMinor}" />
+				<replace file="${SQLDestFile}"  
+						 token="v@FULL_VERSION@" 
+						 value="${pddDetails}" />
+				
+			</then>
+		</if>
+	</target>
+	
+	<target name="build_sql" description="Genera i file SQL per l'installazione">
+		<if>
+			<equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
+			<then>
+				<fail message="Parametro tipoDatabase non fornito"/>
+			</then>
+		</if>
+		<if>
+			<not>
+				<available file="${SQLDirectory}/${tipoDatabase}" type="dir"/>
+			</not>
+			<then>
+				<fail message="TipoDatabase fornito non supportato"/>
+			</then>
+		</if>
+		<delete file="${SQLDestFile}" />
+		<foreach list="${SQLSourceFiles}" param="fileSql" delimiter=" " target="build_sql_concat" inheritall="true"/>
+		<if>
+			<not>
+				<equals arg1="${SQLDataFiles}" arg2="$${SQLDataFiles}"/>
+			</not>
+			<then>
+				<foreach list="${SQLDataFiles}" param="fileSql" delimiter=" " target="build_sql_data_concat" inheritall="true"/>
+			</then>
+		</if>
+		<concat destfile="${SQLDestFile}" append="yes">
+
+${SQLInsertDBInfo}
+
+</concat>
+		<antcall target="svn-version-sql-replace"/>
+	</target>
+	<target name="build_sql_concat" description="Genera i file SQL per l'installazione">
+		  <concat destfile="${SQLDestFile}" append="yes">
+		  	<filelist dir="${SQLDirectory}/${tipoDatabase}"
+		  		      files="${fileSql}"/>
+		  </concat>
+		  <concat destfile="${SQLDestFile}" append="yes">
+
+-- openspcoop2
+		  		
+</concat>
+	</target>
+	<target name="build_sql_data_concat" description="Genera i file SQL per l'installazione">
+			  <concat destfile="${SQLDestFile}" append="yes">
+			  	<filelist dir="${SQLDirectory}"
+			  		      files="${fileSql}"/>
+			  </concat>
+			  <concat destfile="${SQLDestFile}" append="yes">
+
+-- openspcoop2
+			  		
+</concat>
+	</target>
+	
+	<target name="build_sql_utility" description="Genera i file SQL di utilita' (delete, drop)">
+		<if>
+			<equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
+			<then>
+				<fail message="Parametro tipoDatabase non fornito"/>
+			</then>
+		</if>
+		<if>
+			<not>
+				<available file="${SQLDirectory}/utilities/${tipoDatabase}" type="dir"/>
+			</not>
+			<then>
+				<fail message="TipoDatabase fornito non supportato"/>
+			</then>
+		</if>
+		<delete file="${SQLDestFile}" />
+		<foreach list="${SQLSourceFiles}" param="fileSql" delimiter=" " target="build_sql_utils_concat" inheritall="true"/>
+	</target>
+	<target name="build_sql_utils_concat" description="Genera i file SQL di utilita' (delete, drop)">
+		  <concat destfile="${SQLDestFile}" append="yes">
+		  	<filelist dir="${SQLDirectory}/utilities/${tipoDatabase}"
+		  		      files="${fileSql}"/>
+		  </concat>
+		  <concat destfile="${SQLDestFile}" append="yes">
+
+-- openspcoop2
+		  		
+</concat>
+	</target>
+	
+</project>

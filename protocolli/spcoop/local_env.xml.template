@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Durante il deploy, l'application server deve essere in esecuzione -->
+
+<project name="ProtocolloSPCoop_LocalEnv" basedir=".">
+
+		<property name="openspcoop2" location="../../" />
+
+      	<!-- Build as Release -->
+        <property name="buildAsRelease" value="false"/>
+        <property name="buildAPI" value="true"/>
+
+		<!-- Librerie -->
+        <property name="required_lib" value="${openspcoop2}/lib" />
+
+		<!-- Specifica se inserire le informazioni di debug nelle classi -->
+		<property name="debug" value="true" />
+		<property name="printServerInfo" value="false" />
+
+
+</project>
+
+

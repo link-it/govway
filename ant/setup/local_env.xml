@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="setup_local_env" basedir=".">
+
+	<property name="dist" location="dist" />
+	<property name="build" location="build" />
+	<property name="lib" value="../../lib"/>
+	
+	<property name="build_pddConsole_consoleIntegrataEAR" value="true" />
+	<property name="build_pddLoader_consoleIntegrataEAR" value="true" />
+
+</project>
+

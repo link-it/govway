@@ -1,0 +1,74 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+   <accordo-servizio-parte-comune nome="AS_ComunicazioneVariazione" 
+		     descrizione="Esempio di Servizio OneWay"
+		     versione="1"
+		     profilo-collaborazione="oneway"
+		     wsdl-definitorio="wsdl/definitorio.xsd"
+		     wsdl-concettuale="wsdl/concettuale.wsdl"
+		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl">
+	<soggetto-referente tipo="PROXY" nome="CentroAnagrafico" />
+	<port-type nome="ComunicazioneVariazione" profilo-collaborazione="oneway" descrizione="Esempio di servizio oneway">
+           <azione nome="Notifica" />
+        </port-type>
+   </accordo-servizio-parte-comune>
+
+
+   <soggetto tipo="PROXY" nome="CentroAnagrafico">
+
+        <connettore tipo="http" nome="PdDCentroAnagrafico">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/PA" />
+         </connettore>
+
+	<accordo-servizio-parte-specifica
+		 nome="ComunicazioneVariazioneSOAP11"
+		 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_ComunicazioneVariazione:1"
+		 port-type="ComunicazioneVariazione"
+		 descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP11"
+		 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11.wsdl">
+	    <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11"/> 
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+        <accordo-servizio-parte-specifica
+                 nome="ComunicazioneVariazioneSOAP12"
+                 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_ComunicazioneVariazione:1"
+                 port-type="ComunicazioneVariazione"
+                 descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP12"
+                 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12.wsdl">
+            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12"/>
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+        <accordo-servizio-parte-specifica
+                 nome="ComunicazioneVariazioneSOAP11Sec"
+                 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_ComunicazioneVariazione:1"
+                 port-type="ComunicazioneVariazione"
+                 descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP11 con WSSecurity"
+                 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11Security.wsdl">
+            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11Sec"/>
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+        <accordo-servizio-parte-specifica
+                 nome="ComunicazioneVariazioneSOAP12Sec"
+                 accordo-servizio-parte-comune="PROXY/CentroAnagrafico:AS_ComunicazioneVariazione:1"
+                 port-type="ComunicazioneVariazione"
+                 descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP12 con WSSecurity"
+                 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12Security.wsdl">
+            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12Sec"/>
+            <fruitore tipo="PROXY" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+
+   <soggetto tipo="PROXY" nome="Comune">
+
+        <connettore tipo="http" nome="PdDComune">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/PA" />
+        </connettore>
+
+   </soggetto>
+
+</registro-servizi>

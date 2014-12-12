@@ -1,0 +1,9 @@
+DELETE FROM pa_correlazione_risposta;
+DELETE FROM pa_correlazione;
+DELETE FROM pa_ws_response;
+DELETE FROM pa_ws_request;
+DELETE FROM pa_mtom_response;
+DELETE FROM pa_mtom_request;
+DELETE FROM pa_properties;
+DELETE FROM porte_applicative_sa;
+DELETE FROM porte_applicative;

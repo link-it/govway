@@ -1,0 +1,42 @@
+<configuration xmlns="urn:hornetq"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:hornetq /schema/hornetq-jms.xsd">
+
+	<!--  toSmistatoreConfigurazioni -->
+        <queue name="toSmistatoreConfigurazioni">
+           <entry name="/queue/toSmistatoreConfigurazioni"/>
+        </queue>
+	<!--  toSmistatoreConfigurazioni -->
+
+	<!--  GestoreRegistroServizi di OpenSPCoop -->	
+	<queue name="toConfigurazioneRegistro">
+  	   <entry name="/queue/toConfigurazioneRegistro"/>  
+	</queue>
+	<!--  GestoreRegistroServizi di OpenSPCoop -->
+
+	<!--  GestoreRepositoryAutorizzazioni -->
+        <queue name="toConfigurazioneGestoreAutorizzazioni">
+           <entry name="/queue/toConfigurazioneGestoreAutorizzazioni"/>
+        </queue>
+	<!--  GestoreRepositoryAutorizzazioni -->
+
+	<!--  Gestore Eventi (Propagazione) -->
+        <queue name="toConfigurazioneGestoreEventi">
+           <entry name="/queue/toConfigurazioneGestoreEventi"/>
+        </queue>
+	<!--  Gestore Eventi (Propagazione) -->
+
+	<!--  Porte di Dominio -->
+        <queue name="pdd1">
+           <entry name="/queue/pdd1"/>
+        </queue>
+	<queue name="pdd2">
+	   <entry name="/queue/pdd2"/>
+	</queue>
+	<!-- ... -->
+	<queue name="pddN">
+	   <entry name="/queue/pddN"/>
+	</queue>
+	<!--  Porte di Dominio -->
+
+</configuration>

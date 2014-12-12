@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="GenericProject_LocalEnv" basedir=".">
+
+	<!-- Librerie necessarie al progetto -->
+	<property name="openspcoop2" location="../.." />
+    <property name="required_lib" value="${openspcoop2}/lib/" />
+
+    <!-- Build-Options -->
+    <property name="buildAsRelease" value="false"/>
+    <property name="buildOpenSPCoop2GenericProject" value="true"/>
+    <property name="buildAPI" value="true"/>
+	
+    <!-- Dipendenze di compilazione -->
+    <property name="utils" location="../utils"/>
+    <property name="src_utils" location="${utils}/src"/>
+	
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+</project>
+
+

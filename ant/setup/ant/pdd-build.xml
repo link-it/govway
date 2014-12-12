@@ -1,0 +1,488 @@
+
+<project name="setup-pdd" basedir=".">
+	
+	<description>
+        	SETUP PDD
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<!-- openspcoop2.properties -->
+	<target name="pdd_openspcoop2_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup OpenSPCoop2 -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
+		
+		<!-- CONFIG -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.config.tipo"/>
+			<param name="value" value="db"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.config.location"/>
+			<param name="value" value="${datasource_pdd_name}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.config.refresh"/>
+			<param name="value" value="false"/>
+		</antcall>
+		
+		<!-- DATABASE ENGINE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.dataSource"/>
+			<param name="value" value="${datasource_pdd_name}"/>
+		</antcall>
+		
+		<!-- REPOSITORY -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.repository.tipo"/>
+			<param name="value" value="db"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.repository.directory"/>
+			<param name="value" value="@unset@"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.repository.tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>		
+		
+		<!-- REPOSITORY BUSTE (imposto l'auto bytewise il quale utilizza la factory con il tipo di database) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.protocol.repository.gestore"/>
+			<param name="value" value="auto-bytewise"/>
+		</antcall>
+		
+		<!-- 
+		  PROTOCOL DEFAULT
+		  SOGGETTO DEFAULT
+		  Se è abilitato spcoop in backward compatibility è spcoop, 
+		  altrimenti se abilitati verrano scelto nell'ordine:
+		  - trasparente
+		  - spcoop
+		  - sdi
+		-->
+		<if>
+			<and>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<istrue value="${antinstaller_backward_compatibility}"/>
+			</and>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.services.defaultProtocol"/>
+					<param name="value" value="spcoop"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
+					<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.identificativoPorta.tipo"/>
+					<param name="value" value="${antinstaller_tiposoggetto_spcoop}"/>
+				</antcall>
+			</then>
+			<else>
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.services.defaultProtocol"/>
+							<param name="value" value="trasparente"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
+							<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.identificativoPorta.tipo"/>
+							<param name="value" value="${antinstaller_tiposoggetto_trasparente}"/>
+						</antcall>
+					</then>
+					<else>
+						<if>
+							<istrue value="${antinstaller_protocollo_spcoop}"/>
+							<then>
+								<antcall target="set_property">
+								    <param name="file" value="${file}"/>
+									<param name="token" value="org.openspcoop2.pdd.services.defaultProtocol"/>
+									<param name="value" value="spcoop"/>
+								</antcall>
+								<antcall target="set_property">
+								    <param name="file" value="${file}"/>
+									<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
+									<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+								</antcall>
+								<antcall target="set_property">
+								    <param name="file" value="${file}"/>
+									<param name="token" value="org.openspcoop2.pdd.identificativoPorta.tipo"/>
+									<param name="value" value="${antinstaller_tiposoggetto_spcoop}"/>
+								</antcall>
+							</then>
+							<else>
+								<if>
+									<istrue value="${antinstaller_protocollo_sdi}"/>
+									<then>
+										<antcall target="set_property">
+										    <param name="file" value="${file}"/>
+											<param name="token" value="org.openspcoop2.pdd.services.defaultProtocol"/>
+											<param name="value" value="sdi"/>
+										</antcall>
+										<antcall target="set_property">
+										    <param name="file" value="${file}"/>
+											<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
+											<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+										</antcall>
+										<antcall target="set_property">
+										    <param name="file" value="${file}"/>
+											<param name="token" value="org.openspcoop2.pdd.identificativoPorta.tipo"/>
+											<param name="value" value="${antinstaller_tiposoggetto_sdi}"/>
+										</antcall>
+									</then>
+								</if>
+							</else>
+						</if>
+					</else>
+				</if>
+			</else>
+		</if>
+		
+		<!-- SOGGETTO DEFAULT (NOME) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.identificativoPorta.nome"/>
+			<param name="value" value="${antinstaller_nomesoggetto}"/>
+		</antcall>
+		
+		<!-- PROTOCOL SOGGETTO DEFAULT -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.spcoop.identificativoPorta.dominio"/>
+					<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.spcoop.identificativoPorta.tipo"/>
+					<param name="value" value="${antinstaller_tiposoggetto_spcoop}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.spcoop.identificativoPorta.nome"/>
+					<param name="value" value="${antinstaller_nomesoggetto}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.trasparente.identificativoPorta.dominio"/>
+					<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.trasparente.identificativoPorta.tipo"/>
+					<param name="value" value="${antinstaller_tiposoggetto_trasparente}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.trasparente.identificativoPorta.nome"/>
+					<param name="value" value="${antinstaller_nomesoggetto}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.sdi.identificativoPorta.dominio"/>
+					<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.sdi.identificativoPorta.tipo"/>
+					<param name="value" value="${antinstaller_tiposoggetto_sdi}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.sdi.identificativoPorta.nome"/>
+					<param name="value" value="${antinstaller_nomesoggetto}"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<!-- PROTOCOL BACKWARD COMPATIBILITY -->
+		<if>
+			<and>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<istrue value="${antinstaller_backward_compatibility}"/>
+			</and>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.out-response"/>
+					<param name="value" value="faultCodeOpV1"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.integrazione.tipo.pd.spcoop"/>
+					<param name="value" value="trasportoOpV1,urlBasedOpV1"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.integrazione.tipo.pa.spcoop"/>
+					<param name="value" value="trasportoOpV1"/>
+				</antcall>
+			</then>
+		</if>
+
+		<!-- NOTA: TODO Gestire l'aggiunta degli header separati da ',' usati sia per backward compatibility che sdi che in futuro ... -->
+		
+		<!-- PROTOCOL SDI-->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.pre-in-request"/>
+					<param name="value" value="fatturapa"/>
+				</antcall>	
+			</then>
+		</if>
+		
+		<!-- OTHER -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.server"/>
+			<param name="value" value="web"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.stateless.default.oneway"/>
+			<param name="value" value="abilitato"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.logger.dump.allAttachments"/>
+			<param name="value" value="false"/>
+		</antcall>
+				
+	</target>
+	
+	
+	<!-- logger.log4j.properties -->
+	<target name="pdd_logger_log4j_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup OpenSPCoop2 -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/openspcoop2/log/"/>
+			<param name="value" value="${work_dir}/log/"/>
+		</antcall>
+		
+		<!-- TIPI DI LOG -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="log4j.category.openspcoop2.tracciamento"/>
+			<param name="value" value="OFF"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="log4j.category.openspcoop2.msgDiagnostico"/>
+			<param name="value" value="OFF"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="log4j.category.openspcoop2.core"/>
+			<param name="value" value="ERROR,openspcoop2.core.rollingFile"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="log4j.category.openspcoop2.resources"/>
+			<param name="value" value="ERROR,openspcoop2.resources.rollingFile"/>
+		</antcall>
+		<if>
+			<not>
+				<matches string="${as}" pattern="jboss.*"/>
+			</not>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="log4j.logger.org.openspcoop2"/>
+					<param name="value" value="DEBUG,openspcoop2.core.rollingFile"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="log4j.category.openspcoop2.startup"/>
+					<param name="value" value="DEBUG,openspcoop2.startup.rollingFile"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="log4j.additivity.org.openspcoop2"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="log4j.additivity.openspcoop2.startup"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</then>
+		</if>	
+		
+		<!-- DATASOURCE -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.dataSource"/>
+			<param name="value" value="${datasource_pdd_name}"/>
+		</antcall>
+	
+	</target>
+	
+	<!-- log4j.properties -->
+	<target name="pdd_log4j_properties_settings">
+		
+		<available file="${file}" property="file.present"/>
+		
+		<if>
+			<istrue value="${file.present}"/>
+			<then>
+				<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup OpenSPCoop2 -------------
+				</concat>
+				<!-- WORKING DIR -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="/var/openspcoop2/log/"/>
+					<param name="value" value="${work_dir}/log/"/>
+				</antcall>
+			</then>
+		</if>
+		
+	</target>
+	
+	<!-- className.properties -->
+	<target name="pdd_className_properties_settings">
+		
+		<available file="${file}" property="file.present"/>
+		
+		<if>
+			<istrue value="${file.present}"/>
+			<then>
+				<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup OpenSPCoop2 -------------
+				</concat>
+				
+				<!-- PROTOCOL BACKWARD COMPATIBILITY -->
+				<if>
+					<and>
+						<istrue value="${antinstaller_protocollo_spcoop}"/>
+						<istrue value="${antinstaller_backward_compatibility}"/>
+					</and>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.out-response.faultCodeOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.handler.IntegrazioneOutResponse"/>
+						</antcall>
+						
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pd.trasportoOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePDTrasporto"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pd.urlBasedOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePDUrlBased"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pd.soapOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePDSoap"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pd.wsaOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePDWSAddressing"/>
+						</antcall>
+						
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pa.trasportoOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePATrasporto"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pa.urlBasedOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePAUrlBased"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pa.soapOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePASoap"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.integrazione.pa.wsaOpV1"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.GestoreIntegrazionePAWSAddressing"/>
+						</antcall>				
+					</then>
+				</if>
+				
+				<!-- PROTOCOL SDI-->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.behaviour.fatturapa"/>
+							<param name="value" value="org.openspcoop2.protocol.sdi.utils.FatturaPABehaviour"/>
+						</antcall>	
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.pre-in-request.fatturapa"/>
+							<param name="value" value="org.openspcoop2.protocol.sdi.utils.PreInRequestHandler"/>
+						</antcall>	
+					</then>
+				</if>
+								
+			</then>
+		</if>
+		
+	</target>
+		
+</project>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoopAudit_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../../../.."/>
+      <property name="openspcoop2_jars" location="${openspcoop2}/core/dist"/>
+
+      <property name="required_lib_audit" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_audit}"/>
+      <property name="sql" value="${openspcoop2}/core/deploy/sql"/>
+      <property name="src_core" value="${openspcoop2}/core/src"/>
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildAPI" value="true"/>
+
+      <!-- Dipendenze di compilazione -->
+      <property name="mvc" location="../mvc"/>
+      <property name="src_mvc" location="${mvc}/src"/>
+
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true"/>
+
+</project>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+				  xmlns:tns="http://www.openspcoop2.org/pdd/monitor/management" 
+				  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+				  name="MessaggioService"
+				  targetNamespace="http://www.openspcoop2.org/pdd/monitor/management">
+
+	<wsdl:import namespace="http://www.openspcoop2.org/pdd/monitor/management" 
+				 location="MessaggioAll.wsdl"/>
+	
+	<!-- BINDING (SOAP12) --> 
+	
+	<wsdl:binding name="MessaggioServiceSoap12Binding" type="tns:Messaggio">
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<wsdl:operation name="findAll">
+			<soap12:operation soapAction="findAll" soapActionRequired="true" style="document"/>
+			<wsdl:input name="findAll">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="findAllResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="monitor-service-exception">
+				<soap12:fault name="monitor-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-implemented-exception">
+				<soap12:fault name="monitor-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-authorized-exception">
+				<soap12:fault name="monitor-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+
+		<wsdl:operation name="count">
+			<soap12:operation soapAction="count" soapActionRequired="true" style="document"/>
+			<wsdl:input name="count">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="countResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="monitor-service-exception">
+				<soap12:fault name="monitor-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-implemented-exception">
+				<soap12:fault name="monitor-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-authorized-exception">
+				<soap12:fault name="monitor-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+
+
+		
+
+		<wsdl:operation name="deleteAllByFilter">
+			<soap12:operation soapAction="deleteAllByFilter" soapActionRequired="true" style="document"/>
+			<wsdl:input name="deleteAllByFilter">
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="deleteAllByFilterResponse">
+				<soap12:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="monitor-service-exception">
+				<soap12:fault name="monitor-service-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-implemented-exception">
+				<soap12:fault name="monitor-not-implemented-exception" use="literal"/>
+			</wsdl:fault>
+			<wsdl:fault name="monitor-not-authorized-exception">
+				<soap12:fault name="monitor-not-authorized-exception" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	
+    
+
+	</wsdl:binding>
+
+	<!-- SERVICE -->	
+	<wsdl:service name="MessaggioSoap12Service">	
+	
+		<wsdl:port binding="tns:MessaggioServiceSoap12Binding" name="MessaggioPortSoap12">
+			<soap12:address location="http://localhost:8080/monitor/Messaggio/Soap12"/>
+		</wsdl:port>
+					
+	</wsdl:service>
+	
+</wsdl:definitions>

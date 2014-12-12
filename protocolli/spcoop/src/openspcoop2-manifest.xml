@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
+
+    <protocolName>spcoop</protocolName>
+
+    <factory>org.openspcoop2.protocol.spcoop.SPCoopFactory</factory>
+
+    <web>
+        <context>spcoop</context>
+    </web>
+
+    <registroServizi>
+
+        <soggetti codiceIPA="true">
+            <tipi default="SPC">
+                <tipo>SPC</tipo>
+                <tipo>TEST</tipo>
+                <tipo>AOO</tipo>
+            </tipi>
+        </soggetti>
+
+        <servizi specificaConversazioni="true">
+            <tipi default="SPC">
+                <tipo>SPC</tipo>
+                <tipo>TEST</tipo>
+                <tipo>URL</tipo>
+                <tipo>WSDL</tipo>
+                <tipo>LDAP</tipo>
+                <tipo>UDDI</tipo>
+                <tipo>ebXMLRegistry</tipo>
+            </tipi>
+            <profilo asincronoAsimmetrico="true" asincronoSimmetrico="true" />
+            <funzionalita filtroDuplicati="true" confermaRicezione="true"
+            				collaborazione="true" consegnaInOrdine="true"
+            				scadenza="true" manifestAttachments="true"/>
+        </servizi>
+
+        <versioni default="eGov1.1-lineeGuida1.1">
+            <versione>eGov1.1</versione>
+            <versione>eGov1.1-lineeGuida1.1</versione>
+        </versioni>
+
+    </registroServizi>
+
+    <urlMapping>
+        <file>/spcoop-url-mapping.properties</file>
+        <tipo>PROPERTIES</tipo>
+    </urlMapping>
+    
+    <binding soap11="true" soap12="false">
+    	<soapHeaderBypassMustUnderstand>
+    		<header>
+    			<localName>Intestazione</localName>
+    			<namespace>http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/</namespace>
+    		</header>
+    	</soapHeaderBypassMustUnderstand>
+    </binding>
+
+</openspcoop2>

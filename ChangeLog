@@ -1,0 +1,883 @@
+2014-12-05  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 2.1
+
+2014-12-03  Giuliano Pintori <pintori@link.it>
+
+	* [WebGenericProject]
+	Aggiunta funzionalità #270
+	Aggiunto supporto per la gestione della lingua, l'utente puo' ora
+	selezionare la lingua in cui preferisce visualizzare l'interfaccia.
+
+2014-12-01  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #269
+	La funzionalita' di 'CodaMessaggi' e' stata correttamente integrata anche per la pddConsole
+	in modalita' di configurazione remota
+
+2014-11-28  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug #268
+	Completata l'implementazione del DriverRegistroServiziWS
+
+2014-11-27  Giuliano Pintori <pintori@link.it>
+	
+	* [PddConsole]
+	Aggiunta funzionalità #265
+	Aggiunta gestione dello storico per le Configurazioni alla PddConsole.
+
+2014-11-27  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Aggiunta funzionalità #265
+	Aggiunta alla PddConsole la gestione remota delle configurazioni delle Porte di Dominio. 
+	La configurazione viene propagata tramite i webService di configurazione della PdDe di configurazione del Registro dei Servizi.
+
+2014-11-21  Andrea Poli <apoli@link.it>
+
+        * [WebServiceConfig]
+        Aggiunta funzionalità #263
+        Creato WebService per la gestione e consultazione della Configurazione della PdD
+
+2014-11-20  Andrea Poli <apoli@link.it>
+
+	* [WebServiceRegistry]
+	Aggiunta funzionalità #264
+	Creato WebService per la gestione e consultazione del Registro dei Servizi
+
+2014-11-12  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Risolto Bug #260
+	Sistemata gestione dei caratteri speciali nella label
+	dell'applicazione.
+	Aggiunta informazione sul charset utilizzato dalla console in tutte le
+	pagine jsp.
+
+2014-11-12  Giuliano Pintori <pintori@link.it>
+
+        * [WebGenericProject]
+        Aggiunta funzionalità #261
+        Aggiunti elementi di input di tipo Checkbox e Secret (password) alla taglib JSF.
+	Aggiunta internazionalizzazione dei messaggi di validazione degli
+	elementi di input.
+
+2014-11-12  Giuliano Pintori <pintori@link.it>
+
+        * [WebGenericProject]
+	Aggiunta funzionalità #259
+	Aggiunti elementi di input di tipo numerico alla taglib JSF.
+
+2014-11-07  Andrea Poli <apoli@link.it>
+
+        * Rilasciata versione 2.1b1
+
+2014-11-07  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug #232
+	Negli esempi dei datasource per Jboss7 e WildFly8, 
+	quando si fornisce l'esempio sulla definizione di un modulo per il driver jdbc, 
+	viene adesso indicato di generare anche la definizione della classe JDBC dentro il modulo
+	es: 
+	<driver name="openspcoop2-modulo-driver-jdbc" module="org.openspcoop2.jdbc">
+	    <driver-class>com.mysql.jdbc.Driver</driver-class>
+	</driver>
+	Questa definizione risolve il problema di installare non-JDBC-compliant driver (es. mysql)
+	Vedi https://developer.jboss.org/message/866635
+
+2014-11-06  Andrea Poli <apoli@link.it>
+
+        * [Pdd]
+        Aggiunta funzionalità #253
+	Realizzati connettori  che permettono lo scambio di informazioni tra servizi
+	(PD,PD,...) senza dover attivare connessioni di trasporto (http,jms...) ma
+	agendo a livello di JVM.
+	I tipi di connettori aggiunti sono:
+	- vmPD
+	- vmPDtoSOAP
+	- vmPA
+
+2014-11-06  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità #214
+	Aggiunto plugin di protocollo 'Sistema di Interscambio'
+
+2014-10-31  Andrea Poli <apoli@link.it>
+
+        * [Pdd]
+        Aggiunta funzionalità #247
+	Aggiunta function 'behaviour' su Porta Applicativa che permette di:
+	- filtrare dinamicamente i servizi applicativi configurati sulla PA rispetto ai dati della busta e al messaggio
+	- modificare il contenuto del messaggio che verra' inoltrato al back-end 
+	  (puo' essere possibile anche creare piu' di una versione del messaggio da consegnare)
+	- personalizzare il messaggio di replyTo ritornato alla connessione client (Soggetto Mittente)
+	Aggiunto TimerConsegnaContenutiApplicativi per versione 'web' della PdD che si occupa di riconsegnare i messaggi andati in errore.
+
+2014-10-22  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #183
+	Aggiunta alla struttura servizi e azioni dell'accordo di servizio
+	parte comune la possibilita' di gestire manualmente le informazioni
+	WSDL.
+
+2014-10-17  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #240
+	Sistemate label MessageSecurity.
+	Aggiunta gestione MTOM per PA e PD.
+	Aggiunta gestione MTOM nella Validazione Contenuti.
+	Sistemate label Servizio Applicativo.
+
+2014-10-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #183
+	- Aggiunta alla sezione 'azione' della Porta Delegata la possibilita'
+	di selezionare il tipo di riconoscimento wsdlBased.
+	- Configurata la generazione automatica delle PD per utilizzare la
+	funzionalita' di riconoscimento wsdlBased, se questa e' abilitata
+	nelle properties della console.
+
+2014-10-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Risolto Bug #245
+	- Sistemate label Accordi Comune, Accordi Specifica e Cooperazione.
+	- Sistemata modifica del connettore 'InvocazioneServizio'.
+	- Sistemate breadcrumb Servizi applicativi, Porte delegate, Porte
+	Applicative.
+	-Sistemata visualizzazione SelectList tipologia credenziali accesso.
+
+2014-10-15  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità #183
+	- Implementata funzione di riconoscimento wsdlBased che prende in input il messaggio ed il wsdl 
+	  (o le meta informazioni openspcoop sulle operation alternative al wsdl presenti sul Registro dei Servizi) 
+	  e riconosce l'operazione
+	- Aggiunta alla funzionalita' di urlMapping delle Porte Applicative la modalita' wsdlBased per quanto concerne il riconoscimento dell'azione. 
+	  Aggiunto inoltre sempre nell'urlMapping la possibilita' di usare il riconoscimento wsdlBased anche come modalita' alternativa dell'azione, 
+	  se quella di default configurata fallisce.
+	- Aggiunta modalita' di riconoscimento wsdlBased per l'azione nella PortaDelegata
+	  Aggiunta inoltre la possibilita' di usare il riconoscimento wsdlBased anche come modalita' alternativa dell'azione nella PortaDelegata,
+          se quella di default configurata fallisce
+
+2014-10-15  Giuliano Pintori <pintori@link.it>
+
+        * [WebGenericProject]
+        Aggiunta funzionalità #246
+	Aggiunto il componente OutputValuta che permette di visualizzare una
+	valuta.
+
+2014-10-13  Giuliano Pintori <pintori@link.it>
+
+        * [WebGenericProject]
+	Aggiunta funzionalità #244
+	Aggiunti componenti di output per visualizzare le informazioni senza
+	utilizzare le tabelle.
+	Aggiunta funzionalita' di supporto per i form di create/update.
+	Aggiunto supporto per gli input di tipo SelectList.
+
+2014-10-09  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità #243 
+	Aggiunto package org.openspcoop2.utils.id.apache che importano alcune classi del progetto http://commons.apache.org/sandbox/commons-id
+	Aggiunto un IUniqueIdentifierGenerator che utilizza le classi del progetto 'commons-id' per generare identificativi univoci, tra cui alfanumerici.
+
+2014-10-02  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità #237
+	Realizzato supporto per gestione MTOM
+	Modificato progetto 'org.openspcoop2.wssecurity' in un piu' generico 'org.openspcoop2.security'
+	Modificata configurazione della PdD per quanto concerne la sicurezza da 'ws-security' a 'message-security'
+
+2014-10-01  Giuliano Pintori <pintori@link.it>
+
+	* [WebGenericProject]
+        Aggiunta funzionalità #239
+	Realizzata una tag library di componenti da utilizzare durante la
+	definizione di interfacce con linguaggio JSF.
+	Aggiunto supporto Java per la gestione di tali componenti.
+
+2014-09-30  Andrea Poli <apoli@link.it>
+
+	* [GenericProject]
+	Aggiunta funzionalità #238
+	- Metodo validate() che valida l'oggetto rispetto allo schema xsd
+	- Metodi create/update/updateOrCreate che permettono di abilitare la validazione
+
+2014-09-26  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Aggiunta funzionalità #235
+	Aggiunta field Identificativo Messaggio alle form di ricerca nelle
+	maschere Tracciamento e Diagnostica.
+
+2014-09-26  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Aggiunta funzionalità #233
+	Sistemato refresh dell'header della pagina quando l'utente cambia la
+	sua modalita' di interfaccia tramite la schermata 'Profilo Utente'.
+	Sistemato css menu'.
+
+2014-09-25  Giuliano Pintori <pintori@link.it>
+
+         * [PddConsole]
+	 Aggiunta funzionalità #172
+	 Sistemata maschera di creazione di un Accordo Parte Comune in
+	 modalita' standard.
+	 Modificata posizione selectList 'Soggetto Referente'.
+
+	* [PddConsole]
+         Aggiunta funzionalità #174
+	 Aggiunta la possibilita' di riportare lo stato di un Accordo Parte
+	 Comune, Accordo Parte Specifica e di una Fruizione dallo stato
+	 'Finale' allo stato 'Operativo'.
+	 Sistemata la valorizzazione dello stato di default nella creazione
+	 degli elementi suddetti.
+
+2014-09-24  Giuliano Pintori <pintori@link.it>
+
+         * [PddConsole]
+         Aggiunta funzionalità #172
+	 Semplificata la gestione dei WSDL nella maschera di creazione 
+	 di un Accordo Parte Comune.
+	 La maschera di add/update degli Accordi Parte Specifica non
+	 mostra piu' il caricamento dei WSDL in modalita' 'standard', in
+	 modalita' 'avanzata' varia sempre in funzione del protocollo.
+	 In maniera equivalente sono state modificate le maschere di
+	 add/update dei fruitori.
+	 Nella maschera di add/update degli Accordi Parte Comune il campo WSDL
+	 Definitorio viene visualizzato solo in modalita' avanzata e se e'
+	 abilitata la corrispondente opzione nel file di configurazione.
+	 Aggiunto mapping automatico dei porttype e operatione nella
+	 creazione/modifica degli Accordi Parte Comune.
+
+2014-09-23  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+        Aggiunta funzionalità #234
+	Sistemata paginazione delle schermate porteApplicativeList e
+	porteDelegateList;
+	Aggiuta gestione in memoria delle ricerche 'generali' che si fanno per
+	PD e PA, passando dal nuovo menu''Registro'.
+
+2014-09-23  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Aggiunta funzionalità #233
+	Aggiunto refresh interfaccia quando l'utente modifica il tipo di
+	interfaccia dalla schermata 'Profilo Utente'.
+
+2014-09-22  Andrea Poli <apoli@link.it>
+
+        * [PddLoader]
+        Risolto Bug #Bug 170
+	Il loader generato dal Setup non veniva configurato correttamente.
+	Il nome della pdd operativa, indicato nel sql generato dal setup,
+	non era allineato con la configurazione del Loader
+
+2014-09-19  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Aggiunta funzionalità #227
+	Modificata label 'Monitoraggio Applicativo' in 'Coda Messaggi';
+	Modificata label 'Reportistica' in 'Strumenti';
+	Sistemati tutti i riferimenti dove apparivano le vecchie label.
+
+	* [PddConsole]
+        Aggiunta funzionalità #234
+	Aggiunta Modalita' di visualizzazione compatta per il menu' dei
+	comandi, raggruppando gli elementi visibili con permessi 'P' ed 'S' in
+	un unica categoria 'Registro'.
+	La gestione delle PA e PD puo' avvenire anche dalla voce nel menu'
+	'Registro' visualizzabile con l'interfaccia in modalita' avanzata.
+	L'elenco dei servizi applicativi e' ora fruibile anche a partire dalla
+	lista dei soggetti, la nuova lista visualizza solo i servizi relativi
+	al soggetto selezionato.
+
+2014-09-19  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Aggiunta funzionalità #233
+	Modificata gestione degli Utenti:
+	Spostata la sezione 'Utenti' all'interno di quella 'Configurazione';
+	Modificata la label per la voce 'Utente' all'interno della sezione
+	'Configurazione' in 'Profilo Utente';
+	Risolto bug visualizzazione del tipo di interfaccia nella maschera di
+	modifica di un utente;
+	Aggiunto link nell'header della pagina che permette all'utente di
+	effettuare lo switch in modalita' rapita tra l'interfaccia 'Standard'
+	e quella 'Avanzata'.
+
+2014-09-18  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #224
+	Modificate label delle ProtocolProperties in tutte le maschere dove
+	appaiono.
+	Sistemate schermate di edit di Porte Applicative e Porte Delegate per
+	visualizzare i link a 'Servizi Applicativi', 'Ws-Security',
+	'Correlazione Applicativa Richiesta', 'Correlazione Applicativa
+	Risposta' e 'Proprieta' Protocollo' con contatore del numero di
+	elementi presenti.
+
+2014-09-18  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #176
+	Modificata la maschera di aggiunta di un accordo di servizio parte
+	specifica:
+	Introdotta una sezione a se stante per il 'Soggetto Erogatore';
+	Se si utilizza la console in modalita' standard viene nascosta la
+	sezione 'Accordo Servizio Parte Specifica' e la sezione 'Porta
+	Applicativa';
+	Introdotta la sezione 'Servizio Applicativo Erogatore';
+	Modificata la procedura di creazione della Porta Applicativa, ora
+	viene creata solo se il Soggetto Erogatore appartiene ad una PdD di
+	tipo 'operativo'.
+
+2014-09-17  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #173
+	Sistemata visualizzazione interfacce di specifica della conversazione,
+	la visualizzazione dipende dalla modalita' dell'interfaccia utente,
+	dal protocollo e dal soggetto scelto nella maschera.
+	Sistemata versione di default per la versione protocollo nella
+	maschera di definizione di un soggetto.
+	Nella maschera di creazione di un accordo parte specifica viene
+	proposto come default il primo servizio che presenta uno dei tipi del
+	protocollo di default della console.
+	Aggiunta alla maschera di creazione dei soggetti la selectList per la
+	scelta del protocollo.
+
+2014-09-17  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #171
+	Aggiunta la gestione delle funzionalita' (filtroDuplicati, confermaRicezione,
+	idCollaborazione, consegnaInOrdine, scadenza) quando l'utente possiede
+	l'interfaccia avanzata, nelle schermate di creazione/modifica dei
+	servizi e azioni.
+	Aggiunta gestione del profilo di collaborazione, con le stesse
+	modalita' del punto precedente.
+	Sistemata la lista degli accordi servizio parte specifica per
+	visualizzare il valore della colonna ruolo solo se il servizio
+	implementa un protocollo che gestisce almeno un profilo asincrono.
+	Nelle maschere di gestione delle PD e PA viene gestita la
+	funzionalita' gestioneManifest in base al supporto fornito dal
+	protocollo.
+
+2014-09-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #173
+	Visualizzazione delle interfacce di specifica delle conversazioni e
+	della versione del protocollo solo se l'utente possiede la modalita'
+	avanzata dell'interfaccia.
+	I valori di default definiti dai protocolli sono ora utilizzati per
+	valorizzare le selectList nelle maschere di inserimento di soggetti e
+	servizi.
+
+2014-09-16  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #Bug 224
+	Corretta anomalia "Anomalia: Tra le etichette dei valori assegnabili ad una property risulta una voce
+	"TipoDestinatario" al posto di "TipoMittente"."
+	Completata lista dei possibili valori, sono stati aggiunti: 
+	idCorrelazioneApplicativa, idPortaMittente, idPortaDestinatario, versioneServizio
+
+2014-09-16  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #178
+	(Dipendeva da funzionalità #177)
+	La maschera di modifica di un accordo di servizio parte comune permetteva di
+	modificare il soggetto referente, scegliendone uno appartenete ad un protocollo
+	differente, anche se esistono gia' delle implementazioni (parte specifica)
+	dell'accordo.
+	Un tale comportamente non e' piu' possibile, visto che i soggetti forniti
+	sono SOLO quelli compatibili con il protocollo selezionato
+	e il protocollo e' modificabile nella parte comune solo se non esistono
+	parti specifiche che lo implementato.
+
+2014-09-16  Andrea Poli <apoli@link.it>
+
+        * [ToolGenericProject]
+        Risolto bug #230
+	Arricchita interfaccia DAO con metodi che permettono l'update puntuale
+	di campi indirizzati tramite relativi oggetti IField
+
+2014-09-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #175
+	Sistemato selezione del valore dell'elenco degli erogatori al primo accesso
+	alla pagina di creazione dell'accordo servizio parte specifica.
+
+2014-09-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #177
+	Sistemata label con il nome dell'accordo servizio parte comune /
+	composto nella maschera di modifica;
+	Sistemata label con la uri dell'accordo di servizio parte comune /composto 
+	nella maschera di modifica dell'accordo parte specifica.
+
+2014-09-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Aggiunta funzionalità #184
+	Sistemato controllo sull'eliminazione di un utente con permesso 'P',
+	ora se possiede degli oggetti non viene eliminato.
+	Sistemata maschera per assegnare i permessi in caso di update
+	dell'utente con assegnamento del permesso 'P'.
+
+2014-09-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #177
+	Sistemato posizione nel progetto del supporto per la maschera di
+	conferma invio.
+	Modificata label accordo di servizio parte comune nella maschera di
+	modifica dell'accordo di servizio parte specifica.
+	Aggiunto link all'accordo di cooperazione nella maschera con la lista
+	degli accordi di servizio composto.
+
+2014-09-16  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #175
+	Nella maschera di creazione di un accordo di servizio parte specifica
+	quando viene selezionato un accordo di servizio, viene suggerito come
+	soggetto erogatore il referente dell'accordo.
+
+2014-09-15  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #177
+	Selezione esplicita del protocollo durante la creazione di un AS
+	ParteComune:
+	La console consente all'utente (nel caso in cui siano gestiti almeno
+	due protocolli) di poter scegliere esplicitamente in caso di creazione
+	degli Accordi di Servizio Parte Comune, Accordi di Servizio Composto
+	ed Accordi di cooperazione.
+
+2014-09-15  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Aggiunta funzionalità #184
+	Sistemati problemi dopo verifica della nuova funzionalita':
+	La label 'Accordi Cooperazione [P]' nella maschera di add/update;
+	Eliminazione di un utente con permessi [P] anche se non restano altri
+	utenti con la categoria di permessi;
+	Bug nella modifica di un Accordo di Servizio Composto.
+
+2014-09-12  Andrea Poli <apoli@link.it> 
+
+	* [PddCore]
+	Risolto Bug #171
+	Funzionalita' di Registro utilizzabili in base al protocollo
+	Aggiunta al manifestProtocol.xsd la possibilita' di definire per protocollo
+	i profili di collaborazione supportati e le funzionalita' implementate:
+	confermaRicezione, filtroDuplicati, collaborazione, consegnaInOrdine, scadenza, gestioneManifest
+
+2014-09-11  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Aggiunta funzionalità #184
+	Sistemata visualizzazione delle liste di Accordi in base ai permessi
+	posseduti dall'utente nelle maschere di creazione/modifica degli
+	accordi di servizio parte specifica.
+
+2014-09-11  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Risolto Bug #226
+	Errori di visualizzazione durante l'export degli oggetti:
+	Sistemato aspetto della pagina e messaggi di errore.
+
+2014-09-11  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Risolto Bug #195
+	Creazione ASPC o SC (modalità standard): sistema in errore su selezione soggetto referente
+	RESOLVED DUPLICATE of Bug #167
+
+2014-09-11  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Risolto Bug #223
+	Sistemata ricerca dei soggetti in base al valore della property
+	'visibilitaOggetti' nel file 'console.properties'.
+
+2014-09-11  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Risolto Bug #222
+	Sistemati parametri della url che porta alla pagina indicata, al
+	parametro 'id' veniva assegnato un valore non significativo.
+
+2014-09-11  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Aggiunta funzionalità #184
+	Aggiunto Permesso P per la gestione delle sezioni Accordo di
+	Cooperazione e Servizio Composto.
+	Sistemata visualizzazione delle parti della console condivise tra gli
+	utenti con permessi P ed S in funzione dei permessi posseduti.
+	Modificata la gestione degli utenti nel caso di modifica e
+	cancellazione di utente, se esistano degli oggetti associati a questo
+	utente vengono riassegnati ad un altro utente con simile permesso.
+
+2014-09-10  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+        Risolto Bug #221
+	Eliminato errore nella gestione del parametro "nomePorta" della form
+	di inserimento della PD.
+
+2014-09-09  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Risolto Bug #166
+	Modificato il validatore dei documenti, sistemato il controllo del
+	solo documento caricato, prima controllava la
+	presenza di tutti i tipi di documenti, ignorando il documento scelto
+	dall'utente.
+
+2014-09-09  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Risolto bug #167
+	Modificata la generazione della url da invocare in caso di PostBack
+	nella pagina quando l'utente modifica il valore di un elemento che
+	prevede l'aggiornamento della pagina.
+	La url conteneva un parametro con name = "" che provocava un errore in
+	caso di esecuzione della console su Jboss7.
+	Uniformate le label del campo "Modalità Identificazione" come
+	suggerito nel commento 1.
+
+2014-09-02  Andrea Poli <apoli@link.it>
+
+        * [PddCore]
+        Risolto bug #218
+	Non venivano gestite correttamente le credenziali SSL che contenevano 
+	nei valori di un attributo del subject i caratteri speciali ',' o '/'
+
+2014-08-08  Andrea Poli <apoli@link.it>
+
+        * [ToolGenericProject]
+        Risolto bug #200
+	Modificato livello di visibilita' dei metodi closeConnection e getConnection
+	nella classe org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManager
+	Aggiunto metodo close() con visibilita' pubblica in
+	org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManager
+	Tale metodo si occupa di chiudere la connessione se il service manager e' stato
+	inizializzato tramite il costruttore che ha preso in input 
+	jdbcUrl, jdbcUsername e JdbcPassword.
+
+2014-08-08  Andrea Poli <apoli@link.it>
+
+        * [PddCore]
+        Risolto bug #197
+        La Porta di Dominio leggeva gli accordi in stato 'bozza' anche se la proprieta'
+        org.openspcoop2.registroServizi.readObjectStatoBozza era impostata a 'false'.
+        Impostare come valore di default della proprieta' il valore 'true',
+        per far gestire alla PdD anche gli accordi in stato 'bozza' come comportamento di default.	
+
+2014-07-31  Andrea Poli <apoli@link.it>
+
+	* [example EchoService]
+	Rinominato progetto in TestService.
+	Il servizio fornisce diverse servlet utilizzabili negli scenari di esempio descritti nei manuali
+
+2014-07-28  Andrea Poli <apoli@link.it>
+
+        * [PddCore]
+        Risolto bug #165
+        Non venivano generate le credenziali basic (username e password) durante
+        l'invocazione di un servizio applicativo. Il problema era presente sia sul
+        connettore 'invocazione-servizio' che sul connettore 'risposta-asincrona'.
+
+2014-06-23  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	Aggiunto supporto DB2
+	Non venivano generate le credenziali basic (username e password) durante 
+	l'invocazione di un servizio applicativo. Il problema era presente sia sul
+	connettore 'invocazione-servizio' che sul connettore 'risposta-asincrona'.
+
+2014-06-20  Andrea Poli <apoli@link.it>
+
+        * [PddConsole]
+	Corretto Bug che si verificava durante la ricerca dei diagnostici, 
+	nel caso venivano impostati il nome del fruitore o dell'erogatore
+
+2014-06-10  Giovanni Bussu <bussu@link.it>
+
+        * [ToolUtils]
+        Implementata ricerca della resource WADL corrispondente ad una URL
+
+2014-06-05  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	Gestita SOAPAction per SOAP 1.2
+	The SOAP 1.1 mandatory SOAPAction HTTP header has been removed in SOAP 1.2. 
+	In its place is an optional action parameter on the application/soap+xml media type.		
+
+2014-05-13  Giovanni Bussu <bussu@link.it>
+
+	* [ToolGenericProject]
+	Gestite colonne null per tipi contenitori tramite jdbc method 'wasNull'	
+
+2014-05-09  Giovanni Bussu <bussu@link.it>
+
+	* [ToolUtils]
+	Aggiunto supporto alla lettura file WADL e validazione
+	rispetto ad un WADL dei messaggi in ingresso
+
+2014-04-24  Andrea Poli <apoli@link.it>
+
+        * Rilasciata versione 1.0
+
+2014-04-15  Andrea Poli <apoli@link.it>
+
+        * [PddConsole]
+	Vari Fix
+
+2014-03-20  Andrea Poli <apoli@link.it>
+
+	* [PddCore] [PddConsole]
+	Aggiunto supporto SDK per funzionalita' di import archivi tramite pddConsole
+
+	* [PluginSPCoop]
+	Aggiunta gestione import package CNIPA per protocollo SPCoop
+
+2014-02-18  Andrea Poli <apoli@link.it>
+
+	 * [PddCore]
+	Aggiunto supporto Application Server WildFly
+
+2014-02-10  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	Testsuite protocollo SPCoop completamente terminata
+
+2014-01-31  Andrea Poli <apoli@link.it>
+
+        * [PddCore]
+        Aggiunti header POST_OUT_REQUEST e PRE_IN_RESPONSE
+        Aggiunta gestione NotifierInputStream
+
+2013-12-18  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	- Aggiunta possibilita' di registrare i log dei certificati ssl ricevuti
+
+2013-12-05  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	- Aggiunti costruttori classe AbstractValidatoreXSD che permettono di fornire lo schema come oggetto Node o come oggetto Source generico.
+
+	* [ToolGenericProject]
+	- Gestito jaxb marshall/unmarshall per Char in presenza di carattere vuoto.
+
+2013-11-19  Andrea Poli <apoli@link.it>
+
+	* [PluginSPCoop]
+	- Corretta gestione del cluster ID. La proprieta' 'org.openspcoop2.protocol.spcoop.id.prefix' non veniva correttamente gestita
+	  se impostata in file di configurazione esterni (es. spcoop_local.properties)
+
+        * [ToolGenericProject]
+	- Migliorata gestione FunctionField
+
+2013-11-18  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	- Aggiunti controlli di consistenza rispetto ai tipi dei soggetti e dei servizi utilizzati tramite un canale esposto dalla pdd
+	  (puo' esistere 1 o piu' canali per ogni protocollo supportato).
+	  I tipi autorizzati all'interno di un canale sono solo quelli permessi dal protocollo associato al canale.
+	- Risolto bug sulla validazioneContenutiApplicativi 
+	  (nel caso di local forward e tipo di validazione differente tra PD e PA le validazioni venivano scambiate)
+
+	* [PddConsole]
+	- Durante la modifica di un soggetto e' permesso adesso cambiarne il tipo selezionandolo tra quelli supportati dal protocollo associato.
+
+2013-11-14  Giovanni Bussu <bussu@link.it>
+
+        * [PddCore]
+	- WSSecurity Timestamp: allineate properties gestite da Soapbox a quelle gestite da WSS4J
+
+2013-11-08  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	- Aggiunti controlli isAlive sugli appender protocol
+	
+	* [ToolGenericProject]
+	- Aggiunto URITypeFormatter, ByteArrayTypeFormatter, ByteTypeFormatter, ShortTypeFormatter, CharacterTypeFormatter
+
+2013-11-07  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	- Aggiunto package org.openspcoop2.utils.beans contenente classi di utilità generale per un Bean Java
+	- Aggiunti nuovi Adapter jaxb in org.openspcoop2.utils.jaxb:
+	  . Char2String
+	  . Date2String
+	  . DateTime2String
+	  . Time2String
+	- Aggiunta classe di conversione xml to object e viceversa per jaxb (già esistente quella jibx)
+
+	* [ToolGenericProject]
+	- Aggiunti nuovi serializzatori e deserializzatori: jaxb, jibx, java, json, json_xml
+	- Gestiti i tipi letti dal db in caso siano previsti default diversi da quelli jdbc per l'xsd
+	- Risolti bug minori
+
+2013-11-04  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	- Aggiunta informazione sull'identita' del Servizio Applicativo Fruitore negli handler, in caso di local-forward
+
+2013-10-31  Andrea Poli <apoli@link.it>
+
+	* [ToolGenericProject]
+        - Aggiunta gestione per tipo java.lang.URI
+
+2013-10-29  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSPCoop.toolBackwardCompatibility]
+	Aggiunta possibilita' di effettuare lo switch tra gli header delle due versioni di OpenSPCoop a seconda del rispettivo canale utilizzato
+	Se abilitato lo switch, gli header 'OpenSPCoopV1' verranno utilizzati/interpretati effettivamente SOLO SE 
+	si passa dai canali 'OpenSPCoopV1' (url:openspcoop/PD e openspcoop/PA)
+	altrimenti vengono utilizzati/interpretati i nuovi header previsti per OpenSPCoop V2 (url:openspcoop2/spcoop/PD e openspcoop2/spcoop/PA).
+	Se invece lo switch e' disabilitato, vengono sempre e comunque utilizzati gli header della versione 'OpenSPCoopV1' in caso
+	l'installazione della PdD avvenga con backward compatibility.
+	Nella PA il default e' con switch disabilitato, poiche' si vuole avere un unico endpoint di ricezione buste.
+	Sara' poi compito di chi configura le PA indicare i corretti meccanismi di integrazione sulle PA stesse, impostando un opportuno default.
+
+2013-10-25  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+	- Migliorata gestione errori dovuti a inconsistenze valori header http Content-Type e namespace del messaggio
+	- Aggiunto nel manifest.xml di un protocol plugin la possibilita' di definire:
+		. binding soap (abilitare/disabilitare binding soap1.1 e/o soap1.2)
+		. elenco degli header Soap con mustUnderstand=1 che la PdD puo' inoltrare senza essere obbligata a processare
+		. indicazione se associato ad un soggetto vi e' un codice IPA
+		. indicazione se per un accordo puo' essere fornita una specifica delle conversazioni
+		. modificato nome empty-context in emptyContext
+	- Aggiunta personalizzazione WSDL esposti sui canali PD e PA
+
+2013-10-25  Giovanni Bussu <bussu@link.it>
+
+	* [example EchoService]
+	- Corretto problema che non faceva generare un SOAPFault se richiesto al servizio di echo
+
+2013-10-22  Andrea Poli <apoli@link.it>
+
+        * [ToolGenericProject]
+	- Aggiunte classi per la lettura di un file database.properties con una struttura standard
+
+2013-10-18  Andrea Poli <apoli@link.it>
+
+        * [PddConsole]
+	- Nel caso la pddConsole rilevava un campo malformato o non indicato ma obbligatorio, veniva emesso un messaggio di errore.
+	  In tale casistica, nonostante la correzione del campo indicato da parte dell'utente, l'inserimento o l'aggiornamento non veniva effettuato.
+	  E' stato risolto il problema che si verificava solo su alcuni oggetti gestiti dalla console:
+		.accordi di cooperazione
+		.accordi di servizio parte specifica
+		.porte delegate
+		.porte applicative
+		.elementi di configurazione della PdD.
+	- Migliorati criteri di ordinamento per i soggetti e gli accordi di servizio parte comune e specifica
+	- Ampliati i criteri di ricerca dei soggetti e degli accordi (adesso la stringa di ricerca fornita viene controllata su tutti i campi identificativi)
+
+2013-10-17  Andrea Poli <apoli@link.it>
+
+        * [PddCore]
+	Migliorata validazione 'wsdl' dei contenuti applicativi:
+	- corretti problemi in presenza di elementi 'Text' come commenti nei root-element all'interno di un SOAPBody
+	- aggiunta possibilita' di usare validazione wsdl anche in configurazioni non standard, 
+	  con accordi senza azioni o con accordi con azioni senza port types.
+	  . In presenza di un accordo con port-type e azioni la validazione e' puntuale rispetto ai messaggi previsti nel wsdl.
+	  . In presenza di accordi vecchio formato senza port-type e senza azioni direttamente elencate nell'accordo: 
+	    la validazione viene effettuata almeno vericando che il messaggio sia effettivamente uno 
+            tra quelli previsti nel ruolo (richiesta o risposta) che assume il messaggio in transito.
+	  . In presenza di accordi vecchio formato con azioni direttamente specificate nell'accordo: 
+	    la validazione viene effettuata validando che il messaggio sia uno di quelli previsti per le operation 
+	    che possiedono il nome dell'azione (le operation potrebbero essere piu' di una con stesso nome associate a port types differenti)
+
+2013-10-16  Andrea Poli <apoli@link.it>
+
+	* [ToolGenericProject]
+	- Corretti metodi interni a expression. Se veniva impostato delle condizioni di order by, 
+	  ma non venivano impostati alcune condizione di where, 
+	  non funzionavano correttamente i metodi inUseModel o inUseField
+	- Creata AbstractModel che implementa parti di IModel e corretto metodo equals
+	- Creato AbstractSQLFieldConverter per gestire in maniera piu' corretta i metodi con alias
+
+2013-10-15  Andrea Poli <apoli@link.it>
+
+        * Rilasciata versione 1.0b2
+
+2013-10-14  Andrea Poli <apoli@link.it>
+
+	* [PddCore]
+        - Corretto bug che non permetteva l'utilizzo del salvataggio via I.M. con modalita' local-forward
+
+2013-10-07  Andrea Poli <apoli@link.it>
+
+        * [PddConsole]
+	- Corretto problema che non permetta l'abilitazione delle funzionalita' di protocollo (filtro duplicati, conferma ricezione ...)
+	  nei port types e nelle operation
+
+	* [PddCore]
+	- Corretta validazione dei contenuti applicativi. In presenza di un elemento con attributo xsi:<name>
+	  dove xsi rappresenta un namespace 'http://www.w3.org/2001/XMLSchema-instance' e name differente da 'type'
+	  l'engine processava comunque l'elemento come se avesse una valorizzazione per tipo xsi:type="..."
+
+2013-10-02  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	- Corretto problema che non permetteva la visualizzazione dei soggetti appartenenti ad una porta di dominio
+	- Aggiunta modalita' 'inputBased' e 'urlBased' alla correlazione applicativa di richiesta per una Porta Applicativa
+	- Corretto nome della keyword 'identificativo' per le protocol properties in una Porta Applicativa
+
+	* [PddCore]
+	- Le Protocol Properties di una Porta Applicativa vengono adesso impostate anche nella url di consegna.
+	- In modalita' 'LocalForward' vengono generate due entry per la correlazione dei diagnostici, rispettivamente una per la PD e una per la PA
+
+2013-09-06  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	- Corretto link per accedere al connettore del Soggetto
+	- Ristabilita la possibilita' di creare un Soggetto non associato a nessuna Porta di Dominio
+	- Negata la possibilita' di associare una PdD esterna ad un soggetto (o di svincolarlo proprio da qualsiasi pdd)
+	  se il soggetto appartenente ad una PdD Operativa e possiede almeno un servizio applicativo 
+	  o una porta applicativa o una porta delegata
+	- Corretto problema che non permettava di abilitare il connettore di un Accordo di Servizio Parte Specifica
+	- Creazione della Porta Applicativa automatica disabilitata in caso in cui il servizio sia di tipologia 'correlato'
+
+2013-09-05  Andrea Poli <apoli@link.it>
+	
+	* [PddCore] 
+	- org.openspcoop2.utils.cache
+	Aggiunto package che contiene classi che permettono la gestione di una cache JCS
+        Configurazione di default per la cache spostata dal file 'cache.ccf' al file 'cache.jcs.properties'
+        Aggiunta possibilita' di ridefinizione dei valori tramite file locali esterni
+	- org.openspcoop2.pdd.jmx
+	Aggiunte funzionalita' agli oggetti JMX per ottenere maggiori informazioni sulle cache utilizzate dalle PdD: statistiche, keys e values.
+
+2013-08-24  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 1.0b1

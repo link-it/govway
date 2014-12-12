@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+
+<project name="SPCoopTutorialSincrono"  basedir=".">
+
+	<import file="local_env.xml"/>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${openspcoop2_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- set properties for this build -->
+	<property name="src_spcoop_tutorial_sincrono" location="src" />
+	<property name="build_spcoop_tutorial_sincrono" location="build/audit" />
+	<property name="dist_spcoop_tutorial_sincrono" location="dist" />
+
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${openspcoop2_lib}" >
+			<include name="**/cxf/*"/>
+			<include name="**/jetty/*"/>
+			<include name="**/security/*"/>
+			<include name="**/httpcore/*"/>
+			<include name="**/commons/*"/>
+			<include name="**/shared/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${dist_spcoop_tutorial_sincrono}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="-clean_spcoop_tutorial_sincrono">
+		<delete dir="${build_spcoop_tutorial_sincrono}" />
+		<delete dir="${dist_spcoop_tutorial_sincrono}" />
+		<delete dir="${doc_spcoop_tutorial_sincrono}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="-init_compile_spcoop_tutorial_sincrono">
+		<mkdir dir="${build_spcoop_tutorial_sincrono}" />
+		<mkdir dir="${dist_spcoop_tutorial_sincrono}" />
+	</target>
+	
+	
+	
+	<!-- Compilazione del Servizio -->
+	<target name="-compile_compile_spcoop_tutorial_sincrono" depends="-init_compile_spcoop_tutorial_sincrono" description="compila il servizio">
+		<!-- Compile the java code  -->
+		<javac destdir="${build_spcoop_tutorial_sincrono}" debug="${debug}">
+			<!--<compilerarg value="-Xlint:unchecked"/>
+                        <compilerarg value="-Xlint:deprecation"/>-->
+			<src path="${src_spcoop_tutorial_sincrono}" />
+			<classpath refid="classpath_compile" />
+		</javac>
+		<jar jarfile="${dist_spcoop_tutorial_sincrono}/openspcoop2_spcoop-protocol_tutorial_sincrono.jar">
+			<zipfileset dir="${build_spcoop_tutorial_sincrono}" />
+    	</jar>
+	</target>
+	
+	
+	<!-- Esecuzione del server -->
+	<target name="-run_server_spcoop_tutorial_sincrono" description="esegue il servizio">
+		 <java classname="org.openspcoop2.example.pdd.server.richiestastatofamiglia.RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpoint_Server" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+            </classpath>
+        </java>
+	</target>
+	
+	
+	<!-- Esecuzione del client -->
+	<target name="-run_client_spcoop_tutorial_sincrono" description="esegue il client che fruisce del servizio">
+		 <java classname="org.openspcoop2.example.pdd.client.richiestastatofamiglia.RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpoint_Client" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+            </classpath>
+        </java>
+	</target>
+	
+	
+	
+	<!-- alias -->
+	<target name="build" depends="-compile_compile_spcoop_tutorial_sincrono" />
+	<target name="clean" depends="-clean_spcoop_tutorial_sincrono" />
+	<target name="run_server" depends="-run_server_spcoop_tutorial_sincrono" />
+	<target name="run_client" depends="-run_client_spcoop_tutorial_sincrono" />
+	
+</project>

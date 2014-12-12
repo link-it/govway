@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:spc="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia" location="logicoErogatore.wsdl">
+    </wsdl:import>
+  <wsdl:binding name="RichiestaStatoFamigliaBinding" type="spc:RichiestaStatoFamiglia">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Acquisisci">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RichiestaStatoFamigliaService">
+    <wsdl:port name="RichiestaStatoFamigliaInterfaceEndpoint" binding="spc:RichiestaStatoFamigliaBinding">
+      <soap:address location="http://localhost:8888/tutorial/sincrono"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

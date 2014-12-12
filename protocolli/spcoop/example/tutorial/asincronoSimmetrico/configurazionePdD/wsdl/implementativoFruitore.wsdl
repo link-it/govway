@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:spc="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto"
+        targetNamespace="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto">
+
+  <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto" location="logicoFruitore.wsdl">
+    </wsdl:import>
+
+  <wsdl:binding name="EsitoIdentificazioneBinding" type="spc:EsitoIdentificazione">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Risultato">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="EsitoIdentificazioneService">
+    <wsdl:port name="EsitoIdentificazioneInterfaceEndpoint" binding="spc:EsitoIdentificazioneBinding">
+      <soap:address location="http://localhost:8889/tutorial/asincronoSimmetricoRisposta"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

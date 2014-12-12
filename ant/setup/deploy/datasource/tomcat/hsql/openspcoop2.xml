@@ -1,0 +1,22 @@
+<Context>
+
+	<!-- Datasource per i dati della porta di dominio OpenSPCoop2 -->
+
+	<Resource name="org.openspcoop2.dataSource" auth="Container"
+	          type="javax.sql.DataSource"
+	          driverClassName="org.hsqldb.jdbcDriver"
+	          url="jdbc:hsqldb:hsql://@HOST@:@PORT@/@DATABASE@"
+	          username="@USERNAME@" password="@PASSWORD@"
+	          initialSize="10"
+	          maxActive="50"
+	          minIdle="10" maxIdle="50"
+	          maxWait="30000" defaultTransactionIsolation="READ_COMMITTED"
+	          validationQuery="SELECT 1"
+	          validationQueryTimeout="10"
+	          testOnBorrow="true" testOnReturn="false"
+	          poolPreparedStatements="true" maxOpenPreparedStatements="100"/>
+
+
+
+
+</Context>

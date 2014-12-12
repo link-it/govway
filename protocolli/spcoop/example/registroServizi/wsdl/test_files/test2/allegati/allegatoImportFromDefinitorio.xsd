@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.openspcoop2.org/example/allegato/import" xmlns:allegatoimport="http://www.openspcoop2.org/example/allegato/import" xmlns:allegatoimportallegatointerno="http://www.openspcoop2.org/example/allegato/import/allegato/interno" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<!-- Es. Import from Allegato -->
+        <xs:import namespace="http://www.openspcoop2.org/example/allegato/import/allegato/interno" schemaLocation="../allegati/allegatoImportFromAllegato.xsd"/>         
+
+        <xs:element name="esempioAllegatoImport1">
+           <xs:complexType>
+              <xs:sequence>
+		 <xs:element maxOccurs="1" minOccurs="1" name="nome" type="xs:string"/>
+		 <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimportallegatointerno:esempioAllegatoInterno"/>
+              </xs:sequence>
+           </xs:complexType>
+        </xs:element>
+
+        <xs:element name="esempioAllegatoImport2">
+           <xs:complexType>
+              <xs:sequence>
+		 <xs:element maxOccurs="1" minOccurs="1" name="nome" type="xs:string"/>
+		 <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimportallegatointerno:esempioAllegatoInterno"/>
+              </xs:sequence>
+           </xs:complexType>
+        </xs:element>
+         
+</xs:schema>

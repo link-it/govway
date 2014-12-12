@@ -1,0 +1,30 @@
+<xsd:schema targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+     <!-- Nominativo -->
+     <xsd:element name="nominativo" type="xsd:string"/>
+     <xsd:element name="aggiornamento-nominativo">
+     	 <xsd:complexType>
+	    <xsd:simpleContent>
+		<xsd:extension base="xsd:string">
+		   <xsd:attribute name="nomePrecedente" type="xsd:string" use="required"/>
+		</xsd:extension>
+	    </xsd:simpleContent>
+         </xsd:complexType>
+     </xsd:element>
+
+     <!-- Indirizzo -->
+     <xsd:element name="indirizzo" type="xsd:string"/>
+
+     <!-- Data -->
+     <xsd:element name="ora-registrazione" type="xsd:date" />
+ 
+     <!-- Messaggio Risposta -->
+     <xsd:element name="esito" type="xsd:string"/>
+
+     <!-- Ack risposta asincrona -->
+     <xsd:element name="ack-richiesta-asincrona" type="xsd:string"/>
+
+
+</xsd:schema>

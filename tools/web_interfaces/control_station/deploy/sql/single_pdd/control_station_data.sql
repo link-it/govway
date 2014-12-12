@@ -1,0 +1,11 @@
+-- Configurazione
+INSERT INTO configurazione (cadenza_inoltro, validazione_stato, validazione_controllo, msg_diag_severita, msg_diag_severita_log4j, auth_integration_manager,validazione_profilo, mod_risposta, indirizzo_telematico, routing_enabled, validazione_manifest, gestione_manifest, tracciamento_buste, tracciamento_dump,statocache,dimensionecache,algoritmocache,lifecache) VALUES( '60',       'abilitato',    'rigido', 'infoIntegration', 'infoIntegration', 'basic,ssl', 'disabilitato','reply','disabilitato','disabilitato', 'abilitato', 'disabilitato', 'abilitato', 'disabilitato','abilitato','10000','lru','7200');
+
+-- Rotta di default per routing
+insert INTO routing (tiporotta,registrorotta,is_default) VALUES ('registro',0,1);
+
+-- Registro locale
+insert INTO registri (nome,location,tipo) VALUES ('RegistroDB','org.openspcoop2.dataSource.pddConsole','db');
+
+-- Porta di Dominio locale
+INSERT INTO pdd (nome,tipo,superuser) VALUES ('PddOpenSPCoop','operativo','amministratore');

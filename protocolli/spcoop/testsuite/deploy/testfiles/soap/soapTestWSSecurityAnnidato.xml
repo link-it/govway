@@ -1,0 +1,51 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header>
+	<a:example1 xmlns:a="http://www.openspcoop.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova</a:example1>
+        <b:example2 xmlns:b="http://www.openspcoop.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova2</b:example2>
+	</soapenv:Header>
+	<soapenv:Body>
+<ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:se="http://schemas.xmlsoap.org/soap/envelope/" se:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns="http://www.openspcoop.org">
+	<ns:sign_content>
+		<ns:padre>
+			<ns:figlio>ciao</ns:figlio>
+			<ns:figlia>ciao</ns:figlia>
+		</ns:padre>
+	</ns:sign_content>
+
+	<ns:sign_element>
+                <ns:padre>
+                        <ns:figlio>ciao</ns:figlio>
+                        <ns:figlia>ciao</ns:figlia>
+                </ns:padre>
+		<ns2:other xmlns:ns2="http://www.openspcoop.org/other">CIAO</ns2:other>
+        </ns:sign_element>
+
+	<ns:encrypt_content>
+                <ns:padre>
+                        <ns:figlio>ciao</ns:figlio>
+                        <ns:figlia>ciao</ns:figlia>
+                </ns:padre>
+		<ns2:other xmlns:ns2="http://www.openspcoop.org/other">CIAO</ns2:other>
+        </ns:encrypt_content>
+	<ns:encrypt_element_father>
+	        <ns:encrypt_element>
+        	        <ns:padre>
+                	        <ns:figlio>ciao</ns:figlio>
+                       		<ns:figlia>ciao</ns:figlia>
+	                </ns:padre>
+	        </ns:encrypt_element>
+	</ns:encrypt_element_father>
+	
+	<ns:client_encrypt>
+		ahahhahaahha
+	</ns:client_encrypt>
+
+	<ns:client_sign>
+        	<ns:client_sign_child>ciao ciao</ns:client_sign_child>
+        </ns:client_sign>
+
+	<symbol xsi:type="xsd:string">IBM</symbol>
+        <symbol xsi:type="xsd:string">IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII</symbol>
+</ns1:getQuote>
+</soapenv:Body>
+</soapenv:Envelope>

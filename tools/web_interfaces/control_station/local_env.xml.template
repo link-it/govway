@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoopWebInterfaceCtrlstat_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../../.."/>
+      <property name="openspcoop2_jars" location="${openspcoop2}/core/dist"/>
+
+	  <!-- ApplicationServer version -->
+	  <property name="as" value="jboss/tomcat" />
+
+      <property name="required_lib_pddConsole" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_pddConsole}"/>
+      <property name="sql" value="${openspcoop2}/core/deploy/sql"/>
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildPddConsole" value="true"/>
+      <property name="buildAPI" value="true"/>
+
+      <!-- Dipendenze di compilazione -->
+      <property name="mvc" location="../lib/mvc"/>
+      <property name="src_mvc" location="${mvc}/src"/>
+      <property name="queue" location="../lib/queue"/>
+      <property name="src_queue" location="${queue}/src"/>
+      <property name="sql_queue" location="${queue}/deploy/sql"/>
+      <property name="audit" location="../lib/audit"/>
+      <property name="src_audit" location="${audit}/src"/>
+      <property name="sql_audit" location="${audit}/deploy/sql"/>
+      <property name="users" location="../lib/users"/>
+      <property name="src_users" location="${users}/src"/>
+      <property name="sql_users" location="${users}/deploy/sql"/>
+
+      <!-- JSB lib -->
+      <property name="jsplib" location="../lib/jsplib"/>
+      <!-- Javascript lib -->
+      <property name="jslib" location="../lib/js"/>
+      <!-- immagini comuni -->
+      <property name="commons_images" location="../lib/images"/>
+      
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+      <property name="printServerInfo" value="false" />
+
+</project>

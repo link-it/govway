@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+  "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+	<display-name>OpenSPCoop2 Loader</display-name>
+
+  <!-- Filtro per il Login -->
+  <filter>
+    <filter-name>AuthorisationFilter</filter-name>
+    <filter-class>org.openspcoop2.web.loader.servlet.login.AuthorisationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthorisationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+  <!--  Loader startup -->
+  <listener>
+         <listener-class>
+                  org.openspcoop2.web.loader.core.LoaderStartup
+         </listener-class>
+  </listener>
+
+
+  <!-- Action Servlet Configuration -->
+  <servlet>
+    <servlet-name>action</servlet-name>
+    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!-- Action Servlet Mapping -->
+  <servlet-mapping>
+    <servlet-name>action</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+ 
+ 
+ <!-- Define the default session timeout for your application,
+         in minutes.  From a servlet or JSP page, you can modify
+         the timeout for a particular session dynamically by using
+         HttpSession.getMaxInactiveInterval(). -->
+    <session-config>
+        <session-timeout>120</session-timeout>
+    </session-config>
+	
+</web-app>

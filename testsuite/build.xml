@@ -1,0 +1,216 @@
+<project name="TestSuite" basedir="." default="build">
+
+	<description>
+        File di Script per la compilazione della testsuite
+    </description>
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-testsuite-build.xml" />
+	<import file="./ant/openspcoop2-testsuite-war.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+	
+	<!-- set properties for this build -->
+	<property name="src_testsuite" location="src/" />
+	<property name="build_testsuite" location="build/testsuite" />
+	<property name="dist_testsuite" location="dist" />
+	<property name="doc_testsuite" location="doc" />
+	<property name="cfg_testsuite" location="${basedir}/deploy/properties" />
+
+	<!-- Indicazione se produrre la versione per server non j2ee -->
+	<var name="j2ee" value="true" />
+	<var name="commons_logging_jar" value="" />
+	<var name="javax_jms_jar" value="" />
+	<var name="xalan_jar" value="" />
+	<var name="xalan_serializer_jar" value="" />
+	<var name="log4j_jar" value="" />
+	<var name="log4j_properties" value=""/>
+	<var name="jaxp_ri_jar" value=""/>
+	<var name="jboss_classloading" value="" />
+	<var name="jboss_scanning" value="" />
+	<var name="jboss_deployment_structure" value=""/>
+	<runtarget target="check_as_version" />	
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
+			<var name="j2ee" value="false"/>
+		</then>
+	</if>
+	<!-- commons_logging -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="commons_logging_jar" value="commons-logging-1.1.1.jar" />
+		</then>
+	</if>
+	<!-- javax_jms -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="javax_jms_jar" value="javax.jms.jar" />
+		</then>
+	</if>
+	<!-- xalan -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="xalan_jar" value="xalan-2.7.1.jar" />
+		</then>
+	</if>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="xalan_serializer_jar" value="xalan-2.7.1_serializer.jar" />
+		</then>
+	</if>	
+	<!-- log -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="log4j_jar" value="log4j-1.2.16.jar" />
+		</then>
+	</if>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+		</or>
+		<then>
+			<var name="log4j_properties" value="log4j.properties"/>
+		</then>
+	</if>
+	<!-- jaxp_ri -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+		</then>
+	</if>
+	<!-- jboss_classloading -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_classloading" value="jboss-classloading.xml" />
+		</then>
+	</if>
+	<!-- jboss_scanning -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_scanning" value="jboss-scanning.xml" />
+		</then>
+	</if>
+	<!-- jboss_deployment_structure -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>
+	
+
+	
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2}/tools/web_interfaces/control_station/dist" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_testsuite">
+		<delete dir="${build_testsuite}" />
+		<delete dir="build" />
+		<delete dir="${dist_testsuite}" />
+		<delete dir="${doc_testsuite}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_testsuite">
+		<mkdir dir="${build_testsuite}" />
+		<mkdir dir="${build_testsuite}/tmp" />
+		<mkdir dir="${dist_testsuite}" />
+	</target>
+	
+	
+	<!-- Compilazione della testsuite-->
+	<target name="compile_testsuite" depends="init_compile_testsuite,compile_openspcoop2_testsuite" description="compila la testsuite"/>
+	
+	<!-- Creazione del modulo .WAR -->
+	<target name="build_testsuite" depends="compile_testsuite,war_openspcoop2_testsuite" description="Crea la struttura del modulo WAR" />
+	
+	<!-- alias -->
+	<target name="build" depends="build_testsuite"/>
+	<target name="clean" depends="clean_testsuite"/>
+	
+	<!-- Selenium Server -->
+	<target name="start_selenium_server">
+		<java jar="${required_lib}/testsuite/selenium-server-1.0.1.jar" fork="true">
+			<!-- Parametri da utilizzare nel caso si utilizza un server proxy  
+				<jvmarg value="-Dhttp.proxyHost=proxy"/>
+				<jvmarg value="-Dhttp.proxyPort=8080"/>
+			-->
+
+			<!-- Parametri per il selenium server-->
+			<arg value="-port"/>
+			<arg value="6666"/>
+			<arg value="-avoidProxy"/>
+		</java>
+	</target>
+
+</project>

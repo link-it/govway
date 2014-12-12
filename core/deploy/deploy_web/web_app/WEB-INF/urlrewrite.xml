@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+
+<!--
+
+    Configuration file for UrlRewriteFilter
+    http://www.tuckey.org/urlrewrite/
+
+-->
+<urlrewrite>
+
+	<!-- 
+		you can visit http://127.0.0.1:8080/rewrite-status 
+		(or whatever the address of your local webapp and context) to see output 
+		(note: this page is only viewable from localhost). 
+	-->
+
+    <rule>
+        <note>
+            The rule means that requests to /jmx/ will be redirected to /jmx-console/servers/0/domains/org.openspcoop2.pdd/
+            the url will be rewritten.
+        </note>
+        <from>/jmx/</from>
+        <to type="redirect">%{context-path}/jmx-console/servers/0/domains/org.openspcoop2.pdd/</to>
+    </rule>
+
+</urlrewrite>
+

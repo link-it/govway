@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="operation" class="it.cnipa.collprofiles.OperationType">
+    <namespace uri="http://www.cnipa.it/collProfiles" default="elements"/>
+    <value name="servizio" field="servizio" usage="required" style="attribute"/>
+    <value name="operazione" field="operazione" usage="required" style="attribute"/>
+    <value name="profiloDiCollaborazione" field="profiloDiCollaborazione" usage="required" style="attribute"/>
+    <value name="servizioCorrelato" field="servizioCorrelato" usage="optional" style="attribute"/>
+    <value name="operazioneCorrelata" field="operazioneCorrelata" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="operationList" class="it.cnipa.collprofiles.OperationListType">
+    <namespace uri="http://www.cnipa.it/collProfiles" default="elements"/>
+    <collection field="operation" create-type="java.util.ArrayList">
+      <structure map-as="it.cnipa.collprofiles.OperationType"/>
+    </collection>
+  </mapping>
+  <mapping name="egovDecllElement" class="it.cnipa.collprofiles.EgovDecllElement">
+    <namespace uri="http://www.cnipa.it/collProfiles" default="elements"/>
+    <value name="e-govVersion" field="eGovVersion" usage="required"/>
+    <value name="rifDefinizioneInterfaccia" field="rifDefinizioneInterfaccia" usage="required"/>
+    <structure field="operationList" usage="required" map-as="it.cnipa.collprofiles.OperationListType"/>
+  </mapping>
+</binding>

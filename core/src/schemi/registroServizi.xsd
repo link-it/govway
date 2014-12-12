@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/registry"
+	targetNamespace="http://www.openspcoop2.org/core/registry"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	
+	<!-- il registro Servizi contiene la definizione dei vari soggetti 
+		e di possibili connettori associati ai soggetti oltre alla definizione degli accordi di servizio -->
+	<xsd:element name="registro-servizi">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-cooperazione"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-servizio-parte-comune"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-dominio"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="soggetto"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connettore"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	
+	
+	<!-- Accordi di Cooperazione -->
+	<xsd:element name="accordo-cooperazione" type="accordo-cooperazione" />
+	<xsd:complexType name="accordo-cooperazione">
+		<xsd:sequence>
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+			<!-- Elenco Partecipanti -->
+			<xsd:element name="elenco-partecipanti" maxOccurs="1" minOccurs="0"
+				type="accordo-cooperazione-partecipanti"/>
+			<!-- Allegati -->
+			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
+			<!-- Specifiche Semiformale -->
+			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+	</xsd:complexType>
+	<xsd:complexType name="accordo-cooperazione-partecipanti">
+		<xsd:sequence>
+			<xsd:element name="soggetto-partecipante" type="id-soggetto" maxOccurs="unbounded" 
+				minOccurs="0"/>
+			<!-- minOccurs="2"/> Altrimenti non e' utilizzabile durante una esportazione per un accordo senza soggetti -->
+			<!-- Il check che ne esistano 2 e' stato spostato a livello semantico di stato 'finale' -->
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<!-- Accordo di Servizio (Parte Comune) -->
+	<xsd:element name="accordo-servizio-parte-comune" type="accordo-servizio-parte-comune"/>
+	<xsd:complexType name="accordo-servizio-parte-comune">
+		<xsd:sequence>
+			<!-- Soggetto Referente dell'accordo -->
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+			<!-- Indicazione che l'accordo di servizio rappresenta un servizio composto (utilizzato in un accordo di cooperazione) -->
+			<xsd:element name="servizio-composto" type="accordo-servizio-parte-comune-servizio-composto" maxOccurs="1" minOccurs="0"/>
+			<!-- Azioni incluse nell'accordo -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione" type="azione"/>
+			<!-- Port-Type inclusi nell'accordo -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="port-type" type="port-type"/>
+			<!-- Allegati -->
+			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
+			<!-- Specifiche Semiformale -->
+			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+			
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione" use="required"/>
+		<xsd:attribute name="wsdl-definitorio" type="xsd:string"/>
+		<xsd:attribute name="wsdl-concettuale" type="xsd:string"/>
+		<xsd:attribute name="wsdl-logico-erogatore" type="xsd:string"/>
+		<xsd:attribute name="wsdl-logico-fruitore" type="xsd:string"/>
+		<xsd:attribute name="specifica-conversazione-concettuale" type="xsd:string"/>
+		<xsd:attribute name="specifica-conversazione-erogatore" type="xsd:string"/>
+		<xsd:attribute name="specifica-conversazione-fruitore" type="xsd:string"/>
+		<xsd:attribute name="utilizzo-senza-azione" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto">
+		<xsd:sequence>
+			<!-- Servizi componenti -->
+			<xsd:element name="servizio-componente" type="accordo-servizio-parte-comune-servizio-composto-servizio-componente" maxOccurs="unbounded"
+				minOccurs="0"/>
+				<!-- minOccurs="2"/> Altrimenti non e' utilizzabile durante una esportazione per un accordo senza servizi componenti -->
+				<!-- Il check che ne esistano 2 e' stato spostato a livello semantico di stato 'finale' -->
+			<!-- Specifiche Coordinamento -->
+			<xsd:element name="specifica-coordinamento" maxOccurs="unbounded"
+				minOccurs="0" type="documento"/>
+		</xsd:sequence>
+		<xsd:attribute name="accordo-cooperazione" type="xsd:string"
+			use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto-servizio-componente">
+		<xsd:attribute name="tipo-soggetto" type="xsd:string"
+			use="required"/>
+		<xsd:attribute name="nome-soggetto" type="xsd:string"
+			use="required"/>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="azione" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- port-type -->
+	<xsd:complexType name="port-type">
+		<xsd:sequence>
+			<!-- Operations indicate per il port-type -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione" type="operation"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="style" type="BindingStyle" default="document"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita" />
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita" />
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita" />
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- azione -->
+	<xsd:complexType name="azione">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="correlata" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- operation -->
+	<xsd:complexType name="operation">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="message-input" type="message"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="message-output" type="message"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="style" type="BindingStyle" />
+		<xsd:attribute name="soap-action" type="xsd:string"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita" />
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="correlata-servizio" type="xsd:string"/>
+		<xsd:attribute name="correlata" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- Definizione di un messaggio per una operation -->
+	<xsd:complexType name="message">
+		<xsd:sequence>
+			<xsd:element name="part" type="message-part" maxOccurs="unbounded" minOccurs="1"/>			
+		</xsd:sequence>
+		<xsd:attribute name="use" type="BindingUse" default="literal"/>
+		<xsd:attribute name="soap-namespace" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="message-part">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="element-name" type="xsd:string" use="optional"/>
+		<xsd:attribute name="element-namespace" type="xsd:string" use="optional"/>
+		<xsd:attribute name="type-name" type="xsd:string" use="optional"/>
+		<xsd:attribute name="type-namespace" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Porta di Dominio -->
+	<xsd:element name="porta-dominio" type="porta-dominio"/>
+	<xsd:complexType name="porta-dominio">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="implementazione" type="xsd:string" default="standard"/>
+		<xsd:attribute name="subject" type="xsd:string"/>
+		<xsd:attribute name="client-auth" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- un Soggetto contiene: un connettore su cui viene gestito (punto di accesso della sua porta di dominio)
+		e la definizione dei servizi -->
+	<xsd:element name="soggetto" type="soggetto"/>
+	<xsd:complexType name="soggetto">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<xsd:element ref="accordo-servizio-parte-specifica" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="identificativo-porta" type="xsd:string"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="porta-dominio" type="xsd:string"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
+		<xsd:attribute name="codice-ipa" type="xsd:string"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Connettore -->
+	<xsd:element name="connettore" type="connettore"/>
+	<xsd:complexType name="connettore">
+		<xsd:sequence>
+			<xsd:element name="property" type="Property" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
+	
+	
+	<!-- AccordoServizioParteSpecifica -->
+	<xsd:element name="accordo-servizio-parte-specifica" type="accordo-servizio-parte-specifica"/>
+	<xsd:complexType name="accordo-servizio-parte-specifica">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" name="servizio" type="servizio"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="fruitore"/>
+			<!-- Allegati -->
+			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
+			<!-- Specifiche Semiformale -->
+			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+			<!-- Specifiche Livelli Servizio -->
+			<xsd:element name="specifica-livello-servizio" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+			<!-- Specifiche Sicurezza -->
+			<xsd:element name="specifica-sicurezza" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="accordo-servizio-parte-comune" type="xsd:string" use="required"/>
+		<!-- Eventuale precisazione del port-type dell'accordo da utilizzare -->
+		<xsd:attribute name="port-type" type="xsd:string"/>
+		<xsd:attribute name="wsdl-implementativo-erogatore" type="xsd:string"/>
+		<xsd:attribute name="wsdl-implementativo-fruitore" type="xsd:string"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- Servizio/ServizioCorrelato -->
+	<xsd:complexType name="servizio">
+		<xsd:sequence>
+			<!-- dati del servizio -->
+			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<xsd:element name="parametri-azione" type="servizio-azione" maxOccurs="unbounded" minOccurs="0"/>			
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipologia-servizio" type="TipologiaServizio" default="normale"/>
+	</xsd:complexType>
+	<xsd:complexType name="servizio-azione">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" ref="connettore"/>
+			<xsd:element name="parametri-fruitore" type="servizio-azione-fruitore" maxOccurs="unbounded" minOccurs="0"/>		
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="servizio-azione-fruitore">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" ref="connettore"/>
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
+	<!-- Fruitore -->
+	<xsd:element name="fruitore" type="fruitore"/>
+	<xsd:complexType name="fruitore">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="wsdl-implementativo-erogatore" type="xsd:string"/>
+		<xsd:attribute name="wsdl-implementativo-fruitore" type="xsd:string"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
+		<xsd:attribute name="client-auth" type="StatoFunzionalita"/>
+	</xsd:complexType>
+	
+	
+	<!-- Documenti -->
+	<xsd:complexType name="documento">
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="file" type="xsd:string" use="required"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Enumeration -->
+	<xsd:simpleType name="ProfiloCollaborazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="oneway"/>
+			<xsd:enumeration value="sincrono"/>
+			<xsd:enumeration value="asincronoSimmetrico"/>
+			<xsd:enumeration value="asincronoAsimmetrico"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StatoFunzionalita">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="disabilitato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BindingUse">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="literal"/>
+			<xsd:enumeration value="encoded"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BindingStyle">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="document"/>
+			<xsd:enumeration value="rpc"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="Property">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:simpleType name="TipologiaServizio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="normale"/>
+			<xsd:enumeration value="correlato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Altre costanti utilizzate poi nel core 
+	<xsd:simpleType name="TipiDocumentoConversazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WSBL"/>
+			<xsd:enumeration value="BPEL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoCoordinamento">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BPEL"/>
+			<xsd:enumeration value="WS-CDL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoInterfaccia">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WSDL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoLivelloServizio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WS-Agreement"/>
+			<xsd:enumeration value="WSLA"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoSemiformale">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="UML"/>
+			<xsd:enumeration value="HTML"/>
+			<xsd:enumeration value="XML"/>
+			<xsd:enumeration value="Linguaggio Naturale"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoSicurezza">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WS-Policy"/>
+			<xsd:enumeration value="Linguaggio Naturale"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	-->
+	
+	
+	<!-- Identiticativi WS -->
+	<xsd:complexType name="id-porta-dominio">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-soggetto">
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-accordo-cooperazione">
+		<xsd:sequence>
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="id-accordo-servizio-parte-comune">
+		<xsd:sequence>
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="id-accordo-servizio-parte-specifica">
+		<xsd:sequence>
+			<xsd:element name="soggetto-erogatore" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	
+</xsd:schema>

@@ -1,0 +1,455 @@
+<?xml version="1.0"?>
+
+<!--
+    Sample SLA involving third parties for measurement and
+    condition evaluation.
+
+    Authors: Heiko Ludwig, hludwig@us.ibm.com
+             Richard P. King, rpk@us.ibm.com
+             Alexander Keller, alexk@us.ibm.com
+    Date: November 11, 2002
+
+-->
+
+<SLA xmlns="http://www.ibm.com/wsla"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.ibm.com/wsla WSLA.xsd"
+     name="DemoSLA123" >
+
+<!-- Definition of the Involved Parties, the signatory parties as well as
+    the supporting ones -->
+
+<Parties>
+    <ServiceProvider
+        name="ACMEProvider">
+      <Contact>
+        <Street>PO BOX 218</Street>
+        <City>Yorktown, NY 10598, USA</City>
+      </Contact>
+	<Action xsi:type="WSDLSOAPOperationDescriptionType"
+              name="notification"
+	        partyName="ZAuditing">
+	  <WSDLFile>Notification.wsdl</WSDLFile>
+        <SOAPBindingName>SOAPNotificationBinding</SOAPBindingName>
+        <SOAPOperationName>Notify</SOAPOperationName>
+      </Action>
+    </ServiceProvider>
+
+    <ServiceConsumer
+      name="XInc">
+      <Contact>
+        <Street>19 Skyline Drive</Street>
+        <City>Hawthorne, NY 10532, USA</City>
+      </Contact>
+	<Action xsi:type="WSDLSOAPOperationDescriptionType"
+              name="notification"
+	        partyName="ZAuditing">
+	  <WSDLFile>Notification.wsdl</WSDLFile>
+        <SOAPBindingName>SOAPNotificationBinding</SOAPBindingName>
+        <SOAPOperationName>Notify</SOAPOperationName>
+      </Action>
+    </ServiceConsumer>
+
+    <SupportingParty
+      name="YMeasurements"
+	   role="MeasurementService">
+        <Contact>
+            <Street>Saeumerstrasse 4</Street>
+            <City>CH-8803 Rueschlikon, Switzerland</City>
+        </Contact>
+	<Sponsor>ACMEProvider</Sponsor>
+    </SupportingParty>
+
+    <SupportingParty
+      name="ZAuditing"
+	role="ConditionEvaluationService">
+      <Contact>
+        <Street>Hursley Park</Street>
+        <City>Winchester, England, SO21 2JN</City>
+      </Contact>
+	<Action xsi:type="WSDLSOAPOperationDescriptionType"
+              name="parameterUpdate"
+	        partyName="ZAuditing">
+	  <WSDLFile>ParameterUpdate.wsdl</WSDLFile>
+        <SOAPBindingName>SOAPNotificationBinding</SOAPBindingName>
+        <SOAPOperationName>parameterUpdate</SOAPOperationName>
+      </Action>
+	<Sponsor>ACMEProvider</Sponsor>
+	<Sponsor>XInc</Sponsor>
+    </SupportingParty>
+
+</Parties>
+
+
+<!-- The definition of the service in terms of the service parameters
+    and their measurement. -->
+
+<ServiceDefinition
+    name="DemoService">
+
+      <Schedule name="businessdayschedule">
+        <Period>
+          <Start>2001-11-30T14:00:00.000-05:00</Start>
+          <End>2001-12-31T14:00:00.000-05:00</End>
+        </Period>
+        <Interval>
+          <Minutes>1440</Minutes>
+        </Interval>
+    </Schedule>
+
+      <Schedule name="hourlyschedule">
+        <Period>
+          <Start>2001-11-30T14:00:00.000-05:00</Start>
+          <End>2001-12-31T14:00:00.000-05:00</End>
+        </Period>
+        <Interval>
+          <Minutes>60</Minutes>
+        </Interval>
+      </Schedule>
+
+      <Schedule name="5minuteschedule">
+        <Period>
+          <Start>2001-11-30T14:00:00.000-05:00</Start>
+          <End>2001-12-31T14:00:00.000-05:00</End>
+        </Period>
+        <Interval>
+          <Minutes>5</Minutes>
+        </Interval>
+    </Schedule>
+
+      <Schedule name="availabilityschedule">
+        <Period>
+          <Start>2001-11-30T14:00:00.000-05:00</Start>
+          <End>2001-12-31T14:00:00.000-05:00</End>
+        </Period>
+        <Interval>
+          <Minutes>1</Minutes>
+        </Interval>
+    </Schedule>
+
+    <Operation name="GetQuote" xsi:type="WSDLSOAPOperationDescriptionType">
+
+      <SLAParameter name="OverloadPercentage"
+                        type="float"
+                        unit="Percentage">
+        <Metric>OverloadPercentageMetric</Metric>
+	<Communication>
+	  <Source>ACMEProvider</ Source >
+	  <Pull>ZAuditing</Pull>
+	  <Push>ZAuditing</Push>
+	</Communication>
+      </SLAParameter>
+
+      <SLAParameter name="TransactionRate"
+                        type="float"
+                        unit="transactions / hour">
+       <Metric>Transactions</Metric>
+	    <Communication>
+	      <Source>ACMEProvider</Source>
+	      <Pull>ZAuditing</Pull>
+	      <Push>ZAuditing</Push>
+	    </Communication>
+      </SLAParameter>
+
+      <SLAParameter name="Availability_CurrentDownTime"
+                        type="long"
+                        unit="minutes">
+        <Metric>CurrentDownTime</Metric>
+          <Communication>
+            <Source>YMeasurement</Source>
+            <Push>ZAuditing</Push>
+          </Communication>
+      </SLAParameter>
+
+      <SLAParameter name="Availability_UpTimeRatio"
+                        type="float"
+                        unit="">
+        <Metric>UpTimeRatio</Metric>
+	     <Communication>
+          <Source>YMeasurement</Source>
+	       <Push>ZAuditing</Push>
+	     </Communication>
+      </SLAParameter>
+
+      <Metric name="OverloadPercentageMetric" type="float" unit="Percentage">
+        <Source>YMeasurement</Source>
+        <Function xsi:type="PercentageGreaterThanThreshold" resultType="float">
+           <Schedule>businessdayschedule</Schedule> 
+           <Metric>UtilizationTimeSeries</Metric>
+              <Value>
+                 <LongScalar>0.8</LongScalar> <!-- 80% -->
+              </Value>
+        </Function>
+      </Metric>
+
+      <Metric name="UtilizationTimeSeries" type="TS" unit="">
+        <Source>YMeasurement</Source>
+        <Function xsi:type="TSConstructor" resultType="float">
+            <Schedule>5minuteschedule</Schedule>
+            <Metric>ProbedUtilization</Metric>
+            <Window>12</Window>
+         </Function>
+      </Metric>
+
+      <Metric name="ProbedUtilization" type="float" unit="">
+        <Source>YMeasurement</Source>
+        <MeasurementDirective xsi:type="Gauge" resultType="float">
+            <RequestURL>http://acme.com/SystemUtil</RequestURL>
+        </MeasurementDirective>
+      </Metric>
+
+      <Metric name="Transactions" type="long" unit="transactions">
+          <Source>ACMEProvider</Source>
+          <Function xsi:type="Minus" resultType="double">
+            <Operand>
+                <Function xsi:type="TSSelect" resultType="long">
+                  <Operand>
+                    <Metric>SumTransactionTimeSeries</Metric>
+                  </Operand>
+                  <Element>0</Element>
+                </Function>
+            </Operand>
+            <Operand>
+                <Function xsi:type="TSSelect" resultType="long">
+                  <Operand>
+                    <Metric>SumTransactionTimeSeries</Metric>
+                  </Operand>
+                  <Element>-1</Element>
+                </Function>
+            </Operand>
+          </Function>
+      </Metric>
+
+      <Metric name="SumTransactionTimeSeries" type="TS" unit="transactions">
+          <Source>ACMEProvider</Source>
+          <Function xsi:type="TSConstructor" resultType="TS">
+              <Schedule>hourlyschedule</Schedule>
+              <Metric>SumTransactions</Metric>
+              <Window>2</Window>
+          </Function>
+      </Metric>
+
+       <Metric name="ResponseTime" type="long" unit="milliseconds">
+          <Source>ACMEProvider</Source>
+          <Function xsi:type="Minus" resultType="double">
+              <Operand>
+                <Function xsi:type="TSSelect" resultType="long">
+                  <Operand>
+                    <Metric>SumResponseTimeTimeSeries</Metric>
+                  </Operand>
+                  <Element>0</Element>
+                </Function>
+              </Operand>
+              <Operand>
+                <Function xsi:type="TSSelect" resultType="long">
+                  <Operand>
+                    <Metric>SumResponseTimeTimeSeries</Metric>
+                  </Operand>
+                  <Element>-1</Element>
+                </Function>
+              </Operand>
+          </Function>
+      </Metric>
+
+       <Metric name="SumResponseTimeTimeSeries" type="TS" unit="milliseconds">
+          <Source>ACMEProvider</Source>
+          <Function xsi:type="TSConstructor" resultType="TS">
+              <Schedule>hourlyschedule</Schedule>
+              <Metric>SumResponseTime</Metric>
+              <Window>2</Window>
+          </Function>
+      </Metric>
+
+      <Metric name="SumTransactions" type="long" unit="tansactions">
+          <Source>ACMEProvider</Source>
+          <MeasurementDirective xsi:type="InvocationCount" resultType="long"/>
+      </Metric>
+
+       <Metric name="SumResponseTime" type="long" unit="milliseconds">
+          <Source>ACMEProvider</Source>
+          <MeasurementDirective xsi:type="SumResponseTime" resultType="long"/>
+      </Metric>
+
+
+      <Metric name="CurrentDownTime" type="long" unit="minutes">
+          <Source>YMeasurement</Source>
+          <Function xsi:type="Span" resultType="double">
+              <Metric>StatusTimeSeries</Metric>
+              <Value>
+                <LongScalar>0</LongScalar>
+              </Value>
+          </Function>
+      </Metric>
+
+      <Metric name="UpTimeRatio" type="long" unit="">
+          <Source>YMeasurement</Source>
+          <Function xsi:type="Minus" resultType="double">
+              <Operand>
+                <LongScalar>1</LongScalar>
+              </Operand>
+              <Operand>
+                <Function xsi:type="Divide" resultType="long">
+                  <Operand>
+                    <Function xsi:type="ValueOccurs" resultType="long">
+                      <Metric>StatusTimeSeries</Metric>
+                      <Value>
+                        <LongScalar>0</LongScalar>
+                      </Value>
+                    </Function>
+                  </Operand>
+                  <Operand>
+                    <LongScalar>1440</LongScalar>
+                  </Operand>
+                </Function>
+              </Operand>
+          </Function>
+      </Metric>
+
+      <Metric name="StatusTimeSeries" type="TS" unit="">
+          <Source>YMeasurement</Source>
+          <Function xsi:type="TSConstructor" resultType="TS">
+              <Schedule>availabilityschedule</Schedule>
+              <Metric>MeasuredStatus</Metric>
+              <Window>1440</Window>
+          </Function>
+      </Metric>
+
+      <Metric name="MeasuredStatus" type="integer" unit="">
+          <Source>YMeasurement</Source>
+          <MeasurementDirective xsi:type="StatusRequest" resultType="integer">
+               <RequestURI>http://ymeasurement.com/StatusRequest/GetQuote</RequestURI>
+          </MeasurementDirective>
+      </Metric>
+
+      <WSDLFile>DemoService.wsdl</WSDLFile>
+      <SOAPBindingName>SOAPNotificationBinding</SOAPBindingName>
+      <SOAPOperationName>getQuote</SOAPOperationName>
+  </Operation>
+
+</ServiceDefinition>
+
+
+<!-- The obligations of the parties, referring to parameters defined above.
+-->
+
+
+  <Obligations>
+
+    <ServiceLevelObjective name="ConditionalSLOForTransactionRate">
+      <Obliged>ACMEProvider</Obliged>
+      <Validity>
+         <Start>2001-11-30T14:00:00.000-05:00</Start>
+         <End>2001-12-31T14:00:00.000-05:00</End>
+      </Validity>
+      <Expression>
+        <Implies>
+          <Expression>
+            <Predicate xsi:type="Less">
+              <SLAParameter>OverloadPercentage</SLAParameter>
+              <Value>0.3</Value>      <!-- 30% -->
+            </Predicate>
+          </Expression>
+          <Expression>
+            <Predicate xsi:type="Greater">
+              <SLAParameter>TransactionRate</SLAParameter>
+              <Value>1000</Value>
+            </Predicate>
+           </Expression>
+         </Implies>
+      </Expression>
+      <EvaluationEvent>NewValue</EvaluationEvent>
+    </ServiceLevelObjective>
+
+    <ServiceLevelObjective name="UpTimeSLO">
+      <Obliged>ACMEProvider</Obliged>
+      <Validity>
+          <Start>2001-11-30T14:00:00.000-05:00</Start>
+          <End>2001-12-31T14:00:00.000-05:00</End>
+      </Validity>
+      <Expression>
+        <Predicate xsi:type="Greater">
+          <SLAParameter>Availability_UpTimeRatio</SLAParameter>
+          <Value>0.97</Value>
+        </Predicate>
+      </Expression>
+      <EvaluationEvent>NewValue</EvaluationEvent> 
+    </ServiceLevelObjective>
+
+    <ServiceLevelObjective name="ContinuousDowntimeSLO">
+      <Obliged>ACMEProvider</Obliged>
+      <Validity>
+          <Start>2001-11-30T14:00:00.000-05:00</Start>
+          <End>2001-12-31T14:00:00.000-05:00</End>
+      </Validity>
+      <Expression>
+        <Predicate xsi:type="Less">
+          <SLAParameter>Availability_CurrentDownTime</SLAParameter>
+          <Value>10</Value>
+        </Predicate>
+      </Expression>
+      <EvaluationEvent>NewValue</EvaluationEvent> 
+    </ServiceLevelObjective>
+
+    <ActionGuarantee name="UpTimeNotificationGuarantee">
+      <Obliged>ZAuditing</Obliged>
+      <Expression>
+        <Predicate xsi:type="Violation">
+          <ServiceLevelObjective>UpTimeSLO</ServiceLevelObjective>
+        </Predicate>
+      </Expression>
+      <EvaluationEvent>NewValue</EvaluationEvent> 
+      <QualifiedAction>
+        <Party>XInc</Party>
+        <Action actionName="notification" xsi:type="Notification">
+	  <NotificationType>Violation</NotificationType>
+	  <CausingGuarantee>UpTimeNotificationGuarantee 3</CausingGuarantee>
+	  <SLAParameter>Availability_UpTimeRatio</SLAParameter>
+	</Action> 
+      </QualifiedAction>
+      <ExecutionModality>Always</ExecutionModality>
+    </ActionGuarantee>
+
+    <ActionGuarantee name="ContinuousDowntimeNotificationGuarantee">
+      <Obliged>ZAuditing</Obliged>
+      <Expression>
+        <Predicate xsi:type="Violation">
+          <ServiceLevelObjective>ContinuousDowntimeSLO</ServiceLevelObjective>
+        </Predicate>      </Expression>
+      <EvaluationEvent>NewValue</EvaluationEvent> 
+      <QualifiedAction>
+        <Party>XInc</Party>
+        <Action actionName="notification" xsi:type="Notification">
+	  <NotificationType>Violation</NotificationType>
+	  <CausingGuarantee>ContinuousDowntimeNotificationGuarantee 4</CausingGuarantee>
+	  <SLAParameter>Availability_CurrentDownTime</SLAParameter>
+	</Action> 
+      </QualifiedAction>
+      <ExecutionModality>Always</ExecutionModality>
+    </ActionGuarantee>
+
+    <ActionGuarantee name="ConstrainedTARateGuarantee">
+      <Obliged>ZAuditing</Obliged>
+      <Expression>
+        <Predicate xsi:type="Violation">
+          <ServiceLevelObjective>ConditionalSLOForTransactionRate</ServiceLevelObjective>
+        </Predicate>
+      </Expression>
+      <EvaluationEvent>NewValue</EvaluationEvent> 
+      <QualifiedAction>
+        <Party>XInc</Party>
+        <Action actionName="notification" xsi:type="Notification">
+	  <NotificationType>Violation</NotificationType>
+	  <CausingGuarantee> ConstrainedTARateGuarantee</CausingGuarantee>
+	  <SLAParameter>OverloadPercentage TransactionRate</SLAParameter>
+	</Action> 
+      </QualifiedAction>
+      <ExecutionModality>Always</ExecutionModality>
+    </ActionGuarantee>
+
+
+  </Obligations>
+
+</SLA>
+  
+
+ 

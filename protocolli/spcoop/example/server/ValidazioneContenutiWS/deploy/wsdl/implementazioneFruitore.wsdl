@@ -1,0 +1,56 @@
+<!-- Definizione WSDL -->
+<wsdl:definitions targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:service="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:types="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+
+
+
+<!-- **** Import WSDLLogico ****-->
+<wsdl:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service" location="logicoFruitore.wsdl" />
+
+
+
+<!-- **** Binding **** -->
+
+<!-- Servizio EsitoAggiornamentoAsincronoWrappedDocumentLiteral -->
+<wsdl:binding name="EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBinding" 
+              type="service:EsitoAggiornamentoAsincronoWrappedDocumentLiteral">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="esitoAggiornamentoUtenteAsincronoSimmetricoWDL">
+         <wsdlsoap:operation soapAction="esitoAggiornamentoUtenteAsincronoSimmetricoWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+      <wsdl:operation name="esitoAggiornamentoUtenteAsincronoAsimmetricoWDL">
+         <wsdlsoap:operation soapAction="esitoAggiornamentoUtenteAsincronoAsimmetricoWDL"/>
+         <wsdl:input name="richiesta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="risposta">
+            <wsdlsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+
+</wsdl:binding>
+
+
+
+
+
+<!-- ***** service ********* -->
+
+<!-- Servizio EsitoAggiornamentoAsincronoWrappedDocumentLiteral -->
+<wsdl:service name="EsitoAggiornamentoAsincronoWrappedDocumentLiteralService">
+      <wsdl:port binding="service:EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBinding" name="EsitoAggiornamentoAsincronoWrappedDocumentLiteral">
+        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+      </wsdl:port>
+</wsdl:service>
+
+
+
+</wsdl:definitions>

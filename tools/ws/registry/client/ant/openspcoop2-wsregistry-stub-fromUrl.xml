@@ -1,0 +1,144 @@
+<project name="openspcoop2-stub-fromurl-wsregistry">
+    <description>
+        Produzione degli stub relativi al package org.openspcoop2.core.registry.ws.client dal servizio installato
+    </description>
+	
+	<import file="openspcoop2-wsregistry-stub.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<target name="-build_stub_cxf_from_url">
+			
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="AccordoCooperazione"/>
+			<param name="stubVariableEntity" value="accordoCooperazione"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.accordocooperazione"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/AccordoCooperazione/Soap11?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/accordocooperazione"/>
+			<param name="stubJavaClassNameClient" value="AccordoCooperazione_AccordoCooperazionePortSoap11_Client.java"/>
+		</antcall>
+			
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="AccordoCooperazione"/>
+			<param name="stubVariableEntity" value="accordoCooperazione"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.accordocooperazione"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/AccordoCooperazione/Soap12?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/accordocooperazione"/>
+			<param name="stubJavaClassNameClient" value="AccordoCooperazione_AccordoCooperazionePortSoap12_Client.java"/>
+		</antcall>
+			
+		
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="AccordoServizioParteComune"/>
+			<param name="stubVariableEntity" value="accordoServizioParteComune"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/AccordoServizioParteComune/Soap11?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/accordoserviziopartecomune"/>
+			<param name="stubJavaClassNameClient" value="AccordoServizioParteComune_AccordoServizioParteComunePortSoap11_Client.java"/>
+		</antcall>
+			
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="AccordoServizioParteComune"/>
+			<param name="stubVariableEntity" value="accordoServizioParteComune"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/AccordoServizioParteComune/Soap12?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/accordoserviziopartecomune"/>
+			<param name="stubJavaClassNameClient" value="AccordoServizioParteComune_AccordoServizioParteComunePortSoap12_Client.java"/>
+		</antcall>
+			
+		
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="PortaDominio"/>
+			<param name="stubVariableEntity" value="portaDominio"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.portadominio"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/PortaDominio/Soap11?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/portadominio"/>
+			<param name="stubJavaClassNameClient" value="PortaDominio_PortaDominioPortSoap11_Client.java"/>
+		</antcall>
+			
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="PortaDominio"/>
+			<param name="stubVariableEntity" value="portaDominio"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.portadominio"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/PortaDominio/Soap12?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/portadominio"/>
+			<param name="stubJavaClassNameClient" value="PortaDominio_PortaDominioPortSoap12_Client.java"/>
+		</antcall>
+			
+		
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="Soggetto"/>
+			<param name="stubVariableEntity" value="soggetto"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.soggetto"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/Soggetto/Soap11?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/soggetto"/>
+			<param name="stubJavaClassNameClient" value="Soggetto_SoggettoPortSoap11_Client.java"/>
+		</antcall>
+			
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="Soggetto"/>
+			<param name="stubVariableEntity" value="soggetto"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.soggetto"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/Soggetto/Soap12?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/soggetto"/>
+			<param name="stubJavaClassNameClient" value="Soggetto_SoggettoPortSoap12_Client.java"/>
+		</antcall>
+			
+		
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="AccordoServizioParteSpecifica"/>
+			<param name="stubVariableEntity" value="accordoServizioParteSpecifica"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/AccordoServizioParteSpecifica/Soap11?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/accordoserviziopartespecifica"/>
+			<param name="stubJavaClassNameClient" value="AccordoServizioParteSpecifica_AccordoServizioParteSpecificaPortSoap11_Client.java"/>
+		</antcall>
+			
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="AccordoServizioParteSpecifica"/>
+			<param name="stubVariableEntity" value="accordoServizioParteSpecifica"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/AccordoServizioParteSpecifica/Soap12?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/accordoserviziopartespecifica"/>
+			<param name="stubJavaClassNameClient" value="AccordoServizioParteSpecifica_AccordoServizioParteSpecificaPortSoap12_Client.java"/>
+		</antcall>
+			
+	</target>
+	
+	
+</project>

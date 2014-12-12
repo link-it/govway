@@ -1,0 +1,41 @@
+<project name="openspcoop2-build-backwardCompatibility">
+    <description>
+        Produzione del war della PddConsole
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
+	<target name="war_openspcoop2_backwardCompatibility">
+		
+		<war destfile="${dist_backwardCompatibility}/OpenSPCoopV1BackwardCompatibility.war" webxml="${src_backwardCompatibility}/WEB-INF/web.xml">
+			
+			<!-- Informazioni sulla versione -->
+			<fileset dir="${openspcoop2}">
+				<include name="README.txt" />
+				<include name="COPYING" />
+			</fileset>
+
+			<webinf dir="${src_backwardCompatibility}/WEB-INF">
+				<include name="jbossws-cxf.xml" />
+			</webinf>
+
+			<lib dir="${dist_backwardCompatibility}">
+				<include name="openspcoop2*.jar" />
+			</lib>
+			
+			<classes dir="${deploy_backwardCompatibility}/properties">
+				<include name="backwardCompatibility.properties" />
+			</classes>
+			
+		</war>
+		
+	</target>
+	
+</project>

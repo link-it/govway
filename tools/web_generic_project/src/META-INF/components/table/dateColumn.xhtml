@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf" xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<c:set var="id" value="#{fieldDescriptor.name}" />
+	
+	<rich:column>
+		<f:facet name="header">
+			<h:outputText value="#{fieldDescriptor.label}" rendered="#{not empty fieldDescriptor.label}" />
+		</f:facet>
+
+		<h:outputText id="#{id}NoValue" value="--"
+			rendered="#{empty fieldValue.value}" />
+		<h:outputText id="#{id}DataValue" value="#{fieldValue.value}"
+			rendered="#{not empty fieldValue.value}">
+			<f:convertDateTime pattern="dd/M/yy HH:mm:ss" timeZone="Europe/Rome" />
+		</h:outputText>
+	</rich:column>
+</ui:composition>

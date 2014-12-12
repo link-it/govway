@@ -1,0 +1,5 @@
+Per avviare il client usare il comando:
+	ant run -Das=AS_VERSION -DtipoTest=[QueueText/QueueBytes/TopicText/TopicBytes] -Dusername=USERNAME -Dpassword=PASSWORD
+esempio:
+	ant run -Das=jboss7 -DtipoTest=QueueBytes -Dusername=openspcoop2 -Dpassword=123456
+

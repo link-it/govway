@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="OpenSPCoop" default="" basedir=".">
+	<description>
+        File di Script per la compilazione o l'esecuzione del Client
+    </description>
+
+	<property name="libs" value="../../../../lib/" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${libs}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="debug" location="true" />
+
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+	</target>
+
+
+	<!-- Compilazione del Client -->
+	<target name="build" depends="init_compile"
+        description="compila il Client" >
+		<!-- Compile the java code  -->
+		<javac destdir="${build}" debug="${debug}">
+			<!--<compilerarg value="-Xlint:unchecked"/>
+                        <compilerarg value="-Xlint:deprecation"/>-->
+			<src path="${src}" />
+			<classpath>
+				<fileset dir="${libs}" includes="**/*.jar"/>
+			</classpath>
+		</javac>
+	</target>
+	
+
+
+	<!-- Run the Client -->
+	<target name="run" depends=""
+        description="Esegue il Client" >
+		
+		<if>
+			<equals arg1="${as}" arg2="$${as}"/>
+		    <then>
+		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant run -Das=VERSION (indicare jbossVersionNumber es. jboss6)"/>
+			</then>
+		</if>
+
+		<delete dir="${build}/jmxlib"/>
+		<mkdir dir="${build}/jmxlib"/>	
+		<if>
+			<not>
+				<matches string="${as}" pattern="tomcat.*"/>
+			</not>
+			<then>
+				<copy todir="${build}/jmxlib">
+						<fileset dir="${libs}/jbossas/${as}"/>
+				</copy>
+			</then>
+		</if>
+	
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.example.pdd.client.jmx.Client" fork="false">
+			<arg value="${as}" />
+			<classpath>
+				<fileset dir="${build}/jmxlib">
+					<include name="*.jar"/>
+				</fileset>
+				<pathelement path="${build}"/>
+			</classpath>
+		</java>
+		
+	</target>
+
+
+
+</project>

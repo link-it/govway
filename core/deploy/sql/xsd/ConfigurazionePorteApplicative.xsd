@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/config/pa" targetNamespace="http://www.openspcoop2.org/config/pa"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xsd:annotation>
+        <xsd:appinfo>
+            <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:info version="1.0" project-name="ConfigurazionePorteapplicative">
+                    <linkit:authors>
+                        <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                    </linkit:authors>
+                </linkit:info>
+                <linkit:jax-ws xml-annotations="false" ws="false"/>
+            </linkit:project_generator>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:dao>
+                    <linkit:sql>
+                        <linkit:sql-script generate="true">
+                            <linkit:sql-table-list>
+                                <linkit:sql-comment><![CDATA[**** Porte Applicative ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="porte-applicative" object-type="porte-applicative"/>
+                                <linkit:sql-table object-name="porte-applicative-sa" object-type="porte-applicative-sa"/>
+                                <linkit:sql-table object-name="porte-applicative-prop" object-type="NomeValore"/>
+                                <linkit:sql-table object-name="porte-applicative-mtom-request" object-type="MtomFlowParameter"/>
+                                <linkit:sql-table object-name="porte-applicative-mtom-response" object-type="MtomFlowParameter"/>
+                                <linkit:sql-table object-name="porte-applicative-ws-request" object-type="NomeValoreAsText"/>
+                                <linkit:sql-table object-name="porte-applicative-ws-response" object-type="NomeValoreAsText"/>
+                                <linkit:sql-table object-name="porte-applicative-correlazione" object-type="porte-applicative-correlazione"/>
+                                <linkit:sql-table object-name="porte-applicative-correlazione-risposta" object-type="porte-applicative-correlazione-risposta"/>
+                            </linkit:sql-table-list>
+                        </linkit:sql-script>
+                        <linkit:sql-mapping single-table-mapping="false"
+                            on-delete-cascade="false" force-tolowercase-sqlname="false" check-tables-order-list="false"/>
+                    </linkit:sql>
+                </linkit:dao>
+            </linkit:generator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    
+    
+    
+    <xsd:element name="porte-applicative">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="porte_applicative">
+                        <linkit:sql-table-foreign-key reference-table="soggetti">
+                            <linkit:sql-table-fk-field name="id_soggetto"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_soggetto"/>
+                            <linkit:sql-table-unique-field name="nome_porta"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome_porta" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_porta"/>
+                           </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="descrizione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="descrizione"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_soggetto_virtuale" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_soggetto_virtuale"/>
+                                <linkit:sql-column-comment><![CDATA[Soggetto Virtuale]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo_soggetto_virtuale" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo_soggetto_virtuale"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome_soggetto_virtuale" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_soggetto_virtuale"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_servizio" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio"/>
+                                <linkit:sql-column-comment><![CDATA[Servizio]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo_servizio" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo_servizio"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="servizio" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="servizio"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_accordo" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_accordo"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_port_type" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_port_type"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="azione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="azione"/>
+                                <linkit:sql-column-comment><![CDATA[azione]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element> 
+                <xsd:element name="mtom_request_mode" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="mtom_request_mode"/>
+                                <linkit:sql-column-comment><![CDATA[disable/packaging/unpackaging/verify]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="mtom_response_mode" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="mtom_response_mode"/>
+                                <linkit:sql-column-comment><![CDATA[disable/packaging/unpackaging/verify]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ws_security" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ws_security"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ws_security_mtom_req" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ws_security_mtom_req"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ws_security_mtom_res" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ws_security_mtom_res"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ricevuta_asincrona_sim" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ricevuta_asincrona_sim"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ricevuta_asincrona_asim" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ricevuta_asincrona_asim"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="validazione_contenuti_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="validazione_contenuti_stato"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="validazione_contenuti_tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="validazione_contenuti_tipo"/>
+                                <linkit:sql-column-comment><![CDATA[wsdl/openspcoop/xsd]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="validazione_contenuti_mtom" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="validazione_contenuti_mtom"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="integrazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="integrazione"/>
+                                <linkit:sql-column-comment><![CDATA[lista di tipi separati dalla virgola]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="scadenza_correlazione_appl" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="scadenza_correlazione_appl"/>
+                                <linkit:sql-column-comment><![CDATA[scadenza correlazione applicativa]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="allega_body" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="allega_body"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="scarta_body" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="scarta_body"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gestione_manifest" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="gestione_manifest"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stateless" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stateless"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="behaviour" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="behaviour"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="autorizzazione_contenuto" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="autorizzazione_contenuto"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_soggetto" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-column-comment><![CDATA[proprietario porta applicativa]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ora_registrazione" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-sa">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="porte_applicative_sa">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="servizi_applicativi">
+                            <linkit:sql-table-fk-field name="id_servizio_applicativo"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="id_servizio_applicativo"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_PA_SA">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_servizio_applicativo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio_applicativo"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    <xsd:element name="porte-applicative-prop" type="NomeValore">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_properties">
+                        <linkit:sql-table-constraint unique="pa_properties"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                            <linkit:sql-table-unique-field name="valore"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_PA_PROP">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    
+    <xsd:element name="porte-applicative-mtom-request" type="MtomFlowParameter">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_mtom_request">
+                        <linkit:sql-table-constraint unique="pa_mtom_request"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PA_MTOMTREQ">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    
+    <xsd:element name="porte-applicative-mtom-response" type="MtomFlowParameter">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_mtom_response">
+                        <linkit:sql-table-constraint unique="pa_mtom_response"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PA_MTOMTRES">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    
+    <xsd:element name="porte-applicative-ws-request" type="NomeValoreAsText">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_ws_request">
+                        <linkit:sql-table-constraint unique="pa_ws_request"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PA_WSSREQ">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    
+    <xsd:element name="porte-applicative-ws-response" type="NomeValoreAsText">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_ws_response">
+                        <linkit:sql-table-constraint unique="pa_ws_response"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PA_WSSRES">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    
+    <xsd:complexType name="NomeValore">
+        <xsd:sequence>
+            <xsd:element name="id_porta" type="xsd:long">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="id_porta"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="nome" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="nome"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="valore" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="valore"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="NomeValoreAsText">
+        <xsd:sequence>
+            <xsd:element name="id_porta" type="xsd:long">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="id_porta"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="nome" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="nome"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="valore" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="valore" text="true"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="MtomFlowParameter">
+        <xsd:sequence>
+            <xsd:element name="id_porta" type="xsd:long">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="id_porta"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="nome" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="nome"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="pattern" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="pattern" text="true"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="content-type" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="content_type"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="required" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="required"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    
+    <xsd:element name="porte-applicative-correlazione">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_correlazione">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome_elemento" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_elemento"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="mode_correlazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="mode_correlazione"/>
+                                <linkit:sql-column-comment><![CDATA[modalita di scelta user input, content-based, url-based, disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern" text="true"/>
+                                <linkit:sql-column-comment><![CDATA[pattern utilizzato solo per content/url based]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="identificazione_fallita" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="identificazione_fallita"/>
+                                <linkit:sql-column-comment><![CDATA[blocca/accetta]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-correlazione-risposta">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_correlazione_risposta">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome_elemento" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_elemento"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="mode_correlazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="mode_correlazione"/>
+                                <linkit:sql-column-comment><![CDATA[modalita di scelta user input, content-based, url-based, disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern" text="true"/>
+                                <linkit:sql-column-comment><![CDATA[pattern utilizzato solo per content/url based]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="identificazione_fallita" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="identificazione_fallita"/>
+                                <linkit:sql-column-comment><![CDATA[blocca/accetta]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    <!-- TABELLA DI SERVIZIO PER POTER COSTRUIRE LA FOREIGN KEY -->
+    <xsd:element name="servizi-applicativi">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi_applicativi">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="soggetti">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="soggetti">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+</xsd:schema>

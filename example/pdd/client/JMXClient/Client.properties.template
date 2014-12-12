@@ -1,0 +1,58 @@
+# Comunicazione verso il server
+# Factory
+jmx.factory=org.jnp.interfaces.NamingContextFactory
+# Server 
+# jboss 4.x, 5.x, 6.x
+#jmx.server=jnp://127.0.0.1:1099
+# jboss 7.x e 8.x
+jmx.server=service:jmx:remoting-jmx://127.0.0.1:9999
+# tomcat
+#jmx.server=service:jmx:rmi:///jndi/rmi://:9999/jmxrmi
+# Username e Password
+jmx.username=admin
+jmx.password=admin
+
+
+
+
+# Operazioni da Effettuare
+
+
+# ----- org.openspcoop2.pdd:AccessoRegistroServizi --------
+
+# Lettura proprieta' (elencare i nomi separati da virgole)
+accessoRegistroServizi.readProperties=cacheAbilitata,registriServizi
+
+# Invocazione 'resetCache'
+accessoRegistroServizi.resetCache=true
+
+
+
+
+# ----- org.openspcoop2.pdd:ConfigurazionePdD --------
+
+# Lettura proprieta' (elencare i nomi separati da virgole)
+configurazionePdD.readProperties=cacheAbilitata,msgDiagnosticiLivelloSeverita,msgDiagnosticiLivelloSeveritaLog4J,tracciamentoAbilitato,dumpApplicativoAbilitato,msgDiagnosticiAppender,tracciamentoAppender
+
+# Invocazione 'resetCache'
+configurazionePdD.resetCache=true
+
+
+
+# ----- org.openspcoop2.pdd:AutorizzazioneBuste --------
+
+# Lettura proprieta' (elencare i nomi separati da virgole)
+autorizzazioneBuste.readProperties=tipoAutorizzazioneBuste,cacheAbilitata
+
+# Invocazione 'resetCache'
+autorizzazioneBuste.resetCache=true
+
+
+
+# ----- org.openspcoop2.pdd:RepositoryMessaggi --------
+
+# Lettura proprieta' (elencare i nomi separati da virgole)
+repositoryMessaggi.readProperties=tipoRepository,cacheAbilitata
+
+# Invocazione 'resetCache'
+repositoryMessaggi.resetCache=true

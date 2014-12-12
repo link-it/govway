@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Body>
+<example:operation xmlns:example="http://www.openspcoop2.org/example/">
+	<example:nominativo>Rossi Mario, attivazione in corso</example:nominativo>
+	<example:nominativo>Andrea Verdi, disattivato</example:nominativo>
+	<example:idApplicativo>223242424_32323_ABDKD_233</example:idApplicativo>
+</example:operation>
+</soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoop2Testsuite_LocalEnv" basedir=".">
+
+      <property name="openspcoop2" location="../../../../.." />
+
+	  <!-- ApplicationServer version -->
+	  <property name="as" value="jboss/tomcat" />
+
+	  <property name="ws_validazione_lib" value="${openspcoop2}/lib"/>
+
+	  <property name="appServer_url" value="http://127.0.0.1:8080/" />
+      
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+
+</project>

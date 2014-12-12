@@ -1,0 +1,167 @@
+/*
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved.
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package org.openspcoop2.core.registry.constants;
+
+import java.io.Serializable;
+import java.util.List;
+
+import org.openspcoop2.generic_project.beans.IEnumeration;
+
+/**     
+ * Enumeration dell'elemento ProfiloCollaborazione xsd (tipo:string) 
+ *
+ * @author Poli Andrea (poli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
+@javax.xml.bind.annotation.XmlType(name = "ProfiloCollaborazione")
+@javax.xml.bind.annotation.XmlEnum(String.class)
+public enum ProfiloCollaborazione implements IEnumeration , Serializable , Cloneable {
+
+	@javax.xml.bind.annotation.XmlEnumValue("oneway")
+	ONEWAY ("oneway"),
+	@javax.xml.bind.annotation.XmlEnumValue("sincrono")
+	SINCRONO ("sincrono"),
+	@javax.xml.bind.annotation.XmlEnumValue("asincronoSimmetrico")
+	ASINCRONO_SIMMETRICO ("asincronoSimmetrico"),
+	@javax.xml.bind.annotation.XmlEnumValue("asincronoAsimmetrico")
+	ASINCRONO_ASIMMETRICO ("asincronoAsimmetrico");
+	
+	
+	/** Value */
+	private String value;
+	@Override
+	public String getValue()
+	{
+		return this.value;
+	}
+
+
+	/** Official Constructor */
+	ProfiloCollaborazione(String value)
+	{
+		this.value = value;
+	}
+
+
+	
+	@Override
+	public String toString(){
+		return this.value;
+	}
+	public boolean equals(ProfiloCollaborazione object){
+		if(object==null)
+			return false;
+		if(object.getValue()==null)
+			return false;
+		return object.getValue().equals(this.getValue());	
+	}
+	public boolean equals(String object){
+		if(object==null)
+			return false;
+		return object.equals(this.getValue());	
+	}
+	
+		
+	
+	/** compatibility with the generated bean (reflection) */
+	public boolean equals(Object object,List<String> fieldsNotCheck){
+		if( !(object instanceof ProfiloCollaborazione) ){
+			throw new RuntimeException("Wrong type: "+object.getClass().getName());
+		}
+		return this.equals(((ProfiloCollaborazione)object));
+	}
+	public String toString(boolean reportHTML){
+		return toString();
+	}
+  	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
+  		return toString();
+  	}
+  	public String diff(Object object,StringBuffer bf,boolean reportHTML){
+		return bf.toString();
+	}
+	public String diff(Object object,StringBuffer bf,boolean reportHTML,List<String> fieldsNotIncluded){
+		return bf.toString();
+	}
+	
+	
+	/** Utilities */
+	
+	public static String[] toArray(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (ProfiloCollaborazione tmp : values()) {
+			res[i]=tmp.getValue();
+			i++;
+		}
+		return res;
+	}	
+	public static String[] toStringArray(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (ProfiloCollaborazione tmp : values()) {
+			res[i]=tmp.toString();
+			i++;
+		}
+		return res;
+	}
+	public static String[] toEnumNameArray(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (ProfiloCollaborazione tmp : values()) {
+			res[i]=tmp.name();
+			i++;
+		}
+		return res;
+	}
+	
+	public static boolean contains(String value){
+		return toEnumConstant(value)!=null;
+	}
+	
+	public static ProfiloCollaborazione toEnumConstant(String value){
+		ProfiloCollaborazione res = null;
+		if(ProfiloCollaborazione.ONEWAY.getValue().equals(value)){
+			res = ProfiloCollaborazione.ONEWAY;
+		}else if(ProfiloCollaborazione.SINCRONO.getValue().equals(value)){
+			res = ProfiloCollaborazione.SINCRONO;
+		}else if(ProfiloCollaborazione.ASINCRONO_SIMMETRICO.getValue().equals(value)){
+			res = ProfiloCollaborazione.ASINCRONO_SIMMETRICO;
+		}else if(ProfiloCollaborazione.ASINCRONO_ASIMMETRICO.getValue().equals(value)){
+			res = ProfiloCollaborazione.ASINCRONO_ASIMMETRICO;
+		}
+		return res;
+	}
+	
+	public static IEnumeration toEnumConstantFromString(String value){
+		ProfiloCollaborazione res = null;
+		if(ProfiloCollaborazione.ONEWAY.toString().equals(value)){
+			res = ProfiloCollaborazione.ONEWAY;
+		}else if(ProfiloCollaborazione.SINCRONO.toString().equals(value)){
+			res = ProfiloCollaborazione.SINCRONO;
+		}else if(ProfiloCollaborazione.ASINCRONO_SIMMETRICO.toString().equals(value)){
+			res = ProfiloCollaborazione.ASINCRONO_SIMMETRICO;
+		}else if(ProfiloCollaborazione.ASINCRONO_ASIMMETRICO.toString().equals(value)){
+			res = ProfiloCollaborazione.ASINCRONO_ASIMMETRICO;
+		}
+		return res;
+	}
+}

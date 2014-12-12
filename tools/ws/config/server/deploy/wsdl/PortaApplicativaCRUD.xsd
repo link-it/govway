@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tns="http://www.openspcoop2.org/core/config/management" 
+			xmlns:api="http://www.openspcoop2.org/core/config" 
+			attributeFormDefault="unqualified" 
+			elementFormDefault="qualified" 
+			targetNamespace="http://www.openspcoop2.org/core/config/management">
+			
+ 	<xsd:import schemaLocation="config.xsd" namespace="http://www.openspcoop2.org/core/config"/>
+
+	<!-- FILTRI -->
+
+	<xsd:element name="search-filter-porta-applicativa" type="tns:search-filter-porta-applicativa" />
+	<xsd:complexType name="search-filter-porta-applicativa">
+		<xsd:sequence>
+ 			<xsd:element name="soggetto-virtuale" type="tns:porta-applicativa-soggetto-virtuale" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="servizio" type="tns:porta-applicativa-servizio" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="azione" type="tns:porta-applicativa-azione" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="mtom-processor" type="tns:mtom-processor" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="validazione-contenuti-applicativi" type="tns:validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-soggetto-proprietario" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-soggetto-proprietario" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="stato-message-security" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="descrizione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ricevuta-asincrona-simmetrica" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ricevuta-asincrona-asimmetrica" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="integrazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="allega-body" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="scarta-body" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="gestione-manifest" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="stateless" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="behaviour" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="autorizzazione-contenuto" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="orCondition" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="porta-applicativa-soggetto-virtuale" type="tns:porta-applicativa-soggetto-virtuale" />
+	<xsd:complexType name="porta-applicativa-soggetto-virtuale">
+		<xsd:sequence>
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="porta-applicativa-servizio" type="tns:porta-applicativa-servizio" />
+	<xsd:complexType name="porta-applicativa-servizio">
+		<xsd:sequence>
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="porta-applicativa-azione" type="tns:porta-applicativa-azione" />
+	<xsd:complexType name="porta-applicativa-azione">
+		<xsd:sequence>
+ 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="mtom-processor-flow" type="tns:mtom-processor-flow" />
+	<xsd:complexType name="mtom-processor-flow">
+		<xsd:sequence>
+ 			<xsd:element name="mode" type="api:MTOMProcessorType" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="mtom-processor" type="tns:mtom-processor" />
+	<xsd:complexType name="mtom-processor">
+		<xsd:sequence>
+ 			<xsd:element name="request-flow" type="tns:mtom-processor-flow" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="response-flow" type="tns:mtom-processor-flow" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="validazione-contenuti-applicativi" type="tns:validazione-contenuti-applicativi" />
+	<xsd:complexType name="validazione-contenuti-applicativi">
+		<xsd:sequence>
+ 			<xsd:element name="stato" type="api:StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="api:ValidazioneContenutiApplicativiTipo" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<!-- IN USE -->
+
+	<xsd:complexType name="use-info">
+		<xsd:sequence>
+			<xsd:element name="inUseCondition" type="tns:in-use-condition" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="used" type="xsd:boolean"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="in-use-condition">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="type" type="tns:identified" minOccurs="0"/>
+			<xsd:element name="id" type="tns:objectId" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="cause" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="identified">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Soggetto"/>
+			<xsd:enumeration value="PortaDelegata"/>
+			<xsd:enumeration value="PortaApplicativa"/>
+			<xsd:enumeration value="ServizioApplicativo"/>
+		</xsd:restriction>
+ 	</xsd:simpleType>
+	<xsd:complexType name="objectId">
+		<xsd:choice>
+			<xsd:element ref="tns:wrapperIdSoggetto" />
+			<xsd:element ref="tns:wrapperIdPortaDelegata" />
+			<xsd:element ref="tns:wrapperIdPortaApplicativa" />
+			<xsd:element ref="tns:wrapperIdServizioApplicativo" />
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdSoggetto" type="tns:wrapperIdSoggetto"/>
+	<xsd:complexType name="wrapperIdSoggetto">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-soggetto" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdPortaDelegata" type="tns:wrapperIdPortaDelegata"/>
+	<xsd:complexType name="wrapperIdPortaDelegata">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-porta-delegata" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdPortaApplicativa" type="tns:wrapperIdPortaApplicativa"/>
+	<xsd:complexType name="wrapperIdPortaApplicativa">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-porta-applicativa" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdServizioApplicativo" type="tns:wrapperIdServizioApplicativo"/>
+	<xsd:complexType name="wrapperIdServizioApplicativo">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-servizio-applicativo" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<!-- EXCEPTION -->
+	<xsd:element name="config-service-exception" type="tns:config-service-exception"/>
+	<xsd:complexType name="config-service-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="config-not-found-exception" type="tns:config-not-found-exception"/>
+	<xsd:complexType name="config-not-found-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="config-multiple-result-exception" type="tns:config-multiple-result-exception"/>
+	<xsd:complexType name="config-multiple-result-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="config-not-implemented-exception" type="tns:config-not-implemented-exception"/>
+	<xsd:complexType name="config-not-implemented-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="config-not-authorized-exception" type="tns:config-not-authorized-exception"/>
+	<xsd:complexType name="config-not-authorized-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<!-- WRAPPED ELEMENT -->
+
+
+
+	<xsd:element name="create" type="tns:create" />
+	<xsd:complexType name="create">
+		<xsd:sequence>
+			<xsd:element name="portaApplicativa" type="api:porta-applicativa" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="createResponse" type="tns:createResponse" />
+	<xsd:complexType name="createResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="update" type="tns:update" />
+	<xsd:complexType name="update">
+		<xsd:sequence>
+			<xsd:element name="oldIdPortaApplicativa" type="api:id-porta-applicativa" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="portaApplicativa" type="api:porta-applicativa" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="updateResponse" type="tns:updateResponse" />
+	<xsd:complexType name="updateResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="updateOrCreate" type="tns:updateOrCreate" />
+	<xsd:complexType name="updateOrCreate">
+		<xsd:sequence>
+			<xsd:element name="oldIdPortaApplicativa" type="api:id-porta-applicativa" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="portaApplicativa" type="api:porta-applicativa" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="updateOrCreateResponse" type="tns:updateOrCreateResponse" />
+	<xsd:complexType name="updateOrCreateResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="deleteById" type="tns:deleteById" />
+	<xsd:complexType name="deleteById">
+		<xsd:sequence>
+			<xsd:element name="idPortaApplicativa" type="api:id-porta-applicativa" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="deleteByIdResponse" type="tns:deleteByIdResponse" />
+	<xsd:complexType name="deleteByIdResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="deleteAll" type="tns:deleteAll" />
+	<xsd:complexType name="deleteAll">
+		<xsd:sequence/>
+	</xsd:complexType>
+	<xsd:element name="deleteAllResponse" type="tns:deleteAllResponse" />
+	<xsd:complexType name="deleteAllResponse">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="deleteAllByFilter" type="tns:deleteAllByFilter" />
+	<xsd:complexType name="deleteAllByFilter">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-porta-applicativa" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="deleteAllByFilterResponse" type="tns:deleteAllByFilterResponse" />
+	<xsd:complexType name="deleteAllByFilterResponse">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="delete" type="tns:delete" />
+	<xsd:complexType name="delete">
+		<xsd:sequence>
+			<xsd:element name="portaApplicativa" type="api:porta-applicativa" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="deleteResponse" type="tns:deleteResponse" />
+	<xsd:complexType name="deleteResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+    
+
+</xsd:schema>

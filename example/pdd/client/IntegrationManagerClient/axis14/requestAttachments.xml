@@ -1,0 +1,13 @@
+------=_Part_8_5089917.1176480724332
+Content-Type: text/xml; charset=UTF-8
+Content-Transfer-Encoding: binary
+Content-Id: <4AB225DE1F0225E61F94A6346E3996AE>
+
+<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><ns1:echo xmlns:ns1="urn:EchoAttachmentsService" soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><source href="cid:9938A9B65002FA1A86BDE138AE48FDBF" xsi:type="ns1:DataHandler" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></ns1:echo></soapenv:Body></soapenv:Envelope>
+------=_Part_8_5089917.1176480724332
+Content-Type: text/plain
+Content-Transfer-Encoding: binary
+Content-Id: <9938A9B65002FA1A86BDE138AE48FDBF>
+
+CIAO MONDO!!!
+------=_Part_8_5089917.1176480724332--

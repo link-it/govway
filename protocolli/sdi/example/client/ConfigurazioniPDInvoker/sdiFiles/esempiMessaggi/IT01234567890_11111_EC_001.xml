@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="EC_v1.0.xsl"?>
+<types:NotificaEsitoCommittente xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+  <IdentificativoSdI>111</IdentificativoSdI>
+  <RiferimentoFattura>
+    <NumeroFattura>1111</NumeroFattura>
+    <AnnoFattura>2013</AnnoFattura>
+    <PosizioneFattura>2</PosizioneFattura>
+  </RiferimentoFattura>
+  <Esito>EC01</Esito>
+  <Descrizione>Esempio</Descrizione>
+  <MessageIdCommittente>123456</MessageIdCommittente>
+</types:NotificaEsitoCommittente>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="OpenSPCoop2Pools_LocalEnv" basedir=".">
+
+	<!-- root di OpenSPCoop -->
+	<property name="openspcoop2" location="../.."/>
+
+	<!-- ApplicationServer version -->
+	<property name="as" value="jboss/tomcat" />
+	  
+	<!-- Driver JDBC (Necessario in jboss7, wildfly8) -->
+	<property name="driverJDBC" value="PATH_DRIVER_JDBC" />
+
+	<!-- OpenSPCoop2 libs -->
+	<property name="required_lib_openspcoop2Pools" location="${openspcoop2}/lib/"/>
+	<property name="required_lib" value="${required_lib_openspcoop2Pools}"/>
+
+ 	<!-- Build-Options -->
+	<property name="buildAsRelease" value="false"/>
+	<property name="buildOpenSPCoop2Pools" value="true"/>
+	<property name="buildAPI" value="true"/>
+      
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+
+</project>

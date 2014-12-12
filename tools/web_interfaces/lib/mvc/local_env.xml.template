@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="MVC_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../../../.."/>
+      <property name="openspcoop2_jars" location="${openspcoop2}/core/dist"/>
+
+      <property name="required_lib_mvc" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_mvc}"/>
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildAPI" value="true"/>
+      
+      <!-- Dipendenze di compilazione -->
+      <property name="users" location="../users"/>
+      <property name="src_users" location="${users}/src"/>
+      
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+
+</project>

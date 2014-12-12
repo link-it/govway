@@ -1,0 +1,74 @@
+     <configurazione> 
+          
+          <accesso-registro>
+  	       <cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
+               <registro nome="RegistroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml" />
+          </accesso-registro>
+
+          <!-- Configurazione dell'engine per la validazione delle buste eGov -->
+          <validazione-buste stato="abilitato" controllo="rigido" 
+                                     profiloCollaborazione="abilitato" 
+                                     manifestAttachments="abilitato" />
+
+          <!-- Interpretazione degli indirizzi telematici -->
+          <!--
+              <indirizzo-telematico utilizzo="abilitato" />
+          -->
+
+          <!-- Gestione dei manifest degli attachments -->
+          <!--
+              <attachments gestione-manifest="disabilitato" /> 
+          -->
+
+          <!-- Indirizzamento delle buste di risposta (Riscontri,RicevuteAsincrone) -->
+          <risposte-spcoop connessione="new" />
+
+          <!-- Cadenza in minuti delle buste non riscontrate (Riscontri,RicevuteAsincrone) -->
+          <inoltro-buste-non-riscontrate cadenza="1" />
+
+          <!-- Gestione dei messaggi diagnostici prodotti dalla Porta di Dominio -->
+          <messaggi-diagnostici severita="infoIntegration" severita-log4j="infoIntegration">    
+              <openspcoop-appender tipo="protocol">
+		    <!-- jbossDatasource -->
+                    <property nome="datasource" valore="org.openspcoop2.dataSource.msgDiagnostici" /> 
+		    <!-- fineJbossDatasource -->
+		    <!-- tomcatDatasource 
+                    <property nome="datasource" valore="java:/comp/env/org.openspcoop2.dataSource.msgDiagnostici" />
+                    fineTomcatDatasource -->
+              </openspcoop-appender>
+          </messaggi-diagnostici>
+
+          <!-- Tracciamento su Database -->
+	  <tracciamento buste="abilitato" dump="abilitato">
+              <openspcoop-appender tipo="protocol">
+		    <!-- jbossDatasource -->
+                    <property nome="datasource" valore="org.openspcoop2.dataSource.tracciamento" />
+		    <!-- fineJbossDatasource -->
+		    <!-- tomcatDatasource
+		    <property nome="datasource" valore="java:/comp/env/org.openspcoop2.dataSource.tracciamento" />
+		    fineTomcatDatasource -->
+                    <property nome="tipoDatabase" valore="@TIPO_DATABASE@" /> 
+              </openspcoop-appender>
+          </tracciamento>
+
+
+          <!-- Gestione di default dell'errore nella fase di spedizione di una busta eGov 
+               o invocazione di un servizio applicativo -->
+          <!-- <gestione-errore>
+               <componente-cooperazione comportamento="rispedisci" cadenza-rispedizione="1">
+                   <codice-trasporto valore-minimo="200" valore-massimo="299" comportamento="accetta" />
+                   <soap-fault fault-actor="" fault-code="Server.OpenSPCoopExample" comportamento="accetta" />
+                   <soap-fault comportamento="accetta" />
+               </componente-cooperazione>
+               <componente-integrazione comportamento="rispedisci" cadenza-rispedizione="1">
+                   <codice-trasporto valore-minimo="200" valore-massimo="299" comportamento="accetta" />
+                   <soap-fault fault-actor="" fault-code="Server.OpenSPCoopExample" comportamento="accetta" />
+                   <soap-fault comportamento="accetta" />
+               </componente-integrazione>
+          </gestione-errore> -->
+
+          <!-- Autenticazione utilizzata dal servizio di Integration Manager -->
+          <integration-manager autenticazione="basic,ssl" />
+
+     </configurazione>
+</openspcoop2>

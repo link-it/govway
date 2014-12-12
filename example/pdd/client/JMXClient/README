@@ -1,0 +1,24 @@
+Alcuni test richiedono che sia disponibile un accesso remoto sulle risorse jmx dell'application server (tomcat o jboss)
+
+
+Sulle versioni di jboss 4.x, 5.x, 6.x e 7.x la jmx è abilitata per default.
+
+
+Su wildfly8 (jboss8) deve essere abilitato agendo sul file di configurazione (es. standalone-full.xml):
+ ...
+ <management-interfaces>
+	<native-interface security-realm="ManagementRealm">
+                <socket-binding native="management-native"/>
+	</native-interface>
+        ...
+ </management-interfaces>
+ ...
+ <socket-binding-group ...>
+     ...
+     <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:9999}"/>
+     ...
+ </socket-binding-group>
+
+
+Per tomcat impostare le seguenti opzioni:
+export CATALINA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"

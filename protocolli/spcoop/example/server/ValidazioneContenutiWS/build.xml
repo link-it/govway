@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="ValidazioneContenutiApplicativi" default="build" basedir=".">
+	<description>
+        File di Script per la compilazione della servlet di ValidazioneContenutiApplicativi
+    </description>
+
+	<import file="./local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_ws_validazione" >
+		<fileset dir="${ws_validazione_lib}" >
+			<exclude name="**/cxf/*"/>
+			<exclude name="**/jax/*"/>
+		</fileset>
+		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.2.6.jar" />
+	</path>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${ws_validazione_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+					
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+
+	<!-- Indicazione se produrre la versione per server non j2ee -->
+	<var name="j2ee" value="true" />
+	<var name="log4j_jar" value="" />
+	<var name="log4j_properties" value=""/>
+	<var name="commons_logging_jar" value="" />
+	<var name="jaxp_ri_jar" value=""/>
+	<var name="jboss_deployment_structure" value="" />		
+	<runtarget target="check_as_version" />	
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
+			<var name="j2ee" value="false"/>
+		</then>
+	</if>
+	<!-- commons_logging -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="commons_logging_jar" value="commons-logging-1.1.1.jar" />
+		</then>
+	</if>
+	<!-- log -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="log4j_jar" value="log4j-1.2.16.jar" />
+		</then>
+	</if>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="log4j_properties" value="log4j.properties"/>
+		</then>
+	</if>
+	<!-- jaxp_ri -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+		</then>
+	</if>
+	<!-- jboss_deployment_structure -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>	
+	
+	
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+	
+	
+	
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/tmp" />
+		<mkdir dir="${dist}" />
+	</target>
+
+	<target name="init_compile_stub" depends="init_compile">
+		<mkdir dir="${build}/stub" />
+	</target>
+		
+
+
+	<!-- Compilazione del Servizio Axis-->
+	<target name="compile" depends="init_compile" description="compila il servizio">
+		<!-- Compile the java code  -->
+		<javac destdir="${build}" debug="${debug}">
+			<src path="${src}" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</javac>
+	</target>
+
+
+	
+	<!-- Creazione del modulo .WAR -->
+	<target name="build" depends="compile" description="Crea la struttura del modulo WAR">
+
+		<!-- DataSource Properties -->
+		<copy file="deploy/properties/validazione.properties" todir="${build}/tmp" />
+		<if>
+			<not>
+				<istrue value="${j2ee}"/>
+			</not>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/validazione.properties"/>
+					<param name="token" value="org.openspcoop2.datasource.tracciamento"/>
+					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.tracciamento"/>
+				</antcall>
+			</then>
+		</if>
+
+		<war destfile="${dist}/ValidazioneContenutiWS.war" webxml="${src}/WEB-INF/web.xml">
+			<webinf dir="${src}/WEB-INF">
+				<include name="**/server-config.wsdd"/>
+				<include name="${jboss_deployment_structure}"/>
+			</webinf>
+			<classes dir="${build}">
+				<include name="**/*"/>
+			</classes>
+			<classes dir="${build}/tmp">
+				<include name="**/validazione.properties"/>
+			</classes>
+			<classes dir="deploy/properties">
+				<include name="${log4j_properties}"/>
+			</classes>
+			<lib dir="${ws_validazione_lib}/axis14">
+				<include name="axis-1.4.jar"/>
+				<include name="axis-ant-1.4.jar"/>
+				<include name="axis-jaxrpc-1.4.jar"/>
+				<include name="axis-saaj-1.4.jar"/>
+			</lib>
+			<lib dir="${ws_validazione_lib}/commons">
+				<include name="commons-discovery-0.5.jar"/>
+				<include name="${commons_logging_jar}"/>
+			</lib>
+			<lib dir="${ws_validazione_lib}/shared">
+				<include name="wsdl4j-1.6.2.jar"/>
+			</lib>
+			<lib dir="${ws_validazione_lib}/log">
+				<include name="${log4j_jar}"/>
+			</lib>
+			<lib dir="${ws_validazione_lib}/jax">
+				<include name="${jaxp_ri_jar}"/>
+			</lib>
+		</war>
+		<delete dir="${build_testsuite}/tmp" />
+
+	</target>
+
+
+
+
+
+	<!-- Creazione stub -->
+	<target name="build_stub_fromUrl" depends="init_compile_stub">
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/GestioneUtentiOverloadedOperations?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/GestioneUtentiDocumentLiteral?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/GestioneUtentiRPCLiteral?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/GestioneUtentiRPCEncoded?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/GestioneUtentiWrappedDocumentLiteral?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/AggiornamentoUtentiWrappedDocumentLiteral?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/GestioneUtentiStileIbrido?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="${appServer_url}/ValidazioneContenutiWS/EsitoAggiornamentoAsincronoWrappedDocumentLiteral?wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="build_stub_fromWSDL" depends="init_compile_stub">
+		<!-- Generazioni java classes -->
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="deploy/wsdl/implementazioneErogatore.wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+		<java classname="org.apache.axis.wsdl.WSDL2Java" fork="true">
+			<arg value="deploy/wsdl/implementazioneFruitore.wsdl" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</java>
+
+	</target>
+
+	<!-- Compilazione stub -->
+	<target name="compile_stub">
+		<!-- Compilazione classi -->
+		<javac destdir="${build}/stub" debug="${debug}">
+			<src path="org" />
+			<classpath>
+				<path refid="classpath_ws_validazione"/>
+			</classpath>
+		</javac>
+		<!-- Rimozione sorgenti-->
+		<delete dir="org" />
+		<!-- Creazione libreria STUB -->
+		<jar jarfile="${dist}/validazioneContenutiWS_stub.jar">
+			<zipfileset dir="${build}/stub" />
+		</jar>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/validazioneContenutiWS_stub.jar" todir="deploy/stub_ws" />
+	</target>
+
+	<!-- Compilazione stub from ServiziDeployati-->
+	<target name="build_stub" depends="build_stub_fromWSDL">
+		<antcall target="compile_stub"/>
+	</target>
+
+</project>

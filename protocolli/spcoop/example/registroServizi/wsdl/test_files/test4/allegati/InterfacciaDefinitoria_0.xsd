@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:allegatoimport="http://www.openspcoop2.org/example/allegato/import" xmlns:allegatoimport2="http://www.openspcoop2.org/example/allegato/import2" xmlns:allegatoimportwsdl="http://www.openspcoop2.org/example/allegato/importwsdl" xmlns:definitorio="http://www.openspcoop2.org/example" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:spc="http://www.openspcoop2.org/example" xmlns:specificasemiformaleimport="http://www.openspcoop2.org/example/specificasemiformale/import" xmlns:specificasemiformaleimportwsdl="http://www.openspcoop2.org/example/specificasemiformale/importwsdl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.openspcoop2.org/example2">
+      
+      <xs:element name="notificaRequest2">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="aaa" maxOccurs="1" minOccurs="1" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+    </xs:schema>

@@ -1,0 +1,132 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config">
+
+    <soggetto tipo="SPC" nome="ENTE">
+
+        <porta-delegata nome="SPCENTE/SPCCentroServiziFatturaPA/SPCRiceviNotifica/NotificaEsito"
+            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            <soggetto-erogatore tipo="SPC" nome="CentroServiziFatturaPA"/>
+            <servizio tipo="SPC" nome="SdIRiceviNotifica"/>
+            <azione nome="NotificaEsito"/>
+            <servizio-applicativo
+                nome="SPCENTE_SPCCentroServiziFatturaPA_SPCRiceviNotifica_NotificaEsito"/>
+        </porta-delegata>
+
+
+        <porta-applicativa nome="SPCENTE/SPCRicezioneFatture/RiceviFatture" stateless="abilitato">
+            <servizio tipo="SPC" nome="RicezioneFatture"/>
+            <azione nome="RiceviFatture"/>
+            <servizio-applicativo nome="SPCENTE_SPCRicezioneFatture_RiceviFatture"/>
+        </porta-applicativa>
+
+        <porta-applicativa nome="SPCENTE/SPCRicezioneFatture/NotificaDecorrenzaTermini"
+            stateless="abilitato">
+            <servizio tipo="SPC" nome="RicezioneFatture"/>
+            <azione nome="NotificaDecorrenzaTermini"/>
+            <servizio-applicativo nome="SPCENTE_SPCRicezioneFatture_NotificaDecorrenzaTermini"/>
+        </porta-applicativa>
+
+
+
+        <servizio-applicativo
+            nome="SPCENTE_SPCCentroServiziFatturaPA_SPCRiceviNotifica_NotificaEsito">
+            <invocazione-porta sbustamento-informazioni-protocollo="abilitato">
+                <credenziali tipo="basic"
+                    user="SPCENTE_SPCCentroServiziFatturaPA_SPCRiceviNotifica_NotificaEsito"
+                    password="123456"/>
+            </invocazione-porta>
+        </servizio-applicativo>
+
+        <servizio-applicativo nome="SPCENTE_SPCRicezioneFatture_RiceviFatture">
+            <invocazione-servizio sbustamento-informazioni-protocollo="abilitato"
+                sbustamento-soap="disabilitato">
+                <connettore tipo="vmPA" nome="SPCENTE_SPCRicezioneFatture_RiceviFatture">
+                    <property nome="protocol" valore="sdi"/>
+                    <property nome="pa" valore="SDIENTE/SDIRicezioneFatture/RiceviFatture"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+
+        <servizio-applicativo nome="SPCENTE_SPCRicezioneFatture_NotificaDecorrenzaTermini">
+            <invocazione-servizio sbustamento-informazioni-protocollo="abilitato"
+                sbustamento-soap="disabilitato">
+                <connettore tipo="vmPA" nome="SPCENTE_SPCRicezioneFatture_NotificaDecorrenzaTermini">
+                    <property nome="protocol" valore="sdi"/>
+                    <property nome="pa"
+                        valore="SDIENTE/SDIRicezioneFatture/NotificaDecorrenzaTermini"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+
+
+    </soggetto>
+
+    <soggetto tipo="SDI" nome="ENTE">
+
+        <porta-delegata nome="SDIENTE/SDICentroServiziFatturaPA/SDIRiceviNotifica/NotificaEsito"
+            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            <soggetto-erogatore tipo="SDI" nome="CentroServiziFatturaPA"/>
+            <servizio tipo="SDI" nome="RiceviNotifica"/>
+            <azione nome="NotificaEsito"/>
+            <servizio-applicativo
+                nome="SDIENTE_SDICentroServiziFatturaPA_SDIRiceviNotifica_NotificaEsito"/>
+            <mtom-processor>
+                <request-flow mode="packaging">
+                    <parameter nome="File"
+                        pattern="//{http://www.fatturapa.gov.it/sdi/ws/ricezione/v1.0/types}fileSdI/File"
+                        required="true" content-type="text/xml"/>
+                </request-flow>
+            </mtom-processor>
+        </porta-delegata>
+
+
+        <porta-applicativa nome="SDIENTE/SDIRicezioneFatture/RiceviFatture" stateless="abilitato"
+            behaviour="fatturapa">
+            <servizio tipo="SDI" nome="RicezioneFatture"/>
+            <azione nome="RiceviFatture"/>
+            <servizio-applicativo nome="SDIENTE_SDIRicezioneFatture"/>
+        </porta-applicativa>
+
+        <porta-applicativa nome="SDIENTE/SDIRicezioneFatture/NotificaDecorrenzaTermini"
+            stateless="abilitato">
+            <servizio tipo="SDI" nome="RicezioneFatture"/>
+            <azione nome="NotificaDecorrenzaTermini"/>
+            <servizio-applicativo nome="SDIENTE_SDIRicezioneFatture"/>
+        </porta-applicativa>
+
+
+
+        <servizio-applicativo
+            nome="SDIENTE_SDICentroServiziFatturaPA_SDIRiceviNotifica_NotificaEsito">
+            <invocazione-porta sbustamento-informazioni-protocollo="abilitato">
+                <credenziali tipo="basic"
+                    user="SDIENTE_SDICentroServiziFatturaPA_SDIRiceviNotifica_NotificaEsito"
+                    password="123456"/>
+            </invocazione-porta>
+        </servizio-applicativo>
+
+        <servizio-applicativo nome="SDIENTE_SDIRicezioneFatture">
+            <invocazione-servizio sbustamento-informazioni-protocollo="abilitato"
+                sbustamento-soap="abilitato">
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location"
+                        valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/SDI"
+                    />
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+
+
+    </soggetto>
+
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <validazione-buste controllo="rigido"/>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+
+</openspcoop2>

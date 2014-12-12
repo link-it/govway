@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+
+<project name="TrasparenteTutorialOneway"  basedir=".">
+
+	<import file="local_env.xml"/>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${openspcoop2_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- set properties for this build -->
+	<property name="src_trasparente_tutorial_oneway" location="src" />
+	<property name="build_trasparente_tutorial_oneway" location="build/audit" />
+	<property name="dist_trasparente_tutorial_oneway" location="dist" />
+
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${openspcoop2_lib}" >
+			<include name="**/cxf/*"/>
+			<include name="**/jetty/*"/>
+			<include name="**/security/*"/>
+			<include name="**/httpcore/*"/>
+			<include name="**/commons/*"/>
+			<include name="**/shared/*"/>
+                        <include name="**/spring/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${dist_trasparente_tutorial_oneway}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="-clean_trasparente_tutorial_oneway">
+		<delete dir="${build_trasparente_tutorial_oneway}" />
+		<delete dir="${dist_trasparente_tutorial_oneway}" />
+		<delete dir="${doc_trasparente_tutorial_oneway}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="-init_compile_trasparente_tutorial_oneway">
+		<mkdir dir="${build_trasparente_tutorial_oneway}" />
+		<mkdir dir="${dist_trasparente_tutorial_oneway}" />
+	</target>
+	
+	
+	
+	<!-- Compilazione del Servizio -->
+	<target name="-compile_compile_trasparente_tutorial_oneway" depends="-init_compile_trasparente_tutorial_oneway" description="compila il servizio">
+		<!-- Compile the java code  -->
+		<javac destdir="${build_trasparente_tutorial_oneway}" debug="${debug}">
+			<!--<compilerarg value="-Xlint:unchecked"/>
+                        <compilerarg value="-Xlint:deprecation"/>-->
+			<src path="${src_trasparente_tutorial_oneway}" />
+			<classpath refid="classpath_compile" />
+		</javac>
+		<jar jarfile="${dist_trasparente_tutorial_oneway}/openspcoop2_trasparente-protocol_tutorial_oneway.jar">
+			<zipfileset dir="${build_trasparente_tutorial_oneway}" />
+    	</jar>
+	</target>
+	
+	
+	<!-- Esecuzione del server -->
+	<target name="-run_server_trasparente_tutorial_oneway" description="esegue il servizio">
+		 <java classname="org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointMultiBinding_Server" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+                <pathelement location="." />
+            </classpath>
+	    <jvmarg value="-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true" />
+        </java>
+	</target>
+	
+	
+	<!-- Esecuzione del client -->
+	<target name="-run_client_trasparente_tutorial_oneway_soap11" description="esegue il client che fruisce del servizio">
+		 <java classname="org.openspcoop2.example.pdd.client.trasparente.comunicazionevariazione.ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpoint11_Client" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+                <pathelement location="." />
+            </classpath>
+            <jvmarg value="-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true" />
+        </java>
+	</target>
+	<target name="-run_client_trasparente_tutorial_oneway_soap12" description="esegue il client che fruisce del servizio">
+		 <java classname="org.openspcoop2.example.pdd.client.trasparente.comunicazionevariazione.ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpoint12_Client" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+                <pathelement location="." />
+            </classpath>
+	    <jvmarg value="-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true" />
+        </java>
+	</target>
+	<target name="-run_client_trasparente_tutorial_oneway_soap11Sec" description="esegue il client che fruisce del servizio">
+		 <java classname="org.openspcoop2.example.pdd.client.trasparente.comunicazionevariazione.ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointSec11_Client" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+                <pathelement location="." />
+            </classpath>
+	    <jvmarg value="-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true" />
+        </java>
+	</target>
+	<target name="-run_client_trasparente_tutorial_oneway_soap12Sec" description="esegue il client che fruisce del servizio">
+		 <java classname="org.openspcoop2.example.pdd.client.trasparente.comunicazionevariazione.ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointSec12_Client" fork="yes">
+            <classpath>
+                <path refid="classpath_compile"/>
+            	<path refid="classpath_dist"/>
+                <pathelement location="." />
+            </classpath>
+	    <jvmarg value="-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true" />
+        </java>
+	</target>
+	
+	
+	
+	<!-- alias -->
+	<target name="build" depends="-compile_compile_trasparente_tutorial_oneway" />
+	<target name="clean" depends="-clean_trasparente_tutorial_oneway" />
+	<target name="run_server" depends="-run_server_trasparente_tutorial_oneway" />
+	<target name="run_client_soap11" depends="-run_client_trasparente_tutorial_oneway_soap11" />
+	<target name="run_client_soap12" depends="-run_client_trasparente_tutorial_oneway_soap12" />
+	<target name="run_client_soap11_security" depends="-run_client_trasparente_tutorial_oneway_soap11Sec" />
+	<target name="run_client_soap12_security" depends="-run_client_trasparente_tutorial_oneway_soap12Sec" />
+	
+</project>

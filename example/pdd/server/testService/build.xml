@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="TestService" default="build" basedir=".">
+	<description>
+        File di Script per la compilazione
+    </description>
+
+	<property name="rootDir" location="../../../../" />
+	<property name="libs" location="${rootDir}/lib" />
+	<property name="openspcoop2_libs" location="${rootDir}/core/dist" />
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="debug" location="true" />
+	
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>
+
+
+	<!-- Compilazione del Servizio -->
+	<target name="compile" depends="init_compile" description="compila il servizio">
+		<!-- Compile the java code  -->
+		<javac destdir="${build}" debug="${debug}">
+			<!--<compilerarg value="-Xlint:unchecked"/>
+                        <compilerarg value="-Xlint:deprecation"/>-->
+			<src path="${src}" />
+			<classpath>
+				<fileset dir="${libs}" includes="**/*.jar"/>
+				<fileset dir="${openspcoop2_libs}" includes="*.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!-- Creazione del modulo .WAR -->
+	<target name="build" depends="compile" description="Crea la struttura del modulo WAR">
+		<war destfile="${dist}/TestService.war" webxml="${src}/WEB-INF/web.xml">
+			<classes dir="${build}">
+				<include name="**/*"/>
+			</classes>
+			<classes dir="deploy/properties">
+				<include name="**/*.properties"/>
+			</classes>
+			<lib dir="${libs}/commons">
+				<include name="commons-discovery-0.5.jar"/>
+				<include name="commons-io-2.1.jar"/>
+				<include name="commons-lang-2.6.jar"/>
+			</lib>
+			<lib dir="${libs}/cxf">
+				<include name="cxf-2.7.4.jar"/>
+				<include name="saaj-impl-1.3.19.jar"/>
+			</lib>
+			<lib dir="${openspcoop2_libs}/">
+				<include name="openspcoop2_utils_*.jar"/>
+				<include name="openspcoop2_core_*.jar"/>
+				<include name="openspcoop2_message_*.jar"/>
+			</lib>
+		</war>
+
+	</target>
+
+	<!-- alias -->
+	<target name="war" depends="build" />
+
+
+
+</project>

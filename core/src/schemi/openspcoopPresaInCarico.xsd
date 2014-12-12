@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/integrazione"
+        targetNamespace="http://www.openspcoop2.org/core/integrazione"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" elementFormDefault="qualified"
+        attributeFormDefault="unqualified">
+
+        <!-- Contiene il messaggio ritornato dalla Porta di Dominio con presa in carico -->
+        <xsd:element name="esito-richiesta">
+                <xsd:complexType>
+                        <xsd:sequence>
+                                <xsd:element name="identificativo-messaggio" type="xsd:string"/>
+                        </xsd:sequence>
+                        <xsd:attribute name="stato" type="xsd:string" use="required" fixed="PRESA_IN_CARICO"/>
+                </xsd:complexType>
+        </xsd:element>
+
+</xsd:schema>

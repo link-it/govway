@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tns="http://www.openspcoop2.org/core/registry/management" 
+			xmlns:api="http://www.openspcoop2.org/core/registry" 
+			attributeFormDefault="unqualified" 
+			elementFormDefault="qualified" 
+			targetNamespace="http://www.openspcoop2.org/core/registry/management">
+			
+ 	<xsd:import schemaLocation="registroServizi.xsd" namespace="http://www.openspcoop2.org/core/registry"/>
+
+	<!-- FILTRI -->
+
+	<xsd:element name="search-filter-accordo-servizio-parte-specifica" type="tns:search-filter-accordo-servizio-parte-specifica" />
+	<xsd:complexType name="search-filter-accordo-servizio-parte-specifica">
+		<xsd:sequence>
+ 			<xsd:element name="servizio" type="tns:servizio" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="stato-package" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="privato" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="versione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="accordo-servizio-parte-comune" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="port-type" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="versione-protocollo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="descrizione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="orCondition" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="connettore" type="tns:connettore" />
+	<xsd:complexType name="connettore">
+		<xsd:sequence>
+ 			<xsd:element name="custom" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="servizio" type="tns:servizio" />
+	<xsd:complexType name="servizio">
+		<xsd:sequence>
+ 			<xsd:element name="connettore" type="tns:connettore" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipologia-servizio" type="api:TipologiaServizio" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<!-- IN USE -->
+
+	<xsd:complexType name="use-info">
+		<xsd:sequence>
+			<xsd:element name="inUseCondition" type="tns:in-use-condition" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="used" type="xsd:boolean"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="in-use-condition">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="type" type="tns:identified" minOccurs="0"/>
+			<xsd:element name="id" type="tns:objectId" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="cause" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="identified">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="AccordoCooperazione"/>
+			<xsd:enumeration value="AccordoServizioParteComune"/>
+			<xsd:enumeration value="PortaDominio"/>
+			<xsd:enumeration value="Soggetto"/>
+			<xsd:enumeration value="AccordoServizioParteSpecifica"/>
+		</xsd:restriction>
+ 	</xsd:simpleType>
+	<xsd:complexType name="objectId">
+		<xsd:choice>
+			<xsd:element ref="tns:wrapperIdAccordoCooperazione" />
+			<xsd:element ref="tns:wrapperIdAccordoServizioParteComune" />
+			<xsd:element ref="tns:wrapperIdPortaDominio" />
+			<xsd:element ref="tns:wrapperIdSoggetto" />
+			<xsd:element ref="tns:wrapperIdAccordoServizioParteSpecifica" />
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdAccordoCooperazione" type="tns:wrapperIdAccordoCooperazione"/>
+	<xsd:complexType name="wrapperIdAccordoCooperazione">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-accordo-cooperazione" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdAccordoServizioParteComune" type="tns:wrapperIdAccordoServizioParteComune"/>
+	<xsd:complexType name="wrapperIdAccordoServizioParteComune">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-accordo-servizio-parte-comune" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdPortaDominio" type="tns:wrapperIdPortaDominio"/>
+	<xsd:complexType name="wrapperIdPortaDominio">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-porta-dominio" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdSoggetto" type="tns:wrapperIdSoggetto"/>
+	<xsd:complexType name="wrapperIdSoggetto">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-soggetto" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdAccordoServizioParteSpecifica" type="tns:wrapperIdAccordoServizioParteSpecifica"/>
+	<xsd:complexType name="wrapperIdAccordoServizioParteSpecifica">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-accordo-servizio-parte-specifica" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<!-- EXCEPTION -->
+	<xsd:element name="registry-service-exception" type="tns:registry-service-exception"/>
+	<xsd:complexType name="registry-service-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="registry-not-found-exception" type="tns:registry-not-found-exception"/>
+	<xsd:complexType name="registry-not-found-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="registry-multiple-result-exception" type="tns:registry-multiple-result-exception"/>
+	<xsd:complexType name="registry-multiple-result-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="registry-not-implemented-exception" type="tns:registry-not-implemented-exception"/>
+	<xsd:complexType name="registry-not-implemented-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="registry-not-authorized-exception" type="tns:registry-not-authorized-exception"/>
+	<xsd:complexType name="registry-not-authorized-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<!-- WRAPPED ELEMENT -->
+
+	<xsd:element name="findAll" type="tns:findAll" />
+	<xsd:complexType name="findAll">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findAllResponse" type="tns:findAllResponse" />
+	<xsd:complexType name="findAllResponse">
+		<xsd:sequence>
+			<xsd:element name="accordoServizioParteSpecifica" type="api:accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="find" type="tns:find" />
+	<xsd:complexType name="find">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findResponse" type="tns:findResponse" />
+	<xsd:complexType name="findResponse">
+		<xsd:sequence>
+			<xsd:element name="accordoServizioParteSpecifica" type="api:accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="count" type="tns:count" />
+	<xsd:complexType name="count">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="countResponse" type="tns:countResponse" />
+	<xsd:complexType name="countResponse">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="get" type="tns:get" />
+	<xsd:complexType name="get">
+		<xsd:sequence>
+			<xsd:element name="idAccordoServizioParteSpecifica" type="api:id-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="getResponse" type="tns:getResponse" />
+	<xsd:complexType name="getResponse">
+		<xsd:sequence>
+			<xsd:element name="accordoServizioParteSpecifica" type="api:accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="exists" type="tns:exists" />
+	<xsd:complexType name="exists">
+		<xsd:sequence>
+			<xsd:element name="idAccordoServizioParteSpecifica" type="api:id-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="existsResponse" type="tns:existsResponse" />
+	<xsd:complexType name="existsResponse">
+		<xsd:sequence>
+			<xsd:element name="exists" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="findAllIds" type="tns:findAllIds" />
+	<xsd:complexType name="findAllIds">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findAllIdsResponse" type="tns:findAllIdsResponse" />
+	<xsd:complexType name="findAllIdsResponse">
+		<xsd:sequence>
+			<xsd:element name="idAccordoServizioParteSpecifica" type="api:id-accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="inUse" type="tns:inUse" />
+	<xsd:complexType name="inUse">
+		<xsd:sequence>
+			<xsd:element name="idAccordoServizioParteSpecifica" type="api:id-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="inUseResponse" type="tns:inUseResponse" />
+	<xsd:complexType name="inUseResponse">
+		<xsd:sequence>
+			<xsd:element name="inUse" type="tns:use-info" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:element name="create" type="tns:create" />
+	<xsd:complexType name="create">
+		<xsd:sequence>
+			<xsd:element name="accordoServizioParteSpecifica" type="api:accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="createResponse" type="tns:createResponse" />
+	<xsd:complexType name="createResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="update" type="tns:update" />
+	<xsd:complexType name="update">
+		<xsd:sequence>
+			<xsd:element name="oldIdAccordoServizioParteSpecifica" type="api:id-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="accordoServizioParteSpecifica" type="api:accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="updateResponse" type="tns:updateResponse" />
+	<xsd:complexType name="updateResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="updateOrCreate" type="tns:updateOrCreate" />
+	<xsd:complexType name="updateOrCreate">
+		<xsd:sequence>
+			<xsd:element name="oldIdAccordoServizioParteSpecifica" type="api:id-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="accordoServizioParteSpecifica" type="api:accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="updateOrCreateResponse" type="tns:updateOrCreateResponse" />
+	<xsd:complexType name="updateOrCreateResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="deleteById" type="tns:deleteById" />
+	<xsd:complexType name="deleteById">
+		<xsd:sequence>
+			<xsd:element name="idAccordoServizioParteSpecifica" type="api:id-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="deleteByIdResponse" type="tns:deleteByIdResponse" />
+	<xsd:complexType name="deleteByIdResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+
+	<xsd:element name="deleteAll" type="tns:deleteAll" />
+	<xsd:complexType name="deleteAll">
+		<xsd:sequence/>
+	</xsd:complexType>
+	<xsd:element name="deleteAllResponse" type="tns:deleteAllResponse" />
+	<xsd:complexType name="deleteAllResponse">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="deleteAllByFilter" type="tns:deleteAllByFilter" />
+	<xsd:complexType name="deleteAllByFilter">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="deleteAllByFilterResponse" type="tns:deleteAllByFilterResponse" />
+	<xsd:complexType name="deleteAllByFilterResponse">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="delete" type="tns:delete" />
+	<xsd:complexType name="delete">
+		<xsd:sequence>
+			<xsd:element name="accordoServizioParteSpecifica" type="api:accordo-servizio-parte-specifica" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="deleteResponse" type="tns:deleteResponse" />
+	<xsd:complexType name="deleteResponse">
+		<xsd:sequence/>
+	</xsd:complexType>
+    
+
+</xsd:schema>

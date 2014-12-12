@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+        targetNamespace="http://www.openspcoop2.org/example" xmlns:spc="http://www.openspcoop2.org/example"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:definitorio="http://www.openspcoop2.org/example/types"
+        xmlns:allegatoimportwsdl="http://www.openspcoop2.org/example/allegato/importwsdl"
+        xmlns:specificasemiformaleimportwsdl="http://www.openspcoop2.org/example/specificasemiformale/importwsdl" 
+        >
+ 
+  <wsdl:types>
+    <xs:schema targetNamespace="http://www.openspcoop2.org/example/types" xmlns:definitorio="http://www.openspcoop2.org/example/types"
+        xmlns:allegatoimport="http://www.openspcoop2.org/example/allegato/import" xmlns:allegatoimport2="http://www.openspcoop2.org/example/allegato/import2" 
+        xmlns:specificasemiformaleimport="http://www.openspcoop2.org/example/specificasemiformale/import" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      
+      <!-- Es. Include from allegati -->
+      <xs:include schemaLocation="../allegati/allegatoIncludeFromDefinitorio/types.xsd"/>
+      <!-- Es. Include from specificaSemiformale -->
+      <xs:include schemaLocation="../specificaSemiformale/specificaSemiformaleIncludeFromDefinitorio/types.xsd"/> 
+      <!-- Es. Import from allegati -->
+      <xs:import namespace="http://www.openspcoop2.org/example/allegato/import" schemaLocation="../allegati/allegatoImportFromDefinitorio/types.xsd"/>
+      <xs:import namespace="http://www.openspcoop2.org/example/allegato/import2" schemaLocation="../allegati/allegatoImportFromDefinitorio2/types.xsd"/>
+      <!-- Es. Import from specificaSemiformale -->
+      <xs:import namespace="http://www.openspcoop2.org/example/specificasemiformale/import" schemaLocation="../specificaSemiformale/specificaSemiformaleImportFromDefinitorio/types.xsd"/>
+      
+      <!-- Es. OneWay -->
+      <xs:element name="notificaRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimport:esempioAllegatoImport1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimport:esempioAllegatoImport2"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="allegatoimport2:AltroOggettoImportato"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioAllegatoInclude1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioAllegatoInclude2"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="specificasemiformaleimport:esempioSpecificaSemiformaleImport1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="specificasemiformaleimport:esempioSpecificaSemiformaleImport2"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioSpecificaSemiformaleInclude1"/>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esempioSpecificaSemiformaleInclude2"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      <!-- Es. Sincrono -->        
+      <xs:element name="aggiornamentoRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="aggiornamentoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esito"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      <!-- Es. AsincronoSimmetrico -->
+      <xs:element name="richiestaAggiornamentoRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaAggiornamentoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:presaInCarico"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="esitoAggiornamentoRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esito"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="esitoAggiornamentoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:presaInCarico"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      
+      <!-- Es. AsincronoAsimmetrico -->
+      <xs:element name="richiestaRegistrazioneRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:dati"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaRegistrazioneResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:presaInCarico"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaStatoRegistrazioneRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:identificativoRichiestaAsincrona"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="richiestaStatoRegistrazioneResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" ref="definitorio:esito"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      
+      <!-- Dati complessi --> 
+      <xs:element name="dati">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="nome" type="xs:string"/>
+            <xs:element name="cognome" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="esito">
+        <xs:complexType>
+          <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:choice>
+              <xs:element name="ok" type="xs:string"/>
+              <xs:element name="fail" type="xs:string"/>
+            </xs:choice>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="presaInCarico">
+        <xs:complexType>
+          <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:choice>
+              <xs:element name="ok" type="xs:string"/>
+            </xs:choice>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="identificativoRichiestaAsincrona">
+        <xs:complexType>
+          <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:choice>
+              <xs:element name="id" type="xs:string"/>
+            </xs:choice>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      
+    </xs:schema>
+
+    <xs:schema targetNamespace="http://www.openspcoop2.org/example"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         >
+           <xs:element name="aggiornamentoNamespaceWSDLRequest">
+                <xs:complexType>
+                      <xs:sequence>
+                           <xs:element maxOccurs="1" minOccurs="1" type="xs:string" name="req"/>
+                     </xs:sequence>
+                </xs:complexType>
+           </xs:element>
+
+        <xs:element name="aggiornamentoNamespaceWSDLResponse">
+                <xs:complexType>
+                      <xs:sequence>
+                            <xs:element maxOccurs="1" minOccurs="1" type="xs:string" name="res"/>
+                      </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+    </xs:schema>
+
+    <xsd:schema targetNamespace="http://www.openspcoop2.org/example">
+      <xsd:import namespace="http://www.openspcoop2.org/example/allegato/importwsdl" schemaLocation="../allegati/allegatoImportFromWSDL/types.xsd"/>
+    </xsd:schema>
+
+  </wsdl:types>
+  <wsdl:import namespace="http://www.openspcoop2.org/example/specificasemiformale/importwsdl" location="../specificaSemiformale/specificaSemiformaleImportFromWSDL/types.xsd"/>
+  <!-- Es. OneWay -->
+  <wsdl:message name="notificaRequest">
+    <wsdl:part element="definitorio:notificaRequest" name="notificaRequestPart">
+    </wsdl:part>
+    <wsdl:part element="allegatoimportwsdl:AllegatoImportatoDirettamenteInWSDL" name="notificaRequestPart2">
+    </wsdl:part>
+  </wsdl:message>
+
+  <!-- Es. Sincrono -->
+  <wsdl:message name="aggiornamentoRequest">
+    <wsdl:part element="definitorio:aggiornamentoRequest" name="aggiornamentoRequestPart">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="aggiornamentoResponse">
+    <wsdl:part element="definitorio:aggiornamentoResponse" name="aggiornamentoResponsePart">
+    </wsdl:part>
+  </wsdl:message>
+  
+  <!-- Es. AsincronoSimmetrico -->
+  <wsdl:message name="richiestaAggiornamentoRequest">
+    <wsdl:part element="definitorio:richiestaAggiornamentoRequest" name="richiestaAggiornamentoRequestPart">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaAggiornamentoResponse">
+    <wsdl:part element="definitorio:richiestaAggiornamentoResponse" name="richiestaAggiornamentoResponsePart">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="esitoAggiornamentoRequest">
+    <wsdl:part element="definitorio:esitoAggiornamentoRequest" name="esitoAggiornamentoRequestPart">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="esitoAggiornamentoResponse">
+    <wsdl:part element="definitorio:esitoAggiornamentoResponse" name="esitoAggiornamentoResponsePart">
+    </wsdl:part>
+  </wsdl:message>
+  
+  <!-- Es. AsincronoAsimmetrico -->
+  <wsdl:message name="richiestaRegistrazioneRequest">
+    <wsdl:part element="definitorio:richiestaRegistrazioneRequest" name="richiestaRegistrazioneRequestPart">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaRegistrazioneResponse">
+    <wsdl:part element="definitorio:richiestaRegistrazioneResponse" name="richiestaRegistrazioneResponsePart">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaStatoRegistrazioneRequest">
+    <wsdl:part element="definitorio:richiestaStatoRegistrazioneRequest" name="richiestaStatoRegistrazioneRequestPart">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="richiestaStatoRegistrazioneResponse">
+    <wsdl:part element="definitorio:richiestaStatoRegistrazioneResponse" name="richiestaStatoRegistrazioneResponsePart">
+    </wsdl:part>
+  </wsdl:message> 
+  
+  <!-- Es. Sincrono -->
+  <wsdl:message name="aggiornamentoNamespaceWSDLRequest">
+      <wsdl:part element="spc:aggiornamentoNamespaceWSDLRequest" name="aggiornamentoNamespaceWSDLRequestPart">
+      </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="aggiornamentoNamespaceWSDLResponse">
+      <wsdl:part element="spc:aggiornamentoNamespaceWSDLResponse" name="aggiornamentoNamespaceWSDLResponsePart">
+      </wsdl:part>
+  </wsdl:message>
+
+
+  <!-- Es. OneWay -->
+  <wsdl:portType name="Oneway">
+    <wsdl:operation name="notifica">
+      <wsdl:input message="spc:notificaRequest" name="notificaRequest">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Es. Sincrono -->
+  <wsdl:portType name="Sincrono">
+    <wsdl:operation name="aggiornamento">
+      <wsdl:input message="spc:aggiornamentoRequest" name="aggiornamentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:aggiornamentoResponse" name="aggiornamentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+ 
+  <!-- Es. AsincronoSimmetrico -->
+  <wsdl:portType name="AsincronoSimmetricoRichiesta">
+    <wsdl:operation name="richiestaAggiornamento">
+      <wsdl:input message="spc:richiestaAggiornamentoRequest" name="richiestaAggiornamentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaAggiornamentoResponse" name="richiestaAggiornamentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+ 
+  <wsdl:portType name="AsincronoSimmetricoRisposta">
+    <wsdl:operation name="esitoAggiornamento">
+      <wsdl:input message="spc:esitoAggiornamentoRequest" name="esitoAggiornamentoRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:esitoAggiornamentoResponse" name="esitoAggiornamentoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+ 
+  <!-- Es. AsincronoAsimmetrico con port Type diversi -->
+  <wsdl:portType name="AsincronoAsimmetricoRichiesta">
+    <wsdl:operation name="richiestaRegistrazione">
+      <wsdl:input message="spc:richiestaRegistrazioneRequest" name="richiestaRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaRegistrazioneResponse" name="richiestaRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="AsincronoAsimmetricoRisposta">
+    <wsdl:operation name="richiestaStatoRegistrazione">
+      <wsdl:input message="spc:richiestaStatoRegistrazioneRequest" name="richiestaStatoRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaStatoRegistrazioneResponse" name="richiestaStatoRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  
+  <!-- Es. AsincronoAsimmetrico con port Type uguale -->
+  <wsdl:portType name="AsincronoAsimmetrico">
+     <wsdl:operation name="richiestaRegistrazione">
+      <wsdl:input message="spc:richiestaRegistrazioneRequest" name="richiestaRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaRegistrazioneResponse" name="richiestaRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="richiestaStatoRegistrazione">
+      <wsdl:input message="spc:richiestaStatoRegistrazioneRequest" name="richiestaStatoRegistrazioneRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:richiestaStatoRegistrazioneResponse" name="richiestaStatoRegistrazioneResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Es. Sincrono stesso namespace WSDL -->
+  <wsdl:portType name="SincronoNamespaceWSDL">
+      <wsdl:operation name="aggiornamentoNamespaceWSDL">
+         <wsdl:input message="spc:aggiornamentoNamespaceWSDLRequest" name="aggiornamentoNamespaceWSDLRequest">
+         </wsdl:input>
+         <wsdl:output message="spc:aggiornamentoNamespaceWSDLResponse" name="aggiornamentoNamespaceWSDLResponse">
+         </wsdl:output>
+      </wsdl:operation>
+  </wsdl:portType>
+
+  
+  <!-- Bindings -->
+  <wsdl:binding name="OnewayBinding" type="spc:Oneway">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="notifica">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="notificaRequest">
+        <soap:body use="literal" parts="notificaRequestPart"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+  <wsdl:binding name="SincronoBinding" type="spc:Sincrono">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="aggiornamento">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="aggiornamentoRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="aggiornamentoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+  <wsdl:binding name="AsincronoSimmetricoRichiestaBinding" type="spc:AsincronoSimmetricoRichiesta">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="richiestaAggiornamento">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="richiestaAggiornamentoRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="richiestaAggiornamentoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+  <wsdl:binding name="AsincronoSimmetricoRispostaBinding" type="spc:AsincronoSimmetricoRisposta">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="esitoAggiornamento">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="esitoAggiornamentoRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="esitoAggiornamentoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:binding name="AsincronoAsimmetricoBinding" type="spc:AsincronoAsimmetrico">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="richiestaRegistrazione">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="richiestaRegistrazioneRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="richiestaRegistrazioneResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="richiestaStatoRegistrazione">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="richiestaStatoRegistrazioneRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="richiestaStatoRegistrazioneResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+  <wsdl:binding name="AsincronoAsimmetricoRichiestaBinding" type="spc:AsincronoAsimmetricoRichiesta">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="richiestaRegistrazione">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="richiestaRegistrazioneRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="richiestaRegistrazioneResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+    
+  <wsdl:binding name="AsincronoAsimmetricoRispostaBinding" type="spc:AsincronoAsimmetricoRisposta">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="richiestaStatoRegistrazione">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="richiestaStatoRegistrazioneRequest">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="richiestaStatoRegistrazioneResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+    <wsdl:binding name="SincronoNamespaceWSDLBinding" type="spc:SincronoNamespaceWSDL">
+       <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="aggiornamentoNamespaceWSDL">
+             <soap:operation soapAction="aggiornamentoNamespaceWSDL" style="document" />
+             <wsdl:input name="aggiornamentoNamespaceWSDLRequest">
+                   <soap:body use="literal" />
+             </wsdl:input>
+             <wsdl:output name="aggiornamentoNamespaceWSDLResponse">
+                   <soap:body use="literal" />
+            </wsdl:output>
+         </wsdl:operation>
+   </wsdl:binding>
+
+
+
+  <wsdl:service name="OnewayService">
+    <wsdl:port binding="spc:OnewayBinding" name="NotificaPort">
+      <soap:address location="http://localhost:8080/" />
+    </wsdl:port>
+  </wsdl:service>
+  
+  <wsdl:service name="SincronoService">
+      <wsdl:port binding="spc:SincronoBinding" name="SincronoPort">
+      <soap:address location="http://localhost:8080/" />
+    </wsdl:port>
+  </wsdl:service>
+    
+  <wsdl:service name="AsincronoSimmetricoRichiestaService">
+    <wsdl:port binding="spc:AsincronoSimmetricoRichiestaBinding" name="AsincronoSimmetricoRichiestaPort">
+      <soap:address location="http://localhost:8080/" />
+    </wsdl:port>
+  </wsdl:service>
+  
+  <wsdl:service name="AsincronoSimmetricoRispostaService">
+    <wsdl:port binding="spc:AsincronoSimmetricoRispostaBinding" name="AsincronoSimmetricoRispostaPort">
+      <soap:address location="http://localhost:8080/" />
+    </wsdl:port>
+  </wsdl:service>
+  
+  <wsdl:service name="AsincronoAsimmetricoService">
+    <wsdl:port binding="spc:AsincronoAsimmetricoBinding" name="AsincronoAsimmetricoPort">
+      <soap:address location="http://localhost:8080/" />
+    </wsdl:port>
+  </wsdl:service>
+  
+  <wsdl:service name="AsincronoAsimmetricoRichiestaService">
+    <wsdl:port binding="spc:AsincronoAsimmetricoRichiestaBinding" name="AsincronoAsimmetricoRichiestaPort">
+      <soap:address location="http://localhost:8080/" />
+    </wsdl:port>
+  </wsdl:service>
+  
+  <wsdl:service name="AsincronoAsimmetricoRispostaService">
+    <wsdl:port binding="spc:AsincronoAsimmetricoRispostaBinding" name="AsincronoAsimmetricoRispostaPort">
+      <soap:address location="http://localhost:8080/" />
+    </wsdl:port>
+  </wsdl:service>
+
+   <wsdl:service name="SincronoNamespaceWSDLService">
+      <wsdl:port binding="spc:SincronoNamespaceWSDLBinding" name="SincronoNamespaceWSDLPort">
+        <soap:address location="http://localhost:8080/" />
+      </wsdl:port>
+    </wsdl:service>
+
+
+</wsdl:definitions>

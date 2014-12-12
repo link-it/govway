@@ -1,0 +1,36 @@
+
+<project name="prepare-setup-spcoop" basedir=".">
+	
+	<description>
+        	PREPARE SETUP SPCOOP
+	</description>
+
+	
+	<!-- Protocollo SPCoop -->
+	<target name="prepare_spcoop_setup">
+		
+		<if>
+			<not>
+				<available file="${spcoop}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${spcoop}/local_env.xml.template" tofile="${spcoop}/local_env.xml" />
+			</then>
+		</if>
+				
+		<antcall target="compile_spcoop_plugin" >
+	    	<param name="dist" value="${deploy_sw}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_spcoop" value="${src_spcoop}"/>
+	 	</antcall>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/spcoop" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/spcoop"/>
+		<delete dir="it"/>
+		
+	</target>
+	
+	
+</project>

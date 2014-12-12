@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/eccezione/details"
+       targetNamespace="http://www.openspcoop2.org/core/eccezione/details"
+       xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+       attributeFormDefault="unqualified">
+
+       <xsd:element name="dettaglio-eccezione">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <!-- Dati Porta di Comunicazione che ha emesso l'errore applicativo -->
+                            <xsd:element ref="dominio"/>
+                            <!-- OraRegistrazione -->
+                            <xsd:element name="ora-registrazione" type="xsd:dateTime"/>
+                            <!-- Eccezioni standard (Cooperazione/Integrazione) -->
+                            <xsd:element name="eccezioni" type="eccezioni"/>
+                            <!-- Dettagli aggiuntivi -->
+                            <xsd:element name="dettagli" type="dettagli" maxOccurs="1" minOccurs="0"
+                            />
+                     </xsd:sequence>
+              </xsd:complexType>
+       </xsd:element>
+       
+       <xsd:element name="dominio">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <xsd:element name="identificativo-porta" type="xsd:string"/>
+                            <xsd:element name="soggetto" type="dominio-soggetto"/>
+                     </xsd:sequence>
+                     <xsd:attribute name="funzione" type="TipoPdD"/>
+                     <xsd:attribute name="modulo" type="xsd:string"/>
+              </xsd:complexType>
+       </xsd:element>
+       <xsd:complexType name="dominio-soggetto">
+              <xsd:simpleContent>
+                     <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                     </xsd:extension>
+              </xsd:simpleContent>
+       </xsd:complexType>
+       
+       <xsd:simpleType name="TipoPdD">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="PortaDelegata"/>
+                     <xsd:enumeration value="PortaApplicativa"/>
+                     <xsd:enumeration value="IntegrationManager"/>
+                     <xsd:enumeration value="Router"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:complexType name="eccezioni">
+              <xsd:sequence>
+                     <xsd:element ref="eccezione" maxOccurs="unbounded" minOccurs="1"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       <xsd:complexType name="dettagli">
+              <xsd:sequence>
+                     <xsd:element ref="dettaglio" maxOccurs="unbounded" minOccurs="0"/>
+              </xsd:sequence>
+       </xsd:complexType>
+
+       <xsd:element name="eccezione">
+              <xsd:complexType>
+                     <xsd:attribute name="codice" type="xsd:string" use="required"/>
+                     <xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+                     <xsd:attribute name="rilevanza" type="xsd:string"/>
+                     <xsd:attribute name="contesto-codifica" type="xsd:string"/>
+                     <xsd:attribute name="tipo" type="TipoEccezione" use="required"/>
+              </xsd:complexType>
+       </xsd:element>
+
+       <xsd:element name="dettaglio">
+              <xsd:complexType>
+                     <xsd:simpleContent>
+                            <xsd:extension base="xsd:string">
+                                   <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                            </xsd:extension>
+                     </xsd:simpleContent>
+              </xsd:complexType>
+       </xsd:element>
+       
+       <xsd:simpleType name="TipoEccezione">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="EccezioneProtocollo"/>
+                     <xsd:enumeration value="EccezioneIntegrazione"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+
+
+</xsd:schema>

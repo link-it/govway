@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/pools/core" targetNamespace="http://www.openspcoop2.org/pools/core" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+
+
+	<!-- pools contiene:  -->
+	<xsd:element name="openspcoop2">
+    		<xsd:complexType>	
+      			<xsd:sequence>
+                                <xsd:element maxOccurs="1" minOccurs="1" ref="jndi"/>
+        			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="datasource"/>
+                                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="connection-factory"/>
+			</xsd:sequence>
+    		</xsd:complexType>
+	</xsd:element>
+
+	<!-- JNDI, serve per la registrazione delle risorse in un albero JNDI -->
+	<xsd:element name="jndi">
+    		<xsd:complexType>	
+      			<xsd:sequence>
+                                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="context-property"/>
+			</xsd:sequence>
+    		</xsd:complexType>
+	</xsd:element>
+
+        <!-- Raccoglie le impostazioni sulla dimensione del pool -->
+	<xsd:element name="pool-size">
+    		<xsd:complexType>	
+                        <xsd:attribute name="initial" type="xsd:integer" default="0"/>
+                        <xsd:attribute name="min" type="xsd:integer" default="3"/>
+                        <xsd:attribute name="max" type="xsd:integer" default="8"/>
+    		</xsd:complexType>
+	</xsd:element>
+
+        <!-- Raccoglie le impostazioni su come validare una risorsa del pool  -->
+	<xsd:element name="validation">
+    		<xsd:complexType>	
+                        <xsd:attribute name="operation" type="xsd:string" />
+                        <xsd:attribute name="test-on-get" type="xsd:boolean" default="false"/>
+                        <xsd:attribute name="test-on-release" type="xsd:boolean" default="false"/>
+    		</xsd:complexType>
+	</xsd:element>
+
+        <!-- Raccoglie le impostazioni sul comportamente del pool nel caso sia esausto dalle richieste  -->
+	<xsd:element name="when-exhausted">
+    		<xsd:complexType>	
+                       <xsd:attribute name="action" default="block" >
+		            <xsd:simpleType>	
+	          	        <xsd:restriction base="xsd:string">
+	               		    <xsd:enumeration value="block"/>
+		       		    <xsd:enumeration value="grow"/>
+		                    <xsd:enumeration value="fail"/>
+	          	        </xsd:restriction>
+	     	            </xsd:simpleType>
+			</xsd:attribute>
+                        <xsd:attribute name="blocking-timeout" type="xsd:string" default="120000"/>
+    		</xsd:complexType>
+	</xsd:element>
+
+        <!-- Raccoglie le impostazioni su come configurare un thread che controlli gli oggetti Idle  -->
+	<xsd:element name="idle-object-eviction">
+    		<xsd:complexType>	
+                        <xsd:attribute name="time-between-eviction-runs" type="xsd:string" default="300000"/>
+                        <xsd:attribute name="num-tests-per-eviction-run" type="xsd:integer" default="3"/>
+                        <xsd:attribute name="idle-object-timeout" type="xsd:string" default="1800000"/>
+                        <xsd:attribute name="validate-object" type="xsd:boolean" default="false"/>
+    		</xsd:complexType>
+	</xsd:element>
+
+	<!-- Raccoglie le proprieta' per localizzare una risorsa -->
+	<xsd:element name="context-property">
+    		<xsd:complexType>	
+                        <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        <xsd:attribute name="value" type="xsd:string" use="required"/>
+    		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- un Datasource serve a raccogliere connessioni verso un Database relazionale -->
+	<xsd:element name="datasource">
+    		<xsd:complexType>	
+      			<xsd:sequence>
+        			<xsd:element maxOccurs="1" minOccurs="0" ref="pool-size"/>
+        			<xsd:element maxOccurs="1" minOccurs="0" ref="validation"/>
+	                        <xsd:element maxOccurs="1" minOccurs="0" ref="when-exhausted"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="idle-object-eviction"/>
+			</xsd:sequence>
+                        <xsd:attribute name="jndi-name" type="xsd:string" use="required"/>
+                        <xsd:attribute name="connection-url" type="xsd:string" use="required"/>
+                        <xsd:attribute name="driver-class" type="xsd:string" use="required"/>
+                        <xsd:attribute name="username" type="xsd:string"/>
+                        <xsd:attribute name="password" type="xsd:string"/>
+                        <xsd:attribute name="prepared-statement-pool" type="xsd:boolean" default="false"/>
+                        <xsd:attribute name="auto-commit" type="xsd:boolean" default="false"/>
+                        <xsd:attribute name="read-only" type="xsd:boolean" default="false"/>
+                        <xsd:attribute name="transaction-isolation" default="readCommitted" >
+		            <xsd:simpleType>	
+	          	        <xsd:restriction base="xsd:string">
+	               		    <xsd:enumeration value="none"/>
+		       		    <xsd:enumeration value="readCommitted"/>
+		                    <xsd:enumeration value="readUncommitted"/>
+                                    <xsd:enumeration value="repeatableRead"/>
+                                    <xsd:enumeration value="serializable"/>
+	          	        </xsd:restriction>
+	     	            </xsd:simpleType>
+			</xsd:attribute>
+    		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+        <!-- un ConnectionFactory serve a raccogliere connessioni verso un Broker JMS -->
+	<xsd:element name="connection-factory">
+    		<xsd:complexType>	
+      			<xsd:sequence>
+                                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="context-property"/>
+        			<xsd:element maxOccurs="1" minOccurs="0" ref="pool-size"/>
+        			<xsd:element maxOccurs="1" minOccurs="0" ref="validation"/>
+	                        <xsd:element maxOccurs="1" minOccurs="0" ref="when-exhausted"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="idle-object-eviction"/>
+			</xsd:sequence>
+                        <xsd:attribute name="jndi-name" type="xsd:string" use="required"/>
+                        <xsd:attribute name="connection-factory" type="xsd:string" use="required"/>
+                        <xsd:attribute name="username" type="xsd:string"/>
+                        <xsd:attribute name="password" type="xsd:string"/>
+                        <xsd:attribute name="client-id" type="xsd:string"/>
+                        <xsd:attribute name="auto-commit" type="xsd:boolean" default="false"/>
+                        <xsd:attribute name="acknowledgment-type" default="autoAcknowledgment" >
+		            <xsd:simpleType>	
+	          	        <xsd:restriction base="xsd:string">
+	               		    <xsd:enumeration value="none"/>
+		       		    <xsd:enumeration value="autoAcknowledgment"/>
+		                    <xsd:enumeration value="clientAcknowledgment"/>
+                                    <xsd:enumeration value="dupsOkAcknowledgment"/>
+	          	        </xsd:restriction>
+	     	            </xsd:simpleType>
+			</xsd:attribute>
+			<xsd:attribute name="single-connection-with-session-pool" default="disabilitato" >
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:enumeration value="abilitato"/>
+                                    <xsd:enumeration value="disabilitato"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+    		</xsd:complexType>
+	</xsd:element>
+
+
+</xsd:schema>

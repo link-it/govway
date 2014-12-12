@@ -1,0 +1,116 @@
+# URL Servizio IntegrationManager
+#urlServizio=http://localhost:8080/openspcoop2/IntegrationManager/PD
+urlServizio=http://localhost:8080/openspcoop2/IntegrationManager/MessageBox
+
+
+
+#  ------ Tipo di Operazione di invocazione PD ------
+
+# Invocazioni porte delegate
+#operazione=invocazionePortaDelegata
+#operazione=invocazionePortaDelegataPerRiferimento
+#operazione=sendRispostaAsincronaSimmetrica
+#operazione=sendRichiestaStatoAsincronaAsimmetrica
+
+# Servizio di Message Box
+operazione=getAllMessagesId
+#operazione=getAllMessagesIdByService
+#operazione=getNextMessagesId
+#operazione=getNextMessagesIdByService
+#operazione=getMessagesIdArray
+#operazione=getMessagesIdArrayByService
+#operazione=getMessage
+#operazione=getMessageByReference
+#operazione=deleteMessage
+#operazione=deleteMessageByReference
+#operazione=deleteAllMessages
+
+
+
+# ----- Informazioni di integrazione con la Porta di Dominio ---
+
+
+# -- Identificativi di correlazione --
+
+# Identificatore Messaggi per MessageBox
+#idMessaggio=
+
+# RiferimentoMessaggio 
+# Utile per:
+# - invocazione di richiestaStato/risposta per profili Asincroni
+# - ottentere un messaggio dal message box 'byReference'
+#riferimentoMessaggio=
+
+# IDCollaborazione
+#collaborazione=
+
+# Identificativo Messaggio x invocazione PD per riferimento
+#idMessaggioInvocazionePDperRiferimento=
+
+
+# -- Informazioni sul SPCoop header --
+
+# tipoDestinatario
+#tipoDestinatario=SPC
+
+# destinatario
+#destinatario=MinisteroErogatore
+
+# tipoServizio
+#tipoServizio=SPC
+
+# Servizio
+#servizio=ComunicazioneVariazione
+
+# Azione
+#azione=GetMessage
+
+
+# -- Integrazione Servizio Applicativo --
+
+# Identificativo Correlazione Applicativa
+#identificativoCorrelazioneApplicativa=XXX
+
+# Identificativo Servizio Applicativo
+#servizioApplicativo=nomeServizioApplicativo
+
+ 
+# -- Counter, numero di id da ritornare con metodi nextId --
+#counter=int
+
+# Eventuale offset per delimitare il range dei messaggi
+#offset=int
+
+
+# -- Autenticazione BASIC (Username e Password) --
+username=gop3
+password=123456
+
+
+
+
+# ------- Informazioni gruppo invocazionePortaDelegata -----
+
+# -- Messaggio da inviare  --
+# Soap:
+richiestaSOAP=request.xml
+# SoloBody:
+#richiestaSOAP=requestBody.xml
+# Attachments
+#richiestaSOAP=requestAttachments.xml
+
+
+# -- Imbustamento SOAP --
+# default: false
+#imbustamento=true
+
+
+# --  PortaDelegata --
+#openspcoop.PD=NomePortaDelegata
+# Esempi:
+
+# HelloWorld
+#openspcoop.PD=HelloWorld
+
+# PortaDelegata da usare con destinazione/servizio/azione
+#openspcoop.PD=HelloWorldInputBased 

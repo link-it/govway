@@ -1,0 +1,219 @@
+<project name="openspcoop2-war-wsregistry">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.core.registry.ws.server
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<target name="preprocess_search" depends="concat_search">
+		<replace file="${tmp_jboss_conf}/jbossws-cxf.xml" token="@IMPLEMENTOR@" value="Search"/> 
+		<replace dir="${tmp_jboss_conf}" token="@WAR_EXTENSION@" value="_Search"/>                
+		<delete dir="${build_dir_registry_ws}/wsdl" />
+		<mkdir dir="${build_dir_registry_ws}/wsdl" />
+		<copy todir="${build_dir_registry_ws}/wsdl">
+			<zipfileset dir="${wsdl_registry_ws}">
+				<exclude name="*CRUD.*"/>
+				<exclude name="*All.*"/>
+				<exclude name="*CRUD_*"/>
+				<exclude name="*All_*"/>
+			</zipfileset>
+		</copy> 
+	</target>
+
+	<target name="preprocess_crud" depends="concat_crud">
+		<replace file="${tmp_jboss_conf}/jbossws-cxf.xml" token="@IMPLEMENTOR@" value="CRUD"/>
+		<replace dir="${tmp_jboss_conf}" token="@WAR_EXTENSION@" value="_CRUD"/>  
+		<delete dir="${build_dir_registry_ws}/wsdl" />
+		<mkdir dir="${build_dir_registry_ws}/wsdl" />
+		<copy todir="${build_dir_registry_ws}/wsdl">
+			<zipfileset dir="${wsdl_registry_ws}">
+				<exclude name="*Search.*"/>
+				<exclude name="*All.*"/>
+				<exclude name="*Search_*"/>
+				<exclude name="*All_*"/>
+			</zipfileset>
+		</copy> 
+	</target>
+
+	<target name="preprocess_all" depends="concat_all">
+		<replace file="${tmp_jboss_conf}/jbossws-cxf.xml" token="@IMPLEMENTOR@" value="All"/>
+		<replace dir="${tmp_jboss_conf}" token="@WAR_EXTENSION@" value=""/>  
+		<delete dir="${build_dir_registry_ws}/wsdl" />
+		<mkdir dir="${build_dir_registry_ws}/wsdl" />
+		<copy todir="${build_dir_registry_ws}/wsdl">
+			<zipfileset dir="${wsdl_registry_ws}">
+				<exclude name="*Search.*"/>
+				<exclude name="*CRUD.*"/>
+				<exclude name="*Search_*"/>
+				<exclude name="*CRUD_*"/>
+			</zipfileset>
+		</copy> 
+	</target>
+
+
+	<target name="concat">
+		<mkdir dir="${tmp_jboss_conf}" />
+		
+		<copy todir="${tmp_jboss_conf}">
+			<fileset dir="${src_dir_registry_ws}/WEB-INF">
+				<include name="${jboss_classloading}" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="concat_search" depends="concat">
+		<concat destfile="${tmp_jboss_conf}/jbossws-cxf.xml">
+			<fileset file="deploy/cxf/jbossws-cxf.xml.head.part" />
+			<fileset file="deploy/cxf/jbossws-cxf.xml.search.part" />
+			<fileset file="deploy/cxf/jbossws-cxf.xml.tail.part" />
+		</concat>
+	</target>
+
+	<target name="concat_crud" depends="concat">
+		<concat destfile="${tmp_jboss_conf}/jbossws-cxf.xml">
+			<fileset file="deploy/cxf/jbossws-cxf.xml.head.part" />
+			<fileset file="deploy/cxf/jbossws-cxf.xml.crud.part" />
+			<fileset file="deploy/cxf/jbossws-cxf.xml.tail.part" />
+		</concat>
+	</target>
+
+	<target name="concat_all" depends="concat">
+		<concat destfile="${tmp_jboss_conf}/jbossws-cxf.xml">
+			<fileset file="deploy/cxf/jbossws-cxf.xml.head.part" />
+			<fileset file="deploy/cxf/jbossws-cxf.xml.all.part" />
+			<fileset file="deploy/cxf/jbossws-cxf.xml.tail.part" />
+		</concat>
+	</target>
+	
+	<target name="-war">
+		
+		<if>
+			<equals arg1="${war_type}" arg2="All"/>
+			<then>
+				<var name="ext_war" value="" />
+			</then>
+			<else>
+				<var name="ext_war" value="_${war_type}" />
+			</else>
+		</if>
+	
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<copy file="${src_dir_registry_ws}/WEB-INF/${jboss_deployment_structure}.${as}" 
+						tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+			</then>
+ 		</if>
+	
+		<!-- DataSource Properties -->
+		<delete dir="${build_registry_ws}/properties" />
+		<mkdir dir="${build_registry_ws}/properties" />
+		<copy file="${properties_registry_ws}/wsregistry.backend.properties" todir="${build_registry_ws}/properties" />
+		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<concat destfile="${build_registry_ws}/properties/wsregistry.backend.properties" append="yes" >
+
+# ----- Personalizzazione Tomcat -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build_registry_ws}/properties/wsregistry.backend.properties"/>
+					<param name="token" value="db.dataSource"/>
+					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<war destfile="${dist_registry_ws}/openspcoop2Registry${ext_war}.war" webxml="deploy/cxf/web.xml">
+
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="jbossws-cxf.xml"/>
+				<include name="${jboss_classloading}" />
+			</webinf>
+			<webinf dir="${src_dir_registry_ws}/WEB-INF">
+				<include name="${jboss_scanning}" />
+			</webinf>
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_deployment_structure}" />
+			</webinf>
+
+			<lib dir="${openspcoop2.dist}">
+				<include name="openspcoop2_utils_*.jar"/>
+				<include name="openspcoop2_generic-project_*.jar"/>
+				<include name="openspcoop2_core_*.jar"/>
+			</lib>
+			<lib dir="${dist_registry_ws}">
+				<include name="openspcoop2_ws-registry-server*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/cxf">
+				<include name="*.jar"/>
+				<exclude name="geronimo-servlet*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/httpcore">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/spring">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/security">
+				<include name="neethi-3.0.2.jar"/>
+				<include name="xmlsec-1.5.4.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/jax">
+				<include name="${jaxp_ri_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/shared">
+				<include name="wsdl4j-1.6.2.jar"/>
+				<include name="ezmorph-1.0.6.jar"/>
+				<include name="xom-1.2.7.jar"/>
+				<include name="json-lib-2.4-jdk15.jar"/>
+				<include name="soap.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/jibx">
+				<include name="jibx-bind-1.2.3.jar"/>
+				<include name="jibx-run-1.2.3.jar"/>
+				<include name="xpp3-1.2.3.jar"/>
+				<include name="bcel-5.2.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/commons">
+				<include name="commons-lang-2.6.jar"/>
+				<include name="commons-beanutils-1.8.3.jar"/>
+				<include name="commons-collections-3.2.1.jar"/>
+				<include name="${commons_logging_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/log">
+				<include name="log/slf4j-api-1.6.2.jar"/>
+				<include name="${log4j_jar}"/>
+			</lib>
+			
+			<classes dir="${build_registry_ws}/properties">
+				<include name="wsregistry.backend.properties"/>
+			</classes>			
+			<classes dir="${properties_registry_ws}">
+				<include name="wsregistry.log4j.properties"/>
+				<include name="wsregistry.properties"/>
+				<include name="${log4j_properties}"/>
+			</classes>
+			
+			<classes dir="${build_dir_registry_ws}/wsdl"/>								
+		
+		</war>
+
+	</target>
+	
+</project>

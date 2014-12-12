@@ -1,0 +1,34 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:messaging:1.1">
+		...
+                <address-settings>
+		    ...
+                    <address-setting match="jms.queue.testOpenSPCoop2Queue">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.topic.testOpenSPCoop2Topic">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                </address-settings>
+		...
+                <jms-destinations>
+		    ...
+                    <jms-queue name="testOpenSPCoop2Queue">
+                        <entry name="java:jboss/exported/queue/testOpenSPCoop2Queue"/>
+                    </jms-queue>
+		    ....
+                    <jms-topic name="testOpenSPCoop2Topic">
+			<entry name="java:jboss/exported/topic/testOpenSPCoop2Topic"/>
+		    </jms-topic>
+                </jms-destinations>
+		...
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>

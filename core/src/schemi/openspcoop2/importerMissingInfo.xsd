@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/protocol/information_missing"
+	targetNamespace="http://www.openspcoop2.org/protocol/information_missing"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="openspcoop2_protocolInformationMissing">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="false"/>
+				<linkit:configuration>
+					<linkit:restriction enableWithOneValue="true"/>
+				</linkit:configuration>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:xml root-element="openspcoop2" generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="false"/>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+	
+	<xsd:element name="openspcoop2">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="wizard" minOccurs="0" />
+				<xsd:element ref="soggetto" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="input" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-cooperazione" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-servizio-parte-comune" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-servizio-composto" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="fruitore" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="replaceMatchType">
+		<xsd:sequence>
+			<xsd:element name="nome" type="ReplaceMatchFieldType" minOccurs="0" />
+			<xsd:element name="tipo" type="ReplaceMatchFieldType" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="ReplaceKeywordType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="EQUALS"/>
+			<xsd:enumeration value="EMPTY"/>
+			<xsd:enumeration value="CONTAINS"/>
+			<xsd:enumeration value="STARTS_WITH"/>
+			<xsd:enumeration value="ENDS_WITH"/>
+			<xsd:enumeration value="ALL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="ReplaceMatchFieldType">
+		<xsd:attribute name="valore" type="xsd:string" use="optional"/>
+		<xsd:attribute name="tipo" type="ReplaceKeywordType" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Soggetto -->
+	
+	<xsd:element name="soggetto" type="Soggetto" />
+	
+	<xsd:complexType name="Soggetto">
+		<xsd:sequence>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="SoggettoReplaceType" use="required"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
+		<xsd:attribute name="tipo-pdd" type="pddType" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="SoggettoReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="RIFERIMENTO"/>
+			<xsd:enumeration value="CONNETTORE"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="pddType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="operativo"/>
+			<xsd:enumeration value="esterno"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Servizio Applicativo -->
+	
+	<xsd:element name="servizio-applicativo" type="ServizioApplicativo" />
+	
+	<xsd:complexType name="ServizioApplicativo">
+		<xsd:sequence>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="ServizioApplicativoReplaceType" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="ServizioApplicativoReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="RIFERIMENTO"/>
+			<xsd:enumeration value="CONNETTORE"/>
+			<xsd:enumeration value="CREDENZIALI_ACCESSO_PDD"/>
+			<xsd:enumeration value="ALLINEA_CREDENZIALI_PD"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Accordi Cooperazione -->
+	
+	<xsd:element name="accordo-cooperazione" type="AccordoCooperazione" />
+	
+	<xsd:complexType name="AccordoCooperazione">
+		<xsd:sequence>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="AccordoCooperazioneReplaceType" use="required"/>
+		<xsd:attribute name="stato" type="statoType" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="AccordoCooperazioneReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="RIFERIMENTO"/>
+			<xsd:enumeration value="STATO_ARCHIVIO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Accordi Parte Comune -->
+	
+	<xsd:element name="accordo-servizio-parte-comune" type="AccordoServizioParteComune" />
+	<xsd:element name="accordo-servizio-composto" type="AccordoServizioParteComune" />
+	
+	<xsd:complexType name="AccordoServizioParteComune">
+		<xsd:sequence>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="AccordoServizioParteComuneReplaceType" use="required"/>
+		<xsd:attribute name="stato" type="statoType" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="AccordoServizioParteComuneReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="RIFERIMENTO"/>
+			<xsd:enumeration value="STATO_ARCHIVIO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Accordi Parte Specifica -->
+	
+	<xsd:element name="accordo-servizio-parte-specifica" type="AccordoServizioParteSpecifica" />
+	
+	<xsd:complexType name="AccordoServizioParteSpecifica">
+		<xsd:sequence>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="AccordoServizioParteSpecificaReplaceType" use="required"/>
+		<xsd:attribute name="stato" type="statoType" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="AccordoServizioParteSpecificaReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CONNETTORE"/>
+			<xsd:enumeration value="STATO_ARCHIVIO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Fruitore -->
+	
+	<xsd:element name="fruitore" type="Fruitore" />
+	
+	<xsd:complexType name="Fruitore">
+		<xsd:sequence>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="FruitoreReplaceType" use="required"/>
+		<xsd:attribute name="stato" type="statoType" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="FruitoreReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="STATO_ARCHIVIO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+	<!-- Accordi comuni -->
+	
+	<xsd:simpleType name="statoType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="finale"/>
+			<xsd:enumeration value="operativo"/>
+			<xsd:enumeration value="bozza"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Input -->
+	
+	<xsd:element name="input" type="Input" />
+	
+	<xsd:complexType name="Input">
+		<xsd:sequence>
+			<xsd:element name="proprieta" type="Proprieta" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Proprieta">
+		<xsd:attribute name="placeholder" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="default" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Wizard -->	
+	
+	<xsd:element name="wizard" type="Wizard" />
+	
+	<xsd:complexType name="Wizard">
+		<xsd:sequence>
+			<xsd:element name="requisiti" type="Requisiti" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="step" type="xsd:int" use="optional"/>
+		<xsd:attribute name="intestazione-originale" type="xsd:boolean" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="Requisiti">
+		<xsd:sequence>
+			<xsd:element name="protocollo" type="RequisitoProtocollo" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RequisitoProtocollo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+</xsd:schema>

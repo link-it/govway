@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="OpenSPCoop" default="" basedir=".">
+	<description>
+        File di Script per la compilazione o l'esecuzione del Client
+    </description>
+
+	<property name="required_lib" value="../../../../lib/" />
+
+
+	<!-- Argomento passato al Client, durante l'esecuzione -->
+	<property name="parameter" value="fileToSend/request.xml" />
+
+	<property name="src_client" location="src" />
+	<property name="build_client" location="build" />
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build_client}"/>
+	</target>
+	<target name="init">
+		<mkdir dir="${build_client}"/>
+	</target>
+
+
+	<!-- Compilazione del Client -->
+	<target name="build" depends="clean,init"
+        description="compila il Client" >
+		<!-- Compile the java code  -->
+		<javac destdir="${build_client}">
+			<src path="${src_client}"/>
+			<classpath>
+				<path refid="classpath_compile"/>
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!-- Run the Client -->
+	<target name="run" depends="build"
+        description="Esegue il Client" >
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.example.pdd.client.pdinvoker.Client" fork="false">
+			<arg value="${parameter}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="${build_client}"/>
+			</classpath>
+		</java>
+
+	</target>
+
+
+   <!-- Classpath -->
+   <path id="classpath_compile">
+       <fileset dir="${required_lib}"/>
+   </path>
+   <path id="classpath_run">
+		<fileset dir="${required_lib}" includes="axis14/axis-1.4.jar"/>
+		<fileset dir="${required_lib}" includes="shared/soap.jar"/>
+   </path>
+
+
+
+</project>

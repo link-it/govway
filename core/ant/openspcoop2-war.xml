@@ -1,0 +1,201 @@
+<project name="openspcoop2-war">
+    <description>
+        Compilazione dell'archivio WAR
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<import file="../../ant/commons/utils.xml" />
+
+	<!-- Crea una distribuzione di OpenSPCoop che possa girare su Tomcat -->
+	<target name="make_openspcoop_web" description="Crea il modulo WEB per server non j2ee">
+
+		<!-- OpenSPCoop Properties -->
+		<copy file="${properties_dir}/openspcoop2.properties" todir="${build}/tmp" />
+		<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+
+# ----- Personalizzazione Tomcat -------------
+		</concat>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.server"/>
+			<param name="value" value="web"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.dataSource"/>
+			<param name="value" value="java:/comp/env/org.openspcoop2.dataSource"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.logger.dump.allAttachments"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="dos2unix">
+			<param name="dir" value="${build}/tmp"/>
+		    <param name="file" value="openspcoop2.properties"/>
+		</antcall>
+
+		<!-- msgDiagnostici.properties -->
+		<mkdir dir="${build}/tmpNative2ASCII_src" />
+		<mkdir dir="${build}/tmpNative2ASCII_dest" />
+		<copy file="${properties_dir}/msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
+		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
+
+		<!-- Logger Log4j Properties -->
+		<copy file="${properties_dir}/logger.log4j.properties" todir="${build}/tmp" />
+		<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.logger.org.openspcoop2" value="log4j.logger.org.openspcoop2"/>
+		<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.category.openspcoop2.startup" value="log4j.category.openspcoop2.startup"/>
+		<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.additivity.org.openspcoop2" value="log4j.additivity.org.openspcoop2"/>
+		<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.additivity.openspcoop2.startup" value="log4j.additivity.openspcoop2.startup"/>
+
+
+		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
+		<unzip src="${required_lib}/shared/mailapi-1.4.4.jar" dest="${build}/tmp/mailapi"/>
+		<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
+			<filelist dir="${data_content_handler_dir}"
+                           files="mailcap"/>
+		</concat>
+		<jar jarfile="${build}/tmp/mailapi-1.4.4-openspcoop_ext.jar">
+			<zipfileset dir="${build}/tmp/mailapi"/>
+		</jar>
+
+		<!-- Creazione WAR -->
+		<war destfile="${dist}/openspcoop2.war" webxml="${deploy_web_dir}/web_app/WEB-INF/web.xml">
+			<!-- Informazioni sulla versione -->
+			<fileset file="${rootDir}/README.txt"/>
+			<fileset file="${rootDir}/COPYING"/>
+
+			<fileset file="${deploy_web_dir}/web_app/index.jsp"/>
+
+			<webinf dir="${deploy_web_dir}/web_app/WEB-INF">
+				<exclude name="**/web.xml"/>
+			</webinf>
+
+			<!-- Librerie di OpenSPCoop -->
+			<lib dir="${dist}">
+				<include name="openspcoop2_*.jar" />
+			</lib>
+			<!-- Stub di OpenSPCoop -->
+			<lib dir="${required_lib}">
+				<include name="openspcoop2_management_registro_search_stub.jar" />
+			</lib>
+			<lib dir="${required_lib}/commons">
+				<include name="commons-codec-1.5.jar"/>
+				<include name="commons-collections-3.2.1.jar"/>
+				<include name="commons-discovery-0.5.jar"/>
+				<include name="commons-httpclient-3.1.jar"/>
+				<include name="commons-lang-2.6.jar"/>
+				<include name="commons-logging-1.1.1.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="commons-net-3.0.1.jar"/>
+				<include name="commons-io-2.1.jar"/> <!-- (non necessario in A.S.) -->
+			</lib>
+			<lib dir="${required_lib}/jibx">
+				<include name="bcel-5.2.jar"/>
+				<include name="jibx-run-1.2.3.jar"/>
+				<include name="xpp3-1.2.3.jar"/>
+			</lib>
+			<lib dir="${required_lib}/log">
+				<include name="log4j-1.2.16.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="slf4j-api-1.6.2.jar"/>
+				<include name="slf4j-jdk14-1.6.2.jar"/>
+			</lib>
+			<lib dir="${required_lib}/security">
+				<include name="bcprov-ext-jdk15on-147.jar"/>
+				<include name="neethi-3.0.2.jar"/>
+				<include name="opensaml-2.5.1-1.jar"/>
+				<include name="openws-1.4.2-1.jar"/>
+				<include name="wss4j-1.6.10.jar"/>
+				<include name="xmlsec-1.5.4.jar"/>
+			</lib>
+			<lib dir="${required_lib}/javax">
+				<include name="javax.jms.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="javax.ejb.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="javax.transaction.jar"/> <!-- (non necessario in A.S.) -->
+			</lib>
+			<lib dir="${required_lib}/shared">
+				<include name="activation-1.1.1.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="addressing-1.0.jar"/>
+				<include name="concurrent-1.0.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="jcs-1.3.jar"/>
+				<include name="soap.jar"/>
+				<include name="xalan-2.7.1.jar"/>
+				<include name="wsdl4j-1.6.2.jar"/>
+				<include name="uddi4j-2.0.5.jar"/>
+				<include name="xalan-2.7.1_serializer.jar"/>  <!-- (non necessario in A.S.) -->
+				<include name="velocity-1.6.4.jar"/>
+				<include name="urlrewritefilter-4.0.3.jar"/>
+			</lib>
+			<lib dir="${required_lib}/jminix">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/cxf">
+				<include name="*.jar" />
+				<exclude name="geronimo-servlet_3.0_spec-1.0.jar"/>
+			</lib>
+			<lib dir="${required_lib}/jax">
+				<include name="jaxb*.jar" />
+			</lib>
+			<lib dir="${required_lib}/spring">
+				<include name="*.jar" />
+			</lib>
+			<lib dir="${required_lib}/spring-security">
+				<include name="*.jar" />
+			</lib>
+			<lib dir="${required_lib}/soapbox">
+				<include name="*.jar" />
+			</lib>
+			<lib dir="${required_lib}/httpcore">
+				<include name="*.jar" />
+			</lib>
+			<lib dir="${required_lib}/stub/cxf">
+				<include name="openspcoop2_registrySearchStub_cxf.jar"/>
+			</lib>
+			<!-- Mail api esteso con activation data handler openspcoop -->
+			<lib dir="${build}/tmp">
+				<include name="mailapi-1.4.4-openspcoop_ext.jar" />
+			</lib>
+			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
+			<classes dir="${properties_dir}">
+				<include name="cache.jcs.properties" />
+				<include name="className.properties" />
+				<include name="jmsPublisher.properties" />
+				<include name="autorizzazioneControlStation.properties" />
+				<include name="pdd.properties" />
+				<include name="log4j.properties" />
+			</classes>
+			<classes dir="${build}/tmp">
+				<include name="openspcoop2.properties" />
+				<include name="logger.log4j.properties" />
+			</classes>
+			<classes dir="${build}/tmpNative2ASCII_dest">
+				<include name="msgDiagnostici.properties" />
+			</classes>
+			<classes dir="${properties_dir}/crypto"/>
+			<!-- WSDL -->
+			<classes dir="${wsdlFolder}">
+				<include name="${wsdlPortaDelegata}"/>
+				<include name="${wsdlPortaApplicativa}"/>
+			</classes>
+		</war>
+		
+		
+		<!-- Elimino file temporanei -->
+		<delete file="${build}/tmp/openspcoop2.properties" deleteonexit="true"/>
+		<delete file="${build}/tmp/logger.log4j.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmp" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_dest/msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmpNative2ASCII_dest" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_src/msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmpNative2ASCII_src" deleteonexit="true"/>
+		
+	</target>
+	
+	
+	
+</project>

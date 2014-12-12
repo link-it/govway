@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="traccia" class="org.openspcoop2.core.tracciamento.Traccia">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <structure field="dominio" usage="required" map-as="org.openspcoop2.core.tracciamento.Dominio"/>
+    <value name="ora-registrazione" field="oraRegistrazione" usage="required"/>
+    <structure field="esitoElaborazione" usage="required" map-as="org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione"/>
+    <value name="identificativo-correlazione-richiesta" field="identificativoCorrelazioneRichiesta" usage="optional"/>
+    <value name="identificativo-correlazione-risposta" field="identificativoCorrelazioneRisposta" usage="optional"/>
+    <value name="location" field="location" usage="required"/>
+    <structure field="busta" usage="required" map-as="org.openspcoop2.core.tracciamento.Busta"/>
+    <value name="busta-xml" field="bustaXml" usage="optional"/>
+    <structure field="allegati" usage="optional" map-as="org.openspcoop2.core.tracciamento.Allegati"/>
+    <value name="tipo" field="tipo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="esito-elaborazione" class="org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="dettaglio" field="dettaglio" usage="optional"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="dominio" class="org.openspcoop2.core.tracciamento.Dominio">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
+    <structure field="soggetto" usage="required" map-as="org.openspcoop2.core.tracciamento.DominioSoggetto"/>
+    <value name="funzione" field="funzione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="soggetto" class="org.openspcoop2.core.tracciamento.DominioSoggetto">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="busta" class="org.openspcoop2.core.tracciamento.Busta">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <structure name="mittente" field="mittente" usage="optional" map-as="_Soggetto_Type"/>
+    <structure name="destinatario" field="destinatario" usage="optional" map-as="_Soggetto_Type"/>
+    <structure field="profiloCollaborazione" usage="optional" map-as="org.openspcoop2.core.tracciamento.ProfiloCollaborazione"/>
+    <structure name="servizio" field="servizio" usage="optional" map-as="_Servizio_Type"/>
+    <value name="azione" field="azione" usage="optional"/>
+    <structure name="servizio-correlato" field="servizioCorrelato" usage="optional" map-as="_Servizio_Type"/>
+    <value name="collaborazione" field="collaborazione" usage="optional"/>
+    <value name="identificativo" field="identificativo" usage="optional"/>
+    <value name="riferimento-messaggio" field="riferimentoMessaggio" usage="optional"/>
+    <structure name="ora-registrazione" field="oraRegistrazione" usage="optional" map-as="_Data_Type"/>
+    <value name="scadenza" field="scadenza" usage="optional"/>
+    <structure field="profiloTrasmissione" usage="optional" map-as="org.openspcoop2.core.tracciamento.ProfiloTrasmissione"/>
+    <value name="servizio-applicativo-fruitore" field="servizioApplicativoFruitore" usage="optional"/>
+    <value name="servizio-applicativo-erogatore" field="servizioApplicativoErogatore" usage="optional"/>
+    <value name="digest" field="digest" usage="optional"/>
+    <structure field="trasmissioni" usage="optional" map-as="org.openspcoop2.core.tracciamento.Trasmissioni"/>
+    <structure field="riscontri" usage="optional" map-as="org.openspcoop2.core.tracciamento.Riscontri"/>
+    <structure field="eccezioni" usage="optional" map-as="org.openspcoop2.core.tracciamento.Eccezioni"/>
+    <structure field="protocollo" usage="required" map-as="org.openspcoop2.core.tracciamento.Protocollo"/>
+  </mapping>
+  <mapping name="mittente" class="org.openspcoop2.core.tracciamento.Soggetto" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.tracciamento.SoggettoIdentificativo"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="optional"/>
+    <value name="indirizzo" field="indirizzo" usage="optional"/>
+  </mapping>
+
+  <mapping type-name="_Soggetto_Type" class="org.openspcoop2.core.tracciamento.Soggetto" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.tracciamento.SoggettoIdentificativo"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="optional"/>
+    <value name="indirizzo" field="indirizzo" usage="optional"/>
+  </mapping>
+  <mapping name="identificativo" class="org.openspcoop2.core.tracciamento.SoggettoIdentificativo">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="profilo-collaborazione" class="org.openspcoop2.core.tracciamento.ProfiloCollaborazione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="servizio-correlato" class="org.openspcoop2.core.tracciamento.Servizio" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Servizio_Type" class="org.openspcoop2.core.tracciamento.Servizio" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="ora-registrazione" class="org.openspcoop2.core.tracciamento.Data" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="date-time" field="dateTime" usage="optional"/>
+    <structure field="sorgente" usage="optional" map-as="org.openspcoop2.core.tracciamento.TipoData"/>
+  </mapping>
+
+  <mapping type-name="_Data_Type" class="org.openspcoop2.core.tracciamento.Data" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="date-time" field="dateTime" usage="optional"/>
+    <structure field="sorgente" usage="optional" map-as="org.openspcoop2.core.tracciamento.TipoData"/>
+  </mapping>
+  <mapping name="sorgente" class="org.openspcoop2.core.tracciamento.TipoData">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="profilo-trasmissione" class="org.openspcoop2.core.tracciamento.ProfiloTrasmissione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <structure field="inoltro" usage="optional" map-as="org.openspcoop2.core.tracciamento.Inoltro"/>
+    <value name="conferma-ricezione" field="confermaRicezione" usage="optional" style="attribute"/>
+    <value name="sequenza" field="sequenza" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="inoltro" class="org.openspcoop2.core.tracciamento.Inoltro">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="trasmissioni" class="org.openspcoop2.core.tracciamento.Trasmissioni">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <collection field="trasmissione" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.tracciamento.Trasmissione"/>
+    </collection>
+  </mapping>
+  <mapping name="trasmissione" class="org.openspcoop2.core.tracciamento.Trasmissione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <structure name="origine" field="origine" usage="optional" map-as="_Soggetto_Type"/>
+    <structure name="destinazione" field="destinazione" usage="optional" map-as="_Soggetto_Type"/>
+    <structure name="ora-registrazione" field="oraRegistrazione" usage="optional" map-as="_Data_Type"/>
+  </mapping>
+  <mapping name="riscontri" class="org.openspcoop2.core.tracciamento.Riscontri">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <collection field="riscontro" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.tracciamento.Riscontro"/>
+    </collection>
+  </mapping>
+  <mapping name="riscontro" class="org.openspcoop2.core.tracciamento.Riscontro">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="identificativo" field="identificativo" usage="optional"/>
+    <structure name="ora-registrazione" field="oraRegistrazione" usage="optional" map-as="_Data_Type"/>
+  </mapping>
+  <mapping name="eccezioni" class="org.openspcoop2.core.tracciamento.Eccezioni">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <collection field="eccezione" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.tracciamento.Eccezione"/>
+    </collection>
+  </mapping>
+  <mapping name="eccezione" class="org.openspcoop2.core.tracciamento.Eccezione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <structure field="codice" usage="optional" map-as="org.openspcoop2.core.tracciamento.CodiceEccezione"/>
+    <structure field="contestoCodifica" usage="optional" map-as="org.openspcoop2.core.tracciamento.ContestoCodificaEccezione"/>
+    <value name="posizione" field="posizione" usage="optional"/>
+    <structure field="rilevanza" usage="optional" map-as="org.openspcoop2.core.tracciamento.RilevanzaEccezione"/>
+  </mapping>
+  <mapping name="codice" class="org.openspcoop2.core.tracciamento.CodiceEccezione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+    <value name="sottotipo" field="sottotipo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="contesto-codifica" class="org.openspcoop2.core.tracciamento.ContestoCodificaEccezione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="rilevanza" class="org.openspcoop2.core.tracciamento.RilevanzaEccezione">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value field="base" usage="required" style="text"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="allegati" class="org.openspcoop2.core.tracciamento.Allegati">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <collection field="allegato" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.tracciamento.Allegato"/>
+    </collection>
+  </mapping>
+  <mapping name="allegato" class="org.openspcoop2.core.tracciamento.Allegato">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="content-id" field="contentId" usage="optional"/>
+    <value name="content-location" field="contentLocation" usage="optional"/>
+    <value name="content-type" field="contentType" usage="required"/>
+    <value name="digest" field="digest" usage="optional"/>
+  </mapping>
+  <mapping name="protocollo" class="org.openspcoop2.core.tracciamento.Protocollo">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <collection field="proprieta" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.tracciamento.ProtocolloProprieta"/>
+    </collection>
+    <value name="identificativo" field="identificativo" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="proprieta" class="org.openspcoop2.core.tracciamento.ProtocolloProprieta">
+    <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="valore" field="valore" usage="required" style="attribute"/>
+  </mapping>
+</binding>

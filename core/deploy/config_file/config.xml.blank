@@ -1,0 +1,11 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
+
+     <configurazione> 
+          <accesso-registro>
+               <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml" />
+          </accesso-registro>
+          <inoltro-buste-non-riscontrate cadenza="60" />
+          <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration" />
+     </configurazione>
+
+</openspcoop2>

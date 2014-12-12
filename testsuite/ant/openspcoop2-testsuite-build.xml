@@ -1,0 +1,82 @@
+<project name="openspcoop2-compile-pddConsole">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.testsuite
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.testsuite.*' -->
+	<target name="compile_openspcoop2_testsuite" description="compila la libreria org.openspcoop.testsuite.*">
+
+		<if>
+			<istrue value="${buildTestsuite}"/>
+			<then>
+		
+				<!-- Info svn -->
+				<runtarget target="checksvn" />
+				
+				<!-- org.openspcoop2.testsuite -->
+				<var name="packagesCompiled" value="org.openspcoop2.testsuite" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.axis14" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.clients" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.core" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.core.asincrono" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.db" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.gui.commons" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.gui.constant" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.gui.ctrlstat" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.server" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.testsuite.wssecurity" />	
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_testsuite}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="testsuite-lib"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.testsuite"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_testsuite}"/>
+					<param name="build" value="${build_testsuite}"/>
+				</antcall>
+				
+				<!-- Jar Complessivo -->
+				<!--<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="testsuite-lib"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_testsuite}"/>
+					<param name="build" value="${build_testsuite}"/>
+				</antcall>-->
+				
+				<!-- API -->
+				<if>
+					<istrue value="${buildAPI}"/>
+					<then>
+						<mkdir dir="${doc_testsuite}"/>
+					</then>
+				</if>
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_testsuite}/api"/>
+					<param name="src" value="${src_testsuite}"/>
+					<param name="doc" value="${doc_testsuite}"/>
+					<param name="dist" value="${dist_testsuite}"/>
+				</antcall>
+				
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

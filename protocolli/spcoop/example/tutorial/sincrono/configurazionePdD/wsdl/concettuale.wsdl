@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:spc="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia" location="definitorio.xsd">
+    </wsdl:import>
+  <wsdl:message name="statoFamigliaResponse">
+    <wsdl:part name="statoFamigliaResponsePart" element="spc:statoFamiglia">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="statoFamigliaRequest">
+    <wsdl:part name="statoFamigliaRequestPart" element="spc:richiestaStatoFamiglia">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="RichiestaStatoFamiglia">
+    <wsdl:operation name="Acquisisci">
+      <wsdl:input message="spc:statoFamigliaRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:statoFamigliaResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

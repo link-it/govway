@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>org.openspcoop2.pdd.mdb.threads package</title>
+<!--
+  @(#)package.html      $Rev$, $Date$
+ 
+OpenSPCoop v2 - Customizable SOAP Message Broker 
+http://www.openspcoop2.org
+ 
+Copyright (c) 2005-2014 Link.it srl (http://link.it). All rights reserved. 
+ 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+</head>
+<body bgcolor="white">
+
+
+Fornisce classi che definiscono Pool di thread che implementano le funzionalita della Porta di Dominio. Ogni modulo invoca la libreria del package 'mdb':
+<ul>
+<li>Imbustamento, ImbustamentoRisposte; si occupa di ricevere richieste/risposte Soap, e di mapparle in porte delegate registrate
+    precedentemente all'interno dell'infrastruttura OpenSPCoop.
+    Inoltre si occupa di imbustarle con un header Soap, definito dalla specifica SPC e di gestire le varie funzionalita'.
+<li>InoltroBuste, InoltroRisposte; si occupa di consegnare le buste create dal precedente MDB, ad un altra porta di dominio, 
+    a cui il destinatario della busta e' associato.
+<li>Sbustamento, SbustamentoRisposte; si occupa di ricevere buste, e di sbustarle dall'header del protocollo. 
+    Inoltre si occupa di gestire le varie funzionalita' del protocollo e di mapparle in porte applicative registrate
+    precedentemente all'interno dell'infrastruttura OpenSPCoop.
+<li>ConsegnaContenutiApplicativi; si occupa di consegnare le buste soap, all'applicazione destinataria (Server).
+    I possibili tipi di consegna sono implementati attraversi connettori diversi che implementano una interfaccia comune, 
+    <code>org.openspcoop.utils.Connettore</code>
+</ul>
+
+<p>
+<h3>See Also...</h3>
+<p>
+<p>
+Per altra documentazione, tutorials, esempi, guide guarda :
+<ul>
+  <li><a href="http://www.openspcoop2.org">Sito ufficiale del progetto OpenSPCoop2</a>
+</ul>
+<br>
+
+
+
+</body>
+</html>

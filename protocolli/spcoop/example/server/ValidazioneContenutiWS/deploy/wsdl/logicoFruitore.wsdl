@@ -1,0 +1,63 @@
+<!-- Definizione WSDL -->
+<wsdl:definitions targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:service="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:types="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+
+
+  <wsdl:types>
+  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+     <xsd:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" schemaLocation="wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
+  </xsd:schema>
+  </wsdl:types>
+
+
+
+<!-- ********* Import type ************* -->
+<wsdl:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" location="definitorio.xsd" />
+
+
+
+<!-- ********* Messaggi ************* -->
+
+<!-- ### Servizio EsitoAggiornamentoAsincronoWrappedDocumentLiteral ### -->
+
+<!-- operation: esitoAggiornamentoUtenteAsincronoSimmetricoWDL -->
+<wsdl:message name="RichiestaEsitoAggiornamentoUtenteAsincronoSimmetricoWDL">
+	<wsdl:part element="types:esitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+<wsdl:message name="RispostaEsitoAggiornamentoUtenteAsincronoSimmetricoWDL">
+	<wsdl:part element="types:esitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse" name="argomento-wrapped"/>
+</wsdl:message>
+
+<!-- operation: esitoAggiornamentoUtenteAsincronoAsimmetricoWDL -->
+<wsdl:message name="RichiestaEsitoAggiornamentoUtenteAsincronoAsimmetricoWDL">
+	<wsdl:part element="types:esitoAggiornamentoUtenteAsincronoAsimmetricoWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+<wsdl:message name="RispostaEsitoAggiornamentoUtenteAsincronoAsimmetricoWDL">
+	<wsdl:part element="types:esitoAggiornamentoUtenteAsincronoAsimmetricoWDLResponse" name="argomento-wrapped"/>
+</wsdl:message>
+
+
+
+
+
+
+<!-- ********* PortType ********* -->
+
+
+<!-- Servizio EsitoAggiornamentoAsincronoWrappedDocumentLiteral -->
+<wsdl:portType name="EsitoAggiornamentoAsincronoWrappedDocumentLiteral">
+
+      <wsdl:operation name="esitoAggiornamentoUtenteAsincronoSimmetricoWDL">
+         <wsdl:input message="service:RichiestaEsitoAggiornamentoUtenteAsincronoSimmetricoWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaEsitoAggiornamentoUtenteAsincronoSimmetricoWDL" name="risposta"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="esitoAggiornamentoUtenteAsincronoAsimmetricoWDL">
+         <wsdl:input message="service:RichiestaEsitoAggiornamentoUtenteAsincronoAsimmetricoWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaEsitoAggiornamentoUtenteAsincronoAsimmetricoWDL" name="risposta"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+
+
+</wsdl:definitions>

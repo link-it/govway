@@ -1,0 +1,27 @@
+*** SERVER ***
+
+Editare il file di configurazione Server.properties per impostare l'endpoint su cui accetta connessioni il server
+
+Per avviare il server utilizzare il comando:
+-  ant run_server 
+
+
+*** CLIENT ***
+
+Editare il file di configurazione Client.properties per impostare i parametri di accesso al servizio erogatore.
+- invocazioneTramitePdD (true/false): indica se l'invocazione del server viene mediata da una porta di dominio.
+- username: username utilizzato in una autenticazione http basic
+- password: password utilizzata in una autenticazione http basic
+
+Nel caso l'invocazione venga mediata da una porta di dominio (invocazioneTramitePdD=true):
+- portaDiDominio: indirizzo del servizio di ricezione contenuti applicativi della PdD
+- portaDelegata.stampa: nome della porta delegata che permette di effettuare una richiesta asincrona asimmetrica
+- portaDelegata.stato: nome della porta delegata che permette di effettuare una richiesta stato asincrona asimmetrica
+- informazioniIntegrazione.identificativoEGov: header HTTP contenente l'identificativo egov della cooperazione
+- informazioniIntegrazione.riferimentoAsincrono: nome utilizzato per indicare nella url l'id egov di correlazione asincrona
+
+Nel caso l'invocazione sia diretta verso il server (invocazioneTramitePdD=false):
+- endpoint: endpoing su cui accetta connessioni il server
+
+Per avviare il client utilizzare il comando:
+-  ant run_client

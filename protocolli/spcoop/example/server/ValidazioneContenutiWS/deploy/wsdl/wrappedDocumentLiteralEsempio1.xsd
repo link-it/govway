@@ -1,0 +1,32 @@
+<xsd:schema targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+xmlns:types="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+     	<xsd:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" schemaLocation="types.xsd"/>
+
+         <xsd:complexType name="registrazioneUtenteWDLRequestType">
+             <xsd:sequence>
+                 <xsd:element ref="types:nominativo" maxOccurs="1" minOccurs="1"/>
+		 <xsd:element ref="types:indirizzo" maxOccurs="1" minOccurs="1"/>
+                 <xsd:element ref="types:ora-registrazione" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="registrazioneUtenteWDLResponseType">
+             <xsd:sequence>
+                 <xsd:element ref="types:esito" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="eliminazioneUtenteWDLRequestType">
+             <xsd:sequence>
+                 <xsd:element ref="types:nominativo" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="eliminazioneUtenteWDLResponseType">
+             <xsd:sequence>
+                 <xsd:element ref="types:esito" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+
+
+</xsd:schema>

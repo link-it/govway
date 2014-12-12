@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:soap="http://cxf.apache.org/bindings/soap"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans
+                      http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                            http://cxf.apache.org/jaxws
+                                  http://cxf.apache.org/schemas/jaxws.xsd">
+ 
+      <jaxws:endpoint id="ComunicazioneVariazioneSOAP11"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazioneImpl11"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap11.wsdl" address="http://localhost:8888/tutorial/oneway11">
+      </jaxws:endpoint>
+
+      <jaxws:endpoint id="ComunicazioneVariazioneSOAP12"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazioneImpl12"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap12.wsdl" address="http://localhost:8888/tutorial/oneway12">
+      </jaxws:endpoint>
+      
+      <jaxws:endpoint id="ComunicazioneVariazioneSOAP11Sec"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazioneImplSec11"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap11Security.wsdl" address="http://localhost:8888/tutorial/onewaySec11">
+            <jaxws:properties>
+                  <entry key="ws-security.signature.properties" value="configurazionePdD/server/server-crypto.properties"/>
+                  <entry key="ws-security.signature.username" value="serverkey"/>
+                  <entry key="ws-security.encryption.username" value="useReqSigCert"/>
+                  <entry key="ws-security.callback-handler" value="org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ServerCallback"/>
+            </jaxws:properties>
+      </jaxws:endpoint>
+
+      <jaxws:endpoint id="ComunicazioneVariazioneSOAP12Sec"
+            implementor="org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ComunicazioneVariazioneImplSec12"
+            wsdlLocation="file:configurazionePdD/wsdl/implementazioneErogatoreSoap12Security.wsdl" address="http://localhost:8888/tutorial/onewaySec12">
+            <jaxws:properties>
+                  <entry key="ws-security.signature.properties" value="configurazionePdD/server/server-crypto.properties"/>
+                  <entry key="ws-security.signature.username" value="serverkey"/>
+                  <entry key="ws-security.encryption.username" value="useReqSigCert"/>
+                  <entry key="ws-security.callback-handler" value="org.openspcoop2.example.pdd.server.trasparente.comunicazionevariazione.ServerCallback"/>
+            </jaxws:properties>
+      </jaxws:endpoint>
+
+</beans>

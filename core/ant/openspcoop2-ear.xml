@@ -1,0 +1,803 @@
+<project name="openspcoop2-ear">
+    <description>
+        Compilazione dell'archivio EAR
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<import file="../../ant/commons/utils.xml" />
+
+	<!-- Creazione Manifest per EJB/WAR di OpenSPCoop2 -->
+	<var name="manifest.classpath.3parti" value="" />
+	<var name="manifest.classpath.openspcoop" value="" />
+	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
+		
+		<var name="tmp_prefix" value="lib" />
+		<var name="tmp" value="${tmp_prefix}/addressing-1.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcel-5.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-147.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-httpclient-3.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-2.7.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-annotation_1.0_spec-1.1.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-jaxws_2.2_spec-1.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-ws-metadata_2.0_spec-1.1.3.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.2.6.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.2.5.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.2.5.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jcs-1.3.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jibx-run-1.2.3.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.0.2.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-2.5.1-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/openws-1.4.2-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-api-1.3.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/soap.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.aop-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.asm-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.beans-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.context-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.core-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.expression-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.transaction-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.web-3.1.1.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-3.1.0.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xercesImpl-2.9.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.0.3.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-1.5.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xpp3-1.2.3.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wsdl4j-1.6.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-1.6.10.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-asl-4.2.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-api-1.6.2.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-jdk14-1.6.2.jar"/>	
+		<var name="manifest.classpath.3parti" value="${tmp}" />
+		<!-- <echo message="3PARTI: ${manifest.classpath.3parti}"/> -->
+		
+		<fileset dir="${dist}" id="dist.jar">
+			<include name="*.jar"/>
+		</fileset>
+		<pathconvert pathsep=" " property="dist.classpath" refid="dist.jar">
+			<map from="${dist}/" to="${tmp_prefix}/"/>
+		</pathconvert>
+		<var name="manifest.classpath.openspcoop" value="${dist.classpath}" />
+		<!-- <echo message="OPENSPCOOP: ${manifest.classpath.openspcoop}"/> -->
+		
+	</target>
+	
+	
+	
+	
+	<!-- Creazione del modulo OpenSPCoop2.jar -->
+	<target name="make_openspcoop2_ejb" description="Crea il modulo EJB">
+		<delete dir="${build}/tmpEJB" />
+		<mkdir dir="${build}/tmpEJB" />
+		
+		<!-- ejb/jboss config -->
+		<var name="ejb_jar_xml" value=""/>
+		<var name="jboss_xml" value=""/>
+		<if>
+			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
+			<then>
+				<if>
+					<or>
+						<equals arg1="${as}" arg2="jboss4"/>
+						<equals arg1="${as}" arg2="jboss5"/>
+						<equals arg1="${as}" arg2="jboss6"/>
+					</or>
+					<then>
+						<copy file="${src}/META-INF/ejb-jar.xml.ejb2.threads" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
+						<copy file="${src}/META-INF/jboss.xml.ejb2.threads" tofile="${build}/tmpEJB/META-INF/jboss.xml" />
+						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
+						<var name="jboss_xml" value="jboss.xml"/>
+					</then>
+				</if>
+				<if>
+					<or>
+						<equals arg1="${as}" arg2="jboss7"/>
+						<equals arg1="${as}" arg2="jboss8"/>
+						<equals arg1="${as}" arg2="wildfly8"/>
+					</or>
+					<then>
+						<copy file="${src}/META-INF/ejb-jar.xml.ejb3.threads" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
+						<copy file="${src}/META-INF/jboss.xml.ejb3.threads" tofile="${build}/tmpEJB/META-INF/jboss-ejb3.xml" />
+						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
+						<var name="jboss_xml" value="jboss-ejb3.xml"/>
+					</then>
+				</if>
+			</then>
+			<else>
+				<if>
+					<or>
+						<equals arg1="${as}" arg2="jboss4"/>
+						<equals arg1="${as}" arg2="jboss5"/>
+						<equals arg1="${as}" arg2="jboss6"/>
+					</or>
+					<then>
+						<copy file="${src}/META-INF/ejb-jar.xml.ejb2" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
+						<copy file="${src}/META-INF/jboss.xml.ejb2" tofile="${build}/tmpEJB/META-INF/jboss.xml" />
+						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
+						<var name="jboss_xml" value="jboss.xml"/>
+					</then>
+				</if>
+				<if>
+					<or>
+						<equals arg1="${as}" arg2="jboss7"/>
+						<equals arg1="${as}" arg2="jboss8"/>
+						<equals arg1="${as}" arg2="wildfly8"/>
+					</or>
+					<then>
+						<copy file="${src}/META-INF/ejb-jar.xml.ejb3" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
+						<copy file="${src}/META-INF/jboss.xml.ejb3" tofile="${build}/tmpEJB/META-INF/jboss-ejb3.xml" />
+						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
+						<var name="jboss_xml" value="jboss-ejb3.xml"/>
+					</then>
+				</if>
+			</else>
+		</if>
+		
+		<!-- mailcap -->
+		<var name="mailcap_info" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="mailcap_info" value="mailcap"/>
+			</then>
+		</if>
+		
+		<jar jarfile="${dist}/OpenSPCoop2.jar">
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
+			</manifest>
+			<zipfileset dir="${build}/tmpEJB">
+				<include name="META-INF/${ejb_jar_xml}" />
+				<include name="META-INF/${jboss_xml}" />
+			</zipfileset>
+			<!-- DataContentHandler per application/openspcoop2 -->
+			<zipfileset dir="${data_content_handler_dir}" prefix="META-INF">
+				<include name="${mailcap_info}" />
+			</zipfileset>
+		</jar>
+		<delete dir="${build}/tmpEJB" />
+	</target>
+	
+	
+	<!-- Creazione del modulo OpenSPCoop2PropertiesLoader.jar -->
+	<target name="make_openspcoop2_loaderProperties" description="Crea il modulo necessario per caricare far 'vedere' ai moduli web in assenza del modulo ejb">
+
+		<!-- mailcap -->
+		<var name="mailcap_info" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="mailcap_info" value="mailcap"/>
+			</then>
+		</if>
+		
+		<jar jarfile="${dist}/OpenSPCoop2PropertiesLoader.jar">
+			<manifest>
+				<attribute name="Class-Path" value="properties/" />
+			</manifest>
+			<!-- DataContentHandler per application/openspcoop2 -->
+			<zipfileset dir="${data_content_handler_dir}" prefix="META-INF">
+				<include name="${mailcap_info}" />
+			</zipfileset>
+		</jar>
+	</target>
+	
+
+	<!-- Creazione del modulo OpenSPCoop2.war -->
+	<target name="make_openspcoop2_web" description="Crea il modulo WEB">
+		<delete dir="${build}/web-module" />
+		<mkdir dir="${build}/web-module" />
+		<copy file="${deploy_web_dir}/web_app/WEB-INF/jbossws-cxf.xml" todir="${build}/web-module" />
+		<copy file="${deploy_web_dir}/web_app/WEB-INF/urlrewrite.xml" todir="${build}/web-module" />
+		<var name="jboss_web_xml" value=""/>
+		<if>
+			<and>
+				<not>
+					<istrue value="${forceDisableJ2eeMode}"/>
+				</not>
+				<or>
+					<equals arg1="${as}" arg2="jboss4"/>
+					<equals arg1="${as}" arg2="jboss5"/>
+					<equals arg1="${as}" arg2="jboss6"/>
+				</or>
+			</and>
+			<then>
+				<var name="jboss_web_xml" value="jboss-web.xml"/>
+			</then>
+		</if>
+		<!-- mailcap -->
+		<var name="mailcap_info" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="mailcap_info" value="mailcap"/>
+			</then>
+		</if>
+		
+		<war destfile="${dist}/OpenSPCoop2.war" webxml="${deploy_web_dir}/web_app/WEB-INF/web.xml">
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
+			</manifest>
+			<fileset file="${deploy_web_dir}/web_app/index.jsp"/>
+			<webinf dir="${build}/web-module" />
+			<webinf dir="${src}/META-INF">
+				<include name="${jboss_web_xml}"/>
+			</webinf>
+			<!-- DataContentHandler per application/openspcoop2 -->
+			<zipfileset dir="${data_content_handler_dir}" prefix="META-INF">
+				<include name="${mailcap_info}" />
+			</zipfileset>
+		</war>
+		<delete dir="${build}/web-module"/>
+	</target>
+
+
+	<!-- Creazione del modulo OpenSPCoop2Threads.jar -->
+	<target name="make_openspcoop2_threads" description="Crea il modulo WEB per i threads">
+		<war destfile="${dist}/OpenSPCoop2Threads.war" webxml="${deploy_threads_web_dir}/web.xml">
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
+			</manifest>
+		</war>
+	</target>
+	
+	
+	
+	<!-- Costruisce l'ear di OpenSPCoop -->
+	<target name="build_archivio_ear" description="Crea l'ear di OpenSPCoop.">
+		
+		<runtarget target="build_manifest" />
+		<if>
+			<not>
+				<istrue value="${forceDisableJ2eeMode}"/>
+			</not>
+			<then>
+				<runtarget target="make_openspcoop2_ejb" />
+			</then>
+			<else>
+				<runtarget target="make_openspcoop2_loaderProperties" />
+			</else>
+		</if>	
+		<runtarget target="make_openspcoop2_web" />
+		<if>
+			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
+			<then>
+				<runtarget target="make_openspcoop2_threads" />
+			</then>
+		</if>
+
+		<!-- costruzione application.xml -->
+		<delete file="${build}/application.xml" />
+		<concat destfile="${build}/application.xml" append="yes">
+			<filelist dir="${src}/META-INF"
+                           files="application.xml.${as}"/>
+		</concat>
+		<if>
+			<not>
+				<istrue value="${forceDisableJ2eeMode}"/>
+			</not>
+			<then>
+				<concat destfile="${build}/application.xml" append="yes">
+					<filelist dir="${src}/META-INF"
+		                                files="application.xml.mdb"/>
+				</concat>
+			</then>
+			<else>
+				<concat destfile="${build}/application.xml" append="yes">
+					<filelist dir="${src}/META-INF"
+		                                files="application.xml.loaderProperties"/>
+				</concat>
+			</else>
+		</if>	
+		<concat destfile="${build}/application.xml" append="yes">
+			<filelist dir="${src}/META-INF"
+                                files="application.xml.web"/>
+		</concat>
+		<if>
+			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
+			<then>
+				<concat destfile="${build}/application.xml" append="yes">
+					<filelist dir="${src}/META-INF"
+                                files="application.xml.threads"/>
+				</concat>
+			</then>	
+		</if>
+		<if>
+			<not>
+				<equals arg1="${plugins.application.listApplicationXML}" arg2="" />
+			</not>
+			<then>
+				<concat destfile="${build}/application.xml" append="yes">
+					<filelist dir="${application_plugins}/META-INF"
+                                files="${plugins.application.listApplicationXML}"/>
+				</concat>
+			</then>
+		</if>
+		<concat destfile="${build}/application.xml" append="yes">
+			<filelist dir="${src}/META-INF"
+                           files="application.xml.end"/>
+		</concat>
+
+		<!-- directory tmp per versionamento mdb/threads -->
+		<mkdir dir="${build}/tmp" />
+		<if>
+			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
+			<then>
+				<copy file="${dist}/OpenSPCoop2Threads.war" todir="${build}/tmp" />
+				<copy file="${deploy_threads_web_dir}/threads.properties" todir="${build}/tmp" />
+			</then>
+		</if>
+
+		<!-- OpenSPCoop2 Properties -->
+		<copy file="${properties_dir}/openspcoop2.properties" todir="${build}/tmp" />
+		<if>
+			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
+			<then>
+				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+
+# ----- Personalizzazione LinkItThread -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.nodeSender"/>
+					<param name="value" value="db"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.stateless.default.oneway"/>
+					<param name="value" value="disabilitato"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.stateless.default.sincrono"/>
+					<param name="value" value="disabilitato"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.stateful.oneway"/>
+					<param name="value" value="1.0"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.stateless.router"/>
+					<param name="value" value="disabilitato"/>
+				</antcall>				
+				<antcall target="dos2unix">
+					<param name="dir" value="${build}/tmp"/>
+				    <param name="file" value="openspcoop2.properties"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+
+# ----- Personalizzazione per JBoss 7.x/8.x -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load"/>
+					<param name="value" value="true"/>
+				</antcall>	
+				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+
+# ----- Personalizzazione Timer EJB Name per JBoss 7.x/8.x -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.autoStart.stop"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate"/>
+					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestoreBusteNonRiscontrate!org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateHome"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.gestoreMessaggi"/>
+					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestoreMessaggi!org.openspcoop2.pdd.timers.TimerGestoreMessaggiHome"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali"/>
+					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestorePuliziaMessaggiAnomali!org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliHome"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.gestoreRepositoryBuste"/>
+					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestoreRepositoryBuste!org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteHome"/>
+				</antcall>
+			</then>
+		</if>
+
+		<!-- msgDiagnostici.properties -->
+		<mkdir dir="${build}/tmpNative2ASCII_src" />
+		<mkdir dir="${build}/tmpNative2ASCII_dest" />
+		<copy file="${properties_dir}/msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
+		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
+
+		<!-- Logger Log4j Properties -->
+		<copy file="${properties_dir}/logger.log4j.properties" todir="${build}/tmp" />
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss6"/>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.logger.org.openspcoop2" value="log4j.logger.org.openspcoop2"/>
+				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.category.openspcoop2.startup" value="log4j.category.openspcoop2.startup"/>
+				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.additivity.org.openspcoop2" value="log4j.additivity.org.openspcoop2"/>
+				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.additivity.openspcoop2.startup" value="log4j.additivity.openspcoop2.startup"/>
+			</then>
+		</if>
+					
+		<!-- application server (jars e jboss-app.xml) -->
+		<!-- xalan -->
+		<var name="xalan_jar" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss4"/>
+				<equals arg1="${as}" arg2="jboss6"/>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="xalan_jar" value="xalan-2.7.1.jar"/>
+			</then>
+		</if>
+		<!-- log -->
+		<var name="log4j_jar" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss6"/>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="log4j_jar" value="log4j-1.2.16.jar"/>
+			</then>
+		</if>
+		<var name="log4j_properties" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss6"/>
+			</or>
+			<then>
+				<var name="log4j_properties" value="log4j.properties"/>
+			</then>
+		</if>
+		<!-- jaxb_xjc -->
+		<var name="jaxb_xjc_jar" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss6"/>
+			</or>
+			<then>
+				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.2.5.1.jar"/>
+			</then>
+		</if>
+		<!-- jaxp_ri -->
+		<var name="jaxp_ri_jar" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+			</then>
+		</if>
+		<!-- concurrent -->
+		<var name="concurrent_jar" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="concurrent_jar" value="concurrent-1.0.jar"/>
+			</then>
+		</if>
+		<!-- xml-security (com.sun impl) -->
+		<var name="com_sun_xml_security_jar" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<var name="com_sun_xml_security_jar" value="xml-security-impl-1.0.jar"/>
+			</then>
+		</if>
+		<!-- jboss_app -->
+		<var name="jboss_app_xml" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss4"/>
+				<equals arg1="${as}" arg2="jboss5"/>
+				<equals arg1="${as}" arg2="jboss6"/>
+			</or>
+			<then>
+				<copy file="${src}/META-INF/jboss-app.xml.${as}" tofile="${build}/tmp/jboss-app.xml" />
+				<var name="jboss_app_xml" value="jboss-app.xml"/>
+			</then>
+		</if>
+		<!-- jboss_deployment_structure -->
+		<var name="jboss_deployment_structure_xml" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<copy file="${src}/META-INF/jboss-deployment-structure.xml.${as}" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+				<var name="jboss_deployment_structure_xml" value="jboss-deployment-structure.xml"/>
+				
+				<if>
+					<istrue value="${forceDisableJ2eeMode}"/>
+					<then>
+						<replace file="${build}/tmp/jboss-deployment-structure.xml" 
+								 token="OpenSPCoop2.jar" 
+								 value="OpenSPCoop2PropertiesLoader.jar" />
+					</then>
+				</if>	
+				<if>
+					<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
+					<then>
+						<replace file="${build}/tmp/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
+						<concat destfile="${build}/tmp/jboss-deployment-structure.xml" append="yes">
+							<![CDATA[
+    <sub-deployment name="OpenSPCoop2Threads.war">
+        <exclusions>
+                <module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.log4j"/>  
+                <module name="org.jboss.logging"/>
+        </exclusions>
+    </sub-deployment>
+</jboss-deployment-structure>						
+							]]>
+						</concat>
+					</then>	
+				</if>
+				
+			</then>
+		</if>
+		<!-- jboss_all -->
+		<var name="jboss_all_xml" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss8"/>
+				<equals arg1="${as}" arg2="wildfly8"/>
+			</or>
+			<then>
+				<copy file="${src}/META-INF/jboss-all.xml.${as}" tofile="${build}/tmp/jboss-all.xml" />
+				<var name="jboss_all_xml" value="jboss-all.xml"/>
+			</then>
+		</if>
+		<!-- mailcap -->
+		<var name="mailcap_info" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss4"/>
+				<equals arg1="${as}" arg2="jboss5"/>
+				<equals arg1="${as}" arg2="jboss6"/>
+			</or>
+			<then>
+				<var name="mailcap_info" value="mailcap"/>
+			</then>
+		</if>
+		
+		<!-- Ripulisco file su cui ho fatto replace token -->
+		<antcall target="dos2unix">
+			<param name="dir" value="${build}/tmp"/>
+		    <param name="file" value="*.properties"/>
+		</antcall>
+		
+		<!-- build ear -->
+		<echo message="Costruisco per application server [${as}]"/>
+		<mkdir dir="${build}/classes_tmp"/>
+		<ear destfile="${dist}/OpenSPCoop2.ear" appxml="${build}/application.xml">
+			<!-- Informazioni sulla versione -->
+			<zipfileset dir="${rootDir}">
+				<include name="README.txt" />
+				<include name="COPYING" />
+			</zipfileset>
+			<!-- Specifying Isolation dell'ear -->
+			<zipfileset dir="${build}/tmp/" prefix="META-INF">
+				<include name="${jboss_app_xml}" />
+				<include name="${jboss_deployment_structure_xml}" />
+				<include name="${jboss_all_xml}" />
+			</zipfileset>
+			<!-- DataContentHandler per application/openspcoop2 -->
+			<zipfileset dir="${data_content_handler_dir}" prefix="META-INF">
+				<include name="${mailcap_info}" />
+			</zipfileset>
+			<!-- Applicazioni proprietarie di OpenSPCoop -->
+			<zipfileset dir="${dist}">
+				<include name="OpenSPCoop2.war" />
+				<include name="OpenSPCoop2.jar" />
+				<include name="OpenSPCoop2PropertiesLoader.jar" />
+			</zipfileset>
+			<zipfileset dir="${build}/tmp">
+				<include name="OpenSPCoop2Threads.war" />
+			</zipfileset>
+			<!-- Librerie di OpenSPCoop2 -->
+			<zipfileset dir="${dist}" prefix="lib">
+				<include name="openspcoop2_*.jar" />
+			</zipfileset>
+			<!-- Stub di OpenSPCoop2 -->
+			<zipfileset dir="${required_lib}" prefix="lib">
+				<include name="openspcoop2_management_registro_search_stub.jar" />
+			</zipfileset>
+			<!-- Librerie richieste a run-time da OpenSPCoop (Shared Lib) -->
+			<zipfileset dir="${required_lib}/commons" prefix="lib" >
+				<include name="commons-codec-1.5.jar"/>
+				<include name="commons-collections-3.2.1.jar"/>
+				<include name="commons-discovery-0.5.jar"/>
+				<include name="commons-httpclient-3.1.jar"/>
+				<include name="commons-io-2.1.jar"/>
+				<include name="commons-lang-2.6.jar"/>
+				<include name="commons-net-3.0.1.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/jibx" prefix="lib" >
+				<include name="bcel-5.2.jar"/>
+				<include name="jibx-run-1.2.3.jar"/>
+				<include name="xpp3-1.2.3.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/security" prefix="lib" >
+				<include name="bcprov-ext-jdk15on-147.jar"/>
+				<include name="neethi-3.0.2.jar"/>
+				<include name="opensaml-2.5.1-1.jar"/>
+				<include name="openws-1.4.2-1.jar"/>
+				<include name="wss4j-1.6.10.jar"/>
+				<include name="xmlsec-1.5.4.jar"/>
+				<include name="${com_sun_xml_security_jar}"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/shared" prefix="lib" >
+				<include name="addressing-1.0.jar"/>
+				<include name="jcs-1.3.jar"/>
+				<include name="soap.jar"/>
+				<include name="wsdl4j-1.6.2.jar"/>
+				<include name="uddi4j-2.0.5.jar"/>
+				<include name="${xalan_jar}"/>
+				<include name="velocity-1.6.4.jar"/>
+				<include name="urlrewritefilter-4.0.3.jar"/>
+				<include name="${concurrent_jar}"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/log" prefix="lib" >
+				<include name="slf4j-api-1.6.2.jar"/>
+				<include name="slf4j-jdk14-1.6.2.jar"/>
+				<include name="${log4j_jar}"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/jminix" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/cxf" prefix="lib">
+				<include name="*.jar"/>
+				<exclude name="geronimo-servlet_3.0_spec-1.0.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/jax" prefix="lib">
+				<include name="jaxb*.jar"/>
+				<exclude name="${jaxb_xjc_jar}"/>
+				<include name="${jaxp_ri_jar}"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/spring" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/spring-security" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/soapbox" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/httpcore" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/stub/cxf" prefix="lib">
+				<include name="openspcoop2_registrySearchStub_cxf.jar"/>
+			</zipfileset>
+			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
+			<zipfileset dir="${properties_dir}" prefix="properties">
+				<include name="cache.jcs.properties" />
+				<include name="className.properties" />
+				<include name="jmsPublisher.properties" />
+				<include name="autorizzazioneControlStation.properties" />
+				<include name="pdd.properties" />
+				<include name="${log4j_properties}"/>
+			</zipfileset>
+			<zipfileset dir="${build}/tmp" prefix="properties">
+				<include name="openspcoop2.properties" />
+				<include name="logger.log4j.properties" />
+			</zipfileset>
+			<zipfileset dir="${build}/tmpNative2ASCII_dest" prefix="properties">
+				<include name="msgDiagnostici.properties" />
+			</zipfileset>
+			<zipfileset dir="${properties_dir}/crypto" prefix="properties" />
+			<!-- Properties di LinkITThreads -->
+			<zipfileset dir="${build}/tmp" prefix="properties">
+				<include name="threads.properties" />
+			</zipfileset>
+			<!-- Plugins -->
+			<zipfileset dir="${plugins}" prefix="lib">
+				<include name="**/*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${plugins}" prefix="properties">
+				<include name="**/*.properties"/>
+			</zipfileset>
+			<!-- Application Plugins -->
+			<zipfileset dir="${application_plugins}">
+				<include name="**/*.war"/>
+				<include name="**/*.jar"/>
+			</zipfileset>
+			<!-- WSDL -->
+			<zipfileset dir="${wsdlFolder}" prefix="properties">
+				<include name="${wsdlPortaDelegata}"/>
+				<include name="${wsdlPortaApplicativa}"/>
+			</zipfileset>
+		</ear>
+		
+		<!-- Elimino file temporanei -->
+		<delete file="${build}/tmp/openspcoop2.properties" deleteonexit="true"/>
+		<delete file="${build}/tmp/jboss-app.xml" deleteonexit="true"/>
+		<delete dir="${build}/tmp" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_dest/msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmpNative2ASCII_dest" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_src/msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmpNative2ASCII_src" deleteonexit="true"/>
+
+		<!-- Elimino archivi intermedi -->
+		<delete file="${dist}/OpenSPCoop2.war" />
+		<delete file="${dist}/OpenSPCoop2.jar" />
+		<delete file="${dist}/OpenSPCoop2Threads.war" failonerror="false" />
+		
+	</target>
+
+	
+	
+	
+</project>

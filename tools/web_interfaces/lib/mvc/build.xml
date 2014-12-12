@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="MVC" default="build" basedir=".">
+	<description>
+        File di Script per la compilazione di MVC
+    </description>
+
+	<import file="local_env.xml" />
+	<import file="./local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${users}/build.xml" />
+
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+	
+	<!-- set global properties for this build -->
+	<property name="src_mvc" location="src" />
+	<property name="build_mvc" location="build/mvc" />
+	<property name="dist_mvc" location="dist" />
+	<property name="doc_mvc" location="doc" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+		
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_mvc">
+		<delete dir="${build_mvc}" />
+		<delete dir="build" />
+		<delete dir="${dist_mvc}" />
+		<delete dir="${doc_mvc}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_mvc">
+		<mkdir dir="${build_mvc}" />
+		<mkdir dir="${dist_mvc}" />
+	</target>
+
+
+	<!-- Compilazione della libreria MVC-->
+	<target name="compile_mvc" depends="init_compile_mvc,compile_users" description="compila la libreria MVC">
+		
+		<!-- Info svn -->
+		<runtarget target="checksvn" />
+		
+		<!-- org.openspcoop2.web.lib.mvc -->
+		<var name="packagesCompiled" value="org.openspcoop2.web.lib.mvc" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_mvc}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-mvc"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.mvc"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="dist" value="${dist_mvc}"/>
+			<param name="build" value="${build_mvc}"/>
+		</antcall>
+				
+		<!-- Jar Complessivo -->
+		<!-- <antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-mvc"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="web-lib-mvc"/>
+			<param name="svn_rootDir" value="."/>
+		</antcall> -->
+		
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc_mvc}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_mvc}/api"/>
+			<param name="src" value="${src_mvc}"/>
+			<param name="doc" value="${doc_mvc}"/>
+			<param name="dist" value="${dist_mvc}"/>
+		</antcall>
+	</target>
+
+	<!-- alias -->
+	<target name="build" depends="compile_mvc" description="compila la libreria MVC"/>
+	<target name="clean" depends="clean_mvc" description="elimina la libreria MVC"/>
+
+
+</project>

@@ -1,0 +1,33 @@
+<xsd:schema targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+     <xsd:include schemaLocation="types.xsd" />
+
+     <xsd:element name="notificaAggiornamentoUtenteWDLRequest">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="aggiornamento-nominativo" maxOccurs="1" minOccurs="1"/>
+		 <xsd:element ref="indirizzo" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="aggiornamentoUtenteWDLRequest">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="aggiornamento-nominativo" maxOccurs="1" minOccurs="1"/>
+		 <xsd:element ref="indirizzo" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="aggiornamentoUtenteWDLResponse">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element ref="esito" maxOccurs="1" minOccurs="1"/>
+                 <xsd:element ref="ora-registrazione" maxOccurs="1" minOccurs="1"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+    
+
+</xsd:schema>

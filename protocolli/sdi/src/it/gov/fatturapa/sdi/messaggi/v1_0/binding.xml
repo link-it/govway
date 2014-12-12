@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="RicevutaConsegna_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.RicevutaConsegnaType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+    <value name="DataOraRicezione" field="dataOraRicezione" usage="required"/>
+    <value name="DataOraConsegna" field="dataOraConsegna" usage="required"/>
+    <structure name="Destinatario" field="destinatario" usage="optional" map-as="_DestinatarioType_Type"/>
+    <structure name="RiferimentoArchivio" field="riferimentoArchivio" usage="optional" map-as="_RiferimentoArchivioType_Type"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="PecMessageId" field="pecMessageId" usage="optional"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+    <value name="IntermediarioConDupliceRuolo" field="intermediarioConDupliceRuolo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="NotificaScarto_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.NotificaScartoType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+    <value name="DataOraRicezione" field="dataOraRicezione" usage="required"/>
+    <structure name="RiferimentoArchivio" field="riferimentoArchivio" usage="optional" map-as="_RiferimentoArchivioType_Type"/>
+    <structure field="listaErrori" usage="required" map-as="it.gov.fatturapa.sdi.messaggi.v1_0.ListaErroriType"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="PecMessageId" field="pecMessageId" usage="optional"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="NotificaMancataConsegna_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.NotificaMancataConsegnaType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+    <value name="DataOraRicezione" field="dataOraRicezione" usage="required"/>
+    <structure name="RiferimentoArchivio" field="riferimentoArchivio" usage="optional" map-as="_RiferimentoArchivioType_Type"/>
+    <value name="Descrizione" field="descrizione" usage="optional"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="PecMessageId" field="pecMessageId" usage="optional"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="NotificaEsito_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.NotificaEsitoType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+    <structure field="esitoCommittente" usage="required" map-as="it.gov.fatturapa.sdi.messaggi.v1_0.NotificaEsitoCommittenteType"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="PecMessageId" field="pecMessageId" usage="optional"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+    <value name="IntermediarioConDupliceRuolo" field="intermediarioConDupliceRuolo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="AttestazioneTrasmissioneFattura_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.AttestazioneTrasmissioneFatturaType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+    <value name="DataOraRicezione" field="dataOraRicezione" usage="required"/>
+    <structure name="RiferimentoArchivio" field="riferimentoArchivio" usage="optional" map-as="_RiferimentoArchivioType_Type"/>
+    <structure name="Destinatario" field="destinatario" usage="required" map-as="_DestinatarioType_Type"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="PecMessageId" field="pecMessageId" usage="optional"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="HashFileOriginale" field="hashFileOriginale" usage="required"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="RiferimentoArchivio" class="it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoArchivioType" abstract="false">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+  </mapping>
+
+  <mapping type-name="_RiferimentoArchivioType_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoArchivioType" abstract="true">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+  </mapping>
+  <mapping name="ListaErrori" class="it.gov.fatturapa.sdi.messaggi.v1_0.ListaErroriType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <collection field="errore" create-type="java.util.ArrayList">
+      <structure map-as="it.gov.fatturapa.sdi.messaggi.v1_0.ErroreType"/>
+    </collection>
+  </mapping>
+  <mapping name="Errore" class="it.gov.fatturapa.sdi.messaggi.v1_0.ErroreType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="Codice" field="codice" usage="required"/>
+    <value name="Descrizione" field="descrizione" usage="required"/>
+  </mapping>
+  <mapping name="MetadatiInvioFile_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.MetadatiInvioFileType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+    <value name="CodiceDestinatario" field="codiceDestinatario" usage="required"/>
+    <value name="Formato" field="formato" usage="required"/>
+    <value name="TentativiInvio" field="tentativiInvio" usage="required"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="EsitoCommittente" class="it.gov.fatturapa.sdi.messaggi.v1_0.NotificaEsitoCommittenteType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <structure name="RiferimentoFattura" field="riferimentoFattura" usage="optional" map-as="_RiferimentoFatturaType_Type"/>
+    <value name="Esito" field="esito" usage="required" enum-value-method="toString"/>
+    <value name="Descrizione" field="descrizione" usage="optional"/>
+    <value name="MessageIdCommittente" field="messageIdCommittente" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="ScartoEsitoCommittente_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.ScartoEsitoCommittenteType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <structure name="RiferimentoFattura" field="riferimentoFattura" usage="optional" map-as="_RiferimentoFatturaType_Type"/>
+    <value name="Scarto" field="scarto" usage="required" enum-value-method="toString"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="MessageIdCommittente" field="messageIdCommittente" usage="optional"/>
+    <value name="PecMessageId" field="pecMessageId" usage="optional"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="NotificaDecorrenzaTermini_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.NotificaDecorrenzaTerminiType">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="IdentificativoSdI" field="identificativoSdI" usage="required"/>
+    <structure name="RiferimentoFattura" field="riferimentoFattura" usage="optional" map-as="_RiferimentoFatturaType_Type"/>
+    <value name="NomeFile" field="nomeFile" usage="required"/>
+    <value name="Descrizione" field="descrizione" usage="optional"/>
+    <value name="MessageId" field="messageId" usage="required"/>
+    <value name="PecMessageId" field="pecMessageId" usage="optional"/>
+    <value name="Note" field="note" usage="optional"/>
+    <value name="versione" field="versione" usage="required" style="attribute"/>
+    <value name="IntermediarioConDupliceRuolo" field="intermediarioConDupliceRuolo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="RiferimentoFattura" class="it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoFatturaType" abstract="false">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="NumeroFattura" field="numeroFattura" usage="required"/>
+    <value name="AnnoFattura" field="annoFattura" usage="required"/>
+    <value name="PosizioneFattura" field="posizioneFattura" usage="optional"/>
+  </mapping>
+
+  <mapping type-name="_RiferimentoFatturaType_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoFatturaType" abstract="true">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="NumeroFattura" field="numeroFattura" usage="required"/>
+    <value name="AnnoFattura" field="annoFattura" usage="required"/>
+    <value name="PosizioneFattura" field="posizioneFattura" usage="optional"/>
+  </mapping>
+  <mapping name="Destinatario" class="it.gov.fatturapa.sdi.messaggi.v1_0.DestinatarioType" abstract="false">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="Codice" field="codice" usage="required"/>
+    <value name="Descrizione" field="descrizione" usage="required"/>
+  </mapping>
+
+  <mapping type-name="_DestinatarioType_Type" class="it.gov.fatturapa.sdi.messaggi.v1_0.DestinatarioType" abstract="true">
+    <namespace uri="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" default="elements"/>
+    <value name="Codice" field="codice" usage="required"/>
+    <value name="Descrizione" field="descrizione" usage="required"/>
+  </mapping>
+</binding>

@@ -1,0 +1,44 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+   <accordo-servizio-parte-comune nome="AS_ComunicazioneVariazione" 
+		     descrizione="Esempio di Servizio OneWay"
+		     versione="1"
+		     profilo-collaborazione="oneway"
+		     wsdl-definitorio="wsdl/definitorio.xsd"
+		     wsdl-concettuale="wsdl/concettuale.wsdl"
+		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl">
+	<soggetto-referente tipo="SPC" nome="CentroAnagrafico" />
+	<port-type nome="ComunicazioneVariazione" profilo-collaborazione="oneway" descrizione="Esempio di servizio oneway">
+           <azione nome="Notifica" />
+        </port-type>
+   </accordo-servizio-parte-comune>
+
+
+   <soggetto tipo="SPC" nome="CentroAnagrafico">
+
+        <connettore tipo="http" nome="PdDCentroAnagrafico">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/spcoop/PA" />
+         </connettore>
+
+	<accordo-servizio-parte-specifica
+		 nome="ComunicazioneVariazione"
+		 accordo-servizio-parte-comune="SPC/CentroAnagrafico:AS_ComunicazioneVariazione:1"
+		 port-type="ComunicazioneVariazione"
+		 descrizione="Esempio di accordo di servizio parte specifica (Oneway)"
+		 wsdl-implementativo-erogatore="wsdl/implementativoErogatore.wsdl">
+	    <servizio tipo="SPC" nome="ComunicazioneVariazione"/> 
+            <fruitore tipo="SPC" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="Comune">
+
+        <connettore tipo="http" nome="PdDComune">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/spcoop/PA" />
+        </connettore>
+
+   </soggetto>
+
+</registro-servizi>

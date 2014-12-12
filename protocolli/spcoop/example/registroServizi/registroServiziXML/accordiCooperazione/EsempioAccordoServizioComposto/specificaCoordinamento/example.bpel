@@ -1,0 +1,89 @@
+<process name="esempio"
+targetNamespace="http://www.openspcoop2.org/example";
+suppressJoinFailure="yes" xmlns:tns="http://www.openspcoop2.org/example";
+xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/";>
+      <!--
+================================================================= -->
+      <!-- PARTNERLINKS
+-->
+      <!-- List of services participating in this BPEL process
+-->
+      <!--
+================================================================= -->
+      <partnerLinks>
+            <!--
+        The 'client' role represents the requester of this service. It is
+        used for callback. The location and correlation information
+associated
+        with the client role are automatically set using WS-Addressing.
+        -->
+
+            <partnerLink name="partnerLink1" partnerLinkType="tns:partnerLink1bpel"
+myRole="initiator"/>
+            <partnerLink name="erroreGestione"
+partnerLinkType="tns:exceptionService" myRole="handleException"/>
+            <partnerLink name="returnpartnerLink1" partnerLinkType="tns:returnpartnerLink1"
+myRole="returnpartnerLink1"/>
+      </partnerLinks>
+      <!--
+================================================================= -->
+      <!-- VARIABLES
+-->
+      <!-- List of messages and XML documents used within this BPEL process
+-->
+      <!--
+================================================================= -->
+      <variables>
+            <!-- Reference to the message passed as input during initiation
+-->
+            <variable name="receiveInput" messageType="tns:inputRequest"/>
+            <variable name="input"
+messageType="tns:processExceptionItemsRequest"/>
+            <variable name="output"
+messageType="tns:processExceptionItemsResponse"/>
+            <variable name="receiveOutput" messageType="tns:inputRequest"/>
+      </variables>
+      <!--
+================================================================= -->
+      <!-- ORCHESTRATION LOGIC
+-->
+      <!-- Set of activities coordinating the flow of messages across the
+-->
+      <!-- services integrated within this business process
+-->
+      <!--
+================================================================= -->
+      <sequence name="main">
+            <!-- Receive input from requestor.
+             Note: This maps to operation defined in partnerLink1bpel.wsdl
+             -->
+            <receive name="receiveInput" partnerLink="partnerLink1"
+portType="tns:partnerLink1bpel" operation="initiate" variable="receiveInput"
+createInstance="yes">
+            </receive>
+            <assign>
+                  <copy>
+                        <from variable="receiveInput"></from>
+                        <to variable="input"></to>
+                  </copy>
+            </assign>
+
+            <invoke name="callExceptionService"
+partnerLink="erroreGestione" portType="tns:ExceptionService"
+operation="tns:processExceptionItem" inputVariable="input"
+outputVariable="output">
+            </invoke>
+            <assign>
+                  <copy>
+                        <from variable="output"></from>
+                        <to variable="receiveOutput"></to>
+                  </copy>
+            </assign>
+            <receive name="receive" partnerLink="returnpartnerLink1"
+portType="tns:returnpartnerLink1" operation="process" variable="receiveOutput" >
+            </receive>
+            <reply name="reply" partnerLink="returnpartnerLink1"
+portType="tns:returnpartnerLink1" operation="process" variable="receiveOutput">
+            </reply>
+      </sequence>
+</process>

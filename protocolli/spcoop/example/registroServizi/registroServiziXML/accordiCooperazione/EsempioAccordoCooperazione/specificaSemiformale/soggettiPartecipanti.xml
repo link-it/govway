@@ -1,0 +1,5 @@
+<soggetti descrizione="Esempio di specifica semiformale xml">
+   <soggetto tipo="SPC">MinisteroErogatoreServizioComponente1</soggetto>
+   <soggetto tipo="SPC">MinisteroErogatoreServizioComponente2</soggetto>
+   <soggetto tipo="SPC">MinisteroErogatoreServizioComposto</soggetto>
+</soggetti>

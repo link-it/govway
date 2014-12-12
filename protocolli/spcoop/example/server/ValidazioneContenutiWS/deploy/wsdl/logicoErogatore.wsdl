@@ -1,0 +1,299 @@
+<!-- Definizione WSDL -->
+<wsdl:definitions targetNamespace="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:service="http://openspcoop2.org/ValidazioneContenutiWS/Service" xmlns:types="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+
+  <wsdl:types>
+  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+     <xsd:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" schemaLocation="wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
+  </xsd:schema>
+  </wsdl:types>
+
+
+
+<!-- ********* Import type ************* -->
+<wsdl:import namespace="http://openspcoop2.org/ValidazioneContenutiWS/Service/types" location="definitorio.xsd" />
+
+
+
+<!-- ********* Messaggi ************* -->
+
+
+<!-- ### Servizio GestioneUtentiWrappedDocumentLiteral ### -->
+
+<!-- operation: registrazioneUtenteWDL -->
+<wsdl:message name="RichiestaRegistrazioneUtenteWDL">
+	<wsdl:part element="types:registrazioneUtenteWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+<wsdl:message name="RispostaRegistrazioneUtenteWDL">
+	<wsdl:part element="types:registrazioneUtenteWDLResponse" name="argomento-wrapped"/>
+</wsdl:message>
+
+<!-- operation: eliminazioneUtenteWDL -->
+<wsdl:message name="RichiestaEliminazioneUtenteWDL">
+	<wsdl:part element="types:eliminazioneUtenteWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+<wsdl:message name="RispostaEliminazioneUtenteWDL">
+	<wsdl:part element="types:eliminazioneUtenteWDLResponse" name="argomento-wrapped"/>
+</wsdl:message>
+
+
+<!-- ### Servizio AggiornamentoUtentiWrappedDocumentLiteral ### -->
+
+<!-- operation: notificaAggiornamentoUtenteWDL -->
+<wsdl:message name="RichiestaNotificaAggiornamentoUtenteWDL">
+	<wsdl:part element="types:notificaAggiornamentoUtenteWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+
+<!-- operation: aggiornamentoUtenteWDL -->
+<wsdl:message name="RichiestaAggiornamentoUtenteWDL">
+	<wsdl:part element="types:aggiornamentoUtenteWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+<wsdl:message name="RispostaAggiornamentoUtenteWDL">
+	<wsdl:part element="types:aggiornamentoUtenteWDLResponse" name="argomento-wrapped"/>
+</wsdl:message>
+
+
+<!-- ### Servizio AggiornamentoAsincronoWrappedDocumentLiteral ### -->
+
+<!-- operation: richiestaAggiornamentoUtenteAsincronoSimmetricoWDL -->
+<wsdl:message name="RichiestaRichiestaAggiornamentoUtenteAsincronoSimmetricoWDL">
+	<wsdl:part element="types:richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+<wsdl:message name="RispostaRichiestaAggiornamentoUtenteAsincronoSimmetricoWDL">
+	<wsdl:part element="types:richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse" name="argomento-wrapped"/>
+</wsdl:message>
+
+<!-- operation: richiestaAggiornamentoUtenteAsincronoAsimmetricoWDL -->
+<wsdl:message name="RichiestaRichiestaAggiornamentoUtenteAsincronoAsimmetricoWDL">
+	<wsdl:part element="types:richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest" name="argomento-wrapped"/>
+</wsdl:message>
+<wsdl:message name="RispostaRichiestaAggiornamentoUtenteAsincronoAsimmetricoWDL">
+	<wsdl:part element="types:richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse" name="argomento-wrapped"/>
+</wsdl:message>
+
+
+<!-- ### Servizio GestioneUtentiDocumentLiteral ### -->
+
+<!-- operation: registrazioneUtenteDL -->
+<wsdl:message name="RichiestaRegistrazioneUtenteDL">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+	<wsdl:part element="types:indirizzo" name="indirizzoUtente"/>
+	<wsdl:part element="types:ora-registrazione" name="oraRegistrazioneUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaRegistrazioneUtenteDL">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+<!-- operation: eliminazioneUtenteDL -->
+<wsdl:message name="RichiestaEliminazioneUtenteDL">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaEliminazioneUtenteDL">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+
+<!-- ### Servizio GestioneUtentiRPCLiteral ### -->
+
+<!-- operation:registrazioneUtenteRPCL  -->
+<wsdl:message name="RichiestaRegistrazioneUtenteRPCL">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+	<wsdl:part element="types:indirizzo" name="indirizzoUtente"/>
+	<wsdl:part element="types:ora-registrazione" name="oraRegistrazioneUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaRegistrazioneUtenteRPCL">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+<!-- operation: eliminazioneUtenteRPCL -->
+<wsdl:message name="RichiestaEliminazioneUtenteRPCL">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaEliminazioneUtenteRPCL">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+
+<!-- ### Servizio GestioneUtentiRPCEncoded ### -->
+
+<!-- operation:registrazioneUtenteRPCE  -->
+<wsdl:message name="RichiestaRegistrazioneUtenteRPCE">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+	<wsdl:part element="types:indirizzo" name="indirizzoUtente"/>
+	<wsdl:part element="types:ora-registrazione" name="oraRegistrazioneUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaRegistrazioneUtenteRPCE">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+<!-- operation: eliminazioneUtenteRPCE -->
+<wsdl:message name="RichiestaEliminazioneUtenteRPCE">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaEliminazioneUtenteRPCE">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+
+<!-- ### Servizio GestioneUtentiOverloadedOperations ### -->
+
+<!-- operation: registrazioneUtenteOverloadedOperations -->
+<wsdl:message name="RichiestaRegistrazioneUtenteSignature1">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+	<wsdl:part element="types:indirizzo" name="indirizzoUtente"/>
+	<wsdl:part element="types:ora-registrazione" name="oraRegistrazioneUtente"/>
+</wsdl:message>
+<wsdl:message name="RichiestaRegistrazioneUtenteSignature2">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+	<wsdl:part element="types:indirizzo" name="indirizzoUtente"/>
+</wsdl:message>
+<wsdl:message name="RichiestaRegistrazioneUtenteSignature3">
+	<wsdl:part element="types:nominativo" name="nominativoUtente"/>
+	<wsdl:part element="types:ora-registrazione" name="oraRegistrazioneUtente"/>
+</wsdl:message>
+<wsdl:message name="RispostaRegistrazioneUtenteOverloadedOperations">
+	<wsdl:part element="types:esito" name="esitoRegistrazione"/>
+</wsdl:message>
+
+
+
+
+
+<!-- ********* PortType ********* -->
+
+<!-- Servizio GestioneUtentiWrappedDocumentLiteral -->
+<wsdl:portType name="GestioneUtentiWrappedDocumentLiteral">
+
+      <wsdl:operation name="registrazioneUtenteWDL">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteWDL" name="risposta"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteWDL">
+         <wsdl:input message="service:RichiestaEliminazioneUtenteWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaEliminazioneUtenteWDL" name="risposta"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+
+<!-- Servizio AggiornamentoUtentiWrappedDocumentLiteral -->
+<wsdl:portType name="AggiornamentoUtentiWrappedDocumentLiteral">
+
+      <wsdl:operation name="notificaAggiornamentoUtenteWDL">
+         <wsdl:input message="service:RichiestaNotificaAggiornamentoUtenteWDL" name="richiesta"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="aggiornamentoUtenteWDL">
+         <wsdl:input message="service:RichiestaAggiornamentoUtenteWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaAggiornamentoUtenteWDL" name="risposta"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+
+<!-- Servizio AggiornamentoAsincronoWrappedDocumentLiteral -->
+<wsdl:portType name="AggiornamentoAsincronoWrappedDocumentLiteral">
+
+      <wsdl:operation name="richiestaAggiornamentoUtenteAsincronoSimmetricoWDL">
+         <wsdl:input message="service:RichiestaRichiestaAggiornamentoUtenteAsincronoSimmetricoWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRichiestaAggiornamentoUtenteAsincronoSimmetricoWDL" name="risposta"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="richiestaAggiornamentoUtenteAsincronoAsimmetricoWDL">
+         <wsdl:input message="service:RichiestaRichiestaAggiornamentoUtenteAsincronoAsimmetricoWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRichiestaAggiornamentoUtenteAsincronoAsimmetricoWDL" name="risposta"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+
+<!-- Servizio GestioneUtentiDocumentLiteral -->
+<wsdl:portType name="GestioneUtentiDocumentLiteral">
+
+      <wsdl:operation name="registrazioneUtenteDL">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteDL" name="risposta"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteDL">
+         <wsdl:input message="service:RichiestaEliminazioneUtenteDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaEliminazioneUtenteDL" name="risposta"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+
+<!-- Servizio GestioneUtentiRPCLiteral -->
+<wsdl:portType name="GestioneUtentiRPCLiteral">
+
+      <wsdl:operation name="registrazioneUtenteRPCL">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteRPCL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteRPCL" name="risposta"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteRPCL">
+         <wsdl:input message="service:RichiestaEliminazioneUtenteRPCL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaEliminazioneUtenteRPCL" name="risposta"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+<!-- Servizio GestioneUtentiRPCEncoded -->
+<wsdl:portType name="GestioneUtentiRPCEncoded">
+
+      <wsdl:operation name="registrazioneUtenteRPCE">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteRPCE" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteRPCE" name="risposta"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="eliminazioneUtenteRPCE">
+         <wsdl:input message="service:RichiestaEliminazioneUtenteRPCE" name="richiesta"/>
+	 <wsdl:output message="service:RispostaEliminazioneUtenteRPCE" name="risposta"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+<!-- Servizio GestioneUtentiStileIbrido -->
+<wsdl:portType name="GestioneUtentiStileIbrido">
+
+    <wsdl:operation name="registrazioneUtenteWDL">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteWDL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteWDL" name="risposta"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="registrazioneUtenteRPCL">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteRPCL" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteRPCL" name="risposta"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="registrazioneUtenteRPCE">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteRPCE" name="richiesta"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteRPCE" name="risposta"/>
+    </wsdl:operation>
+
+</wsdl:portType>
+
+
+<!-- Servizio GestioneUtentiOverloadedOperations  -->
+<wsdl:portType name="GestioneUtentiOverloadedOperations">
+
+      <wsdl:operation name="registrazioneUtenteOverloadedOperations">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteSignature1" name="richiestaSignature1"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteOverloadedOperations" name="rispostaSignature1"/>
+      </wsdl:operation>
+
+    <wsdl:operation name="registrazioneUtenteOverloadedOperations">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteSignature2" name="richiestaSignature2"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteOverloadedOperations" name="rispostaSignature2"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="registrazioneUtenteOverloadedOperations">
+         <wsdl:input message="service:RichiestaRegistrazioneUtenteSignature3" name="richiestaSignature3"/>
+	 <wsdl:output message="service:RispostaRegistrazioneUtenteOverloadedOperations" name="rispostaSignature3"/>
+      </wsdl:operation>
+
+</wsdl:portType>
+
+
+</wsdl:definitions>

@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/pdd/monitor"
+	targetNamespace="http://www.openspcoop2.org/pdd/monitor"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="monitor">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="true" binding-soap-11="true" binding-soap-12="true" all="true" crud="false" search="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:xml root-element="openspcoop2" generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="false"/>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+
+	<!-- Soggetti e la Configurazione della porta di dominio OpenSPCoop2 -->
+	<xsd:element name="openspcoop2">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="stato-pdd" type="stato-pdd"/>
+				<xsd:element name="messaggio" type="messaggio"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+	<!-- *** Oggetti di primo livello *** -->
+
+	<!-- Stato PdD -->
+	<xsd:element name="stato-pdd" type="stato-pdd"/>
+	<xsd:complexType name="stato-pdd">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true">
+						<linkit:ws-interface search="false" crud="false" all="true">
+							<linkit:ws-search-method-interface get="false" exists="false" 
+								inUse="false" findAll="false" count="false" findAllIds="false" />
+							<linkit:ws-crud-method-interface create="false" update="false" 
+								updateOrCreate="false" deleteById="false" deleteAll="false" 
+								deleteAllByFilter="false" delete="false"/>
+						</linkit:ws-interface>
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			
+			<!-- Messaggi in Consegna -->
+			<xsd:element name="num-msg-in-consegna" type="xsd:long" default="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-medio-attesa-in-consegna" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-max-attesa-in-consegna" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Messaggi in Spedizione -->
+			<xsd:element name="num-msg-in-spedizione" type="xsd:long" default="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-medio-attesa-in-spedizione" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-max-attesa-in-spedizione" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Messaggi in Processamento -->
+			<xsd:element name="num-msg-in-processamento" type="xsd:long" default="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-medio-attesa-in-processamento" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-max-attesa-in-processamento" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Totale Messaggi -->
+			<xsd:element name="tot-messaggi" type="xsd:long" default="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-medio-attesa" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tempo-max-attesa" type="xsd:long" default="-1" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Messaggi Duplicati -->
+			<xsd:element name="tot-messaggi-duplicati" type="xsd:long" default="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Filtro -->
+			<xsd:element name="filtro" type="filtro" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping transient="true" filter="true"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<!-- Messaggio -->
+	<xsd:element name="messaggio" type="messaggio"/>
+	<xsd:complexType name="messaggio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true">
+						<linkit:ws-interface search="false" crud="false" all="true">
+							<linkit:ws-search-method-interface get="false" exists="false" 
+								inUse="false" find="false" findAllIds="false" />
+							<linkit:ws-crud-method-interface create="false" update="false" 
+								updateOrCreate="false" deleteById="false" deleteAll="false" 
+								delete="false"/>							
+						</linkit:ws-interface>
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			
+			<!-- Dettaglio -->
+			<xsd:element name="dettaglio" type="dettaglio">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="busta-info" type="busta">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- IdMessaggio -->
+			<xsd:element name="id-messaggio" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Tempi -->
+			<xsd:element name="ora-attuale" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ora-registrazione" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Stato -->
+			<xsd:element name="stato" type="StatoMessaggio">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			
+			<!-- Filtro -->
+			<xsd:element name="filtro" type="filtro" minOccurs="0"  >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping transient="true" filter="true"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	
+	<!-- *** CriteriRicerca *** -->
+	
+	<xsd:complexType name="filtro">
+		<xsd:sequence>
+			<xsd:element name="correlazione-applicativa" type="xsd:string" minOccurs="0" />
+			<xsd:element name="busta" type="busta" minOccurs="0" />
+			<xsd:element name="id-messaggio" type="xsd:string" minOccurs="0" />
+			<xsd:element name="message-pattern" type="xsd:string" minOccurs="0" />
+			<xsd:element name="soglia" type="xsd:long" minOccurs="0" />
+			<xsd:element name="stato" type="StatoMessaggio" minOccurs="0" />
+			<xsd:element name="tipo" type="xsd:string" minOccurs="0" />
+			<xsd:element name="soggetto" type="busta-soggetto" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="proprieta" type="proprieta" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+	<!-- *** Oggetti Comuni *** -->
+	
+	<xsd:complexType name="dettaglio">
+		<xsd:sequence>
+			<xsd:element name="errore-processamento" type="xsd:string" minOccurs="0" />
+			<xsd:element name="id-correlazione-applicativa" type="xsd:string" minOccurs="0" />
+			<xsd:element name="id-modulo" type="xsd:string" />
+			<xsd:element name="tipo" type="xsd:string" />
+			<xsd:element name="servizio-applicativo-consegna" type="servizio-applicativo-consegna" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="proprieta" type="proprieta" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="servizio-applicativo-consegna">
+		<xsd:sequence>
+			<xsd:element name="autorizzazione-integration-manager" type="xsd:boolean" default="false" />
+			<xsd:element name="errore-processamento" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome" type="xsd:string" />
+			<xsd:element name="sbustamento-soap" type="xsd:boolean" default="false" />
+			<xsd:element name="tipo-consegna" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="busta">
+		<xsd:sequence>
+			<xsd:element name="attesa-riscontro" type="xsd:boolean" minOccurs="0" default="false" />
+			<xsd:element name="mittente" type="busta-soggetto" minOccurs="0" />
+			<xsd:element name="destinatario" type="busta-soggetto" minOccurs="0" />
+			<xsd:element name="servizio" type="busta-servizio" minOccurs="0" />
+			<xsd:element name="azione" type="xsd:string" minOccurs="0" />
+			<xsd:element name="profilo-collaborazione" type="xsd:string" minOccurs="0" />
+			<xsd:element name="collaborazione" type="xsd:string" minOccurs="0" />
+			<xsd:element name="riferimento-messaggio" type="xsd:string" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="busta-soggetto">
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome" type="xsd:string" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="busta-servizio">
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome" type="xsd:string" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="proprieta">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" />
+			<xsd:element name="valore" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Enumeration -->
+	
+	<xsd:simpleType name="StatoMessaggio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="consegna"/>
+			<xsd:enumeration value="spedizione"/>
+			<xsd:enumeration value="processamento"/>
+			<xsd:enumeration value="cancellato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+
+</xsd:schema>

@@ -1,0 +1,1077 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <parameter name="sendMultiRefs" value="true"/>
+  <parameter name="disablePrettyXML" value="true"/>
+  <parameter name="adminPassword" value="admin"/>
+  <!--<parameter name="attachments.Directory" value="/petra/opt/local/Programmi/jboss-4.0.4.GA/server/default/deploy/AttachmentsExample.war/WEB-INF/attachments"/>
+  -->
+   <parameter name="attachments.Directory" value="./WEB-INF/attachments"/>
+  <parameter name="dotNetSoapEncFix" value="true"/>
+  <parameter name="enableNamespacePrefixOptimization" value="false"/>
+  <parameter name="sendXMLDeclaration" value="true"/>
+  <parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/>
+  <parameter name="sendXsiTypes" value="true"/>
+  <requestFlow>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="session"/>
+   </handler>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="request"/>
+    <parameter name="extension" value=".jwr"/>
+   </handler>
+  </requestFlow>
+ </globalConfiguration>
+ <handler name="LocalResponder" type="java:org.apache.axis.transport.local.LocalResponder"/>
+ <handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+ <handler name="Authenticate" type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+
+ <!-- Services from GestioneUtentiOverloadedOperationsService WSDL service -->
+
+<!-- Handler per la lettura dei dati di integrazione -->
+  <handler name="IntegrationReader" type="java:org.openspcoop2.ValidazioneContenutiWS.utilities.IntegrationReaderHandler"/>
+  <handler name="IntegrationReaderUscita" type="java:org.openspcoop2.ValidazioneContenutiWS.utilities.IntegrationReaderUscitaHandler"/>
+
+
+  <service name="GestioneUtentiOverloadedOperations" provider="java:RPC" style="rpc" use="encoded">
+
+      <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="GestioneUtentiOverloadedOperationsService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="GestioneUtentiOverloadedOperations"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiOverloadedOperationsSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="GestioneUtentiOverloadedOperations"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+        <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:eliminazioneUtenteWDLRequestType"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:registrazioneUtenteWDLResponseType"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:registrazioneUtenteWDLRequestType"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:eliminazioneUtenteWDLResponseType"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+
+  <!-- Services from GestioneUtentiDocumentLiteralService WSDL service -->
+
+  <service name="GestioneUtentiDocumentLiteral" provider="java:RPC" style="document" use="literal">
+      
+      <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="GestioneUtentiDocumentLiteralService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="GestioneUtentiDocumentLiteral"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiDocumentLiteralSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="GestioneUtentiDocumentLiteral"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:eliminazioneUtenteWDLRequestType"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+  <!-- Services from AggiornamentoAsincronoWrappedDocumentLiteralService WSDL service -->
+
+  <service name="AggiornamentoAsincronoWrappedDocumentLiteral" provider="java:RPC" style="document" use="literal">
+    
+     <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+     <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="AggiornamentoAsincronoWrappedDocumentLiteralService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="AggiornamentoAsincronoWrappedDocumentLiteral"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoAsincronoWrappedDocumentLiteralSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="AggiornamentoAsincronoWrappedDocumentLiteral"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+  <!-- Services from GestioneUtentiRPCLiteralService WSDL service -->
+
+  <service name="GestioneUtentiRPCLiteral" provider="java:RPC" style="rpc" use="literal">
+    
+      <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="GestioneUtentiRPCLiteralService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="GestioneUtentiRPCLiteral"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCLiteralSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="GestioneUtentiRPCLiteral"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+  <!-- Services from GestioneUtentiRPCEncodedService WSDL service -->
+
+  <service name="GestioneUtentiRPCEncoded" provider="java:RPC" style="rpc" use="encoded">
+    
+      <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="GestioneUtentiRPCEncodedService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="GestioneUtentiRPCEncoded"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiRPCEncodedSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="GestioneUtentiRPCEncoded"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+
+  <!-- Services from GestioneUtentiWrappedDocumentLiteralService WSDL service -->
+
+  <service name="GestioneUtentiWrappedDocumentLiteral" provider="java:RPC" style="document" use="literal">
+    
+     <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="GestioneUtentiWrappedDocumentLiteralService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="GestioneUtentiWrappedDocumentLiteral"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiWrappedDocumentLiteralSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="GestioneUtentiWrappedDocumentLiteral"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+  <!-- Services from AggiornamentoUtentiWrappedDocumentLiteralService WSDL service -->
+
+  <service name="AggiornamentoUtentiWrappedDocumentLiteral" provider="java:RPC" style="document" use="literal">
+    
+      <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="AggiornamentoUtentiWrappedDocumentLiteralService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="AggiornamentoUtentiWrappedDocumentLiteral"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.AggiornamentoUtentiWrappedDocumentLiteralSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="AggiornamentoUtentiWrappedDocumentLiteral"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+  <!-- Services from GestioneUtentiStileIbridoService WSDL service -->
+
+  <service name="GestioneUtentiStileIbrido" provider="java:RPC" style="document" use="literal">
+    
+     <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+
+
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="GestioneUtentiStileIbridoService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="GestioneUtentiStileIbrido"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.GestioneUtentiStileIbridoSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="GestioneUtentiStileIbrido"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>notificaAggiornamentoUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.NotificaAggiornamentoUtenteWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>richiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>registrazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>aggiornamento-nominativo"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.AggiornamentoNominativo"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types/esempio1"
+        qname="ns:>eliminazioneUtenteWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.EliminazioneUtenteWDLResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+ <!-- Services from EsitoAggiornamentoAsincronoWrappedDocumentLiteralService WSDL service -->
+
+  <service name="EsitoAggiornamentoAsincronoWrappedDocumentLiteral" provider="java:RPC" style="document" use="literal">
+    
+      <requestFlow>
+         <handler type="IntegrationReader"/>
+      </requestFlow>
+      <responseFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </responseFlow>
+      <faultFlow>
+         <handler type="IntegrationReaderUscita"/>
+      </faultFlow>
+ 
+      <parameter name="wsdlTargetNamespace" value="http://openspcoop2.org/ValidazioneContenutiWS/Service"/>
+      <parameter name="wsdlServiceElement" value="EsitoAggiornamentoAsincronoWrappedDocumentLiteralService"/>
+      <parameter name="schemaQualified" value="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"/>
+      <parameter name="wsdlServicePort" value="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"/>
+      <parameter name="className" value="org.openspcoop2.ValidazioneContenutiWS.Service.EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>esitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.EsitoAggiornamentoUtenteAsincronoSimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>esitoAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.EsitoAggiornamentoUtenteAsincronoAsimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>esitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.EsitoAggiornamentoUtenteAsincronoSimmetricoWDLResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types"
+        qname="ns:>esitoAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        type="java:org.openspcoop2.ValidazioneContenutiWS.Service.types.EsitoAggiornamentoUtenteAsincronoAsimmetricoWDLRequest"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+<transport name="http">
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+  <parameter name="qs:list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs:wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+  <parameter name="qs.list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs.method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs:method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs.wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+ </transport>
+ <transport name="local">
+  <responseFlow>
+   <handler type="LocalResponder"/>
+  </responseFlow>
+ </transport>
+</deployment>

@@ -1,0 +1,116 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry">
+
+
+    <accordo-servizio-parte-comune nome="Trasmissione" profilo-collaborazione="oneway"
+        utilizzo-senza-azione="false" versione="1" wsdl-logico-erogatore="">
+        <soggetto-referente tipo="SDI" nome="CentroServiziFatturaPA"/>
+
+        <port-type nome="TrasmissioneFatture" profilo-collaborazione="oneway" style="document">
+            <azione nome="RicevutaConsegna" profilo-collaborazione="oneway">
+                <message-input use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="ricevuta" element-name="ricevutaConsegna"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-input>
+            </azione>
+            <azione nome="NotificaMancataConsegna" profilo-collaborazione="oneway">
+                <message-input use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="mancataConsegna" element-name="notificaMancataConsegna"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-input>
+            </azione>
+            <azione nome="NotificaScarto" profilo-collaborazione="oneway">
+                <message-input use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="scarto" element-name="notificaScarto"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-input>
+            </azione>
+            <azione nome="NotificaEsito" profilo-collaborazione="oneway">
+                <message-input use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="esito" element-name="notificaEsito"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-input>
+            </azione>
+            <azione nome="NotificaDecorrenzaTermini" profilo-collaborazione="oneway">
+                <message-input use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="decorrenzaTermini" element-name="notificaDecorrenzaTermini"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-input>
+            </azione>
+            <azione nome="AttestazioneTrasmissioneFattura" profilo-collaborazione="oneway">
+                <message-input use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="attestazioneTrasmissioneFattura"
+                        element-name="attestazioneTrasmissioneFattura"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-input>
+            </azione>
+        </port-type>
+
+        <port-type nome="SdIRiceviFile" profilo-collaborazione="sincrono" style="document">
+            <azione nome="RiceviFile" profilo-collaborazione="sincrono">
+                <message-input use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="parametersIn" element-name="fileSdIAccoglienza"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-input>
+                <message-output use="literal"
+                    soap-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0">
+                    <part name="parametersOut" element-name="rispostaSdIRiceviFile"
+                        element-namespace="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types"
+                    />
+                </message-output>
+            </azione>
+        </port-type>
+
+    </accordo-servizio-parte-comune>
+
+
+
+    <!-- Soggetto SDI -->
+    <soggetto tipo="SDI" nome="CentroServiziFatturaPA">
+        <connettore tipo="disabilitato" nome="PdDSistemaDiInterscambio"/>
+
+        <accordo-servizio-parte-specifica nome="RiceviFile"
+            accordo-servizio-parte-comune="SDI/CentroServiziFatturaPA:Trasmissione:1"
+            port-type="SdIRiceviFile">
+            <servizio tipo="SDI" nome="RiceviFile">
+                <connettore tipo="http" nome="RiceviFile">
+                    <property nome="location" valore="http://localhost:8888/ricevi_file"/>
+                </connettore>
+            </servizio>
+            <fruitore tipo="SDI" nome="ENTE"/>
+        </accordo-servizio-parte-specifica>
+
+    </soggetto>
+
+
+    <!-- Soggetto Destinatario degli esempi -->
+    <soggetto tipo="SDI" nome="ENTE">
+
+        <connettore tipo="http" nome="PdDENTE">
+            <property nome="location"
+                valore="http://localhost:8080/openspcoop2/sdi/PA/SDIENTE/SDITrasmissioneFatture"/>
+        </connettore>
+
+        <accordo-servizio-parte-specifica nome="TrasmissioneFatture"
+            accordo-servizio-parte-comune="SDI/CentroServiziFatturaPA:Trasmissione:1"
+            port-type="TrasmissioneFatture">
+            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
+            <fruitore tipo="SDI" nome="CentroServiziFatturaPA"/>
+        </accordo-servizio-parte-specifica>
+
+    </soggetto>
+
+</registro-servizi>

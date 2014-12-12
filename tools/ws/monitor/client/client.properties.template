@@ -1,0 +1,16 @@
+statoPdd.soap11.url=http://127.0.0.1:8080/openspcoop2Monitor/StatoPdd/Soap11
+#statoPdd.soap11.username=INSERIRE_USERNAME
+#statoPdd.soap11.password=INSERIRE_PASSWORD
+
+statoPdd.soap12.url=http://127.0.0.1:8080/openspcoop2Monitor/StatoPdd/Soap12
+#statoPdd.soap12.username=INSERIRE_USERNAME
+#statoPdd.soap12.password=INSERIRE_PASSWORD
+
+messaggio.soap11.url=http://127.0.0.1:8080/openspcoop2Monitor/Messaggio/Soap11
+#messaggio.soap11.username=INSERIRE_USERNAME
+#messaggio.soap11.password=INSERIRE_PASSWORD
+
+messaggio.soap12.url=http://127.0.0.1:8080/openspcoop2Monitor/Messaggio/Soap12
+#messaggio.soap12.username=INSERIRE_USERNAME
+#messaggio.soap12.password=INSERIRE_PASSWORD
+

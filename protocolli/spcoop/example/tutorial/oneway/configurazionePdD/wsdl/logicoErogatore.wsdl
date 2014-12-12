@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+	targetNamespace="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:spc="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+	<wsdl:import
+		namespace="http://openspcoop2.org/example/pdd/server/ComunicazioneVariazione"
+		location="definitorio.xsd">
+	</wsdl:import>
+	<wsdl:message name="comunicazioneVariazioneRequest">
+		<wsdl:part name="comunicazioneVariazionePart" element="spc:comunicazioneVariazione">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="ComunicazioneVariazione">
+		<wsdl:operation name="Notifica">
+			<wsdl:input message="spc:comunicazioneVariazioneRequest">
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:portType>
+</wsdl:definitions>

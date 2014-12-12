@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.openspcoop.org/example/wadl"
+    attributeFormDefault="unqualified" elementFormDefault="qualified"
+    targetNamespace="http://www.openspcoop.org/example/wadl">
+    
+    
+    <!--  <xsd:include schemaLocation="test2.xsd"/> -->
+    
+    <xsd:import namespace="http://www.openspcoop.org/example/wadl/interno" schemaLocation="test2.xsd"/>
+    
+    
+  
+    <xsd:element name="libro" type="libro"/>
+    <xsd:complexType name="libro">
+        <xsd:sequence>
+            <xsd:element name="id-libro" type="xsd:int"/>
+            <xsd:element name="nome" type="xsd:string"/>
+            <xsd:element name="autore" type="xsd:string"/>
+         </xsd:sequence>
+    </xsd:complexType>
+    
+</xsd:schema>

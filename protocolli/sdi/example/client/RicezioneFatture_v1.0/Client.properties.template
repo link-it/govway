@@ -1,0 +1,37 @@
+# MTOM Enabled
+mtom=true
+
+# Username/password
+#username=
+#password=
+
+# PdD
+# -- SDICOOP --
+pdd=http://localhost:8080/openspcoop2/sdi/PA
+pa=SDIENTE/SDIRicezioneFatture
+# -- SPCOOP --
+#pdd=http://localhost:8080/openspcoop2/spcoop/PA
+#pa=
+
+# Tipo Operazione
+# - notificaDecorrenzaTermini
+# - riceviFatture
+tipoOperazione=riceviFatture
+
+# Buste
+busta.riceviFatture=spcoopFiles/riceviFatture.xml
+busta.notificaDecorrenzaTermini=spcoopFiles/notificaDecorrenzaTermini.xml
+
+# Fattura 1.0 (usata in riceviFatture)
+fattura=sdiFiles/esempiFatture/IT01234567890_11111.xml
+#fattura=sdiFiles/esempiFatture/IT01234567890_33333.xml
+# Fattura 1.1 (usata in riceviFatture)
+#fattura=sdiFiles/esempiFatture/IT01234567890_99999.xml
+# Metadati (usata in riceviFatture)
+metadati=sdiFiles/esempiMessaggi/IT01234567890_11111_MT_001.xml
+#metadati=sdiFiles/esempiMessaggi/IT01234567890_33333_MT_001.xml
+#metadati=sdiFiles/esempiMessaggi/IT01234567890_99999_MT_001.xml
+
+# NotificaDecorrenzaTermini
+notificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
+#notificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml

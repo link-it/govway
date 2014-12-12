@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:spc="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto"
+        targetNamespace="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto">
+
+  <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/IdentificaSoggetto" location="definitorio.xsd">
+    </wsdl:import>
+
+  <wsdl:message name="identificaResponse">
+    <wsdl:part name="identificaResponsePart" element="spc:presaConsegnaIdentifica">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="identificaRequest">
+    <wsdl:part name="identificaRequestPart" element="spc:identifica">
+    </wsdl:part>
+  </wsdl:message>
+
+  <wsdl:portType name="IdentificaSoggetto">
+    <wsdl:operation name="Cerca">
+      <wsdl:input message="spc:identificaRequest">
+    </wsdl:input>
+      <wsdl:output message="spc:identificaResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+
+</wsdl:definitions>

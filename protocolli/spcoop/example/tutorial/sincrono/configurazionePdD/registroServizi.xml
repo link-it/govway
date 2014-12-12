@@ -1,0 +1,44 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+   <accordo-servizio-parte-comune nome="AS_RichiestaStatoFamiglia" 
+		     descrizione="Esempio di Servizio Sincrono"
+		     versione="1"
+		     profilo-collaborazione="sincrono"
+		     wsdl-definitorio="wsdl/definitorio.xsd"
+		     wsdl-concettuale="wsdl/concettuale.wsdl"
+		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl">
+	<soggetto-referente tipo="SPC" nome="CentroAnagrafico" />
+	<port-type nome="RichiestaStatoFamiglia" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
+           <azione nome="Acquisisci" />
+        </port-type>
+   </accordo-servizio-parte-comune>
+
+
+   <soggetto tipo="SPC" nome="CentroAnagrafico">
+
+        <connettore tipo="http" nome="PdDCentroAnagrafico">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/spcoop/PA" />
+         </connettore>
+
+	<accordo-servizio-parte-specifica
+		 nome="RichiestaStatoFamiglia"
+		 accordo-servizio-parte-comune="SPC/CentroAnagrafico:AS_RichiestaStatoFamiglia:1"
+		 port-type="RichiestaStatoFamiglia"
+		 descrizione="Esempio di accordo di servizio parte specifica (Sincrono)"
+		 wsdl-implementativo-erogatore="wsdl/implementativoErogatore.wsdl">
+	    <servizio tipo="SPC" nome="RichiestaStatoFamiglia"/> 
+            <fruitore tipo="SPC" nome="Comune" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+
+   <soggetto tipo="SPC" nome="Comune">
+
+        <connettore tipo="http" nome="PdDComune">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/spcoop/PA" />
+        </connettore>
+
+   </soggetto>
+
+</registro-servizi>

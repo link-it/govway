@@ -1,0 +1,100 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" 
+	xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+	xmlns:tras="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia"
+	targetNamespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia">
+
+
+	<!-- WS-Sec-Policy -->
+
+	<wsp:Policy wsu:Id="SignEncr"
+		xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+		xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+
+		<wsp:ExactlyOne>
+			<wsp:All>
+				<sp:AsymmetricBinding
+					xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+					<wsp:Policy>
+						<sp:InitiatorToken>
+							<wsp:Policy>
+								<sp:X509Token
+									sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+									<wsp:Policy>
+										<sp:RequireThumbprintReference />
+									</wsp:Policy>
+								</sp:X509Token>
+							</wsp:Policy>
+						</sp:InitiatorToken>
+						<sp:RecipientToken>
+							<wsp:Policy>
+								<sp:X509Token
+									sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Never">
+									<wsp:Policy>
+										<sp:RequireThumbprintReference />
+									</wsp:Policy>
+								</sp:X509Token>
+							</wsp:Policy>
+						</sp:RecipientToken>
+						<sp:AlgorithmSuite>
+							<wsp:Policy>
+								<sp:TripleDesRsa15 />
+							</wsp:Policy>
+						</sp:AlgorithmSuite>
+						<sp:Layout>
+							<wsp:Policy>
+								<sp:Strict />
+							</wsp:Policy>
+						</sp:Layout>
+						<sp:IncludeTimestamp />
+						<sp:OnlySignEntireHeadersAndBody />
+					</wsp:Policy>
+				</sp:AsymmetricBinding>
+
+				<sp:SignedParts
+					xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+					<sp:Body />
+
+				</sp:SignedParts>
+
+				<sp:EncryptedParts
+					xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+					<sp:Body />
+				</sp:EncryptedParts>
+
+			</wsp:All>
+		</wsp:ExactlyOne>
+	</wsp:Policy>
+
+
+        <wsdl:import namespace="http://openspcoop2.org/example/pdd/server/RichiestaStatoFamiglia"
+                location="logicoErogatore.wsdl">
+        </wsdl:import>
+
+
+	<wsdl:binding name="RichiestaStatoFamigliaSOAP12SecBinding"
+		type="tras:RichiestaStatoFamiglia">
+		<wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+			URI="#SignEncr" />
+		<soap12:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="Acquisisci">
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="RichiestaStatoFamigliaSOAP12SecService">
+		<wsdl:port name="RichiestaStatoFamigliaSOAP12SecInterfaceEndpoint"
+			binding="tras:RichiestaStatoFamigliaSOAP12SecBinding">
+			<soap12:address location="http://localhost:8888/tutorial/sincronoSec12" />
+		</wsdl:port>
+	</wsdl:service>
+
+
+</wsdl:definitions>

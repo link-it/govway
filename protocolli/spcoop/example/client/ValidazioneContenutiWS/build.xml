@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="ValidazioneContenutiApplicativiClient" default="" basedir=".">
+	<description>
+        File di Script per la compilazione o l'esecuzione del Client ValidazioneContenutiApplicativi
+    </description>
+
+	<property name="openspcoop2" location="../../../../.." />
+		
+	<!-- CLASSPATH -->
+	<property name="ws_validazione_lib_client" location="${openspcoop2}/lib"/>
+	<path id="classpath_ws_validazione_client" >
+		<fileset dir="${ws_validazione_lib_client}" >
+			<exclude name="**/cxf/*"/>
+			<exclude name="**/jax/*"/>
+		</fileset>
+		<fileset file="${ws_validazione_lib_client}/jax/jaxb-api-2.2.6.jar" />
+		<fileset file="deploy/stub_ws/validazioneContenutiWS_stub.jar" />
+	</path>
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+
+	<!-- Argomento passato al Client, durante l'esecuzione -->
+	<property name="parameter" value="request.xml" />
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build}" />
+	</target>
+	
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+	</target>
+
+
+	<!-- Compilazione del Client -->
+	<target name="build" depends="init_compile"
+        description="compila il Client" >
+		<!-- Compile the java code  -->
+		<javac destdir="${build}" debug="true">
+			<src path="${src}"/>
+			<classpath>
+				<path refid="classpath_ws_validazione_client"/>
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!-- Run the Client -->
+	<target name="run" depends=""
+        description="Esegue il Client" >
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.example.pdd.client.validazione.Client" fork="true">
+			<arg value="${parameter}" />
+			<classpath>
+				<path refid="classpath_ws_validazione_client"/>
+				<pathelement path="${build}"/>
+			</classpath>
+		</java>
+
+	</target>
+
+
+
+</project>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="OpenSPCoop" default="" basedir=".">
+	<description>
+        File di Script per la compilazione del Client
+    </description>
+
+	<property name="libs" value="../../../../lib/" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${libs}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	
+	
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="debug" value="true" />
+
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+	</target>
+	
+	
+
+
+	<!-- Compilazione del Client -->
+	<target name="build" depends="init_compile"
+        description="compila il Client" >
+		<!-- Compile the java code  -->
+		<javac destdir="${build}" debug="${debug}">
+			<!--<compilerarg value="-Xlint:unchecked"/>
+                        <compilerarg value="-Xlint:deprecation"/>-->
+			<src path="${src}" />
+			<classpath>
+				<fileset dir="${libs}" includes="**/*.jar"/>
+			</classpath>
+		</javac>
+	</target>
+
+
+
+	<!-- Run the Receiver -->
+	<target name="receive" depends=""
+        description="Esegue il Client" >
+		
+		<if>
+			<equals arg1="${as}" arg2="$${as}"/>
+		    <then>
+		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant receive -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (indicare jbossVersionNumber es. jboss6)"/>
+			</then>
+		</if>
+		
+		<if>
+			<equals arg1="${tipoTest}" arg2="$${tipoTest}"/>
+		    <then>
+		 	   <fail message="Parametro tipoTest non fornito, utilizzare il comando: 'ant receive -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (valori possibili: QueueBytes/QueueText/TopicBytes/TopicText)"/>
+			</then>
+		</if>
+
+		
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.example.pdd.client.jmsreceiver.${tipoTest}Receiver" fork="false">
+			<arg value="${as}" />
+			<arg value="${username}" />
+			<arg value="${password}" />
+			<classpath>
+				<pathelement path="${build}"/>
+				<path refid="classpath" />
+				<fileset dir="${libs}/jbossas/${as}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</java>
+
+	</target>
+	
+	
+	
+	
+	
+	<!-- Run the Sender -->
+	<target name="send" depends=""
+        description="Esegue il Client" >
+		
+		<if>
+			<equals arg1="${as}" arg2="$${as}"/>
+		    <then>
+		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant send -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (indicare jbossVersionNumber es. jboss6)"/>
+			</then>
+		</if>
+		
+		<if>
+			<equals arg1="${tipoTest}" arg2="$${tipoTest}"/>
+		    <then>
+		 	   <fail message="Parametro tipoTest non fornito, utilizzare il comando: 'ant send -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (valori possibili: QueueBytes/QueueText/TopicBytes/TopicText)"/>
+			</then>
+		</if>
+
+		
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.example.pdd.client.jmsreceiver.${tipoTest}Sender" fork="false">
+			<arg value="${as}" />
+			<arg value="${username}" />
+			<arg value="${password}" />
+			<classpath>
+				<pathelement path="${build}"/>
+				<path refid="classpath" />
+				<fileset dir="${libs}/jbossas/${as}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</java>
+
+	</target>
+
+
+
+	<!-- Classpath -->
+	<path id="classpath">
+		<fileset dir="${libs}/javax" includes="javax.jms.jar"/>
+		<fileset dir="${libs}/shared" includes="concurrent-1.0.jar"/>
+		<fileset dir="${libs}/shared" includes="xercesImpl-2.9.1.jar"/>
+		<fileset dir="${libs}/log" includes="log4j-1.2.16.jar"/>
+	</path>
+
+
+
+</project>

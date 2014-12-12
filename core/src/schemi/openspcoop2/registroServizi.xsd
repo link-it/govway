@@ -1,0 +1,1145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/registry"
+	targetNamespace="http://www.openspcoop2.org/core/registry"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="registry">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="true" binding-soap-11="true" binding-soap-12="true" all="true"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:xml root-element="registro-servizi" generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="false"/>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+	
+	
+	
+	
+	
+	
+	
+	<!-- il registro Servizi contiene la definizione dei vari soggetti 
+		e di possibili connettori associati ai soggetti oltre alla definizione degli accordi di servizio -->
+	<xsd:element name="registro-servizi">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-cooperazione"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-servizio-parte-comune"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-dominio"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="soggetto"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connettore"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	
+	
+	<!-- Accordi di Cooperazione -->
+	<xsd:element name="accordo-cooperazione" type="accordo-cooperazione" />
+	<xsd:complexType name="accordo-cooperazione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-accordo-cooperazione" >
+						<linkit:ws-interface crud="true" all="true" />
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<!-- start-extensions -->
+			<!-- URI Accordi -->
+			<xsd:element name="uri-servizi-composti" maxOccurs="unbounded" minOccurs="0"
+				type="xsd:string"/>
+			<!-- end-extensions -->
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+			<!-- Elenco Partecipanti -->
+			<xsd:element name="elenco-partecipanti" maxOccurs="1" minOccurs="0"
+				type="accordo-cooperazione-partecipanti"/>
+			<!-- Allegati -->
+			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
+			<!-- Specifiche Semiformale -->
+			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
+		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="accordo-cooperazione-partecipanti">
+		<xsd:sequence>
+			<xsd:element name="soggetto-partecipante" type="id-soggetto" maxOccurs="unbounded" 
+				minOccurs="0"/>
+			<!-- minOccurs="2"/> Altrimenti non e' utilizzabile durante una esportazione per un accordo senza soggetti -->
+			<!-- Il check che ne esistano 2 e' stato spostato a livello semantico di stato 'finale' -->
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<!-- Accordo di Servizio (Parte Comune) -->
+	<xsd:element name="accordo-servizio-parte-comune" type="accordo-servizio-parte-comune"/>
+	<xsd:complexType name="accordo-servizio-parte-comune">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-accordo-servizio-parte-comune" >
+						<linkit:ws-interface crud="true" all="true" />
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<!-- Soggetto Referente dell'accordo -->
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+			<!-- Indicazione che l'accordo di servizio rappresenta un servizio composto (utilizzato in un accordo di cooperazione) -->
+			<xsd:element name="servizio-composto" type="accordo-servizio-parte-comune-servizio-composto" maxOccurs="1" minOccurs="0"/>
+			<!-- Azioni incluse nell'accordo -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione" type="azione"/>
+			<!-- Port-Type inclusi nell'accordo -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="port-type" type="port-type"/>
+			<!-- Allegati -->
+			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
+			<!-- Specifiche Semiformale -->
+			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+			
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
+		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="byte-wsdl-definitorio" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-wsdl-concettuale" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-wsdl-logico-erogatore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-wsdl-logico-fruitore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-specifica-conversazione-concettuale" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-specifica-conversazione-erogatore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-specifica-conversazione-fruitore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione" use="required">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="wsdl-definitorio" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="wsdl-concettuale" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="wsdl-logico-erogatore" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="wsdl-logico-fruitore" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="specifica-conversazione-concettuale" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="specifica-conversazione-erogatore" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="specifica-conversazione-fruitore" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="utilizzo-senza-azione" type="xsd:boolean" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="scadenza" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto">
+		<xsd:sequence>
+			<!-- Servizi componenti -->
+			<xsd:element name="servizio-componente" type="accordo-servizio-parte-comune-servizio-composto-servizio-componente" maxOccurs="unbounded"
+				minOccurs="0"/>
+				<!-- minOccurs="2"/> Altrimenti non e' utilizzabile durante una esportazione per un accordo senza servizi componenti -->
+				<!-- Il check che ne esistano 2 e' stato spostato a livello semantico di stato 'finale' -->
+			<!-- Specifiche Coordinamento -->
+			<xsd:element name="specifica-coordinamento" maxOccurs="unbounded"
+				minOccurs="0" type="documento"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="id-accordo-cooperazione" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="accordo-cooperazione" type="xsd:string"
+			use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto-servizio-componente">
+		<!-- start-extensions -->
+		<xsd:attribute name="id-servizio-componente" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="tipo-soggetto" type="xsd:string"
+			use="required"/>
+		<xsd:attribute name="nome-soggetto" type="xsd:string"
+			use="required"/>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="azione" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- port-type -->
+	<xsd:complexType name="port-type">
+		<xsd:sequence>
+			<!-- Operations indicate per il port-type -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione" type="operation"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="profilo-p-t" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-accordo" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="style" type="BindingStyle" default="document"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita" />
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita" />
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita" />
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- azione -->
+	<xsd:complexType name="azione">
+		<!-- start-extensions -->
+		<xsd:attribute name="prof-azione" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-accordo" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="correlata" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- operation -->
+	<xsd:complexType name="operation">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="message-input" type="message"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="message-output" type="message"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="prof-azione" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-port-type" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="style" type="BindingStyle" />
+		<xsd:attribute name="soap-action" type="xsd:string"/>
+		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita" />
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="correlata-servizio" type="xsd:string"/>
+		<xsd:attribute name="correlata" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- Definizione di un messaggio per una operation -->
+	<xsd:complexType name="message">
+		<xsd:sequence>
+			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
+			<xsd:element name="part" type="message-part" maxOccurs="unbounded" minOccurs="0"/>			
+		</xsd:sequence>
+		<xsd:attribute name="use" type="BindingUse" default="literal"/>
+		<xsd:attribute name="soap-namespace" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="message-part">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="element-name" type="xsd:string" use="optional"/>
+		<xsd:attribute name="element-namespace" type="xsd:string" use="optional"/>
+		<xsd:attribute name="type-name" type="xsd:string" use="optional"/>
+		<xsd:attribute name="type-namespace" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Porta di Dominio -->
+	<xsd:element name="porta-dominio" type="porta-dominio"/>
+	<xsd:complexType name="porta-dominio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-porta-dominio" >
+						<linkit:ws-interface crud="true" all="true" />
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="implementazione" type="xsd:string" default="standard"/>
+		<xsd:attribute name="subject" type="xsd:string"/>
+		<xsd:attribute name="client-auth" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	
+	
+	
+	<!-- un Soggetto contiene: un connettore su cui viene gestito (punto di accesso della sua porta di dominio)
+		e la definizione dei servizi -->
+	<xsd:element name="soggetto" type="soggetto"/>
+	<xsd:complexType name="soggetto">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-soggetto" >
+						<linkit:ws-interface crud="true" all="true" />
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<xsd:element ref="accordo-servizio-parte-specifica" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<!-- end-extensions -->
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="identificativo-porta" type="xsd:string"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="porta-dominio" type="xsd:string"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
+		<xsd:attribute name="codice-ipa" type="xsd:string"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Connettore -->
+	<xsd:element name="connettore" type="connettore"/>
+	<xsd:complexType name="connettore">
+		<xsd:sequence>
+			<xsd:element name="property" type="Property" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="custom" type="xsd:boolean" use="optional"/>
+		<!-- end-extensions -->
+		<xsd:attribute name="tipo" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
+	
+	
+	<!-- AccordoServizioParteSpecifica -->
+	<xsd:element name="accordo-servizio-parte-specifica" type="accordo-servizio-parte-specifica"/>
+	<xsd:complexType name="accordo-servizio-parte-specifica">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-accordo-servizio-parte-specifica" >
+						<linkit:ws-interface crud="true" all="true" />
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" name="servizio" type="servizio"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="fruitore"/>
+			<!-- Allegati -->
+			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
+			<!-- Specifiche Semiformale -->
+			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+			<!-- Specifiche Livelli Servizio -->
+			<xsd:element name="specifica-livello-servizio" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+			<!-- Specifiche Sicurezza -->
+			<xsd:element name="specifica-sicurezza" maxOccurs="unbounded" minOccurs="0"
+				type="documento"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
+		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="id-accordo" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-wsdl-implementativo-erogatore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-wsdl-implementativo-fruitore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="accordo-servizio-parte-comune" type="xsd:string" use="required"/>
+		<!-- Eventuale precisazione del port-type dell'accordo da utilizzare -->
+		<xsd:attribute name="port-type" type="xsd:string"/>
+		<xsd:attribute name="wsdl-implementativo-erogatore" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="wsdl-implementativo-fruitore" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="scadenza" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
+		<xsd:attribute name="descrizione" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- Servizio/ServizioCorrelato -->
+	<xsd:complexType name="servizio">
+		<xsd:sequence>
+			<!-- dati del servizio -->
+			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<xsd:element name="parametri-azione" type="servizio-azione" maxOccurs="unbounded" minOccurs="0"/>			
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="tipo-soggetto-erogatore" type="xsd:string" use="optional"/>
+		<xsd:attribute name="nome-soggetto-erogatore" type="xsd:string" use="optional"/>		
+		<!-- end-extensions -->
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipologia-servizio" type="TipologiaServizio" default="normale"/>
+	</xsd:complexType>
+	<xsd:complexType name="servizio-azione">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" ref="connettore"/>
+			<xsd:element name="parametri-fruitore" type="servizio-azione-fruitore" maxOccurs="unbounded" minOccurs="0"/>		
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="servizio-azione-fruitore">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="1" ref="connettore"/>
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
+	<!-- Fruitore -->
+	<xsd:element name="fruitore" type="fruitore"/>
+	<xsd:complexType name="fruitore">
+		<xsd:sequence>
+			<!-- start-extensions -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="xsd:string"/>
+			<!-- end-extensions -->
+			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
+		<xsd:attribute name="byte-wsdl-implementativo-erogatore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="byte-wsdl-implementativo-fruitore" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="id-servizio" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="wsdl-implementativo-erogatore" type="xsd:string"/>
+		<xsd:attribute name="wsdl-implementativo-fruitore" type="xsd:string"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
+		<xsd:attribute name="client-auth" type="StatoFunzionalita"/>
+	</xsd:complexType>
+	
+	
+	<!-- Documenti -->
+	<xsd:complexType name="documento">
+		<xsd:sequence>
+			<xsd:element name="byte-contenuto" type="xsd:base64Binary" minOccurs="0"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="ruolo" type="xsd:string" use="optional"/>
+		<xsd:attribute name="tipo-proprietario-documento" type="xsd:string" use="optional"/>
+		<xsd:attribute name="id-proprietario-documento" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="file" type="xsd:string" use="required"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" />
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Enumeration -->
+	<xsd:simpleType name="ProfiloCollaborazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="oneway"/>
+			<xsd:enumeration value="sincrono"/>
+			<xsd:enumeration value="asincronoSimmetrico"/>
+			<xsd:enumeration value="asincronoAsimmetrico"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StatoFunzionalita">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="disabilitato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BindingUse">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="literal"/>
+			<xsd:enumeration value="encoded"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BindingStyle">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="document"/>
+			<xsd:enumeration value="rpc"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="Property">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:simpleType name="TipologiaServizio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="normale"/>
+			<xsd:enumeration value="correlato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Altre costanti utilizzate poi nel core 
+	<xsd:simpleType name="TipiDocumentoConversazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WSBL"/>
+			<xsd:enumeration value="BPEL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoCoordinamento">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BPEL"/>
+			<xsd:enumeration value="WS-CDL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoInterfaccia">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WSDL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoLivelloServizio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WS-Agreement"/>
+			<xsd:enumeration value="WSLA"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoSemiformale">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="UML"/>
+			<xsd:enumeration value="HTML"/>
+			<xsd:enumeration value="XML"/>
+			<xsd:enumeration value="Linguaggio Naturale"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TipiDocumentoSicurezza">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WS-Policy"/>
+			<xsd:enumeration value="Linguaggio Naturale"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	-->
+	
+	
+	<!-- Identiticativi WS -->
+	<xsd:complexType name="id-porta-dominio">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-soggetto">
+		<!-- start-extensions -->
+		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-accordo-cooperazione">
+		<xsd:sequence>
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="id-accordo-servizio-parte-comune">
+		<xsd:sequence>
+			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="id-accordo-servizio-parte-specifica">
+		<xsd:sequence>
+			<xsd:element name="soggetto-erogatore" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione"> <!-- default="1"> -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="[1-9]+[0-9]*"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+	
+</xsd:schema>

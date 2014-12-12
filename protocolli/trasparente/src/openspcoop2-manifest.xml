@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
+
+    <protocolName>trasparente</protocolName>
+
+    <factory>org.openspcoop2.protocol.trasparente.TrasparenteFactory</factory>
+
+    <web>
+        <context>trasparente</context>
+        <emptyContext enabled="true"/>
+    </web>
+
+    <registroServizi>
+
+        <soggetti>
+            <tipi>
+                <tipo>PROXY</tipo>
+            </tipi>
+        </soggetti>
+
+        <servizi>
+            <tipi>
+                <tipo>PROXY</tipo>
+            </tipi>
+        </servizi>
+
+        <versioni>
+            <versione>1.0</versione>
+        </versioni>
+
+    </registroServizi>
+
+    <urlMapping>
+        <file>/trasparente-url-mapping.properties</file>
+        <tipo>PROPERTIES</tipo>
+    </urlMapping>
+
+    <binding soap11="true" soap12="true"/>
+
+</openspcoop2>

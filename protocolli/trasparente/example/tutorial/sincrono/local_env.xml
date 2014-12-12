@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="TrasparenteTutorialSincrono_LocalEnv" basedir=".">
+
+      <property name="openspcoop2" location="../../../../.." />
+	  <property name="openspcoop2_lib" location="${openspcoop2}/lib" />
+
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+
+</project>

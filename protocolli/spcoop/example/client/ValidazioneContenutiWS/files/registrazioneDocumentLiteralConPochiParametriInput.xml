@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <soapenv:Body>
+         <nominativo xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types">Mario Rossi</nominativo>
+         <indirizzo xmlns="http://openspcoop2.org/ValidazioneContenutiWS/Service/types">viale Roma 26</indirizzo>
+      </soapenv:Body>
+   </soapenv:Envelope>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsbl:ConceptualBehavior xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsbl="http://spcoop.gov.it/sica/wsbl" xsi:schemaLocation="http://spcoop.gov.it/sica/wsbl wsbl.xsd">
+  <name>Esempio di profilo asincrono simmetrico</name>
+  <states>
+    <state-initial name="TransazioneRichiestaAsincronaSimmetrica"/>
+    <state-final name="TransazioneAsincronaSimmetricaTerminata"/>
+    <state name="TransazioneRispostaAsincronaSimmetrica"/>
+  </states>
+  <transitions>
+    <transition name="T1" source="TransazioneRichiestaAsincronaSimmetrica" target="TransazioneRispostaAsincronaSimmetrica">
+      <activationMode>EXPLICIT</activationMode>
+      <completionMode>
+        <mode>DEFINITIVE</mode>
+      </completionMode>
+      <events>
+        <event name="IdentificaSoggetto_Cerca"/>
+      </events>
+    </transition>
+    <transition name="T2" source="TransazioneRispostaAsincronaSimmetrica" target="TransazioneAsincronaSimmetricaTerminata">
+      <activationMode>IMPLICIT</activationMode>
+      <completionMode>
+        <mode>EFFECTLESS</mode>
+      </completionMode>
+      <events>
+        <event name="EsitoIdentificazione_Risultato"/>
+      </events>
+      <temporalCondition>
+        <predicate>M-INVOKE</predicate>
+        <boolop>GEQ</boolop>
+        <data>end(T1)+10</data>
+        <description></description>
+      </temporalCondition>
+    </transition>
+  </transitions>
+</wsbl:ConceptualBehavior>

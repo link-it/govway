@@ -1,0 +1,331 @@
+<project name="openspcoop2-compile-utils">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.utils
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.utils.*' -->
+	<target name="compile_openspcoop2_utils" description="compila la libreria org.openspcoop.utils.*">
+
+		<if>
+			<istrue value="${buildUtils}"/>
+			<then>
+		
+				<!-- Info svn -->
+				<runtarget target="checksvn" />
+				<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+				
+				<var name="packagesCompiled" value="" />
+				
+				<!-- org.openspcoop.2.utils -->
+				<var name="packagesCompiled" value="org.openspcoop2.utils" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.resources -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.resources" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/resources"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-resources"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="mime.types"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/resources"/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.resources"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+
+				<!-- org.openspcoop.2.utils.regexp -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.regexp" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/regexp"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-regexp"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.regexp"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.cache -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.cache" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/cache"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-cache"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.cache"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.checksum -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.checksum" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/checksum"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-checksum"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.checksum"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.crypt -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.crypt" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/crypt"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-crypt"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.crypt"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+ 					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.date -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.date" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/date"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-date"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.date"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.id -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.apache" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.apache.serial" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/id"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-id"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.id"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.io -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.io" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.io.notifier" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.io.notifier.unblocked" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/io"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-io"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.io"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.jaxb -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxb" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jaxb"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-jaxb"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jaxb"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.sql -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.sql" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/sql"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-sql"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.sql"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.jdbc -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jdbc" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jdbc"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-jdbc"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="test.pdf"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/jdbc"/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jdbc"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+								
+				<!-- org.openspcoop.2.utils.serialization -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.serialization" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/serialization"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-serialization"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.serialization"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.xml -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.xml" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/xml"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-xml"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="pretty-print.xsl"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/xml"/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.xml"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.digest -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.digest" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/digest"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-digest"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.digest"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.wsdl -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wsdl" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/wsdl"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-wsdl"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.wsdl"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.wadl -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl.entity" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl.validator" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/wadl"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-wadl"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.wadl"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.utils.beans -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.beans" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/beans"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-beans"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.beans"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- Jar Complessivo -->
+				<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+		
+				<!-- API -->
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_utils}/api/utils"/>
+					<param name="src" value="${src_utils}"/>
+					<param name="doc" value="${doc_utils}"/>
+					<param name="dist" value="${dist_utils}"/>
+				</antcall>
+				
+			</then>
+		</if>
+
+	</target>
+	
+</project>
