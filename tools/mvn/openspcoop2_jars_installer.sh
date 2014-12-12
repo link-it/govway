@@ -6,11 +6,7 @@ then
 	IS_SNAPSHOT="$1"
 fi
 
-OPENSPCOOP_VERSION="2.1"
-
-# Ricavo automaticamente la versione della major di Openspcoop
-#Ora commentato per un problema di nomenclatura dell'svn
-#OPENSPCOOP_VERSION="$(svn info | grep \"URL:\" | cut -d '/' -f 7)"
+OPENSPCOOP_VERSION="$(svn info | grep URL | cut -d '/' -f 7)"
 
 URL_REPOSITORY="scp://maven.openspcoop.org/var/maven2/repositories/public/"
 
