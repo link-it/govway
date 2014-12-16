@@ -1,5 +1,17 @@
 2014-12-16  Andrea Poli <apoli@link.it>
 
+	* [PddConsole]
+	Risolto Bug #273
+	Errore non previsto durante l'aggiornamento del nome di un soggetto.
+	Il problema si presentava quando esistevano due porte applicative con uno stesso prefisso  nel nome. 
+	Ad esempio:
+	- SPCErogatore/SPCServizio/azione1
+	- SPCErogatore/SPCServizio/azione2
+	L'update durante l'aggiornamento "bruciava" l'azione presente nel nome della porta applicativa, 
+	e qundi provocava un "unique constraint UNIQUE_PORTE_APPLICATIVE_1 violated"
+
+2014-12-16  Andrea Poli <apoli@link.it>
+
 	* [Pdd]
 	Risolto Bug #272
 	Modificato indice 'audit_filter' dove e' stato esclusa la colonna 'object_id' definita con tipo 'CLOB':

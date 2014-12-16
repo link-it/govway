@@ -823,20 +823,33 @@ public class SoggettoUpdateUtilities {
 				tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new Search());
 				for (PortaApplicativa portaApplicativa : tmpList) {
 					String nome = portaApplicativa.getNome();
-					// se il nome e' quello di default cioe' (erogatore)/(servizio)
+					// se il nome e' quello di default cioe' (erogatore)/(servizio) o (erogatore)/(servizio)/azione
 					String regex = "(.*)\\/(.*)";
 					if (nome.matches(regex)) {
 
 						String[] val = nome.split("\\/");
-						String pat1 = val[0];
-						String pat2 = val[1];
-
-						// erogatore
-						if (pat1.equals(this.oldtipoprov + this.oldnomeprov)) {
-							pat1 = this.tipoprov + this.nomeprov;
+						String patErogatore = val[0];
+						String patServizio = val[1];
+						String patAzione = null;
+						if(val.length>2){
+							patAzione = "";
+							for (int i = 2; i < val.length; i++) {
+								if(i>2){
+									patAzione = patAzione + "/";
+								}
+								patAzione = patAzione + val[i];
+							}
 						}
 
-						String newNome = pat1 + "/" + pat2;
+						// erogatore
+						if (patErogatore.equals(this.oldtipoprov + this.oldnomeprov)) {
+							patErogatore = this.tipoprov + this.nomeprov;
+						}
+
+						String newNome = patErogatore + "/" + patServizio;
+						if(patAzione!=null){
+							newNome = newNome + "/" + patAzione;
+						}
 						
 						portaApplicativa.setNome(newNome);
 						portaApplicativa.setOldNomeForUpdate(nome);
@@ -851,7 +864,7 @@ public class SoggettoUpdateUtilities {
 							String descrRegex = "Servizio(.*)erogato da(.*)";
 							if (descrizionePA.matches(descrRegex)) {
 								String tmpDescrizione = descrizionePA.substring(0,descrizionePA.indexOf("erogato da")+"erogato da".length());
-								descrizionePA = tmpDescrizione + " " + pat1;
+								descrizionePA = tmpDescrizione + " " + patErogatore;
 								//descrizionePD.replaceFirst((oldtipoprov + oldnomeprov), pat1);
 							}
 
