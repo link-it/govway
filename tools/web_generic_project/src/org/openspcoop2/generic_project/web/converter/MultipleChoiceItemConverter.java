@@ -61,7 +61,7 @@ public class MultipleChoiceItemConverter implements Converter {
 				List<org.openspcoop2.generic_project.web.form.field.SelectItem> sourceList = (List<org.openspcoop2.generic_project.web.form.field.SelectItem>) sourceValue;
 				
 				for (org.openspcoop2.generic_project.web.form.field.SelectItem selectItem : sourceList) {
-					if(selectItem.getLabel().equals(value))
+					if(selectItem.getLabel() != null && selectItem.getLabel().equals(value))
 						return selectItem;
 				}
 			}
@@ -72,7 +72,7 @@ public class MultipleChoiceItemConverter implements Converter {
 				List<org.openspcoop2.generic_project.web.form.field.SelectItem> targetList = (List<org.openspcoop2.generic_project.web.form.field.SelectItem>) targetValue;
 				
 				for (org.openspcoop2.generic_project.web.form.field.SelectItem selectItem : targetList) {
-					if(selectItem.getLabel().equals(value))
+					if(selectItem.getLabel() != null && selectItem.getLabel().equals(value))
 						return selectItem;
 				}
 			}
@@ -97,7 +97,7 @@ public class MultipleChoiceItemConverter implements Converter {
 		for (SelectItem selectItem : selectItems) {
 			org.openspcoop2.generic_project.web.form.field.SelectItem comboBoxItem = 
 					(org.openspcoop2.generic_project.web.form.field.SelectItem)selectItem.getValue();
-			if(comboBoxItem.getLabel().equalsIgnoreCase(value)) {
+			if(comboBoxItem.getLabel() != null && comboBoxItem.getLabel().equalsIgnoreCase(value)) {
 				return comboBoxItem;
 			}
 		}

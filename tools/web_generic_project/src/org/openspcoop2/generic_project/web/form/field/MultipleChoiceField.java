@@ -38,6 +38,8 @@ public class MultipleChoiceField extends FormField<List<SelectItem>> {
 	private boolean moveControlsVisible;
 	private boolean fastOrderControlsVisible;
 	private boolean orderControlsVisible;
+	
+	private String suggestionValue = null;
 
 	public MultipleChoiceField(){
 		super();
@@ -49,6 +51,7 @@ public class MultipleChoiceField extends FormField<List<SelectItem>> {
 		this.fastOrderControlsVisible = false;
 		this.moveControlsVisible = true;
 		this.orderControlsVisible = false;
+		this.suggestionValue = null;
 	}
 
 	public String getTargetCaptionLabel() {
@@ -98,6 +101,15 @@ public class MultipleChoiceField extends FormField<List<SelectItem>> {
 	public void setOrderControlsVisible(boolean orderControlsVisible) {
 		this.orderControlsVisible = orderControlsVisible;
 	}
+
+	public String getSuggestionValue() {
+		return this.suggestionValue;
+	}
+
+	public void setSuggestionValue(String suggestionValue) {
+		this.suggestionValue = suggestionValue;
+	}
+	
 	
 	
 
