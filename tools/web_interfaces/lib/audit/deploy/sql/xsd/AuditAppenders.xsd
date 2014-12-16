@@ -39,10 +39,15 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="audit_operations" sequence-cycle="true">
+			<linkit:sql-table-index name="audit_filter_time">
+			    <linkit:sql-table-index-field name="time_request"/>
+			</linkit:sql-table-index>
                         <linkit:sql-table-index name="audit_filter">
                             <linkit:sql-table-index-field name="tipo_operazione"/>
                             <linkit:sql-table-index-field name="tipo"/>
-                            <linkit:sql-table-index-field name="object_id"/>
+                            <!-- L'indice su una colonna 'text' non e' permesso in tutti i database 
+				<linkit:sql-table-index-field name="object_id"/> 
+			    -->
                             <linkit:sql-table-index-field name="utente"/>
                             <linkit:sql-table-index-field name="stato"/>
                         </linkit:sql-table-index>

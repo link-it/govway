@@ -31,7 +31,8 @@ CREATE TABLE audit_operations
 );
 
 -- index
-CREATE INDEX audit_filter ON audit_operations (tipo_operazione,tipo,object_id,utente,stato);
+CREATE INDEX audit_filter_time ON audit_operations (time_request);
+CREATE INDEX audit_filter ON audit_operations (tipo_operazione,tipo,utente,stato);
 CREATE TABLE audit_operations_init_seq (id BIGINT);
 INSERT INTO audit_operations_init_seq VALUES (NEXT VALUE FOR seq_audit_operations);
 
