@@ -28,7 +28,10 @@ import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.impl.LikeExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.sql.EscapeSQLPattern;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 
 /**
  * LikeExpressionSQL
@@ -47,7 +50,7 @@ public class LikeExpressionSQL extends LikeExpressionImpl implements ISQLExpress
 		this.sqlFieldConverter = sqlFieldConverter;
 	}
 
-	public String toSql_engine(SQLMode mode,List<?> oggettiPreparedStatement,Hashtable<String, ?> oggettiJPA)throws ExpressionException{
+	public String toSql_engine(SQLMode mode,ISQLQueryObject sqlQueryObject,List<?> oggettiPreparedStatement,Hashtable<String, ?> oggettiJPA)throws ExpressionException{
 		StringBuffer bf = new StringBuffer();
 		if(isNot()){
 			bf.append("( NOT ");
@@ -68,6 +71,29 @@ public class LikeExpressionSQL extends LikeExpressionImpl implements ISQLExpress
 		}catch(Exception e){
 			return "ERROR: "+e.getMessage();
 		}
+			
+		// escape
+		String escapeClausole = "";
+		try{
+			ISQLQueryObject sqlQueryObjectForEscape = null;
+			if(sqlQueryObject!=null){
+				sqlQueryObjectForEscape = sqlQueryObject.newSQLQueryObject();
+			}
+			else{
+				sqlQueryObjectForEscape = SQLObjectFactory.createSQLQueryObject(TipiDatabase.POSTGRESQL); // lo uso come default per produrre sql
+			}
+			System.out.println("DATABASE: "+sqlQueryObjectForEscape.getClass().getName());
+			EscapeSQLPattern escapePattern = sqlQueryObjectForEscape.escapePatternValue(sqlValue);
+			System.out.println("ESCAPE PATTERN: "+escapePattern.isUseEscapeClausole());
+			if(escapePattern.isUseEscapeClausole()){
+				escapeClausole = " ESCAPE '"+escapePattern.getEscapeClausole()+"'";
+			}
+			sqlValue = escapePattern.getEscapeValue();
+		}catch(Exception e){
+			throw new ExpressionException(e);
+		}
+		
+		// mode
 		switch (this.getMode()) {
 		case EXACT:
 			if(this.isCaseInsensitive()){
@@ -100,8 +126,10 @@ public class LikeExpressionSQL extends LikeExpressionImpl implements ISQLExpress
 		default:
 			break;
 		}
+		
 		bf.append(likeParam);
 		bf.append("'");
+		bf.append(escapeClausole);
 		bf.append(" )");
 		if(isNot()){
 			bf.append(" )");
@@ -111,7 +139,7 @@ public class LikeExpressionSQL extends LikeExpressionImpl implements ISQLExpress
 	
 	public void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
 		try{
-			String s = toSql_engine(mode, oggettiPreparedStatement, oggettiJPA);
+			String s = toSql_engine(mode, sqlQueryObject, oggettiPreparedStatement, oggettiJPA);
 			s = s.substring(1,s.length()-2);
 			sqlQueryObject.addWhereCondition(s);
 		}catch(Exception e){
@@ -121,19 +149,19 @@ public class LikeExpressionSQL extends LikeExpressionImpl implements ISQLExpress
 	
 	@Override
 	public String toSql() throws ExpressionException {
-		return toSql_engine(SQLMode.STANDARD, null, null);
+		return toSql_engine(SQLMode.STANDARD, null, null, null);
 	}
 
 	@Override
 	public String toSqlPreparedStatement(List<Object> oggetti)
 			throws ExpressionException {
-		return toSql_engine(SQLMode.PREPARED_STATEMENT, oggetti, null);
+		return toSql_engine(SQLMode.PREPARED_STATEMENT, null, oggetti, null);
 	}
 
 	@Override
 	public String toSqlJPA(Hashtable<String, Object> oggetti)
 			throws ExpressionException {
-		return toSql_engine(SQLMode.JPA, null, oggetti);
+		return toSql_engine(SQLMode.JPA, null, null, oggetti);
 	}
 	
 	@Override

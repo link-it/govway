@@ -30,6 +30,10 @@ import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.sql.EscapeSQLPattern;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 
 /**
  * LikeExpressionImpl
@@ -110,34 +114,50 @@ public class LikeExpressionImpl extends AbstractBaseExpressionImpl {
 			bf.append(")");
 		}
 		bf.append(" like '");
+		
+		String likeValue = this.value;
+		
+		// escape
+		String escapeClausole = "";
+		try{
+			ISQLQueryObject sqlQueryObjectForEscape = SQLObjectFactory.createSQLQueryObject(TipiDatabase.POSTGRESQL); // lo uso come default per produrre la stringa
+			EscapeSQLPattern escapePattern = sqlQueryObjectForEscape.escapePatternValue(likeValue);
+			if(escapePattern.isUseEscapeClausole()){
+				escapeClausole = " ESCAPE '"+escapePattern.getEscapeClausole()+"'";
+			}
+			likeValue = escapePattern.getEscapeValue();
+		}catch(Exception e){
+			e.printStackTrace(System.err);
+		}
+		
 		String likeParam = null;
 		switch (this.mode) {
 		case EXACT:
 			if(this.caseInsensitive){
-				likeParam = this.value.toLowerCase();
+				likeParam = likeValue.toLowerCase();
 			}else{
-				likeParam = this.value;
+				likeParam = likeValue;
 			}
 			break;
 		case ANYWHERE:
 			if(this.caseInsensitive){
-				likeParam = "%"+this.value.toLowerCase()+"%";
+				likeParam = "%"+likeValue.toLowerCase()+"%";
 			}else{
-				likeParam = "%"+this.value+"%";
+				likeParam = "%"+likeValue+"%";
 			}
 			break;
 		case END:
 			if(this.caseInsensitive){
-				likeParam = "%"+this.value.toLowerCase();
+				likeParam = "%"+likeValue.toLowerCase();
 			}else{
-				likeParam = "%"+this.value;
+				likeParam = "%"+likeValue;
 			}
 			break;
 		case START:
 			if(this.caseInsensitive){
-				likeParam = this.value.toLowerCase()+"%";
+				likeParam = likeValue.toLowerCase()+"%";
 			}else{
-				likeParam = this.value+"%";
+				likeParam = likeValue+"%";
 			}
 			break;
 		default:
@@ -145,6 +165,7 @@ public class LikeExpressionImpl extends AbstractBaseExpressionImpl {
 		}
 		bf.append(likeParam);
 		bf.append("'");
+		bf.append(escapeClausole);
 		bf.append(" )");
 		if(isNot()){
 			bf.append(" )");

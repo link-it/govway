@@ -82,7 +82,7 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  */
 public class ClientTest {
 
-	private static String tipoDatabase = "oracle";
+	private static String tipoDatabase = "postgresql";
 	
 	/**
 	 * @param args
@@ -92,8 +92,8 @@ public class ClientTest {
 		
 		/* TEST Funzionalita' non dipendenti dal tipo di gestione del SQL */
 		
-		typeFormatter();
-		
+//		typeFormatter();
+//		
 		
 		
 		/* TEST Funzionalita' dipendenti dal tipo di gestione del SQL */
@@ -117,9 +117,9 @@ public class ClientTest {
 			
 			ClientTest.testAuthor();
 			
-			ClientTest.testBook();
+//			ClientTest.testBook();
 			
-			ClientTest.testFruitore(testType);
+//			ClientTest.testFruitore(testType);
 		}
 		
 	}
@@ -475,61 +475,61 @@ public class ClientTest {
 		author.setFirstBookReleaseDate(Calendar.getInstance());
 		author.setLastBookReleaseDate(new Timestamp(System.currentTimeMillis()));
 		
-		ClientTest.constructorExpression(author);
-		
-		ClientTest.empty(author);
-		
-		ClientTest.mixed(author);
-		
-		ClientTest.equals(author);
-		
-		ClientTest.notEquals(author);
-		
-		ClientTest.greaterEquals(author);
-		
-		ClientTest.greaterThan(author);
-		
-		ClientTest.lessEquals(author);
-		
-		ClientTest.lessThan(author);
-		
-		ClientTest.isNull(author);
-		
-		ClientTest.isNotNull(author);
-		
-		ClientTest.isEmpty(author);
-		
-		ClientTest.isNotEmpty(author);
-		
-		ClientTest.between(author);
+//		ClientTest.constructorExpression(author);
+//		
+//		ClientTest.empty(author);
+//		
+//		ClientTest.mixed(author);
+//		
+//		ClientTest.equals(author);
+//		
+//		ClientTest.notEquals(author);
+//		
+//		ClientTest.greaterEquals(author);
+//		
+//		ClientTest.greaterThan(author);
+//		
+//		ClientTest.lessEquals(author);
+//		
+//		ClientTest.lessThan(author);
+//		
+//		ClientTest.isNull(author);
+//		
+//		ClientTest.isNotNull(author);
+//		
+//		ClientTest.isEmpty(author);
+//		
+//		ClientTest.isNotEmpty(author);
+//		
+//		ClientTest.between(author);
 		
 		ClientTest.like(author);
 		
 		ClientTest.ilike(author);
 		
-		ClientTest.in(author);
-		
-		ClientTest.and(author);
-		
-		ClientTest.or(author);
-		
-		ClientTest.not(author);
-		
-		ClientTest.order(author);
-		
-		switch (ClientTest.mode) {
-		case SQL_STANDARD_QUERY_OBJECT:
-		case PREPARED_STATEMENT_QUERY_OBJECT:
-		case JPA_QUERY_OBJECT:
-		case SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION:
-		case PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION:
-		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
-			ClientTest.limit(author,false);
-			break;
-		default:
-			ClientTest.limit(author, true);
-			break;
-		}
+//		ClientTest.in(author);
+//		
+//		ClientTest.and(author);
+//		
+//		ClientTest.or(author);
+//		
+//		ClientTest.not(author);
+//		
+//		ClientTest.order(author);
+//		
+//		switch (ClientTest.mode) {
+//		case SQL_STANDARD_QUERY_OBJECT:
+//		case PREPARED_STATEMENT_QUERY_OBJECT:
+//		case JPA_QUERY_OBJECT:
+//		case SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION:
+//		case PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION:
+//		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
+//			ClientTest.limit(author,false);
+//			break;
+//		default:
+//			ClientTest.limit(author, true);
+//			break;
+//		}
 		
 	}
 	
@@ -2115,6 +2115,12 @@ public class ClientTest {
 		expr = expr.not(expr);
 		System.out.println("- test 4: "+ClientTest.toString(expr));
 		
+		expr = ClientTest.newExpressionImplForAuthor().like(Author.model().NAME,"Dell'Asilo"); // test per escape
+		System.out.println("- test 5 (escape): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().like(Author.model().NAME,"Dell'Asilo_peresempio%piu'complesso"); // test per escape
+		System.out.println("- test 6 (escape complesso): "+ClientTest.toString(expr));
+		
 	}
 	
 	public static void ilike(Author author) throws ExpressionNotImplementedException, ExpressionException{
@@ -2133,6 +2139,12 @@ public class ClientTest {
 		expr = ClientTest.newExpressionImplForAuthor().ilike(Author.model().NAME,"START",LikeMode.START);
 		expr = expr.not(expr);
 		System.out.println("- test 4: "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().ilike(Author.model().NAME,"Dell'Asilo"); // test per escape
+		System.out.println("- test 5 (escape): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().ilike(Author.model().NAME,"Dell'Asilo_peresempio%piu'complesso"); // test per escape
+		System.out.println("- test 6 (escape complesso): "+ClientTest.toString(expr));
 		
 	}
 	
