@@ -1403,17 +1403,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			long endDate = System.currentTimeMillis();
 			long secondStarter = (endDate - OpenSPCoop2Startup.this.startDate) / 1000;
 			msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP);
-			msgDiag.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getFullVersion());
+			msgDiag.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getPddDetailsForLog());
 			msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_AVVIO, secondStarter+" secondi");
-			OpenSPCoop2Startup.log.info("Porta di Dominio "+propertiesReader.getFullVersion()+" avviata correttamente in "+secondStarter+" secondi.");
+			OpenSPCoop2Startup.log.info("Porta di Dominio "+propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
 			if(OpenSPCoop2Logger.isLoggerOpenSPCoopConsoleStartupAgganciatoLog()){
 				// per farlo finire anche sul server.log
-				System.out.println("Porta di Dominio "+propertiesReader.getFullVersion()+" avviata correttamente in "+secondStarter+" secondi.");
+				System.out.println("Porta di Dominio "+propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
 			}
 			msgDiag.logPersonalizzato("pdd");
 			MsgDiagnostico msgIM = new MsgDiagnostico(IntegrationManager.ID_MODULO);
 			msgIM.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP);
-			msgIM.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getFullVersion());
+			msgIM.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getPddDetailsForLog());
 			msgIM.addKeyword(CostantiPdD.KEY_TEMPO_AVVIO, secondStarter+" secondi");
 			msgIM.logPersonalizzato("IntegrationManager");
 			

@@ -1796,12 +1796,51 @@ public class OpenSPCoop2Properties {
 		}
 		return OpenSPCoop2Properties.details;
 	}
-	public String getFullVersion() {
+	
+	private static String getPddDetailsForLog = null;
+	public String getPddDetailsForLog() {	
+		if(OpenSPCoop2Properties.getPddDetailsForLog==null){
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.log.details");
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getPddDetailsForLog = v;
+				}else{
+					OpenSPCoop2Properties.getPddDetailsForLog = getDefaultLogVersionDetails();
+				}
+			}catch(java.lang.Exception e) {
+				OpenSPCoop2Properties.getPddDetailsForLog = getDefaultLogVersionDetails();
+			}    
+		}
+		return OpenSPCoop2Properties.getPddDetailsForLog;
+	}
+	
+	private String getDefaultLogVersionDetails() {
 		String d = this.getDetails();
 		if(d!=null && !"".equals(d))
 			return this.getVersione()+" ("+d+")";
 		else
 			return this.getVersione();
+	}
+
+	private static String getPddDetailsForServices = null;
+	public String getPddDetailsForServices() {	
+		if(OpenSPCoop2Properties.getPddDetailsForServices==null){
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.details");
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getPddDetailsForServices = v;
+				}else{
+					OpenSPCoop2Properties.getPddDetailsForServices = this.getVersione();
+				}
+			}catch(java.lang.Exception e) {
+				OpenSPCoop2Properties.getPddDetailsForServices = this.getVersione();
+			}    
+		}
+		return OpenSPCoop2Properties.getPddDetailsForServices;
 	}
 	
 

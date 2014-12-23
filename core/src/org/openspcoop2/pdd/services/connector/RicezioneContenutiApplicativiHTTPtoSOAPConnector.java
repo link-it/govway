@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiHTTPtoSOAP;
 
@@ -85,12 +86,16 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector extends HttpServle
 	}
 	
 	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
-	throws ServletException, IOException {
+	throws ServletException, IOException {		
+		
+		String versione = "Porta di Dominio "+OpenSPCoop2Properties.getInstance().getPddDetailsForServices();
+		
 		res.setStatus(500);
 		StringBuffer risposta = new StringBuffer();
 		risposta.append("<html>\n");
 		risposta.append("<body>\n");
 		risposta.append("<h1>" + req.getContextPath() + req.getServletPath() + "/&lt;NOME_PD&gt;</h1>\n");
+		risposta.append("<p>"+versione+"</p>\n");
 		risposta.append("<p>Method HTTP GET non supportato</p>\n");
 		risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2, con messaggi xml non imbustati nel protocollo SOAP</i>\n");
 		risposta.append("</body>\n");

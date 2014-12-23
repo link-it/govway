@@ -106,7 +106,7 @@ public class RicezioneContenutiApplicativiSOAPConnector extends HttpServlet {
 	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		
-		String versione = "Porta di Dominio "+OpenSPCoop2Properties.getInstance().getFullVersion();
+		String versione = "Porta di Dominio "+OpenSPCoop2Properties.getInstance().getPddDetailsForServices();
 		
 		Enumeration<?> parameters = req.getParameterNames();
 		while(parameters.hasMoreElements()){
