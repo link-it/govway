@@ -51,6 +51,8 @@ public abstract class OutputField<T> {
 	
 	private boolean secret ;
 	
+	private String pattern;
+	
 	public String getName() {
 		return this.name;
 	}
@@ -112,6 +114,14 @@ public abstract class OutputField<T> {
 
 	public void setSecret(boolean secret) {
 		this.secret = secret;
+	}
+
+	public String getPattern() {
+		return this.pattern;
+	}
+
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
 	}
 	
 	

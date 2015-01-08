@@ -28,7 +28,7 @@
 			<op2web:prop label="#{commonsMsg['form.component.dal']}" styleClass="insideLeftProp"
 				rendered="#{field.rendered}">
 				<rich:calendar id="input1_#{field.name}" value="#{field.value}"  disabled="#{disabled}"
-				 style="#{field.style}" datePattern="dd/MM/yyyy HH:mm" defaultTime="00:00" />
+				 style="#{field.style}" datePattern="#{field.pattern}" defaultTime="00:00" />
 			</op2web:prop>
 		</ui:define>
 
@@ -36,7 +36,7 @@
 			<op2web:prop label="#{commonsMsg['form.component.al']}" styleClass="insideRightProp"
 				rendered="#{field.rendered}">
 					<rich:calendar id="input2_#{field.name}" value="#{field.value2}"  disabled="#{disabled}"
-					 style="#{field.style}" datePattern="dd/MM/yyyy HH:mm" defaultTime="00:00" />
+					 style="#{field.style}" datePattern="#{field.pattern}" defaultTime="00:00" />
 			</op2web:prop>
 		</ui:define>
 	</op2web:inlineProp>

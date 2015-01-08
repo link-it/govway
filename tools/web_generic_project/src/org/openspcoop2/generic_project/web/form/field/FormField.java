@@ -98,6 +98,8 @@ public abstract class FormField<T> {
 	
 	private String style;
 	
+	private String pattern;
+	
 	private int width;	
 
 	public boolean isAutoComplete() {
@@ -376,6 +378,14 @@ public abstract class FormField<T> {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	public String getPattern() {
+		return this.pattern;
+	}
+
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
 	}
 
 }

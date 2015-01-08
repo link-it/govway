@@ -33,6 +33,8 @@ public class OutputDate extends OutputField<Date> {
 
 	public OutputDate(){
 		this.setType("date");
-		this.setInsideGroup(false); 
+		this.setInsideGroup(false);
+		this.setPattern("dd/M/yy HH:mm:ss");
+
 	}
 }

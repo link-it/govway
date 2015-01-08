@@ -26,7 +26,7 @@
 
 			<h:outputText id="out_#{id}_DataValue" value="#{field.value}"
 				rendered="#{not empty field.value}">
-				<f:convertDateTime pattern="dd/M/yy HH:mm:ss" timeZone="Europe/Rome" />
+				<f:convertDateTime pattern="#{field.pattern}" defaultTime="00:00" timeZone="Europe/Rome" />
 			</h:outputText>
 		</h:panelGrid>
 	</c:if>
@@ -40,7 +40,7 @@
 
 			<h:outputText id="out_#{id}_DataValue" value="#{field.value}"
 				rendered="#{not empty field.value}">
-				<f:convertDateTime pattern="dd/M/yy HH:mm:ss" timeZone="Europe/Rome" />
+				<f:convertDateTime pattern="#{field.pattern}" defaultTime="00:00" timeZone="Europe/Rome" />
 			</h:outputText>
 	</c:if>
 

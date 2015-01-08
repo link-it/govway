@@ -9,13 +9,13 @@
 	<c:if test="#{empty required}">
 		<c:set var="required" value="#{field.required}" />
 	</c:if>
-		<c:if test="#{empty disabled}">
+	<c:if test="#{empty disabled}">
 		<c:set var="disabled" value="#{field.disabled}" />
 	</c:if>
 
 	<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
 		<rich:calendar id="input_#{field.name}" value="#{field.value}"  disabled="#{disabled}"
-		 style="#{field.style}" datePattern="dd/MM/yyyy HH:mm" defaultTime="00:00" />
+		 style="#{field.style}" datePattern="#{field.pattern}" defaultTime="00:00" />
 	</op2web:prop>
 
 </ui:composition>

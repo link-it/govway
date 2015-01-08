@@ -37,6 +37,7 @@ public class DateField extends FormField<Date>{
 		super();
 
 		this.setType(FieldType.DATE);
+		this.setPattern("dd/M/yy HH:mm:ss");
 	}
 
 }
