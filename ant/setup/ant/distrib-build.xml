@@ -145,12 +145,16 @@
 					<then>
 		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
 <![CDATA[
+
+	<!-- Start MODULE pddConsole -->
 	<module>
 		<web>
 			<web-uri>pddConsole.war</web-uri>
 			<context-root>pddConsole</context-root>
 		</web>
 	</module>
+	<!-- End MODULE pddConsole -->
+		        				
 ]]>
 		        		</concat>
 					</then>
@@ -160,12 +164,16 @@
 					<then>
 		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
 <![CDATA[
+	
+	<!-- Start MODULE pddLoader -->
 	<module>
 		<web>
 			<web-uri>pddLoader.war</web-uri>
 			<context-root>pddLoader</context-root>
 		</web>
 	</module>
+	<!-- End MODULE pddLoader -->
+		        			
 ]]>
 		        		</concat>
 					</then>
@@ -202,7 +210,9 @@
 					<then>
 						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
-    <sub-deployment name="pddConsole.war">
+
+	<!-- Start MODULE pddConsole -->
+	<sub-deployment name="pddConsole.war">
         <exclusions>
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
@@ -211,6 +221,8 @@
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
+	<!-- End MODULE pddConsole -->
+								
 ]]>
 						</concat>
 					</then>
@@ -219,7 +231,9 @@
 					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
 					<then>
 						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
-<![CDATA[							
+<![CDATA[
+
+	<!-- Start MODULE pddLoader -->
     <sub-deployment name="pddLoader.war">
         <exclusions>
                 <module name="org.apache.log4j"/>
@@ -229,6 +243,8 @@
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
+	<!-- End MODULE pddLoader -->
+
 ]]>
 						</concat>
 					</then>
@@ -257,13 +273,19 @@
 				
 		        <replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
 		        <concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
-	&lt;module&gt;
-		&lt;web&gt;
-			&lt;web-uri&gt;OpenSPCoopV1BackwardCompatibility.war&lt;/web-uri&gt;
-			&lt;context-root&gt;openspcoop&lt;/context-root&gt;
-		&lt;/web&gt;
-	&lt;/module&gt;
-&lt;/application&gt;
+<![CDATA[
+	
+	<!-- Start MODULE OpenSPCoopV1BackwardCompatibility -->
+	<module>
+		<web>
+			<web-uri>OpenSPCoopV1BackwardCompatibility.war</web-uri>
+			<context-root>openspcoop</context-root>
+		</web>
+	</module>
+	<!-- End MODULE OpenSPCoopV1BackwardCompatibility -->
+
+</application>
+]]>
 		        </concat>
 				<antcall target="dos2unix">
 					<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
@@ -280,7 +302,9 @@
 						<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
 						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 					<![CDATA[
-    <sub-deployment name="OpenSPCoopV1BackwardCompatibility.war">
+
+	<!-- Start MODULE OpenSPCoopV1BackwardCompatibility -->
+	<sub-deployment name="OpenSPCoopV1BackwardCompatibility.war">
         <exclusions>
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
@@ -289,6 +313,8 @@
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
+	<!-- End MODULE OpenSPCoopV1BackwardCompatibility -->							
+
 </jboss-deployment-structure>
 ]]>
 						</concat>

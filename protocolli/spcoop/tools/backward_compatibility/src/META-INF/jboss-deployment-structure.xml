@@ -1,3 +1,4 @@
+	<!-- Start MODULE OpenSPCoopV1BackwardCompatibility -->
     <sub-deployment name="OpenSPCoopV1BackwardCompatibility.war">
         <exclusions>
                 <module name="org.apache.log4j"/>
@@ -7,3 +8,4 @@
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
+	<!-- End MODULE OpenSPCoopV1BackwardCompatibility -->
