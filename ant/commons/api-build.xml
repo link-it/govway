@@ -41,7 +41,7 @@
 						<![CDATA[<h1>API OpenSPCoop2 [${compile_src_openspcoop2.DIST_DIR_NAME}]</h1>]]>
 					</doctitle>
 					<bottom>
-						<![CDATA[<i>Copyright 2005-2014 Link.it srl, http://link.it.</i>]]>
+						<![CDATA[<i>Copyright 2005-2015 Link.it srl, http://link.it.</i>]]>
 					</bottom>
 					<bootclasspath>
 						<path refid="classpath_jre" />
