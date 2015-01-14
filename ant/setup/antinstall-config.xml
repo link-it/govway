@@ -29,7 +29,7 @@
             <option value="mysql" text="MySQL"/>
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
-            <option value="sqlserver" text="SQLServer 2005"/>
+            <option value="sqlserver" text="SQLServer"/>
             <option value="db2" text="IBM DB2"/>
         </large-select>
         
