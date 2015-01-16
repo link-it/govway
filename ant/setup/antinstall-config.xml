@@ -24,7 +24,7 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="DB Platform" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DB Platform">
+        <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
             <option value="postgresql" text="PostgreSQL"/>
             <option value="mysql" text="MySQL"/>
             <option value="oracle" text="Oracle"/>
@@ -47,7 +47,7 @@
         
      </page> 
 
-    <page name="informazionidibasexml" type="input" displayText="Il Database">
+    <page name="informazionidibasexml" type="input" displayText="Configurazioni DBMS">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
             regex=".+"/>
         <conditional ifProperty="${antinstaller_tipo_database}=postgresql">
@@ -124,6 +124,16 @@
 
     </page>
 
+    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_as}=tomcat) AND (${antinstaller_backward_compatibility}=true)">
+
+	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat impedisce l'attivazione delle interfacce di compatibilità."/>
+	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>
+	<comment displayText="o procedere con opzione di compatibilità disabilitata"/>
+
+	<comment displayText=""/>
+	<checkbox defaultValue="false" property="antinstaller_backward_compatibility" force="true" displayText="Compatibilità interfacce OpenSPCoop-v1"/>
+
+    </page>
 
     <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
         target="setup,setup_datasource,setup_sql,setup_pdd,setup_pddConsole,setup_loader,setup_backward_compatibility,setup_finished"/>
