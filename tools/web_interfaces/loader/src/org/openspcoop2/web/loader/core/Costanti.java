@@ -147,4 +147,5 @@ public class Costanti {
 	public static final String TIPOLOGIA_XML_CONFIGURAZIONE_PDD = "configurazionePdD";
 	
 	public static final String PDD_TIPOLOGIA_ESTERNA = "esterno";
+	public static final String PDD_TIPOLOGIA_OPERATIVA = "operativo";
 }

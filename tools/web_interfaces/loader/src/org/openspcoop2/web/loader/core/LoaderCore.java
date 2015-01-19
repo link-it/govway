@@ -23,14 +23,19 @@
 package org.openspcoop2.web.loader.core;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.upload.FormFile;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.utils.resources.GestoreJNDI;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDB;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
@@ -107,6 +112,27 @@ public class LoaderCore{
 	
 	private void initCore() throws Exception {
 		
+		// Leggo le informazioni da loader.datasource.properties
+		DatasourceProperties datasourceProperties = null;
+		try {
+			datasourceProperties = DatasourceProperties.getInstance();
+
+			// RegistroServizi
+			this.dataSourceRegistroServizi = datasourceProperties.getRegistroServizi_DataSource();
+			this.tipoDatabaseRegistroServizi = datasourceProperties.getRegistroServizi_TipoDatabase();
+			this.ctxDatasourceRegistroServizi = datasourceProperties.getRegistroServizi_DataSourceContext();
+
+			// ConfigurazionePdD
+			this.dataSourceConfigurazionePdD = datasourceProperties.getConfigurazione_DataSource();
+			this.tipoDatabaseConfigurazionePdD = datasourceProperties.getConfigurazione_TipoDatabase();
+			this.ctxDatasourceConfigurazionePdD = datasourceProperties.getConfigurazione_DataSourceContext();		
+
+		} catch (java.lang.Exception e) {
+			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.datasource.properties:" + e.toString());
+			throw new Exception("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.datasource.properties:" + e.toString());
+		} 
+		
+		
 		// Leggo le informazioni da loader.properties
 		LoaderProperties loaderProperties = null;
 		
@@ -114,7 +140,10 @@ public class LoaderCore{
 			loaderProperties = LoaderProperties.getInstance();
 
 			// Funzionalità Generiche
-			this.nomePdDOperativaCtrlstatSinglePdD = loaderProperties.getNomePddOperativaConsoleSinglePdDMode();		
+			this.nomePdDOperativaCtrlstatSinglePdD = loaderProperties.getNomePddOperativaConsoleSinglePdDMode();	
+			if(this.nomePdDOperativaCtrlstatSinglePdD==null){
+				this.nomePdDOperativaCtrlstatSinglePdD = this.getNomePddOperativa();
+			}
 			this.gestioneSoggetti = loaderProperties.isGestioneSoggetti();
 			this.mantieniFruitoriServizi = loaderProperties.isMantieniFruitoriServiziEsistenti();
 			this.searchUserIntoRegistro = loaderProperties.isAutenticazioneUtenti_UtilizzaDabaseRegistro();
@@ -136,28 +165,6 @@ public class LoaderCore{
 			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());
 			throw new Exception("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());
 		} 
-
-
-		// Leggo le informazioni da loader.datasource.properties
-		DatasourceProperties datasourceProperties = null;
-		try {
-			datasourceProperties = DatasourceProperties.getInstance();
-
-			// RegistroServizi
-			this.dataSourceRegistroServizi = datasourceProperties.getRegistroServizi_DataSource();
-			this.tipoDatabaseRegistroServizi = datasourceProperties.getRegistroServizi_TipoDatabase();
-			this.ctxDatasourceRegistroServizi = datasourceProperties.getRegistroServizi_DataSourceContext();
-
-			// ConfigurazionePdD
-			this.dataSourceConfigurazionePdD = datasourceProperties.getConfigurazione_DataSource();
-			this.tipoDatabaseConfigurazionePdD = datasourceProperties.getConfigurazione_TipoDatabase();
-			this.ctxDatasourceConfigurazionePdD = datasourceProperties.getConfigurazione_DataSourceContext();		
-
-		} catch (java.lang.Exception e) {
-			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.datasource.properties:" + e.toString());
-			throw new Exception("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.datasource.properties:" + e.toString());
-		} 
-		
 		
 		this.xmlUtils = XMLUtils.getInstance();
 	}
@@ -230,8 +237,8 @@ public class LoaderCore{
 			return driver.existsUser(login);
 
 		} catch (Exception e) {
-			LoaderCore.log.error("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
-			throw new DriverUsersDBException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			LoaderCore.log.error("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
 				con.close();
@@ -255,8 +262,8 @@ public class LoaderCore{
 			return driver.existsUser(login);
 
 		} catch (Exception e) {
-			LoaderCore.log.error("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
-			throw new DriverUsersDBException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			LoaderCore.log.error("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
 				con.close();
@@ -280,8 +287,8 @@ public class LoaderCore{
 			return driver.getUser(login);
 
 		} catch (Exception e) {
-			LoaderCore.log.error("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
-			throw new DriverUsersDBException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			LoaderCore.log.error("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
 				con.close();
@@ -305,14 +312,63 @@ public class LoaderCore{
 			return driver.getUser(login);
 
 		} catch (Exception e) {
-			LoaderCore.log.error("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
-			throw new DriverUsersDBException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+			LoaderCore.log.error("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			throw new DriverUsersDBException("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			try{
 				con.close();
 			}catch(Exception eClose){}
 		}
 
+	}
+	
+	public String getNomePddOperativa() throws Exception {
+		Connection con = null;
+		String nomeMetodo = "getNomePddOperativa";
+		
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		try {
+			// prendo una connessione
+			GestoreJNDI jndi = new GestoreJNDI(this.ctxDatasourceRegistroServizi);
+			DataSource ds = (DataSource) jndi.lookup(this.dataSourceRegistroServizi);
+			con = ds.getConnection();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabaseRegistroServizi);
+			sqlQueryObject.addFromTable(CostantiDB.PDD);
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addWhereCondition("tipo=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, Costanti.PDD_TIPOLOGIA_OPERATIVA);
+			risultato = stmt.executeQuery();
+			if (risultato.next()) {
+				String nomePdd = risultato.getString("nome");
+				if (risultato.next()) {
+					throw new Exception("Esiste piu' di una pdd con tipologia '"+Costanti.PDD_TIPOLOGIA_OPERATIVA+"'");
+				}
+				return nomePdd;
+			}
+			else{
+				throw new Exception("Non esiste una pdd con tipologia '"+Costanti.PDD_TIPOLOGIA_OPERATIVA+"'");
+			}
+			
+		} catch (Exception e) {
+			LoaderCore.log.error("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			throw new Exception("[LoaderCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			try{
+				risultato.close();
+			}catch(Exception eClose){}
+			try{
+				stmt.close();
+			}catch(Exception eClose){}
+			try{
+				con.close();
+			}catch(Exception eClose){}
+		}
 	}
 	
 	public byte[] readBytes(FormFile ff) throws Exception{

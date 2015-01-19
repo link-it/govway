@@ -86,6 +86,16 @@
 			<param name="token" value="nomePddOperativa_CtrlstatSinglePdD"/>
 			<param name="value" value="PdD${antinstaller_nomesoggetto}"/>
 		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="nomePddOperativa_CtrlstatSinglePdD"/>
+			<param name="value" value="#nomePddOperativa_CtrlstatSinglePdD"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="tipoPdD"/>
+			<param name="value" value="esterno"/>
+		</antcall>
 		
 	</target>
 	

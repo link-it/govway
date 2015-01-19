@@ -102,7 +102,7 @@ public class PddHelper extends ConsoleHelper {
 		/** Nome della Porta di Dominio */
 		DataElement de = new DataElement();
 		de.setLabel(PddCostanti.LABEL_PDD_NOME);
-		if (tipoOp.equals(TipoOperazione.ADD)) {
+		if (tipoOp.equals(TipoOperazione.ADD) || this.core.isSinglePdD()) {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);
 		} else {

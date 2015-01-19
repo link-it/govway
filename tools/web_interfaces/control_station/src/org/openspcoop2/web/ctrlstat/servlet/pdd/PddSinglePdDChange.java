@@ -22,6 +22,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -36,6 +37,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -80,6 +82,7 @@ public final class PddSinglePdDChange extends Action {
 			String subject = request.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
 			String clientAuth = request.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
 			String tipo = request.getParameter(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
+			String nome = request.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
 			
 			PddCore pddCore = new PddCore();
 
@@ -87,14 +90,14 @@ public final class PddSinglePdDChange extends Action {
 			pddHelper.makeMenu();
 
 			// Prendo il nome della pdd
-			String nomePdd = request.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
-			if ((nomePdd == null) || nomePdd.equals("")) {
-				pd.setMessage("Il nome della porta di dominio &egrave; necessario!");
+
+			if ((id == null) || id.equals("")) {
+				pd.setMessage("L'identificativo della porta di dominio &egrave; necessario!");
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 				return ServletUtils.getStrutsForwardGeneralError(mapping, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.CHANGE());
 			}
-
-			PdDControlStation pdd = pddCore.getPdDControlStation(nomePdd);
+			long idPdd = Long.parseLong(id);
+			PdDControlStation pdd = pddCore.getPdDControlStation(idPdd);
 
 			// Se nomehid = null, devo visualizzare la pagina per la modifica
 			// dati
@@ -102,10 +105,12 @@ public final class PddSinglePdDChange extends Action {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, 
-						PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST, nomePdd);
+						PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST, pdd.getNome());
 
 				if(descr==null)
 					descr = pdd.getDescrizione();
+				if(nome==null)
+					nome = pdd.getNome();
 				if(implementazione==null)
 					implementazione = pdd.getImplementazione();
 				if(subject==null)
@@ -121,7 +126,7 @@ public final class PddSinglePdDChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = pddHelper.addPddToDati(dati, nomePdd, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
+				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
 						null, "", 0, descr, "", 0, implementazione, clientAuth, true);
 
 				pd.setDati(dati);
@@ -137,14 +142,14 @@ public final class PddSinglePdDChange extends Action {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, 
-						PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST, nomePdd);
+						PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST, pdd.getNome());
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = pddHelper.addPddToDati(dati, nomePdd, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
+				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
 						null, "", 0, descr, "", 0, implementazione, clientAuth, true);
 
 				pd.setDati(dati);
@@ -162,9 +167,25 @@ public final class PddSinglePdDChange extends Action {
 			else
 				pdd.setSubject(null);
 			pdd.setClientAuth(StatoFunzionalita.toEnumConstant(clientAuth));
-
+			
+			ArrayList<Object> oggettiDaAggiornare = new ArrayList<Object>();
+			
+			// Se e' stato modificato il nome della pdd, modifico i soggetti
+			if(pdd.getNome().equals(nome)==false){
+				List<SoggettoCtrlStat> soggetti = pddCore.soggettiWithServer(pdd.getNome());
+				for (SoggettoCtrlStat soggettoCtrlStat : soggetti) {
+					if(soggettoCtrlStat.getSoggettoReg()!=null)
+						soggettoCtrlStat.getSoggettoReg().setPortaDominio(nome);
+					oggettiDaAggiornare.add(soggettoCtrlStat);
+				}
+				pdd.setOldNomeForUpdate(pdd.getNome());
+				pdd.setNome(nome);
+			}
+			
+			oggettiDaAggiornare.add(pdd);
+			
 			// effettuo le operazioni
-			pddCore.performUpdateOperation(userLogin, pddHelper.smista(), pdd);
+			pddCore.performUpdateOperation(userLogin, pddHelper.smista(), oggettiDaAggiornare.toArray(new Object[1]));
 
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class); 
 

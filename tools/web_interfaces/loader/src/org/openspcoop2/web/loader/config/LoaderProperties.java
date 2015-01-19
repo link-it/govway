@@ -170,7 +170,7 @@ public class LoaderProperties {
 	}
 	
 	public String getNomePddOperativaConsoleSinglePdDMode() throws UtilsException{
-		return this.readProperty(true, "nomePddOperativa_CtrlstatSinglePdD");
+		return this.readProperty(false, "nomePddOperativa_CtrlstatSinglePdD");
 	}
 	
 	public String getTipoPortaDiDominio() throws UtilsException{

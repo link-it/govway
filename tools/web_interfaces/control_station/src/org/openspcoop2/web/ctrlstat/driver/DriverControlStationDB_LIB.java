@@ -186,6 +186,7 @@ public class DriverControlStationDB_LIB {
 					sqlQueryObject.addUpdateField("password", "?");
 					sqlQueryObject.addUpdateField("client_auth", "?");
 					sqlQueryObject.addUpdateField("superuser", "?");
+					sqlQueryObject.addUpdateField("nome", "?");
 					if (pdd.getOraRegistrazione() != null)
 						sqlQueryObject.addUpdateField("ora_registrazione", "?");
 					sqlQueryObject.addWhereCondition("id=?");
@@ -204,8 +205,9 @@ public class DriverControlStationDB_LIB {
 					updateStmt.setString(10, password);
 					updateStmt.setString(11, DriverRegistroServiziDB_LIB.getValue(client_auth));
 					updateStmt.setString(12, superuser);
+					updateStmt.setString(13, nome);
 
-					int param_index = 12;
+					int param_index = 13;
 
 					if (pdd.getOraRegistrazione() != null)
 						updateStmt.setTimestamp(++param_index, new Timestamp(pdd.getOraRegistrazione().getTime()));

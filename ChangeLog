@@ -1,6 +1,12 @@
 2015-01-19  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
+	Aggiunta funzionalità #276
+	Aggiunta la possibilita' di modificare il nome di una porta di dominio (nel caso di pddConsole con configurazione locale 'singlePdD')
+
+2015-01-19  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
 	Risolto Bug #274
 	Importazione Package CNIPA
 	
