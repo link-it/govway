@@ -471,6 +471,7 @@
 		<!-- application server (jars e jboss-app.xml) -->
 		<!-- xalan -->
 		<var name="xalan_jar" value=""/>
+		<var name="xalan_serializer_jar" value="" />
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss4"/>
@@ -481,6 +482,7 @@
 			</or>
 			<then>
 				<var name="xalan_jar" value="xalan-2.7.1.jar"/>
+				<var name="xalan_serializer_jar" value="xalan-2.7.1_serializer.jar" />
 			</then>
 		</if>
 		<!-- log -->
@@ -705,6 +707,7 @@
 				<include name="wsdl4j-1.6.2.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>				
 				<include name="velocity-1.6.4.jar"/>
 				<include name="urlrewritefilter-4.0.3.jar"/>
 				<include name="${concurrent_jar}"/>

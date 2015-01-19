@@ -61,19 +61,14 @@
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss4"/>
+			<equals arg1="${as}" arg2="jboss6"/>
 			<equals arg1="${as}" arg2="jboss7"/>
 			<equals arg1="${as}" arg2="jboss8"/>
 			<equals arg1="${as}" arg2="wildfly8"/>
 		</or>
 		<then>
 			<var name="xalan_jar" value="xalan-2.7.1.jar" />
-		</then>
-	</if>
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
 			<var name="xalan_serializer_jar" value="xalan-2.7.1_serializer.jar" />
 		</then>
 	</if>	

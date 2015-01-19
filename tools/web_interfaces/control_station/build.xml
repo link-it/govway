@@ -31,6 +31,8 @@
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
+	<var name="xalan_jar" value="" />
+	<var name="xalan_serializer_jar" value="" />
 	<var name="log4j_jar" value="" />
 	<var name="log4j_properties" value=""/>
 	<var name="commons_logging_jar" value="" />
@@ -63,6 +65,21 @@
 		</or>
 		<then>
 			<var name="javax_jms_jar" value="javax.jms.jar" />
+		</then>
+	</if>
+	<!-- xalan -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss4"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="xalan_jar" value="xalan-2.7.1.jar" />
+			<var name="xalan_serializer_jar" value="xalan-2.7.1_serializer.jar" />
 		</then>
 	</if>
 	<!-- log -->

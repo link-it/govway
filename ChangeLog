@@ -1,6 +1,36 @@
 2015-01-19  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
+	Risolto Bug #274
+	Importazione Package CNIPA
+	
+	Problema 1.
+	L'importazione di un Package CNIPA con wsdl fruitore 'vuoto' (come previsto da ClientSICA) 
+	generava un errore se il wsdl 'vuoto' conteneva	dei commenti xml interni.
+	Esempio di "wsdl vuoto" accettato: <wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\"/>
+	Esempio di "wsdl vuoto non accettate: " <wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\"><!-- esempio di wsdl vuoto--></wsdl:definitions>
+	Il problema e' stato risolto, adesso entrambi i wsdl "vuoti" sono accettati.
+	
+	Problema 2.
+	Se il Package CNIPA conteneva un manifest con descrizione maggiore di 255 caratteri, 
+	l'importazione andava in errore. Il problema e' stato risolto facendo in modo
+	che il processo di importazione controlli la lunghezza della descrizione del manifest
+	e se superiore vengono utilizzati solo i primi 255 caratteri.
+	
+	Problema 3.
+	Gli archivi generati per alcune versioni di Application Server (es. jboss7/wildfly8)
+	contenevano un problema per cui l'importazione di un package CNIPA causava un errore simile al seguente:
+	// java.lang.NullPointerException
+	//        at com.sun.org.apache.xalan.internal.xsltc.trax.DOM2SAX.parse(DOM2SAX.java:244)
+	// La versione 'com.sun.org.apache.xalan.internal.xsltc.trax.*' non funziona correttamente per tutti gli xml potenziali presenti nei package CNIPA.
+	// Tale versione veniva presa dalla ricerca nel classpath effettuato dal metodo 'newInstance' se nel classpath sono presenti i jar:
+	// - jaxp-ri-1.4.5.jar (META-INF/services/javax.xml.transform.TransformerFactory contiene 'com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl')
+	// - xalan-2.7.1.jar (META-INF/services/javax.xml.transform.TransformerFactory contiene 'org.apache.xalan.processor.TransformerFactoryImpl')
+	// Il problema e' stato risolto "forzando" l'utilizzo della Factory di xalan.
+
+2015-01-19  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
 	Risolto Bug #275
 	L'errore si verificafa durante l'aggiornamento Configurazione su SQL server 2008
 	'Quando IDENTITY_INSERT è OFF non è possibile inserire un valore esplicito per la

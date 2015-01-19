@@ -36,7 +36,6 @@ import javax.xml.transform.ErrorListener;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -66,9 +65,9 @@ public class PrettyPrintXMLUtils {
 
 	public static TransformerFactory transformerFactory = null;
 
-	public static synchronized void initTransformer() throws TransformerConfigurationException{
+	public static synchronized void initTransformer() {
 		if(PrettyPrintXMLUtils.transformerFactory==null){
-			PrettyPrintXMLUtils.transformerFactory = TransformerFactory.newInstance();
+			PrettyPrintXMLUtils.transformerFactory = XmlFactory.newTransformerFactory();
 		}
 	}
 

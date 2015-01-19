@@ -37,6 +37,7 @@ import it.gov.spcoop.sica.manifest.driver.TipiDocumentoConversazione;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoInterfaccia;
 
 import java.io.File;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -58,11 +59,14 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
+import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -599,25 +603,24 @@ public class SICAtoOpenSPCoopUtilities {
 	public static boolean isWsdlEmpty(byte[] wsdl){
 		
 		try{
-			String tmp = new String(wsdl).trim();
-			if(tmp.startsWith("<?xml")){
-				int indexOf = tmp.indexOf(">");
-				tmp = tmp.substring(indexOf+1);
+			
+			// <wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\"/>
+			Element el = XMLUtils.getInstance().newElement(wsdl);
+			
+			if("http://schemas.xmlsoap.org/wsdl/".equals(el.getNamespaceURI())==false){
+				return false;
+			}
+			if("definitions".equals(el.getLocalName())==false){
+				return false;
 			}
 			
-			if(Costanti.WSDL_EMPTY.equals(tmp))
+			Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(el, false);
+			if(childs.size()<=0){
 				return true;
-			int presenzaDiElementi = 0;
-			int indexOf = tmp.indexOf("<");
-			while( indexOf >= 0 ){
-				presenzaDiElementi++;
-				indexOf = tmp.indexOf("<",(indexOf+1));
 			}
-			//System.out.println("WSDL:"+new String(wsdl));
-			//System.out.println("ELEMENTI : "+presenzaDiElementi);
-			
-			// Se il documento e' vuoto esisteranno al massimo 2 '<' 
-			return presenzaDiElementi<=2;
+			else{
+				return false;
+			}
 		
 		}catch(Exception e){
 			//e.printStackTrace();
@@ -625,7 +628,14 @@ public class SICAtoOpenSPCoopUtilities {
 		}
 	}
 	
-	
+	private static String resizeDescriptionForMaxLength(String description){
+		if(description!=null && description.length()>255){
+			return description.substring(0, 252)+"...";
+		}
+		else{
+			return description;
+		}
+	}
 	
 	
 	
@@ -644,7 +654,7 @@ public class SICAtoOpenSPCoopUtilities {
 		
 		/* Metadati presenti nel Manifest dell'Accordo di Cooperazione. */
 		it.gov.spcoop.sica.manifest.AccordoCooperazione manifest = accordoCooperazioneSICA.getManifesto();
-		accCooperazioneOpenspcoop.setDescrizione(manifest.getDescrizione());
+		accCooperazioneOpenspcoop.setDescrizione(resizeDescriptionForMaxLength(manifest.getDescrizione()));
 		accCooperazioneOpenspcoop.setNome(manifest.getNome());
 		accCooperazioneOpenspcoop.setVersione(manifest.getVersione());
 		accCooperazioneOpenspcoop.setOraRegistrazione(manifest.getDataCreazione());
@@ -901,7 +911,7 @@ public class SICAtoOpenSPCoopUtilities {
 		
 		/* Metadati presenti nel Manifest dell'Accordo di Cooperazione. */
 		it.gov.spcoop.sica.manifest.AccordoServizio manifest = accordoServizioSICA.getManifesto();
-		accServizioOpenspcoop.setDescrizione(manifest.getDescrizione());
+		accServizioOpenspcoop.setDescrizione(resizeDescriptionForMaxLength(manifest.getDescrizione()));
 		accServizioOpenspcoop.setNome(manifest.getNome());
 		accServizioOpenspcoop.setVersione(manifest.getVersione());
 		accServizioOpenspcoop.setOraRegistrazione(manifest.getDataCreazione());
@@ -1465,7 +1475,7 @@ public class SICAtoOpenSPCoopUtilities {
 		aspsOpenSPCoop.setNome(manifest.getNome());
 		aspsOpenSPCoop.setVersione(manifest.getVersione());
 		
-		aspsOpenSPCoop.setDescrizione(manifest.getDescrizione());
+		aspsOpenSPCoop.setDescrizione(resizeDescriptionForMaxLength(manifest.getDescrizione()));
 		aspsOpenSPCoop.setOraRegistrazione(manifest.getDataCreazione());
 		//aspsOpenSPCoop.setDataPubblicazione(manifest.getDataPubblicazione());
 		//manifest.getRiservato() ???
@@ -2143,7 +2153,7 @@ public class SICAtoOpenSPCoopUtilities {
 		
 		/* Metadati presenti nel Manifest dell'Accordo di Cooperazione. */
 		it.gov.spcoop.sica.manifest.ServizioComposto manifest = accordoServizioSICA.getManifesto();
-		accServizioOpenspcoop.setDescrizione(manifest.getDescrizione());
+		accServizioOpenspcoop.setDescrizione(resizeDescriptionForMaxLength(manifest.getDescrizione()));
 		accServizioOpenspcoop.setNome(manifest.getNome());
 		accServizioOpenspcoop.setVersione(manifest.getVersione());
 		accServizioOpenspcoop.setOraRegistrazione(manifest.getDataCreazione());
