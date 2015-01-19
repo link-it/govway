@@ -97,13 +97,29 @@ public final class CostantiDB {
     public static final String GESTIONE_ERRORE = "gestione_errore";
     public static final String GESTIONE_ERRORE_TRASPORTO = "gestione_errore_trasporto";
     public static final String GESTIONE_ERRORE_SOAP = "gestione_errore_soap";
+    
     public static final String MSG_DIAGN_APPENDER = "msgdiag_appender";
+    public final static String MSG_DIAGN_APPENDER_COLUMN_ID = "id";
+    public final static String MSG_DIAGN_APPENDER_SEQUENCE = "seq_msgdiag_appender";
+    public final static String MSG_DIAGN_APPENDER_TABLE_FOR_ID = "msgdiag_appender_init_seq";
     public static final String MSG_DIAGN_APPENDER_PROP = "msgdiag_appender_prop";
+    
     public static final String MSG_DIAGN_DS = "msgdiag_ds";
+    public final static String MSG_DIAGN_DS_COLUMN_ID = "id";
+    public final static String MSG_DIAGN_DS_SEQUENCE = "seq_msgdiag_ds";
+    public final static String MSG_DIAGN_DS_TABLE_FOR_ID = "msgdiag_ds_init_seq";
     public static final String MSG_DIAGN_DS_PROP = "msgdiag_ds_prop";
+    
     public static final String TRACCIAMENTO_APPENDER = "tracce_appender";
+    public final static String TRACCIAMENTO_APPENDER_COLUMN_ID = "id";
+    public final static String TRACCIAMENTO_APPENDER_SEQUENCE = "seq_tracce_appender";
+    public final static String TRACCIAMENTO_APPENDER_TABLE_FOR_ID = "tracce_appender_init_seq";
     public static final String TRACCIAMENTO_APPENDER_PROP = "tracce_appender_prop";
+    
     public static final String TRACCIAMENTO_DS = "tracce_ds";
+    public final static String TRACCIAMENTO_DS_COLUMN_ID = "id";
+    public final static String TRACCIAMENTO_DS_SEQUENCE = "seq_tracce_ds";
+    public final static String TRACCIAMENTO_DS_TABLE_FOR_ID = "tracce_ds_init_seq";
     public static final String TRACCIAMENTO_DS_PROP = "tracce_ds_prop";
     
     /*DIAGNOSTICA*/

@@ -32,6 +32,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -120,7 +121,12 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
+import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
+import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
+import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -5048,21 +5054,21 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into msg diag appender
-				long id = 1;
 				if(config.getMessaggiDiagnostici()!=null){
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getMessaggiDiagnostici().getOpenspcoopAppender(k);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.MSG_DIAGN_APPENDER);
-						sqlQueryObject.addInsertField("tipo", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, appender.getTipo());
-						updateStmt.setLong(2, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
-
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idMsgDiagAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.MSG_DIAGN_APPENDER, CostantiDB.MSG_DIAGN_APPENDER_COLUMN_ID, 
+										CostantiDB.MSG_DIAGN_APPENDER_SEQUENCE, CostantiDB.MSG_DIAGN_APPENDER_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idMsgDiagAppender<=0){
+							throw new Exception("ID (msg diag appender) autoincrementale non ottenuto");
+						}
+						
 						for(int l=0; l<appender.sizePropertyList();l++){
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 							sqlQueryObject.addInsertTable(CostantiDB.MSG_DIAGN_APPENDER_PROP);
@@ -5071,14 +5077,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idMsgDiagAppender);
 							updateStmt.setString(2, appender.getProperty(l).getNome());
 							updateStmt.setString(3, appender.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 
@@ -5099,20 +5104,20 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into tracciamento appender
-				id = 1;
 				if(config.getTracciamento()!=null){
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getTracciamento().getOpenspcoopAppender(k);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.TRACCIAMENTO_APPENDER);
-						sqlQueryObject.addInsertField("tipo", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, appender.getTipo());
-						updateStmt.setLong(2, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idTracceAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.TRACCIAMENTO_APPENDER, CostantiDB.TRACCIAMENTO_APPENDER_COLUMN_ID, 
+										CostantiDB.TRACCIAMENTO_APPENDER_SEQUENCE, CostantiDB.TRACCIAMENTO_APPENDER_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idTracceAppender<=0){
+							throw new Exception("ID (tracce appender) autoincrementale non ottenuto");
+						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5122,14 +5127,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idTracceAppender);
 							updateStmt.setString(2, appender.getProperty(l).getNome());
 							updateStmt.setString(3, appender.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 
@@ -5150,24 +5154,22 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into msgdiag ds
-				id = 1;
 				if(config.getMessaggiDiagnostici()!=null){
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getMessaggiDiagnostici().getOpenspcoopSorgenteDati(k);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.MSG_DIAGN_DS);
-						sqlQueryObject.addInsertField("nome", "?");
-						sqlQueryObject.addInsertField("nome_jndi", "?");
-						sqlQueryObject.addInsertField("tipo_database", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, ds.getNome());
-						updateStmt.setString(2, ds.getNomeJndi());
-						updateStmt.setString(3, ds.getTipoDatabase());
-						updateStmt.setLong(4, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idMsgDsAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.MSG_DIAGN_DS, CostantiDB.MSG_DIAGN_DS_COLUMN_ID, 
+										CostantiDB.MSG_DIAGN_DS_SEQUENCE, CostantiDB.MSG_DIAGN_DS_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idMsgDsAppender<=0){
+							throw new Exception("ID (msgdiag ds appender) autoincrementale non ottenuto");
+						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5177,14 +5179,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idMsgDsAppender);
 							updateStmt.setString(2, ds.getProperty(l).getNome());
 							updateStmt.setString(3, ds.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 
@@ -5205,24 +5206,22 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into tracce ds
-				id = 1;
 				if(config.getTracciamento()!=null){
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getTracciamento().getOpenspcoopSorgenteDati(k);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.TRACCIAMENTO_DS);
-						sqlQueryObject.addInsertField("nome", "?");
-						sqlQueryObject.addInsertField("nome_jndi", "?");
-						sqlQueryObject.addInsertField("tipo_database", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, ds.getNome());
-						updateStmt.setString(2, ds.getNomeJndi());
-						updateStmt.setString(3, ds.getTipoDatabase());
-						updateStmt.setLong(4, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idTracceDsAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.TRACCIAMENTO_DS, CostantiDB.TRACCIAMENTO_DS_COLUMN_ID, 
+										CostantiDB.TRACCIAMENTO_DS_SEQUENCE, CostantiDB.TRACCIAMENTO_DS_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idTracceDsAppender<=0){
+							throw new Exception("ID (tracciamento ds appender) autoincrementale non ottenuto");
+						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5232,14 +5231,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idTracceDsAppender);
 							updateStmt.setString(2, ds.getProperty(l).getNome());
 							updateStmt.setString(3, ds.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 
@@ -5332,25 +5330,23 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into msg diag appender
-				id = 1;
 				if(config.getMessaggiDiagnostici()!=null){
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();k++){
-
 						OpenspcoopAppender appender = config.getMessaggiDiagnostici().getOpenspcoopAppender(k);
-						DriverConfigurazioneDB_LIB.log.debug("INSERT INTO "+CostantiDB.MSG_DIAGN_APPENDER+" (tipo,id) VALUES ("+appender.getTipo()+","+id+")");
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.MSG_DIAGN_APPENDER);
-						sqlQueryObject.addInsertField("tipo", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, appender.getTipo());
-						updateStmt.setLong(2, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idMsgDiagAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.MSG_DIAGN_APPENDER, CostantiDB.MSG_DIAGN_APPENDER_COLUMN_ID, 
+										CostantiDB.MSG_DIAGN_APPENDER_SEQUENCE, CostantiDB.MSG_DIAGN_APPENDER_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idMsgDiagAppender<=0){
+							throw new Exception("ID (msg diag appender) autoincrementale non ottenuto");
+						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
-							DriverConfigurazioneDB_LIB.log.debug("INSERT INTO "+CostantiDB.MSG_DIAGN_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+id+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
+							DriverConfigurazioneDB_LIB.log.debug("INSERT INTO "+CostantiDB.MSG_DIAGN_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+idMsgDiagAppender+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 							sqlQueryObject.addInsertTable(CostantiDB.MSG_DIAGN_APPENDER_PROP);
 							sqlQueryObject.addInsertField("id_appender", "?");
@@ -5358,14 +5354,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idMsgDiagAppender);
 							updateStmt.setString(2, appender.getProperty(l).getNome());
 							updateStmt.setString(3, appender.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 
@@ -5386,24 +5381,23 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into tracciamento appender
-				id = 1;
 				if(config.getTracciamento()!=null){
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopAppenderList();k++){
 						OpenspcoopAppender appender = config.getTracciamento().getOpenspcoopAppender(k);
-						DriverConfigurazioneDB_LIB.log.debug("INSERT INTO "+CostantiDB.TRACCIAMENTO_APPENDER+" (tipo,id) VALUES ("+appender.getTipo()+","+id+")");
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.TRACCIAMENTO_APPENDER);
-						sqlQueryObject.addInsertField("tipo", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, appender.getTipo());
-						updateStmt.setLong(2, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idTracceAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.TRACCIAMENTO_APPENDER, CostantiDB.TRACCIAMENTO_APPENDER_COLUMN_ID, 
+										CostantiDB.TRACCIAMENTO_APPENDER_SEQUENCE, CostantiDB.TRACCIAMENTO_APPENDER_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idTracceAppender<=0){
+							throw new Exception("ID (tracce appender) autoincrementale non ottenuto");
+						}
 
 						for(int l=0; l<appender.sizePropertyList();l++){
-							DriverConfigurazioneDB_LIB.log.debug("INSERT INTO "+CostantiDB.TRACCIAMENTO_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+id+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
+							DriverConfigurazioneDB_LIB.log.debug("INSERT INTO "+CostantiDB.TRACCIAMENTO_APPENDER_PROP+" (id_appender,nome,valore) VALUES ("+idTracceAppender+","+appender.getProperty(l).getNome()+","+appender.getProperty(l).getValore()+")");
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 							sqlQueryObject.addInsertTable(CostantiDB.TRACCIAMENTO_APPENDER_PROP);
 							sqlQueryObject.addInsertField("id_appender", "?");
@@ -5411,14 +5405,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idTracceAppender);
 							updateStmt.setString(2, appender.getProperty(l).getNome());
 							updateStmt.setString(3, appender.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 
@@ -5439,24 +5432,22 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into msgdiag ds
-				id = 1;
 				if(config.getMessaggiDiagnostici()!=null){
 					for(int k=0; k<config.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getMessaggiDiagnostici().getOpenspcoopSorgenteDati(k);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.MSG_DIAGN_DS);
-						sqlQueryObject.addInsertField("nome", "?");
-						sqlQueryObject.addInsertField("nome_jndi", "?");
-						sqlQueryObject.addInsertField("tipo_database", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, ds.getNome());
-						updateStmt.setString(2, ds.getNomeJndi());
-						updateStmt.setString(3, ds.getTipoDatabase());
-						updateStmt.setLong(4, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idMsgDsAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.MSG_DIAGN_DS, CostantiDB.MSG_DIAGN_DS_COLUMN_ID, 
+										CostantiDB.MSG_DIAGN_DS_SEQUENCE, CostantiDB.MSG_DIAGN_DS_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idMsgDsAppender<=0){
+							throw new Exception("ID (msgdiag ds appender) autoincrementale non ottenuto");
+						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5466,14 +5457,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idMsgDsAppender);
 							updateStmt.setString(2, ds.getProperty(l).getNome());
 							updateStmt.setString(3, ds.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 
@@ -5494,24 +5484,22 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.close();
 
 				// insert into tracce ds
-				id = 1;
 				if(config.getTracciamento()!=null){
 					for(int k=0; k<config.getTracciamento().sizeOpenspcoopSorgenteDatiList();k++){
 						OpenspcoopSorgenteDati ds = config.getTracciamento().getOpenspcoopSorgenteDati(k);
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.TRACCIAMENTO_DS);
-						sqlQueryObject.addInsertField("nome", "?");
-						sqlQueryObject.addInsertField("nome_jndi", "?");
-						sqlQueryObject.addInsertField("tipo_database", "?");
-						sqlQueryObject.addInsertField("id", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, ds.getNome());
-						updateStmt.setString(2, ds.getNomeJndi());
-						updateStmt.setString(3, ds.getTipoDatabase());
-						updateStmt.setLong(4, id);
-						updateStmt.executeUpdate();
-						updateStmt.close();
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", ds.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome_jndi", ds.getNomeJndi() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_database", ds.getTipoDatabase() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idTracceDsAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.TRACCIAMENTO_DS, CostantiDB.TRACCIAMENTO_DS_COLUMN_ID, 
+										CostantiDB.TRACCIAMENTO_DS_SEQUENCE, CostantiDB.TRACCIAMENTO_DS_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idTracceDsAppender<=0){
+							throw new Exception("ID (tracciamento ds appender) autoincrementale non ottenuto");
+						}
 
 						for(int l=0; l<ds.sizePropertyList();l++){
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5521,14 +5509,13 @@ public class DriverConfigurazioneDB_LIB {
 							sqlQueryObject.addInsertField("valore", "?");
 							updateQuery = sqlQueryObject.createSQLInsert();
 							updateStmt = con.prepareStatement(updateQuery);
-							updateStmt.setLong(1, id);
+							updateStmt.setLong(1, idTracceDsAppender);
 							updateStmt.setString(2, ds.getProperty(l).getNome());
 							updateStmt.setString(3, ds.getProperty(l).getValore());
 							updateStmt.executeUpdate();
 							updateStmt.close();
 						}
 
-						id++;
 					}
 				}
 

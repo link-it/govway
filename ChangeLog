@@ -1,3 +1,11 @@
+2015-01-19  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #275
+	L'errore si verificafa durante l'aggiornamento Configurazione su SQL server 2008
+	'Quando IDENTITY_INSERT è OFF non è possibile inserire un valore esplicito per la
+	colonna Identity nella tabella 'msgdiag_appender'.
+
 2014-12-16  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
