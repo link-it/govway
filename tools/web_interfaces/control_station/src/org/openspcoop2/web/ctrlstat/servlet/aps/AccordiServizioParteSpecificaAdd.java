@@ -939,7 +939,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					pa.setDescrizione("Servizio "+this.tiposervizio+this.nomeservizio+" erogato da "+this.tipoSoggettoErogatore+this.nomeSoggettoErogatore);
 					pa.setAllegaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
 					pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-					pa.setGestioneManifest(CostantiConfigurazione.ABILITATO);
+					// Devo lasciare a null !! pa.setGestioneManifest(CostantiConfigurazione.ABILITATO);
 					pa.setRicevutaAsincronaSimmetrica(CostantiConfigurazione.ABILITATO);
 					pa.setRicevutaAsincronaAsimmetrica(CostantiConfigurazione.ABILITATO);
 
