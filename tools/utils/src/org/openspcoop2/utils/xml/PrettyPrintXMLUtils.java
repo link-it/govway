@@ -67,7 +67,7 @@ public class PrettyPrintXMLUtils {
 
 	public static synchronized void initTransformer() {
 		if(PrettyPrintXMLUtils.transformerFactory==null){
-			PrettyPrintXMLUtils.transformerFactory = XmlFactory.newTransformerFactory();
+			PrettyPrintXMLUtils.transformerFactory = TransformerFactory.newInstance();
 		}
 	}
 

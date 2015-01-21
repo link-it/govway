@@ -54,7 +54,11 @@ public class XMLUtils extends AbstractXMLUtils {
 
 	@Override
 	protected TransformerFactory newTransformerFactory() throws XMLException {
-		return XmlFactory.newTransformerFactory();
+		try{
+			return TransformerFactory.newInstance();
+		}catch(Exception e){
+			throw new XMLException(e.getMessage(),e);
+		}
 	}
 
 	@Override

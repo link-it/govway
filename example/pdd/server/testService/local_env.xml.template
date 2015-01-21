@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="TestServicer_LocalEnv" basedir=".">
+
+	<!-- ApplicationServer version -->
+	<property name="as" value="jboss/tomcat" />
+	
+	<!-- RootDir -->  
+	<property name="rootDir" location="../../../../" />
+	  
+</project>
