@@ -324,6 +324,15 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					i++;
 				}
 			}
+			
+			// se ancora non ho scelto l'accordo da mostrare quando entro
+			if(accordoPrimoAccesso == -1 && lista.size() > 0){
+				// Se entro in questo caso significa che tutti gli accordi di servizio parte comune esistente s
+				// possiedono come soggetto referente un tipo di protocollo differente da quello di default.
+				// in questo caso prendo il primo che trovo
+				accordoPrimoAccesso = 0;
+			}
+			
 			//			}
 
 
