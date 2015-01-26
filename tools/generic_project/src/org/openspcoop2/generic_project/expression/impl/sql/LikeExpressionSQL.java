@@ -82,9 +82,9 @@ public class LikeExpressionSQL extends LikeExpressionImpl implements ISQLExpress
 			else{
 				sqlQueryObjectForEscape = SQLObjectFactory.createSQLQueryObject(TipiDatabase.POSTGRESQL); // lo uso come default per produrre sql
 			}
-			System.out.println("DATABASE: "+sqlQueryObjectForEscape.getClass().getName());
+			//System.out.println("DATABASE: "+sqlQueryObjectForEscape.getClass().getName());
 			EscapeSQLPattern escapePattern = sqlQueryObjectForEscape.escapePatternValue(sqlValue);
-			System.out.println("ESCAPE PATTERN: "+escapePattern.isUseEscapeClausole());
+			//System.out.println("ESCAPE PATTERN: "+escapePattern.isUseEscapeClausole());
 			if(escapePattern.isUseEscapeClausole()){
 				escapeClausole = " ESCAPE '"+escapePattern.getEscapeClausole()+"'";
 			}
