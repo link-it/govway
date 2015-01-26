@@ -71,6 +71,7 @@ public class XMLLib{
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 
+	private org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsRegistry = null;
 
 
 	/**
@@ -81,6 +82,8 @@ public class XMLLib{
 	 */    
 	public XMLLib(String path,String url) throws DriverRegistroServiziException{
 
+		this.cleanerOpenSPCoop2ExtensionsRegistry = new org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions();
+		
 		if(path!=null){
 			if (!path.endsWith(File.separator))
 				this.pathPrefix= path + File.separator;
@@ -738,6 +741,7 @@ public class XMLLib{
 			}
 
 			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(accordo); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
 			registroXML.addAccordoCooperazione(accordo);
 			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
@@ -1259,6 +1263,7 @@ public class XMLLib{
 			}
 
 			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(accordo); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
 			registroXML.addAccordoServizioParteComune(accordo);
 			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
@@ -1471,6 +1476,7 @@ public class XMLLib{
 			org.openspcoop2.core.registry.RegistroServizi registroXML = new org.openspcoop2.core.registry.RegistroServizi();
 
 			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(pdd);
 			registroXML.addPortaDominio(pdd);
 			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
@@ -1656,6 +1662,7 @@ public class XMLLib{
 			org.openspcoop2.core.registry.RegistroServizi registroXML = new org.openspcoop2.core.registry.RegistroServizi();
 
 			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(soggetto);
 			registroXML.addSoggetto(soggetto);
 			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
@@ -2223,6 +2230,7 @@ public class XMLLib{
 			}
 
 			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(asps); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
 			soggXML.addAccordoServizioParteSpecifica(asps);
 			registroXML.addSoggetto(soggXML);
 			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
