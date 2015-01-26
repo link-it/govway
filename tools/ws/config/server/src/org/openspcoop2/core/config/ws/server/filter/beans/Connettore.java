@@ -65,13 +65,13 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBean implements 
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="custom",required=false,nillable=false)
-	private Boolean custom;
+	private java.lang.Boolean custom;
 	
-	public void setCustom(Boolean custom){
+	public void setCustom(java.lang.Boolean custom){
 		this.custom = custom;
 	}
 	
-	public Boolean getCustom(){
+	public java.lang.Boolean getCustom(){
 		return this.custom;
 	}
 	

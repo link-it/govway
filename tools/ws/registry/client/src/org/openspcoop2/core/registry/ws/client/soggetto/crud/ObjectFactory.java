@@ -51,19 +51,19 @@ public class ObjectFactory {
     private final static QName _WrapperIdAccordoServizioParteComune_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteComune");
     private final static QName _RegistryServiceException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-service-exception");
     private final static QName _DeleteAllByFilter_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "deleteAllByFilter");
-    private final static QName _WrapperIdAccordoCooperazione_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoCooperazione");
     private final static QName _DeleteById_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "deleteById");
+    private final static QName _WrapperIdAccordoCooperazione_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoCooperazione");
     private final static QName _CreateResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "createResponse");
     private final static QName _Delete_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "delete");
     private final static QName _DeleteAllByFilterResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "deleteAllByFilterResponse");
     private final static QName _UpdateOrCreate_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "updateOrCreate");
-    private final static QName _DeleteAll_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "deleteAll");
     private final static QName _Connettore_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "connettore");
+    private final static QName _DeleteAll_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "deleteAll");
     private final static QName _UpdateResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "updateResponse");
     private final static QName _SearchFilterSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "search-filter-soggetto");
     private final static QName _RegistryNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-found-exception");
-    private final static QName _DeleteByIdResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "deleteByIdResponse");
     private final static QName _UpdateOrCreateResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "updateOrCreateResponse");
+    private final static QName _DeleteByIdResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "deleteByIdResponse");
     private final static QName _RegistryNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-implemented-exception");
     private final static QName _RegistryMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-multiple-result-exception");
     private final static QName _WrapperIdAccordoServizioParteSpecifica_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteSpecifica");
@@ -374,21 +374,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoCooperazione }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoCooperazione")
-    public JAXBElement<WrapperIdAccordoCooperazione> createWrapperIdAccordoCooperazione(WrapperIdAccordoCooperazione value) {
-        return new JAXBElement<WrapperIdAccordoCooperazione>(ObjectFactory._WrapperIdAccordoCooperazione_QNAME, WrapperIdAccordoCooperazione.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteById }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteById")
     public JAXBElement<DeleteById> createDeleteById(DeleteById value) {
         return new JAXBElement<DeleteById>(ObjectFactory._DeleteById_QNAME, DeleteById.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoCooperazione }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoCooperazione")
+    public JAXBElement<WrapperIdAccordoCooperazione> createWrapperIdAccordoCooperazione(WrapperIdAccordoCooperazione value) {
+        return new JAXBElement<WrapperIdAccordoCooperazione>(ObjectFactory._WrapperIdAccordoCooperazione_QNAME, WrapperIdAccordoCooperazione.class, null, value);
     }
 
     /**
@@ -428,21 +428,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAll }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteAll")
-    public JAXBElement<DeleteAll> createDeleteAll(DeleteAll value) {
-        return new JAXBElement<DeleteAll>(ObjectFactory._DeleteAll_QNAME, DeleteAll.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Connettore }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "connettore")
     public JAXBElement<Connettore> createConnettore(Connettore value) {
         return new JAXBElement<Connettore>(ObjectFactory._Connettore_QNAME, Connettore.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAll }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteAll")
+    public JAXBElement<DeleteAll> createDeleteAll(DeleteAll value) {
+        return new JAXBElement<DeleteAll>(ObjectFactory._DeleteAll_QNAME, DeleteAll.class, null, value);
     }
 
     /**
@@ -473,21 +473,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteByIdResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteByIdResponse")
-    public JAXBElement<DeleteByIdResponse> createDeleteByIdResponse(DeleteByIdResponse value) {
-        return new JAXBElement<DeleteByIdResponse>(ObjectFactory._DeleteByIdResponse_QNAME, DeleteByIdResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateOrCreateResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "updateOrCreateResponse")
     public JAXBElement<UpdateOrCreateResponse> createUpdateOrCreateResponse(UpdateOrCreateResponse value) {
         return new JAXBElement<UpdateOrCreateResponse>(ObjectFactory._UpdateOrCreateResponse_QNAME, UpdateOrCreateResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteByIdResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteByIdResponse")
+    public JAXBElement<DeleteByIdResponse> createDeleteByIdResponse(DeleteByIdResponse value) {
+        return new JAXBElement<DeleteByIdResponse>(ObjectFactory._DeleteByIdResponse_QNAME, DeleteByIdResponse.class, null, value);
     }
 
     /**

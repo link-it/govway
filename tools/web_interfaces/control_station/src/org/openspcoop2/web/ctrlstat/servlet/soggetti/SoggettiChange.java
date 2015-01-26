@@ -41,12 +41,14 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -171,8 +173,15 @@ public final class SoggettiChange extends Action {
 			if(soggettiCore.isSinglePdD()){
 				if(soggettiCore.isRegistroServiziLocale()){
 					// Prendo la lista di pdd e la metto in un array
+					// In pratica se un soggetto e' associato ad una PdD Operativa,
+					// e possiede gia' delle PD o PA o SA,
+					// non e' piu' possibile cambiargli la porta di dominio in una esterna.
+					
+					PdDControlStation pddCtrlstat = pddCore.getPdDControlStation(soggettoRegistry.getPortaDominio());
+					boolean pddOperativa = PddTipologia.OPERATIVO.toString().equals(pddCtrlstat.getTipo());
+					
 					List<PortaDominio> lista = new ArrayList<PortaDominio>();
-					if(numPA<=0 && numPD<=0 && numSA<=0){
+					if( (numPA<=0 && numPD<=0 && numSA<=0) || !pddOperativa ){
 						// aggiungo un elemento di comodo
 						PortaDominio tmp = new PortaDominio();
 						tmp.setNome("-");
@@ -229,7 +238,7 @@ public final class SoggettiChange extends Action {
 					if(versioneProtocollo==null)
 						versioneProtocollo = soggettoRegistry.getVersioneProtocollo();
 					if(request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO) == null){
-						privato = soggettoRegistry.isPrivato();
+						privato = soggettoRegistry.getPrivato()!=null && soggettoRegistry.getPrivato();
 					}
 					if(codiceIpa==null){
 						codiceIpa = soggettoRegistry.getCodiceIpa();

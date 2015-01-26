@@ -346,7 +346,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			boolean visibilitaAccordoCooperazione=false;
 			if("-".equals(this.accordoCooperazione)==false && "".equals(this.accordoCooperazione)==false  && this.accordoCooperazione!=null){
 				AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(this.accordoCooperazione));
-				visibilitaAccordoCooperazione=ac.isPrivato();
+				visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato();
 			}
 
 			// Controlli sui campi immessi

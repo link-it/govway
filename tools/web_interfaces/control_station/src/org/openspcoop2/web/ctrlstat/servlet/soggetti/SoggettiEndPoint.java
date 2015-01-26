@@ -162,7 +162,7 @@ public final class SoggettiEndPoint extends Action {
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Connettore di " + tmpTitle);
 			
 				if (endpointtype == null) {
-					if (c.isCustom() && !c.getTipo().equals(TipiConnettore.HTTPS.toString())) {
+					if ( (c.getCustom()!=null && c.getCustom()) && !c.getTipo().equals(TipiConnettore.HTTPS.toString())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = c.getTipo();
 					} else
@@ -303,7 +303,7 @@ public final class SoggettiEndPoint extends Action {
 
 			// Modifico i dati del soggetto nel db
 			String oldConnT = c.getTipo();
-			if (c.isCustom() && !c.getTipo().equals(TipiConnettore.HTTPS.toString()))
+			if ((c.getCustom()!=null && c.getCustom()) && !c.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			connettoriHelper.fillConnettore(c, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,

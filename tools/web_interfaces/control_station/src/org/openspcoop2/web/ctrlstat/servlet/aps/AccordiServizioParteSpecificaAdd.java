@@ -363,7 +363,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// salvo il soggetto referente
 				soggettoReferente = new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome());
 
-				accordoPrivato = as.isPrivato();
+				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
 				List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));

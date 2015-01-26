@@ -343,7 +343,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				if(scadenza == null)
 					scadenza = as.getScadenza() != null ? as.getScadenza() : "";
 					if(request.getParameter("privato")==null){
-						privato = as.isPrivato();
+						privato = as.getPrivato()!=null && as.getPrivato();
 					}
 
 					showUtilizzoSenzaAzione = as.sizeAzioneList() > 0;// se ci
@@ -393,7 +393,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		boolean visibilitaAccordoCooperazione=false;
 		if("-".equals(accordoCooperazioneId)==false && "".equals(accordoCooperazioneId)==false  && accordoCooperazioneId!=null){
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(accordoCooperazioneId));
-			visibilitaAccordoCooperazione=ac.isPrivato();
+			visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato();
 		}
 
 		// Controlli sui campi immessi

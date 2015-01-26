@@ -353,7 +353,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 
 				if (endpointtype == null) {
-					if (connettore.isCustom() && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
+					if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
 						endpointtype = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 						tipoconn = connettore.getTipo();
 					} else
@@ -613,7 +613,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				connettoreNew.setId(connettore.getId());
 	
 				String oldConnT = connettore.getTipo();
-				if (connettore.isCustom() && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
+				if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
 					// mantengo vecchie proprieta connettore custom
 					for(int i=0; i<connettore.sizePropertyList(); i++){
 						connettoreNew.addProperty(connettore.getProperty(i));

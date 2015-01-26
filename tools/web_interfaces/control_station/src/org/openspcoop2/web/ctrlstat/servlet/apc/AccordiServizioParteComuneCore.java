@@ -1099,7 +1099,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			sqlQueryObject.addSelectCountField(CostantiDB.SERVIZI + ".id", "tot", true);
 			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo=?");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo<>?");
-			if(as.isPrivato()==false){
+			if(as.getPrivato()==null || as.getPrivato()==false){
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".privato=?");
 			}
 			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SERVIZI+".id_soggetto");
@@ -1122,7 +1122,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			stmt.setLong(1, idAccordoInt);
 			stmt.setLong(2, idAccordoInt);
 			int index = 3;
-			if(as.isPrivato()==false){
+			if(as.getPrivato()==null || as.getPrivato()==false){
 				stmt.setInt(index, 0);
 				index++;
 			}
@@ -1153,7 +1153,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI, "id","idServizio");
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo=?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo<>?");
-				if(as.isPrivato()==false){
+				if(as.getPrivato()==null || as.getPrivato()==false){
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".privato=?");
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SERVIZI+".id_soggetto");
@@ -1176,7 +1176,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 				stmt.setLong(1, idAccordoInt);
 				stmt.setLong(2, idAccordoInt);
 				index = 3;
-				if(as.isPrivato()==false){
+				if(as.getPrivato()==null || as.getPrivato()==false){
 					stmt.setInt(index, 0);
 					index++;
 				}

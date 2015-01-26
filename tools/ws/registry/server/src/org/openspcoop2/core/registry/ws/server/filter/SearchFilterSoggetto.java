@@ -101,13 +101,13 @@ public class SearchFilterSoggetto extends org.openspcoop2.utils.beans.BaseBean i
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="privato",required=false,nillable=false)
-	private Boolean privato;
+	private java.lang.Boolean privato;
 	
-	public void setPrivato(Boolean privato){
+	public void setPrivato(java.lang.Boolean privato){
 		this.privato = privato;
 	}
 	
-	public Boolean getPrivato(){
+	public java.lang.Boolean getPrivato(){
 		return this.privato;
 	}
 	

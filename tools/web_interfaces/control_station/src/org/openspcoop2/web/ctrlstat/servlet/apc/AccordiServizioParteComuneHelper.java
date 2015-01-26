@@ -4061,7 +4061,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 					// Visibilita rispetto all'accordo
 					boolean visibile = false;
 					if(visibilitaAccordoServizio==visibile){
-						if(sRef.isPrivato()==true){
+						if(sRef.getPrivato()!=null && sRef.getPrivato()==true){
 							this.pd.setMessage("Non e' possibile utilizzare un soggetto referente con visibilita' privata, in un accordo di servizio con visibilita' pubblica.");
 							return false;
 						}
@@ -4099,11 +4099,11 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 
 				as = this.apcCore.getAccordoServizio(idAccordoOLD);
 
-				if(as.isPrivato()==false && as.getServizioComposto()!=null){
+				if((as.getPrivato()==null || as.getPrivato()==false) && as.getServizioComposto()!=null){
 					for(int i=0;i<as.getServizioComposto().sizeServizioComponenteList(); i++){
 						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente(i).getIdServizioComponente());
 						Servizio s = asps.getServizio();
-						if(asps.isPrivato()){
+						if(asps.getPrivato()!=null && asps.getPrivato()){
 							this.pd.setMessage("Non e' possibile impostare una visibilita' pubblica all'accordo di servizio, poiche' possiede un servizio componente ["+s.getTipo()+"/"+s.getNome()+"_"
 									+s.getTipoSoggettoErogatore()+"/"+s.getNomeSoggettoErogatore()+"] con visibilita' privata.");
 							return false;

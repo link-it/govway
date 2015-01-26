@@ -45,7 +45,7 @@ public class ConnettoreModel extends AbstractModel<Connettore> {
 		this.NOME_REGISTRO = new Field("nome-registro",java.lang.String.class,"connettore",Connettore.class);
 		this.TIPO_DESTINATARIO_TRASMISSIONE_BUSTA = new Field("tipo-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME_DESTINATARIO_TRASMISSIONE_BUSTA = new Field("nome-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
-		this.CUSTOM = new Field("custom",boolean.class,"connettore",Connettore.class);
+		this.CUSTOM = new Field("custom",Boolean.class,"connettore",Connettore.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME = new Field("nome",java.lang.String.class,"connettore",Connettore.class);
 	
@@ -59,7 +59,7 @@ public class ConnettoreModel extends AbstractModel<Connettore> {
 		this.NOME_REGISTRO = new ComplexField(father,"nome-registro",java.lang.String.class,"connettore",Connettore.class);
 		this.TIPO_DESTINATARIO_TRASMISSIONE_BUSTA = new ComplexField(father,"tipo-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME_DESTINATARIO_TRASMISSIONE_BUSTA = new ComplexField(father,"nome-destinatario-trasmissione-busta",java.lang.String.class,"connettore",Connettore.class);
-		this.CUSTOM = new ComplexField(father,"custom",boolean.class,"connettore",Connettore.class);
+		this.CUSTOM = new ComplexField(father,"custom",Boolean.class,"connettore",Connettore.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"connettore",Connettore.class);
 	

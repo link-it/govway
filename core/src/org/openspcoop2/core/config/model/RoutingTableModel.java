@@ -43,7 +43,7 @@ public class RoutingTableModel extends AbstractModel<RoutingTable> {
 	
 		this.DESTINAZIONE = new org.openspcoop2.core.config.model.RoutingTableDestinazioneModel(new Field("destinazione",org.openspcoop2.core.config.RoutingTableDestinazione.class,"routing-table",RoutingTable.class));
 		this.DEFAULT = new org.openspcoop2.core.config.model.RoutingTableDefaultModel(new Field("default",org.openspcoop2.core.config.RoutingTableDefault.class,"routing-table",RoutingTable.class));
-		this.ABILITATA = new Field("abilitata",boolean.class,"routing-table",RoutingTable.class);
+		this.ABILITATA = new Field("abilitata",Boolean.class,"routing-table",RoutingTable.class);
 	
 	}
 	
@@ -53,7 +53,7 @@ public class RoutingTableModel extends AbstractModel<RoutingTable> {
 	
 		this.DESTINAZIONE = new org.openspcoop2.core.config.model.RoutingTableDestinazioneModel(new ComplexField(father,"destinazione",org.openspcoop2.core.config.RoutingTableDestinazione.class,"routing-table",RoutingTable.class));
 		this.DEFAULT = new org.openspcoop2.core.config.model.RoutingTableDefaultModel(new ComplexField(father,"default",org.openspcoop2.core.config.RoutingTableDefault.class,"routing-table",RoutingTable.class));
-		this.ABILITATA = new ComplexField(father,"abilitata",boolean.class,"routing-table",RoutingTable.class);
+		this.ABILITATA = new ComplexField(father,"abilitata",Boolean.class,"routing-table",RoutingTable.class);
 	
 	}
 	

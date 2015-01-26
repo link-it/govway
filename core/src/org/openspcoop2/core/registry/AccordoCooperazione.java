@@ -48,7 +48,7 @@ import java.util.List;
  * 		&lt;/sequence>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
+ * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -205,15 +205,11 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
     this.statoPackage = statoPackage;
   }
 
-  public boolean isPrivato() {
+  public Boolean getPrivato() {
     return this.privato;
   }
 
-  public boolean getPrivato() {
-    return this.privato;
-  }
-
-  public void setPrivato(boolean privato) {
+  public void setPrivato(Boolean privato) {
     this.privato = privato;
   }
 
@@ -375,9 +371,9 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
   @XmlAttribute(name="stato-package",required=false)
   protected java.lang.String statoPackage;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="privato",required=false)
-  protected boolean privato;
+  protected Boolean privato = new Boolean("false");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

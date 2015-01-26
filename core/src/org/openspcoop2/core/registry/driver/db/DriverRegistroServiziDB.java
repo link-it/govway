@@ -2199,7 +2199,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(index++, conversazioneFruitore!=null && !conversazioneFruitore.trim().equals("") ? conversazioneFruitore : null );
 			stm.setString(index++, superUser);
 			stm.setInt(index++, utilizzioSenzaAzione ? CostantiDB.TRUE : CostantiDB.FALSE);
-			if (accordoServizio.isPrivato())
+			if (accordoServizio.getPrivato()!=null && accordoServizio.getPrivato())
 				stm.setInt(index++, 1);
 			else
 				stm.setInt(index++, 0);
@@ -2232,7 +2232,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					filtroDuplicati, identificativoCollaborazione, nome, profiloCollaborazione, scadenza, 
 					wsdlConcettuale, wsdlDefinitorio, wsdlLogicoErogatore, wsdlLogicoFruitore, 
 					conversazioneConcettuale, conversazioneErogatore, conversazioneFruitore,
-					superUser, accordoServizio.getUtilizzoSenzaAzione(), accordoServizio.isPrivato()));
+					superUser, accordoServizio.getUtilizzoSenzaAzione(), (accordoServizio.getPrivato()!=null && accordoServizio.getPrivato())));
 
 			// eseguo la query
 			stm.executeUpdate();
@@ -3044,7 +3044,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(index++, conversazioneFruitore);
 			stm.setString(index++, superUser);
 			stm.setInt(index++, utilizzioSenzaAzione ? CostantiDB.TRUE : CostantiDB.FALSE);
-			if(accordoServizio.isPrivato())
+			if(accordoServizio.getPrivato()!=null && accordoServizio.getPrivato())
 				stm.setInt(index++, 1);
 			else
 				stm.setInt(index++, 0);
@@ -10273,7 +10273,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				isInUso=true;
 				AccordoServizioParteSpecifica servizio = this.getAccordoServizioParteSpecifica(risultato.getLong("id_servizio"));
 				if(checkOnlyStatiPubblici){
-					if(servizio.isPrivato()==false){
+					if(servizio.getPrivato()==null || servizio.getPrivato()==false){
 						serviziFruitori.add(servizio.getServizio().getTipo() + "/" + servizio.getServizio().getNome());
 					}
 				}else{
@@ -10376,7 +10376,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						partecipanti.add(this.idAccordoCooperazioneFactory.getUriFromAccordo(accordo));
 					}
 				}else if(checkOnlyStatiPubblici){
-					if(accordo.isPrivato()==false){
+					if(accordo.getPrivato()==null || accordo.getPrivato()==false){
 						isInUso=true;
 						partecipanti.add(this.idAccordoCooperazioneFactory.getUriFromAccordo(accordo));
 					}
@@ -10504,7 +10504,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				isInUso=true;
 				AccordoServizioParteSpecifica servizio = this.getAccordoServizioParteSpecifica(risultato.getLong("id_servizio"));
 				if(checkOnlyStatiPubblici){
-					if(servizio.isPrivato()==false){
+					if(servizio.getPrivato()==null || servizio.getPrivato()==false){
 						IDServizio idSE = new IDServizio();
 						idSE.setServizio(servizio.getServizio().getNome());
 						idSE.setTipoServizio(servizio.getServizio().getTipo());
@@ -16255,12 +16255,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try{
 
 			// Controlli di visibilita
-			if(as.isPrivato()==false){
+			if(as.getPrivato()==null || as.getPrivato()==false){
 				if(as.getSoggettoReferente()!=null){
 					IDSoggetto idS = new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome());
 					try{
 						Soggetto s = this.getSoggetto(idS);
-						if(s.isPrivato()){
+						if(s.getPrivato()!=null && s.getPrivato()){
 							erroreValidazione.addErroreValidazione("soggetto referente ["+idS+"] con visibilita' privata, in un accordo di servizio con visibilita' pubblica");
 						}
 					}catch(DriverRegistroServiziNotFound dNot){}
@@ -16270,8 +16270,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(as.getServizioComposto().getIdAccordoCooperazione()>0){
 					try{
 						AccordoCooperazione ac = this.getAccordoCooperazione(as.getServizioComposto().getIdAccordoCooperazione());
-						if(as.isPrivato()==false){
-							if(ac.isPrivato()){
+						if(as.getPrivato()==null || as.getPrivato()==false){
+							if(ac.getPrivato()!=null && ac.getPrivato()){
 								erroreValidazione.addErroreValidazione("accordo di cooperazione ["+this.idAccordoCooperazioneFactory.getUriFromAccordo(ac)+"] con visibilita' privata, in un accordo di servizio con visibilita' pubblica");
 							}
 						}
@@ -16282,8 +16282,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 						if(as.getServizioComposto().getServizioComponente(i).getId()>0){
 							try{
 								AccordoServizioParteSpecifica sc = this.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente(i).getId());
-								if(as.isPrivato()==false){
-									if(sc.isPrivato()){
+								if(as.getPrivato()==null || as.getPrivato()==false){
+									if(sc.getPrivato()!=null && sc.getPrivato()){
 										erroreValidazione.addErroreValidazione("servizio componente ["+sc.getServizio().getTipo()+"/"+sc.getServizio().getNome()+"_"+
 												sc.getServizio().getTipoSoggettoErogatore()+"/"+
 												sc.getServizio().getNomeSoggettoErogatore()+"] con visibilita' privata, in un accordo di servizio con visibilita' pubblica");
@@ -16449,12 +16449,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try{
 
 			// Controlli di visibilita
-			if(ac.isPrivato()==false){
+			if(ac.getPrivato()==null || ac.getPrivato()==false){
 				if(ac.getSoggettoReferente()!=null){
 					IDSoggetto idS = new IDSoggetto(ac.getSoggettoReferente().getTipo(),ac.getSoggettoReferente().getNome());
 					try{
 						Soggetto s = this.getSoggetto(idS);
-						if(s.isPrivato()){
+						if(s.getPrivato()!=null && s.getPrivato()){
 							erroreValidazione.addErroreValidazione("soggetto referente ["+idS+"] con visibilita' privata, in un accordo di cooperazione con visibilita' pubblica");
 						}
 					}catch(DriverRegistroServiziNotFound dNot){}
@@ -16467,7 +16467,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						if(partecipanti.getSoggettoPartecipante(i).getIdSoggetto()>0){
 							try{
 								Soggetto s = this.getSoggetto(partecipanti.getSoggettoPartecipante(i).getIdSoggetto());
-								if(s.isPrivato()){
+								if(s.getPrivato()!=null && s.getPrivato()){
 									erroreValidazione.addErroreValidazione("soggetto partecipante ["+s.getTipo()+"/"+s.getNome()+"] con visibilita' privata, in un accordo di cooperazione con visibilita' pubblica");
 								}
 							}catch(DriverRegistroServiziNotFound dNot){}
@@ -16511,17 +16511,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try{
 
 			// Controlli di visibilita
-			if(servizio.isPrivato()==false){
+			if(servizio.getPrivato()==null || servizio.getPrivato()==false){
 				IDSoggetto idS = new IDSoggetto(servizio.getServizio().getTipoSoggettoErogatore(),servizio.getServizio().getNomeSoggettoErogatore());
 				try{
 					Soggetto s = this.getSoggetto(idS);
-					if(s.isPrivato()){
+					if(s.getPrivato()!=null && s.getPrivato()){
 						erroreValidazione.addErroreValidazione("soggetto erogatore ["+idS+"] con visibilita' privata, in un servizio con visibilita' pubblica");
 					}
 				}catch(DriverRegistroServiziNotFound dNot){}
 				try{
 					AccordoServizioParteComune as = this.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(servizio.getAccordoServizioParteComune()));
-					if(as.isPrivato()){
+					if(as.getPrivato()!=null && as.getPrivato()){
 						erroreValidazione.addErroreValidazione("accordo di servizio ["+servizio.getAccordoServizioParteComune()+"] con visibilita' privata, in un servizio con visibilita' pubblica");
 					}
 				}catch(DriverRegistroServiziNotFound dNot){}

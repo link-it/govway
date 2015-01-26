@@ -613,7 +613,21 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="custom" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="custom" use="optional" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -710,7 +724,13 @@
 			<xsd:element name="default" maxOccurs="1" minOccurs="1" type="routing-table-default" />
 		</xsd:sequence>
 		<!-- start-extensions -->
-		<xsd:attribute name="abilitata" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="abilitata" use="optional" default="false">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 	</xsd:complexType>
 	<xsd:complexType name="routing-table-default">

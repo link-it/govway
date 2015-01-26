@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.XMLUtils;
@@ -1309,8 +1310,9 @@ public class ImporterInformationMissingUtils {
 	}
 	
 	private List<String> letturaServiziDefinitiParteComune(Fruitore fruitore,AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc){
-		// Comprensione WSDL Implementativo
-		boolean correlato = false;
+		Boolean correlato = null;
+		
+		// Comprensione attraverso WSDL Implementativo
 		if(fruitore.getByteWsdlImplementativoErogatore()!=null){
 			correlato = false;
 		}
@@ -1323,17 +1325,38 @@ public class ImporterInformationMissingUtils {
 		else if(asps.getByteWsdlImplementativoFruitore()!=null){
 			correlato = true;
 		}
+		
+		// Comprensione attraverso tipologia
+		if(correlato==null){
+			TipologiaServizio tipologiaServizio = TipologiaServizio.NORMALE;
+			if(asps.getServizio()!=null){
+				tipologiaServizio = asps.getServizio().getTipologiaServizio();
+			}
+			correlato = TipologiaServizio.CORRELATO.equals(tipologiaServizio);
+		}
+		
 		return this.letturaServiziDefinitiParteComune(correlato, aspc);	
 	}
 	private List<String> letturaServiziDefinitiParteComune(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc){
-		// Comprensione WSDL Implementativo
-		boolean correlato = false;
+		Boolean correlato = null;
+		
+		// Comprensione attraverso WSDL Implementativo
 		if(asps.getByteWsdlImplementativoErogatore()!=null){
 			correlato = false;
 		}
 		else if(asps.getByteWsdlImplementativoFruitore()!=null){
 			correlato = true;
 		}
+		
+		// Comprensione attraverso tipologia
+		if(correlato==null){
+			TipologiaServizio tipologiaServizio = TipologiaServizio.NORMALE;
+			if(asps.getServizio()!=null){
+				tipologiaServizio = asps.getServizio().getTipologiaServizio();
+			}
+			correlato = TipologiaServizio.CORRELATO.equals(tipologiaServizio);
+		}
+		
 		return this.letturaServiziDefinitiParteComune(correlato, aspc);	
 	}
 	private List<String> letturaServiziDefinitiParteComune(boolean correlato,AccordoServizioParteComune aspc){

@@ -558,9 +558,9 @@ public class TestUtil {
 		
 		boolean custom = false;
 		if(isRegistro){
-			custom = conR!=null ? conR.isCustom() : false;
+			custom = conR!=null ? (conR.getCustom()!=null && conR.getCustom()) : false;
 		}else{
-			custom = con!=null ? con.isCustom() : false;
+			custom = con!=null ? (con.getCustom()!=null && con.getCustom()) : false;
 		}
 		
 		Reporter.log("Check connettore custom["+custom+"] di tipo ["+tipo+"]");

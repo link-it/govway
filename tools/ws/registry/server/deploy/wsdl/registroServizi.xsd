@@ -47,7 +47,14 @@
 			
 		</xsd:attribute>
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute default="false" name="privato" use="optional">
+			
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -95,7 +102,14 @@
 			
 		</xsd:attribute>
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute default="false" name="privato" use="optional">
+			
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<xsd:attribute name="byte-wsdl-definitorio" type="xsd:base64Binary" use="optional">
 			
 		</xsd:attribute>
@@ -327,7 +341,14 @@
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
 			
 		</xsd:attribute>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute default="false" name="privato" use="optional">
+			
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -350,7 +371,14 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="property" type="Property"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
-		<xsd:attribute name="custom" type="xsd:boolean" use="optional"/>
+		<xsd:attribute default="false" name="custom" use="optional">
+			
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -380,7 +408,14 @@
 			
 		</xsd:attribute>
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute default="false" name="privato" use="optional">
+			
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<xsd:attribute name="id-accordo" type="xsd:unsignedLong" use="optional">
 			
 		</xsd:attribute>

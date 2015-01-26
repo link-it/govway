@@ -57,8 +57,8 @@ public class ObjectFactory {
     private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllResponse");
     private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "find");
     private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllIds");
-    private final static QName _InUseResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUseResponse");
     private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findResponse");
+    private final static QName _InUseResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUseResponse");
     private final static QName _InUse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUse");
     private final static QName _RegistryNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-found-exception");
     private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "existsResponse");
@@ -419,21 +419,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link InUseResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "inUseResponse")
-    public JAXBElement<InUseResponse> createInUseResponse(InUseResponse value) {
-        return new JAXBElement<InUseResponse>(ObjectFactory._InUseResponse_QNAME, InUseResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FindResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findResponse")
     public JAXBElement<FindResponse> createFindResponse(FindResponse value) {
         return new JAXBElement<FindResponse>(ObjectFactory._FindResponse_QNAME, FindResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link InUseResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "inUseResponse")
+    public JAXBElement<InUseResponse> createInUseResponse(InUseResponse value) {
+        return new JAXBElement<InUseResponse>(ObjectFactory._InUseResponse_QNAME, InUseResponse.class, null, value);
     }
 
     /**

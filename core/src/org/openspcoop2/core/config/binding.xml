@@ -335,7 +335,7 @@
     <value name="nome-registro" field="nomeRegistro" usage="optional" style="attribute"/>
     <value name="tipo-destinatario-trasmissione-busta" field="tipoDestinatarioTrasmissioneBusta" usage="optional" style="attribute"/>
     <value name="nome-destinatario-trasmissione-busta" field="nomeDestinatarioTrasmissioneBusta" usage="optional" style="attribute"/>
-    <value name="custom" field="custom" usage="optional" style="attribute"/>
+    <value name="custom" field="custom" default="false" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
@@ -348,7 +348,7 @@
     <value name="nome-registro" field="nomeRegistro" usage="optional" style="attribute"/>
     <value name="tipo-destinatario-trasmissione-busta" field="tipoDestinatarioTrasmissioneBusta" usage="optional" style="attribute"/>
     <value name="nome-destinatario-trasmissione-busta" field="nomeDestinatarioTrasmissioneBusta" usage="optional" style="attribute"/>
-    <value name="custom" field="custom" usage="optional" style="attribute"/>
+    <value name="custom" field="custom" default="false" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
@@ -439,7 +439,7 @@
       <structure map-as="org.openspcoop2.core.config.RoutingTableDestinazione"/>
     </collection>
     <structure field="_default" usage="required" map-as="org.openspcoop2.core.config.RoutingTableDefault"/>
-    <value name="abilitata" field="abilitata" usage="optional" style="attribute"/>
+    <value name="abilitata" field="abilitata" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="default" class="org.openspcoop2.core.config.RoutingTableDefault">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>

@@ -587,7 +587,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			dati = apcHelper.addAccordiToDati(dati, as.getNome(), descr, profcoll, "", "", "", "", 
 					filtrodup, confric, idcoll, consord, scadenza, this.id, TipoOperazione.CHANGE, 
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
-					as.isPrivato(),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
+					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, tipoProtocollo,listaTipiProtocollo,used);
 
 			pd.setDati(dati);

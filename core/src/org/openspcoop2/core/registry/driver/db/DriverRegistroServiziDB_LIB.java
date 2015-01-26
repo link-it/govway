@@ -525,13 +525,13 @@ public class DriverRegistroServiziDB_LIB {
 				}else{
 					stm.setInt(13, 0);
 				}
-				if(connettore.isCustom()){
+				if(connettore.getCustom()!=null && connettore.getCustom()){
 					stm.setInt(14, 1);
 				}else{
 					stm.setInt(14, 0);
 				}
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug, connettore.isCustom()));
+				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug, (connettore.getCustom()!=null && connettore.getCustom())));
 				int n = stm.executeUpdate();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore type = " + type + " row affected =" + n);
 				stm.close();
@@ -564,7 +564,7 @@ public class DriverRegistroServiziDB_LIB {
 								
 				
 				// Custom properties
-				if(connettore.isCustom()){					
+				if(connettore.getCustom()!=null && connettore.getCustom()){					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
@@ -638,14 +638,14 @@ public class DriverRegistroServiziDB_LIB {
 				}else{
 					stm.setInt(13, 0);
 				}
-				if(connettore.isCustom()){
+				if(connettore.getCustom()!=null && connettore.getCustom()){
 					stm.setInt(14, 1);
 				}else{
 					stm.setInt(14, 0);
 				}
 				stm.setLong(15, idConnettore);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,connettore.isCustom(),idConnettore));
+				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
 				n = stm.executeUpdate();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore type = " + type + " row affected =" + n);
 				stm.close();
@@ -662,7 +662,7 @@ public class DriverRegistroServiziDB_LIB {
 				stm.executeUpdate();
 				stm.close();
 				// Aggiungo attuali
-				if(connettore.isCustom()){					
+				if(connettore.getCustom()!=null && connettore.getCustom()){					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
@@ -821,7 +821,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setLong(5, idConnettore);
 				updateStmt.setString(6, server);
 				updateStmt.setString(7, soggetto.getSuperUser());
-				if(soggetto.isPrivato())
+				if(soggetto.getPrivato()!=null && soggetto.getPrivato())
 					updateStmt.setInt(8, 1);
 				else
 					updateStmt.setInt(8, 0);
@@ -899,7 +899,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(4, tipo);
 				updateStmt.setString(5, server);
 				updateStmt.setString(6, soggetto.getSuperUser());
-				if(soggetto.isPrivato())
+				if(soggetto.getPrivato()!=null && soggetto.getPrivato())
 					updateStmt.setInt(7, 1);
 				else
 					updateStmt.setInt(7, 0);
@@ -1138,7 +1138,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(7, wsdlImplementativoErogatore);
 				updateStmt.setString(8, wsdlImplementativoFruitore);
 				updateStmt.setString(9, superUser);
-				if(asps.isPrivato())
+				if(asps.getPrivato()!=null && asps.getPrivato())
 					updateStmt.setInt(10, 1);
 				else
 					updateStmt.setInt(10, 0);
@@ -1318,7 +1318,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(7, wsdlImplementativoErogatore);
 				updateStmt.setString(8, wsdlImplementativoFruitore);
 				updateStmt.setString(9, superUser);
-				if(asps.isPrivato())
+				if(asps.getPrivato()!=null && asps.getPrivato())
 					updateStmt.setInt(10, 1);
 				else
 					updateStmt.setInt(10, 0);
@@ -3866,7 +3866,7 @@ public class DriverRegistroServiziDB_LIB {
 		String descrizione = accordoCooperazione.getDescrizione();
 		
 		String stato = accordoCooperazione.getStatoPackage();
-		boolean privato = accordoCooperazione.isPrivato();
+		boolean privato = accordoCooperazione.getPrivato()!=null && accordoCooperazione.getPrivato();
 		String superUser = accordoCooperazione.getSuperUser();	
 		
 		if (nome == null || nome.equals(""))

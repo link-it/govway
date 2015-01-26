@@ -222,7 +222,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 		String aliasConnettoriRispostaAsincrona = "connettoriRispAsincrona";
 		if(filter.getRispostaAsincrona()!= null && filter.getRispostaAsincrona().getConnettore()!= null) {
 			sqlQueryObjectParam.addFromTable(CostantiDB.CONNETTORI,aliasConnettoriRispostaAsincrona);
-			sqlQueryObjectParam.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_connettore_inv="+aliasConnettoriRispostaAsincrona+".id");
+			sqlQueryObjectParam.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_connettore_risp="+aliasConnettoriRispostaAsincrona+".id");
 		}
 		
 		sqlQueryObjectParam.setANDLogicOperator(true);

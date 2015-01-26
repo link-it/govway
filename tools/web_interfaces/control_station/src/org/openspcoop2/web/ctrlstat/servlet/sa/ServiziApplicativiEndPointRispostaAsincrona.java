@@ -258,7 +258,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					subjectRichiesta = cra.getSubject();
 				}
 				if (endpointtype == null) {
-					if (connra.isCustom() && !connra.getTipo().equals(TipiConnettore.HTTPS.toString())) {
+					if ((connra.getCustom()!=null && connra.getCustom()) && !connra.getTipo().equals(TipiConnettore.HTTPS.toString())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = connra.getTipo();
 					} else
@@ -501,7 +501,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				ra.setCredenziali(null);
 			}
 			String oldConnT = connra.getTipo();
-			if (connra.isCustom() && !connra.getTipo().equals(TipiConnettore.HTTPS.toString()))
+			if ((connra.getCustom()!=null && connra.getCustom()) && !connra.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			connettoriHelper.fillConnettore(connra, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,

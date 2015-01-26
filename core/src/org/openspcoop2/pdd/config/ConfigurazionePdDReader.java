@@ -620,7 +620,7 @@ public class ConfigurazionePdDReader {
 				}
 			}
 		}	*/
-		if( (routingTable.isAbilitata()==false) 
+		if( (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) 
 				|| 
 			( 
 				( (routingTable.getDefault()==null) || (routingTable.getDefault().sizeRouteList()==0) ) 
@@ -629,7 +629,7 @@ public class ConfigurazionePdDReader {
 			) 
 		){
 
-			if(routingTable.isAbilitata()==false)
+			if(routingTable.getAbilitata()==null || routingTable.getAbilitata()==false)
 				this.log.debug("getForwardRoute: routing table disabilitata");
 			else
 				this.log.debug("getForwardRoute: routing table senza rotte");
@@ -835,7 +835,7 @@ public class ConfigurazionePdDReader {
 		}catch(Exception e){
 			this.log.debug("routerFunctionActive[getRoutingTable]",e);
 		}
-		if(routingTable == null || (routingTable.isAbilitata()==false) || 
+		if(routingTable == null || (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) || 
 				( 
 					(routingTable.getDefault()==null || routingTable.getDefault().sizeRouteList()==0) 
 						&& 
@@ -871,7 +871,7 @@ public class ConfigurazionePdDReader {
 		}catch(Exception e){
 			this.log.debug("getRouterIdentity[routingTable]",e);
 		}
-		if(routingTable == null || (routingTable.isAbilitata()==false) || 
+		if(routingTable == null || (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) || 
 				( 
 					(routingTable.getDefault()==null || routingTable.getDefault().sizeRouteList()==0) 
 						&& 

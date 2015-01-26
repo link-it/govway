@@ -253,7 +253,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			if (endpointtype == null) {
 				if(connis!=null){
-					if (connis.isCustom() && !TipiConnettore.HTTPS.toString().equals(connis.getTipo())) {
+					if ((connis.getCustom()!=null && connis.getCustom()) && !TipiConnettore.HTTPS.toString().equals(connis.getTipo())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = connis.getTipo();
 					} else
@@ -409,7 +409,7 @@ public final class ServiziApplicativiChange extends Action {
 					subjectRichiesta = cis.getSubject();
 				}
 				if (endpointtype == null) {
-					if (connis.isCustom() && !connis.getTipo().equals(TipiConnettore.HTTPS.toString())) {
+					if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = connis.getTipo();
 					} else
@@ -763,7 +763,7 @@ public final class ServiziApplicativiChange extends Action {
 					is.setCredenziali(null);
 				}
 				String oldConnT = connis.getTipo();
-				if (connis.isCustom() && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
+				if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				connettoriHelper.fillConnettore(connis, endpointtype, oldConnT, tipoconn, url,
 						nomeCodaJMS, tipo, user, password,

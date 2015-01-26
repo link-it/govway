@@ -379,7 +379,14 @@
 		<xsd:attribute name="nome-destinatario-trasmissione-busta" type="xsd:string" use="optional">
 			
 		</xsd:attribute>
-		<xsd:attribute name="custom" type="xsd:boolean" use="optional"/>
+		<xsd:attribute default="false" name="custom" use="optional">
+			
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -459,7 +466,13 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="default" type="routing-table-default"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
-		<xsd:attribute name="abilitata" type="xsd:boolean" use="optional"/>
+		<xsd:attribute default="false" name="abilitata" use="optional">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 	</xsd:complexType>
 	<xsd:complexType name="routing-table-default">

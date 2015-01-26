@@ -277,7 +277,7 @@ public class BasicArchive implements IArchive {
 			MapPlaceholder placeholder) throws ProtocolException {
 		
 		ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger());
-		return zipUtils.getArchive(archive,placeholder);
+		return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		
 	}
 	
@@ -288,7 +288,7 @@ public class BasicArchive implements IArchive {
 		
 		try{
 			ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger());
-			return zipUtils.getArchive(archive,placeholder);
+			return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		}finally{
 			try{
 				if(archive!=null){

@@ -366,7 +366,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			// Visibilita rispetto al soggetto erogatore
 			if(visibilitaServizio==visibile){
 				org.openspcoop2.core.registry.Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoErogatore, nomeErogatore));
-				if(tmpSogg.isPrivato()==true){
+				if(tmpSogg.getPrivato()!=null && tmpSogg.getPrivato()==true){
 					this.pd.setMessage("Non e' possibile utilizzare un soggetto erogatore con visibilita' privata, in un servizio con visibilita' pubblica.");
 					return false;
 				}

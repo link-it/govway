@@ -49,7 +49,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.SPECIFICA_SICUREZZA = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-sicurezza",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.STATO_PACKAGE = new Field("stato-package",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
-		this.PRIVATO = new Field("privato",boolean.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.PRIVATO = new Field("privato",Boolean.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new Field("byte-wsdl-implementativo-erogatore",byte[].class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
@@ -83,7 +83,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.SPECIFICA_SICUREZZA = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-sicurezza",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.STATO_PACKAGE = new ComplexField(father,"stato-package",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
-		this.PRIVATO = new ComplexField(father,"privato",boolean.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new ComplexField(father,"byte-wsdl-implementativo-erogatore",byte[].class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);

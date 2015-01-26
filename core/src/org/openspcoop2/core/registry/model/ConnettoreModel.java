@@ -42,7 +42,7 @@ public class ConnettoreModel extends AbstractModel<Connettore> {
 		super();
 	
 		this.PROPERTY = new org.openspcoop2.core.registry.model.PropertyModel(new Field("property",org.openspcoop2.core.registry.Property.class,"connettore",Connettore.class));
-		this.CUSTOM = new Field("custom",boolean.class,"connettore",Connettore.class);
+		this.CUSTOM = new Field("custom",Boolean.class,"connettore",Connettore.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME = new Field("nome",java.lang.String.class,"connettore",Connettore.class);
 	
@@ -53,7 +53,7 @@ public class ConnettoreModel extends AbstractModel<Connettore> {
 		super(father);
 	
 		this.PROPERTY = new org.openspcoop2.core.registry.model.PropertyModel(new ComplexField(father,"property",org.openspcoop2.core.registry.Property.class,"connettore",Connettore.class));
-		this.CUSTOM = new ComplexField(father,"custom",boolean.class,"connettore",Connettore.class);
+		this.CUSTOM = new ComplexField(father,"custom",Boolean.class,"connettore",Connettore.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"connettore",Connettore.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"connettore",Connettore.class);
 	

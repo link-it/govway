@@ -90,7 +90,21 @@
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="privato" use="optional" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -162,7 +176,21 @@
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="privato" use="optional" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<xsd:attribute name="byte-wsdl-definitorio" type="xsd:base64Binary" use="optional">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -646,7 +674,21 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="privato" use="optional" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -676,7 +718,21 @@
 			<xsd:element name="property" type="Property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
-		<xsd:attribute name="custom" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="custom" use="optional" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -724,7 +780,21 @@
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="stato-package" type="xsd:string" use="optional"/>
-		<xsd:attribute name="privato" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="privato" use="optional" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 		<xsd:attribute name="id-accordo" type="xsd:unsignedLong" use="optional">
 			<xsd:annotation>
 				<xsd:appinfo>

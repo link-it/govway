@@ -43,6 +43,7 @@ import javax.xml.namespace.QName;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.IdSoggetto;
 import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -78,10 +79,14 @@ public final class ServizioApplicativo_ServizioApplicativoPortSoap11_Client {
         ServizioApplicativoSoap11Service ss = new ServizioApplicativoSoap11Service(wsdlURL, ServizioApplicativo_ServizioApplicativoPortSoap11_Client.SERVICE_NAME);
         ServizioApplicativo port = ss.getServizioApplicativoPortSoap11();
 	
-        // PREREQUISITO:
+        // PREREQUISITO SE IL DATABASE e' UN DATABASE PDDCONSOLE SINGLEPDD:
         // INSERT INTO connettori (endpointtype,nome_connettore) VALUES ('disabilitato','TESTSUITE');
         // INSERT  INTO  soggetti  (nome_soggetto,tipo_soggetto,id_connettore,codice_ipa) VALUES ('Ente','SPC',(select id from connettori where nome_connettore='TESTSUITE'),'c=it,o=Ente');
 
+        // PREREQUISITO SE IL DATABASE e' UN DATABASE SOLO CONFIG
+        // INSERT  INTO  soggetti  (nome_soggetto,tipo_soggetto) VALUES ('Ente','SPC');
+
+        
         Date startDate = DateManager.getDate();
         
         
@@ -121,7 +126,12 @@ public final class ServizioApplicativo_ServizioApplicativoPortSoap11_Client {
 				_create_servizioApplicativo.setRispostaAsincrona(new RispostaAsincrona());
 				_create_servizioApplicativo.getRispostaAsincrona().setConnettore(new Connettore());
 				_create_servizioApplicativo.getRispostaAsincrona().getConnettore().setNome("ConnettoreRISP_SASPCEnte");
-				_create_servizioApplicativo.getRispostaAsincrona().getConnettore().setTipo("disabilitato");
+				_create_servizioApplicativo.getRispostaAsincrona().getConnettore().setTipo("provaCustom");
+				_create_servizioApplicativo.getRispostaAsincrona().getConnettore().setCustom(true);
+				Property property = new Property();
+				property.setNome("prop1");
+				property.setValore("Valore");
+				_create_servizioApplicativo.getRispostaAsincrona().getConnettore().addProperty(property);
 				_create_servizioApplicativo.setTipologiaErogazione("disabilitato");
 				_create_servizioApplicativo.setTipologiaFruizione("disabilitato");
 				
@@ -164,6 +174,25 @@ public final class ServizioApplicativo_ServizioApplicativoPortSoap11_Client {
 				System.out.println("count.result (filtro ko) =" + _count__return);
 				if(_count__return!=0){
 					throw new Exception("Risultato count con filtro ko errato");
+				}
+				
+				_count_filter.setTipologiaErogazione(null);
+				org.openspcoop2.core.config.ws.client.servizioapplicativo.all.RispostaAsincrona rispAs = new org.openspcoop2.core.config.ws.client.servizioapplicativo.all.RispostaAsincrona();
+				org.openspcoop2.core.config.ws.client.servizioapplicativo.all.Connettore connettore = new org.openspcoop2.core.config.ws.client.servizioapplicativo.all.Connettore();
+				connettore.setCustom(true);
+				rispAs.setConnettore(connettore);
+				_count_filter.setRispostaAsincrona(rispAs);
+				_count__return = port.count(_count_filter);
+				System.out.println("count.result (filtro custom ok) =" + _count__return);
+				if(_count__return!=1){
+					throw new Exception("Risultato count con filtro custom ok errato");
+				}
+				
+				_count_filter.getRispostaAsincrona().getConnettore().setCustom(false);
+				_count__return = port.count(_count_filter);
+				System.out.println("count.result (filtro custom ko) =" + _count__return);
+				if(_count__return!=0){
+					throw new Exception("Risultato count con filtro custom ko errato");
 				}
 
 			} catch (ConfigNotAuthorizedException_Exception e) { 

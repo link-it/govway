@@ -1076,7 +1076,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						int myIdInt = Integer.parseInt(elem6);
 						Fruitore myAccErFru = this.apsCore.getErogatoreFruitore(myIdInt);
 						org.openspcoop2.core.registry.Connettore connettore = myAccErFru.getConnettore();
-						if (connettore != null && connettore.isCustom())
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
 							numProp = connettore.sizePropertyList();
 					}
 					if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
@@ -1088,7 +1088,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
 						Servizio servizio = asps.getServizio();
 						org.openspcoop2.core.registry.Connettore connettore = servizio.getConnettore();
-						if (connettore != null && connettore.isCustom())
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
 							numProp = connettore.sizePropertyList();
 					}
 					if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
@@ -1100,7 +1100,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						int idServizioFruitoreInt = Integer.parseInt(elem2);
 						Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
 						org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
-						if (connettore != null && connettore.isCustom())
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
 							numProp = connettore.sizePropertyList();
 					}
 					if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
@@ -1117,12 +1117,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 						if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 							InvocazioneServizio is = sa.getInvocazioneServizio();
 							Connettore connettore = is.getConnettore();
-							if (connettore != null && connettore.isCustom())
+							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom())
 								numProp = connettore.sizePropertyList();
 						} else {
 							RispostaAsincrona ra = sa.getRispostaAsincrona();
 							Connettore connettore = ra.getConnettore();
-							if (connettore != null && connettore.isCustom())
+							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom())
 								numProp = connettore.sizePropertyList();
 						}
 					}
@@ -1136,7 +1136,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
 						Soggetto ss = scs.getSoggettoReg();
 						org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
-						if (connettore != null && connettore.isCustom())
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
 							numProp = connettore.sizePropertyList();
 					}
 				} catch (Exception ex) {

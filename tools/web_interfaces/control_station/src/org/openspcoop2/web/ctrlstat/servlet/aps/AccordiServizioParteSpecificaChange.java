@@ -376,7 +376,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 
 			if(as!=null){
-				accordoPrivato = as.isPrivato();
+				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
 				if( apsCore.isShowCorrelazioneAsincronaInAccordi() ){
@@ -504,7 +504,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					Map<String, String> props = connettore.getProperties();
 
 					if (endpointtype == null) {
-						if (connettore.isCustom() && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
+						if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
 							endpointtype = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 							tipoconn = connettore.getTipo();
 						} else
@@ -576,7 +576,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				portType = (portType != null && !"".equals(portType) ? portType : asps.getPortType());
 
-				privato = asps.isPrivato();
+				privato = asps.getPrivato()!=null && asps.getPrivato();
 
 				if(backToStato == null){
 					// preparo i campi
@@ -786,7 +786,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				newConnettore.setTipo(endpointtype);
 
 			String oldConnT = servizio.getConnettore().getTipo();
-			if (servizio.getConnettore().isCustom() && !servizio.getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
+			if ((servizio.getConnettore().getCustom()!=null && servizio.getConnettore().getCustom()) && !servizio.getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
 				oldConnT = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 				// mantengo vecchie proprieta connettore custom
 				for(int i=0; i<servizio.getConnettore().sizePropertyList(); i++){

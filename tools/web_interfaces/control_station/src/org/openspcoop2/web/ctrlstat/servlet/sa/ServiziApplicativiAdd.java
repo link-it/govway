@@ -570,7 +570,7 @@ public final class ServiziApplicativiAdd extends Action {
 						connis = new Connettore();
 					}
 					String oldConnT = connis.getTipo();
-					if (connis.isCustom() && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
+					if ( (connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					connettoriHelper.fillConnettore(connis, endpointtype, oldConnT, tipoconn, url,
 							nomeCodaJMS, tipo, user, password,

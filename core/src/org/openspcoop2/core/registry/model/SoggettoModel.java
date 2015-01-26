@@ -44,7 +44,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"soggetto",Soggetto.class));
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel(new Field("accordo-servizio-parte-specifica",org.openspcoop2.core.registry.AccordoServizioParteSpecifica.class,"soggetto",Soggetto.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"soggetto",Soggetto.class);
-		this.PRIVATO = new Field("privato",boolean.class,"soggetto",Soggetto.class);
+		this.PRIVATO = new Field("privato",Boolean.class,"soggetto",Soggetto.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"soggetto",Soggetto.class);
 		this.NOME = new Field("nome",java.lang.String.class,"soggetto",Soggetto.class);
 		this.IDENTIFICATIVO_PORTA = new Field("identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);
@@ -63,7 +63,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"soggetto",Soggetto.class));
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel(new ComplexField(father,"accordo-servizio-parte-specifica",org.openspcoop2.core.registry.AccordoServizioParteSpecifica.class,"soggetto",Soggetto.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"soggetto",Soggetto.class);
-		this.PRIVATO = new ComplexField(father,"privato",boolean.class,"soggetto",Soggetto.class);
+		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"soggetto",Soggetto.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"soggetto",Soggetto.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"soggetto",Soggetto.class);
 		this.IDENTIFICATIVO_PORTA = new ComplexField(father,"identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);

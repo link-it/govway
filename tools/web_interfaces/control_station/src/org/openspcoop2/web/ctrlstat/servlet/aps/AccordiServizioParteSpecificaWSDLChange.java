@@ -379,7 +379,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				Map<String, String> props = connettore.getProperties();
 
 				if (endpointtype == null) {
-					if (connettore.isCustom() && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
+					if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
 						endpointtype = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 						tipoconn = connettore.getTipo();
 					} else
@@ -466,7 +466,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString, soggettiList,
 					soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "",
 					TipoOperazione.CHANGE, this.id, tipiServizi, profilo, portType, ptList,
-					aspsT.isPrivato(),idAccordoFactory.getUriFromAccordo(as),
+					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,
 					nome_aps, versione, versioniProtocollo,this.validazioneDocumenti,
 					null,null,null,protocollo,true);

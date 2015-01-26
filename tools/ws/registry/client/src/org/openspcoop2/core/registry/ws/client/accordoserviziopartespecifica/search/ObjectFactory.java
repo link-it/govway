@@ -59,8 +59,8 @@ public class ObjectFactory {
     private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findAllIds");
     private final static QName _InUseResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUseResponse");
     private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "findResponse");
-    private final static QName _Connettore_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "connettore");
     private final static QName _InUse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "inUse");
+    private final static QName _Connettore_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "connettore");
     private final static QName _RegistryNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-found-exception");
     private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "existsResponse");
     private final static QName _Servizio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "servizio");
@@ -455,21 +455,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Connettore }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "connettore")
-    public JAXBElement<Connettore> createConnettore(Connettore value) {
-        return new JAXBElement<Connettore>(ObjectFactory._Connettore_QNAME, Connettore.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InUse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "inUse")
     public JAXBElement<InUse> createInUse(InUse value) {
         return new JAXBElement<InUse>(ObjectFactory._InUse_QNAME, InUse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Connettore }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "connettore")
+    public JAXBElement<Connettore> createConnettore(Connettore value) {
+        return new JAXBElement<Connettore>(ObjectFactory._Connettore_QNAME, Connettore.class, null, value);
     }
 
     /**

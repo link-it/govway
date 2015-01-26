@@ -48,7 +48,7 @@ import java.util.Set;
  * 		&lt;attribute name="nome-registro" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="tipo-destinatario-trasmissione-busta" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="nome-destinatario-trasmissione-busta" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="custom" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
+ * 		&lt;attribute name="custom" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
  * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
@@ -135,15 +135,11 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBean implements 
     this.nomeDestinatarioTrasmissioneBusta = nomeDestinatarioTrasmissioneBusta;
   }
 
-  public boolean isCustom() {
+  public Boolean getCustom() {
     return this.custom;
   }
 
-  public boolean getCustom() {
-    return this.custom;
-  }
-
-  public void setCustom(boolean custom) {
+  public void setCustom(Boolean custom) {
     this.custom = custom;
   }
 
@@ -235,9 +231,9 @@ public void setProperties(Map<String,String> newmap){
   @XmlAttribute(name="nome-destinatario-trasmissione-busta",required=false)
   protected java.lang.String nomeDestinatarioTrasmissioneBusta;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="custom",required=false)
-  protected boolean custom;
+  protected Boolean custom = new Boolean("false");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo",required=false)

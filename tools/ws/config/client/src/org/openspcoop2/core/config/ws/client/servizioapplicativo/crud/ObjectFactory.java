@@ -50,18 +50,18 @@ public class ObjectFactory {
     private final static QName _Credenziali_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "credenziali");
     private final static QName _DeleteAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "deleteAllResponse");
     private final static QName _WrapperIdPortaApplicativa_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "wrapperIdPortaApplicativa");
-    private final static QName _ConfigNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-authorized-exception");
     private final static QName _DeleteById_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "deleteById");
+    private final static QName _ConfigNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-authorized-exception");
     private final static QName _DeleteAllByFilter_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "deleteAllByFilter");
     private final static QName _SearchFilterServizioApplicativo_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "search-filter-servizio-applicativo");
     private final static QName _ConfigMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-multiple-result-exception");
     private final static QName _ConfigNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "config-not-implemented-exception");
     private final static QName _Create_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "create");
     private final static QName _InvocazioneServizio_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-servizio");
-    private final static QName _UpdateResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "updateResponse");
     private final static QName _InvocazionePortaGestioneErrore_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "invocazione-porta-gestione-errore");
-    private final static QName _DeleteAll_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "deleteAll");
+    private final static QName _UpdateResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "updateResponse");
     private final static QName _Connettore_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "connettore");
+    private final static QName _DeleteAll_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "deleteAll");
     private final static QName _UpdateOrCreate_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "updateOrCreate");
     private final static QName _DeleteAllByFilterResponse_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "deleteAllByFilterResponse");
     private final static QName _Delete_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "delete");
@@ -401,21 +401,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ConfigNotAuthorizedException }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "config-not-authorized-exception")
-    public JAXBElement<ConfigNotAuthorizedException> createConfigNotAuthorizedException(ConfigNotAuthorizedException value) {
-        return new JAXBElement<ConfigNotAuthorizedException>(ObjectFactory._ConfigNotAuthorizedException_QNAME, ConfigNotAuthorizedException.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteById }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteById")
     public JAXBElement<DeleteById> createDeleteById(DeleteById value) {
         return new JAXBElement<DeleteById>(ObjectFactory._DeleteById_QNAME, DeleteById.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ConfigNotAuthorizedException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "config-not-authorized-exception")
+    public JAXBElement<ConfigNotAuthorizedException> createConfigNotAuthorizedException(ConfigNotAuthorizedException value) {
+        return new JAXBElement<ConfigNotAuthorizedException>(ObjectFactory._ConfigNotAuthorizedException_QNAME, ConfigNotAuthorizedException.class, null, value);
     }
 
     /**
@@ -473,15 +473,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "updateResponse")
-    public JAXBElement<UpdateResponse> createUpdateResponse(UpdateResponse value) {
-        return new JAXBElement<UpdateResponse>(ObjectFactory._UpdateResponse_QNAME, UpdateResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link InvocazionePortaGestioneErrore }{@code >}}
      * 
      */
@@ -491,12 +482,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAll }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteAll")
-    public JAXBElement<DeleteAll> createDeleteAll(DeleteAll value) {
-        return new JAXBElement<DeleteAll>(ObjectFactory._DeleteAll_QNAME, DeleteAll.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "updateResponse")
+    public JAXBElement<UpdateResponse> createUpdateResponse(UpdateResponse value) {
+        return new JAXBElement<UpdateResponse>(ObjectFactory._UpdateResponse_QNAME, UpdateResponse.class, null, value);
     }
 
     /**
@@ -506,6 +497,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "connettore")
     public JAXBElement<Connettore> createConnettore(Connettore value) {
         return new JAXBElement<Connettore>(ObjectFactory._Connettore_QNAME, Connettore.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAll }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteAll")
+    public JAXBElement<DeleteAll> createDeleteAll(DeleteAll value) {
+        return new JAXBElement<DeleteAll>(ObjectFactory._DeleteAll_QNAME, DeleteAll.class, null, value);
     }
 
     /**

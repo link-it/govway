@@ -49,7 +49,7 @@ import java.util.List;
  * 		&lt;/sequence>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
+ * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="byte-wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
@@ -281,15 +281,11 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     this.statoPackage = statoPackage;
   }
 
-  public boolean isPrivato() {
+  public Boolean getPrivato() {
     return this.privato;
   }
 
-  public boolean getPrivato() {
-    return this.privato;
-  }
-
-  public void setPrivato(boolean privato) {
+  public void setPrivato(Boolean privato) {
     this.privato = privato;
   }
 
@@ -670,9 +666,9 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   @XmlAttribute(name="stato-package",required=false)
   protected java.lang.String statoPackage;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="privato",required=false)
-  protected boolean privato;
+  protected Boolean privato = new Boolean("false");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idAccordo;

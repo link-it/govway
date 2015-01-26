@@ -129,15 +129,17 @@ public class ArchiviHelper extends ConsoleHelper {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO);
-		if(protocolliSelectList.size()>2){
-			de.setType(DataElementType.SELECT);
-			de.setValues(protocolliSelectList.toArray(new String[1]));
-			de.setLabels(protocolliSelectList.toArray(new String[1]));
-			de.setSelected(protocollo);
-		}else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(protocollo);
-		}
+		// Non sembra necessario far vedere la lista dei protocolli anche se sono maggiore di uno.
+		// Tanto poi gli export modes sono sempre tutti quelli SOLO compatibilit con TUTTI i protocolli degli oggetti selezionati.
+//		if(protocolliSelectList.size()>=2){
+//			de.setType(DataElementType.SELECT);
+//			de.setValues(protocolliSelectList.toArray(new String[1]));
+//			de.setLabels(protocolliSelectList.toArray(new String[1]));
+//			de.setSelected(protocollo);
+//		}else{
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(protocollo);
+//		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		de.setSize(this.getSize());
 		de.setPostBack(true);

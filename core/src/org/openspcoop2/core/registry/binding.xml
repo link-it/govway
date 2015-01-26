@@ -33,7 +33,7 @@
     </collection>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>
     <value name="stato-package" field="statoPackage" usage="optional" style="attribute"/>
-    <value name="privato" field="privato" usage="optional" style="attribute"/>
+    <value name="privato" field="privato" default="false" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="versione" field="versione" usage="optional" style="attribute"/>
@@ -63,7 +63,7 @@
     </collection>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>
     <value name="stato-package" field="statoPackage" usage="optional" style="attribute"/>
-    <value name="privato" field="privato" usage="optional" style="attribute"/>
+    <value name="privato" field="privato" default="false" usage="optional" style="attribute"/>
     <value name="byte-wsdl-definitorio" field="byteWsdlDefinitorio" usage="optional" style="attribute"/>
     <value name="byte-wsdl-concettuale" field="byteWsdlConcettuale" usage="optional" style="attribute"/>
     <value name="byte-wsdl-logico-erogatore" field="byteWsdlLogicoErogatore" usage="optional" style="attribute"/>
@@ -200,7 +200,7 @@
       <structure map-as="org.openspcoop2.core.registry.AccordoServizioParteSpecifica"/>
     </collection>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>
-    <value name="privato" field="privato" usage="optional" style="attribute"/>
+    <value name="privato" field="privato" default="false" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="identificativo-porta" field="identificativoPorta" usage="optional" style="attribute"/>
@@ -215,7 +215,7 @@
     <collection field="property" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.Property"/>
     </collection>
-    <value name="custom" field="custom" usage="optional" style="attribute"/>
+    <value name="custom" field="custom" default="false" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
@@ -225,7 +225,7 @@
     <collection field="property" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.Property"/>
     </collection>
-    <value name="custom" field="custom" usage="optional" style="attribute"/>
+    <value name="custom" field="custom" default="false" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
@@ -249,7 +249,7 @@
     </collection>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>
     <value name="stato-package" field="statoPackage" usage="optional" style="attribute"/>
-    <value name="privato" field="privato" usage="optional" style="attribute"/>
+    <value name="privato" field="privato" default="false" usage="optional" style="attribute"/>
     <value name="id-accordo" field="idAccordo" usage="optional" style="attribute"/>
     <value name="id-soggetto" field="idSoggetto" usage="optional" style="attribute"/>
     <value name="byte-wsdl-implementativo-erogatore" field="byteWsdlImplementativoErogatore" usage="optional" style="attribute"/>

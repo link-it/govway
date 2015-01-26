@@ -282,7 +282,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					subjectRichiesta = cis.getSubject();
 				}
 				if (endpointtype == null) {
-					if (connis.isCustom() && !connis.getTipo().equals(TipiConnettore.HTTPS.toString())) {
+					if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = connis.getTipo();
 					} else
@@ -526,7 +526,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				is.setCredenziali(null);
 			}
 			String oldConnT = connis.getTipo();
-			if (connis.isCustom() && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
+			if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			connettoriHelper.fillConnettore(connis, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,

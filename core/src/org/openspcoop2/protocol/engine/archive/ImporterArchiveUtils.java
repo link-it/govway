@@ -1812,21 +1812,25 @@ public class ImporterArchiveUtils {
 			// --- compatibilita' elementi riferiti ---
 			String protocolloAssociatoSoggettoProprietario = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoProprietario.getTipo());
 			// erogatore
-			String protocolloAssociatoSoggettoErogatore = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoErogatore.getTipo());
-			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoErogatore)==false){
-				throw new Exception("SoggettoErogatore ["+idSoggettoErogatore+"] (protocollo:"+protocolloAssociatoSoggettoErogatore+
-						") non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+			if(idSoggettoErogatore!=null){
+				String protocolloAssociatoSoggettoErogatore = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoErogatore.getTipo());
+				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoErogatore)==false){
+					throw new Exception("SoggettoErogatore ["+idSoggettoErogatore+"] (protocollo:"+protocolloAssociatoSoggettoErogatore+
+							") non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+				}
 			}
 			// accordo di servizio parte specifica
-			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipoServizio());
-			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoAccordoParteSpecifica)==false){
-				throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
-						") con servizio non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
-			}
-			String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolBySubjectType(idServizio.getSoggettoErogatore().getTipo());
-			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoAccordoParteSpecifica)==false){
-				throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoSoggettoAccordoParteSpecifica+
-						") con soggetto non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+			if(idServizio!=null){
+				String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipoServizio());
+				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoAccordoParteSpecifica)==false){
+					throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
+							") con servizio non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+				}
+				String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolBySubjectType(idServizio.getSoggettoErogatore().getTipo());
+				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoAccordoParteSpecifica)==false){
+					throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoSoggettoAccordoParteSpecifica+
+							") con soggetto non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+				}
 			}
 			
 			

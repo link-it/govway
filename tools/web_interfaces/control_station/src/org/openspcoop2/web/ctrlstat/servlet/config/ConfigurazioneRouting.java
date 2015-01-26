@@ -211,7 +211,7 @@ public final class ConfigurazioneRouting extends Action {
 			if (rottaenabled == null) {
 				RoutingTable rt = confCore.getRoutingTable();
 
-				if ((rt == null) || !rt.isAbilitata()) {
+				if ((rt == null) || (rt.getAbilitata()==null || rt.getAbilitata()==false)) {
 					rottaenabled = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 					tiporotta = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY;
 					tiposoggrotta = "";

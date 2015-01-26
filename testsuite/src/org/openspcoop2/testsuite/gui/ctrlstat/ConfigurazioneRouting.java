@@ -67,7 +67,7 @@ public class ConfigurazioneRouting {
 		
 		if(routingTable!=null){
 			
-			selenium.select("rottaenabled","label="+(routingTable.isAbilitata()?CostantiConfigurazione.ABILITATO.toString():CostantiConfigurazione.DISABILITATO.toString()));
+			selenium.select("rottaenabled","label="+((routingTable.getAbilitata()!=null && routingTable.getAbilitata())?CostantiConfigurazione.ABILITATO.toString():CostantiConfigurazione.DISABILITATO.toString()));
 			try{
 				selenium.waitForPageToLoad(TestUtil.getWaitPageToLoadTime());
 			}catch (SeleniumException e) {

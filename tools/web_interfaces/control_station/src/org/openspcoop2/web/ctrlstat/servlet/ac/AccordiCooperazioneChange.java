@@ -257,7 +257,7 @@ public final class AccordiCooperazioneChange extends Action {
 					referente = "-";
 				}
 				versione = ac.getVersione();
-				privato = ac.isPrivato();
+				privato = ac.getPrivato()!=null && ac.getPrivato();
 				if(statoPackage==null)
 					statoPackage = ac.getStatoPackage();
 

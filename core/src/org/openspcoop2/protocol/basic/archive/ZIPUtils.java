@@ -159,7 +159,7 @@ public class ZIPUtils  {
 	 * @return Archive
 	 * @throws ProtocolException
 	 */
-	public Archive getArchive(byte[] zip,MapPlaceholder placeholder) throws ProtocolException{
+	public Archive getArchive(byte[] zip,MapPlaceholder placeholder,boolean validationDocuments) throws ProtocolException{
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
@@ -170,7 +170,7 @@ public class ZIPUtils  {
 			fout.flush();
 			fout.close();
 			
-			return getArchive(tmp,placeholder);
+			return getArchive(tmp,placeholder,validationDocuments);
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
@@ -192,8 +192,8 @@ public class ZIPUtils  {
 	 * @return Archive
 	 * @throws ProtocolException
 	 */
-	public Archive getArchive(String fileName,MapPlaceholder placeholder) throws ProtocolException{
-		return getArchive(new File(fileName),placeholder);
+	public Archive getArchive(String fileName,MapPlaceholder placeholder,boolean validationDocuments) throws ProtocolException{
+		return getArchive(new File(fileName),placeholder,validationDocuments);
 	}
 	
 	/**
@@ -203,11 +203,11 @@ public class ZIPUtils  {
 	 * @return Archive
 	 * @throws ProtocolException
 	 */
-	public Archive getArchive(File zip,MapPlaceholder placeholder) throws ProtocolException{
+	public Archive getArchive(File zip,MapPlaceholder placeholder,boolean validationDocuments) throws ProtocolException{
 		ZipFile zipFile = null;
 		try{
 			zipFile = new ZipFile(zip);
-			return getArchive(zipFile,placeholder);
+			return getArchive(zipFile,placeholder,validationDocuments);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}finally{
@@ -225,7 +225,7 @@ public class ZIPUtils  {
 	 * @return Archive
 	 * @throws ProtocolException
 	 */
-	public Archive getArchive(InputStream m,MapPlaceholder placeholder) throws ProtocolException{
+	public Archive getArchive(InputStream m,MapPlaceholder placeholder,boolean validationDocuments) throws ProtocolException{
 		ByteArrayOutputStream bout = null;
 		try{
 			bout = new ByteArrayOutputStream();
@@ -238,7 +238,7 @@ public class ZIPUtils  {
 			bout.close();
 			m.close();
 			
-			return getArchive(bout.toByteArray(),placeholder);
+			return getArchive(bout.toByteArray(),placeholder,validationDocuments);
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
@@ -258,7 +258,7 @@ public class ZIPUtils  {
 	 * @return Archive
 	 * @throws ProtocolException
 	 */
-	public Archive getArchive(ZipFile zip,MapPlaceholder placeholder) throws ProtocolException{
+	public Archive getArchive(ZipFile zip,MapPlaceholder placeholder,boolean validationDocuments) throws ProtocolException{
 		try{
 			Archive archivio = new Archive();
 			
@@ -301,17 +301,17 @@ public class ZIPUtils  {
 						
 						// ********** configurazione ****************
 						if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR+File.separatorChar)) ){
-							this.readConfigurazione(archivio, bin, xml, entryName);
+							this.readConfigurazione(archivio, bin, xml, entryName, validationDocuments);
 						}
 						
 						// ********** pdd ****************
 						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_PORTE_DOMINIO_DIR+File.separatorChar)) ){
-							this.readPortaDominio(archivio, bin, xml, entryName);
+							this.readPortaDominio(archivio, bin, xml, entryName, validationDocuments);
 						}
 						
 						// ********** informationMissing ********************
 						else if(entryName.equals((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_INFORMATION_MISSING)) ){
-							this.readInformationMissing(archivio, bin, xml, entryName);
+							this.readInformationMissing(archivio, bin, xml, entryName, validationDocuments);
 						}
 						
 						// ********** soggetti/* ********************
@@ -371,24 +371,24 @@ public class ZIPUtils  {
 								if(nomeFile.contains((File.separatorChar+""))==false){
 									
 									// ------------ soggetto --------------------
-									this.readSoggetto(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto);
+									this.readSoggetto(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments);
 									
 								}
 								else{
 
 									// ------------ servizio applicativo --------------------
 									if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR+File.separatorChar)) ){
-										this.readServizioApplicativo(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto);
+										this.readServizioApplicativo(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments);
 									}
 									
 									// ------------ porta delegata --------------------
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_PORTE_DELEGATE_DIR+File.separatorChar)) ){
-										this.readPortaDelegata(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto);
+										this.readPortaDelegata(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments);
 									}
 									
 									// ------------ porta applicativa --------------------
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_PORTE_APPLICATIVE_DIR+File.separatorChar)) ){
-										this.readPortaApplicativa(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto);
+										this.readPortaApplicativa(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments);
 									}
 									
 									// ------------ accordi -------------------
@@ -459,19 +459,23 @@ public class ZIPUtils  {
 											
 											// ------------ accordo servizio parte comune -------------------
 											if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR+File.separatorChar)) ){
-												this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,false);
+												this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+														nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,false, validationDocuments);
 											}
 											// ------------ accordo servizio composto -------------------
 											else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR+File.separatorChar)) ){
-												this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,true);
+												this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+														nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,true, validationDocuments);
 											}
 											// ------------ accordo servizio parte specifica -------------------
 											else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR+File.separatorChar)) ){
-												this.readAccordoServizioParteSpecifica(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, nomeFileSenzaAccordo,nomeAccordo,versioneAccordo);
+												this.readAccordoServizioParteSpecifica(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+														nomeFileSenzaAccordo,nomeAccordo,versioneAccordo, validationDocuments);
 											}
 											// ------------ accordo cooperazione -------------------
 											else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR+File.separatorChar)) ){
-												this.readAccordoCooperazione(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, nomeFileSenzaAccordo,nomeAccordo,versioneAccordo);
+												this.readAccordoCooperazione(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+														nomeFileSenzaAccordo,nomeAccordo,versioneAccordo, validationDocuments);
 											}
 										}
 										
@@ -513,9 +517,11 @@ public class ZIPUtils  {
 		}
 	}
 	
-	private void readConfigurazione(Archive archivio,InputStream bin,byte[]xml,String entryName) throws ProtocolException{
+	private void readConfigurazione(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments) throws ProtocolException{
 		try{
-			org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
 			Configurazione configurazione = this.jibxConfigDeserializer.readConfigurazione(xml);
 			if(archivio.getConfigurazionePdD()!=null){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione della pdd");
@@ -527,9 +533,11 @@ public class ZIPUtils  {
 		}
 	}
 	
-	private void readPortaDominio(Archive archivio,InputStream bin,byte[]xml,String entryName) throws ProtocolException{
+	private void readPortaDominio(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments) throws ProtocolException{
 		try{
-			org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			if(validationDocuments){
+				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
 			PortaDominio pdd = this.jibxRegistryDeserializer.readPortaDominio(xml);
 			String key = ArchivePdd.buildKey(pdd.getNome());
 			if(archivio.getPdd().containsKey(key)){
@@ -542,7 +550,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	private void readInformationMissing(Archive archivio,InputStream bin,byte[]xml,String entryName) throws ProtocolException{
+	private void readInformationMissing(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments) throws ProtocolException{
 		try{
 			
 			// verifica
@@ -555,7 +563,9 @@ public class ZIPUtils  {
 			if(informationMissingOp2!=null){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Una definizione xml di informationMissing e' presente piu' di una volta");
 			}
-			org.openspcoop2.protocol.information_missing.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			if(validationDocuments){
+				org.openspcoop2.protocol.information_missing.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
 			informationMissingOp2 = this.jibxInformationMissingDeserializer.readOpenspcoop2(xml);
 
 			// add
@@ -567,7 +577,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	private void readSoggetto(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto) throws ProtocolException{
+	private void readSoggetto(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments) throws ProtocolException{
 		boolean registro = false;
 		String schema = null;
 		if(RegistroServiziUtils.isRegistroServizi(xml, CostantiRegistroServizi.LOCAL_NAME_SOGGETTO)){
@@ -604,7 +614,9 @@ public class ZIPUtils  {
 				if(soggettoRegistroServizi!=null){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. Una definizione xml del soggetto con tipologia ("+schema+") e' presente piu' di una volta");
 				}
-				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				if(validationDocuments){
+					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				}
 				soggettoRegistroServizi = this.jibxRegistryDeserializer.readSoggetto(xml);
 				if(tipoSoggetto.equals(soggettoRegistroServizi.getTipo())==false){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
@@ -619,7 +631,9 @@ public class ZIPUtils  {
 				if(soggettoConfigurazione!=null){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. Una definizione xml del soggetto con tipologia ("+schema+") e' presente piu' di una volta");
 				}
-				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				if(validationDocuments){
+					org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				}
 				soggettoConfigurazione = this.jibxConfigDeserializer.readSoggetto(xml);
 				if(tipoSoggetto.equals(soggettoConfigurazione.getTipo())==false){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
@@ -652,9 +666,11 @@ public class ZIPUtils  {
 		
 	}
 	
-	private void readServizioApplicativo(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto) throws ProtocolException{
+	private void readServizioApplicativo(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments) throws ProtocolException{
 		try{
-			org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
 			ServizioApplicativo sa = this.jibxConfigDeserializer.readServizioApplicativo(xml);
 			sa.setTipoSoggettoProprietario(tipoSoggetto);
 			sa.setNomeSoggettoProprietario(nomeSoggetto);
@@ -671,9 +687,11 @@ public class ZIPUtils  {
 		}
 	}
 	
-	private void readPortaDelegata(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto) throws ProtocolException{
+	private void readPortaDelegata(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments) throws ProtocolException{
 		try{
-			org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
 			PortaDelegata pd = this.jibxConfigDeserializer.readPortaDelegata(xml);
 			pd.setTipoSoggettoProprietario(tipoSoggetto);
 			pd.setNomeSoggettoProprietario(nomeSoggetto);
@@ -693,9 +711,11 @@ public class ZIPUtils  {
 		}
 	}
 	
-	private void readPortaApplicativa(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto) throws ProtocolException{
+	private void readPortaApplicativa(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments) throws ProtocolException{
 		try{
-			org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
 			PortaApplicativa pa = this.jibxConfigDeserializer.readPortaApplicativa(xml);
 			pa.setTipoSoggettoProprietario(tipoSoggetto);
 			pa.setNomeSoggettoProprietario(nomeSoggetto);
@@ -713,7 +733,7 @@ public class ZIPUtils  {
 	}
 	
 	private void readAccordoServizioParteComune(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments) throws ProtocolException{
 		
 		String key = null;
 		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
@@ -729,7 +749,9 @@ public class ZIPUtils  {
 			
 			// definizione dell'accordo
 			try{
-				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				if(validationDocuments){
+					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				}
 				AccordoServizioParteComune aspc = this.jibxRegistryDeserializer.readAccordoServizioParteComune(xml);
 				
 				// soggetto referente
@@ -871,7 +893,7 @@ public class ZIPUtils  {
 	}
 	
 	private void readAccordoServizioParteSpecifica(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments) throws ProtocolException{
 		
 		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
@@ -882,7 +904,9 @@ public class ZIPUtils  {
 			
 			// definizione dell'accordo
 			try{
-				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				if(validationDocuments){
+					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				}
 				AccordoServizioParteSpecifica asps = this.jibxRegistryDeserializer.readAccordoServizioParteSpecifica(xml);
 				
 				// soggetto erogatore
@@ -975,7 +999,9 @@ public class ZIPUtils  {
 			// fruitori
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)){
 				try{
-					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+					if(validationDocuments){
+						org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+					}
 					Fruitore fruitore = this.jibxRegistryDeserializer.readFruitore(xml);
 					String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
 					if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
@@ -996,7 +1022,7 @@ public class ZIPUtils  {
 	
 	
 	private void readAccordoCooperazione(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments) throws ProtocolException{
 		
 		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
@@ -1007,7 +1033,9 @@ public class ZIPUtils  {
 			
 			// definizione dell'accordo
 			try{
-				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				if(validationDocuments){
+					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				}
 				AccordoCooperazione ac = this.jibxRegistryDeserializer.readAccordoCooperazione(xml);
 				
 				// soggetto referente

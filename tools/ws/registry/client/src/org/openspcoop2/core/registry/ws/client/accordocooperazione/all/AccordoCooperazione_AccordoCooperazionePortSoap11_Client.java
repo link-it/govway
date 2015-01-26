@@ -103,6 +103,7 @@ public final class AccordoCooperazione_AccordoCooperazionePortSoap11_Client {
 				_create_accordoCooperazione.setNome("AC");
 				_create_accordoCooperazione.setDescrizione("AccordoCooperazione di test");
 				_create_accordoCooperazione.setVersione("1");
+				_create_accordoCooperazione.setPrivato(true);
 
 				port.create(_create_accordoCooperazione);
 				System.out.println("CREATO");
@@ -135,7 +136,7 @@ public final class AccordoCooperazione_AccordoCooperazionePortSoap11_Client {
 				_count__return = port.count(_count_filter);
 				System.out.println("count.result (filtro ok) =" + _count__return);
 				if(_count__return!=1){
-					throw new Exception("Risultato count con filtro ok errato");
+					throw new Exception("Risultato count con filtro ok");
 				}
 
 				_count_filter.setVersione("2");
@@ -143,6 +144,21 @@ public final class AccordoCooperazione_AccordoCooperazionePortSoap11_Client {
 				System.out.println("count.result (filtro ko) =" + _count__return);
 				if(_count__return!=0){
 					throw new Exception("Risultato count con filtro ko errato");
+				}
+				
+				_count_filter.setVersione(null);
+				_count_filter.setPrivato(true);
+				_count__return = port.count(_count_filter);
+				System.out.println("count.result (filtro privato ok) =" + _count__return);
+				if(_count__return!=1){
+					throw new Exception("Risultato count con filtro ok privato");
+				}
+				
+				_count_filter.setPrivato(false);
+				_count__return = port.count(_count_filter);
+				System.out.println("count.result (filtro privato ko) =" + _count__return);
+				if(_count__return!=0){
+					throw new Exception("Risultato count con filtro ko privato");
 				}
 
 			} catch (RegistryNotAuthorizedException_Exception e) { 

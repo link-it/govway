@@ -152,7 +152,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					// Visibilita rispetto all'accordo
 					boolean visibile = false;
 					if(visibilitaAccordoCooperazione==visibile){
-						if(sRef.isPrivato()==true){
+						if(sRef.getPrivato()!=null && sRef.getPrivato()==true){
 							this.pd.setMessage("Non e' possibile utilizzare un soggetto referente con visibilita' privata, in un accordo di cooperazione con visibilita' pubblica.");
 							return false;
 						}
@@ -185,12 +185,12 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 				ac = this.acCore.getAccordoCooperazione(idAccordoOLD);
 
-				if(ac.isPrivato()==false){
+				if(ac.getPrivato()==null || ac.getPrivato()==false){
 					if(ac.getElencoPartecipanti()!=null){
 						AccordoCooperazionePartecipanti partecipanti = ac.getElencoPartecipanti();
 						for(int i=0;i<partecipanti.sizeSoggettoPartecipanteList(); i++){
 							Soggetto sPartecipante = this.soggettiCore.getSoggettoRegistro(partecipanti.getSoggettoPartecipante(i).getIdSoggetto().intValue());
-							if(sPartecipante.isPrivato()){
+							if(sPartecipante.getPrivato()!=null && sPartecipante.getPrivato()){
 								this.pd.setMessage("Non e' possibile impostare una visibilita' pubblica all'accordo di cooperazione, poiche' possiede un soggetto parcepante ["+sPartecipante.getTipo()+"/"+sPartecipante.getNome()
 										+"] con visibilita' privata.");
 								return false;

@@ -335,7 +335,7 @@ public class SPCoopArchiveExport {
 				}
 				else{
 					Connettore cSoggettoErogatore = soggettoErogatore.getConnettore();
-					accordo.getServizio().getConnettore().setCustom(cSoggettoErogatore.isCustom());
+					accordo.getServizio().getConnettore().setCustom(cSoggettoErogatore.getCustom()!=null && cSoggettoErogatore.getCustom());
 					accordo.getServizio().getConnettore().setTipo(cSoggettoErogatore.getTipo());
 					while(accordo.getServizio().getConnettore().sizePropertyList()>0){
 						accordo.getServizio().getConnettore().removeProperty(0);

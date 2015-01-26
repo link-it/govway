@@ -42,7 +42,7 @@ import java.util.List;
  * 			&lt;element name="destinazione" type="{http://www.openspcoop2.org/core/config}routing-table-destinazione" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="default" type="{http://www.openspcoop2.org/core/config}routing-table-default" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="abilitata" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
+ * 		&lt;attribute name="abilitata" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -112,15 +112,11 @@ public class RoutingTable extends org.openspcoop2.utils.beans.BaseBean implement
     this._default = _default;
   }
 
-  public boolean isAbilitata() {
+  public Boolean getAbilitata() {
     return this.abilitata;
   }
 
-  public boolean getAbilitata() {
-    return this.abilitata;
-  }
-
-  public void setAbilitata(boolean abilitata) {
+  public void setAbilitata(Boolean abilitata) {
     this.abilitata = abilitata;
   }
 
@@ -164,8 +160,8 @@ public class RoutingTable extends org.openspcoop2.utils.beans.BaseBean implement
   @XmlElement(name="default",required=true,nillable=false)
   protected RoutingTableDefault _default;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="abilitata",required=false)
-  protected boolean abilitata;
+  protected Boolean abilitata = new Boolean("false");
 
 }

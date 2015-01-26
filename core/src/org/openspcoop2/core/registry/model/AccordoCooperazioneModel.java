@@ -48,7 +48,7 @@ public class AccordoCooperazioneModel extends AbstractModel<AccordoCooperazione>
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-cooperazione",AccordoCooperazione.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.STATO_PACKAGE = new Field("stato-package",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
-		this.PRIVATO = new Field("privato",boolean.class,"accordo-cooperazione",AccordoCooperazione.class);
+		this.PRIVATO = new Field("privato",Boolean.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.VERSIONE = new Field("versione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
@@ -67,7 +67,7 @@ public class AccordoCooperazioneModel extends AbstractModel<AccordoCooperazione>
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-cooperazione",AccordoCooperazione.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.STATO_PACKAGE = new ComplexField(father,"stato-package",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
-		this.PRIVATO = new ComplexField(father,"privato",boolean.class,"accordo-cooperazione",AccordoCooperazione.class);
+		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);

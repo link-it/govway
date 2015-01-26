@@ -755,13 +755,13 @@ public class DriverConfigurazioneDB_LIB {
 				}else{
 					stm.setInt(13, 0);
 				}
-				if(connettore.isCustom()){
+				if(connettore.getCustom()!=null && connettore.getCustom()){
 					stm.setInt(14, 1);
 				}else{
 					stm.setInt(14, 0);
 				}
 
-				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,connettore.isCustom()));
+				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,(connettore.getCustom()!=null && connettore.getCustom())));
 
 				n = stm.executeUpdate();
 				stm.close();
@@ -795,7 +795,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();				
 				
 				// Custom properties
-				if(connettore.isCustom()){					
+				if(connettore.getCustom()!=null && connettore.getCustom()){					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
@@ -864,7 +864,7 @@ public class DriverConfigurazioneDB_LIB {
 				}else{
 					stm.setInt(13, 0);
 				}
-				if(connettore.isCustom()){
+				if(connettore.getCustom()!=null && connettore.getCustom()){
 					stm.setInt(14, 1);
 				}else{
 					stm.setInt(14, 0);
@@ -873,7 +873,7 @@ public class DriverConfigurazioneDB_LIB {
 
 				stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,connettore.isCustom(),idConnettore));
+				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
 
 				// Custom properties
 				// Delete eventuali vecchie properties
@@ -886,7 +886,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.executeUpdate();
 				stm.close();
 				// Aggiungo attuali
-				if(connettore.isCustom()){					
+				if(connettore.getCustom()!=null && connettore.getCustom()){					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
 					sqlQueryObject.addInsertField("name", "?");
@@ -3892,11 +3892,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("routing_enabled", "?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
-				if(aRT.isAbilitata())
+				if(aRT.getAbilitata()!=null && aRT.getAbilitata())
 					updateStmt.setString(1, CostantiConfigurazione.ABILITATO.toString());
 				else
 					updateStmt.setString(1, CostantiConfigurazione.DISABILITATO.toString());
-				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, aRT.isAbilitata()));
+				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, (aRT.getAbilitata()!=null && aRT.getAbilitata())));
 				updateStmt.executeUpdate();
 				updateStmt.close();
 
@@ -4033,11 +4033,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("routing_enabled", "?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
-				if(aRT.isAbilitata())
+				if(aRT.getAbilitata()!=null && aRT.getAbilitata())
 					updateStmt.setString(1, CostantiConfigurazione.ABILITATO.toString());
 				else
 					updateStmt.setString(1, CostantiConfigurazione.DISABILITATO.toString());
-				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, aRT.isAbilitata()));
+				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, aRT.getAbilitata()!=null && aRT.getAbilitata()));
 				updateStmt.executeUpdate();
 				updateStmt.close();
 
@@ -4950,7 +4950,7 @@ public class DriverConfigurazioneDB_LIB {
 		}
 		String routingEnabled =  CostantiConfigurazione.DISABILITATO.toString();
 		if(config.getRoutingTable()!=null){
-			if(config.getRoutingTable().isAbilitata())
+			if(config.getRoutingTable().getAbilitata()!=null && config.getRoutingTable().getAbilitata())
 				routingEnabled =  CostantiConfigurazione.ABILITATO.toString();
 		}
 		

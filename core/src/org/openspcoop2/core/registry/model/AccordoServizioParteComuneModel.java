@@ -49,7 +49,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.STATO_PACKAGE = new Field("stato-package",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.PRIVATO = new Field("privato",boolean.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.PRIVATO = new Field("privato",Boolean.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_WSDL_DEFINITORIO = new Field("byte-wsdl-definitorio",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_WSDL_CONCETTUALE = new Field("byte-wsdl-concettuale",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_WSDL_LOGICO_EROGATORE = new Field("byte-wsdl-logico-erogatore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -90,7 +90,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.STATO_PACKAGE = new ComplexField(father,"stato-package",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.PRIVATO = new ComplexField(father,"privato",boolean.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_WSDL_DEFINITORIO = new ComplexField(father,"byte-wsdl-definitorio",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_WSDL_CONCETTUALE = new ComplexField(father,"byte-wsdl-concettuale",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_WSDL_LOGICO_EROGATORE = new ComplexField(father,"byte-wsdl-logico-erogatore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
