@@ -310,15 +310,17 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}
 		
 		// validazione XSD file
-		try{
-			AbstractValidatoreXSD validatore = 
-					it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			validatore.valida(new ByteArrayInputStream(esito));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
+		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+			try{
+				AbstractValidatoreXSD validatore = 
+						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				validatore.valida(new ByteArrayInputStream(esito));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
+			}
 		}
 		
 		// Lettura
@@ -634,15 +636,17 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}
 		
 		// validazione XSD file
-		try{
-			AbstractValidatoreXSD validatore = 
-					it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			validatore.valida(new ByteArrayInputStream(esito));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
+		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+			try{
+				AbstractValidatoreXSD validatore = 
+						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				validatore.valida(new ByteArrayInputStream(esito));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
+			}
 		}
 		
 		// Lettura

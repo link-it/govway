@@ -66,11 +66,13 @@ public class SDIImbustamento {
 	private AbstractXMLUtils xmlUtils = null;
 	private SDIValidazioneUtils sdiUtils = null;
 	private SDITraduttore sdiTraduttore = null;
+	private SDIProperties sdiProperties = null;
 	public SDIImbustamento(SDIBustaBuilder bustaBuilder) throws ProtocolException{
 		this.bustaBuilder = bustaBuilder;
 		this.xmlUtils = XMLUtils.getInstance();
 		this.sdiUtils = new SDIValidazioneUtils(bustaBuilder.getProtocolFactory());
 		this.sdiTraduttore = (SDITraduttore) bustaBuilder.getProtocolFactory().createTraduttore();
+		this.sdiProperties = SDIProperties.getInstance(bustaBuilder.getProtocolFactory().getLogger());
 	}
 	
 	public SOAPElement creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msg) throws ProtocolException{
@@ -220,39 +222,41 @@ public class SDIImbustamento {
 			
 			
 			// effettuo validazione del messaggio ricevuto
-			AbstractValidatoreXSD validatore = null;
-			try{			
-				if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
-					validatore = it.gov.fatturapa.sdi.fatturapa.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
-				}
-				else{
-					validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
-				}
-			}catch(Exception e){
-				throw new Exception("Inizializzazione schema per validazione fattura non riuscita: "+e.getMessage(),e);
-			}
-			if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
-				try{
-					// Fix Validazione versione
-					// axiom non funziona
-//					Attr attr = fatturaSOAPElement.getAttributeNode("versione");
-//					if(attr!=null){
-//						fatturaSOAPElement.removeAttributeNode(attr);
-//						Node nAttr = soapPart.createAttributeNS(null, "versione");
-//						nAttr.setNodeValue(attr.getNodeValue());
-//						if(fatturaSOAPElement.getAttributes()!=null){
-//							fatturaSOAPElement.getAttributes().setNamedItem(nAttr);
-//						}
-//					}
-//					validatore.valida(fatturaSOAPElement);
-					
-					validatore.valida(new ByteArrayInputStream(fatturaBytes));
-					
+			if(this.sdiProperties.isEnableValidazioneXsdFattura()){
+				AbstractValidatoreXSD validatore = null;
+				try{			
+					if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
+						validatore = it.gov.fatturapa.sdi.fatturapa.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
+					}
+					else{
+						validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
+					}
 				}catch(Exception e){
-					throw new Exception("Fattura non valida: "+e.getMessage(),e);
+					throw new Exception("Inizializzazione schema per validazione fattura non riuscita: "+e.getMessage(),e);
 				}
-			}else{
-				// TODO: capirlo aprendo lo zip o ignorarlo per p7m
+				if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
+					try{
+						// Fix Validazione versione
+						// axiom non funziona
+	//					Attr attr = fatturaSOAPElement.getAttributeNode("versione");
+	//					if(attr!=null){
+	//						fatturaSOAPElement.removeAttributeNode(attr);
+	//						Node nAttr = soapPart.createAttributeNS(null, "versione");
+	//						nAttr.setNodeValue(attr.getNodeValue());
+	//						if(fatturaSOAPElement.getAttributes()!=null){
+	//							fatturaSOAPElement.getAttributes().setNamedItem(nAttr);
+	//						}
+	//					}
+	//					validatore.valida(fatturaSOAPElement);
+						
+						validatore.valida(new ByteArrayInputStream(fatturaBytes));
+						
+					}catch(Exception e){
+						throw new Exception("Fattura non valida: "+e.getMessage(),e);
+					}
+				}else{
+					// TODO: capirlo aprendo lo zip o ignorarlo per p7m
+				}
 			}
 			
 			
@@ -260,10 +264,11 @@ public class SDIImbustamento {
 			if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
 				try{
 					Vector<Eccezione> erroriValidazione = new Vector<Eccezione>();
-					SDIFatturaUtils.validazioneFattura(fatturaBytes,SDIProperties.getInstance(protocolFactory.getLogger()),
+					boolean forceDisableValidazioneXsd = true; // la validazione se abilitata e' stata fatta prima
+					SDIFatturaUtils.validazioneFattura(fatturaBytes,this.sdiProperties,
 							erroriValidazione,
 							this.sdiUtils,protocolFactory,
-							busta,msg,false,false);
+							busta,msg,false,false,forceDisableValidazioneXsd);
 					if(erroriValidazione!=null && erroriValidazione.size()>0){
 						StringBuffer bf = new StringBuffer();
 						for(int k=0; k<erroriValidazione.size();k++){
@@ -443,8 +448,10 @@ public class SDIImbustamento {
 				}
 				
 				// validazione
-				AbstractValidatoreXSD validatore = it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
-				validatore.valida(new ByteArrayInputStream(notificaEsitoCommittenteBytes));
+				if(this.sdiProperties.isEnableValidazioneXsdMessaggi()){
+					AbstractValidatoreXSD validatore = it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
+					validatore.valida(new ByteArrayInputStream(notificaEsitoCommittenteBytes));
+				}
 				
 			}catch(Exception e){
 				throw new Exception("Notifica di Esito Committente non valida: "+e.getMessage(),e);

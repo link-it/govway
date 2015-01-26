@@ -46,7 +46,7 @@ public class SDIFatturaUtils {
 	public static void validazioneFattura(byte[] fattura, SDIProperties sdiProperties, Vector<Eccezione> eccezioniValidazione, 
 			SDIValidazioneUtils validazioneUtils, IProtocolFactory protocolFactory,
 			Busta busta,OpenSPCoop2Message msg,boolean addMsgInContextIfEnabled,
-			boolean validaDatiTrasmissione) throws Exception{
+			boolean validaDatiTrasmissione, boolean forceDisableValidazioneXSD) throws Exception{
 			
 		// Valori letti nel file Metadati
 		String formatoFattura = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA);
@@ -54,20 +54,22 @@ public class SDIFatturaUtils {
 		String codiceDestinatario = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_CODICE_DESTINATARIO);
 		
 		// validazione XSD file Fattura
-		try{
-			AbstractValidatoreXSD validatore = null;
-			if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
-				validatore = it.gov.fatturapa.sdi.fatturapa.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+		if(forceDisableValidazioneXSD==false && sdiProperties.isEnableValidazioneXsdFattura()){
+			try{
+				AbstractValidatoreXSD validatore = null;
+				if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
+					validatore = it.gov.fatturapa.sdi.fatturapa.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				}
+				else{
+					validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				}
+				validatore.valida(new ByteArrayInputStream(fattura));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
 			}
-			else{
-				validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			}
-			validatore.valida(new ByteArrayInputStream(fattura));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
 		}
 		
 		// Lettura fattura

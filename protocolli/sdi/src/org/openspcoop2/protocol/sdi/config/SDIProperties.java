@@ -133,6 +133,11 @@ public class SDIProperties {
 			this.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov();
 			
 			this.isEnableValidazioneNomeFile();
+			
+			this.isEnableValidazioneXsdMetadati();
+			this.isEnableValidazioneXsdFattura();
+			this.isEnableValidazioneXsdMessaggi();
+			
 			this.isEnableValidazioneCampiInterniMetadati();
 			this.isEnableValidazioneCampiInterniFattura();
 			this.isEnableValidazioneCampiInterniMessaggi();
@@ -405,6 +410,104 @@ public class SDIProperties {
 
 		return SDIProperties.isEnableValidazioneCampiInterniMessaggi;
 	}
+	
+	
+	/**
+	 * Indicazione se effettuare la validazione xsd dei metadati
+	 *   
+	 * @return Indicazione se effettuare la validazione xsd dei metadati
+	 * 
+	 */
+	private static Boolean isEnableValidazioneXsdMetadati = null;
+	public Boolean isEnableValidazioneXsdMetadati() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneXsdMetadati==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.metadati";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableValidazioneXsdMetadati = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableValidazioneXsdMetadati;
+	}
+	
+	/**
+	 * Indicazione se effettuare la validazione xsd della fattura
+	 *   
+	 * @return Indicazione se effettuare la validazione xsd della fattura
+	 * 
+	 */
+	private static Boolean isEnableValidazioneXsdFattura = null;
+	public Boolean isEnableValidazioneXsdFattura() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneXsdFattura==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.fattura";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableValidazioneXsdFattura = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableValidazioneXsdFattura;
+	}
+	
+	/**
+	 * Indicazione se effettuare la validazione xsd dei messaggi
+	 *   
+	 * @return Indicazione se effettuare la validazione xsd dei messaggi
+	 * 
+	 */
+	private static Boolean isEnableValidazioneXsdMessaggi = null;
+	public Boolean isEnableValidazioneXsdMessaggi() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneXsdMessaggi==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.messaggi";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableValidazioneXsdMessaggi = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableValidazioneXsdMessaggi;
+	}
+	
 	
 	
 	/**

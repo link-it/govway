@@ -1,3 +1,9 @@
+2015-01-22  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto Bug #277
+	Aggiunta la possibilita' di disabilitare la validazione XSD dei Messaggi e delle Fatture.
+
 2015-01-19  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]

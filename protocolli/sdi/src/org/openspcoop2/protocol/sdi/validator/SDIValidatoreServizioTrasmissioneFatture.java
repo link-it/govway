@@ -506,15 +506,17 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// validazione XSD file
-		try{
-			AbstractValidatoreXSD validatore = 
-					it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			validatore.valida(new ByteArrayInputStream(xml));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
+		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+			try{
+				AbstractValidatoreXSD validatore = 
+						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				validatore.valida(new ByteArrayInputStream(xml));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
+			}
 		}
 		
 		// Lettura metadati
@@ -595,15 +597,17 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		
 		
 		// validazione XSD file
-		try{
-			AbstractValidatoreXSD validatore = 
-					it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			validatore.valida(new ByteArrayInputStream(xml));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
+		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+			try{
+				AbstractValidatoreXSD validatore = 
+						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				validatore.valida(new ByteArrayInputStream(xml));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
+			}
 		}
 		
 		// Lettura metadati
@@ -675,15 +679,17 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		
 		
 		// validazione XSD file
-		try{
-			AbstractValidatoreXSD validatore = 
-					it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			validatore.valida(new ByteArrayInputStream(xml));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
+		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+			try{
+				AbstractValidatoreXSD validatore = 
+						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				validatore.valida(new ByteArrayInputStream(xml));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
+			}
 		}
 		
 		// Lettura metadati
@@ -760,15 +766,17 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		
 		
 		// validazione XSD file
-		try{
-			AbstractValidatoreXSD validatore = 
-					it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			validatore.valida(new ByteArrayInputStream(xml));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
+		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+			try{
+				AbstractValidatoreXSD validatore = 
+						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				validatore.valida(new ByteArrayInputStream(xml));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
+			}
 		}
 		
 		// Lettura metadati
@@ -826,15 +834,17 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		
 		
 		// validazione XSD file
-		try{
-			AbstractValidatoreXSD validatore = 
-					it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-			validatore.valida(new ByteArrayInputStream(xml));
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
-			return;	
+		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+			try{
+				AbstractValidatoreXSD validatore = 
+						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				validatore.valida(new ByteArrayInputStream(xml));
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+				return;	
+			}
 		}
 		
 		// Lettura metadati
@@ -982,18 +992,20 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
 				xmlAT = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), xmlAT);
 			}
-			try{
-				AbstractValidatoreXSD validatore = 
-						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-				validatore.valida(new ByteArrayInputStream(xmlAT));
-			}catch(Exception e){
-				eccezioniValidazione.add(
-						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+
-										tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),
-										!consegnaAttestato));
-				if(consegnaAttestato){
-					return;
+			if(sdiProperties.isEnableValidazioneXsdMessaggi()){
+				try{
+					AbstractValidatoreXSD validatore = 
+							it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(xmlAT));
+				}catch(Exception e){
+					eccezioniValidazione.add(
+							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+									"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+
+											tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),
+											!consegnaAttestato));
+					if(consegnaAttestato){
+						return;
+					}
 				}
 			}
 		}
