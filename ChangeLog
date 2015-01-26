@@ -1,6 +1,18 @@
 2015-01-22  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
+	Risolto Bug #278
+	Aggiornamento XSD Fattura 1.1
+	Nella pagina http://www.fatturapa.gov.it/export/fatturazione/it/normativa/f-2.htm
+	Si evince come l'xsd della fattura 1.1 e' stato aggiornato:
+	"La versione 1.1 del formato fattura, che sarà utilizzata dal prossimo 2
+	febbraio, è stata aggiornata in seguito alle nuove disposizioni contenute nella
+	L. 190/2014 e nel d. lgs. 175/2014."
+	E' stato quindi allineato il protocollo sdi rispetto agli aggiornamenti introdotti
+
+2015-01-22  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
 	Risolto Bug #277
 	Aggiunta la possibilita' di disabilitare la validazione XSD dei Messaggi e delle Fatture.
 

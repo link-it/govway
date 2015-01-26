@@ -33,70 +33,76 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
  * @version $Rev$, $Date$
  */
 @javax.xml.bind.annotation.XmlType(name = "CausalePagamentoType")
-@javax.xml.bind.annotation.XmlEnum(java.lang.String.class)
+@javax.xml.bind.annotation.XmlEnum(String.class)
 public enum CausalePagamentoType implements IEnumeration , Serializable , Cloneable {
 
 	@javax.xml.bind.annotation.XmlEnumValue("A")
-	A ('A'),
+	A ("A"),
 	@javax.xml.bind.annotation.XmlEnumValue("B")
-	B ('B'),
+	B ("B"),
 	@javax.xml.bind.annotation.XmlEnumValue("C")
-	C ('C'),
+	C ("C"),
 	@javax.xml.bind.annotation.XmlEnumValue("D")
-	D ('D'),
+	D ("D"),
 	@javax.xml.bind.annotation.XmlEnumValue("E")
-	E ('E'),
-	@javax.xml.bind.annotation.XmlEnumValue("F")
-	F ('F'),
+	E ("E"),
 	@javax.xml.bind.annotation.XmlEnumValue("G")
-	G ('G'),
+	G ("G"),
 	@javax.xml.bind.annotation.XmlEnumValue("H")
-	H ('H'),
+	H ("H"),
 	@javax.xml.bind.annotation.XmlEnumValue("I")
-	I ('I'),
+	I ("I"),
 	@javax.xml.bind.annotation.XmlEnumValue("L")
-	L ('L'),
+	L ("L"),
 	@javax.xml.bind.annotation.XmlEnumValue("M")
-	M ('M'),
+	M ("M"),
 	@javax.xml.bind.annotation.XmlEnumValue("N")
-	N ('N'),
+	N ("N"),
 	@javax.xml.bind.annotation.XmlEnumValue("O")
-	O ('O'),
+	O ("O"),
 	@javax.xml.bind.annotation.XmlEnumValue("P")
-	P ('P'),
+	P ("P"),
 	@javax.xml.bind.annotation.XmlEnumValue("Q")
-	Q ('Q'),
+	Q ("Q"),
 	@javax.xml.bind.annotation.XmlEnumValue("R")
-	R ('R'),
+	R ("R"),
 	@javax.xml.bind.annotation.XmlEnumValue("S")
-	S ('S'),
+	S ("S"),
 	@javax.xml.bind.annotation.XmlEnumValue("T")
-	T ('T'),
+	T ("T"),
 	@javax.xml.bind.annotation.XmlEnumValue("U")
-	U ('U'),
+	U ("U"),
 	@javax.xml.bind.annotation.XmlEnumValue("V")
-	V ('V'),
+	V ("V"),
 	@javax.xml.bind.annotation.XmlEnumValue("W")
-	W ('W'),
+	W ("W"),
 	@javax.xml.bind.annotation.XmlEnumValue("X")
-	X ('X'),
+	X ("X"),
 	@javax.xml.bind.annotation.XmlEnumValue("Y")
-	Y ('Y'),
+	Y ("Y"),
 	@javax.xml.bind.annotation.XmlEnumValue("Z")
-	Z ('Z');
+	Z ("Z"),
+	@javax.xml.bind.annotation.XmlEnumValue("L1")
+	L1 ("L1"),
+	@javax.xml.bind.annotation.XmlEnumValue("M1")
+	M1 ("M1"),
+	@javax.xml.bind.annotation.XmlEnumValue("O1")
+	O1 ("O1"),
+	@javax.xml.bind.annotation.XmlEnumValue("V1")
+	V1 ("V1");
 	
 	
 	/** Value */
-	private java.lang.Character value;
+	private String value;
 	@Override
-	public java.lang.Character getValue()
+	public String getValue()
 	{
 		return this.value;
 	}
 
 
 	/** Official Constructor */
-	CausalePagamentoType(java.lang.Character value)
+	CausalePagamentoType(String value)
 	{
 		this.value = value;
 	}
@@ -105,17 +111,19 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 	
 	@Override
 	public String toString(){
-		return this.value+"";
+		return this.value;
 	}
 	public boolean equals(CausalePagamentoType object){
 		if(object==null)
 			return false;
-		return object.getValue().toString().equals(this.getValue().toString());	
+		if(object.getValue()==null)
+			return false;
+		return object.getValue().equals(this.getValue());	
 	}
-	public boolean equals(java.lang.Character object){
+	public boolean equals(String object){
 		if(object==null)
 			return false;
-		return object.toString().equals(this.getValue().toString());	
+		return object.equals(this.getValue());	
 	}
 	
 		
@@ -143,8 +151,8 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 	
 	/** Utilities */
 	
-	public static java.lang.Character[] toArray(){
-		java.lang.Character[] res = new java.lang.Character[values().length];
+	public static String[] toArray(){
+		String[] res = new String[values().length];
 		int i=0;
 		for (CausalePagamentoType tmp : values()) {
 			res[i]=tmp.getValue();
@@ -171,60 +179,66 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 		return res;
 	}
 	
-	public static boolean contains(java.lang.Character value){
+	public static boolean contains(String value){
 		return toEnumConstant(value)!=null;
 	}
 	
-	public static CausalePagamentoType toEnumConstant(java.lang.Character value){
+	public static CausalePagamentoType toEnumConstant(String value){
 		CausalePagamentoType res = null;
-		if(CausalePagamentoType.A.getValue() == value){
+		if(CausalePagamentoType.A.getValue().equals(value)){
 			res = CausalePagamentoType.A;
-		}else if(CausalePagamentoType.B.getValue() == value){
+		}else if(CausalePagamentoType.B.getValue().equals(value)){
 			res = CausalePagamentoType.B;
-		}else if(CausalePagamentoType.C.getValue() == value){
+		}else if(CausalePagamentoType.C.getValue().equals(value)){
 			res = CausalePagamentoType.C;
-		}else if(CausalePagamentoType.D.getValue() == value){
+		}else if(CausalePagamentoType.D.getValue().equals(value)){
 			res = CausalePagamentoType.D;
-		}else if(CausalePagamentoType.E.getValue() == value){
+		}else if(CausalePagamentoType.E.getValue().equals(value)){
 			res = CausalePagamentoType.E;
-		}else if(CausalePagamentoType.F.getValue() == value){
-			res = CausalePagamentoType.F;
-		}else if(CausalePagamentoType.G.getValue() == value){
+		}else if(CausalePagamentoType.G.getValue().equals(value)){
 			res = CausalePagamentoType.G;
-		}else if(CausalePagamentoType.H.getValue() == value){
+		}else if(CausalePagamentoType.H.getValue().equals(value)){
 			res = CausalePagamentoType.H;
-		}else if(CausalePagamentoType.I.getValue() == value){
+		}else if(CausalePagamentoType.I.getValue().equals(value)){
 			res = CausalePagamentoType.I;
-		}else if(CausalePagamentoType.L.getValue() == value){
+		}else if(CausalePagamentoType.L.getValue().equals(value)){
 			res = CausalePagamentoType.L;
-		}else if(CausalePagamentoType.M.getValue() == value){
+		}else if(CausalePagamentoType.M.getValue().equals(value)){
 			res = CausalePagamentoType.M;
-		}else if(CausalePagamentoType.N.getValue() == value){
+		}else if(CausalePagamentoType.N.getValue().equals(value)){
 			res = CausalePagamentoType.N;
-		}else if(CausalePagamentoType.O.getValue() == value){
+		}else if(CausalePagamentoType.O.getValue().equals(value)){
 			res = CausalePagamentoType.O;
-		}else if(CausalePagamentoType.P.getValue() == value){
+		}else if(CausalePagamentoType.P.getValue().equals(value)){
 			res = CausalePagamentoType.P;
-		}else if(CausalePagamentoType.Q.getValue() == value){
+		}else if(CausalePagamentoType.Q.getValue().equals(value)){
 			res = CausalePagamentoType.Q;
-		}else if(CausalePagamentoType.R.getValue() == value){
+		}else if(CausalePagamentoType.R.getValue().equals(value)){
 			res = CausalePagamentoType.R;
-		}else if(CausalePagamentoType.S.getValue() == value){
+		}else if(CausalePagamentoType.S.getValue().equals(value)){
 			res = CausalePagamentoType.S;
-		}else if(CausalePagamentoType.T.getValue() == value){
+		}else if(CausalePagamentoType.T.getValue().equals(value)){
 			res = CausalePagamentoType.T;
-		}else if(CausalePagamentoType.U.getValue() == value){
+		}else if(CausalePagamentoType.U.getValue().equals(value)){
 			res = CausalePagamentoType.U;
-		}else if(CausalePagamentoType.V.getValue() == value){
+		}else if(CausalePagamentoType.V.getValue().equals(value)){
 			res = CausalePagamentoType.V;
-		}else if(CausalePagamentoType.W.getValue() == value){
+		}else if(CausalePagamentoType.W.getValue().equals(value)){
 			res = CausalePagamentoType.W;
-		}else if(CausalePagamentoType.X.getValue() == value){
+		}else if(CausalePagamentoType.X.getValue().equals(value)){
 			res = CausalePagamentoType.X;
-		}else if(CausalePagamentoType.Y.getValue() == value){
+		}else if(CausalePagamentoType.Y.getValue().equals(value)){
 			res = CausalePagamentoType.Y;
-		}else if(CausalePagamentoType.Z.getValue() == value){
+		}else if(CausalePagamentoType.Z.getValue().equals(value)){
 			res = CausalePagamentoType.Z;
+		}else if(CausalePagamentoType.L1.getValue().equals(value)){
+			res = CausalePagamentoType.L1;
+		}else if(CausalePagamentoType.M1.getValue().equals(value)){
+			res = CausalePagamentoType.M1;
+		}else if(CausalePagamentoType.O1.getValue().equals(value)){
+			res = CausalePagamentoType.O1;
+		}else if(CausalePagamentoType.V1.getValue().equals(value)){
+			res = CausalePagamentoType.V1;
 		}
 		return res;
 	}
@@ -241,8 +255,6 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 			res = CausalePagamentoType.D;
 		}else if(CausalePagamentoType.E.toString().equals(value)){
 			res = CausalePagamentoType.E;
-		}else if(CausalePagamentoType.F.toString().equals(value)){
-			res = CausalePagamentoType.F;
 		}else if(CausalePagamentoType.G.toString().equals(value)){
 			res = CausalePagamentoType.G;
 		}else if(CausalePagamentoType.H.toString().equals(value)){
@@ -279,6 +291,14 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 			res = CausalePagamentoType.Y;
 		}else if(CausalePagamentoType.Z.toString().equals(value)){
 			res = CausalePagamentoType.Z;
+		}else if(CausalePagamentoType.L1.toString().equals(value)){
+			res = CausalePagamentoType.L1;
+		}else if(CausalePagamentoType.M1.toString().equals(value)){
+			res = CausalePagamentoType.M1;
+		}else if(CausalePagamentoType.O1.toString().equals(value)){
+			res = CausalePagamentoType.O1;
+		}else if(CausalePagamentoType.V1.toString().equals(value)){
+			res = CausalePagamentoType.V1;
 		}
 		return res;
 	}

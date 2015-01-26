@@ -1,0 +1,22 @@
+Fattura singola versione 1.0 con una sola linea di fattura:
+IT12345678910_11111.xml
+
+Fattura singola versione 1.0 con più linee di fattura:
+IT12345678910_22222.xml
+
+Lotto di fatture versione 1.0
+IT12345678910_33333.xml
+
+Fattura singola versione 1.0 firmata con firma XAdES-BES
+IT12345678910_X1111.xml
+
+Fattura singola versione 1.0 firmata con firma CAdES-BES
+IT12345678910_11111.xml.p7m
+
+Esempio di fattura singola versione 1.0 che prevede, nell'intestazione, una visualizzazione attraverso il foglio di stile
+(per visualizzare il file FatturaPA attraverso il foglio di stile occorre scaricare entrambi i files nella stessa cartella):
+IT12345678910_44444.xml
+Foglio di stile per la visualizzazione della FatturaPA versione 1.0 - xslt
+
+Esempio di fattura che non supera la validazione XSD
+ITAAABBB00C11D222E_00001.xml

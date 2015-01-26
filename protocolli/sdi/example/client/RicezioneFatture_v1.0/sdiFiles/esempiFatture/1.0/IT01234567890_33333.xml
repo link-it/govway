@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<p:FatturaElettronica versione="1.1" 
+<p:FatturaElettronica versione="1.0" 
 xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
-xmlns:p="http://www.fatturapa.gov.it/sdi/fatturapa/v1.1" 
+xmlns:p="http://www.fatturapa.gov.it/sdi/fatturapa/v1.0" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <FatturaElettronicaHeader>
     <DatiTrasmissione>
@@ -10,7 +10,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <IdCodice>01234567890</IdCodice>
       </IdTrasmittente>
       <ProgressivoInvio>00001</ProgressivoInvio>
-      <FormatoTrasmissione>SDI11</FormatoTrasmissione>
+      <FormatoTrasmissione>SDI10</FormatoTrasmissione>
       <CodiceDestinatario>AAAAAA</CodiceDestinatario>
       <ContattiTrasmittente>
         <Telefono>060601</Telefono>

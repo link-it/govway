@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types:MetadatiInvioFile versione="1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+  <IdentificativoSdI>0</IdentificativoSdI>
+  <NomeFile>ITAAABBB00C11D222E_00001.xml</NomeFile>
+  <CodiceDestinatario>MEF001</CodiceDestinatario>
+  <Formato>SDI10</Formato>
+  <TentativiInvio>0</TentativiInvio>
+  <MessageId>123456</MessageId>
+  <Note>File dei metadati di prova</Note>
+</types:MetadatiInvioFile>

@@ -22,16 +22,49 @@ tipoOperazione=riceviFatture
 busta.riceviFatture=spcoopFiles/riceviFatture.xml
 busta.notificaDecorrenzaTermini=spcoopFiles/notificaDecorrenzaTermini.xml
 
-# Fattura 1.0 (usata in riceviFatture)
-fattura=sdiFiles/esempiFatture/IT01234567890_11111.xml
-#fattura=sdiFiles/esempiFatture/IT01234567890_33333.xml
-# Fattura 1.1 (usata in riceviFatture)
-#fattura=sdiFiles/esempiFatture/IT01234567890_99999.xml
-# Metadati (usata in riceviFatture)
-metadati=sdiFiles/esempiMessaggi/IT01234567890_11111_MT_001.xml
-#metadati=sdiFiles/esempiMessaggi/IT01234567890_33333_MT_001.xml
-#metadati=sdiFiles/esempiMessaggi/IT01234567890_99999_MT_001.xml
 
-# NotificaDecorrenzaTermini
-notificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
-#notificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml
+# --- Fattura 1.0 (usata in riceviFatture) ---
+
+# Fattura singola versione 1.0 con una sola linea di fattura:
+#fattura=sdiFiles/esempiFatture/1.0/IT01234567890_11111.xml
+#metadati=sdiFiles/esempiMetadati/1.0/IT01234567890_11111_MT_001.xml
+
+# Fattura singola versione 1.0 con più linee di fattura:
+#fattura=sdiFiles/esempiFatture/1.0/IT01234567890_22222.xml
+#metadati=sdiFiles/esempiMetadati/1.0/IT01234567890_22222_MT_001.xml
+
+# Lotto di fatture versione 1.0
+#fattura=sdiFiles/esempiFatture/1.0/IT01234567890_33333.xml
+#metadati=sdiFiles/esempiMetadati/1.0/IT01234567890_33333_MT_001.xml
+
+# Fattura che contiene valori non validi
+#fattura=sdiFiles/esempiFatture/1.0/ITAAABBB00C11D222E_00001.xml
+#metadati=sdiFiles/esempiMetadati/1.0/ITAAABBB00C11D222E_00001_MT_001.xml
+
+
+# --- Fattura 1.1 (usata in riceviFatture) ---
+
+# Fattura singola versione 1.1 con una sola linea di fattura:
+fattura=sdiFiles/esempiFatture/1.1/IT01234567890_11001.xml
+metadati=sdiFiles/esempiMetadati/1.1/IT01234567890_11001_MT_001.xml
+
+# Fattura singola versione 1.1 con più linee di fattura:
+#fattura=sdiFiles/esempiFatture/1.1/IT01234567890_11002.xml
+#metadati=sdiFiles/esempiMetadati/1.1/IT01234567890_11002_MT_001.xml
+
+# Lotto di fatture versione 1.1
+#fattura=sdiFiles/esempiFatture/1.1/IT01234567890_11003.xml
+#metadati=sdiFiles/esempiMetadati/1.1/IT01234567890_11003_MT_001.xml
+
+# Fattura che contiene valori non validi
+#fattura=sdiFiles/esempiFatture/1.1/ITAAABBB00C11D222E_11001.xml
+#metadati=sdiFiles/esempiMetadati/1.1/ITAAABBB00C11D222E_11001_MT_001.xml
+
+
+# --- NotificaDecorrenzaTermini ---
+
+# Esempio di NotificaDecorrenzaTermini con namespace corretto 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0'
+#notificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
+
+# Esempio di NotificaDecorrenzaTermini con namespace errato 'http://www.fatturapa.it/sdi/messaggi/v1.0'
+notificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml

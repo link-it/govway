@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="MT_v1.0.xsl"?>
+<types:MetadatiInvioFile xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+  <IdentificativoSdI>111</IdentificativoSdI>
+  <NomeFile>IT01234567890_11001.xml</NomeFile>
+  <CodiceDestinatario>AAAAAA</CodiceDestinatario>
+  <Formato>SDI11</Formato>
+  <TentativiInvio>1</TentativiInvio>
+  <MessageId>123456</MessageId>
+  <Note>Esempio</Note></types:MetadatiInvioFile>

@@ -70,6 +70,8 @@ public enum RegimeFiscaleType implements IEnumeration , Serializable , Cloneable
 	RF16 ("RF16"),
 	@javax.xml.bind.annotation.XmlEnumValue("RF17")
 	RF17 ("RF17"),
+	@javax.xml.bind.annotation.XmlEnumValue("RF19")
+	RF19 ("RF19"),
 	@javax.xml.bind.annotation.XmlEnumValue("RF18")
 	RF18 ("RF18");
 	
@@ -201,6 +203,8 @@ public enum RegimeFiscaleType implements IEnumeration , Serializable , Cloneable
 			res = RegimeFiscaleType.RF16;
 		}else if(RegimeFiscaleType.RF17.getValue().equals(value)){
 			res = RegimeFiscaleType.RF17;
+		}else if(RegimeFiscaleType.RF19.getValue().equals(value)){
+			res = RegimeFiscaleType.RF19;
 		}else if(RegimeFiscaleType.RF18.getValue().equals(value)){
 			res = RegimeFiscaleType.RF18;
 		}
@@ -243,6 +247,8 @@ public enum RegimeFiscaleType implements IEnumeration , Serializable , Cloneable
 			res = RegimeFiscaleType.RF16;
 		}else if(RegimeFiscaleType.RF17.toString().equals(value)){
 			res = RegimeFiscaleType.RF17;
+		}else if(RegimeFiscaleType.RF19.toString().equals(value)){
+			res = RegimeFiscaleType.RF19;
 		}else if(RegimeFiscaleType.RF18.toString().equals(value)){
 			res = RegimeFiscaleType.RF18;
 		}

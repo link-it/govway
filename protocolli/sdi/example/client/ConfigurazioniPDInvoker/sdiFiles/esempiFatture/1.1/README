@@ -1,0 +1,14 @@
+Fattura singola versione 1.1 con una sola linea di fattura:
+IT12345678910_11001.xml
+
+Fattura singola versione 1.1 con più linee di fattura:
+IT12345678910_11002.xml
+
+Lotto di fatture versione 1.1
+IT12345678910_11003.xml
+
+Esempio di fattura singola versione 1.1 che prevede, nell'intestazione, una visualizzazione attraverso il foglio di stile
+(per visualizzare il file FatturaPA attraverso il foglio di stile occorre scaricare entrambi i files nella stessa cartella):
+IT12345678910_11004.xml
+Foglio di stile per la visualizzazione della FatturaPA versione 1.1 - xslt
+

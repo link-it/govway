@@ -166,13 +166,11 @@
   </xs:complexType>
   <xs:simpleType name="CausalePagamentoType">
     <xs:restriction base="xs:string">
-      <xs:length value="1" />
       <xs:enumeration value="A" />
       <xs:enumeration value="B" />
       <xs:enumeration value="C" />
       <xs:enumeration value="D" />
       <xs:enumeration value="E" />
-      <xs:enumeration value="F" />
       <xs:enumeration value="G" />
       <xs:enumeration value="H" />
       <xs:enumeration value="I" />
@@ -191,6 +189,10 @@
       <xs:enumeration value="X" />
       <xs:enumeration value="Y" />
       <xs:enumeration value="Z" />
+	  <xs:enumeration value="L1" />
+	  <xs:enumeration value="M1" />
+	  <xs:enumeration value="O1" />
+	  <xs:enumeration value="V1" />
       <!--I CODICI SEGUENTI FANNO RIFERIMENTO A QUELLI PREVISTI NEL MOD. 770S-->
     </xs:restriction>
   </xs:simpleType>
@@ -624,7 +626,12 @@
       </xs:enumeration>
       <xs:enumeration value="RF17">
         <xs:annotation>
-          <xs:documentation>IVA per cassa soggetti con volume d’affari inferiore ad euro 200.000 (art. 7, D.L. 185/2008)</xs:documentation>
+          <xs:documentation>IVA per cassa (art. 32-bis, D.L. 83/2012)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+	  <xs:enumeration value="RF19">
+        <xs:annotation>
+          <xs:documentation>Regime forfettario</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="RF18">
