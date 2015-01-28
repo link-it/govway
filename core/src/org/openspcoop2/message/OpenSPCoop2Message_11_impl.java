@@ -79,6 +79,7 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 {
 	private long outgoingsize = -1;
 	private long incomingsize = -1;
+	private Long incomingSizeForced = null;
 	private String protocolName;
 	
 	private NotifierInputStream notifierInputStream;
@@ -187,14 +188,36 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 	// Content Length
 	
 	@Override
-	public long getOutgoingMessageContentLength() {
-		return this.outgoingsize;
+	public void updateIncomingMessageContentLength(){
+		// NOP (Viene letta tutta nel costruttore)
+	}
+	
+	@Override
+	public void updateIncomingMessageContentLength(long incomingsize){
+		this.incomingSizeForced = incomingsize;
 	}
 	
 	@Override
 	public long getIncomingMessageContentLength() {
-		return this.incomingsize;
+		if(this.incomingSizeForced!=null){
+			return this.incomingSizeForced;
+		}else{
+			return this.incomingsize;
+		}
 	}
+
+	@Override
+	public void updateOutgoingMessageContentLength(long outgoingsize){
+		this.outgoingsize = outgoingsize;
+	}
+	
+	@Override
+	public long getOutgoingMessageContentLength() {
+		return this.outgoingsize;
+	}
+
+	
+
 	
 	
 	// SOAP WithAttachments

@@ -131,7 +131,10 @@ public interface OpenSPCoop2Message {
 		
 	/* Content Length */
 	
+	public abstract void updateIncomingMessageContentLength();
+	public abstract void updateIncomingMessageContentLength(long incomingsize);
 	public abstract long getIncomingMessageContentLength();	
+	public abstract void updateOutgoingMessageContentLength(long outgoingsize);
 	public abstract long getOutgoingMessageContentLength();
 		
 	/* SOAP Utilities */

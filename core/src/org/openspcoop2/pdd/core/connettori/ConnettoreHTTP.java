@@ -52,6 +52,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.commons.io.input.CountingInputStream;
 import org.apache.log4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -969,49 +970,65 @@ public class ConnettoreHTTP extends ConnettoreBase {
 							return false;
 						}*/
 					}else{
-						if(imbustamentoConAttachment){
-							if(this.debug)
-								this.log.debug("["+this.idMessaggio+"] Imbustamento con attachments...");
+						CountingInputStream cis = null;
+						try{
+							cis = new CountingInputStream(this.is);
 							
-							// Imbustamento per Tunnel OpenSPCoop
-							tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+mimeTypeAttachment;
-							try{
-								this.responseMsg = SoapUtils.
-								imbustamentoMessaggioConAttachment(this.requestMsg.getVersioneSoap(), this.is,mimeTypeAttachment,
-										MailcapActivationReader.existsDataContentHandler(mimeTypeAttachment),tipoRisposta, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
-							}catch(UtilsException e){
-								if(e.getMessage()!=null && e.getMessage().equals("Contenuto da imbustare non presente")){
-									// L'errore consiste solo nel fatto che una risposta non e' stata ricevuta.
-								}else{
-									throw e;
-								}
-							}
-						}else{
-							if(tipoRisposta!=null && tipoRisposta.contains("multipart/related")){
-								
+							if(imbustamentoConAttachment){
 								if(this.debug)
-									this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio multipart/related...");
+									this.log.debug("["+this.idMessaggio+"] Imbustamento con attachments...");
 								
-								// Imbustamento di un messaggio multipart/related
-								tipoLetturaRisposta = "Imbustamento messaggio multipart/related in un SOAP WithAttachments";
-								java.io.ByteArrayOutputStream byteBuffer = new java.io.ByteArrayOutputStream();
-								byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-								int readByte = 0;
-								while((readByte = this.is.read(readB))!= -1){
-									byteBuffer.write(readB,0,readByte);
-								}
-								if(byteBuffer.size()>0){
-									this.responseMsg = SoapUtils.imbustamentoMessaggio(notifierInputStreamParams,byteBuffer.toByteArray(),this.openspcoopProperties.isDeleteInstructionTargetMachineXml(), this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+								// Imbustamento per Tunnel OpenSPCoop
+								tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+mimeTypeAttachment;
+								try{
+									this.responseMsg = SoapUtils.
+									imbustamentoMessaggioConAttachment(this.requestMsg.getVersioneSoap(), cis,mimeTypeAttachment,
+											MailcapActivationReader.existsDataContentHandler(mimeTypeAttachment),tipoRisposta, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+								}catch(UtilsException e){
+									if(e.getMessage()!=null && e.getMessage().equals("Contenuto da imbustare non presente")){
+										// L'errore consiste solo nel fatto che una risposta non e' stata ricevuta.
+									}else{
+										throw e;
+									}
 								}
 							}else{
-								
-								if(this.debug)
-									this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio...");
-								// Imbustamento di un messaggio normale: secondo parametro a true, indica che il messaggio deve essere imbustato in un msg SOAP
-								tipoLetturaRisposta = "Imbustamento messaggio xml in un messaggio SOAP";
-								this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.is,notifierInputStreamParams,true,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+								if(tipoRisposta!=null && tipoRisposta.contains("multipart/related")){
+									
+									if(this.debug)
+										this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio multipart/related...");
+									
+									// Imbustamento di un messaggio multipart/related
+									tipoLetturaRisposta = "Imbustamento messaggio multipart/related in un SOAP WithAttachments";
+									java.io.ByteArrayOutputStream byteBuffer = new java.io.ByteArrayOutputStream();
+									byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+									int readByte = 0;
+									while((readByte = cis.read(readB))!= -1){
+										byteBuffer.write(readB,0,readByte);
+									}
+									if(byteBuffer.size()>0){
+										this.responseMsg = SoapUtils.imbustamentoMessaggio(notifierInputStreamParams,byteBuffer.toByteArray(),this.openspcoopProperties.isDeleteInstructionTargetMachineXml(), this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+									}
+								}else{
+									
+									if(this.debug)
+										this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio...");
+									// Imbustamento di un messaggio normale: secondo parametro a true, indica che il messaggio deve essere imbustato in un msg SOAP
+									tipoLetturaRisposta = "Imbustamento messaggio xml in un messaggio SOAP";
+									this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(cis,notifierInputStreamParams,true,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+								}
+	
 							}
-
+							
+							if(this.responseMsg!=null){
+								this.responseMsg.updateIncomingMessageContentLength(cis.getByteCount());
+							}
+							
+						}finally{
+							try{
+								if(cis!=null){
+									cis.close();
+								}
+							}catch(Exception eClose){}
 						}
 						
 					}

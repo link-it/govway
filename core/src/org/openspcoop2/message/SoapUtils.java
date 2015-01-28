@@ -48,6 +48,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.soap.util.mime.ByteArrayDataSource;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -456,27 +457,30 @@ public class SoapUtils {
 	 * Ritorna i bytes del contenuto del messaggio Soap passato come parametro
 	 *
 	 * @param msg Messaggio Soap da sbustare
-	 * @param stream Stream su cui scrivere il messaggio sbustato
+	 * @param streamParam Stream su cui scrivere il messaggio sbustato
 	 * 
 	 */
-	public static void sbustamentoMessaggio(OpenSPCoop2Message msg,OutputStream stream) throws UtilsException{
+	public static void sbustamentoMessaggio(OpenSPCoop2Message msg,OutputStream streamParam) throws UtilsException{
 
+		CountingOutputStream cout = null;
 		try{
+						
 			// Nota: non viene usato DocumentToStream, poiche' altrimenti viene prodotto l'<?xml ... /> 
+			cout = new CountingOutputStream(streamParam);
 			
 			//	Sbustamento Senza Attachments
 			if(msg.countAttachments() == 0){
 				SOAPBody bd = msg.getSOAPBody();
 				if(bd.hasFault()){
 					SOAPFault fault = bd.getFault();
-					stream.write(msg.getAsByte(fault, true));
+					cout.write(msg.getAsByte(fault, true));
 				}else{
 					java.util.Iterator<?> it = bd.getChildElements();
 					while(it.hasNext()){
 						Object bodyObject = it.next();
 						if(!(bodyObject instanceof SOAPElement)) continue;
 						SOAPElement bodyElement = (SOAPElement) bodyObject;
-						stream.write(msg.getAsByte(bodyElement, true));
+						cout.write(msg.getAsByte(bodyElement, true));
 					}
 				}
 			}
@@ -508,7 +512,7 @@ public class SoapUtils {
 						bout.write(readB,0,readByte);
 					inputDH.close();
 					bout.close();
-					stream.write(bout.toByteArray());
+					cout.write(bout.toByteArray());
 				}else{
 				
 					ByteArrayOutputStream sbustamentoAttachments = new ByteArrayOutputStream();
@@ -524,25 +528,37 @@ public class SoapUtils {
 					//System.out.println("SoapStopIndexOf: "+msgString.indexOf(soapEnvelopeStop));
 					// Prima parte del Multipart
 					if(msgString.indexOf(xmlTagDecode)!=-1){
-						stream.write(msgByte,0,msgString.indexOf(xmlTagDecode));
+						cout.write(msgByte,0,msgString.indexOf(xmlTagDecode));
 					}else{
-						stream.write(msgByte,0,msgString.indexOf(soapEnvelopeStart));
+						cout.write(msgByte,0,msgString.indexOf(soapEnvelopeStart));
 					}
 					// Body
 					SOAPBody bd = msg.getSOAPBody();
 					if(bd.hasFault()){
 						SOAPFault fault = bd.getFault();
-						stream.write(msg.getAsByte(fault, true));
+						cout.write(msg.getAsByte(fault, true));
 					}else{
-						stream.write(msg.getAsByte(msg.getFirstChildElement(bd), true));
+						cout.write(msg.getAsByte(msg.getFirstChildElement(bd), true));
 					}
 					// Resto degli attachments
 					int indexOf = msgString.indexOf(soapEnvelopeStop)+soapEnvelopeStop.length();
-					stream.write(msgByte,indexOf,msgByte.length - indexOf);
+					cout.write(msgByte,indexOf,msgByte.length - indexOf);
 				}
 			}
+			
+			// Aggiorno le lunghezze del messaggio (normalmente le aggiorna la writeTo)
+			msg.updateIncomingMessageContentLength();
+			// Come dimensione di uscita utilizzo i bytes che produco
+			cout.flush();
+			msg.updateOutgoingMessageContentLength(cout.getByteCount());
+			
 		}catch (Exception e){
 			throw new UtilsException("Sbustamento msg_inputStream non riuscito: "+e.getMessage(),e);
+		}finally{
+			try{
+				if(cout!=null)
+					cout.close();
+			}catch(Exception e){}
 		}
 		
 		

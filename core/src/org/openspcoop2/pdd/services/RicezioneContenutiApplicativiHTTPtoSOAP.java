@@ -152,6 +152,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 		IProtocolFactory protocolFactory = null;
 		SOAPVersion versioneSoap = SOAPVersion.SOAP11;
 		String protocol = null;
+		byte[] inputBody = null;
 		
 		try{
 			
@@ -276,7 +277,6 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			}
 
 			String tipoLetturaRisposta = null;
-			byte[] inputBody = null;
 			try{
 				inputBody = req.getRequest();
 				if( inputBody == null || inputBody.length<=0 ){
@@ -678,8 +678,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				if(context.getTipoPorta()!=null)
 					postOutResponseContext.setTipoPorta(context.getTipoPorta());	
 				
+				if(inputBody!=null){
+					postOutResponseContext.setInputRequestMessageSize(new Long(inputBody.length));
+				}
 				if(requestMessage!=null){
-					postOutResponseContext.setInputRequestMessageSize(requestMessage.getIncomingMessageContentLength());
+					//postOutResponseContext.setInputRequestMessageSize(requestMessage.getIncomingMessageContentLength());
 					postOutResponseContext.setOutputRequestMessageSize(requestMessage.getOutgoingMessageContentLength());
 				}else{
 					postOutResponseContext.setInputRequestMessageSize(req.getContentLength()+0l);
