@@ -36,14 +36,14 @@ else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getValue(gdString);
 
-int idx =gd.getUrl().indexOf("/pddConsole");
-int l = "/pddConsole".length();
+// int idx =gd.getUrl().indexOf("/pddConsole");
+// int l = "/pddConsole".length();
 
-  if(idx > -1){
-  	String ap1 = gd.getUrl().substring(0,idx);
-	String ap2 = gd.getUrl().substring(idx+l);
-	gd.setUrl(ap1 + request.getContextPath() + ap2);
-  }
+//   if(idx > -1){
+//   	String ap1 = gd.getUrl().substring(0,idx);
+// 	String ap2 = gd.getUrl().substring(idx+l);
+// 	gd.setUrl(ap1 + request.getContextPath() + ap2);
+//   }
 
 %>
 <html>
