@@ -83,6 +83,8 @@ public interface OpenSPCoop2Message {
 	public AttachmentPart getAttachment(SOAPElement element) throws SOAPException;
 	public void removeAllAttachments();
 	public abstract void removeAttachments(MimeHeaders mhs);
+	public void updateAttachmentPart(AttachmentPart ap,byte[]content,String contentType);
+	public void updateAttachmentPart(AttachmentPart ap,DataHandler dh);
 	
 	/* Trasporto */
 	

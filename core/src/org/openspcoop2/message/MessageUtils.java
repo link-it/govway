@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
@@ -331,14 +330,14 @@ public class MessageUtils {
 	    	out.append("\nId["+ap.getContentId()+"] location["+ap.getContentLocation()+"] type["+ap.getContentType()+"]: ");
 			
 	    	if(dumpAllAttachments){
-	    		out.append(MessageUtils.dumpAttachment(ap));
+	    		out.append(MessageUtils.dumpAttachment(msg, ap));
 	    	}else{
 	    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
 	    		Object o = ap.getDataHandler().getContent();
 	    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");
 	    		if(Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP.equals(ap.getContentType())){
 	    			 // reimposto handler
-	    			 MessageUtils.rebuildAttachmentAsByteArray(ap);
+	    			 MessageUtils.rebuildAttachmentAsByteArray(msg, ap);
 	    		}
 	    		
 	    		if(o instanceof String){
@@ -351,7 +350,7 @@ public class MessageUtils {
 	    return out.toString();
 	}
 	
-	public static String dumpAttachment(AttachmentPart ap) throws SOAPException,IOException{
+	public static String dumpAttachment(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
 		javax.activation.DataHandler dh= ap.getDataHandler();  
     	java.io.InputStream inputDH = dh.getInputStream();
 		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
@@ -364,12 +363,14 @@ public class MessageUtils {
 		bout.close();
 		// Per non perdere quanto letto
 		if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
-			ap.setDataHandler(new DataHandler(bout.toByteArray(),ap.getContentType()));
+			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+			// In axiom l'update del data handler non funziona
+			msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
 		}
 		return bout.toString();
 	}
 	
-	public static byte[] toByteArrayAttachment(AttachmentPart ap) throws SOAPException,IOException{
+	public static byte[] toByteArrayAttachment(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
 		javax.activation.DataHandler dh= ap.getDataHandler();  
     	java.io.InputStream inputDH = dh.getInputStream();
 		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
@@ -382,12 +383,14 @@ public class MessageUtils {
 		bout.close();
 		// Per non perdere quanto letto
 		if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
-			ap.setDataHandler(new DataHandler(bout.toByteArray(),ap.getContentType()));
+			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+			// In axiom l'update del data handler non funziona
+			msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
 		}
 		return bout.toByteArray();
 	}
 	
-	private static void rebuildAttachmentAsByteArray(AttachmentPart ap) throws SOAPException,IOException{
+	private static void rebuildAttachmentAsByteArray(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
 		javax.activation.DataHandler dh= ap.getDataHandler();  
     	java.io.InputStream inputDH = dh.getInputStream();
 		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
@@ -398,7 +401,9 @@ public class MessageUtils {
 		inputDH.close();
 		bout.flush();
 		bout.close();
-		ap.setDataHandler(new DataHandler(bout.toByteArray(),ap.getContentType()));
+		//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+		// In axiom l'update del data handler non funziona
+		msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
 	}
 	
 	protected String dumpContenutoXML(javax.xml.transform.stream.StreamSource xml) throws SOAPException,IOException{

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.AttachmentPart;
@@ -206,6 +207,16 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 		if(super.countAttachments() == 0){
 			this.setContentType(SOAPConstants.SOAP_1_2_CONTENT_TYPE);
 		}
+	}
+	
+	@Override
+	public void updateAttachmentPart(AttachmentPart ap,byte[]content,String contentType){
+		this.updateAttachmentPart(ap, new DataHandler(content,contentType));
+	}
+	
+	@Override
+	public void updateAttachmentPart(AttachmentPart ap,DataHandler dh){
+		ap.setDataHandler(dh);
 	}
 	
 	
