@@ -342,7 +342,10 @@ public final class PorteDelegateAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				Configurazione configGenerale = porteDelegateCore.getConfigurazioneGenerale();
+				Configurazione configGenerale = null;
+				if(porteDelegateCore.isSinglePdD()){
+					configGenerale = porteDelegateCore.getConfigurazioneGenerale();
+				}
 
 				if (nomePD == null) {
 					nomePD = "";

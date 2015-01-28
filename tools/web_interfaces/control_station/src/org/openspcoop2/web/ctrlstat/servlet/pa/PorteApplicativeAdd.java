@@ -304,7 +304,10 @@ public final class PorteApplicativeAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				Configurazione configGenerale = porteApplicativeCore.getConfigurazioneGenerale();
+				Configurazione configGenerale = null;
+				if(porteApplicativeCore.isSinglePdD()){
+					configGenerale = porteApplicativeCore.getConfigurazioneGenerale();
+				}
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
 
