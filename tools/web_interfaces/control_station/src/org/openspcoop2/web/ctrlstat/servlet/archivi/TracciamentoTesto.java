@@ -417,18 +417,19 @@ public class TracciamentoTesto extends Action {
 			
 			// *********** Properties generiche ****************
 			
-			String [] pNames = busta.getPropertiesNames();
-			if(pNames!=null && pNames.length>0){
+			if(busta.sizeProperties()>0){
 				
 				de = new DataElement();
 				de.setLabel(ArchiviCostanti.LABEL_LISTA_INFO_PROTOCOLLO);
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 				
-				for (int i = 0; i < pNames.length; i++) {
+				java.util.ArrayList<String> listKeys = java.util.Collections.list(busta.getProperties().keys());
+				java.util.Collections.sort(listKeys);
+				for (String key : listKeys) {
 					de = new DataElement();
-					de.setLabel(pNames[i]);
-					de.setValue(busta.getProperty(pNames[i]));
+					de.setLabel(key);
+					de.setValue(busta.getProperty(key));
 					dati.addElement(de);
 				}
 			}
