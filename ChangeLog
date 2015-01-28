@@ -4,7 +4,14 @@
 	Risolto Bug #281
 	Sistemato il problema del redirect quando si utilizza la pddConsole
 	con un contesto diverso da quello di default.
-		
+
+2015-01-28  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #282
+	Nella pddConsole configurata con propagazione remota, 
+	non funzionava la creazione delle PorteDelegate e delle PorteApplicativa.
+
 2015-01-22  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
