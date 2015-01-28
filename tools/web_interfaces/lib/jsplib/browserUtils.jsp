@@ -26,14 +26,27 @@ public String[] getBrowserInfo(String Information) {
        String browsername = "";
        String browserversion = "";
        String browser = Information  ;
-       if(browser.contains("MSIE")){
+       if(browser.contains("MSIE")){ //IE <= 10
            String subsString = browser.substring( browser.indexOf("MSIE"));
            info = (subsString.split(";")[0]).split(" ");
         }
-      else if(browser.contains("msie")){
+      else if(browser.contains("msie")){ //IE <= 10
            String subsString = browser.substring( browser.indexOf("msie"));
            info = (subsString.split(";")[0]).split(" ");
         }
+      else if(browser.contains("Trident")){ //IE 11
+			String subsString = browser.substring( browser.indexOf("Trident"));
+			info = new String[2];
+			
+			info[0] = (subsString.split(";")[0]).split("/")[0];
+			
+			int idx = (subsString.split(";")[1]).indexOf(")");
+			if(idx > -1)
+				info[1] = ((String)(subsString.split(";")[1]).subSequence(0, idx)).split(":")[1];
+			else
+			info[1] = "";
+			
+		}
       else if(browser.contains("Firefox")){
            String subsString = browser.substring( browser.indexOf("Firefox"));
            info = (subsString.split(" ")[0]).split("/");
@@ -61,8 +74,8 @@ String info[] = getBrowserInfo(userAgent);
 String browsername = info[0];
 String browserversion = info[1];
 
-// Microsoft IE 
-if(browsername.equalsIgnoreCase("MSIE")){
+// Microsoft IE (Trident e' il browsername che viene impostato da IE11)
+if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident")){
 	%>
 	<meta http-equiv="X-UA-Compatible" content="IE=8">
 	<script type="text/javascript">
