@@ -119,6 +119,10 @@ public abstract class BaseBean {
 					continue;
 				}
 				
+				if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+					continue;
+				}
+				
 				// field id non controllato se in fieldsNotCheckList
 				boolean ignoreField = false;
 				if(fieldsNotCheck!=null && fieldsNotCheck.size()>0){
@@ -387,6 +391,10 @@ public abstract class BaseBean {
 					continue;
 				}
 				
+				if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+					continue;
+				}
+				
 				// field id non controllato se in fieldsNotCheckList
 				boolean ignoreField = false;
 				if(fieldsNotIncluded!=null && fieldsNotIncluded.size()>0){
@@ -530,6 +538,10 @@ public abstract class BaseBean {
 				//System.out.println("["+fields[i].getName()+"]");
 				if(java.lang.reflect.Modifier.isStatic(fields[i].getModifiers())){
 					//System.out.println("IS STATIC");
+					continue;
+				}
+				
+				if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
 					continue;
 				}
 				
@@ -912,6 +924,11 @@ public abstract class BaseBean {
 						//System.out.println("IS STATIC");
 						continue;
 					}
+					
+					if(org.openspcoop2.utils.jaxb.DecimalWrapper.class.getName().equals(fields[i].getType().getName())){
+						continue;
+					}
+					
 					
 					java.lang.reflect.Field field = fields[i];
 					Object fieldValue = this.getFieldValue(field.getName(), this);
