@@ -620,7 +620,14 @@ public class RicezioneBuste {
 	}
 	
 	private void setSOAPFault_engine(Logger logCore, MsgDiagnostico msgDiag, Exception e, 
-			ErroreCooperazione erroreCooperazione, ErroreIntegrazione erroreIntegrazione, String posizioneErrore, boolean validazione) {
+			ErroreCooperazione erroreCooperazione, ErroreIntegrazione erroreIntegrazione, String posizioneErrore, 
+			boolean validazione) {
+		
+		boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1 = true;
+		try{
+			setSoapPrefixBackwardCompatibilityOpenSPCoop1 = OpenSPCoop2Properties.getInstance().isForceSoapPrefixCompatibilitaOpenSPCoopV1(); 
+		}catch(Exception eReader){}
+		
 		SOAPVersion versioneSoap = (SOAPVersion) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
 		if(msgDiag!=null)
 			msgDiag.logErroreGenerico(e, posizioneErrore);
@@ -637,22 +644,24 @@ public class RicezioneBuste {
 					if(erroreCooperazione != null)
 						messageFault = imbustamentoErroreBuilder.buildSoapFaultProtocollo_intestazione(this.msgContext.getIdentitaPdD(), this.msgContext.getTipoPorta(),
 								this.msgContext.getIdModulo(), 
-								erroreCooperazione.getCodiceErrore(), erroreCooperazione.getDescrizione(protocolFactory), versioneSoap);
+								erroreCooperazione.getCodiceErrore(), erroreCooperazione.getDescrizione(protocolFactory), 
+								versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 					else
 						messageFault = imbustamentoErroreBuilder.buildSoapFaultProtocollo_intestazione(this.msgContext.getIdentitaPdD(), this.msgContext.getTipoPorta(),
 								this.msgContext.getIdModulo(), 
-								erroreIntegrazione, versioneSoap);
+								erroreIntegrazione, 
+								versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 				}else{
 					if(e!=null){
 						 messageFault = imbustamentoErroreBuilder.buildSoapFaultProtocollo_processamento(this.msgContext.getIdentitaPdD(), this.msgContext.getTipoPorta(),
 								this.msgContext.getIdModulo(), 
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore),
-								e, versioneSoap);
+								e, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 					}else{
 						 messageFault = imbustamentoErroreBuilder.buildSoapFaultProtocollo_processamento(this.msgContext.getIdentitaPdD(), this.msgContext.getTipoPorta(),
 									this.msgContext.getIdModulo(), 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore),
-									versioneSoap);
+									versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 					}
 				}
 			} catch(ProtocolException protocolException){
@@ -5050,7 +5059,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
-							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),versioneSoap);
+							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
+							versioneSoap, propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}
 				else if(erroreIntegrazione!=null){
 					responseErrorMessage = imbustatore.msgErroreProtocollo_Processamento(openspcoopState.getStatoRichiesta(),
@@ -5061,7 +5071,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
-							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),versioneSoap);
+							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
+							versioneSoap, propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}else{
 					responseErrorMessage = imbustatore.msgErroreProtocollo_Processamento(openspcoopState.getStatoRichiesta(),
 							identitaPdD,this.msgContext.getTipoPorta(),this.msgContext.getIdModulo(),
@@ -5071,7 +5082,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
-							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),versioneSoap);
+							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
+							versioneSoap, propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}
 			}else{
 				if(erroreCooperazione!=null){
@@ -5082,7 +5094,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
-							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),versioneSoap);
+							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
+							versioneSoap, propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}
 				else if(erroreIntegrazione!=null){
 					throw new Exception("Method 'generaBustaErroreValidazione' not supported for MessaggioErroreIntegrazione");
@@ -5095,7 +5108,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
-							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),versioneSoap);
+							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
+							versioneSoap, propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}
 			}
 
@@ -5260,7 +5274,8 @@ public class RicezioneBuste {
 				Imbustamento protocolErroreBuilder = new Imbustamento(protocolFactory);
 				this.msgContext.setMessageResponse(protocolErroreBuilder.buildSoapFaultProtocollo_processamento(this.msgContext.getIdentitaPdD(), 
 						this.msgContext.getTipoPorta(),this.msgContext.getIdModulo(),
-						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e, versioneSoap));
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e, 
+						versioneSoap, parametriInvioBustaErrore.getPropertiesReader().isForceSoapPrefixCompatibilitaOpenSPCoopV1()));
 			}catch(Exception eBustaErrore){
 				this.msgContext.setMessageResponse(this.fac.createFaultMessage(versioneSoap, "ErroreSendBustaErrore: "+e.getMessage()));		
 			}

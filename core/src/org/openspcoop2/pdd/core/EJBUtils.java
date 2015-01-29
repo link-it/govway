@@ -2096,7 +2096,7 @@ public class EJBUtils {
 
 		//ErroreProcessamentoProtocollo: error Msg
 		OpenSPCoop2Message errorMsg = 
-			imbustatore.buildSoapMsgErroreProtocollo_Processamento(dettaglioEccezione, versioneSoap);
+			imbustatore.buildSoapMsgErroreProtocollo_Processamento(dettaglioEccezione, versioneSoap, this.propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 		if(errorMsg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
 		}
@@ -2167,7 +2167,7 @@ public class EJBUtils {
 
 		//ErroreValidazioneProtocollo: Msg
 		OpenSPCoop2Message msg = 
-			imbustatore.buildSoapMsgErroreProtocollo_Validazione(versioneSoap);
+			imbustatore.buildSoapMsgErroreProtocollo_Validazione(versioneSoap, this.propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 		
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreValidazioneProtocollo error: Costruzione messaggio Errore Protocollo fallita.");
@@ -2201,7 +2201,7 @@ public class EJBUtils {
 
 		//ErroreValidazioneProtocollo: Msg
 		OpenSPCoop2Message msg = 
-			imbustatore.buildSoapMsgErroreProtocollo_Validazione(versioneSoap);
+			imbustatore.buildSoapMsgErroreProtocollo_Validazione(versioneSoap, this.propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProtocollo_BustaRispostaMalformata error: Costruzione Msg Errore Protocollo fallita.");
 		}

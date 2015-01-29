@@ -258,14 +258,15 @@ public class RicezioneBusteSOAP  {
 					msgDiag.logPersonalizzato("contentType.notDefined");
 					responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(), context.getTipoPorta(), context.getIdModulo(), 
 							ErroriIntegrazione.ERRORE_433_CONTENT_TYPE_NON_PRESENTE.getErrore433_ContentTypeNonPresente(versioneSoap,supportedContentTypes),
-							versioneSoap);	
+							versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());	
 				}	
 				else{
 					//ContentType del messaggio non supportato
 					msgDiag.logPersonalizzato("contentType.unsupported");
 					responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(),  context.getTipoPorta(),context.getIdModulo(), 
 							ErroriIntegrazione.ERRORE_429_CONTENT_TYPE_NON_SUPPORTATO.getErrore429_ContentTypeNonSupportato(versioneSoap, 
-									contentTypeReq,supportedContentTypes), versioneSoap);	
+									contentTypeReq,supportedContentTypes), 
+									versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());	
 				}
 			}
 			else{
@@ -337,14 +338,16 @@ public class RicezioneBusteSOAP  {
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, mustUnderstandError);
 						msgDiag.logPersonalizzato("mustUnderstand.unknown");
 						responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(), context.getTipoPorta(),context.getIdModulo(), 
-								ErroriIntegrazione.ERRORE_427_MUSTUNDERSTAND_ERROR.getErrore427_MustUnderstandHeaders(mustUnderstandError), versioneSoap);
+								ErroriIntegrazione.ERRORE_427_MUSTUNDERSTAND_ERROR.getErrore427_MustUnderstandHeaders(mustUnderstandError), 
+								versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 					}
 					else{
 						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, soapEnvelopeNamespaceVersionMismatch);
 						msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
 						responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(), context.getTipoPorta(),context.getIdModulo(),
 								ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
-									getErrore430_SoapNamespaceNonSupportato(versioneSoap, soapEnvelopeNamespaceVersionMismatch), versioneSoap);
+									getErrore430_SoapNamespaceNonSupportato(versioneSoap, soapEnvelopeNamespaceVersionMismatch), 
+									versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 					}
 				}
 			}
@@ -360,7 +363,8 @@ public class RicezioneBusteSOAP  {
 				msgDiag.setPddContext(pddContext,ProtocolFactoryManager.getInstance().getDefaultProtocolFactory());
 				msgDiag.logErroreGenerico(e, "MessaggioRichiestaMalformato");
 				responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_intestazione(context.getIdentitaPdD(), context.getTipoPorta(),context.getIdModulo(),
-						ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(true, e), versioneSoap);
+						ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(true, e), 
+						versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 			}catch(ProtocolException ep){
 				throw new ConnectorException(ep.getMessage(),ep);
 			}
@@ -405,16 +409,19 @@ public class RicezioneBusteSOAP  {
 				if(saxParseException || wstxParsingException || wstxUnexpectedCharException){
 					// Richiesto da certificazione DigitPA
 					responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_intestazione(context.getIdentitaPdD(),context.getTipoPorta(), context.getIdModulo(),
-							ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(true,e), versioneSoap);
+							ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(true,e), 
+							versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}else if(msgErrore.equals("Transport level information does not match with SOAP Message namespace URI")){
 					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, "Impossibile recuperare il valore del namespace");
 					msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
 					responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(),context.getTipoPorta(), context.getIdModulo(),
 							ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
-								getErrore430_SoapNamespaceNonSupportato(versioneSoap,  "Impossibile recuperare il valore del namespace"), versioneSoap);
+								getErrore430_SoapNamespaceNonSupportato(versioneSoap,  "Impossibile recuperare il valore del namespace"), 
+								versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}else{
 					responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(),context.getTipoPorta(), context.getIdModulo(),
-							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(true, e), e, versioneSoap);
+							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(true, e), e, 
+							versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}
 			} catch (Exception ee) {
 				logCore.error("Creazione del messaggio di fault fallita");
@@ -435,7 +442,8 @@ public class RicezioneBusteSOAP  {
 							msgErrore = requestMessage.getParsingError().toString();
 						}
 						responseMessage = protocolErroreBuilder.buildSoapFaultProtocollo_intestazione(context.getIdentitaPdD(),context.getTipoPorta(), context.getIdModulo(),
-								ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(true,requestMessage.getParsingError()), versioneSoap);
+								ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(true,requestMessage.getParsingError()), 
+								versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 					} catch (Exception e1) {
 						logCore.error("Creazione del messaggio di fault fallita");
 					}
@@ -544,10 +552,12 @@ public class RicezioneBusteSOAP  {
 					msgDiag.logErroreGenerico(responseMessage.getParsingError(), "Generale(risposta)");
 					responseMessageError = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(),context.getTipoPorta(), context.getIdModulo(),
 							ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-								getErrore432_MessaggioRichiestaMalformato(false,responseMessage.getParsingError()), versioneSoap);
+								getErrore432_MessaggioRichiestaMalformato(false,responseMessage.getParsingError()), 
+								versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				} else {
 					responseMessageError = protocolErroreBuilder.buildSoapFaultProtocollo_processamento(context.getIdentitaPdD(),context.getTipoPorta(), context.getIdModulo(),
-							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e), versioneSoap);
+							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e), 
+							versioneSoap, openSPCoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 				}
 				// transfer length
 				ServletUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneBuste(), 

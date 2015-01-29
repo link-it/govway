@@ -35,9 +35,12 @@ import javax.xml.namespace.QName;
 public enum SOAPFaultCode {
 	DataEncodingUnknown, MustUnderstand, Receiver, Sender, VersionMismatch;
 	
-	public QName toQName(SOAPVersion version){
+	public QName toQName(SOAPVersion version,String prefix){
 		String namespace = version.getSoapEnvelopeNS();
-		return new QName(namespace, this.toString(version));
+		if(prefix!=null)
+			return new QName(namespace, this.toString(version), prefix);
+		else
+			return new QName(namespace, this.toString(version));
 	}
 
 	public String toString(SOAPVersion version) {

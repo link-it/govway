@@ -1114,6 +1114,7 @@ public class OpenSPCoop2Properties {
 			this.isGestioneElementoCollaborazione(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.ignoraEccezioniNonGravi_Validazione();
+			this.isForceSoapPrefixCompatibilitaOpenSPCoopV1();
 			this.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.isValidazioneIDBustaCompleta(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 
@@ -5473,28 +5474,58 @@ public class OpenSPCoop2Properties {
 	 * @return Indicazione se ritenere una busta malformata se la validazione ha rilevato eccezioni di livello non gravi
 	 * 
 	 */
-	private static Boolean ignoraEccezioniNonGravi_ValidazioneSPCoop = null;
+	private static Boolean ignoraEccezioniNonGravi_Validazione = null;
 	public boolean ignoraEccezioniNonGravi_Validazione(){
-		if(OpenSPCoop2Properties.ignoraEccezioniNonGravi_ValidazioneSPCoop==null){
+		if(OpenSPCoop2Properties.ignoraEccezioniNonGravi_Validazione==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.validazione.ignoraEccezioniNonGravi"); 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi"); 
 
 				if (value != null){
 					value = value.trim();
-					OpenSPCoop2Properties.ignoraEccezioniNonGravi_ValidazioneSPCoop = Boolean.parseBoolean(value);
+					OpenSPCoop2Properties.ignoraEccezioniNonGravi_Validazione = Boolean.parseBoolean(value);
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.ignoraEccezioniNonGravi_ValidazioneSPCoop = false;
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.ignoraEccezioniNonGravi_Validazione = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				OpenSPCoop2Properties.ignoraEccezioniNonGravi_ValidazioneSPCoop = false;
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.ignoraEccezioniNonGravi_Validazione = false;
 			}
 		}
 
-		return OpenSPCoop2Properties.ignoraEccezioniNonGravi_ValidazioneSPCoop;
+		return OpenSPCoop2Properties.ignoraEccezioniNonGravi_Validazione;
 	}
+	
+	/**
+	 * Indicazione se forzare la generazione del prefix 'soap' per i fault spcoop (compatibilita' con OpenSPCoop v1).
+	 *   
+	 * @return Indicazione se forzare la generazione del prefix 'soap' per i fault spcoop (compatibilita' con OpenSPCoop v1).
+	 * 
+	 */
+	private static Boolean forceSoapPrefixCompatibilitaOpenSPCoopV1 = null;
+	public boolean isForceSoapPrefixCompatibilitaOpenSPCoopV1(){
+		if(OpenSPCoop2Properties.forceSoapPrefixCompatibilitaOpenSPCoopV1==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.forceSoapPrefixCompatibilitaOpenSPCoopV1 = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.forceSoapPrefixCompatibilitaOpenSPCoopV1 = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.forceSoapPrefixCompatibilitaOpenSPCoopV1 = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.forceSoapPrefixCompatibilitaOpenSPCoopV1;
+	}
+	
 
 	/**
 	 * Indicazione se generare la lista Trasmissione
@@ -5546,7 +5577,7 @@ public class OpenSPCoop2Properties {
 	 * @return Indicazione se generare un msg di Protocollo errore in caso di filtro duplicati  anche per il profilo oneway
 	 * 
 	 */
-	private static Boolean isGenerazioneSPCoopErroreFiltroDuplicati = null;
+	private static Boolean isGenerazioneErroreFiltroDuplicati = null;
 	public boolean isGenerazioneErroreProtocolloFiltroDuplicati(String implementazionePdDSoggetto){
 
 		// ovverriding per implementazione porta di dominio
@@ -5563,25 +5594,25 @@ public class OpenSPCoop2Properties {
 			}
 		}
 
-		if(OpenSPCoop2Properties.isGenerazioneSPCoopErroreFiltroDuplicati==null){
+		if(OpenSPCoop2Properties.isGenerazioneErroreFiltroDuplicati==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.filtroduplicati.generazioneSPCoopErrore"); 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.filtroduplicati.generazioneErrore"); 
 
 				if (value != null){
 					value = value.trim();
-					OpenSPCoop2Properties.isGenerazioneSPCoopErroreFiltroDuplicati = Boolean.parseBoolean(value);
+					OpenSPCoop2Properties.isGenerazioneErroreFiltroDuplicati = Boolean.parseBoolean(value);
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroduplicati.generazioneSPCoopErrore' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isGenerazioneSPCoopErroreFiltroDuplicati = false;
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroduplicati.generazioneErrore' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isGenerazioneErroreFiltroDuplicati = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroduplicati.generazioneSPCoopErrore' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				OpenSPCoop2Properties.isGenerazioneSPCoopErroreFiltroDuplicati = false;
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroduplicati.generazioneErrore' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isGenerazioneErroreFiltroDuplicati = false;
 			}
 		}
 
-		return OpenSPCoop2Properties.isGenerazioneSPCoopErroreFiltroDuplicati;
+		return OpenSPCoop2Properties.isGenerazioneErroreFiltroDuplicati;
 	}
 
 	/**

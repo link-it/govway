@@ -365,7 +365,82 @@ public class Imbustamento  {
 
 
 
+	/**----------------- Fix soap prefix per OpenSPCoop v1 backward compatibility -------------*/
+	/*
+	 *OpenSPCoop2 ritorna il seguente soap-fault:
 
+	<SOAP-ENV:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<SOAP-ENV:Body>
+	<SOAP-ENV:Fault>
+	<faultcode>SOAP-ENV:Client</faultcode>
+	<faultstring>EGOV_IT_001 - Formato Busta non corretto</faultstring>
+	</SOAP-ENV:Fault>
+	</SOAP-ENV:Body>
+	</SOAP-ENV:Envelope>
+
+Il campo incriminato e' il fault code.
+Nel caso di fault eGov deve appartenere al namespace soap 11. Infatti il fault code "Client" possiede il prefisso SOAP-ENV dichiarato nella Envelope.
+La busta ritornata e' corretta.
+
+OpenSPCoop 1.x "rifiuta" questo tipo di fault.
+Di seguito il codice del controllo implementato nelle due versioni.
+In pratica nella nuova versione viene controllato correttamente che il namespace del fault-code appartenga al namespace soap. 
+Nella vecchia versione invece il controllo era cablato sul prefisso "soap" e quindi un diverso prefisso (come in questo caso) non supera la validazione. 
+Il controllo implementato sul vecchio codice e' doppiamente errato, visto che il "prefisso giusto" potrebbe essere associato ad un namespace non corretto e 
+la validazione sarebbe superata lo stesso.
+
+OpenSPCoop 1.x
+if(
+                        !(
+("Client".equals(codeS.getLocalName()) || "Server".equals(codeS.getLocalName()) ) &&
+"soap".equalsIgnoreCase(codeS.getPrefix())
+                        )
+                )
+                {
+                    GENERA ERRORE BUSTA
+                }
+
+
+OpenSPCoop 2.x (codice plugin spcoop)
+if(
+                        !(
+("Client".equals(codeS.getLocalName()) || "Server".equals(codeS.getLocalName()) ) &&
+Costanti.SOAP_ENVELOPE_NAMESPACE.equalsIgnoreCase(codeS.getURI())
+                        )
+                )
+                {
+                    GENERA ERRORE BUSTA
+                }
+
+
+Un prefix 'soap' viene fatto generare ad OpenSPCoop2 comunque, nel caso SPCoop.
+In questo modo il fault viene interpretato correttamente da OpenSPCoop-v1.
+L'xml possiede una dichiarazione ulteriore del namespace soap.
+
+<SOAP-ENV:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Body>
+<SOAP-ENV:Fault>
+<faultcode xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">soap:Client</faultcode>
+<faultstring>EGOV_IT_001 - Formato Busta non corretto</faultstring>
+</SOAP-ENV:Fault>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>  
+	 **/
+	private String getFaultCodePrefix(SOAPVersion versioneSoap, 
+			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+		if(setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+			if(this.protocolFactory!=null &&
+					this.protocolFactory.getProtocol()!=null &&
+					this.protocolFactory.getProtocol().equals("spcoop")){
+				if(SOAPVersion.SOAP11.equals(versioneSoap)){
+					return "soap";
+				}
+			}	
+		}
+		
+		return null; // viene generato nel namespace della busta SOAP
+		
+	}
 
 
 
@@ -380,8 +455,8 @@ public class Imbustamento  {
 	 *         in caso di costruzione con successo, null altrimenti.
 	 * 
 	 */
-	public OpenSPCoop2Message buildSoapMsgErroreProtocollo_Validazione(SOAPVersion versioneSoap)  {
-		return this.buildSoapMsgProtocolloErrore(true, null, versioneSoap);	
+	public OpenSPCoop2Message buildSoapMsgErroreProtocollo_Validazione(SOAPVersion versioneSoap,boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1)  {
+		return this.buildSoapMsgProtocolloErrore(true, null, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);	
 	}
 
 	/**
@@ -392,8 +467,9 @@ public class Imbustamento  {
 	 *         in caso di costruzione con successo, null altrimenti.
 	 * 
 	 */
-	public OpenSPCoop2Message buildSoapMsgErroreProtocollo_Processamento(DettaglioEccezione dettaglioEccezione, SOAPVersion versioneSoap){
-		return this.buildSoapMsgProtocolloErrore(false, dettaglioEccezione, versioneSoap);	
+	public OpenSPCoop2Message buildSoapMsgErroreProtocollo_Processamento(DettaglioEccezione dettaglioEccezione, 
+			SOAPVersion versioneSoap,boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+		return this.buildSoapMsgProtocolloErrore(false, dettaglioEccezione, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);	
 	}
 
 	/**
@@ -406,7 +482,8 @@ public class Imbustamento  {
 	 *         in caso di costruzione con successo, null altrimenti.
 	 * 
 	 */
-	public OpenSPCoop2Message buildSoapMsgProtocolloErrore(boolean erroreValidazione,DettaglioEccezione dettaglioEccezione, SOAPVersion versioneSoap)  {
+	public OpenSPCoop2Message buildSoapMsgProtocolloErrore(boolean erroreValidazione,DettaglioEccezione dettaglioEccezione, 
+			SOAPVersion versioneSoap,boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1)  {
 
 		try{
 
@@ -419,12 +496,13 @@ public class Imbustamento  {
 			SOAPBody bdy = env.getBody();
 			SOAPFault fault = bdy.addFault();
 
+			String soapFaultCodePrefix = this.getFaultCodePrefix(versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 			if(erroreValidazione){
 				fault.setFaultString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString(this.protocolFactory));
-				fault.setFaultCode(SOAPFaultCode.Sender.toQName(versioneSoap)); //costanti.get_FAULT_CODE_VALIDAZIONE
+				fault.setFaultCode(SOAPFaultCode.Sender.toQName(versioneSoap,soapFaultCodePrefix)); //costanti.get_FAULT_CODE_VALIDAZIONE
 			}else{
 				fault.setFaultString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO.toString(this.protocolFactory));
-				fault.setFaultCode(SOAPFaultCode.Receiver.toQName(versioneSoap)); 
+				fault.setFaultCode(SOAPFaultCode.Receiver.toQName(versioneSoap,soapFaultCodePrefix)); 
 			}
 			
 			if(!erroreValidazione && dettaglioEccezione!=null){
@@ -454,7 +532,8 @@ public class Imbustamento  {
 	
    
     
-	public OpenSPCoop2Message buildSoapFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, ErroreIntegrazione errore,Exception eProcessamento, SOAPVersion versioneSoap){
+	public OpenSPCoop2Message buildSoapFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, 
+			ErroreIntegrazione errore,Exception eProcessamento, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		try{
 			DettaglioEccezione dettaglioEccezione = null;
 			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()){
@@ -462,7 +541,8 @@ public class Imbustamento  {
 						this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 				this.dettaglioEccezioneOpenSPCoop2Builder.gestioneDettaglioEccezioneProcessamento(eProcessamento, dettaglioEccezione);
 			}
-			QName faultCode = SOAPFaultCode.Receiver.toQName(versioneSoap); 
+			String soapFaultCodePrefix = this.getFaultCodePrefix(versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+			QName faultCode = SOAPFaultCode.Receiver.toQName(versioneSoap, soapFaultCodePrefix); 
 			return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, SoapUtils.build_Soap_Fault(versioneSoap, this.protocolFactory.createTraduttore().toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO),null,
 					faultCode, 
 					this.xmlUtils.newElement(org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezione(dettaglioEccezione)), 
@@ -472,14 +552,16 @@ public class Imbustamento  {
 		}
 	}
 	
-	public OpenSPCoop2Message buildSoapFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore, SOAPVersion versioneSoap){
+	public OpenSPCoop2Message buildSoapFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
+			ErroreIntegrazione errore, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		try{
 			DettaglioEccezione dettaglioEccezione = null;
 			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()){
 				dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, errore.getCodiceErrore(), 
 						this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 			}
-			QName faultCode = SOAPFaultCode.Receiver.toQName(versioneSoap); 
+			String soapFaultCodePrefix = this.getFaultCodePrefix(versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+			QName faultCode = SOAPFaultCode.Receiver.toQName(versioneSoap, soapFaultCodePrefix); 
 			return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, 
 					SoapUtils.build_Soap_Fault(versioneSoap, 
 					this.protocolFactory.createTraduttore().toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO),null,
@@ -493,27 +575,31 @@ public class Imbustamento  {
 		}
 	}
 	
-	public OpenSPCoop2Message buildSoapFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,CodiceErroreCooperazione codiceErrore,String msgErrore, SOAPVersion versioneSoap) throws ProtocolException{
+	public OpenSPCoop2Message buildSoapFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
+			CodiceErroreCooperazione codiceErrore,String msgErrore, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = null;
 		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione()){
 			dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, codiceErrore, 
 					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(codiceErrore,msgErrore));
 		}
-		return buildSoapFaultProtocollo_intestazione(dettaglioEccezione, versioneSoap);
+		return buildSoapFaultProtocollo_intestazione(dettaglioEccezione, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 	
-	public OpenSPCoop2Message buildSoapFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore, SOAPVersion versioneSoap) throws ProtocolException{
+	public OpenSPCoop2Message buildSoapFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
+			ErroreIntegrazione errore, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = null;
 		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione()){
 			dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, errore.getCodiceErrore(), 
 					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 		}
-		return buildSoapFaultProtocollo_intestazione(dettaglioEccezione, versioneSoap);
+		return buildSoapFaultProtocollo_intestazione(dettaglioEccezione, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 	
-	public OpenSPCoop2Message buildSoapFaultProtocollo_intestazione(DettaglioEccezione dettaglioEccezione, SOAPVersion versioneSoap){
+	public OpenSPCoop2Message buildSoapFaultProtocollo_intestazione(DettaglioEccezione dettaglioEccezione, 
+			SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		try{
-			QName faultCode = SOAPFaultCode.Sender.toQName(versioneSoap); 
+			String soapFaultCodePrefix = this.getFaultCodePrefix(versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+			QName faultCode = SOAPFaultCode.Sender.toQName(versioneSoap, soapFaultCodePrefix); 
 			Element elementDetail = null;
 			if(dettaglioEccezione!=null){
 				byte [] bytesElement = org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezione(dettaglioEccezione);
@@ -601,9 +687,11 @@ public class Imbustamento  {
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
-			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, SOAPVersion versioneSoap){
+			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, 
+			SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		return msgErroreProtocollo_Processamento(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, errori, null,
-				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, eProcessamento, versioneSoap);
+				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
+				eProcessamento, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 
 	/**
@@ -624,9 +712,11 @@ public class Imbustamento  {
 			ErroreCooperazione erroreCooperazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
-			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, SOAPVersion versioneSoap){ 
+			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
+			Exception eProcessamento, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){ 
 		return msgErroreProtocollo_Processamento(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, erroreCooperazione, null, null,
-				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, eProcessamento, versioneSoap);
+				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
+				eProcessamento, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 	
 	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IState state,IDSoggetto identitaPdD, TipoPdD tipoPdD,
@@ -634,9 +724,11 @@ public class Imbustamento  {
 			ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
-			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, SOAPVersion versioneSoap){ 
+			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
+			Exception eProcessamento, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){ 
 		return msgErroreProtocollo_Processamento(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, null, erroreIntegrazione,
-				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, eProcessamento, versioneSoap);
+				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
+				eProcessamento, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 
 	/**
@@ -659,7 +751,8 @@ public class Imbustamento  {
 			ErroreCooperazione erroreCooperazione, List<Eccezione> errori, ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext, long attesaAttiva, int checkInterval, String profiloGestione,
-			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, Exception eProcessamento, SOAPVersion versioneSoap){
+			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
+			Exception eProcessamento, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 
 
 
@@ -710,7 +803,7 @@ public class Imbustamento  {
 			
 			//ErroreProcessamento:  Msg
 			OpenSPCoop2Message responseMessage = 
-				this.buildSoapMsgErroreProtocollo_Processamento(dettaglioEccezione, versioneSoap);
+				this.buildSoapMsgErroreProtocollo_Processamento(dettaglioEccezione, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 
 			// Tracciamento in Busta (se il profilo e' null, non aggiunto la trasmissione, rischierei di aggiungere elementi che non sono validi per le LineeGuida1.1)
 			if(generazioneListaTrasmissioni){
@@ -750,7 +843,7 @@ public class Imbustamento  {
 						return this.msgErroreProtocollo_Validazione(state,identitaPdD, modulo,
 								busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
-								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, versioneSoap);
+								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 					}
 				}
 			}
@@ -782,9 +875,11 @@ public class Imbustamento  {
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
-			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni, SOAPVersion versioneSoap){
+			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni, 
+			SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		return msgErroreProtocollo_Validazione(state,identitaPdD, modulo, busta, integrazione, idTransazione, null, errori,
-				messageSecurityPropertiesResponse,messageSecurityContext,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, versioneSoap);
+				messageSecurityPropertiesResponse,messageSecurityContext,attesaAttiva,checkInterval,
+				profiloGestione,tipoTempo,generazioneListaTrasmissioni, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 
 	/**
@@ -810,9 +905,11 @@ public class Imbustamento  {
 			long attesaAttiva, 
 			int checkInterval, 
 			String profiloGestione,
-			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, SOAPVersion versioneSoap){
+			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
+			SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		return msgErroreProtocollo_Validazione(state,identitaPdD, modulo, busta, integrazione, idTransazione, erroreCooperazione,null,
-				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, versioneSoap);
+				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, 
+				profiloGestione, tipoTempo, generazioneListaTrasmissioni, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 
 	/**
@@ -834,7 +931,8 @@ public class Imbustamento  {
 			ErroreCooperazione erroreCooperazione, List<Eccezione> errori, 
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext, long attesaAttiva, int checkInterval, String profiloGestione,
-			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, SOAPVersion versioneSoap){
+			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
+			SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 
 		try{
 
@@ -863,7 +961,7 @@ public class Imbustamento  {
 
 			//ErroreValidazione:  Msg
 			OpenSPCoop2Message responseMessage = 
-				this.buildSoapMsgErroreProtocollo_Validazione(versioneSoap);
+				this.buildSoapMsgErroreProtocollo_Validazione(versioneSoap,setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 
 			// Tracciamento in Busta
 			if(generazioneListaTrasmissioni){
@@ -902,7 +1000,7 @@ public class Imbustamento  {
 						return this.msgErroreProtocollo_Validazione(state,identitaPdD,modulo,
 								busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
-								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, versioneSoap);
+								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 					}
 				}
 			}
