@@ -31,6 +31,7 @@ package org.openspcoop2.generic_project.web.presentation.field;
 public class OutputText extends OutputField<String>{
 	
 	public OutputText(){
+		super();
 		this.setType("text"); 
 		this.setInsideGroup(false);
 		this.setSecret(false);

@@ -32,6 +32,7 @@ package org.openspcoop2.generic_project.web.presentation.field;
 public class OutputButton extends OutputIcon{
 
 	public OutputButton(){
+		super();
 		this.setType("link");
 		this.setInsideGroup(false);
 	}

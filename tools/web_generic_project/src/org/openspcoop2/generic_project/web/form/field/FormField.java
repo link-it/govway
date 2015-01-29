@@ -95,12 +95,14 @@ public abstract class FormField<T> {
 	private boolean confirm ;
 
 	private boolean redisplay;
-	
+
 	private String style;
-	
+
 	private String pattern;
 	
 	private int width;	
+
+	private String handlerMethodPrefix = null;
 
 	public boolean isAutoComplete() {
 		return this.autoComplete;
@@ -210,7 +212,7 @@ public abstract class FormField<T> {
 			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
 				return tmp;
 		}catch(Exception e){}
-		
+
 		return this.label2;
 	}
 
@@ -241,9 +243,18 @@ public abstract class FormField<T> {
 
 	public List<?> fieldAutoComplete(Object val){
 		try{
-			String methodName = this.getName() + CostantiForm.AUTO_COMPLETE_EVENT_HANDLER;
-			Method method =  this.form.getClass().getMethod(methodName , Object.class);
-			Object ret = method.invoke(this.form,val);
+			String methodName = null;
+			Method method = null;
+			Object ret = null;
+			if(this.getHandlerMethodPrefix() == null){
+				methodName = this.getName() + CostantiForm.AUTO_COMPLETE_EVENT_HANDLER;
+				method =  this.form.getClass().getMethod(methodName , Object.class);
+				ret = method.invoke(this.form,val);
+			}else {
+				methodName = this.getHandlerMethodPrefix() + CostantiForm.AUTO_COMPLETE_EVENT_HANDLER;
+				method =  this.form.getClass().getMethod(methodName , FormField.class, Object.class);
+				ret = method.invoke(this.form,this,val);
+			}
 
 			if(ret != null && ret instanceof List<?>)
 				return (List<?>) ret;
@@ -256,9 +267,17 @@ public abstract class FormField<T> {
 	// Event Handler per la selezione 
 	public void fieldSelected(ActionEvent ae) {
 		try{
-			String methodName = this.getName() + CostantiForm.SELECTED_ELEMENT_EVENT_HANDLER;
-			Method method =  this.form.getClass().getMethod(methodName ,ae.getClass());
-			method.invoke(this.form,ae);
+			String methodName = null;
+			Method method = null;
+			if(this.getHandlerMethodPrefix() == null){
+				methodName = this.getName() + CostantiForm.SELECTED_ELEMENT_EVENT_HANDLER;
+				method =  this.form.getClass().getMethod(methodName , ae.getClass());
+				method.invoke(this.form,ae);
+			}else {
+				methodName = this.getHandlerMethodPrefix() + CostantiForm.SELECTED_ELEMENT_EVENT_HANDLER;
+				method =  this.form.getClass().getMethod(methodName , FormField.class, ae.getClass());
+				method.invoke(this.form,this,ae);
+			}
 		}catch(Exception e){
 
 		}
@@ -267,9 +286,17 @@ public abstract class FormField<T> {
 	// Event Handler per l'evento OnChange 
 	public void valueChanged(ActionEvent ae) {
 		try{
-			String methodName = this.getName() + CostantiForm.ONCHANGE_EVENT_HANDLER;
-			Method method =  this.form.getClass().getMethod(methodName ,ae.getClass());
-			method.invoke(this.form,ae);
+			String methodName = null;
+			Method method = null;
+			if(this.getHandlerMethodPrefix() == null){
+				methodName = this.getName() + CostantiForm.ONCHANGE_EVENT_HANDLER;
+				method =  this.form.getClass().getMethod(methodName , ae.getClass());
+				method.invoke(this.form,ae);
+			}else {
+				methodName = this.getHandlerMethodPrefix() + CostantiForm.ONCHANGE_EVENT_HANDLER;
+				method =  this.form.getClass().getMethod(methodName , FormField.class, ae.getClass());
+				method.invoke(this.form,this,ae);
+			}
 		}catch(Exception e){
 
 		}
@@ -378,6 +405,14 @@ public abstract class FormField<T> {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	public String getHandlerMethodPrefix() {
+		return this.handlerMethodPrefix;
+	}
+
+	public void setHandlerMethodPrefix(String handlerMethodPrefix) {
+		this.handlerMethodPrefix = handlerMethodPrefix;
 	}
 
 	public String getPattern() {

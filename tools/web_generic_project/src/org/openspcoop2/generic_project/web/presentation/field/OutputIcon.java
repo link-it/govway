@@ -35,12 +35,14 @@ import org.openspcoop2.generic_project.web.core.Utils;
 public class OutputIcon extends OutputField<String> {
 
 	public OutputIcon(){
+		super();
 		this.setType("icon"); 
 		this.setInsideGroup(false);
 	}
 	
 	private String icon = null;
 	private String iconTitle = null;
+	private String alt = null;
 	
 	public String getIcon() {
 		return this.icon;
@@ -63,5 +65,20 @@ public class OutputIcon extends OutputField<String> {
 	public void setIconTitle(String iconTitle) {
 		this.iconTitle = iconTitle;
 	}
+	public String getAlt() {
+		try{
+			String tmp = Utils.getMessageFromResourceBundle(this.alt);
+
+			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
+				return tmp;
+		}catch(Exception e){}
+		
+		return this.alt;
+	}
+	public void setAlt(String alt) {
+		this.alt = alt;
+	}
+	
+	
 
 }

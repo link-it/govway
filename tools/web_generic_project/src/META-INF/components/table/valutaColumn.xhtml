@@ -12,26 +12,29 @@
 
 	<rich:column>
 		<f:facet name="header">
-			<h:outputText value="#{fieldDescriptor.label}"
+			<h:outputText value="#{fieldDescriptor.label}" styleClass="#{fieldDescriptor.labelStyleClass}"
 				rendered="#{not empty fieldDescriptor.label}" />
 		</f:facet>
 
-		<h:outputText id="#{id}NoValue" value="--"
-			rendered="#{empty fieldValue.value}" />
+								<h:outputText id="#{id}NoValue" value="--" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{empty fieldValue.value and empty fieldValue.defaultValue}" />
+				
+			<h:outputText id="#{id}DValue" value="#{fieldValue.defaultValue}" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{empty fieldValue.value and not empty fieldValue.defaultValue}" />
 
-		<h:outputText id="#{id}ValutaCSValue" value="#{fieldValue.value}"
+		<h:outputText id="#{id}ValutaCSValue" value="#{fieldValue.value}" styleClass="#{fieldDescriptor.valueStyleClass}"
 			rendered="#{not empty fieldValue.value and not empty fieldDescriptor.currencySymbol}">
 			<f:convertNumber currencySymbol="#{fieldDescriptor.currencySymbol}"
 				type="#{fieldDescriptor.converterType}" />
 		</h:outputText>
 
-		<h:outputText id="#{id}ValutaCCValue" value="#{fieldValue.value}"
+		<h:outputText id="#{id}ValutaCCValue" value="#{fieldValue.value}" styleClass="#{fieldDescriptor.valueStyleClass}"
 			rendered="#{not empty fieldValue.value and not empty fieldDescriptor.currencyCode}">
 			<f:convertNumber currencyCode="#{fieldDescriptor.currencyCode}"
 				type="#{fieldDescriptor.converterType}" />
 		</h:outputText>
 
-		<h:outputText id="#{id}ValutaValue" value="#{fieldValue.value}"
+		<h:outputText id="#{id}ValutaValue" value="#{fieldValue.value}" styleClass="#{fieldDescriptor.valueStyleClass}"
 			rendered="#{not empty fieldValue.value and empty fieldDescriptor.currencyCode and empty fieldDescriptor.currencySymbol}">
 			<f:convertNumber type="#{fieldDescriptor.converterType}" />
 		</h:outputText>

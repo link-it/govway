@@ -1,3 +1,10 @@
+2014-11-12  Giuliano Pintori <pintori@link.it>
+
+	* [WebGenericProject]
+	Aggiunta funzionalità #283
+	Aggiunta la possibilita' di definire tramite le API le classi CSS da
+	utilizzare per personalizzare l'aspetto grafico dei componenti.
+
 2015-01-28  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole]

@@ -11,7 +11,8 @@
 	
 	<rich:column>
 		<f:facet name="header" > 
-			<h:outputText value="#{fieldDescriptor.label}"  rendered="#{not empty fieldDescriptor.label}" />
+			<h:outputText value="#{fieldDescriptor.label}"  rendered="#{not empty fieldDescriptor.label}" 
+			styleClass="#{fieldDescriptor.labelStyleClass}"/>
 		</f:facet>
 		
 		<ui:insert name="icons"/>

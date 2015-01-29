@@ -42,8 +42,11 @@ public class OutputNumber<N extends Number> extends OutputField<Number> {
 	public static final String CURRENCY_CODE_EURO = "EUR";
 	public static final String CURRENCY_CODE_GBP = "GBP";
 	public static final String CURRENCY_CODE_USA = "USD";
+	
+	
 
 	public OutputNumber(){
+		super();
 		this.setType("number");
 		this.setInsideGroup(false); 
 	}

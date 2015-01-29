@@ -32,6 +32,7 @@ import java.util.Date;
 public class OutputDate extends OutputField<Date> {
 
 	public OutputDate(){
+		super();
 		this.setType("date");
 		this.setInsideGroup(false);
 		this.setPattern("dd/M/yy HH:mm:ss");

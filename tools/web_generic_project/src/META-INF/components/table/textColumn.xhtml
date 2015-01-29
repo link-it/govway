@@ -11,16 +11,19 @@
 	
 	<rich:column>
 		<f:facet name="header">
-			<h:outputText value="#{fieldDescriptor.label}" rendered="#{not empty fieldDescriptor.label}"/>
+			<h:outputText value="#{fieldDescriptor.label}" rendered="#{not empty fieldDescriptor.label}" styleClass="#{fieldDescriptor.labelStyleClass}"/>
 		</f:facet>
 
-		<h:outputText id="#{id}NoValue" value="--"
-			rendered="#{empty fieldValue.value}" />
+						<h:outputText id="#{id}NoValue" value="--" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{empty fieldValue.value and empty fieldValue.defaultValue}" />
+				
+			<h:outputText id="#{id}DValue" value="#{fieldValue.defaultValue}" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{empty fieldValue.value and not empty fieldValue.defaultValue}" />
 			
-		<h:outputText id="#{id}TextValue" value="#{fieldValue.value}"
+		<h:outputText id="#{id}TextValue" value="#{fieldValue.value}" escape="#{field.escape}" styleClass="#{fieldDescriptor.valueStyleClass}"
 				rendered="#{not empty fieldValue.value and fieldValue.secret == false}" />
 				
-		<h:outputText id="#{id}TextValueSecret" value="#{fieldValue.secretValue}"
+		<h:outputText id="#{id}TextValueSecret" value="#{fieldValue.secretValue}" styleClass="#{fieldDescriptor.valueStyleClass}"
 				rendered="#{not empty fieldValue.value and fieldValue.secret == true}" />	
 	</rich:column>
 </ui:composition>

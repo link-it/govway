@@ -60,7 +60,7 @@
 			<rich:datascroller for="#{id}_tbl"
 						   id="#{id}_ds_top" 
 						   maxPages="10"
-						   renderIfSinglePage="true" 
+						   renderIfSinglePage="false" 
 						   pagesVar="pages" 
 						   pageIndexVar="page" 
 						   reRender="#{id}_ds_down" fastControls="hide" 
@@ -131,7 +131,7 @@
 					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
 	                      <h:panelGroup style="width:50px;" layout="block">
-	                         <script type="text/javascript">
+	                         <script type="text/javascript" >
 	                        //<![CDATA[
 	                            function #{id}_checkAllCheckboxesInTable( inputId, state ){
 		                            var size = 0;
@@ -203,17 +203,6 @@
 				      <f:facet name="footer">
 				      	<a4j:outputPanel layout="block">
 				      		<a4j:outputPanel layout="block" rendered="#{showSelectAll}" styleClass="selectionInfoCtr">
-			      					<style type="text/css">
-						      			.selectionInfoCtr{
-						      				margin-bottom: 5px;
-						      			}
-						      			.selectionInfoItems{
-						      				text-align: center;
-						      			}
-						      			.selectionInfoItem{
-						      				margin-right: 5px;
-						      			}
-						      		</style>
 						      		<div class="selectionInfoItems">
 						      			<h:outputText id="#{id}_selectedInfoLbl" style="display:none" value="" styleClass="selectionInfoItem"/>
 
@@ -224,7 +213,7 @@
 			      					
 			      				
 			      			</a4j:outputPanel>
-				      		<h:panelGroup layout="block;" styleClass="buttonrow">
+				      		<h:panelGroup layout="block" styleClass="buttonrow">
 					      		<div class="buttonrowlista">
 					      			<c:if test="#{empty customDelete or customDelete==false}">
 						      			<a4j:jsFunction id="#{id}_deleteSelected" name="#{id}_deleteSelected" action="#{mBean.delete}" reRender="#{id}"/>
@@ -289,7 +278,7 @@
 			   </f:facet>
 			   <h:panelGrid>
 			      <h:panelGrid columns="2">
-			         <h:graphicImage value="/images/001_11.png" />
+			         <h:graphicImage value="/images/001_11.png" alt="#{commonsMsg['pagedDataTable.component.confermaRimozione.label']}"/>
 				 	<h:outputText value="#{commonsMsg['pagedDataTable.component.confermaRimozione.label']}" style="font-weight: bold;" />
 			      </h:panelGrid>
 			      <h:panelGroup>
@@ -311,7 +300,7 @@
 			   </f:facet>
 			   <h:panelGrid>
 			      <h:panelGrid columns="2">
-			         <h:graphicImage value="/images/001_11.png" />
+			         <h:graphicImage value="/images/001_11.png" alt="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.label']}"/>
 				 	<h:outputText value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.label']}" style="font-weight: bold;" />
 			      </h:panelGrid>
 			      <h:panelGroup>

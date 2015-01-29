@@ -43,6 +43,8 @@ public abstract class OutputField<T> {
 	
 	private T value;
 	
+	private T defaultValue;
+	
 	private String type;
 
 	private boolean rendered;
@@ -51,7 +53,24 @@ public abstract class OutputField<T> {
 	
 	private boolean secret ;
 	
+	private boolean escape = true;
+	
 	private String pattern;
+	
+	private String labelStyleClass = null;
+	
+	private String valueStyleClass = null;
+	
+	private String columnClasses = null;
+	
+	private String styleClass = null;
+	
+	public OutputField(){
+		this.labelStyleClass ="outputFieldLabel";
+		this.rendered = true;
+		this.columnClasses = ""; //"gridContent verticalAlignTop";
+		this.styleClass = "";
+	}
 	
 	public String getName() {
 		return this.name;
@@ -123,6 +142,56 @@ public abstract class OutputField<T> {
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
 	}
+	
+	public boolean isEscape() {
+		return this.escape;
+	}
+
+	public void setEscape(boolean escape) {
+		this.escape = escape;
+	}
+
+	public String getLabelStyleClass() {
+		return this.labelStyleClass;
+	}
+
+	public void setLabelStyleClass(String labelStyleClass) {
+		this.labelStyleClass = labelStyleClass;
+	}
+
+	public String getValueStyleClass() {
+		return this.valueStyleClass;
+	}
+
+	public void setValueStyleClass(String valueStyleClass) {
+		this.valueStyleClass = valueStyleClass;
+	}
+
+	public T getDefaultValue() {
+		return this.defaultValue;
+	}
+
+	public void setDefaultValue(T defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public String getColumnClasses() {
+		return this.columnClasses;
+	}
+
+	public void setColumnClasses(String columnClasses) {
+		this.columnClasses = columnClasses;
+	}
+
+	public String getStyleClass() {
+		return this.styleClass;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+ 
 	
 	
 	

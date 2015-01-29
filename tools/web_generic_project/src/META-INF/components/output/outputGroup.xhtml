@@ -11,14 +11,14 @@
 	
 		<c:set var="insideGroup" value="true" />
 
-	<h:panelGrid id="panelGroupOut_#{id}"
-		columnClasses="gridContent verticalAlignTop"
+	<h:panelGrid id="panelGroupOut_#{id}" styleClass="#{group.styleClass}"
+		columnClasses="#{group.columnClasses}" 
 		rendered="#{group.rendered}" columns="#{group.columns}">
 
 		<c:forEach items="#{group.fields}" var="field">
-		
-			<op2web:output field="#{field}" insideGroup="#{insideGroup}" />
-			
+			<c:if test="#{field.rendered}">
+				<op2web:output field="#{field}" insideGroup="#{insideGroup}" />
+			</c:if>
 		</c:forEach>
 	</h:panelGrid>
 

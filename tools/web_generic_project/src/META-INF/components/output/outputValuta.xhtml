@@ -15,26 +15,30 @@
 
 	<c:if test="#{insideGroup == 'false'}">
 		<h:panelGrid id="panelOut_#{id}"
-			columnClasses="gridContent verticalAlignTop"
-			rendered="#{!empty field.value}"
+			styleClass="#{field.styleClass}"
+		columnClasses="#{field.columnClasses}" 
+			rendered="#{field.rendered}"
 			columns="#{!empty field.label ? 2 : 1}">
-			<h:outputText id="out_#{id}_Label" style="font-weight: bold;"
+			<h:outputText id="out_#{id}_Label" styleClass="#{field.labelStyleClass}"
 				value="#{field.label}:" rendered="#{!empty field.label}" />
 
-			<h:outputText id="out_#{id}_NoValue" value="--"
-				rendered="#{empty field.value}" />
-
-			<h:outputText id="out_#{id}_ValutaCSValue" value="#{field.value}"
+			<h:outputText id="out_#{id}_NoValue" value="--"  styleClass="#{field.valueStyleClass}"
+				rendered="#{empty field.value and empty field.defaultValue}" />
+				
+			<h:outputText id="out_#{id}_DValue" value="#{field.defaultValue}" styleClass="#{field.valueStyleClass}"
+				rendered="#{empty field.value and not empty field.defaultValue}" />
+				
+			<h:outputText id="out_#{id}_ValutaCSValue" value="#{field.value}" styleClass="#{field.valueStyleClass}"
 				rendered="#{not empty field.value and not empty field.currencySymbol}">
 				 <f:convertNumber currencySymbol="#{field.currencySymbol}" type="#{field.converterType}"/>
 			</h:outputText>
 			
-			<h:outputText id="out_#{id}_ValutaCCValue" value="#{field.value}"
+			<h:outputText id="out_#{id}_ValutaCCValue" value="#{field.value}" styleClass="#{field.valueStyleClass}"
 				rendered="#{not empty field.value and not empty field.currencyCode}">
 				 <f:convertNumber currencyCode="#{field.currencyCode}" type="#{field.converterType}"/>
 			</h:outputText>
 			
-			<h:outputText id="out_#{id}_ValutaValue" value="#{field.value}"
+			<h:outputText id="out_#{id}_ValutaValue" value="#{field.value}" styleClass="#{field.valueStyleClass}"
 				rendered="#{not empty field.value and empty field.currencyCode and empty field.currencySymbol}">
 				 <f:convertNumber type="#{field.converterType}"/>
 			</h:outputText>
@@ -42,23 +46,26 @@
 	</c:if>
 	
 	<c:if test="#{insideGroup == 'true'}">
-			<h:outputText id="out_#{id}_Label" style="font-weight: bold;"
+			<h:outputText id="out_#{id}_Label" styleClass="#{field.labelStyleClass}"
 				value="#{field.label}:" rendered="#{!empty field.label}" />
 
-			<h:outputText id="out_#{id}_NoValue" value="--"
-				rendered="#{empty field.value}" />
+			<h:outputText id="out_#{id}_NoValue" value="--" styleClass="#{field.valueStyleClass}"
+				rendered="#{empty field.value and empty field.defaultValue}" />
+				
+			<h:outputText id="out_#{id}_DValue" value="#{field.defaultValue}" styleClass="#{field.valueStyleClass}"
+				rendered="#{empty field.value and not empty field.defaultValue}" />
 
-			<h:outputText id="out_#{id}_ValutaCSValue" value="#{field.value}"
+			<h:outputText id="out_#{id}_ValutaCSValue" value="#{field.value}" styleClass="#{field.valueStyleClass}"
 				rendered="#{not empty field.value and not empty field.currencySymbol}">
 				 <f:convertNumber currencySymbol="#{field.currencySymbol}" type="#{field.converterType}"/>
 			</h:outputText>
 			
-			<h:outputText id="out_#{id}_ValutaCCValue" value="#{field.value}"
+			<h:outputText id="out_#{id}_ValutaCCValue" value="#{field.value}" styleClass="#{field.valueStyleClass}"
 				rendered="#{not empty field.value and not empty field.currencyCode}">
 				 <f:convertNumber currencyCode="#{field.currencyCode}" type="#{field.converterType}"/>
 			</h:outputText>
 			
-			<h:outputText id="out_#{id}_ValutaValue" value="#{field.value}"
+			<h:outputText id="out_#{id}_ValutaValue" value="#{field.value}" styleClass="#{field.valueStyleClass}"
 				rendered="#{not empty field.value and empty field.currencyCode and empty field.currencySymbol}">
 				 <f:convertNumber type="#{field.converterType}"/>
 			</h:outputText>

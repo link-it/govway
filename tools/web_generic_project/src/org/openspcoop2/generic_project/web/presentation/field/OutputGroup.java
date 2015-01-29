@@ -48,9 +48,15 @@ public class OutputGroup {
 	
 	private String label = null;
 	
+	private String columnClasses = null;
+	
+	private String styleClass = null;
+	
 	public OutputGroup(){
 		this.fields = new ArrayList<OutputField<?>>();
 		this.columns = 2;
+		this.columnClasses = ""; //"gridContent verticalAlignTop";
+		this.styleClass = "";
 	}
 
 	public String getIdGroup() {
@@ -96,7 +102,21 @@ public class OutputGroup {
 	public void addField(OutputField<?> field){
 		this.fields.add(field);
 	}
-	
-	
+
+	public String getColumnClasses() {
+		return this.columnClasses;
+	}
+
+	public void setColumnClasses(String columnClasses) {
+		this.columnClasses = columnClasses;
+	}
+
+	public String getStyleClass() {
+		return this.styleClass;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
 	
 }
