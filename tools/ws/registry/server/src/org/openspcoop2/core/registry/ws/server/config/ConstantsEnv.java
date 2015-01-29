@@ -33,12 +33,12 @@ public class ConstantsEnv {
 
 	public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
 	
-    public final static String OPENSPCOOP2_WSREGISTRY_LOCAL_PATH = "wsregitry_local.properties";
+    public final static String OPENSPCOOP2_WSREGISTRY_LOCAL_PATH = "wsregistry_local.properties";
     public final static String OPENSPCOOP2_WSREGISTRY_PROPERTIES = "OPENSPCOOP2_WSREGISTRY_PROPERTIES";
     
-    public final static String OPENSPCOOP2_BACKEND_LOCAL_PATH = "wsregitry_local.backend.properties";
+    public final static String OPENSPCOOP2_BACKEND_LOCAL_PATH = "wsregistry_local.backend.properties";
     public final static String OPENSPCOOP2_BACKEND_PROPERTIES = "OPENSPCOOP2_WSREGISTRY_BACKEND_PROPERTIES";
     	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsregitry_local.log4j.properties";
+    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsregistry_local.log4j.properties";
     public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_WSREGISTRY_LOG_PROPERTIES";
 }
