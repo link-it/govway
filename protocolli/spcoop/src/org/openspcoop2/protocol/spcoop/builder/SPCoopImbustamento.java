@@ -1059,8 +1059,11 @@ public class SPCoopImbustamento {
 			// Aggiungo figli presenti nel vecchio, nel nuovo
 			java.util.Iterator<?> child = eGovHeaderOLD.getChildElements();
 			while(child.hasNext()){
-				SOAPElement mChild = (SOAPElement) child.next();
-				eGovHeaderNEW.addChildElement(mChild);
+				Object oChild = child.next();
+				if(oChild instanceof SOAPElement){
+					SOAPElement mChild = (SOAPElement) oChild;
+					eGovHeaderNEW.addChildElement(mChild);
+				}
 			}
 			// Cerco eventuale lista trasmissioni
 			child = eGovHeaderNEW.getChildElements();
