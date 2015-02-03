@@ -39,7 +39,9 @@ public enum EsigibilitaIVAType implements IEnumeration , Serializable , Cloneabl
 	@javax.xml.bind.annotation.XmlEnumValue("D")
 	D ('D'),
 	@javax.xml.bind.annotation.XmlEnumValue("I")
-	I ('I');
+	I ('I'),
+	@javax.xml.bind.annotation.XmlEnumValue("S")
+	S ('S');
 	
 	
 	/** Value */
@@ -137,6 +139,8 @@ public enum EsigibilitaIVAType implements IEnumeration , Serializable , Cloneabl
 			res = EsigibilitaIVAType.D;
 		}else if(EsigibilitaIVAType.I.getValue() == value){
 			res = EsigibilitaIVAType.I;
+		}else if(EsigibilitaIVAType.S.getValue() == value){
+			res = EsigibilitaIVAType.S;
 		}
 		return res;
 	}
@@ -147,6 +151,8 @@ public enum EsigibilitaIVAType implements IEnumeration , Serializable , Cloneabl
 			res = EsigibilitaIVAType.D;
 		}else if(EsigibilitaIVAType.I.toString().equals(value)){
 			res = EsigibilitaIVAType.I;
+		}else if(EsigibilitaIVAType.S.toString().equals(value)){
+			res = EsigibilitaIVAType.S;
 		}
 		return res;
 	}

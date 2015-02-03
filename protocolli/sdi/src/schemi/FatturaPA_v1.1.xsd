@@ -1027,6 +1027,11 @@
           <xs:documentation>esigibilità immediata</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+      <xs:enumeration value="S">
+        <xs:annotation>
+          <xs:documentation>scissione dei pagamenti</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="NaturaType">

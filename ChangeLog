@@ -1,4 +1,12 @@
-2015-01-28  Giuliano Pintori <pintori@link.it>
+2015-02-03  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto Bug #278
+	Aggiornamento XSD Fattura 1.1
+	Il formato FatturaPA permette l'assolvimento dell'obbligo mediante l'aggiunta di un valore (il carattere "S") 
+	tra quelli ammissibili per il campo <EsigibilitaIVA>, contenuto nel blocco informativo <DatiRiepilogo>. 
+
+2015-02-02  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole]
 	Risolto Bug #285
