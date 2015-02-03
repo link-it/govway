@@ -1402,18 +1402,20 @@ public class XMLDataConverter {
 	}
 	
 	public static void impostaInformazioniRegistroDB_AccordoServizioParteSpecifica_Fruitore(Fruitore fruitore){
-		// I nomi vengono autogenerati dal driver
-		fruitore.getConnettore().setNome(null);
-		// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
-		String tipoConnettore = fruitore.getConnettore().getTipo();
-		if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
-			 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
-			 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
-			fruitore.getConnettore().setCustom(true);
-		}
-		// Gestione default per connettore https
-		if(TipiConnettore.HTTPS.getNome().equals(tipoConnettore)){
-			gestioneDefaultConnettoreHTTP(fruitore.getConnettore());
+		if(fruitore.getConnettore()!=null){
+			// I nomi vengono autogenerati dal driver
+			fruitore.getConnettore().setNome(null);
+			// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
+			String tipoConnettore = fruitore.getConnettore().getTipo();
+			if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
+				 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
+				 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
+				fruitore.getConnettore().setCustom(true);
+			}
+			// Gestione default per connettore https
+			if(TipiConnettore.HTTPS.getNome().equals(tipoConnettore)){
+				gestioneDefaultConnettoreHTTP(fruitore.getConnettore());
+			}
 		}
 	}
 	public static void impostaInformazioniRegistroDB_AccordoServizioParteSpecifica(AccordoServizioParteSpecifica servizio){
