@@ -197,11 +197,6 @@ public class BasicArchive implements IArchive {
 						opOpenSPCoop = new Operation();
 						opOpenSPCoop.setNome(opNome);
 						opOpenSPCoop.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
-						if(opWSDL.getOutput()!=null){
-							opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.SINCRONO);
-						}else{
-							opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
-						}
 						opOpenSPCoop.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);
 						
 						// Prendo la definizione del messaggio di input
@@ -209,6 +204,14 @@ public class BasicArchive implements IArchive {
 						
 						// Prendo la definizione del messaggio di output
 						AccordoServizioWrapperUtilities.addMessageOutputOperation(opWSDL, this.getProtocolFactory().getLogger(), opOpenSPCoop);
+						
+						// profilo di collaborazione (non basta guardare l'output, poiche' puo' avere poi un message vuoto e quindi equivale a non avere l'output)
+						//if(opWSDL.getOutput()!=null){
+						if(opOpenSPCoop.getMessageOutput()!=null){
+							opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.SINCRONO);
+						}else{
+							opOpenSPCoop.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
+						}
 						
 						// cerco operation binding (se il wsdl contiene la parte implementativa)
 						if(bindingWSDL!=null){
@@ -226,14 +229,18 @@ public class BasicArchive implements IArchive {
 												opOpenSPCoop, ptOpenSPCoop);
 									
 									// Raccolgo Message-Input
-									AccordoServizioWrapperUtilities.
-										setMessageInputSoapBindingInformation(bindingOperationWSDL, this.getProtocolFactory().getLogger(), 
-												opOpenSPCoop, ptOpenSPCoop);
+									if(opOpenSPCoop.getMessageInput()!=null){
+										AccordoServizioWrapperUtilities.
+											setMessageInputSoapBindingInformation(bindingOperationWSDL, this.getProtocolFactory().getLogger(), 
+													opOpenSPCoop, ptOpenSPCoop);
+									}
 									
 									// Raccolgo Message-Output
-									AccordoServizioWrapperUtilities.
-										setMessageOutputSoapBindingInformation(bindingOperationWSDL, this.getProtocolFactory().getLogger(), 
-												opOpenSPCoop, ptOpenSPCoop);
+									if(opOpenSPCoop.getMessageOutput()!=null){
+										AccordoServizioWrapperUtilities.
+											setMessageOutputSoapBindingInformation(bindingOperationWSDL, this.getProtocolFactory().getLogger(), 
+													opOpenSPCoop, ptOpenSPCoop);
+									}
 									
 								}
 							}

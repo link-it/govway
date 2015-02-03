@@ -1,4 +1,10 @@
-2014-11-12  Giuliano Pintori <pintori@link.it>
+2015-01-30  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #284
+	Sistemato problema di caricamento di un'Interfaccia WSDL contenente un output definito tramite message 'vuoto'
+
+2015-01-29  Giuliano Pintori <pintori@link.it>
 
 	* [WebGenericProject]
 	Aggiunta funzionalità #283
