@@ -233,7 +233,7 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   @javax.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="soglia",required=false,nillable=false)
-  protected long soglia;
+  protected long soglia = -1; // default utilizzato dal driver
 
   @XmlTransient
   protected java.lang.String _value_stato;

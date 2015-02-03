@@ -669,6 +669,7 @@ public class ClassQueue {
 			sqlQueryObject.addFromTable(CostantiDB.OPERATIONS_TABLE);
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addSelectField("operation");
+			sqlQueryObject.addSelectField("timereq");
 			sqlQueryObject.addWhereCondition("status = ?");
 			if (!hostname.equals(""))
 				sqlQueryObject.addWhereCondition("hostname = ?");

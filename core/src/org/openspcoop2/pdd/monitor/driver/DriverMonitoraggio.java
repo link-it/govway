@@ -268,6 +268,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			rs.close();
 			pstmt.close();
 			this.log.debug("query["+sqlQueryObject+"] totaleMessaggi:"+totaleMessaggi);
+			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggi");
 
 			if(totaleMessaggi>0){
 
@@ -307,6 +308,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					rs.close();
 					pstmt.close();
 					this.log.debug("query["+sqlQueryObject+"] totaleMessaggiInConsegna:"+statoPdD.getNumMsgInConsegna());
+					this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiInConsegna");
 				}
 
 				// Messaggi in Spedizione
@@ -346,6 +348,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					rs.close();
 					pstmt.close();
 					this.log.debug("query["+sqlQueryObject+"] totaleMessaggiInSpedizione:"+statoPdD.getNumMsgInSpedizione());
+					this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiInSpedizione");
 				}
 
 				// Messaggi ne in Spedizione, ne in Consegna (PROCESSAMENTO) 
@@ -386,6 +389,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					rs.close();
 					pstmt.close();
 					this.log.debug("query["+sqlQueryObject+"] totaleMessaggiInProcessamento:"+statoPdD.getNumMsgInProcessamento());
+					this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiInProcessamento");
 				}
 
 			}
@@ -405,6 +409,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			rs.close();
 			pstmt.close();
 			this.log.debug("query["+sqlQueryObject.toString()+"] totaleMessaggiDuplicati:"+totaleMessaggiDuplicati);
+			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiDuplicati");
 
 
 			return statoPdD;
@@ -549,6 +554,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			rs.close();
 			pstmt.close();
 			this.log.debug("query["+sqlQueryObject+"] totaleMessaggi:"+totaleMessaggi);
+			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggi");
 
 			return totaleMessaggi;
 
@@ -633,7 +639,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			List<Messaggio> msgs = new ArrayList<Messaggio>();
 
 			this.log.debug("query["+sqlQueryObject+"] listaMessaggi");
-
+			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] listaMessaggi");
+			
 			while(rs.next()){
 				Messaggio m = new Messaggio();
 				// id
@@ -948,6 +955,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			Vector<Messaggio> msgs = new Vector<Messaggio>();
 
 			this.log.debug("query["+sqlQueryObject+"] listaMessaggi");
+			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] listaMessaggi");
 
 			while(rs.next()){
 				Messaggio m = new Messaggio();
@@ -1077,14 +1085,18 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}
 			if( (search.getMessagePattern()!=null) && ("".equals(search.getMessagePattern())==false) ){
 				// Tabella OpenSPCoop.sql.DefinizioneMessaggi
-				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"ID_MESSAGGIO");
-				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"tipo");
+// Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
+// se in futuro serviranno, utilizzare degli alias
+//				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"ID_MESSAGGIO");
+//				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"tipo");
 				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"MSG_BYTES");
 			}	
 			if(search.getBusta()!=null){
 				// Tabella Libreria.sql.Repository
-				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"ID_MESSAGGIO");
-				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"tipo");
+// Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
+// se in futuro serviranno, utilizzare degli alias
+//				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"ID_MESSAGGIO");
+//				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"tipo");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_MITTENTE");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"MITTENTE");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_DESTINATARIO");
@@ -1098,7 +1110,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}	
 			if(search.getBusta()!=null && search.getBusta().isAttesaRiscontro()){
 				// Tabella Libreria.sql.RiscontriDaRicevere
-				sqlQueryObject.addSelectField(Costanti.RISCONTRI_DA_RICEVERE,"ID_MESSAGGIO");
+// Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
+// se in futuro serviranno, utilizzare degli alias
+//				sqlQueryObject.addSelectField(Costanti.RISCONTRI_DA_RICEVERE,"ID_MESSAGGIO");
 			}
 
 		}

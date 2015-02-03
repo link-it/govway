@@ -426,7 +426,8 @@ public final class Monitor extends Action {
 			// setto gli altri filtri
 			filter.setMessagePattern(formBean.getMessagePattern());
 			filter.setIdMessaggio(formBean.getIdMessaggio());
-			filter.setSoglia(formBean.getSoglia());
+			if(formBean.getSoglia()>0)
+				filter.setSoglia(formBean.getSoglia());
 			if(formBean.getStato()!=null)
 				filter.setStato(org.openspcoop2.pdd.monitor.constants.StatoMessaggio.toEnumConstant(formBean.getStato()));
 			filter.setCorrelazioneApplicativa(formBean.getCorrelazioneApplicativa());
