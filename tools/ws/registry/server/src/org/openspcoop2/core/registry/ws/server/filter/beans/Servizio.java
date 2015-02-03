@@ -33,7 +33,7 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  *         &lt;element name="nome-soggetto-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="tipologia-servizio" type="{http://www.openspcoop2.org/core/registry}TipologiaServizio" minOccurs="0" maxOccurs="1" default="(TipologiaServizio) TipologiaServizio.toEnumConstantFromString("normale")" />
+ *         &lt;element name="tipologia-servizio" type="{http://www.openspcoop2.org/core/registry}TipologiaServizio" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -135,8 +135,8 @@ public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Se
 	}
 	
 	
-	@XmlElement(name="tipologia-servizio",required=false,nillable=false,defaultValue="normale")
-	private TipologiaServizio tipologiaServizio = (TipologiaServizio) TipologiaServizio.toEnumConstantFromString("normale");
+	@XmlElement(name="tipologia-servizio",required=false,nillable=false)
+	private TipologiaServizio tipologiaServizio;
 	
 	public void setTipologiaServizio(TipologiaServizio tipologiaServizio){
 		this.tipologiaServizio = tipologiaServizio;

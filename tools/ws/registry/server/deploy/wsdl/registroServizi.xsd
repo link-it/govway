@@ -481,7 +481,9 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute default="normale" name="tipologia-servizio" type="TipologiaServizio"/>
+		<xsd:attribute default="normale" name="tipologia-servizio" type="TipologiaServizio">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:complexType name="servizio-azione">
 		<xsd:sequence>

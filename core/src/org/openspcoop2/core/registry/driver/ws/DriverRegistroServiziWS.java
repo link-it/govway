@@ -545,6 +545,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				filter.setServizio(new Servizio());
 				filter.getServizio().setTipoSoggettoErogatore(idSoggetto.getTipo());
 				filter.getServizio().setNomeSoggettoErogatore(idSoggetto.getNome());
+				filter.getServizio().setTipologiaServizio(TipologiaServizio.CORRELATO);
 			}
 			return this.accordoServizioParteSpecificaPort.find(filter);
 		}catch(org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.RegistryNotFoundException_Exception e){
@@ -584,7 +585,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 					GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
 					cal.setTime(filtroRicerca.getMinDate());
 					filter.setOraRegistrazioneMax(this.dataTypeFactory.newXMLGregorianCalendar(cal));
-				}			
+				}	
 			}
 			List<IdAccordoServizioParteSpecifica> ids = this.accordoServizioParteSpecificaPort.findAllIds(filter);
 			if(ids==null || ids.size()<=0){

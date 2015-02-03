@@ -944,7 +944,16 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="tipologia-servizio" type="TipologiaServizio" default="normale"/>
+		<xsd:attribute name="tipologia-servizio" type="TipologiaServizio" default="normale">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:complexType name="servizio-azione">
 		<xsd:sequence>
