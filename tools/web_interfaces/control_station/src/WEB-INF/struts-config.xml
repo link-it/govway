@@ -1699,6 +1699,11 @@
             <forward name="auditingDel" path="/jsplib/listElement.jsp"/>
             <forward name="auditingError" path="/jsplib/info.jsp"/>
         </action>
+        <action path="/auditingList" type="org.openspcoop2.web.ctrlstat.servlet.audit.AuditingList"
+            scope="request" validate="true">
+            <forward name="auditingOk" path="/jsplib/listElement.jsp"/>
+            <forward name="auditingError" path="/jsplib/info.jsp"/>
+        </action>
 
         <action path="/auditingDettaglio" type="org.openspcoop2.web.ctrlstat.servlet.audit.AuditingDettaglio" 
             scope="request" validate="true">

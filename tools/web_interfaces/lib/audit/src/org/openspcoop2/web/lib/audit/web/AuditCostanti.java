@@ -70,9 +70,11 @@ public class AuditCostanti {
 
 	public final static String SERVLET_NAME_AUDITING  = OBJECT_NAME_AUDITING +".do";
 	public final static String SERVLET_NAME_AUDITING_DEL  = OBJECT_NAME_AUDITING +"Del.do";
+	public final static String SERVLET_NAME_AUDITING_LIST  = OBJECT_NAME_AUDITING +"List.do";
 	public final static Vector<String> SERVLET_AUDITING  = new Vector<String>();
 	static{
 		SERVLET_AUDITING .add(SERVLET_NAME_AUDITING );
+		SERVLET_AUDITING .add(SERVLET_NAME_AUDITING_LIST );
 		SERVLET_AUDITING .add(SERVLET_NAME_AUDITING_DEL );
 	}
 

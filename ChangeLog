@@ -1,3 +1,10 @@
+2015-01-28  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Risolto Bug #285
+	Risolto bug nella navigazione e selezione numero elementi visualizzati 
+	nelle ricerche delle informazioni di auditing.
+
 2015-01-30  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]

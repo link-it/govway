@@ -141,6 +141,10 @@ public class ServletUtils {
 	public static DataElement getDataElementForEditModeFinished(){
 		return Costanti.DATA_ELEMENT_HIDDENT_EDIT_MODE_END;
 	}
+	
+	public static Parameter getParameterForEditModeFinished(){
+		return Costanti.PARAMETER_EDIT_MODE_END;
+	}
 
 	public static boolean isEditModeInProgress(HttpServletRequest request){
 		String editMode = request.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);

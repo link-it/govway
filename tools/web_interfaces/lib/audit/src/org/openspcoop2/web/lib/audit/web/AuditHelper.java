@@ -878,9 +878,9 @@ public class AuditHelper {
 			Parameter pUtente = new Parameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE, utente);
 			Parameter pStatoOperazione = new Parameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE, statooperazione);
 			Parameter pContoggetto = new Parameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO, contoggetto);
+			Parameter pEditModeFin = ServletUtils.getParameterForEditModeFinished();
 
-
-			String params = ServletUtils.getParametersAsString(false, pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto);
+			String params = ServletUtils.getParametersAsString(false, pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto, pEditModeFin);
 
 			// setto la barra del titolo
 			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();

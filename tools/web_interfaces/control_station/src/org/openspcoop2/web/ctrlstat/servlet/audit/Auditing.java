@@ -59,7 +59,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @version $Rev$, $Date$
  * 
  */
-public final class Auditing extends Action {
+public   class Auditing extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
