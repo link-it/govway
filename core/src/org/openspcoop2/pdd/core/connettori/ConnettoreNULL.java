@@ -46,7 +46,8 @@ public class ConnettoreNULL extends ConnettoreBase {
 	
 	public final static String LOCATION = "openspcoop2://dev/null";
     
-	
+	/** Proprieta' urlBased che deve gestire il connettore */
+	private java.util.Properties propertiesUrlBased;
 
 
 
@@ -65,6 +66,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 		// Context per invocazioni handler
 		this.outRequestContext = request.getOutRequestContext();
 		this.msgDiagnostico = request.getMsgDiagnostico();
+		this.propertiesUrlBased = request.getPropertiesUrlBased();
 		
 		this.codice = 200;
 		
@@ -135,7 +137,12 @@ public class ConnettoreNULL extends ConnettoreBase {
      */
     @Override
 	public String getLocation(){
-    	return LOCATION;
+		if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
+			return ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, LOCATION);
+		}
+		else{
+			return LOCATION;
+		}
     }
     
 }
