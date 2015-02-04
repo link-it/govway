@@ -25,6 +25,7 @@ import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
 /**
@@ -65,5 +66,7 @@ public interface ConnectorInMessage {
 	public int getContentLength() throws ConnectorException;
 	
 	public void close() throws ConnectorException;
+	
+	public Identity getIdentity() throws ConnectorException;
 	
 }

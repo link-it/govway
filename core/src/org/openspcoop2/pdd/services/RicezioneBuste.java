@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 
@@ -117,6 +116,7 @@ import org.openspcoop2.pdd.mdb.InoltroBusteMessage;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoMessage;
+import org.openspcoop2.pdd.services.connector.ConnectorInMessage;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
@@ -777,12 +777,12 @@ public class RicezioneBuste {
 		IDSoggetto identitaPdD = propertiesReader.getIdentitaPortaDefault(protocollo);
 
 		
-		// HttpServletRequest
-		HttpServletRequest httpServletRequest = null;
+		// ConnectorInMessage
+		ConnectorInMessage connectorInMessage = null;
 		if(params!=null){
 			for (int i = 0; i < params.length; i++) {
-				if(params[i]!=null && (params[i] instanceof HttpServletRequest) ){
-					httpServletRequest = (HttpServletRequest) params[i];
+				if(params[i]!=null && (params[i] instanceof ConnectorInMessage) ){
+					connectorInMessage = (ConnectorInMessage) params[i];
 					break;
 				}
 			}
@@ -995,8 +995,8 @@ public class RicezioneBuste {
 			
 			// Read Identity
 			if(is.existsIdentityBasedIdentificationMode()){
-				if(httpServletRequest!=null)
-					identity = new Identity(httpServletRequest);
+				if(connectorInMessage!=null)
+					identity = connectorInMessage.getIdentity();
 			}
 			
 			// Refresh dati su mittente e destinatario

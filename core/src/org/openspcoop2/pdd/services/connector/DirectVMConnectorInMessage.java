@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
 /**
@@ -263,5 +264,17 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public void close() throws ConnectorException{
 		// nop
+	}
+	
+	@Override
+	public Identity getIdentity() throws ConnectorException{
+		if(this.credenziali!=null){
+			Identity identity = new Identity();
+			identity.setUsername(this.credenziali.getUsername());
+			identity.setPassword(this.credenziali.getPassword());
+			identity.setSubject(this.credenziali.getSubject());
+			return identity;
+		}
+		return null;
 	}
 }

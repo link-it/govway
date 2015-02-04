@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.services.ServletUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
@@ -55,6 +56,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	private InputStream is;
 	private Logger log;
 	private String idModulo;
+	private Identity identity;
 	
 	public HttpServletConnectorInMessage(HttpServletRequest req,String idModulo) throws ConnectorException{
 		try{
@@ -190,4 +192,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}	
 	}
+	
+	@Override
+	public Identity getIdentity() throws ConnectorException{
+		if(this.identity==null){
+			this.initIdentity();
+		}
+		return this.identity;
+	}
+	private synchronized void initIdentity(){
+		if(this.identity==null){
+			this.identity = new Identity(this.req);
+		}
+	} 
 }
