@@ -96,6 +96,18 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				dispatcher.forward(req, res);
 				
 			}
+			else if(function.equals(URLProtocolContext.CheckPdD_FUNCTION)){
+				
+				// Dispatching al servizio di IntegrationManager implementato tramite CXF
+				String forwardUrl = "/"+URLProtocolContext.CheckPdD_FUNCTION;
+				if(protocolContext.getFunctionParameters()!=null){
+					forwardUrl = forwardUrl+"/"+protocolContext.getFunctionParameters();
+				}
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolContext.getProtocol());
+				RequestDispatcher dispatcher = req.getRequestDispatcher(forwardUrl);
+				dispatcher.forward(req, res);
+				
+			}
 			else{
 				throw new Exception("Service ["+function+"] not supported");
 			}

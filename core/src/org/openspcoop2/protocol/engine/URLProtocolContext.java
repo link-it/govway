@@ -51,6 +51,7 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 	public static final String IntegrationManager_FUNCTION = "IntegrationManager";
 	public static final String IntegrationManager_FUNCTION_PD = "IntegrationManager/PD";
 	public static final String IntegrationManager_FUNCTION_MessageBox = "IntegrationManager/MessageBox";
+	public static final String CheckPdD_FUNCTION = "checkPdD";
 	
 	
 	public URLProtocolContext() throws ProtocolException, UtilsException{

@@ -79,7 +79,14 @@ public class SDIBustaBuilder extends BustaBuilder {
 			throw new ProtocolException("TipoDestinatario["+busta.getTipoDestinatario()+"] differente da quello atteso per il Sistema di Interscambio ["+this.sdiProperties.getTipoSoggettoSDI()+"]");
 		}
 		if(busta.getDestinatario().equals(this.sdiProperties.getNomeSoggettoSDI())==false){
-			throw new ProtocolException("NomeDestinatario["+busta.getDestinatario()+"] differente da quello atteso per il Sistema di Interscambio ["+this.sdiProperties.getNomeSoggettoSDI()+"]");
+			boolean whiteList = false;
+			if(busta.getDestinatario()!=null && this.sdiProperties.getSoggettiWhiteList().contains(busta.getDestinatario())){
+				this.log.debug("Destinatario ["+busta.getDestinatario()+"] in white list");
+				whiteList = true;
+			}
+			if(!whiteList){
+				throw new ProtocolException("NomeDestinatario["+busta.getDestinatario()+"] differente da quello atteso per il Sistema di Interscambio ["+this.sdiProperties.getNomeSoggettoSDI()+"]");
+			}
 		}
 		
 		SOAPElement element = null;
@@ -98,7 +105,16 @@ public class SDIBustaBuilder extends BustaBuilder {
 						this.sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov());
 			}
 			else{
-				throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di richiesta");
+				boolean whiteList = false;
+				if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
+					if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
+						this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
+						whiteList = true;
+					}
+				}
+				if(!whiteList){
+					throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di richiesta");
+				}
 			}
 			
 		}
@@ -124,7 +140,16 @@ public class SDIBustaBuilder extends BustaBuilder {
 				element = this.sdiImbustamento.creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(this.protocolFactory,state,busta,msg);
 			}
 			else{
-				throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di risposta");
+				boolean whiteList = false;
+				if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
+					if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
+						this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
+						whiteList = true;
+					}
+				}
+				if(!whiteList){
+					throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di risposta");
+				}
 			}
 			
 		}
@@ -179,7 +204,16 @@ public class SDIBustaBuilder extends BustaBuilder {
 					}
 				}
 				else{
-					throw new ProtocolException("Servizio["+busta.getServizio()+"] non gestite dal protocollo durante la fase di richiesta");
+					boolean whiteList = false;
+					if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
+						if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
+							this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
+							whiteList = true;
+						}
+					}
+					if(!whiteList){
+						throw new ProtocolException("Servizio["+busta.getServizio()+"] non gestite dal protocollo durante la fase di richiesta");
+					}
 				}
 				
 			}
@@ -195,7 +229,16 @@ public class SDIBustaBuilder extends BustaBuilder {
 					se = this.sdiSbustamento.sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(busta, msg);
 				}
 				else{
-					throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di risposta");
+					boolean whiteList = false;
+					if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
+						if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
+							this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
+							whiteList = true;
+						}
+					}
+					if(!whiteList){
+						throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di risposta");
+					}
 				}
 				
 			}

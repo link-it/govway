@@ -178,10 +178,27 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			if(namespace==null){
 				return false;
 			}
-			return (SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_NAMESPACE.equals(namespace)) ||
+			boolean verify = (SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_NAMESPACE.equals(namespace)) ||
 					(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA_NAMESPACE.equals(namespace)) ||
 					(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_NAMESPACE.equals(namespace)) ||
 					(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_NAMESPACE.equals(namespace));
+			if(!verify){
+				// per sondaPdD
+				if(!isRichiesta && TipoPdD.DELEGATA.equals(tipoPdD)){
+					if(this.sdiProperties.getNamespaceWhiteList().contains(namespace)){
+						return true;
+					}
+					else{
+						return false;
+					}
+				}else{
+					return false;
+				}
+			}
+			else{
+				return true;
+			}
+			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -264,8 +281,15 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			return;
 		}
 		if(busta.getMittente().equals(this.sdiProperties.getNomeSoggettoSDI())==false){
-			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_VALIDO));
-			return;
+			boolean whiteList = false;
+			if(busta.getMittente()!=null && this.sdiProperties.getSoggettiWhiteList().contains(busta.getMittente())){
+				this.log.debug("Mittente ["+busta.getMittente()+"] in white list");
+				whiteList = true;
+			}
+			if(!whiteList){
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_VALIDO));
+				return;
+			}
 		}
 		
 		// destinatario
@@ -310,8 +334,15 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			this.validaServizioRiceviFile(msg, busta,isRichiesta,sdiMessage);			
 		}
 		else{
-			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SERVIZIO_NON_VALIDO));
-			return;
+			boolean whiteList = false;
+			if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
+				this.log.debug("Servizio ["+busta.getServizio()+"] in white list");
+				whiteList = true;
+			}
+			if(!whiteList){
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SERVIZIO_NON_VALIDO));
+				return;
+			}
 		}
 			
 	}
@@ -341,8 +372,15 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			validatore.validaAttestazioneTrasmissioneFattura();
 		}
 		else{
-			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
-			return;
+			boolean whiteList = false;
+			if(busta.getAzione()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getAzione())){
+				this.log.debug("Azione ["+busta.getAzione()+"] in white list");
+				whiteList = true;
+			}
+			if(!whiteList){
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
+				return;
+			}
 		}
 	}
 		
@@ -359,8 +397,15 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			validatore.validaNotificaDecorrenzaTermini();	
 		}
 		else{
-			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
-			return;
+			boolean whiteList = false;
+			if(busta.getAzione()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getAzione())){
+				this.log.debug("Azione ["+busta.getAzione()+"] in white list");
+				whiteList = true;
+			}
+			if(!whiteList){
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
+				return;
+			}
 		}	
 	}
 	
@@ -374,8 +419,15 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			validatore.validaNotificaEsito();
 		}
 		else{
-			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
-			return;
+			boolean whiteList = false;
+			if(busta.getAzione()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getAzione())){
+				this.log.debug("Azione ["+busta.getAzione()+"] in white list");
+				whiteList = true;
+			}
+			if(!whiteList){
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
+				return;
+			}
 		}	
 	}
 	
@@ -389,8 +441,15 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			validatore.validaRiceviFile();
 		}
 		else{
-			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
-			return;
+			boolean whiteList = false;
+			if(busta.getAzione()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getAzione())){
+				this.log.debug("Azione ["+busta.getAzione()+"] in white list");
+				whiteList = true;
+			}
+			if(!whiteList){
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.AZIONE_NON_VALIDA));
+				return;
+			}
 		}	
 	}
 }

@@ -21,6 +21,8 @@
 
 package org.openspcoop2.protocol.sdi.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -146,6 +148,11 @@ public class SDIProperties {
 			this.isSaveMessaggiInContext();
 			
 			this.isNotificaATConsegnaSoloAttestato();
+			
+			this.getSoggettiWhiteList();
+			this.getServiziWhiteList();
+			this.getAzioniWhiteList();
+			this.getNamespaceWhiteList();
 			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo sdi, "+e.getMessage();
@@ -640,5 +647,124 @@ public class SDIProperties {
 		}
 
 		return SDIProperties.isBehaviourCreaProtocolloSDI;
+	}
+	
+	
+	// Utile per sonde applicative
+	
+	private static List<String> soggettiWhiteList = null;
+	public List<String> getSoggettiWhiteList() throws ProtocolException{
+		if(SDIProperties.soggettiWhiteList==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.soggetti";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				SDIProperties.soggettiWhiteList = new ArrayList<String>();
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						SDIProperties.soggettiWhiteList.add(tmp[i]);
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.soggettiWhiteList;
+	}
+	
+	private static List<String> serviziWhiteList = null;
+	public List<String> getServiziWhiteList() throws ProtocolException{
+		if(SDIProperties.serviziWhiteList==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.servizi";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				SDIProperties.serviziWhiteList = new ArrayList<String>();
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						SDIProperties.serviziWhiteList.add(tmp[i]);
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.serviziWhiteList;
+	}
+	
+	private static List<String> azioniWhiteList = null;
+	public List<String> getAzioniWhiteList() throws ProtocolException{
+		if(SDIProperties.azioniWhiteList==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.azioni";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				SDIProperties.azioniWhiteList = new ArrayList<String>();
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						SDIProperties.azioniWhiteList.add(tmp[i]);
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.azioniWhiteList;
+	}
+	
+	private static List<String> namespaceWhiteList = null;
+	public List<String> getNamespaceWhiteList() throws ProtocolException{
+		if(SDIProperties.namespaceWhiteList==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.whiteList.namespace";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				SDIProperties.namespaceWhiteList = new ArrayList<String>();
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						SDIProperties.namespaceWhiteList.add(tmp[i]);
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.namespaceWhiteList;
 	}
 }
