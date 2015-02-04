@@ -153,6 +153,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_WSDL_NOT_FOUND = "non fornito";
 	public final static String LABEL_WSDL_ATTUALE = "Attuale";
 	public final static String LABEL_WSDL_NUOVO = "Nuovo WSDL";
+	public final static String LABEL_AGGIUNTA_FRUITORI_COMPLETATA = "Tutti i soggetti sono già stati aggiunti come fruitori";
 	
 	
 	

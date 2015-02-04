@@ -3064,7 +3064,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			}
 
 			boolean showSA = false;
-			if(soggettiList.length>0){
+			if(soggettiList!=null && soggettiList.length>0){
 				String soggettoId = provider;
 				if(soggettoId==null || "".equals(soggettoId)){
 					soggettoId = soggettiList[0];

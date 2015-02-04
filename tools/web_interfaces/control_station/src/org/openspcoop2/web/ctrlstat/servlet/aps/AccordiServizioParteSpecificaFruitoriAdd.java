@@ -323,16 +323,19 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					}
 				}
 			}
-			soggettiList = soggettiListVector.toArray(new String[1]);
-			soggettiListLabel = soggettiListLabelVector.toArray(new String[1]);
-			
-			if(idSoggettoSelected==null){
-				// prendo il primo soggetto se esiste
-				if(soggettiListLabel!=null && soggettiListLabel.length>0){
-					String [] tmp = soggettiListLabel[0].split("/");
-					idSoggettoSelected = new IDSoggetto(tmp[0], tmp[1]);
+			if(soggettiListVector.size()>0){
+				soggettiList = soggettiListVector.toArray(new String[1]);
+				soggettiListLabel = soggettiListLabelVector.toArray(new String[1]);
+				
+				if(idSoggettoSelected==null){
+					// prendo il primo soggetto se esiste
+					if(soggettiListLabel!=null && soggettiListLabel.length>0){
+						String [] tmp = soggettiListLabel[0].split("/");
+						idSoggettoSelected = new IDSoggetto(tmp[0], tmp[1]);
+					}
 				}
 			}
+				
 
 			// Versioni
 			String[] versioniValues = new String[versioniProtocollo.size()+1];
@@ -385,101 +388,111 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, this.id, null, null, dati);
-
-				if (this.provider == null) {
-					this.provider = "";
-					this.servizioApplicativo = "-";
-					this.wsdlimpler = "";
-					this.wsdlimplfru = "";
-					this.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
-					this.tipoconn = "";
-					this.url = "";
-					this.nome = "";
-					this.tipo = ConnettoriCostanti.TIPI_CODE_JMS[0];
-					this.user = "";
-					this.password = "";
-					this.initcont = "";
-					this.urlpgk = "";
-					this.provurl = "";
-					this.connfact = "";
-					this.sendas = ConnettoriCostanti.TIPO_SEND_AS[0];
-					this.profilo = "-";
-					this.clientAuth= ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-					this.httpsurl = "";
-					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
-					this.httpshostverify = true;
-					this.httpspath = "";
-					this.httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
-					this.httpspwd = "";
-					this.httpsalgoritmo = "";
-					this.httpsstato = false;
-					this.httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-					this.httpspwdprivatekeytrust = "";
-					this.httpspathkey = "";
-					this.httpstipokey = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
-					this.httpspwdkey = "";
-					this.httpspwdprivatekey = "";
-					this.httpsalgoritmokey = "";
-
-					if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
-						if(this.statoPackage==null || "".equals(this.statoPackage)){
-							//if(serviziFruitoriAdd.generazioneAutomaticaPorteDelegate){
-							this.statoPackage=StatiAccordo.bozza.toString();
-							/*}else{
-								this.statoPackage=servizio.getStatoPackage();
-							}*/
-						}
-						
-						//Se l'ASPS riferito e' in stato operativo o finale allora setto la fruizione come operativa.
-						if(asps.getStatoPackage().equals(StatiAccordo.operativo.toString()) || asps.getStatoPackage().equals(StatiAccordo.finale.toString())){
-							this.statoPackage=StatiAccordo.operativo.toString();
-						}
-						
-					}else{
-						this.statoPackage=StatiAccordo.finale.toString();
-					}
+				if(soggettiListVector.size()<=0){
+					
+					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_FRUITORI_COMPLETATA);
+					
+					pd.disableEditMode();
+					
 				}
-
-				// default
-				if(this.httpsalgoritmo==null || "".equals(this.httpsalgoritmo)){
-					this.httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
-				}
-				if(this.httpsalgoritmokey==null || "".equals(this.httpsalgoritmokey)){
-					this.httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
-				}
-				if(this.httpstipologia==null || "".equals(this.httpstipologia)){
-					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
-				}
-				if(this.httpshostverifyS==null || "".equals(this.httpshostverifyS)){
-					this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-					this.httpshostverify = true;
-				}
-
-				this.autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
 				
-				dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, soggettiList,
-						soggettiListLabel, "0", this.id, TipoOperazione.ADD, "", "", "", nomeservizio, tiposervizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
-						this.servizioApplicativo,saList);
-
-				dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
-						,null,null,null,null,null,null);
-
-				String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
-				String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
-				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-					dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null, 
-							"", "",
-							tipoJms, "", "", "", "", "", "", tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
-							this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
-							this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
-							this.httpspwdprivatekeytrust, this.httpspathkey,
-							this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
-							null, null, null, null, null, null, true);
-				}else{
-					//spostato dentro l'helper
+				else{
+					dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, this.id, null, null, dati);
+	
+					if (this.provider == null) {
+						this.provider = "";
+						this.servizioApplicativo = "-";
+						this.wsdlimpler = "";
+						this.wsdlimplfru = "";
+						this.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
+						this.tipoconn = "";
+						this.url = "";
+						this.nome = "";
+						this.tipo = ConnettoriCostanti.TIPI_CODE_JMS[0];
+						this.user = "";
+						this.password = "";
+						this.initcont = "";
+						this.urlpgk = "";
+						this.provurl = "";
+						this.connfact = "";
+						this.sendas = ConnettoriCostanti.TIPO_SEND_AS[0];
+						this.profilo = "-";
+						this.clientAuth= ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
+						this.httpsurl = "";
+						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
+						this.httpshostverify = true;
+						this.httpspath = "";
+						this.httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
+						this.httpspwd = "";
+						this.httpsalgoritmo = "";
+						this.httpsstato = false;
+						this.httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
+						this.httpspwdprivatekeytrust = "";
+						this.httpspathkey = "";
+						this.httpstipokey = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
+						this.httpspwdkey = "";
+						this.httpspwdprivatekey = "";
+						this.httpsalgoritmokey = "";
+	
+						if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
+							if(this.statoPackage==null || "".equals(this.statoPackage)){
+								//if(serviziFruitoriAdd.generazioneAutomaticaPorteDelegate){
+								this.statoPackage=StatiAccordo.bozza.toString();
+								/*}else{
+									this.statoPackage=servizio.getStatoPackage();
+								}*/
+							}
+							
+							//Se l'ASPS riferito e' in stato operativo o finale allora setto la fruizione come operativa.
+							if(asps.getStatoPackage().equals(StatiAccordo.operativo.toString()) || asps.getStatoPackage().equals(StatiAccordo.finale.toString())){
+								this.statoPackage=StatiAccordo.operativo.toString();
+							}
+							
+						}else{
+							this.statoPackage=StatiAccordo.finale.toString();
+						}
+					}
+	
+					// default
+					if(this.httpsalgoritmo==null || "".equals(this.httpsalgoritmo)){
+						this.httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
+					}
+					if(this.httpsalgoritmokey==null || "".equals(this.httpsalgoritmokey)){
+						this.httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
+					}
+					if(this.httpstipologia==null || "".equals(this.httpstipologia)){
+						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
+					}
+					if(this.httpshostverifyS==null || "".equals(this.httpshostverifyS)){
+						this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						this.httpshostverify = true;
+					}
+	
+					this.autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
+					
+					dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, soggettiList,
+							soggettiListLabel, "0", this.id, TipoOperazione.ADD, "", "", "", nomeservizio, tiposervizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
+							this.servizioApplicativo,saList);
+	
+					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
+							,null,null,null,null,null,null);
+	
+					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
+					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
+					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+						dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null, 
+								"", "",
+								tipoJms, "", "", "", "", "", "", tipoSendas,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
+								this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
+								this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
+								this.httpspwdprivatekeytrust, this.httpspathkey,
+								this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
+								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
+								null, null, null, null, null, null, true);
+					}else{
+						//spostato dentro l'helper
+					}
 				}
 
 

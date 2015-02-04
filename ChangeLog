@@ -1,3 +1,11 @@
+2015-02-04  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #287
+	Aggiunta di un Fruitore ad un Accordo di Servizio Parte Specifica
+	L'aggiunta di un fruitore ad un accordo di servizio parte specifica provocava un crash della console, 
+	quando non esistevano ulteriori soggetti (compatibili con il protocollo) associabili come fruitori del servizio.
+
 2015-02-03  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
