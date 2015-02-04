@@ -398,7 +398,7 @@ public class Imbustamento extends GenericLib{
 						throw new Exception(FunzionalitaProtocollo.SCADENZA.getEngineValue());
 					}
 				}
-				if(configurazionePdDManager.isGestioneManifestAttachments(pd)){
+				if(configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory)){
 					if(protocolConfiguration.isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)==false){
 						throw new Exception(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS.getEngineValue());
 					}

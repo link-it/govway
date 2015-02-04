@@ -292,8 +292,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getTipiIntegrazione(pd);
 	}
 	
-	public boolean isGestioneManifestAttachments(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.isGestioneManifestAttachments(this.getConnection(), pd);
+	public boolean isGestioneManifestAttachments(PortaDelegata pd, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.isGestioneManifestAttachments(this.getConnection(), pd, protocolFactory);
 	}
 	
 	public boolean isAllegaBody(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -389,8 +389,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getTipiIntegrazione(pa);
 	}
 	
-	public boolean isGestioneManifestAttachments(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.isGestioneManifestAttachments(this.getConnection(), pa);
+	public boolean isGestioneManifestAttachments(PortaApplicativa pa, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.isGestioneManifestAttachments(this.getConnection(), pa, protocolFactory);
 	}
 	
 	public boolean isAllegaBody(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

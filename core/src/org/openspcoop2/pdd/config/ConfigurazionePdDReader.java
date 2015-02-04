@@ -96,6 +96,7 @@ import org.openspcoop2.protocol.engine.mapping.OperationFinder;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
+import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -1631,16 +1632,37 @@ public class ConfigurazionePdDReader {
 	 * @return Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
 	 * 
 	 */
-	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaDelegata pd, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
-			return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+			try{
+				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
+					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+				}
+				else{
+					return false;
+				}
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
 		}
-		if( CostantiConfigurazione.ABILITATO.equals(pd.getGestioneManifest())  )
+		if( CostantiConfigurazione.ABILITATO.equals(pd.getGestioneManifest())  ){
 			return true;
-		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getGestioneManifest())  )
+		}else if( CostantiConfigurazione.DISABILITATO.equals(pd.getGestioneManifest())  ){
 			return false;
-		else 
-			return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+		}else{
+			try{
+				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
+					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+				}
+				else{
+					return false;
+				}
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
 	}
 	
 	/**
@@ -2215,10 +2237,20 @@ public class ConfigurazionePdDReader {
 	 * @return Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
 	 * 
 	 */
-	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaApplicativa pa, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(pa==null){
-			return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+			try{
+				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
+					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+				}
+				else{
+					return false;
+				}
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
 		}
 		
 		if( CostantiConfigurazione.ABILITATO.equals(pa.getGestioneManifest())  ){
@@ -2226,7 +2258,17 @@ public class ConfigurazionePdDReader {
 		}else if( CostantiConfigurazione.DISABILITATO.equals(pa.getGestioneManifest())  ){
 			return false;
 		}else {
-			return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+			try{
+				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
+					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
+				}
+				else{
+					return false;
+				}
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
 		}
 	}
 	

@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.Vector;
 
@@ -137,8 +138,11 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				notifierInputStreamParams = this.preInResponseContext.getNotifierInputStreamParams();
 			}
 			
-			
-			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getVersioneSoap(),(bout.toByteArray()),notifierInputStreamParams);
+			ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(bin,notifierInputStreamParams,false,request.getRequestMessage().getContentType(),
+					null, 
+					properties.isFileCacheEnable(), properties.getAttachmentRepoDir(), properties.getFileThreshold());
+			// Non funziona con gli attachments: this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getVersioneSoap(),(bout.toByteArray()),notifierInputStreamParams);
 			
 			validatoreSintattico = new ValidazioneSintattica(state,this.responseMsg, properties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
 
@@ -167,9 +171,25 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				pValidazioneErrori.setIgnoraEccezioniNonGravi(protocolManager.isIgnoraEccezioniNonGravi());
 				boolean isBustaSPCoopErrore = validatoreErrori.isBustaErrore(busta,this.responseMsg,pValidazioneErrori);
 				
+				// Gestisco il manifest se il messaggio lo possiede
+				boolean gestioneManifest = false;
+				// La gestione manifest non la devo fare a questo livello.
+				// Se mi arriva un messaggio senza manifest, vuol dire che era disabilitata e quindi anche nella risposta non ci deve essere
+				// In egual misura se arriva un messsaggio con manifest, significa che ci deve essere anche nella risposta
+				// Poiche' la risposta e' esattamente uguale (nel body e negli allegati) alla richiesta, 
+				// venendo costruita dai bytes della richiesta 
+//				if(this.responseMsg.countAttachments()>0){
+//					javax.xml.soap.SOAPBody soapBody = this.responseMsg.getSOAPBody();
+//					if(soapBody!=null){
+//						Node childNode = org.openspcoop2.message.SoapUtils.getFirstNotEmptyChildNode(soapBody);
+//						System.out.println("LocalName["+childNode.getLocalName()+"] ["+childNode.getNamespaceURI()+"]");
+//						
+//					}
+//				}
+				
 				// rimozione vecchia busta
 				Sbustamento sbustatore = new Sbustamento(protocolFactory);
-				headerProtocolloRisposta = sbustatore.sbustamento(state,this.responseMsg,busta,true, true, 
+				headerProtocolloRisposta = sbustatore.sbustamento(state,this.responseMsg,busta,true, gestioneManifest, 
 						properties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
 				
 				// Creo busta di risposta solo se la busta di richiesta non conteneva una busta Errore
@@ -286,7 +306,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					// imbustamento nuova busta
 					Integrazione integrazione = new Integrazione();
 					integrazione.setStateless(true);
-					imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,false,false,false,
+					imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,gestioneManifest,false,false,
 							properties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
 
 				}
@@ -305,7 +325,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.log.error("Riscontrato errore durante l'echo del msg soap");
+			this.log.error("Riscontrato errore durante l'echo del msg soap",e);
 			this.errore = "Riscontrato errore durante l'echo del msg soap:" +e.getMessage();
 			return false;
 		}finally{

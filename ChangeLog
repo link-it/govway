@@ -1,3 +1,12 @@
+2015-02-04  Andrea Poli <apoli@link.it
+
+	* [Pdd]
+	Risolto Bug #286
+	Utilizzo errato dell'impostazione di default per la "Gestione Manifest" anche nei protocolli che non supportano la funzionalità
+	Il problema risiedeva nel comportamento della Porta di Dominio che in presenza di una PD o PA che possiede il campo 'gestione_manifest' 
+	non valorizzato utilizzava come informazione sostitutiva l'indicazione di default impostata nella configurazione generale della porta. 
+	Tale comportamente adesso viene effettuato solamente se il protocollo supporta la funzionalita' (quindi solo per spcoop).
+
 2015-02-04  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]

@@ -558,7 +558,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			try{
 				msgDiag.mediumDebug("isGestioneManifestAttachments(pa)...");
-				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pa); 
+				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pa,protocolFactory); 
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "isGestioneManifestAttachments(pa)");
 				esito.setEsitoInvocazione(false); 
@@ -604,7 +604,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			try{
 				msgDiag.mediumDebug("isGestioneManifestAttachments(pd)...");
-				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pd); 
+				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory); 
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "isGestioneManifestAttachments(pd)");
 				esito.setEsitoInvocazione(false); 

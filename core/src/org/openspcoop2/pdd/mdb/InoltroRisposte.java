@@ -568,7 +568,7 @@ public class InoltroRisposte extends GenericLib{
 					if(functionAsRouter==false && inoltroSegnalazioneErrore==false  && busta.getTipoServizio()!=null && busta.getServizio()!=null){
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setIDServizio(new IDServizio(busta.getTipoMittente(),busta.getMittente(),busta.getTipoServizio(),busta.getServizio(),busta.getAzione()));
-						gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pa);
+						gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pa,protocolFactory);
 					}
 					if(functionAsRouter && 
 							!( identitaPdD.getTipo().equals(busta.getTipoMittente()) && identitaPdD.getNome().equals(busta.getMittente()) ) 

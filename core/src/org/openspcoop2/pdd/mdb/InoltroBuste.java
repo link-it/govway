@@ -1135,7 +1135,7 @@ public class InoltroBuste extends GenericLib{
 			if(functionAsRouter){
 				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments();
 			}else{
-				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pd);
+				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory);
 			}
 			SOAPElement headerBustaRichiesta = null;
 			try{
@@ -2812,7 +2812,7 @@ public class InoltroBuste extends GenericLib{
 				try{
 					boolean gestioneManifestRisposta = false;
 					if(functionAsRouter==false && sbustamentoInformazioniProtocolloRisposta){
-						gestioneManifestRisposta = configurazionePdDManager.isGestioneManifestAttachments(pd);
+						gestioneManifestRisposta = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory);
 						// GestioneManifest solo se ho ricevuto una busta correttamente formata nel manifest
 						boolean sbustamentoManifestRisposta = gestioneManifestRisposta;
 						for(int k = 0; k < erroriValidazione.size() ; k++){

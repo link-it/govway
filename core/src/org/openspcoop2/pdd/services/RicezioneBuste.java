@@ -1789,7 +1789,7 @@ public class RicezioneBuste {
 				msgDiag.highDebug("Lettura porta applicativa/delegata (Set)...");
 				properties.setValidazioneManifestAttachments(
 						configurazionePdDReader.isValidazioneManifestAttachments(implementazionePdDMittente) &&
-						configurazionePdDReader.isGestioneManifestAttachments(pa));
+						configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory));
 				
 				msgDiag.highDebug("Lettura porta applicativa/delegata terminato");
 				
@@ -1867,7 +1867,7 @@ public class RicezioneBuste {
 				}
 			}
 			
-			if(configurazionePdDReader.isGestioneManifestAttachments(pa)){
+			if(configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory)){
 				if(protocolConfiguration.isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)==false){
 					throw new Exception(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS.getEngineValue());
 				}
@@ -4558,9 +4558,9 @@ public class RicezioneBuste {
 						if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
 								RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString()) &&
 								pd!=null){ // devo generare la ricevuta alla risposta
-							gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pd);
+							gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pd,protocolFactory);
 						}else{
-							gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pa);
+							gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory);
 						}
 					}
 					if(functionAsRouter && 
