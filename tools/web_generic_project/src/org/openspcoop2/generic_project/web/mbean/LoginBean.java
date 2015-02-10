@@ -52,7 +52,7 @@ public class LoginBean{
 	private Boolean isLoggedIn=false;
 
 	private Locale currentLocal = null;
-	
+
 	private String currentLang = null;
 
 	// Serve per indicare se il Bean deve inizializzare da solo il LoginDAO, se false viene inizializzato da Faces...
@@ -73,7 +73,7 @@ public class LoginBean{
 
 		this.languageForm = new LanguageForm();
 		this.languageForm.setmBean(this);
-		
+
 		this.languageForm.setRendered(true);
 
 		try{
@@ -83,16 +83,19 @@ public class LoginBean{
 		}
 
 		this.languageForm.getLingua().setElencoSelectItems(this.getListaLingueSupportate());
-		
+
 		if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
 			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ITALIAN.getLanguage(),
 					Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal)));
+		if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
+			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ENGLISH.getLanguage(),
+					Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal)));
 		if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
 			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.GERMAN.getLanguage(),
 					Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal)));
 
 		this.currentLang = this.currentLocal.getLanguage();
-		
+
 		this.initDao = initDao;
 
 		init();
@@ -180,24 +183,29 @@ public class LoginBean{
 	public void setUsername(String username){this.username = username;}
 
 	public void cambiaLinguaListener(ActionEvent event){
-		
+
 		org.openspcoop2.generic_project.web.form.field.SelectItem newValue = this.languageForm.getLingua().getValue();
-		
+
 		String value = newValue.getValue();
-		
+
 		if(value.equals(Locale.ITALIAN.getLanguage()))
 			this.currentLocal = Locale.ITALIAN;
-		
-		if(value.equals(Locale.GERMAN.getLanguage()))
-			this.currentLocal = Locale.GERMAN;
-		
+		else 
+			if(value.equals(Locale.GERMAN.getLanguage()))
+				this.currentLocal = Locale.GERMAN;
+			else 
+				if(value.equals(Locale.ENGLISH.getLanguage()))
+					this.currentLocal = Locale.ENGLISH;
+
 		if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
 			newValue.setLabel(Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal));
 		if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
 			newValue.setLabel(Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal));
-		
+		if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
+			newValue.setLabel(Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal));
+
 		this.currentLang = this.currentLocal.getLanguage();
-		
+
 		this.languageForm.getLingua().setElencoSelectItems(this.getListaLingueSupportate());
 	}
 
@@ -221,6 +229,8 @@ public class LoginBean{
 
 		this.listaLingueSupportate.add(new SelectItem(
 				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ITALIAN.getLanguage(),Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal))));
+		this.listaLingueSupportate.add(new SelectItem(
+				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ENGLISH.getLanguage(),Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal))));
 		this.listaLingueSupportate.add(new SelectItem(
 				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.GERMAN.getLanguage(),Utils.getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal))));
 

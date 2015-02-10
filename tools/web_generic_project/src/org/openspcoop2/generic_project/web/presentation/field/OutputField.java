@@ -65,11 +65,14 @@ public abstract class OutputField<T> {
 	
 	private String styleClass = null;
 	
+	private String tableColumnStyleClass = null;
+	
 	public OutputField(){
 		this.labelStyleClass ="outputFieldLabel";
 		this.rendered = true;
 		this.columnClasses = ""; //"gridContent verticalAlignTop";
 		this.styleClass = "";
+		this.tableColumnStyleClass = "";
 	}
 	
 	public String getName() {
@@ -191,8 +194,11 @@ public abstract class OutputField<T> {
 		this.styleClass = styleClass;
 	}
 
- 
-	
-	
-	
+	public String getTableColumnStyleClass() {
+		return this.tableColumnStyleClass;
+	}
+
+	public void setTableColumnStyleClass(String tableColumnStyleClass) {
+		this.tableColumnStyleClass = tableColumnStyleClass;
+	}
 }

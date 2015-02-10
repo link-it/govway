@@ -9,7 +9,7 @@
 
 	<c:set var="id" value="#{fieldDescriptor.name}" />
 	
-	<rich:column>
+	<rich:column styleClass="#{fieldDescriptor.tableColumnStyleClass}">
 		<f:facet name="header" > 
 			<h:outputText value="#{fieldDescriptor.label}"  rendered="#{not empty fieldDescriptor.label}" 
 			styleClass="#{fieldDescriptor.labelStyleClass}"/>
