@@ -36,6 +36,7 @@ public class Costanti {
 	public final static String CLUSTER_ID = "ID";
 	public final static String CONNECTION_PDD = "CONNECTION_PDD";
 	public final static String PROTOCOLLO = "PROTOCOLLO";
+	public final static String INTEGRATION_MANAGER_ENGINE_AUTHORIZED = "INTEGRATION_MANAGER_ENGINE_DIRECT_INVOCATION";
 	public final static String ID_PORTA = "ID_PORTA";
 	public final static String ID_FUNZIONE = "ID_FUNZIONE";
 	public final static String ID_MESSAGGIO = "ID_MESSAGGIO";

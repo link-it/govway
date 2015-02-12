@@ -13,6 +13,18 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
         <param-value>WEB-INF/jbossws-cxf.xml</param-value>
     </context-param>
 
+	<!-- IntegrationManagerEngine -->
+	<filter>
+    	<filter-name>IntegrationManagerEngineFilter</filter-name>
+    	<filter-class>org.openspcoop2.protocol.spcoop.backward_compatibility.services.skeleton.IntegrationManagerFilter</filter-class>
+	</filter>
+
+	<!-- IntegrationManagerEngine -->
+	<filter-mapping>
+	    <filter-name>IntegrationManagerEngineFilter</filter-name>
+	    <url-pattern>/IntegrationManager/*</url-pattern>
+	</filter-mapping>
+
 
     <!-- CXF -->
     <listener>
@@ -25,13 +37,15 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     </listener>
     
     
-    
-
     <!-- Servlet: CXF -->
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
         <display-name>CXF Servlet</display-name>
         <servlet-class> org.apache.cxf.transport.servlet.CXFServlet </servlet-class>
+		<init-param>
+			<param-name>hide-service-list-page</param-name>
+			<param-value>true</param-value>
+		</init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -109,9 +123,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
         <mime-type>text/xml</mime-type>
     </mime-mapping>
 
-    <welcome-file-list id="WelcomeFileList">
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
+
     <!-- Altre configurazioni -->
 
 

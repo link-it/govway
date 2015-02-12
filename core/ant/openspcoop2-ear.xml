@@ -247,7 +247,6 @@
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
 			</manifest>
-			<fileset file="${deploy_web_dir}/web_app/index.jsp"/>
 			<webinf dir="${build}/web-module" />
 			<webinf dir="${src}/META-INF">
 				<include name="${jboss_web_xml}"/>

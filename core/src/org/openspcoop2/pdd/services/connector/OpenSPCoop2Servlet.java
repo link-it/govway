@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.services.connector;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -30,8 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.manifest.constants.Costanti;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
  * OpenSPCoop2Servlet
@@ -58,10 +63,21 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		Logger logOpenSPCoop2Servlet = Logger.getLogger("openspcoop2.startup");
 		
+		OpenSPCoop2Properties op2Properties = null;
 		try {
+			
+			op2Properties = OpenSPCoop2Properties.getInstance();
 			
 			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore);
 			String function = protocolContext.getFunction();
+			
+			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocol());
+			if(pf==null){
+				if(!Costanti.CONTEXT_EMPTY.equals(protocolContext.getProtocol()))
+					throw new Exception("Non risulta registrato un protocollo con contesto ["+protocolContext.getProtocol()+"]");
+				else
+					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+			}
 			
 			if(function.equals(URLProtocolContext.PD_FUNCTION)){
 				RicezioneContenutiApplicativiSOAPConnector r = new RicezioneContenutiApplicativiSOAPConnector();
@@ -89,9 +105,56 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION)){
 				
+				boolean wsdl = false;
+				Enumeration<?> parameters = req.getParameterNames();
+				while(parameters.hasMoreElements()){
+					String key = (String) parameters.nextElement();
+					String value = req.getParameter(key);
+					if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
+						// richiesta del wsdl
+						if(op2Properties!=null && op2Properties.isGenerazioneWsdlIntegrationManagerEnabled()==false){
+							res.sendError(404, ConnectorUtils.generateError404Message(ConnectorCostanti.INTEGRATION_MANAGER_WSDL));
+							return;
+						}
+						else{
+							wsdl = true;
+							break;
+						}
+					}
+				}
+				
+				if(!doPost && !wsdl){
+					// messaggio di errore
+					boolean errore404 = false;
+					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpGetIntegrationManagerEnabled()){
+						errore404 = true;
+					}
+					
+					if(errore404){
+						res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.INTEGRATION_MANAGER_HTTP_GET));
+						return;
+					}
+					else{
+					
+						res.setStatus(500);
+						
+						res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, ConnectorCostanti.METHOD_HTTP_GET_NOT_SUPPORTED, false, true).getBytes());
+								
+						try{
+							res.getOutputStream().flush();
+						}catch(Exception eClose){}
+						try{
+							res.getOutputStream().close();
+						}catch(Exception eClose){}
+						
+						return;
+					}
+				}
+								
 				// Dispatching al servizio di IntegrationManager implementato tramite CXF
-				String forwardUrl = "/"+URLProtocolContext.IntegrationManager_FUNCTION+"/"+protocolContext.getFunctionParameters();
+				String forwardUrl = "/"+URLProtocolContext.IntegrationManager_ENGINE+"/"+protocolContext.getFunctionParameters();
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolContext.getProtocol());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED, true);
 				RequestDispatcher dispatcher = req.getRequestDispatcher(forwardUrl);
 				dispatcher.forward(req, res);
 				
@@ -134,27 +197,36 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				logOpenSPCoop2Servlet.error("Detail: "+bf.toString());
 			}
 			
-			res.setStatus(500);
+			// log su file core
+			if(logCore!=null){
+				logCore.error(ConnectorUtils.generateErrorMessage(req, e.getMessage(), true, false));
+			}
+			else{
+				logOpenSPCoop2Servlet.error(ConnectorUtils.generateErrorMessage(req, e.getMessage(), true, false));
+			}
 			
-			StringBuffer risposta = new StringBuffer();
-			risposta.append("<html>\n");
-			risposta.append("<body>\n");
-			risposta.append("<h1>" + req.getContextPath() + req.getContextPath() +"</h1>\n");
-			risposta.append("<p>OpenSPCoop2</p>\n");
-			risposta.append("<p>"+e.getMessage()+"</p>\n");
-			risposta.append("<i>Enabled services: PD, PA, PDtoSOAP, checkPdD, IntegrationManager</i>\n");
-			risposta.append("<i>Sito ufficiale del progetto: http://www.openspcoop2.org</i>\n");
-			risposta.append("</body>\n");
-			risposta.append("</html>\n");
+			// messaggio di errore
+			boolean errore404 = true;
+			if(op2Properties!=null && op2Properties.isGenerazioneErroreProtocolloNonSupportato()){
+				errore404 = false;
+			}
+			
+			if(errore404){
+				res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.PROTOCOL_NOT_SUPPORTED));
+			}
+			else{
+				res.setStatus(500);
 
-			res.getOutputStream().write(risposta.toString().getBytes());
-			
-			try{
-				res.getOutputStream().flush();
-			}catch(Exception eClose){}
-			try{
-				res.getOutputStream().close();
-			}catch(Exception eClose){}
+				res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, e.getMessage(), true, true).getBytes());
+				
+				try{
+					res.getOutputStream().flush();
+				}catch(Exception eClose){}
+				try{
+					res.getOutputStream().close();
+				}catch(Exception eClose){}
+				
+			}
 			
 		}
 		

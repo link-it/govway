@@ -31,8 +31,4 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 		<mime-type>text/xml</mime-type>
 	</mime-mapping>
 
-	<welcome-file-list id="WelcomeFileList">
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-
 </web-app>

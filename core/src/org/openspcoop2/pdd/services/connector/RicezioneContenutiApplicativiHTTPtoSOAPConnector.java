@@ -88,20 +88,30 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector extends HttpServle
 	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {		
 		
-		String versione = "Porta di Dominio "+OpenSPCoop2Properties.getInstance().getPddDetailsForServices();
-		
-		res.setStatus(500);
-		StringBuffer risposta = new StringBuffer();
-		risposta.append("<html>\n");
-		risposta.append("<body>\n");
-		risposta.append("<h1>" + req.getContextPath() + req.getServletPath() + "/&lt;NOME_PD&gt;</h1>\n");
-		risposta.append("<p>"+versione+"</p>\n");
-		risposta.append("<p>Method HTTP GET non supportato</p>\n");
-		risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2, con messaggi xml non imbustati nel protocollo SOAP</i>\n");
-		risposta.append("</body>\n");
-		risposta.append("</html>\n");
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 
-		res.getOutputStream().write(risposta.toString().getBytes());
+		// messaggio di errore
+		boolean errore404 = false;
+		if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled()){
+			errore404 = true;
+		}
+		
+		if(errore404){
+			res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.PORTA_DELEGATA_IMBUSTAMENTO_SOAP_HTTP_GET));
+		}
+		else{
+		
+			res.setStatus(500);
+			
+			res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, ConnectorCostanti.METHOD_HTTP_GET_NOT_SUPPORTED, false, true).getBytes());
+			
+			try{
+				res.getOutputStream().flush();
+			}catch(Exception eClose){}
+			try{
+				res.getOutputStream().close();
+			}catch(Exception eClose){}
+		}
 	}
 
 }

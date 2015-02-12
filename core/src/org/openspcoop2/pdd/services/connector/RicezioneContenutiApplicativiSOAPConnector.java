@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiSOAP;
 import org.openspcoop2.utils.Utilities;
@@ -106,7 +107,11 @@ public class RicezioneContenutiApplicativiSOAPConnector extends HttpServlet {
 	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		
-		String versione = "Porta di Dominio "+OpenSPCoop2Properties.getInstance().getPddDetailsForServices();
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		String versione = "Porta di Dominio "+CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
+		if(op2Properties!=null){
+			versione = "Porta di Dominio "+op2Properties.getPddDetailsForServices();
+		}
 		
 		Enumeration<?> parameters = req.getParameterNames();
 		while(parameters.hasMoreElements()){
@@ -116,7 +121,6 @@ public class RicezioneContenutiApplicativiSOAPConnector extends HttpServlet {
 				InputStream is =null;
 				try{
 					
-					OpenSPCoop2Properties props = new OpenSPCoop2Properties(null);
 					is = RicezioneContenutiApplicativiSOAPConnector.class.getResourceAsStream("/PD.wsdl");
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
@@ -130,7 +134,7 @@ public class RicezioneContenutiApplicativiSOAPConnector extends HttpServlet {
 						bout.close();
 					}
 					
-					if(props.isGenerazioneWsdlPortaDelegataEnabled()){
+					if(op2Properties!=null && op2Properties.isGenerazioneWsdlPortaDelegataEnabled()){
 					
 						if(bout.size()<=0){
 							throw new Exception("WSDL Not Found");
@@ -145,25 +149,20 @@ public class RicezioneContenutiApplicativiSOAPConnector extends HttpServlet {
 					}
 					else{
 						
-						if(bout.size()>0){
-							res.getOutputStream().write(bout.toByteArray());
-						}
-						else{
-							res.sendError(404);
-						}
+//						if(bout.size()>0){
+//							res.getOutputStream().write(bout.toByteArray());
+//						}
+//						else{
+						res.sendError(404, ConnectorUtils.generateError404Message(ConnectorCostanti.PORTA_DELEGATA_WSDL));
+//						}
 						
 					}
 					
 				}catch(Exception e){					
 					res.setStatus(500);
-					StringBuffer risposta = new StringBuffer();
-					risposta.append("<html>\n");
-					risposta.append("<body>\n");
-					risposta.append("<h1>" + req.getContextPath() + req.getServletPath() +  "?wsdl</h1>\n");
-					risposta.append("<p>Generazione WSDL non riuscita</p>\n");
-					risposta.append("</body>\n");
-					risposta.append("</html>\n");
-					res.getOutputStream().write(risposta.toString().getBytes());
+					
+					res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, "Generazione WSDL non riuscita", false, true).getBytes());
+					
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Generazione WSDL PD non riuscita",e);	
 				}finally{
 					try{
@@ -181,25 +180,29 @@ public class RicezioneContenutiApplicativiSOAPConnector extends HttpServlet {
 			}
 		}
 		
-		res.setStatus(500);
-		StringBuffer risposta = new StringBuffer();
-		risposta.append("<html>\n");
-		risposta.append("<body>\n");
-		risposta.append("<h1>" + req.getContextPath() + req.getServletPath() + "/&lt;NOME_PD&gt;</h1>\n");
-		risposta.append("<p>"+versione+"</p>\n");
-		risposta.append("<p>Method HTTP GET non supportato</p>\n");
-		risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2</i>\n");
-		risposta.append("</body>\n");
-		risposta.append("</html>\n");
-
-		res.getOutputStream().write(risposta.toString().getBytes());
+		// messaggio di errore
+		boolean errore404 = false;
+		if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpGetPortaDelegataEnabled()){
+			errore404 = true;
+		}
 		
-		try{
-			res.getOutputStream().flush();
-		}catch(Exception eClose){}
-		try{
-			res.getOutputStream().close();
-		}catch(Exception eClose){}
+		if(errore404){
+			res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.PORTA_DELEGATA_HTTP_GET));
+		}
+		else{
+		
+			res.setStatus(500);
+			
+			res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, ConnectorCostanti.METHOD_HTTP_GET_NOT_SUPPORTED, false, true).getBytes());
+			
+			try{
+				res.getOutputStream().flush();
+			}catch(Exception eClose){}
+			try{
+				res.getOutputStream().close();
+			}catch(Exception eClose){}
+			
+		}
 	}
 
 }

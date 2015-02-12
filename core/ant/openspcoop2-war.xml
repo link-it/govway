@@ -71,8 +71,6 @@
 			<fileset file="${rootDir}/README.txt"/>
 			<fileset file="${rootDir}/COPYING"/>
 
-			<fileset file="${deploy_web_dir}/web_app/index.jsp"/>
-
 			<webinf dir="${deploy_web_dir}/web_app/WEB-INF">
 				<exclude name="**/web.xml"/>
 			</webinf>

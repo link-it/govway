@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
+import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
@@ -121,9 +122,15 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
 			this.codiceErroreIntegrazione = errore.getCodiceErrore();
-			this.codiceEccezione = protocolFactory.createTraduttore().toString(errore.getCodiceErrore(), 
-					this.proprietaErroreAppl.getFaultPrefixCode(), this.proprietaErroreAppl.isFaultAsGenericCode());
-			this.descrizioneEccezione = errore.getDescrizione(protocolFactory);
+			if(protocolFactory!=null){
+				this.codiceEccezione = protocolFactory.createTraduttore().toString(errore.getCodiceErrore(), 
+						this.proprietaErroreAppl.getFaultPrefixCode(), this.proprietaErroreAppl.isFaultAsGenericCode());
+				this.descrizioneEccezione = errore.getDescrizione(protocolFactory);
+			}
+			else{
+				this.codiceEccezione = errore.getCodiceErrore().getCodice()+"";
+				this.descrizioneEccezione = errore.getDescrizioneRawValue();
+			}
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -186,7 +193,11 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 		OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		try{
-			this.proprietaErroreAppl = openspcoopProperties.getProprietaGestioneErrorePD(protocolFactory.createProtocolManager());
+			IProtocolManager pm = null;
+			if(protocolFactory!=null){
+				pm = protocolFactory.createProtocolManager();
+			}
+			this.proprietaErroreAppl = openspcoopProperties.getProprietaGestioneErrorePD(pm);
 		}catch(Exception e){}
 		if(servizioApplicativo!=null){
 			try{
@@ -197,7 +208,11 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 				//OpenSPCoopLogger.getLoggerOpenSPCoopCore().error("Aggiornamento gestione errore PD servizio applicativo in IntegrationManagerException.init dell'IntegrationManager  SA["+servizioApplicativo+"] non riuscito");
 			}
 		}
-		this.identificativoPorta = openspcoopProperties.getIdentificativoPortaDefault(protocolFactory.getProtocol());
+		String protocol = null;
+		if(protocolFactory!=null){
+			protocol = protocolFactory.getProtocol();
+		}
+		this.identificativoPorta = openspcoopProperties.getIdentificativoPortaDefault(protocol);
 	}
 
 	@XmlTransient

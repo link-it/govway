@@ -14,12 +14,28 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     </context-param>
 
 
-	<!-- Se queste istruzioni vengono attivate, vengono utilizzate le regole di rewriter presenti nel file urlrewrite.xml -->	
+	<!-- IntegrationManagerEngine -->
+	<filter>
+    	<filter-name>IntegrationManagerEngineFilter</filter-name>
+    	<filter-class>org.openspcoop2.pdd.services.skeleton.IntegrationManagerEngineFilter</filter-class>
+	</filter>
+	
+	<!-- Se questo filtro viene attivato, vengono utilizzate le regole di rewriter presenti nel file urlrewrite.xml -->	
 	<!--
 	<filter>
     	<filter-name>UrlRewriteFilter</filter-name>
     	<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
 	</filter>
+	-->
+	
+	<!-- IntegrationManagerEngine -->
+	<filter-mapping>
+	    <filter-name>IntegrationManagerEngineFilter</filter-name>
+	    <url-pattern>/IntegrationManagerEngine/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Se questo filtro viene attivato, vengono utilizzate le regole di rewriter presenti nel file urlrewrite.xml -->	
+	<!--
 	<filter-mapping>
 	    <filter-name>UrlRewriteFilter</filter-name>
 	    <url-pattern>/*</url-pattern>
@@ -37,11 +53,16 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
         <listener-class> org.openspcoop2.pdd.services.OpenSPCoop2Startup </listener-class>
     </listener>
 
+
     <!-- Servlet: CXF -->
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
         <display-name>CXF Servlet</display-name>
         <servlet-class> org.apache.cxf.transport.servlet.CXFServlet </servlet-class>
+		<init-param>
+			<param-name>hide-service-list-page</param-name>
+			<param-value>true</param-value>
+		</init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -90,7 +111,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     <!-- Servlet Mapping: CXF -->
     <servlet-mapping>
         <servlet-name>CXFServlet</servlet-name>
-        <url-pattern>/IntegrationManager/*</url-pattern>
+        <url-pattern>/IntegrationManagerEngine/*</url-pattern>
     </servlet-mapping>
     
     
@@ -115,9 +136,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
         <mime-type>text/xml</mime-type>
     </mime-mapping>
 
-    <welcome-file-list id="WelcomeFileList">
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
+
     <!-- Altre configurazioni -->
 
 

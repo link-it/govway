@@ -153,6 +153,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		} 
 	}
 	
+	private void checkIMAuthorization(Logger log) throws IntegrationManagerException{
+		try {
+			Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED);
+			if(o == null || !(o instanceof Boolean)){
+				throw new Exception("Invocazione del Servizio non autorizzata");
+			}
+			Boolean b = (Boolean) o;
+			if(!b){
+				throw new Exception("Invocazione del Servizio non autorizzata");
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+		} 
+	}
+	
 	
 	private InfoConnettoreIngresso buildInfoConnettoreIngresso(javax.servlet.http.HttpServletRequest req,Credenziali credenziali,URLProtocolContext urlProtocolContext){
 		// Informazioni connettore ingresso
@@ -472,6 +488,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		if(logCore==null)
 			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
 		
+		// check Autorizzazione
+		checkIMAuthorization(logCore);
+		
 		// ProtocolFactoyr
 		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
 		
@@ -732,6 +751,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		if(logCore==null)
 			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
 
+		// check Autorizzazione
+		checkIMAuthorization(logCore);
+		
 		// ProtocolFactoyr
 		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
 		
@@ -1052,6 +1074,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		if(logCore==null)
 			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
 
+		// check Autorizzazione
+		checkIMAuthorization(logCore);
+		
 		// ProtocolFactoyr
 		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
 		
@@ -1273,6 +1298,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		if(logCore==null)
 			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
 
+		// check Autorizzazione
+		checkIMAuthorization(logCore);
+		
 		// ProtocolFactoyr
 		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
 		
@@ -1471,6 +1499,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		if(logCore==null)
 			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
 
+		// check Autorizzazione
+		checkIMAuthorization(logCore);
+		
 		// ProtocolFactoyr
 		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
 		
