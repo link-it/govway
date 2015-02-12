@@ -31,6 +31,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 
 
 /**
@@ -256,6 +257,109 @@ public class ConsoleProperties {
 	
 	public String getConsoleLanguage() throws UtilsException{
 		return this.readProperty(true, "console.language");
+	}
+	
+	
+	/* ----- Opzioni Accesso JMX della PdD ------- */
+	
+	public List<String> getJmxPdD_aliases() throws UtilsException {
+		List<String> list = new ArrayList<String>();
+		String tipo = this.readProperty(false, "risorseJmxPdd.aliases");
+		if(tipo!=null && !"".equals(tipo)){
+			String [] tmp = tipo.split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				list.add(tmp[i].trim());
+			}
+		}
+		return list;
+	}
+	
+	public String getJmxPdD_descrizione(String alias) throws UtilsException {
+		return this.readProperty(true, alias+".risorseJmxPdd.descrizione");
+	}
+	
+	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{
+		String tmp = this.readProperty(false, alias+"."+prop);
+		if(tmp==null || !"".equals(tmp)){
+			tmp = this.readProperty(required, prop);
+		}
+		return tmp;
+	}
+	
+	public String getJmxPdD_tipoAccesso(String alias) throws UtilsException {
+		String tipo = _getJmxPdD_value(true, alias, "risorseJmxPdd.tipoAccesso");
+		if(!CostantiControlStation.RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX.equals(tipo) && !CostantiControlStation.RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(tipo)){
+			throw new UtilsException("Tipo ["+tipo+"] non supportato per la proprieta' 'risorseJmxPdd.tipoAccesso'");
+		}
+		return tipo;
+	}
+	public String getJmxPdD_remoteAccess_username(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.username");
+	}
+	public String getJmxPdD_remoteAccess_password(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.password");
+	}
+	public String getJmxPdD_remoteAccess_applicationServer(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.as");
+	}
+	public String getJmxPdD_remoteAccess_factory(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.factory");
+	}
+	public String getJmxPdD_remoteAccess_url(String alias) throws UtilsException {
+		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.url");
+	}
+	public String getJmxPdD_dominio(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.dominio");
+	}
+	public String getJmxPdD_configurazioneSistema_type(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.tipo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsa(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsa");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versionePdD");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versioneBaseDati");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.versioneJava");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.tipoDatabase");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoDatabase");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.confDir");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.pluginProtocols");
+	}
+	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
+		List<String> list = new ArrayList<String>();
+		String tipo = _getJmxPdD_value(false, alias, "risorseJmxPdd.caches");
+		if(tipo!=null && !"".equals(tipo)){
+			String [] tmp = tipo.split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				list.add(tmp[i].trim());
+			}
+		}
+		return list;
+	}
+	public String getJmxPdD_cache_type(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.tipo");
+	}
+	public String getJmxPdD_cache_nomeAttributo_cacheAbilitata(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeAttributo.cacheAbilitata");
+	}
+	public String getJmxPdD_cache_nomeMetodo_statoCache(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeMetodo.statoCache");
+	}
+	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeMetodo.resetCache");
 	}
 	
 	

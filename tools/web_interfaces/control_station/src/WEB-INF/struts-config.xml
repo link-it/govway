@@ -1644,6 +1644,17 @@
         </action>
         
         
+        <!-- Configurazione Sistema -->
+        
+		<action path="/configurazioneSistemaAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSistemaAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneSistemaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneSistemaAddAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneSistemaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneSistemaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        
         <!-- Configurazione Audit (Pagina Iniziale)  -->
         
     	<action path="/configurazioneAuditing" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneAuditing"

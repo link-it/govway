@@ -473,13 +473,31 @@ public class Cache {
 			if(region.getCache().getElementAttributes()!=null){
 			
 				bf.append("IdleTime:");
-				bf.append(region.getCache().getElementAttributes().getIdleTime());
+				long idleTime = region.getCache().getElementAttributes().getIdleTime();
+				if(idleTime>0){
+					bf.append(Utilities.convertSystemTimeIntoString_millisecondi(idleTime*1000,false));
+				}
+				else if(idleTime==0){
+					bf.append("0");
+				}
+				else if(idleTime<0){
+					bf.append("Infinito");
+				}
 				bf.append(" ");
 				
 				bf.append(separator);
 				
 				bf.append("LifeTime:");
-				bf.append(Utilities.convertSystemTimeIntoString_millisecondi( (region.getCache().getElementAttributes().getMaxLifeSeconds()*1000),false));
+				long lifeTime = region.getCache().getElementAttributes().getMaxLifeSeconds();
+				if(lifeTime>0){
+					bf.append(Utilities.convertSystemTimeIntoString_millisecondi(lifeTime*1000,false));
+				}
+				else if(lifeTime==0){
+					bf.append("0");
+				}
+				else if(lifeTime<0){
+					bf.append("Infinito");
+				}
 				bf.append(" ");
 				
 				bf.append(separator);

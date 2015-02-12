@@ -70,7 +70,7 @@ public class GestoreJNDI {
 		// Inizializzo Contesto
 		InitialContext ctx = null;
 		try{
-			if(this.contextProperties.size() > 0){
+			if(this.contextProperties!=null && this.contextProperties.size() > 0){
 				ctx = new InitialContext(this.contextProperties);
 			}else{
 				ctx = new InitialContext();

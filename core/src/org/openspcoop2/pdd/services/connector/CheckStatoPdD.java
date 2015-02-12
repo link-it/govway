@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -38,6 +40,7 @@ import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.utils.Identity;
 
 /**
  * Servlet che serve per verificare l'installazione di OpenSPCoop.
@@ -65,6 +68,82 @@ public class CheckStatoPdD extends HttpServlet {
 		if(log==null)
 			log = Logger.getLogger(CheckStatoPdD.class);
 		
+		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+		boolean checkPdDReadEnabled = false;
+		if(properties!=null && properties.isCheckPdDReadJMXResourcesEnabled() ){
+			checkPdDReadEnabled = true;
+		}
+			
+		// verifico se l'invocazione richiede una lettura di una risorsa jmx
+		String resourceName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME);
+		if(resourceName!=null && !"".equals(resourceName)){
+			
+			if(checkPdDReadEnabled==false){
+				String msg = "Servizio non abilitato";
+				log.error("[CheckStatoPdD] "+msg);
+				res.setStatus(500);
+				res.getOutputStream().write(msg.getBytes());
+				return;
+			}
+			
+			// prima di procedere verifico una eventuale autenticazione
+			String username = properties.getCheckPdDReadJMXResourcesUsername();
+			String password = properties.getCheckPdDReadJMXResourcesPassword();
+			if(username!=null && password!=null){
+				Identity identity = new Identity(req);
+				if(username.equals(identity.getUsername())==false){
+					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
+					log.error("[CheckStatoPdD] "+msg+". Richiesta effettuata da un username ["+identity.getUsername()+"]");
+					res.setStatus(500);
+					res.getOutputStream().write(msg.getBytes());	
+					return;
+				}
+				if(password.equals(identity.getPassword())==false){
+					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
+					log.error("[CheckStatoPdD] "+msg+". Richiesta effettuata da un username ["+identity.getUsername()+"] (password errata)");
+					res.setStatus(500);
+					res.getOutputStream().write(msg.getBytes());
+					return;
+				}
+			}
+			
+			String attributeName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME);
+			String methodName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME);
+			if(attributeName!=null){
+				try{
+					Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.getAttribute(resourceName, attributeName);
+					res.getOutputStream().write(value.toString().getBytes());	
+				}catch(Exception e){
+					String msg = "Lettura attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
+					log.error("[CheckStatoPdD] "+msg,e);
+					res.setStatus(500);
+					res.getOutputStream().write(msg.getBytes());	
+					return;
+				}
+			}
+			else if(methodName!=null){
+				try{
+					Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.invoke(resourceName, methodName, null, null);
+					res.getOutputStream().write(value.toString().getBytes());	
+				}catch(Exception e){
+					String msg = "Invocazione metodo ["+methodName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
+					log.error("[CheckStatoPdD] "+msg,e);
+					res.setStatus(500);
+					res.getOutputStream().write(msg.getBytes());
+					return;
+				}
+			}
+			else{
+				String msg = "Lettura risorsa ["+resourceName+"] non effettuata, nessun attributo o metodo richiesto";
+				log.error("[CheckStatoPdD] "+msg);
+				res.setStatus(500);
+				res.getOutputStream().write(msg.getBytes());
+				return;
+			}
+			
+		}
+			
+						
 		if( OpenSPCoop2Startup.initialize == false){
 			String msg = "Porta di dominio OpenSPCoop non inzializzata";
 			log.error("[CheckStatoPdD] "+msg);

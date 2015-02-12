@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -77,6 +78,8 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -85,6 +88,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
@@ -526,6 +530,207 @@ public class ControlStationCore {
 		return this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 	}
 	
+	/** Opzioni Accesso JMX della PdD */
+	private List<String> jmxPdD_aliases = new ArrayList<String>();
+	private Map<String, String> jmxPdD_descrizioni = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_tipoAccesso = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_username = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_password = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_as = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_factory = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_remoteAccess_url = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_dominio = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_type = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsa = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new Hashtable<String, String>();
+	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
+	private Map<String, String> jmxPdD_cache_type = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_cache_nomeAttributo_cacheAbilitata = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_cache_nomeMetodo_statoCache = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_cache_nomeMetodo_resetCache = new Hashtable<String, String>();
+	
+	public List<String> getJmxPdD_aliases() {
+		return this.jmxPdD_aliases;
+	}
+	public String getJmxPdD_descrizione(String alias) {
+		return this.jmxPdD_descrizioni.get(alias);
+	}
+	public boolean isJmxPdD_tipoAccessoOpenSPCoop(String alias) {
+		return CostantiControlStation.RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(this.jmxPdD_tipoAccesso.get(alias));
+	}
+	public String getJmxPdD_remoteAccess_username(String alias) {
+		return this.jmxPdD_remoteAccess_username.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_password(String alias) {
+		return this.jmxPdD_remoteAccess_password.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_as(String alias) {
+		return this.jmxPdD_remoteAccess_as.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_factory(String alias) {
+		return this.jmxPdD_remoteAccess_factory.get(alias);
+	}
+	public String getJmxPdD_remoteAccess_url(String alias) {
+		return this.jmxPdD_remoteAccess_url.get(alias);
+	}
+	public String getJmxPdD_dominio(String alias) {
+		return this.jmxPdD_dominio.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_type(String alias) {
+		return this.jmxPdD_configurazioneSistema_type.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsa(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeRisorsa.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.get(alias);
+	}
+	public List<String> getJmxPdD_caches(String alias) {
+		return this.jmxPdD_caches.get(alias);
+	}
+	public String getJmxPdD_cache_type(String alias) {
+		return this.jmxPdD_cache_type.get(alias);
+	}
+	public String getJmxPdD_cache_nomeAttributo_cacheAbilitata(String alias) {
+		return this.jmxPdD_cache_nomeAttributo_cacheAbilitata.get(alias);
+	}
+	public String getJmxPdD_cache_nomeMetodo_statoCache(String alias) {
+		return this.jmxPdD_cache_nomeMetodo_statoCache.get(alias);
+	}
+	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) {
+		return this.jmxPdD_cache_nomeMetodo_resetCache.get(alias);
+	}
+	
+	public Object getGestoreRisorseJMX(String alias)  throws Exception{
+		try {
+			if(this.isJmxPdD_tipoAccessoOpenSPCoop(alias)){
+				//System.out.println("=================== REMOTA OPENSPCOOP =======================");
+				String remoteUrl = this.getJmxPdD_remoteAccess_url(alias);
+				if(remoteUrl==null){
+					throw new Exception("Configurazione errata (pdd:"+alias+") accesso via checkPdD. Non e' stata indicata la url");
+				}
+				return remoteUrl;
+			}
+			else{
+				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX gestoreJMX = null;
+				
+				if(this.getJmxPdD_remoteAccess_url(alias)!=null && !"".equals(this.getJmxPdD_remoteAccess_url(alias))){
+					//System.out.println("=================== REMOTA =======================");
+					String remoteUrl = this.getJmxPdD_remoteAccess_url(alias);
+					String factory = this.getJmxPdD_remoteAccess_factory(alias);
+					if(factory==null){
+						throw new Exception("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stata indicata una factory");
+					}
+					String as = this.getJmxPdD_remoteAccess_as(alias);
+					if(as==null){
+						throw new Exception("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stato indicato il tipo di application server");
+					}
+					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX(as, factory, remoteUrl, 
+							this.getJmxPdD_remoteAccess_username(alias), 
+							this.getJmxPdD_remoteAccess_password(alias), getLog());
+				}
+				else{
+					//System.out.println("=================== LOCALE =======================");
+					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX(getLog());
+					
+				}
+				
+				return gestoreJMX;
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public String invokeJMXMethod(Object gestore, String alias, String type, String nomeRisorsa, String nomeMetodo) throws Exception{
+		try {
+			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
+				String tmp = (String) ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).invoke(this.getJmxPdD_dominio(alias), type, nomeRisorsa, nomeMetodo, null, null);
+				if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
+					throw new Exception(tmp); 
+				}
+				return tmp;
+			}
+			else if(gestore instanceof String){
+				String url = (String) gestore;
+				String username = this.getJmxPdD_remoteAccess_username(alias);
+				String password = this.getJmxPdD_remoteAccess_password(alias);
+				StringBuffer bfUrl = new StringBuffer(url);
+				bfUrl.append("?").
+					append(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME).append("=").append(nomeRisorsa).append("&").
+					append(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME).append("=").append(nomeMetodo);
+				byte [] response = HttpUtilities.requestHTTPFile(bfUrl.toString(), username, password);
+				return new String(response);
+			}
+			else {
+				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public String readJMXAttribute(Object gestore, String alias, String type, String nomeRisorsa, String nomeAttributo) throws Exception{
+		try {
+			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
+				Object t = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).getAttribute(this.getJmxPdD_dominio(alias), type, nomeRisorsa, nomeAttributo);
+				if(t instanceof String){
+					String tmp = (String) t; 
+					if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
+						throw new Exception(tmp); 
+					}
+					return tmp;
+				}
+				else if(t instanceof Boolean){
+					return ((Boolean)t).toString();
+				}
+				else{
+					return t.toString();
+				}
+			}
+			else if(gestore instanceof String){
+				String url = (String) gestore;
+				String username = this.getJmxPdD_remoteAccess_username(alias);
+				String password = this.getJmxPdD_remoteAccess_password(alias);
+				StringBuffer bfUrl = new StringBuffer(url);
+				bfUrl.append("?").
+					append(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME).append("=").append(nomeRisorsa).append("&").
+					append(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME).append("=").append(nomeAttributo);
+				byte [] response = HttpUtilities.requestHTTPFile(bfUrl.toString(), username, password);
+				return new String(response);
+			}
+			else {
+				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	
 
 	/* --- COSTRUTTORI --- */
@@ -685,6 +890,31 @@ public class ControlStationCore {
 		this.generazioneAutomaticaPorteApplicative = core.generazioneAutomaticaPorteApplicative;
 		this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = core.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 		this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = core.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
+		
+		/** Opzioni Accesso JMX della PdD */
+		this.jmxPdD_aliases = core.jmxPdD_aliases;
+		this.jmxPdD_descrizioni = core.jmxPdD_descrizioni;
+		this.jmxPdD_tipoAccesso = core.jmxPdD_tipoAccesso;
+		this.jmxPdD_remoteAccess_username = core.jmxPdD_remoteAccess_username;
+		this.jmxPdD_remoteAccess_password = core.jmxPdD_remoteAccess_password;
+		this.jmxPdD_remoteAccess_as = core.jmxPdD_remoteAccess_as;
+		this.jmxPdD_remoteAccess_factory = core.jmxPdD_remoteAccess_factory;
+		this.jmxPdD_remoteAccess_url = core.jmxPdD_remoteAccess_url;
+		this.jmxPdD_dominio = core.jmxPdD_dominio;
+		this.jmxPdD_configurazioneSistema_type = core.jmxPdD_configurazioneSistema_type;
+		this.jmxPdD_configurazioneSistema_nomeRisorsa = core.jmxPdD_configurazioneSistema_nomeRisorsa;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = core.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati = core.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = core.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = core.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = core.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols;
+		this.jmxPdD_caches = core.jmxPdD_caches;
+		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
+		this.jmxPdD_cache_nomeAttributo_cacheAbilitata = core.jmxPdD_cache_nomeAttributo_cacheAbilitata;
+		this.jmxPdD_cache_nomeMetodo_statoCache = core.jmxPdD_cache_nomeMetodo_statoCache;
+		this.jmxPdD_cache_nomeMetodo_resetCache = core.jmxPdD_cache_nomeMetodo_resetCache;
 	}
 
 
@@ -857,6 +1087,45 @@ public class ControlStationCore {
 			// Opzioni di importazione/esportazione Archivi
 			this.importArchivi_tipoPdD = consoleProperties.getImportArchive_tipoPdD();
 			this.exportArchivi_standard = consoleProperties.isExportArchive_standard();
+			
+			// Opzioni Accesso JMX della PdD
+			this.jmxPdD_aliases = consoleProperties.getJmxPdD_aliases();
+			if(this.jmxPdD_aliases!=null){
+				for (String alias : this.jmxPdD_aliases) {
+					this.jmxPdD_descrizioni.put(alias, consoleProperties.getJmxPdD_descrizione(alias));
+					this.jmxPdD_tipoAccesso.put(alias,consoleProperties.getJmxPdD_tipoAccesso(alias));
+					String username = consoleProperties.getJmxPdD_remoteAccess_username(alias);
+					if(username!=null)
+						this.jmxPdD_remoteAccess_username.put(alias,username);
+					String password = consoleProperties.getJmxPdD_remoteAccess_password(alias);
+					if(password!=null)
+						this.jmxPdD_remoteAccess_password.put(alias,password);
+					String as = consoleProperties.getJmxPdD_remoteAccess_applicationServer(alias);
+					if(as!=null)
+						this.jmxPdD_remoteAccess_as.put(alias,as);
+					String factory = consoleProperties.getJmxPdD_remoteAccess_factory(alias);
+					if(factory!=null)
+						this.jmxPdD_remoteAccess_factory.put(alias,factory);
+					String url = consoleProperties.getJmxPdD_remoteAccess_url(alias);
+					if(url!=null)
+						this.jmxPdD_remoteAccess_url.put(alias,url);
+					this.jmxPdD_dominio.put(alias,consoleProperties.getJmxPdD_dominio(alias));
+					this.jmxPdD_configurazioneSistema_type.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_type(alias));
+					this.jmxPdD_configurazioneSistema_nomeRisorsa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsa(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
+					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
+					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));
+					this.jmxPdD_cache_nomeAttributo_cacheAbilitata.put(alias, consoleProperties.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+					this.jmxPdD_cache_nomeMetodo_statoCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_statoCache(alias));
+					this.jmxPdD_cache_nomeMetodo_resetCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_resetCache(alias));
+				}
+			}
 			
 			// Gestione Visibilità utenti
 			this.visioneOggettiGlobale = consoleProperties.isVisibilitaOggettiGlobale();

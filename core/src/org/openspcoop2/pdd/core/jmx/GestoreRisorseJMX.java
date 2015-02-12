@@ -53,17 +53,26 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 			throws RisorseJMXException {
 		super(jndiNameMBeanServer, jndiContext, logger, loggerConsole);
 	}
-
-
 	public GestoreRisorseJMX(String jndiNameMBeanServer,
 			Properties jndiContext, Logger logger) throws RisorseJMXException {
 		super(jndiNameMBeanServer, jndiContext, logger);
 	}
-
-
 	public GestoreRisorseJMX(String jndiNameMBeanServer, Properties jndiContext)
 			throws RisorseJMXException {
 		super(jndiNameMBeanServer, jndiContext);
+	}
+	
+	
+	public GestoreRisorseJMX(String tipoApplicationServer, String factory, String serverUrl, String username,  String password) throws RisorseJMXException{
+		super(tipoApplicationServer,factory,serverUrl,username,password);
+	}
+	public GestoreRisorseJMX(String tipoApplicationServer, String factory, String serverUrl, String username,  String password,
+			Logger logger) throws RisorseJMXException{
+		super(tipoApplicationServer,factory,serverUrl,username,password,logger);
+	}
+	public GestoreRisorseJMX(String tipoApplicationServer, String factory, String serverUrl, String username,  String password,
+			Logger logger,Logger loggerConsole) throws RisorseJMXException{
+		super(tipoApplicationServer,factory,serverUrl,username,password,logger,loggerConsole);
 	}
 
 
@@ -306,5 +315,4 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 		return invoke(CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA, nomeMetodo, null, null);
 	}
 
-	
 }

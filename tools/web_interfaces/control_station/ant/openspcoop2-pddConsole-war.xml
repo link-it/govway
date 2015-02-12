@@ -187,6 +187,22 @@
 		</if>
 		
 		<if>
+			<isfalse value="${singlePdD}" />
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${build_pddConsole}/tmp/console.properties"/>
+					<param name="token" value="risorseJmxPdd.aliases"/>
+					<param name="value" value="#risorseJmxPdd.aliases"/>
+				</antcall>
+
+				<antcall target="dos2unix">
+					<param name="dir" value="${build_pddConsole}/tmp"/>
+				    <param name="file" value="console.properties"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
 				<equals arg1="${as}" arg2="jboss8"/>

@@ -66,6 +66,12 @@
     <servlet-name>archiviExporter</servlet-name>
 	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviExporter</servlet-class>
   </servlet>
+  
+  <!-- Servlet di gestione esportazione della configurazione di sistema -->
+  <servlet>
+    <servlet-name>configurazioneSistemaExporter</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSistemaExporter</servlet-class>
+  </servlet>
 
 
   <!-- Servlet per il download dei documenti -->
@@ -88,6 +94,12 @@
   <servlet-mapping>
     <servlet-name>archiviExporter</servlet-name>
     <url-pattern>/exporterArchivi</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet di gestioneesportazione della configurazione di sistema -->
+  <servlet-mapping>
+    <servlet-name>configurazioneSistemaExporter</servlet-name>
+    <url-pattern>/exporterConfigurazione</url-pattern>
   </servlet-mapping>
 
   <!-- Action Servlet Mapping -->

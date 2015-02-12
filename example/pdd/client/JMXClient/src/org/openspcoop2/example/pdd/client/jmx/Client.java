@@ -166,6 +166,7 @@ public class Client {
 		
 		
 		
+		// NOTA: gestire un eventuale nuovo a.s. anche nella classe  org.openspcoop2.utils.resources.GestoreRisorseJMX
 		try{
 			MBeanServerConnection mconn = null;
 			if(args[0].equals("jboss7") ||

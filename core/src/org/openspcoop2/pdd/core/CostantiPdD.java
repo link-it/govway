@@ -252,6 +252,13 @@ public class CostantiPdD {
     public final static String WSDL_EROGATORE = "Wsdl erogatore";
     
     public final static String BUSTA_RISPOSTA = "BustaProprietaHeaderIntegrazione";
+    
+    
+    
+    public final static String CHECK_STATO_PDD_METHOD_NAME = "methodName";
+    public final static String CHECK_STATO_PDD_ATTRIBUTE_NAME = "attributeName";
+    public final static String CHECK_STATO_PDD_RESOURCE_NAME = "resourceName";
+    
        
     
     /* Proprieta di una busta: renderle reperibili TUTTE quando si è letta una busta, in ogni servizio/modulo */

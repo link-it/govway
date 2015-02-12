@@ -265,6 +265,11 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			
 	}
 	
+	public boolean isCacheAbilitata() {
+		return this.cacheAbilitata;
+	}
+	
+	
 	/* Metodi di management JMX */
 	public String resetCache(){
 		try{

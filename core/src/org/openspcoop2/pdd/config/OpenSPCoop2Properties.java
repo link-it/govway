@@ -1521,6 +1521,11 @@ public class OpenSPCoop2Properties {
 			this.isGenerazioneWsdlPortaApplicativaEnabled();
 			this.isGenerazioneWsdlIntegrationManagerEnabled();
 			
+			// CheckPdD
+			this.isCheckPdDReadJMXResourcesEnabled();
+			this.getCheckPdDReadJMXResourcesUsername();
+			this.getCheckPdDReadJMXResourcesPassword();
+			
 			// NotifierInputStreamCallback
 			String notifierClass = null;
 			try{
@@ -9573,7 +9578,66 @@ public class OpenSPCoop2Properties {
 	
 	
 	
+	/* ------------- CheckPdD Reader Risorse JMX ---------------------*/
 	
+	private static Boolean isCheckPdDReadJMXResourcesEnabled = null;
+	public boolean isCheckPdDReadJMXResourcesEnabled() {	
+		if(OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.readJMXResources.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled;
+	}
+	
+	private static String getCheckPdDReadJMXResourcesUsername = null;
+	private static Boolean getCheckPdDReadJMXResourcesUsername_read = null;
+	public String getCheckPdDReadJMXResourcesUsername() {	
+		if(OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.readJMXResources.username");
+				if(name!=null){
+					name = name.trim();
+				}
+				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername_read = true;
+				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.username': "+e.getMessage());
+			}    
+		}
+		return OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername;
+	}
+	
+	private static String getCheckPdDReadJMXResourcesPassword = null;
+	private static Boolean getCheckPdDReadJMXResourcesPassword_read = null;
+	public String getCheckPdDReadJMXResourcesPassword() {	
+		if(OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.readJMXResources.password");
+				if(name!=null){
+					name = name.trim();
+				}
+				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword_read = true;
+				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.password': "+e.getMessage());
+			}    
+		}
+		return OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword;
+	}
 	
 	
 	

@@ -408,6 +408,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 
 	}
 	
+	public boolean isCacheAbilitata() {
+		return this.cacheAbilitata;
+	}
+	
 	/* Metodi di management JMX */
 	public String resetCache(){
 		try{

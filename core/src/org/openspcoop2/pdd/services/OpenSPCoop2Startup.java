@@ -24,6 +24,8 @@
 package org.openspcoop2.pdd.services;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -56,7 +58,11 @@ import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InitContext;
+import org.openspcoop2.pdd.core.jmx.AccessoRegistroServizi;
+import org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema;
 import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX;
+import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
+import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -137,6 +143,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Gestore risorse JMX */
 	private GestoreRisorseJMX gestoreRisorseJMX = null;
+	public static GestoreRisorseJMX gestoreRisorseJMX_staticInstance = null;
 
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -672,6 +679,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}else{
 						OpenSPCoop2Startup.this.gestoreRisorseJMX = new GestoreRisorseJMX();
 					}
+					OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance = OpenSPCoop2Startup.this.gestoreRisorseJMX;
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Gestore Risorse JMX");
@@ -1025,10 +1033,50 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - configurazione di sistema della Porta di Dominio");
 				}
+				
 			}
 
 
+			
+			
+			
+			
+			/* ----------- Log Configurazione di Sistema ------------ */
+			
+			InformazioniStatoPorta informazioniStatoPorta = new InformazioniStatoPorta();
+			List<InformazioniStatoPortaCache> informazioniStatoPortaCache = new ArrayList<InformazioniStatoPortaCache>();
+			
+			AccessoRegistroServizi infoRegistroServizi = new AccessoRegistroServizi();
+			InformazioniStatoPortaCache InformazioniStatoPortaCache_registro = new InformazioniStatoPortaCache(CostantiPdD.JMX_REGISTRO_SERVIZI, infoRegistroServizi.isCacheAbilitata());
+			InformazioniStatoPortaCache_registro.setStatoCache(infoRegistroServizi.printStatCache());
+			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_registro);
+			
+			org.openspcoop2.pdd.core.jmx.ConfigurazionePdD infoConfigurazione = new org.openspcoop2.pdd.core.jmx.ConfigurazionePdD();
+			InformazioniStatoPortaCache InformazioniStatoPortaCache_config = new InformazioniStatoPortaCache(CostantiPdD.JMX_CONFIGURAZIONE_PDD, infoConfigurazione.isCacheAbilitata());
+			InformazioniStatoPortaCache_config.setStatoCache(infoConfigurazione.printStatCache());
+			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_config);
+			
+			org.openspcoop2.pdd.core.jmx.EngineAutorizzazioneBuste infoAutorizzazioneBuste = new org.openspcoop2.pdd.core.jmx.EngineAutorizzazioneBuste();
+			InformazioniStatoPortaCache InformazioniStatoPortaCache_autorizzazioneBuste = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE, infoAutorizzazioneBuste.isCacheAbilitata());
+			InformazioniStatoPortaCache_autorizzazioneBuste.setStatoCache(infoAutorizzazioneBuste.printStatCache());
+			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_autorizzazioneBuste);
+			
+			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
+			InformazioniStatoPortaCache InformazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
+			InformazioniStatoPortaCache_repositoryMessaggi.setStatoCache(infoRepositoryMessaggi.printStatCache());
+			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_repositoryMessaggi);
+			
+			ConfigurazioneSistema infoConfigSistema = new ConfigurazioneSistema();
+			OpenSPCoop2Logger.getLoggerOpenSPCoopConfigurazioneSistema().
+				info(informazioniStatoPorta.formatStatoPorta(infoConfigSistema.getVersionePdD(), 
+						infoConfigSistema.getVersioneBaseDati(), infoConfigSistema.getDirectoryConfigurazione(), 
+						infoConfigSistema.getVersioneJava(), infoConfigSistema.getInformazioniDatabase(),
+						infoConfigSistema.getPluginProtocols(), informazioniStatoPortaCache.toArray(new InformazioniStatoPortaCache[1])));
 
+			
+			
+			
+			
 			
 			
 			

@@ -143,5 +143,7 @@ public class CostantiControlStation {
 	/** OTHER */
 	public final static String IMAGES_DIR = "images";
 	public final static String OPERATIONS_DELIMITER = "\n--------------------------------------------\n\n";
+	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX = "jmx";
+	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP = "openspcoop";
 	
 }

@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -62,6 +64,8 @@ public class ConfigurazioneCostanti {
 	public final static String OBJECT_NAME_CONFIGURAZIONE_ROTTE_ROUTING = "configurazioneRoute";
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES = "configurazioneSystemProperties";
+	
+	public final static String OBJECT_NAME_CONFIGURAZIONE_SISTEMA = "configurazioneSistema";
 	
 	/* SERVLET NAME */
 	
@@ -217,6 +221,13 @@ public class ConfigurazioneCostanti {
 		SERVLET_CONFIGURAZIONE_SYSTEM_PROPERTIES.add(SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST);
 	}
 	
+	public final static String SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD = OBJECT_NAME_CONFIGURAZIONE_SISTEMA+"Add.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER = "exporterConfigurazione";
+	public final static Vector<String> SERVLET_CONFIGURAZIONE_SISTEMA = new Vector<String>();
+	static{
+		SERVLET_CONFIGURAZIONE_SISTEMA.add(SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD);
+		SERVLET_CONFIGURAZIONE_SISTEMA.add(SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);
+	}
 	
 
 	
@@ -235,6 +246,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA = "Propriet&agrave; di Sistema";
+	
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA = "Configurazione di Sistema";
 	
 	public final static String LABEL_CONFIGURAZIONE_DESTINAZIONI = "Destinazioni";
 	public final static String LABEL_CONFIGURAZIONE_ROTTA = "Rotta";
@@ -260,6 +273,15 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE = "Cache";
+	
+	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
+	
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI = "Informazioni Generali";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "Informazioni Database";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Protocolli";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
+	
+	
 	/* PARAMETRI */
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_ID = "id";
@@ -302,6 +324,20 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE = "algoritmocache";
 	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "idlecache";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "lifecache";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO = "nomeMetodo";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "versionePdD";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "versioneBaseDati";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA = "versioneJava";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "directoryConfigurazione";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "infoDatabase_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "infoProtocollo_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "infoProtocolloContesto_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "ResetCache";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	
 	/* LABEL PARAMETRI */
 	
@@ -347,6 +383,17 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "LRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "MRU";
 	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "Porta di Dominio";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "Versione PdD";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "Versione BaseDati";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA = "Versione Java";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "Directory di Configurazione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "Protocollo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "contesti: ";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Reset Cache";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
+	
 	
 	/* DEFAULT VALUE PARAMETRI */
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_XML = "xml";
@@ -380,6 +427,16 @@ public class ConfigurazioneCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "lru";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "mru";
 	
+	
+	public final static List<String> CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI = new ArrayList<String>();
+	static {
+		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("Algoritmo");
+		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("Dimensione");
+		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("ElementiInCache");
+		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("MemoriaOccupata");
+		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("IdleTime");
+		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("LifeTime");
+	}
 }
 
 	

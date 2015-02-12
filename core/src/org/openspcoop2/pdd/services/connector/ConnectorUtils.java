@@ -131,7 +131,7 @@ public class ConnectorUtils {
 							if(bfProtocols.length()>0){
 								bfProtocols.append(", ");
 							}
-							bfProtocols.append("\"\"(protocol:"+key+")");
+							bfProtocols.append("\"\" (protocol:"+key+")");
 						}
 						if(pf.getManifest().getWeb().sizeContextList()>0){
 							for (String context : pf.getManifest().getWeb().getContextList()) {

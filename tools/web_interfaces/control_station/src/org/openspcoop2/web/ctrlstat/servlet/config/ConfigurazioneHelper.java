@@ -21,6 +21,8 @@
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -2828,6 +2830,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST);
 		ServletUtils.setDataElementVisualizzaLabel(de);
 		dati.addElement(de);
+		
+		if(this.confCore.getJmxPdD_aliases()!=null && this.confCore.getJmxPdD_aliases().size()>0){
+		
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD);
+			ServletUtils.setDataElementVisualizzaLabel(de);
+			dati.addElement(de);
+			
+		}
 
 		return dati;
 	}
@@ -3225,6 +3242,338 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 
+		return dati;
+	}
+	
+	public Vector<DataElement> addConfigurazioneSistemaSelectListNodiCluster(Vector<DataElement> dati) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.SELECT);
+		de.setValues(this.confCore.getJmxPdD_aliases());
+		List<String> labels = new ArrayList<String>();
+		for (String alias : this.confCore.getJmxPdD_aliases()) {
+			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+		}
+		de.setLabels(labels);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setSize(this.getSize());
+		//de.setPostBack(true);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public Vector<DataElement> addConfigurazioneSistema(Vector<DataElement> dati, String alias) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER,
+				new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER,alias));
+		de.setType(DataElementType.LINK);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
+		de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		
+		Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String versionePdD = null;
+		try{
+			versionePdD = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura della versione della PdD (jmxResourcePdD): "+e.getMessage(),e);
+			versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD);
+		de.setValue(versionePdD);
+		de.setType(DataElementType.TEXT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+
+		
+		String versioneBaseDati = null;
+		try{
+			versioneBaseDati = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
+			versioneBaseDati = versioneBaseDati.replaceAll("\n", "<br/>");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
+			versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
+		de.setValue(versioneBaseDati);
+		de.setType(DataElementType.TEXT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		
+		String confDir = null;
+		try{
+			confDir = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
+			confDir = confDir.replaceAll("\n", "<br/>");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura della directory di configurazione (jmxResourcePdD): "+e.getMessage(),e);
+			confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
+		de.setValue(confDir);
+		de.setType(DataElementType.TEXT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		
+		String versioneJava = null;
+		try{
+			versioneJava = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura della versione di java (jmxResourcePdD): "+e.getMessage(),e);
+			versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
+		de.setValue(versioneJava);
+		de.setType(DataElementType.TEXT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoDatabase = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
+			infoDatabase = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoDatabase==null || infoDatabase.length<=0){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		else{
+			for (int i = 0; i < infoDatabase.length; i++) {
+				
+				try{
+					String label = infoDatabase[i];
+					String value = "";
+					if(infoDatabase[i].contains(":")){
+						label = infoDatabase[i].split(":")[0];
+						value = infoDatabase[i].split(":")[1];
+					}
+					
+					de = new DataElement();
+					de.setLabel(label);
+					de.setValue(value);
+					de.setType(DataElementType.TEXT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE+i);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoProtocolli = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
+			infoProtocolli = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoProtocolli==null || infoProtocolli.length<=0){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		else{
+			Hashtable<String, String> map = new Hashtable<String, String>();
+			for (int i = 0; i < infoProtocolli.length; i++) {
+				
+				try{
+					String context = infoProtocolli[i].split(" ")[0];
+					String protocol = infoProtocolli[i].split(" ")[1];
+					protocol = protocol.split(":")[1];
+					protocol = protocol.substring(0, protocol.length()-1);
+					if(map.containsKey(protocol)){
+						String c = map.remove(protocol);
+						map.put(protocol, (c+", "+context));
+					}
+					else{
+						map.put(protocol, context);
+					}
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
+				}
+				
+			}
+			Enumeration<String> protocolli = map.keys();
+			int index = 0;
+			while (protocolli.hasMoreElements()) {
+				String protocollo = (String) protocolli.nextElement();
+				
+				de = new DataElement();
+				de.setLabel(protocollo);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO+map.get(protocollo));
+				de.setType(DataElementType.TEXT);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO+index);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+//				de = new DataElement();
+//				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO);
+//				de.setValue(protocollo);
+//				de.setType(DataElementType.TEXT);
+//				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO+index);
+//				de.setSize(this.getSize());
+//				dati.addElement(de);
+//				
+//				de = new DataElement();
+//				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO);
+//				de.setValue(map.get(protocollo));
+//				de.setType(DataElementType.TEXT);
+//				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO+index);
+//				de.setSize(this.getSize());
+//				dati.addElement(de);
+				
+				index++;
+			}
+		}
+		
+		List<String> caches = this.confCore.getJmxPdD_caches(alias);
+		if(caches!=null && caches.size()>0){
+			
+			for (String cache : caches) {
+			
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE+cache);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				String stato = null;
+				try{
+					stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							cache,
+							this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+					if(stato.equalsIgnoreCase("true")){
+						stato = "abilitata";
+					}
+					else if(stato.equalsIgnoreCase("false")){
+						stato = "disabilitata";
+					}
+					else{
+						throw new Exception("Stato ["+stato+"] sconosciuto");
+					}
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+				
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
+				de.setValue(stato);
+				de.setType(DataElementType.TEXT);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				if("abilitata".equals(stato)){
+					
+					de = new DataElement();
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+cache+
+							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias));
+					de.setType(DataElementType.LINK);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+					de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+					
+					String [] params = null;
+					try{
+						String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_cache_type(alias), 
+								cache,
+								this.confCore.getJmxPdD_cache_nomeMetodo_statoCache(alias));
+						params = tmp.split("\n");
+					}catch(Exception e){
+						this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+						stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+					}
+					
+					if(params!=null && params.length>0){
+						for (int i = 0; i < params.length; i++) {
+							
+							try{
+								String label = params[i];
+								String value = "";
+								if(params[i].contains(":")){
+									label = params[i].split(":")[0];
+									value = params[i].split(":")[1];
+								}
+								
+								if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.contains(label)){
+								
+									de = new DataElement();
+									de.setLabel(label);
+									de.setValue(value);
+									de.setType(DataElementType.TEXT);
+									de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO+"_"+i);
+									de.setSize(this.getSize());
+									dati.addElement(de);
+									
+								}
+									
+							}catch(Exception e){
+								this.log.error("Errore durante la lettura dello stato della cache ["+cache+"]: "+e.getMessage(),e);
+							}
+						}
+					}
+				}
+			}
+						
+		}
+			
 		return dati;
 	}
 

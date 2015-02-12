@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 
@@ -65,10 +66,15 @@ public class HttpUtilities {
 	 * 
 	 */
 	public static byte[] requestHTTPFile(String path) throws UtilsException{
-		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT);
+		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
 	}
 	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout) throws UtilsException{
-
+		return requestHTTPFile(path, readTimeout, connectTimeout, null, null);
+	}
+	public static byte[] requestHTTPFile(String path,String username,String password) throws UtilsException{
+		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+	}	
+	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
 		InputStream is = null;
 		ByteArrayOutputStream outResponse = null;
 		try{
@@ -78,6 +84,13 @@ public class HttpUtilities {
 
 			httpConn.setConnectTimeout(connectTimeout);
 			httpConn.setReadTimeout(readTimeout);
+			
+			if(username!=null && password!=null){
+				String authentication = username + ":" + password;
+				authentication = "Basic " + 
+				Base64.encode(authentication.getBytes());
+				httpConn.setRequestProperty("Authorization",authentication);
+			}
 			
 			httpConn.setRequestMethod("GET");
 			httpConn.setDoOutput(true);
@@ -135,9 +148,15 @@ public class HttpUtilities {
 
 
 	public static void check(String path) throws Exception{
-		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT);
+		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
 	}
 	public static void check(String path,int readTimeout,int connectTimeout) throws Exception{
+		check(path, readTimeout, connectTimeout, null, null);
+	}
+	public static void check(String path,String username,String password) throws Exception{
+		check(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+	}
+	public static void check(String path,int readTimeout,int connectTimeout,String username,String password) throws Exception{
 
 		InputStream is = null;
 		ByteArrayOutputStream outResponse = null;
@@ -149,6 +168,13 @@ public class HttpUtilities {
 
 			httpConn.setConnectTimeout(connectTimeout);
 			httpConn.setReadTimeout(readTimeout);
+			
+			if(username!=null && password!=null){
+				String authentication = username + ":" + password;
+				authentication = "Basic " + 
+				Base64.encode(authentication.getBytes());
+				httpConn.setRequestProperty("Authorization",authentication);
+			}
 			
 			httpConn.setRequestMethod("GET");
 			httpConn.setDoOutput(true);

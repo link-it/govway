@@ -294,6 +294,10 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 			
 	}
 	
+	public boolean isCacheAbilitata() {
+		return this.cacheAbilitata;
+	}
+	
 	/* Metodi di management JMX */
 	public String resetCache(){
 		try{

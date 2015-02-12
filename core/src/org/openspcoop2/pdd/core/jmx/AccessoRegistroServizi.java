@@ -305,6 +305,10 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		}
 	}
 	
+	public boolean isCacheAbilitata() {
+		return this.cacheAbilitata;
+	}
+	
 	/* Metodi di management JMX */
 	public String resetCache(){
 		try{
