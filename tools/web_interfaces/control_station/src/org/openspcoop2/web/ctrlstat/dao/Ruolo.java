@@ -26,6 +26,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.utils.beans.BaseBean;
 
 /**
  * Bean ruolo
@@ -38,7 +39,7 @@ import org.openspcoop2.core.id.IDAccordo;
  * @version $Rev$, $Date$
  * 
  */
-public class Ruolo {
+public class Ruolo extends BaseBean {
 
 	private Long idAccordo;
 	private Long idServizioApplicativo;

@@ -90,6 +90,7 @@ public class PddCostanti {
 	public final static String PARAMETRO_PDD_TIPOLOGIA = "tipo";
 	public final static String PARAMETRO_PDD_DESCRIZIONE = "descrizione";
 	public final static String PARAMETRO_PDD_PROTOCOLLO = "protocollo";
+	public final static String PARAMETRO_PDD_PROTOCOLLO_GESTIONE = "protocollo_gestione";
 	public final static String PARAMETRO_PDD_INDIRIZZO_PUBBLICO = "ip";
 	public final static String PARAMETRO_PDD_PORTA_PUBBLICA = "porta";
 	public final static String PARAMETRO_PDD_INDIRIZZO_GESTIONE = "ip_gestione";
@@ -106,6 +107,7 @@ public class PddCostanti {
 	public final static String LABEL_PDD_TIPOLOGIA ="Tipo";
 	public final static String LABEL_PDD_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PDD_PROTOCOLLO = "Protocollo";
+	public final static String LABEL_PDD_PROTOCOLLO_GESTIONE = "Protocollo gestione";
 	public final static String LABEL_PDD_INDIRIZZO_PUBBLICO = "Indirizzo pubblico (IP/Hostname)";
 	public final static String LABEL_PDD_PORTA_PUBBLICA = "Porta pubblica";
 	public final static String LABEL_PDD_INDIRIZZO_GESTIONE = "Indirizzo gestione (IP/Hostname)";

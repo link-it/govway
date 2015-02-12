@@ -89,6 +89,17 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="protocollo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="protocollo"/>
+                                <linkit:sql-column-comment><![CDATA[protocollo pubblico]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="ip_gestione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -111,13 +122,13 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="protocollo" type="xsd:string" minOccurs="0">
+                <xsd:element name="protocollo_gestione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="protocollo"/>
-                                <linkit:sql-column-comment><![CDATA[protocollo]]></linkit:sql-column-comment>
+                                <linkit:sql-column-mapping name="protocollo_gestione"/>
+                                <linkit:sql-column-comment><![CDATA[protocollo gestione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

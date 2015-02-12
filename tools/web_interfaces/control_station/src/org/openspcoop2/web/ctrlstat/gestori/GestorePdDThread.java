@@ -1133,7 +1133,7 @@ public class GestorePdDThread extends GestoreGeneral {
 				// ipPdd = backEndConnector.getIPPdd(queueName);
 				PdDControlStation pdd = this.pddCore.getPdDControlStation(this.pddName);
 				ipPdd = pdd.getIpGestione();
-				protocollo = pdd.getProtocollo();
+				protocollo = pdd.getProtocolloGestione();
 				porta = pdd.getPortaGestione();
 
 				if (ipPdd == null || protocollo == null || porta <= 0)

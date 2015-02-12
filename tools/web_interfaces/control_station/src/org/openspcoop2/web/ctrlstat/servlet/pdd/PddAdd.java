@@ -88,6 +88,7 @@ public final class PddAdd extends Action {
 			String subject = request.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
 			String clientAuth = request.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
 			String protocollo = request.getParameter(PddCostanti.PARAMETRO_PDD_PROTOCOLLO);
+			String protocolloGestione = request.getParameter(PddCostanti.PARAMETRO_PDD_PROTOCOLLO_GESTIONE);
 			
 			int portaInt = 0;
 			int portaGestioneInt = 0;
@@ -131,12 +132,12 @@ public final class PddAdd extends Action {
 				if (nome == null)
 				    dati = pddHelper.addPddToDati(dati, "", null,  ip, "", "", "", 
 				    		PddTipologia.OPERATIVO, TipoOperazione.ADD, 
-				    		PddCostanti.DEFAULT_PDD_PROTOCOLLI, PddCostanti.DEFAULT_PDD_PROTOCOLLO, 
+				    		PddCostanti.DEFAULT_PDD_PROTOCOLLI, PddCostanti.DEFAULT_PDD_PROTOCOLLO, PddCostanti.DEFAULT_PDD_PROTOCOLLO, 
 				    		portaInt, descrizione, ipGestione, portaGestioneInt, implementazione, CostantiConfigurazione.DISABILITATO.toString(), false);
 				else
 				    dati = pddHelper.addPddToDati(dati, nome, null,  ip, subject, "", "", 
 				    		PddTipologia.toPddTipologia(tipo), TipoOperazione.ADD, 
-				    		PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo, 
+				    		PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo,  protocolloGestione,
 				    		portaInt, descrizione, ipGestione, portaGestioneInt, implementazione, clientAuth, false);
 	
 				pd.setDati(dati);
@@ -161,7 +162,7 @@ public final class PddAdd extends Action {
 	
 				dati = pddHelper.addPddToDati(dati, nome, null, ip, subject, "" /* password */, ""/* confpw */, 
 						PddTipologia.toPddTipologia(tipo), TipoOperazione.ADD,
-						PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo,  
+						PddCostanti.DEFAULT_PDD_PROTOCOLLI, protocollo,  protocolloGestione,
 						portaInt, descrizione, ipGestione, portaGestioneInt, implementazione, clientAuth, false);
 	
 				pd.setDati(dati);
@@ -199,6 +200,7 @@ public final class PddAdd extends Action {
 				pdd.setPorta(portaInt);
 				pdd.setIpGestione(ipGestione);
 				pdd.setPortaGestione(portaGestioneInt);
+				pdd.setProtocolloGestione(protocolloGestione);
 			}
 			pdd.setSuperUser(userLogin);
 

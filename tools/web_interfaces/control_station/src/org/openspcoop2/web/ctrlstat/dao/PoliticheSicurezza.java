@@ -24,6 +24,8 @@ package org.openspcoop2.web.ctrlstat.dao;
 
 import java.io.Serializable;
 
+import org.openspcoop2.utils.beans.BaseBean;
+
 /**
  * PoliticheSicurezza
  * 
@@ -34,7 +36,7 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  * 
  */
-public class PoliticheSicurezza implements Serializable {
+public class PoliticheSicurezza extends BaseBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

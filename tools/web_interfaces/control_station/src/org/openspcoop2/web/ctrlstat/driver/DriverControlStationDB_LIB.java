@@ -84,6 +84,7 @@ public class DriverControlStationDB_LIB {
 		String ipGestione = pdd.getIpGestione();
 		int portaGestione = pdd.getPortaGestione();
 		String protocollo = pdd.getProtocollo();
+		String protocolloGestione = pdd.getProtocolloGestione();
 
 		String tipo = pdd.getTipo();
 		String implementazione = pdd.getImplementazione();
@@ -116,6 +117,7 @@ public class DriverControlStationDB_LIB {
 					sqlQueryObject.addInsertField("ip_gestione", "?");
 					sqlQueryObject.addInsertField("porta_gestione", "?");
 					sqlQueryObject.addInsertField("protocollo", "?");
+					sqlQueryObject.addInsertField("protocollo_gestione", "?");
 					sqlQueryObject.addInsertField("tipo", "?");
 					sqlQueryObject.addInsertField("implementazione", "?");
 					sqlQueryObject.addInsertField("subject", "?");
@@ -128,21 +130,23 @@ public class DriverControlStationDB_LIB {
 					updateQuery = sqlQueryObject.createSQLInsert();
 					updateStmt = con.prepareStatement(updateQuery);
 
-					updateStmt.setString(1, nome);
-					updateStmt.setString(2, descrizione);
-					updateStmt.setString(3, ip);
-					updateStmt.setInt(4, porta);
-					updateStmt.setString(5, ipGestione);
-					updateStmt.setInt(6, portaGestione);
-					updateStmt.setString(7, protocollo);
-					updateStmt.setString(8, tipo);
-					updateStmt.setString(9, implementazione);
-					updateStmt.setString(10, (subject != null ? Utilities.formatSubject(subject) : null));
-					updateStmt.setString(11, password);
-					updateStmt.setString(12, DriverRegistroServiziDB_LIB.getValue(client_auth));
-					updateStmt.setString(13, superuser);
+					int index = 1;
+					updateStmt.setString(index++, nome);
+					updateStmt.setString(index++, descrizione);
+					updateStmt.setString(index++, ip);
+					updateStmt.setInt(index++, porta);
+					updateStmt.setString(index++, ipGestione);
+					updateStmt.setInt(index++, portaGestione);
+					updateStmt.setString(index++, protocollo);
+					updateStmt.setString(index++, protocolloGestione);
+					updateStmt.setString(index++, tipo);
+					updateStmt.setString(index++, implementazione);
+					updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+					updateStmt.setString(index++, password);
+					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
+					updateStmt.setString(index++, superuser);
 					if (pdd.getOraRegistrazione() != null)
-						updateStmt.setTimestamp(14, new Timestamp(pdd.getOraRegistrazione().getTime()));
+						updateStmt.setTimestamp(index++, new Timestamp(pdd.getOraRegistrazione().getTime()));
 
 					// eseguo lo statement
 					n = updateStmt.executeUpdate();
@@ -151,7 +155,7 @@ public class DriverControlStationDB_LIB {
 
 					DriverControlStationDB_LIB.log.debug("CRUDPdd type = " + type + " row affected =" + n);
 
-					DriverControlStationDB_LIB.log.debug("CRUDPdd CREATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, nome, descrizione, ip, porta, ipGestione, portaGestione, protocollo, tipo, implementazione, subject, password, client_auth));
+					DriverControlStationDB_LIB.log.debug("CRUDPdd CREATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, nome, descrizione, ip, porta, ipGestione, portaGestione, protocollo, protocolloGestione, tipo, implementazione, subject, password, client_auth));
 
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverControlStationDB_LIB.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.PDD);
@@ -180,6 +184,7 @@ public class DriverControlStationDB_LIB {
 					sqlQueryObject.addUpdateField("ip_gestione", "?");
 					sqlQueryObject.addUpdateField("porta_gestione", "?");
 					sqlQueryObject.addUpdateField("protocollo", "?");
+					sqlQueryObject.addUpdateField("protocollo_gestione", "?");
 					sqlQueryObject.addUpdateField("tipo", "?");
 					sqlQueryObject.addUpdateField("implementazione", "?");
 					sqlQueryObject.addUpdateField("subject", "?");
@@ -193,33 +198,32 @@ public class DriverControlStationDB_LIB {
 					updateQuery = sqlQueryObject.createSQLUpdate();
 					updateStmt = con.prepareStatement(updateQuery);
 
-					updateStmt.setString(1, descrizione);
-					updateStmt.setString(2, ip);
-					updateStmt.setInt(3, porta);
-					updateStmt.setString(4, ipGestione);
-					updateStmt.setInt(5, portaGestione);
-					updateStmt.setString(6, protocollo);
-					updateStmt.setString(7, tipo);
-					updateStmt.setString(8, implementazione);
-					updateStmt.setString(9, (subject != null ? Utilities.formatSubject(subject) : null));
-					updateStmt.setString(10, password);
-					updateStmt.setString(11, DriverRegistroServiziDB_LIB.getValue(client_auth));
-					updateStmt.setString(12, superuser);
-					updateStmt.setString(13, nome);
-
-					int param_index = 13;
-
+					index = 1;
+					updateStmt.setString(index++, descrizione);
+					updateStmt.setString(index++, ip);
+					updateStmt.setInt(index++, porta);
+					updateStmt.setString(index++, ipGestione);
+					updateStmt.setInt(index++, portaGestione);
+					updateStmt.setString(index++, protocollo);
+					updateStmt.setString(index++, protocolloGestione);
+					updateStmt.setString(index++, tipo);
+					updateStmt.setString(index++, implementazione);
+					updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+					updateStmt.setString(index++, password);
+					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
+					updateStmt.setString(index++, superuser);
+					updateStmt.setString(index++, nome);
 					if (pdd.getOraRegistrazione() != null)
-						updateStmt.setTimestamp(++param_index, new Timestamp(pdd.getOraRegistrazione().getTime()));
+						updateStmt.setTimestamp(index++, new Timestamp(pdd.getOraRegistrazione().getTime()));
 
-					updateStmt.setLong(++param_index, pdd.getId());
+					updateStmt.setLong(index++, pdd.getId());
 
 					// eseguo lo statement
 					n = updateStmt.executeUpdate();
 					updateStmt.close();
 					DriverControlStationDB_LIB.log.debug("CRUDPdd type = " + type + " row affected =" + n);
 
-					DriverControlStationDB_LIB.log.debug("CRUDPdd UPDATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, descrizione, ip, porta, ipGestione, portaGestione, protocollo, tipo, implementazione, subject, password, client_auth, pdd.getId()));
+					DriverControlStationDB_LIB.log.debug("CRUDPdd UPDATE : \n" + DriverControlStationDB_LIB.formatSQLString(updateQuery, descrizione, ip, porta, ipGestione, portaGestione, protocollo, protocolloGestione, tipo, implementazione, subject, password, client_auth, pdd.getId()));
 
 					break;
 

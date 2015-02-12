@@ -1,3 +1,24 @@
+2014-11-06  Andrea Poli <apoli@link.it>
+
+	Aggiunta tabella 'LISTA_EXT_PROTOCOL_INFO' in modo da gestire in maniera persistente
+	le informazioni extra dei protocolli all'interno del repository delle buste	
+
+2014-10-15  Andrea Poli <apoli@link.it>
+	
+	Aggiunta funzionalita' force-wsdl-based alle porte delegate.
+	Aggiunta possibilita' di personalizzare il behaviour nella porta applicativa
+
+2014-10-09  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle 'ID_MESSAGGIO_RELATIVO', 'ID_MESSAGGIO_PRG' e 'ID_MESSAGGIO_RELATIVO_PRG'
+	che permettono la gestione dei progressivi interni agli identificativi dei protocolli.
+	La generazione progressiva puo' adesso essere relativa non solo ad un protocollo,
+	ma anche ad informazioni specifiche (es. servizio)
+
+2014-09-26  Andrea Poli <apoli@link.it>
+
+	Aggiunta gestione della funzionalita' 'MTOM' nelle porte delegate e applicative.
+
 2012-02-29  Andrea Poli <apoli@link.it>
 
 	Creato file ChangeLog per l'sql

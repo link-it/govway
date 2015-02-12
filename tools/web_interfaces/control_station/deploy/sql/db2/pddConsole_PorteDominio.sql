@@ -8,12 +8,14 @@ CREATE TABLE pdd
 	ip VARCHAR(255),
 	-- porta pubblico
 	porta INT,
+	-- protocollo pubblico
+	protocollo VARCHAR(255),
 	-- ip gestione
 	ip_gestione VARCHAR(255),
 	-- porta gestione
 	porta_gestione INT,
-	-- protocollo
-	protocollo VARCHAR(255),
+	-- protocollo gestione
+	protocollo_gestione VARCHAR(255),
 	-- Tipo della Porta
 	tipo VARCHAR(255),
 	implementazione VARCHAR(255) DEFAULT 'standard',

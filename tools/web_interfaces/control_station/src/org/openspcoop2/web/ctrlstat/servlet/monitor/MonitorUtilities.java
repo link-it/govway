@@ -88,7 +88,7 @@ public class MonitorUtilities {
 			// ipPdd = backEndConnector.getIPPdd(queueName);
 			PdDControlStation pdd = Monitor.pddCore.getPdDControlStation(pddName);
 			ipPdd = pdd.getIpGestione();
-			protocollo = pdd.getProtocollo();
+			protocollo = pdd.getProtocolloGestione();
 			porta = pdd.getPortaGestione();
 
 			if (ipPdd == null || protocollo == null || porta <= 0)

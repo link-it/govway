@@ -89,7 +89,7 @@ public class PddHelper extends ConsoleHelper {
 	}
 	
 	public Vector<DataElement> addPddToDati(Vector<DataElement> dati, String nome, String id, String ip, String subject, String password, String confpw, PddTipologia tipo, 
-			TipoOperazione tipoOp, String[] protocolli, String protocollo, int porta, String descrizione, 
+			TipoOperazione tipoOp, String[] protocolli, String protocollo, String protocolloGestione, int porta, String descrizione, 
 			String ipGestione, int portaGestione, String implementazione, String clientAuth, boolean singlePdd) throws DriverRegistroServiziException {
 		
 		/** Id della Porta di Dominio */
@@ -165,6 +165,18 @@ public class PddHelper extends ConsoleHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 
+			/** Protocollo Gestione (solo in caso di pdd control station) */
+			de = new DataElement();
+			de.setLabel(PddCostanti.LABEL_PDD_PROTOCOLLO_GESTIONE);
+			if (tipoOp.equals(TipoOperazione.ADD) || !tipo.equals(PddTipologia.ESTERNO)){
+				de.setType(DataElementType.SELECT);
+			}else
+				de.setType(DataElementType.HIDDEN);
+			de.setName(PddCostanti.PARAMETRO_PDD_PROTOCOLLO_GESTIONE);
+			de.setValues(protocolli);
+			de.setSelected(protocolloGestione);
+			dati.addElement(de);
+			
 			/** Indirizzo Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_INDIRIZZO_GESTIONE);

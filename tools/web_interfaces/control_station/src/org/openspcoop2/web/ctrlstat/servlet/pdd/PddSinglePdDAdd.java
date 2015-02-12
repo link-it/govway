@@ -101,7 +101,7 @@ public final class PddSinglePdDAdd extends Action {
 					implementazione = PddCostanti.DEFAULT_PDD_IMPLEMENTAZIONE;
 				
 				dati = pddHelper.addPddToDati(dati, nome, null, "", subject, "", "", PddTipologia.ESTERNO, TipoOperazione.ADD, 
-						null, "", 0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "",  0, descr, "", 0, implementazione, clientAuth, true);
 	
 				pd.setDati(dati);
 	
@@ -122,7 +122,7 @@ public final class PddSinglePdDAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 	
 				dati = pddHelper.addPddToDati(dati, nome, null, "", subject, "", "", PddTipologia.ESTERNO, TipoOperazione.ADD, 
-						null, "", 0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
 	
 				pd.setDati(dati);
 	

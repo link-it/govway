@@ -35,6 +35,7 @@ function changePdDType()
 		$("input[name=porta]").hide("slow");
 		$("input[name=ip_gestione]").hide("slow");
 		$("input[name=porta_gestione]").hide("slow");
+		$("select[name=protocollo_gestione]").hide();
 
 	}else
 	{
@@ -45,6 +46,7 @@ function changePdDType()
 		$("input[name=porta]").show("slow");
 		$("input[name=ip_gestione]").show("slow");
 		$("input[name=porta_gestione]").show("slow");
+		$("select[name=protocollo_gestione]").show();
 	}
 
 };

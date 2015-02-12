@@ -127,7 +127,7 @@ public final class PddSinglePdDChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
-						null, "", 0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
 
 				pd.setDati(dati);
 
@@ -150,7 +150,7 @@ public final class PddSinglePdDChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = pddHelper.addPddToDati(dati, nome, id, "", subject, "", "", PddTipologia.toPddTipologia(tipo), TipoOperazione.CHANGE, 
-						null, "", 0, descr, "", 0, implementazione, clientAuth, true);
+						null, "", "", 0, descr, "", 0, implementazione, clientAuth, true);
 
 				pd.setDati(dati);
 

@@ -529,6 +529,7 @@ public class DriverControlStationDB  {
 				pdd.setIpGestione(risultato.getString("ip_gestione"));
 				pdd.setPortaGestione(risultato.getInt("porta_gestione"));
 				pdd.setProtocollo(risultato.getString("protocollo"));
+				pdd.setProtocolloGestione(risultato.getString("protocollo_gestione"));
 
 				pdd.setTipo(risultato.getString("tipo"));
 				pdd.setImplementazione(risultato.getString("implementazione"));
