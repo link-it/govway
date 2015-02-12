@@ -98,8 +98,14 @@ public class GestoreRegistroThread extends GestoreGeneral {
 	private DatasourceProperties datasourceProperties;
 	
 	private String name = null;
+	
 	/** run */
 	public boolean stop = false;
+	private boolean isRunning = false;
+	public boolean isRunning() {
+		return this.isRunning;
+	}
+	
 	/** Gestore Registro Servizi */
 	private SoggettiCore soggettiCore;
 	private PddCore pddCore;
@@ -157,6 +163,8 @@ public class GestoreRegistroThread extends GestoreGeneral {
 	@Override
 	public void run() {
 
+		this.isRunning = true;
+		
 		// effettuo inizializzazione
 		try {
 			this.initGestore();
@@ -1045,6 +1053,9 @@ public class GestoreRegistroThread extends GestoreGeneral {
 			} catch (Exception eLogger) {
 			}
 		}
+		
+		this.isRunning = false;
+		this.log.debug("Thread terminato");
 	}
 
 	/**

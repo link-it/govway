@@ -23,8 +23,9 @@
 package org.openspcoop2.web.ctrlstat.gestori;
 
 import java.sql.Connection;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
@@ -34,6 +35,7 @@ import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 
 /**
  * GestorePdDInitThread
@@ -53,7 +55,7 @@ public class GestorePdDInitThread extends Thread {
 	private static Logger log = null;
 	/** run */
 	// public static boolean stop = false;
-	private static Vector<IGestore> allPdd = new Vector<IGestore>();
+	private static Hashtable<String, IGestore> gestoriPdd = new Hashtable<String, IGestore>();
 
 	private boolean singlePdD = false;
 	private boolean enginePDD = false;
@@ -113,20 +115,13 @@ public class GestorePdDInitThread extends Thread {
 				else
 					GestorePdDInitThread.log.info("Non sono state trovate pdd da gestire");
 				for (int i = 0; i < pddList.size(); i++) {
+					PdDControlStation pdd = null;
 					try{
-						PdDControlStation tmpPdd = core.getPdDControlStation(pddList.get(i));
-						String tipoPdd = tmpPdd.getTipo();
-						if (tipoPdd != null && (tipoPdd.equals("operativo") || tipoPdd.equals("non-operativo"))) {
-							GestorePdDInitThread.log.info("Avvio thread di gestione per la porta di dominio ["+pddList.get(i)+"] ...");
-							String nomeCoda = pddList.get(i);
-							GestorePdDInitThread.startPdD(nomeCoda);
-							GestorePdDInitThread.log.info("Avviato thread di gestione per la porta di dominio ["+pddList.get(i)+"]");
-						}else{
-							GestorePdDInitThread.log.info("Thread di gestione per la porta di dominio ["+pddList.get(i)+"] non avviato poiche' la porta di dominio non possiede tipo operativo/non-operativo");
-						}
+						pdd = core.getPdDControlStation(pddList.get(i));
 					}catch(DriverControlStationNotFound dNot){
-						GestorePdDInitThread.log.error("Thread di gestione per la porta di dominio ["+pddList.get(i)+"] non avviato: "+dNot.getMessage());
+						GestorePdDInitThread.log.error("Errore durante la lettura dei dati della pdd ["+pddList.get(i)+"]: "+dNot.getMessage());
 					}
+					addGestore(pdd);				
 				}
 			}
 
@@ -150,14 +145,16 @@ public class GestorePdDInitThread extends Thread {
 	 */
 	public static void startPdD(String nomeCoda) throws OpenSPCoop2ConfigurationException {
 		GestorePdDThread pdd = new GestorePdDThread(nomeCoda);
-		GestorePdDInitThread.allPdd.add(pdd);
+		GestorePdDInitThread.gestoriPdd.put(nomeCoda,pdd);
 		new Thread(pdd).start();
 	}
 
 	public void stopGestore() {
 		// Stoppo tutti i thread gestori delle pdd
-		for (IGestore gestore : GestorePdDInitThread.allPdd) {
-			gestore.stopGestore();
+		Enumeration<String> pdds = gestoriPdd.keys();
+		while (pdds.hasMoreElements()) {
+			String pdd = (String) pdds.nextElement();
+			deleteGestore(pdd);
 		}
 
 	}
@@ -173,5 +170,51 @@ public class GestorePdDInitThread extends Thread {
 			throw new GestoreNonAttivoException("Motore di sincronizzazione verso le Porte di Dominio non attivo.");
 		}
 
+	}
+	
+	
+	public static void addGestore(PdDControlStation pdd) throws Exception {
+		if(gestoriPdd.containsKey(pdd.getNome())==false){
+			try{
+				String tipoPdd = pdd.getTipo();
+				if (tipoPdd != null && PddTipologia.OPERATIVO.toString().equals(tipoPdd)) {
+					GestorePdDInitThread.log.info("Avvio thread di gestione per la porta di dominio ["+pdd.getNome()+"] ...");
+					String nomeCoda = pdd.getNome();
+					GestorePdDInitThread.startPdD(nomeCoda);
+					GestorePdDInitThread.log.info("Avviato thread di gestione per la porta di dominio ["+pdd.getNome()+"]");
+				}else{
+					GestorePdDInitThread.log.info("Thread di gestione per la porta di dominio ["+pdd.getNome()+"] non avviato poiche' la porta di dominio non possiede tipo "+PddTipologia.OPERATIVO.toString()+" (tipo:"+pdd.getTipo()+")");
+				}
+			}catch(Exception e){
+				GestorePdDInitThread.log.error("Thread di gestione per la porta di dominio ["+pdd.getNome()+"] non avviato: "+e.getMessage());
+			}
+		}
+		else{
+			GestorePdDInitThread.log.debug("Thread di gestione per la porta di dominio ["+pdd.getNome()+"] gia' in esecuzione");
+		}
+	}
+	
+	public static void deleteGestore(String pdd)  {
+		if(gestoriPdd.containsKey(pdd)==false){
+			GestorePdDInitThread.log.debug("Thread di gestione per la porta di dominio ["+pdd+"] non risulta in esecuzione");
+		}
+		else{
+			GestorePdDInitThread.log.debug("Fermo il thread di gestione per la porta di dominio ["+pdd+"] ...");
+			GestorePdDThread gestore = (GestorePdDThread) gestoriPdd.get(pdd);
+			gestore.stopGestore();
+			int timeout = 60;
+			for (int i = 0; i < timeout; i++) {
+				if(gestore.isRunning()){
+					try{
+						Thread.sleep(1000);
+					}catch(Exception e){}
+				}
+				else{
+					break;
+				}
+			}
+			GestorePdDInitThread.log.debug("Thread di gestione per la porta di dominio ["+pdd+"] terminato");
+			gestoriPdd.remove(pdd);
+		}
 	}
 }

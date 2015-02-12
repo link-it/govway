@@ -102,6 +102,7 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
+import org.openspcoop2.web.ctrlstat.gestori.GestorePdDInitThread;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
@@ -1432,6 +1433,8 @@ public class ControlStationCore {
 			// disabilito l'autocommit
 			// e lo riabilito solo dopo aver terminato le operazioni
 			con.setAutoCommit(false);
+			PdDControlStation pddGestore = null;
+			int pddGestoreTipoOperazione = -1;
 
 			// creo il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
@@ -1456,15 +1459,8 @@ public class ControlStationCore {
 
 						// Una volta creata la PdD avvio il thread di
 						// gestione (a meno che non sia esterna)
-						// rimane un prerequisito che il nome della coda jms
-						// sia
-						// uguale
-						// a quello del nome della PdD e che sia gia' stata
-						// creata in precedenza.
-						// TODO RIATTIVARE QUESTO COMMENTO
-						//if (!"esterno".equals(pdd.getTipo()))
-						//GestorePdDInitThread.startPdD(pdd.getNome());
-						// TODO RIATTIVARE QUESTO COMMENTO
+						pddGestore = pdd;
+						pddGestoreTipoOperazione = operationType;
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
@@ -1904,6 +1900,11 @@ public class ControlStationCore {
 						PdDControlStation pdd = (PdDControlStation) oggetto;
 						driver.updatePdDControlStation(pdd);
 
+						// Una volta modificata la PdD avvio il thread di
+						// gestione (a meno che non sia esterna)
+						pddGestore = pdd;
+						pddGestoreTipoOperazione = operationType;
+												
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
 						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
@@ -2323,6 +2324,11 @@ public class ControlStationCore {
 						PdDControlStation pdd = (PdDControlStation) oggetto;
 						driver.deletePdDControlStation(pdd);
 
+						// Una volta modificata la PdD avvio il thread di
+						// gestione (a meno che non sia esterna)
+						pddGestore = pdd;
+						pddGestoreTipoOperazione = operationType;
+						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
 						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
@@ -2653,6 +2659,20 @@ public class ControlStationCore {
 
 			// ogni operazione e' andata a buon fine quindi faccio il commit
 			con.commit();
+			
+			// Devo Fermare e ricreare. Potrebbero essere stati modificati dei parametri
+			if(pddGestore!=null){
+				if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
+					GestorePdDInitThread.addGestore(pddGestore);
+				}
+				else if (CostantiControlStation.PERFORM_OPERATION_UPDATE == pddGestoreTipoOperazione){
+					GestorePdDInitThread.deleteGestore(pddGestore.getNome());
+					GestorePdDInitThread.addGestore(pddGestore);
+				}
+				else if (CostantiControlStation.PERFORM_OPERATION_DELETE == pddGestoreTipoOperazione){
+					GestorePdDInitThread.deleteGestore(pddGestore.getNome());	
+				}
+			}
 
 		} catch (DriverConfigurazioneNotFound e) {
 			// se ci sono degli errori faccio il rollback

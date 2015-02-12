@@ -72,8 +72,13 @@ public class SmistatoreThread extends Thread {
 
 	/** Logger utilizzato per debug. */
 	private static Logger log = null;
+	
 	/** run */
 	private boolean stop = false;
+	private boolean isRunning = false;
+	public boolean isRunning() {
+		return this.isRunning;
+	}
 
 	private DBManager dbm;
 	private Connection con;
@@ -110,6 +115,8 @@ public class SmistatoreThread extends Thread {
 	@Override
 	public void run() {
 
+		this.isRunning = true;
+		
 		// Controllo se dbmanager inizializzato
 		if (!DBManager.isInitialized()) {
 			SmistatoreThread.log.info("Inizializzazione di " + this.getClass().getSimpleName() + " non riuscito perche' DBManager non INIZIALIZZATO");
@@ -519,6 +526,9 @@ public class SmistatoreThread extends Thread {
 			} catch (Exception eLogger) {
 			}
 		}
+		
+		this.isRunning = false;
+		log.debug("Thread terminato");
 	}
 
 	public void stopGestore() {

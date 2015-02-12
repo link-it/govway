@@ -93,6 +93,11 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 	
 	/** run */
 	private boolean stop = false;
+	private boolean isRunning = false;
+	public boolean isRunning() {
+		return this.isRunning;
+	}
+	
 	private String name = null;
 
 	private IRepositoryAutorizzazioniDriverCRUD gestoreRepositoryAutorizzazioni = null;
@@ -135,6 +140,8 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 	@Override
 	public void run() {
 
+		this.isRunning = true;
+		
 		// effettuo inizializzazione
 		try {
 			this.initGestore();
@@ -1327,6 +1334,9 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 			}
 		}// chiudo while
 
+		this.isRunning = false;
+		this.log.debug("Thread terminato");
+		
 	}
 
 	@Override

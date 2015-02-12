@@ -96,6 +96,10 @@ public class GestorePdDThread extends GestoreGeneral {
 
 	/** run */
 	private boolean stop = false;
+	private boolean isRunning = false;
+	public boolean isRunning() {
+		return this.isRunning;
+	}
 
 	/** Back End Connector */
 	// private BackendConnector backEndConnector;
@@ -160,6 +164,8 @@ public class GestorePdDThread extends GestoreGeneral {
 	@Override
 	public void run() {
 
+		this.isRunning = true;
+		
 		try {
 			this.initGestore();
 
@@ -180,6 +186,7 @@ public class GestorePdDThread extends GestoreGeneral {
 		// Avvio Gestione Pdd
 		boolean riconnessioneConErrore = false;
 		while (this.stop == false) {
+			
 			ClassQueue operationManager = null;
 			Operation operation = null;
 			try {
@@ -1033,6 +1040,8 @@ public class GestorePdDThread extends GestoreGeneral {
 			}
 		}
 
+		this.isRunning = false;
+		this.log.debug(this.nomeThread +" Thread terminato");
 	}
 
 	@Override
