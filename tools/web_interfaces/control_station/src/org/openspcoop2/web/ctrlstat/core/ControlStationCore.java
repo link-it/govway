@@ -2661,7 +2661,7 @@ public class ControlStationCore {
 			con.commit();
 			
 			// Devo Fermare e ricreare. Potrebbero essere stati modificati dei parametri
-			if(pddGestore!=null){
+			if(pddGestore!=null && this.isSinglePdD()==false){
 				if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
 					GestorePdDInitThread.addGestore(pddGestore);
 				}
