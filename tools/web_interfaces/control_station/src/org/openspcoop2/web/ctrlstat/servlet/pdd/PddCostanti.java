@@ -115,6 +115,7 @@ public class PddCostanti {
 	public final static String LABEL_PDD_SUBJECT = "Subject";
 	public final static String LABEL_PDD_CLIENT_AUTH = "Client Auth";
 	public final static String LABEL_PDD_SOGGETTI = "Soggetti";
+	public final static String LABEL_PDD_CONFIGURAZIONE_SISTEMA = "Configurazione";
 	
 	public final static String[] LABEL_TIPI = { "operativo", "non-operativo", "esterno" };
 	public final static String[] LABEL_TIPI_SOLO_OPERATIVI = { "operativo", "non-operativo" };

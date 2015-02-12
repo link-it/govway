@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -38,6 +39,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -47,6 +49,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * PddHelper
@@ -599,9 +602,21 @@ public class PddHelper extends ConsoleHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, search);
 			}
 
+			User user = ServletUtils.getUserFromSession(this.session);
+			boolean showConfigurazioneSistema = user!=null && user.getPermessi()!=null && user.getPermessi().isSistema() &&
+					this.pddCore.getJmxPdD_aliases()!=null && this.pddCore.getJmxPdD_aliases().size()>0;
+			
 			// setto le label delle colonne
-			String[] labels = { PddCostanti.LABEL_PDD_NOME, PddCostanti.LABEL_PDD_INDIRIZZO, PddCostanti.LABEL_PDD_TIPOLOGIA, 
-					PddCostanti.LABEL_PDD_IMPLEMENTAZIONE, PddCostanti.LABEL_PDD_SOGGETTI };
+			List<String> listLabels = new ArrayList<String>();
+			listLabels.add(PddCostanti.LABEL_PDD_NOME);
+			listLabels.add(PddCostanti.LABEL_PDD_INDIRIZZO);
+			listLabels.add(PddCostanti.LABEL_PDD_TIPOLOGIA);
+			listLabels.add(PddCostanti.LABEL_PDD_IMPLEMENTAZIONE);
+			if(showConfigurazioneSistema){
+				listLabels.add(PddCostanti.LABEL_PDD_CONFIGURAZIONE_SISTEMA);
+			}
+			listLabels.add(PddCostanti.LABEL_PDD_SOGGETTI);
+			String[] labels = listLabels.toArray(new String[1]);
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -636,6 +651,20 @@ public class PddHelper extends ConsoleHelper {
 				de.setValue(pdd.getImplementazione());
 				e.addElement(de);
 
+				if(showConfigurazioneSistema){
+					de = new DataElement();
+					if(PddTipologia.OPERATIVO.toString().equals(pdd.getTipo())){
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD,
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER, pdd.getNome()));
+						de.setValue(Costanti.LABEL_VISUALIZZA);
+					}
+					else{
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					}
+					e.addElement(de);
+				}
+				
 				de = new DataElement();
 				de.setUrl(PddCostanti.SERVLET_NAME_PDD_SOGGETTI_LIST,
 						new Parameter(PddCostanti.PARAMETRO_PDD_ID, pdd.getId().toString()));
@@ -647,8 +676,7 @@ public class PddHelper extends ConsoleHelper {
 					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSog));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
-					
-				e.addElement(de);
+				e.addElement(de);				
 
 				dati.addElement(e);
 			}

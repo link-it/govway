@@ -1,3 +1,9 @@
+2015-02-11  Andrea Poli <apoli@link.it
+
+	* [PddConsole]
+	Aggiunta funzionalità #292
+	Aggiunta una voce alla sezione 'Configurazione' che riporti le informazioni sull'installazione ('Configurazione Sistema')
+
 2015-02-09  Andrea Poli <apoli@link.it
 
 	* [Pdd]

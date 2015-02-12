@@ -103,6 +103,8 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.appender.AuditAppender;
@@ -558,8 +560,24 @@ public class ControlStationCore {
 	public List<String> getJmxPdD_aliases() {
 		return this.jmxPdD_aliases;
 	}
-	public String getJmxPdD_descrizione(String alias) {
-		return this.jmxPdD_descrizioni.get(alias);
+	public String getJmxPdD_descrizione(String alias) throws Exception {
+		String descrizione = this.jmxPdD_descrizioni.get(alias);
+		if(descrizione==null || "".equals(descrizione)){
+			if(this.singlePdD){
+				descrizione = alias; // uso lo stesso nome dell'alias
+			}
+			else{
+				PddCore pddCore = new PddCore(this);
+				PdDControlStation pdd = pddCore.getPdDControlStation(alias); // esiste per forza
+				if(pdd.getDescrizione()!=null && "".equals(pdd.getDescrizione())){
+					descrizione = pdd.getDescrizione();
+				}
+				else{
+					descrizione = alias; // uso lo stesso nome dell'alias
+				}
+			}
+		}
+		return descrizione;
 	}
 	public boolean isJmxPdD_tipoAccessoOpenSPCoop(String alias) {
 		return CostantiControlStation.RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(this.jmxPdD_tipoAccesso.get(alias));
@@ -576,11 +594,27 @@ public class ControlStationCore {
 	public String getJmxPdD_remoteAccess_factory(String alias) {
 		return this.jmxPdD_remoteAccess_factory.get(alias);
 	}
-	public String getJmxPdD_remoteAccess_url(String alias) {
-		return this.jmxPdD_remoteAccess_url.get(alias);
+	public String getJmxPdD_remoteAccess_url(String alias) throws Exception {
+		String url = this.jmxPdD_remoteAccess_url.get(alias);
+		if(url!=null && this.singlePdD==false){
+			// replace con url del nodo
+			PddCore pddCore = new PddCore(this);
+			PdDControlStation pdd = pddCore.getPdDControlStation(alias); // esiste per forza
+			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_GESTIONE, pdd.getIpGestione());
+			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_GESTIONE, pdd.getPortaGestione()+"");
+			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_GESTIONE, pdd.getProtocollo());
+			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_PUBBLICO, pdd.getIp());
+			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_PUBBLICA, pdd.getPorta()+"");
+			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_PUBBLICO, pdd.getProtocollo());
+		}
+		return url;
 	}
-	public String getJmxPdD_dominio(String alias) {
-		return this.jmxPdD_dominio.get(alias);
+	public String getJmxPdD_dominio(String alias) throws Exception {
+		String dominio = this.jmxPdD_dominio.get(alias);
+		if(dominio==null || "".equals(dominio)){
+			throw new Exception("Configurazione errata (pdd:"+alias+") accesso via jmx. Non e' stata indicato il dominio");
+		}
+		return dominio;
 	}
 	public String getJmxPdD_configurazioneSistema_type(String alias) {
 		return this.jmxPdD_configurazioneSistema_type.get(alias);
@@ -748,6 +782,9 @@ public class ControlStationCore {
 			// inizializzo DateManager
 			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), null, ControlStationCore.log);
 
+			// inizializzo JMX
+			this.initCoreJmxResources();
+			
 			// inizializza l'AuditManager
 			ControlStationCore.initializeAuditManager(this.tipoDB);
 
@@ -1088,11 +1125,65 @@ public class ControlStationCore {
 			this.importArchivi_tipoPdD = consoleProperties.getImportArchive_tipoPdD();
 			this.exportArchivi_standard = consoleProperties.isExportArchive_standard();
 			
+			// Gestione Visibilità utenti
+			this.visioneOggettiGlobale = consoleProperties.isVisibilitaOggettiGlobale();
+			this.utentiConVisioneGlobale.addAll(consoleProperties.getUtentiConVisibilitaGlobale());
+
+
+		} catch (java.lang.Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
+			throw new ControlStationCoreException("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
+		}
+		
+		
+		
+		// Leggo le informazioni da queue.properties
+		QueueProperties queueProperties = null;
+		if(this.singlePdD==false){
+			try {
+	
+				queueProperties = QueueProperties.getInstance();
+				
+				this.cfName = queueProperties.getConnectionFactory();
+				this.cfProp = queueProperties.getConnectionFactoryContext();
+				
+			} catch (java.lang.Exception e) {
+				ControlStationCore.log.error("[ControlStationCore::initCore] Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]", e);
+				throw new ControlStationCoreException("ControlStationCore: Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]",e);
+			} 
+		}
+	}
+
+	
+	private void initCoreJmxResources() throws ControlStationCoreException {
+
+		// Leggo le informazioni da console.properties
+		ConsoleProperties consoleProperties = null;
+		try {
+			consoleProperties = ConsoleProperties.getInstance();
+					
 			// Opzioni Accesso JMX della PdD
 			this.jmxPdD_aliases = consoleProperties.getJmxPdD_aliases();
+			if(this.singlePdD==false){
+				// se esistono degli alias allora assegno poi come alias i nomi delle pdd operative
+				if(this.jmxPdD_aliases!=null && this.jmxPdD_aliases.size()>0){
+					this.jmxPdD_aliases = new ArrayList<String>();
+					PddCore pddCore = new PddCore(this);
+					try{
+						List<PdDControlStation> pddList = pddCore.pddList(null, new Search());
+						for (PdDControlStation pddControlStation : pddList) {
+							if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
+								this.jmxPdD_aliases.add(pddControlStation.getNome());
+							}
+						}
+					}catch(Exception e){}
+				}
+			}
 			if(this.jmxPdD_aliases!=null){
 				for (String alias : this.jmxPdD_aliases) {
-					this.jmxPdD_descrizioni.put(alias, consoleProperties.getJmxPdD_descrizione(alias));
+					String descrizione = consoleProperties.getJmxPdD_descrizione(alias);
+					if(descrizione!=null)
+						this.jmxPdD_descrizioni.put(alias,descrizione);
 					this.jmxPdD_tipoAccesso.put(alias,consoleProperties.getJmxPdD_tipoAccesso(alias));
 					String username = consoleProperties.getJmxPdD_remoteAccess_username(alias);
 					if(username!=null)
@@ -1126,36 +1217,13 @@ public class ControlStationCore {
 					this.jmxPdD_cache_nomeMetodo_resetCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_resetCache(alias));
 				}
 			}
-			
-			// Gestione Visibilità utenti
-			this.visioneOggettiGlobale = consoleProperties.isVisibilitaOggettiGlobale();
-			this.utentiConVisioneGlobale.addAll(consoleProperties.getUtentiConVisibilitaGlobale());
-
 
 		} catch (java.lang.Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
-			throw new ControlStationCoreException("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
-		}
-		
-		
-		
-		// Leggo le informazioni da queue.properties
-		QueueProperties queueProperties = null;
-		if(this.singlePdD==false){
-			try {
-	
-				queueProperties = QueueProperties.getInstance();
-				
-				this.cfName = queueProperties.getConnectionFactory();
-				this.cfProp = queueProperties.getConnectionFactoryContext();
-				
-			} catch (java.lang.Exception e) {
-				ControlStationCore.log.error("[ControlStationCore::initCore] Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]", e);
-				throw new ControlStationCoreException("ControlStationCore: Impossibile leggere i dati dal file queue.properties[" + e.toString() + "]",e);
-			} 
+			ControlStationCore.log.error("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
+			throw new ControlStationCoreException("[ControlStationCore::initCoreJmxResources] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
 		}
 	}
-
+	
 
 	/**
 	 * Inizializza il driver di tracciamento.

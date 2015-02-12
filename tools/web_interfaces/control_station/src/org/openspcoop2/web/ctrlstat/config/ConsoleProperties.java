@@ -275,7 +275,7 @@ public class ConsoleProperties {
 	}
 	
 	public String getJmxPdD_descrizione(String alias) throws UtilsException {
-		return this.readProperty(true, alias+".risorseJmxPdd.descrizione");
+		return this.readProperty(false, alias+".risorseJmxPdd.descrizione");
 	}
 	
 	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{
