@@ -90,6 +90,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.utils.resources.ScriptInvoker;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -461,6 +462,9 @@ public class ControlStationCore {
 
 	/** Motori di Sincronizzazione */
 	private boolean sincronizzazionePddEngineEnabled;
+	private String sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd;
+	private String sincronizzazionePddEngineEnabled_scriptShell_Path;
+	private String sincronizzazionePddEngineEnabled_scriptShell_Args;
 	private boolean sincronizzazioneRegistroEngineEnabled;
 	private boolean sincronizzazioneRepositoryAutorizzazioniEngineEnabled;
 	private boolean sincronizzazioneGEEngineEnabled;
@@ -469,6 +473,15 @@ public class ControlStationCore {
 	private String sincronizzazioneGE_NomeServizioApplicativo;
 	public boolean isSincronizzazionePddEngineEnabled() {
 		return this.sincronizzazionePddEngineEnabled;
+	}
+	public String getSincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd() {
+		return this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd;
+	}
+	public String getSincronizzazionePddEngineEnabled_scriptShell_Path() {
+		return this.sincronizzazionePddEngineEnabled_scriptShell_Path;
+	}
+	public String getSincronizzazionePddEngineEnabled_scriptShell_Args() {
+		return this.sincronizzazionePddEngineEnabled_scriptShell_Args;
 	}
 	public boolean isSincronizzazioneRegistroEngineEnabled() {
 		return this.sincronizzazioneRegistroEngineEnabled;
@@ -908,6 +921,9 @@ public class ControlStationCore {
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
+		this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd = core.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd;
+		this.sincronizzazionePddEngineEnabled_scriptShell_Path = core.sincronizzazionePddEngineEnabled_scriptShell_Path;
+		this.sincronizzazionePddEngineEnabled_scriptShell_Args = core.sincronizzazionePddEngineEnabled_scriptShell_Args;
 		this.sincronizzazioneRegistroEngineEnabled = core.sincronizzazioneRegistroEngineEnabled;
 		this.sincronizzazioneRepositoryAutorizzazioniEngineEnabled = core.sincronizzazioneRepositoryAutorizzazioniEngineEnabled;
 		this.sincronizzazioneGEEngineEnabled = core.sincronizzazioneGEEngineEnabled;
@@ -1093,6 +1109,9 @@ public class ControlStationCore {
 			// Gestione pddConsole centralizzata
 			if(this.singlePdD == false){
 				this.sincronizzazionePddEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazionePdd();
+				this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd = consoleProperties.getGestioneCentralizzata_PrefissoNomeCodaConfigurazionePdd();
+				this.sincronizzazionePddEngineEnabled_scriptShell_Path = consoleProperties.getGestioneCentralizzata_GestorePddd_ScriptShell_Path();
+				this.sincronizzazionePddEngineEnabled_scriptShell_Args = consoleProperties.getGestioneCentralizzata_GestorePddd_ScriptShell_Args();
 				this.sincronizzazioneRegistroEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneRegistro();
 				this.sincronizzazioneRepositoryAutorizzazioniEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneRepositoryAutorizzazioni();
 				this.sincronizzazioneGEEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneGestoreEventi();
@@ -2657,6 +2676,36 @@ public class ControlStationCore {
 
 			}
 
+			// Prima di committare provo a eseguire lo script se previsto
+			if(pddGestore!=null && this.isSinglePdD()==false){
+				String tipoPdd = pddGestore.getTipo();
+				if (tipoPdd != null && PddTipologia.OPERATIVO.toString().equals(tipoPdd)) {
+					if(this.getSincronizzazionePddEngineEnabled_scriptShell_Path()!=null){
+						if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione || 
+								CostantiControlStation.PERFORM_OPERATION_DELETE == pddGestoreTipoOperazione){
+							ScriptInvoker scriptInvoker = new ScriptInvoker(this.getSincronizzazionePddEngineEnabled_scriptShell_Path());
+							String tipoOperazione = null;
+							if (CostantiControlStation.PERFORM_OPERATION_CREATE == pddGestoreTipoOperazione){
+								tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_CREATE;
+							}else{
+								tipoOperazione = CostantiControlStation.SCRIPT_PERFORM_OPERATION_DELETE;
+							}
+							String nomeCoda = this.getSincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd() + pddGestore.getNome();
+							scriptInvoker.run(tipoOperazione,nomeCoda,this.getSincronizzazionePddEngineEnabled_scriptShell_Args());
+							String msg = "Invocazione script ["+this.getSincronizzazionePddEngineEnabled_scriptShell_Path()+"] ha ritornato un codice di uscita ["+scriptInvoker.getExitValue()+
+									"] (Param1:"+tipoOperazione+" Param2:"+nomeCoda+" Param3:"+this.getSincronizzazionePddEngineEnabled_scriptShell_Args()+
+									").\nOutputStream: "+scriptInvoker.getOutputStream()+"\nErrorStream: "+scriptInvoker.getErrorStream();
+							if(scriptInvoker.getExitValue()!=0){
+								throw new Exception(msg);
+							}
+							else{
+								ControlStationCore.log.debug(msg);
+							}
+						}
+					}
+				}
+			}
+			
 			// ogni operazione e' andata a buon fine quindi faccio il commit
 			con.commit();
 			

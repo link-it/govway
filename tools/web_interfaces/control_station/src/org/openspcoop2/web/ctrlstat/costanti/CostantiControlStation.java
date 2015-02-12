@@ -77,6 +77,10 @@ public class CostantiControlStation {
 	public static final int PERFORM_OPERATION_UPDATE = 1;
 	public static final int PERFORM_OPERATION_DELETE = 2;
 	
+	/** SCRIPT OPERATION */
+	public static final String SCRIPT_PERFORM_OPERATION_CREATE = "add";
+	public static final String SCRIPT_PERFORM_OPERATION_DELETE = "delete";
+	
 	/** SESSION ATTRIBUTE */
 	public final static String SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO = "GestioneInfoProtocollo";
 	public final static String SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI = "ShowAccordiAzioni";

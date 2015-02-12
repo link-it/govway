@@ -543,6 +543,14 @@ public class ConsoleProperties {
 		return this.readProperty(true, "PdDQueuePrefix");
 	}
 	
+	public String getGestioneCentralizzata_GestorePddd_ScriptShell_Path() throws UtilsException{
+		return this.readProperty(false, "GestorePdD.script.path");
+	}
+	
+	public String getGestioneCentralizzata_GestorePddd_ScriptShell_Args() throws UtilsException{
+		return this.readProperty(false, "GestorePdD.script.args");
+	}
+	
 	public String getGestioneCentralizzata_WSConfigurazione_endpointSuffixPortaApplicativa() throws UtilsException{
 		return this.readProperty(true, "ConfigurazioneWS.endpoint.suffix.portaApplicativa");
 	}
