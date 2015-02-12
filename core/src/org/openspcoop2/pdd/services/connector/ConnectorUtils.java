@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -22,9 +23,13 @@ public class ConnectorUtils {
 	public static String generateErrorMessage(HttpServletRequest req, String msgErrore, boolean erroreGenerale, boolean htmlMessage){
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
 		// versione
-		String versione = "Porta di Dominio "+OpenSPCoop2Properties.getInstance().getPddDetailsForServices();
+		String versione = "Porta di Dominio "+CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
+		if(op2Properties!=null){
+			versione = "Porta di Dominio "+op2Properties.getPddDetailsForServices();
+		}
 		if(htmlMessage){
 			versione = StringEscapeUtils.escapeHtml(versione);
 		}

@@ -192,6 +192,23 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 		
 	}
 	
+	
+	
+	/**
+	 * Registrazione del MBean per la configurazione di sistema della PdD
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanConfigurazioneSistema()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema.class, CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA);
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazioneSistema: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazioneSistema: "+e.getMessage(),e);
+		}	
+		
+	}
+	
 
 	
 	public Object getAttributeMBeanConfigurazionePdD(String nomeAttributo)throws RisorseJMXException{
@@ -217,6 +234,9 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 	}
 	public Object getAttributeMBeanSystemPropertiesPdD(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_SYSTEM_PROPERTIES_PDD, nomeAttributo);
+	}
+	public Object getAttributeMBeanConfigurazioneSistema(String nomeAttributo)throws RisorseJMXException{
+		return this.getAttribute(CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA, nomeAttributo);
 	}
 
 	
@@ -277,6 +297,13 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 	}
 	public Object invokeMethodMBeanSystemPropertiesPdD(String nomeMetodo)throws RisorseJMXException{
 		return invoke(CostantiPdD.JMX_SYSTEM_PROPERTIES_PDD, nomeMetodo, null, null);
+	}
+	
+	public Object invokeMethodMBeanConfigurazioneSistema(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA, nomeMetodo, params, signature);
+	}
+	public Object invokeMethodMBeanConfigurazioneSistema(String nomeMetodo)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA, nomeMetodo, null, null);
 	}
 
 	

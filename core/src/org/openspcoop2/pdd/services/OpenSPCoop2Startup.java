@@ -1019,6 +1019,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - proprietà di sistema della Porta di Dominio");
 				}
+				// MBean ConfigurazioneSistema
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanConfigurazioneSistema();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - configurazione di sistema della Porta di Dominio");
+				}
 			}
 
 

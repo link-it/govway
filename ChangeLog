@@ -1,3 +1,26 @@
+2015-02-09  Andrea Poli <apoli@link.it
+
+	* [Pdd]
+	Aggiunta funzionalità #291
+	- Gestione delle pagine HTML ritornate in seguito a richieste HTTP GET
+	  Sono state aggiunte le proprieta' su openspcoop2.properties che permettando di indicare se deve essere generata una pagina html di errore 
+	  o una pagina 404 per quanto concerne invocazioni verso url che presentano la seguente caratteristica:
+	  . http get/post indirizzate verso protocolli, indicati nella url, che sono sconosciuti alla PdD (configurazione di default: 404)
+	  . http get su servizio PD (configurazione di default: pagina di errore)
+	  . http get su servizio PA (configurazione di default: pagina di errore)
+	  . http get su servizio PDtoSOAP (configurazione di default: pagina di errore)
+	  . http get su servizio IntegrationManager  (configurazione di default: pagina di errore)
+	  E' stato inoltre reso parametrico l'indicazione se generare il WSDL per i servizi PD,PA (default: generazione disabilitata) 
+	  e IntegrationManager (default: generazione abilitata).
+	- JMX-Bean che fornisca informazioni sull'installazione:
+	  E' stata aggiunto il jmx bean org.openspcoop2.pdd.ConfigurazioneSistema che consente di visualizzare:
+	  . Versione della Porta di Dominio
+	  . Versione della Base-Dati (tutte le entry)
+	  . Versione java
+	  . Tipo del Database
+	  . ConfigurationDirectory
+	  . Protocolli installati
+
 2015-02-04  Andrea Poli <apoli@link.it
 
 	* [Pdd]

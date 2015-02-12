@@ -238,6 +238,8 @@ public class CostantiPdD {
     public static final String JMX_INFORMAZIONI_STATISTICHE_PDD = "StatistichePdD";
     /** MBean per le system properties */
     public static final String JMX_SYSTEM_PROPERTIES_PDD = "SystemPropertiesPdD";
+    /** MBean per la configurazione di sistema */
+    public static final String JMX_CONFIGURAZIONE_SISTEMA = "ConfigurazioneSistema";
     
     
     /** Limit messaggi processati dai Gestori */
