@@ -64,32 +64,6 @@
 	</xsd:complexType>
 
 
-	<!-- IN USE -->
-
-	<xsd:complexType name="use-info">
-		<xsd:sequence>
-			<xsd:element name="inUseCondition" type="tns:in-use-condition" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="used" type="xsd:boolean"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="in-use-condition">
-		<xsd:sequence>
-			<xsd:element name="name" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="type" type="tns:identified" minOccurs="0"/>
-			<xsd:element name="id" type="tns:objectId" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="cause" type="xsd:string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:simpleType name="identified">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="StatoPdd"/>
-			<xsd:enumeration value="Messaggio"/>
-		</xsd:restriction>
- 	</xsd:simpleType>
-	<xsd:complexType name="objectId">
-		<xsd:choice>
-		</xsd:choice>
-	</xsd:complexType>
 
 
 	<!-- EXCEPTION -->

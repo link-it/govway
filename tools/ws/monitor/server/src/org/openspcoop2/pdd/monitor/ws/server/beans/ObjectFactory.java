@@ -42,26 +42,5 @@ public class ObjectFactory {
     public ObjectFactory() {
     }
 
-    /**
-     * Create an instance of {@link IdEntity }
-     */
-    public IdEntity createIdEntity() {
-        return new IdEntity();
-    }
-    
-    /**
-     * Create an instance of {@link InUseCondition }
-     */
-    public InUseCondition createInUseCondition() {
-        return new InUseCondition();
-    }
-    
-    /**
-     * Create an instance of {@link UseInfo }
-     */
-    public UseInfo createUseInfo() {
-        return new UseInfo();
-    }
-    
 
 }
