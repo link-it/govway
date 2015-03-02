@@ -52,6 +52,10 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 	public static final String IntegrationManager_ENGINE = "IntegrationManagerEngine";
 	public static final String IntegrationManager_FUNCTION_PD = "IntegrationManager/PD";
 	public static final String IntegrationManager_FUNCTION_MessageBox = "IntegrationManager/MessageBox";
+	public static final String API_ENGINE = "API";
+	public static final String API_FUNCTION_PD = "PD";
+	public static final String API_FUNCTION_PA = "PA";
+	public static final String API_FUNCTION_MessageBox = "MessageBox";
 	public static final String CheckPdD_FUNCTION = "checkPdD";
 	
 	
@@ -117,7 +121,12 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 				logCore.debug("PROTOCOLLO["+protocollo+"] FUNCTION["+function+"]");
 			
 			// Vedo se ho un protocollo prima della funzione o direttamente il protocollo
-			if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || protocollo.equals(URLProtocolContext.PD_FUNCTION) || protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION)) {
+			if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || 
+					protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
+					protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
+					protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) || 
+					protocollo.equals(URLProtocolContext.API_ENGINE) || 
+					protocollo.equals(URLProtocolContext.CheckPdD_FUNCTION)) {
 				// ContextProtocol Empty
 				if(logCore!=null)
 					logCore.debug("SERVLET PATH EMPTY");
@@ -128,7 +137,7 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 				if(req.getRequestURI().length()>sizePrefix){
 					functionParameters = req.getRequestURI().substring(sizePrefix);
 				}
-				logCore.debug("FunctionParameters ["+functionParameters+"]");
+
 			}
 			else{
 				// Calcolo function
@@ -145,8 +154,29 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 				if(req.getRequestURI().length()>sizePrefix){
 					functionParameters = req.getRequestURI().substring(sizePrefix);
 				}
-				logCore.debug("FunctionParameters ["+functionParameters+"]");
+
 			}
+			
+			// calcolo eventuale contesto api
+			if(URLProtocolContext.API_ENGINE.equals(function)){
+				if(functionParameters==null){
+					throw new Exception("API Service invocation without context (PD,PA,MessageBox)");
+				}
+				String functionApi = functionParameters;
+				if(functionParameters.contains("/")){
+					functionApi = functionParameters.substring(0, functionParameters.indexOf("/"));
+				}
+				if(API_FUNCTION_PD.equals(functionApi) || API_FUNCTION_PA.equals(functionApi) || API_FUNCTION_MessageBox.equals(functionApi) ){
+					function = URLProtocolContext.API_ENGINE+"/"+functionApi;
+					if(functionParameters.length()>(functionApi+"/").length()){
+						functionParameters = functionParameters.substring((functionApi+"/").length());	
+					}else{
+						functionParameters = null;
+					}
+				}
+			}
+			
+			logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
 			
 			this.webContext = req.getContextPath();
 			this.requestURI = req.getRequestURI();

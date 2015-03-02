@@ -55,9 +55,51 @@ public class HttpUtilities {
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
+	
+	public static void setChunkedStreamingMode(HttpURLConnection httpConn, int chunkLength, String httpMethod, String contentType) throws UtilsException{
+		
+		HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
+		
+		// Devo impostarlo solo se e' previsto un output
+		if(params.isDoOutput()){
+			httpConn.setChunkedStreamingMode(chunkLength);
+		}
+	}
+	
+	public static boolean isHttpBodyPermitted(boolean isRequest,String httpMethod, String contentType) throws UtilsException{
+		
+		HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
+		if(isRequest){
+			return params.isDoOutput();
+		}
+		else{
+			return params.isDoInput();
+		}
+		
+	}
+	
 
+	public static void setStream(HttpURLConnection httpConn, String httpMethod) throws UtilsException{
+		setStream(httpConn, httpMethod, null);
+	}
+	public static void setStream(HttpURLConnection httpConn, String httpMethod, String contentType) throws UtilsException{
+		try{
+			HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
+						
+			httpConn.setRequestMethod(httpMethod);
+			if(params.isDoOutput()){
+				httpConn.setDoOutput(params.isDoOutput());
+			}
+			if(params.isDoInput()){
+				httpConn.setDoInput(params.isDoInput());
+			}
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	} 
+	
 
-/**
+	/**
 	 * Si occupa di effettuare la connessione verso l'indirizzo specificato dal<var>path</var>.
 	 * 
 	 *
@@ -92,9 +134,7 @@ public class HttpUtilities {
 				httpConn.setRequestProperty("Authorization",authentication);
 			}
 			
-			httpConn.setRequestMethod("GET");
-			httpConn.setDoOutput(true);
-			httpConn.setDoInput(true);
+			setStream(httpConn, "GET");
 
 			int resultHTTPOperation = httpConn.getResponseCode();
 			if(resultHTTPOperation==404){
@@ -176,9 +216,7 @@ public class HttpUtilities {
 				httpConn.setRequestProperty("Authorization",authentication);
 			}
 			
-			httpConn.setRequestMethod("GET");
-			httpConn.setDoOutput(true);
-			httpConn.setDoInput(true);
+			setStream(httpConn, "GET");
 
 			int resultHTTPOperation = httpConn.getResponseCode();
 

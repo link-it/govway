@@ -68,6 +68,7 @@ public class CheckStatoPdD extends HttpServlet {
 		if(log==null)
 			log = Logger.getLogger(CheckStatoPdD.class);
 		
+		
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		boolean checkPdDReadEnabled = false;
 		if(properties!=null && properties.isCheckPdDReadJMXResourcesEnabled() ){
@@ -183,9 +184,6 @@ public class CheckStatoPdD extends HttpServlet {
 		return;
 
 	}
-	@Override public void doPost(HttpServletRequest req, HttpServletResponse res)
-	throws ServletException, IOException {
-		doGet(req,res);
-	}
+
 
 }

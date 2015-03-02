@@ -30,6 +30,7 @@ import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiHTTPtoSOAPConnector;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 
 /**
  * Classe utilizzata per effettuare consegne di messaggi Soap, attraverso
@@ -50,6 +51,10 @@ public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends A
 	@Override
 	public String getIdModulo(){
 		return RicezioneContenutiApplicativiHTTPtoSOAPConnector.ID_MODULO+"_VM";
+	}
+	@Override
+	public IDService getIdModuloAsIDService() {
+		return IDService.PORTA_DELEGATA_XML_TO_SOAP;
 	}
 	@Override
 	public String getFunction(){

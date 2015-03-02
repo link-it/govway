@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -63,12 +65,59 @@ public class ServletTestService extends HttpServlet {
 		this.log = log;
 	}
 	
-	public void doEngine(HttpServletRequest req, HttpServletResponse res, boolean oneway)
+	public static void checkHttpServletRequestParameter(HttpServletRequest request) throws ServletException{
+		
+		String checkEqualsHttpMethod = request.getParameter("checkEqualsHttpMethod");
+		if(checkEqualsHttpMethod!=null){
+			checkEqualsHttpMethod = checkEqualsHttpMethod.trim();
+			if(checkEqualsHttpMethod.equals(request.getMethod())==false){
+				throw new ServletException("Ricevuta una richiesta con metodo http ["+request.getMethod()+"] differente da quella attesa ["+checkEqualsHttpMethod+"]");
+			}
+		}
+		
+		String checkEqualsHttpHeader = request.getParameter("checkEqualsHttpHeader");
+		if(checkEqualsHttpHeader!=null){
+			checkEqualsHttpHeader = checkEqualsHttpHeader.trim();
+			if(checkEqualsHttpHeader.contains(":")==false){
+				throw new ServletException("Ricevuta una richiesta di verifica header non conforme (pattern nome:valore)");
+			}
+			String [] split = checkEqualsHttpHeader.split(":");
+			if(split==null){
+				throw new ServletException("Ricevuta una richiesta di verifica header non conforme (pattern nome:valore) (split null)");
+			}
+			if(split.length!=2){
+				throw new ServletException("Ricevuta una richiesta di verifica header non conforme (pattern nome:valore) (split:"+split.length+")");
+			}
+			String key = split[0];
+			String valore = split[1];
+			
+			String v = request.getHeader(key);
+			if(v==null){
+				v = request.getHeader(key.toLowerCase());
+			}
+			if(v==null){
+				v = request.getHeader(key.toUpperCase());
+			}
+			if(v==null){
+				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
+			}
+			if(v.equals(valore)==false){
+				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
+			}
+		}
+		
+	}
+	
+	public void doEngine(HttpServletRequest req, HttpServletResponse res, boolean oneway, Properties headerRisposta)
 	throws ServletException, IOException {
 
 		
 		
 		try{
+			
+			checkHttpServletRequestParameter(req);
+			
+			
 			
 			/* ----  Ricezione richiesta di un proxy delegato  ---- */
 						
@@ -353,6 +402,18 @@ public class ServletTestService extends HttpServlet {
 						res.setContentLength(contenuto.length);
 					}else{
 						// web server default
+					}
+				}
+				
+				// Header personalizzati della Testsuite di OpenSPCoop
+				if(headerRisposta!=null){
+					Enumeration<?> en = headerRisposta.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						String value = headerRisposta.getProperty(key);
+						if(value!=null){
+							res.setHeader(key, value);
+						}
 					}
 				}
 				

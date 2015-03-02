@@ -34,6 +34,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
@@ -229,6 +230,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		try{
 			
 			DirectVMConnectorInMessage inMessage = new DirectVMConnectorInMessage(this.requestMsg, 
+					this.getIdModuloAsIDService(),
 					this.getIdModulo(), 
 					this.propertiesTrasporto,
 					this.propertiesUrlBased,
@@ -244,7 +246,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			this.responseMsg = outMessage.getMessage();
 			this.contentLength = outMessage.getContentLength();
 			this.propertiesTrasportoRisposta = outMessage.getHeaders();
-			this.codice = outMessage.getStatus();
+			this.codice = outMessage.getResponseStatus();
 			
 			
 			
@@ -280,6 +282,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	public abstract boolean validate(ConnettoreMsg request);
 	public abstract String getFunctionParameters();
 	public abstract String getIdModulo();
+	public abstract IDService getIdModuloAsIDService();
 	public abstract String getFunction();
 	public abstract void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException;
 	

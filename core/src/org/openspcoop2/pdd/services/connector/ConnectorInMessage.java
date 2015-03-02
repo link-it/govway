@@ -24,6 +24,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -37,6 +38,8 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
  */
 public interface ConnectorInMessage {
 
+	public IDService getIdModuloAsIDService();
+	
 	public String getIdModulo();
 	
 	public Object getAttribute(String key) throws ConnectorException;

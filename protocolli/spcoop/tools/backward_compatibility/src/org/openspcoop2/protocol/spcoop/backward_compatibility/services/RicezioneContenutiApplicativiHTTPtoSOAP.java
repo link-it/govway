@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -82,7 +83,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP extends HttpServlet {
 			throw new ServletException(e.getMessage(),e);
 		}
 	}
-	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
+	
+	
+	private void dispatch(HttpServletRequest req, HttpServletResponse res, MethodType method)
 	throws ServletException, IOException {
 		try{
 			WrapperHttpServletRequest httpReqWrapper = new WrapperHttpServletRequest(req,this.backwardCompatibilityProperties);
@@ -92,10 +95,46 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP extends HttpServlet {
 			//System.out.println("getRequestURI=["+httpReqWrapper.getRequestURI()+"]");
 			//System.out.println("getRequestURL=["+httpReqWrapper.getRequestURL()+"]");
 			//System.out.println("getServletPath=["+httpReqWrapper.getServletPath()+"]");
-			this.ricezioneContenutiApplicativiHTTPtoSOAP.doGet(httpReqWrapper, res);
+			this.ricezioneContenutiApplicativiHTTPtoSOAP.engine(httpReqWrapper, res,method);
 		}catch(Exception e){
 			throw new ServletException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.DELETE);
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.GET);
+	}
+
+	@Override
+	protected void doHead(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.HEAD);
+	}
+
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.OPTIONS);
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.PUT);
+	}
+
+	@Override
+	protected void doTrace(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.TRACE);
 	}
 
 }

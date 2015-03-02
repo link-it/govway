@@ -35,6 +35,7 @@ import javax.xml.soap.SOAPFault;
 
 import org.apache.log4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -73,6 +74,7 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
+import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -1060,6 +1062,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					consegnaMessage = 
 						msgRequest.buildRichiestaPubblicazioneMessaggio_RepositoryMessaggi(soggettoFruitore, tipoServizio,servizio,azione);
 				}
+				if(pd!=null){
+					consegnaMessage.addContextProperty(CostantiApi.NOME_PORTA, pd.getNome());
+				}
+				else if(pa!=null){
+					consegnaMessage.addContextProperty(CostantiApi.NOME_PORTA, pa.getNome());
+				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "msgRequest.getMessage()");
 
@@ -1564,12 +1572,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
 				
 				// Il Connettore potrebbe aggiungere informazioni alla location.
-				location = connectorSender.getLocation();
-				if(location!=null){
+				String tmpLocation = connectorSender.getLocation();
+				if(tmpLocation!=null){
+					// aggiorno
+					location = tmpLocation;
+				
+					if(connectorSender instanceof ConnettoreHTTP){
+						if(((ConnettoreHTTP)connectorSender).isSbustamentoApi()){
+							location = org.openspcoop2.core.api.utils.Utilities.updateLocation(((ConnettoreHTTP)connectorSender).getHttpMethod(), location);
+						}
+					}
 					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
-				}
-				else{
-					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
 				}
 			}
 

@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
  * HttpServletConnectorOutMessage
@@ -35,13 +36,16 @@ import org.openspcoop2.message.OpenSPCoop2Message;
  */
 public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 
-	private HttpServletResponse res;
-	private OutputStream out;
+	protected HttpServletResponse res;
+	protected OutputStream out;
+	protected IProtocolFactory protocolFactory;
 	
-	public HttpServletConnectorOutMessage(HttpServletResponse res) throws ConnectorException{
+	
+	public HttpServletConnectorOutMessage(IProtocolFactory protocolFactory, HttpServletResponse res) throws ConnectorException{
 		try{
 			this.res = res;
 			this.out = this.res.getOutputStream();
+			this.protocolFactory = protocolFactory;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -96,13 +100,19 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 		}
 	}
 	
+	private int status = -1;
 	@Override
 	public void setStatus(int status) throws ConnectorException{
 		try{
 			this.res.setStatus(status);
+			this.status = status;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
+	}
+	@Override
+	public int getResponseStatus() throws ConnectorException{
+		return this.status;
 	}
 	
 	@Override

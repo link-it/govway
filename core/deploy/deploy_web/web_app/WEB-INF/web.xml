@@ -76,11 +76,6 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 	</servlet>
 	-->
 
-    <!-- OpenSPCoop: Servizio di check stato PdD -->
-    <servlet>
-        <servlet-name>checkPdD</servlet-name>
-        <servlet-class>org.openspcoop2.pdd.services.connector.CheckStatoPdD</servlet-class>
-    </servlet>
     <!-- OpenSPCoop: Servizio di dispatching dei servizi della Porta -->
     <servlet>
         <servlet-name>OpenSPCoop2Servlet</servlet-name>
@@ -89,16 +84,12 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     </servlet>
 
 
-
     <!-- servlet-mapping OpenSPCoop2 -->
     <servlet-mapping>
         <servlet-name>OpenSPCoop2Servlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>checkPdD</servlet-name>
-        <url-pattern>/checkPdD/*</url-pattern>
-    </servlet-mapping>
+    
     
     <!-- servlet-mapping JMXConsole embedded -->
     <!--

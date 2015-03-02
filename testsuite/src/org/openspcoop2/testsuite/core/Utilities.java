@@ -59,9 +59,9 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
-import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -76,7 +76,7 @@ import org.xml.sax.SAXException;
  * @version $Rev$, $Date$
  */
 public class Utilities {
-
+	
 	/**
 	 * Confronta due SoapBody
 	 * 

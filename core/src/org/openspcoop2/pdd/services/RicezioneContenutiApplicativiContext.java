@@ -28,6 +28,7 @@ import java.util.Date;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.utils.id.UniqueIdentifierException;
 
@@ -64,12 +65,14 @@ public class RicezioneContenutiApplicativiContext extends AbstractContext implem
 	
 	
 	/** Costruttore */
-	public RicezioneContenutiApplicativiContext(Date dataIngressoRichiesta,IDSoggetto identitaPdD) throws UniqueIdentifierException{
-		super(dataIngressoRichiesta,identitaPdD);
+	public RicezioneContenutiApplicativiContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,IDSoggetto identitaPdD) throws UniqueIdentifierException{
+		super(idModuloAsIDService,dataIngressoRichiesta,identitaPdD);
 	}
-	private RicezioneContenutiApplicativiContext(){}
-	public static RicezioneContenutiApplicativiContext newRicezioneContenutiApplicativiContext(Date dataIngressoRichiesta,IDSoggetto identitaPdD){
-		RicezioneContenutiApplicativiContext context = new RicezioneContenutiApplicativiContext();
+	private RicezioneContenutiApplicativiContext(IDService idModuloAsIDService){
+		super(idModuloAsIDService);
+	}
+	public static RicezioneContenutiApplicativiContext newRicezioneContenutiApplicativiContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,IDSoggetto identitaPdD){
+		RicezioneContenutiApplicativiContext context = new RicezioneContenutiApplicativiContext(idModuloAsIDService);
 		context.dataIngressoRichiesta=dataIngressoRichiesta;
 		context.identitaPdD=identitaPdD;
 		context.pddContext = new PdDContext();

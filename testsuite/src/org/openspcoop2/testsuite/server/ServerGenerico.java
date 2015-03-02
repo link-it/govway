@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.message.ServletTestService;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 
 
@@ -64,6 +65,8 @@ public class ServerGenerico extends ServerCore{
 
 		try{
 
+			ServletTestService.checkHttpServletRequestParameter(request);
+			
 			String generaRisposta = request.getParameter("generazioneRisposta");
 			boolean generazioneRisposta = true;
 			if(generaRisposta!=null){

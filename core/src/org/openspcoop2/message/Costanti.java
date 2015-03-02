@@ -36,6 +36,9 @@ public class Costanti {
 	public final static String CONTENT_LOCATION = "Content-Location";
 	public final static String CONTENT_ID = "Content-ID";
 	
+	public final static String TRANSFER_ENCODING = "Transfer-Encoding";
+	public final static String TRANSFER_ENCODING_CHUNCKED_VALUE = "chunked";
+	
 	public final static String SOAP_ACTION = "SOAPAction";
 	
 	public final static String CONTENT_TYPE_SOAP_1_1 = "text/xml";

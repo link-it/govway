@@ -56,6 +56,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorOutMessage;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -81,6 +82,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 		
 		// IDModulo
 		String idModulo = req.getIdModulo();
+		IDService idModuloAsService = req.getIdModuloAsIDService();
 		
 		// Timestamp
 		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
@@ -173,7 +175,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 					openSPCoopProperties.getIdentitaPortaDefault(protocol), null, null, proprietaErroreAppl.getIdModulo(), 
 					proprietaErroreAppl, versioneSoap,TipoPdD.DELEGATA,null); 
 			
-			context = new RicezioneContenutiApplicativiContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
+			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 			context.setIdModulo(idModulo);
@@ -356,7 +358,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 						openSPCoopProperties.getIdentitaPortaDefault(protocol), null, null, idModulo, 
 						proprietaErroreAppl, versioneSoap,TipoPdD.DELEGATA,null);
 				
-				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
+				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setIdModulo(idModulo);
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -378,7 +380,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			
 			if(context==null){
 				// Errore durante la generazione dell'id
-				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
+				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 				context.setIdModulo(idModulo);
@@ -583,6 +585,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 		}
 		finally{
 						
+			statoServletResponse = res.getResponseStatus(); // puo' essere "trasformato" da api engine
 			msgDiag.addKeyword(CostantiPdD.KEY_CODICE_CONSEGNA, ""+statoServletResponse);
 			msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, descrizioneSoapFault);
 			

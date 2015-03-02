@@ -80,6 +80,9 @@ public class ServletUtils {
 
 	
 	public static String readContentTypeFromHeader(HttpServletRequest req) throws Exception{
+		return readContentTypeFromHeader(req, true);
+	}
+	public static String readContentTypeFromHeader(HttpServletRequest req, boolean returnMsgErroreIfNotFound) throws Exception{
 
 		java.util.Enumeration<?> enTrasporto = req.getHeaderNames();
 		while(enTrasporto.hasMoreElements()){
@@ -88,13 +91,19 @@ public class ServletUtils {
 				//System.out.println("TROVATO CONTENT_TYPE: "+req.getHeader(nomeProperty));
 				String ct = req.getHeader(nomeProperty);
 				if(ct==null){
-					return CostantiPdD.CONTENT_TYPE_NON_VALORIZZATO;
+					if(returnMsgErroreIfNotFound)
+						return CostantiPdD.CONTENT_TYPE_NON_VALORIZZATO;
+					else
+						return null;
 				}
 				return ct;
 			}
 		}
 
-		return CostantiPdD.CONTENT_TYPE_NON_PRESENTE;
+		if(returnMsgErroreIfNotFound)
+			return CostantiPdD.CONTENT_TYPE_NON_PRESENTE;
+		else
+			return null;
 	}
 	
 	/**
@@ -396,7 +405,7 @@ public class ServletUtils {
 		String requestProtocoll = connectorInMessage.getProtocol();
 		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
 			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
-				connectorOutMessage.setHeader("Transfer-Encoding","chunked");
+				connectorOutMessage.setHeader(Costanti.TRANSFER_ENCODING,Costanti.TRANSFER_ENCODING_CHUNCKED_VALUE);
 			}
 			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode)){
 				if(message!=null){
@@ -412,7 +421,7 @@ public class ServletUtils {
 		String requestProtocoll = connectorInMessage.getProtocol();
 		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
 			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
-				connectorOutMessage.setHeader("Transfer-Encoding","chunked");
+				connectorOutMessage.setHeader(Costanti.TRANSFER_ENCODING,Costanti.TRANSFER_ENCODING_CHUNCKED_VALUE);
 			}
 			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode)){
 				if(length!=null){

@@ -33,10 +33,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.RicezioneBusteSOAP;
+import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.w3c.dom.Document;
 
@@ -60,7 +63,8 @@ public class RicezioneBusteSOAPConnector extends HttpServlet {
 
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static String ID_MODULO = "RicezioneBuste_PA";
+	public final static IDService ID_SERVICE = IDService.PORTA_APPLICATIVA_SOAP;
+	public final static String ID_MODULO = ID_SERVICE.getValue();
 
 	
 	/* ********  M E T O D I   ******** */
@@ -77,15 +81,20 @@ public class RicezioneBusteSOAPConnector extends HttpServlet {
 		
 		HttpServletConnectorInMessage httpIn = null;
 		try{
-			httpIn = new HttpServletConnectorInMessage(req, ID_MODULO);
+			httpIn = new HttpServletConnectorInMessage(req, ID_SERVICE, ID_MODULO);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 		
+		IProtocolFactory protocolFactory = null;
+		try{
+			protocolFactory = httpIn.getProtocolFactory();
+		}catch(Throwable e){}
+		
 		HttpServletConnectorOutMessage httpOut = null;
 		try{
-			httpOut = new HttpServletConnectorOutMessage(res);
+			httpOut = new HttpServletConnectorOutMessage(protocolFactory,res);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
@@ -100,7 +109,7 @@ public class RicezioneBusteSOAPConnector extends HttpServlet {
 		
 	}
 	
-	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
+	public void engine(HttpServletRequest req, HttpServletResponse res, MethodType method)
 	throws ServletException, IOException {
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
@@ -109,86 +118,89 @@ public class RicezioneBusteSOAPConnector extends HttpServlet {
 			versione = "Porta di Dominio "+op2Properties.getPddDetailsForServices();
 		}
 		
-		Enumeration<?> parameters = req.getParameterNames();
-		while(parameters.hasMoreElements()){
-			String key = (String) parameters.nextElement();
-			String value = req.getParameter(key);
-			if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
-				InputStream is =null;
-				try{
-					is = RicezioneBusteSOAPConnector.class.getResourceAsStream("/PA.wsdl");
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-					if(is!=null){
-						int letti = 0;
-						byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
-						while( (letti=is.read(buffer)) != -1 ){
-							bout.write(buffer, 0, letti);
-						}
-						bout.flush();
-						bout.close();
-					}
-					
-					if(op2Properties!=null && op2Properties.isGenerazioneWsdlPortaApplicativaEnabled()){
-					
-						if(bout.size()<=0){
-							throw new Exception("WSDL Not Found");
+		if(MethodType.GET.equals(method)){
+			Enumeration<?> parameters = req.getParameterNames();
+			while(parameters.hasMoreElements()){
+				String key = (String) parameters.nextElement();
+				String value = req.getParameter(key);
+				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
+					InputStream is =null;
+					try{
+						is = RicezioneBusteSOAPConnector.class.getResourceAsStream("/PA.wsdl");
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	
+						if(is!=null){
+							int letti = 0;
+							byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+							while( (letti=is.read(buffer)) != -1 ){
+								bout.write(buffer, 0, letti);
+							}
+							bout.flush();
+							bout.close();
 						}
 						
-						byte[] b = bout.toByteArray();
-						org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
-						Document d = xmlUtils.newDocument(b);
-						d.getFirstChild().appendChild(d.createComment(versione));
-						xmlUtils.writeTo(d, res.getOutputStream());
+						if(op2Properties!=null && op2Properties.isGenerazioneWsdlPortaApplicativaEnabled()){
 						
+							if(bout.size()<=0){
+								throw new Exception("WSDL Not Found");
+							}
+							
+							byte[] b = bout.toByteArray();
+							org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+							Document d = xmlUtils.newDocument(b);
+							d.getFirstChild().appendChild(d.createComment(versione));
+							xmlUtils.writeTo(d, res.getOutputStream());
+							
+						}
+						else{
+							
+	//						if(bout.size()>0){
+	//							res.getOutputStream().write(bout.toByteArray());
+	//						}
+	//						else{
+							res.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(ID_SERVICE)));
+	//						}
+							
+						}
+						
+					}catch(Exception e){
+						res.setStatus(500);
+						
+						ConnectorUtils.generateErrorMessage(ID_SERVICE,method,req,res, "Generazione WSDL non riuscita", false, true);
+						
+						OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Generazione WSDL PA non riuscita",e);	
+					}finally{
+						try{
+							res.getOutputStream().flush();
+						}catch(Exception eClose){}
+						try{
+							res.getOutputStream().close();
+						}catch(Exception eClose){}
+						try{
+							if(is!=null)
+								is.close();
+						}catch(Exception eClose){}
 					}
-					else{
-						
-//						if(bout.size()>0){
-//							res.getOutputStream().write(bout.toByteArray());
-//						}
-//						else{
-						res.sendError(404, ConnectorUtils.generateError404Message(ConnectorCostanti.PORTA_APPLICATIVA_WSDL));
-//						}
-						
-					}
-					
-				}catch(Exception e){
-					res.setStatus(500);
-					
-					res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, "Generazione WSDL non riuscita", false, true).getBytes());
-					
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Generazione WSDL PA non riuscita",e);	
-				}finally{
-					try{
-						res.getOutputStream().flush();
-					}catch(Exception eClose){}
-					try{
-						res.getOutputStream().close();
-					}catch(Exception eClose){}
-					try{
-						if(is!=null)
-							is.close();
-					}catch(Exception eClose){}
+					return;
 				}
-				return;
 			}
 		}
+			
 		
 		// messaggio di errore
 		boolean errore404 = false;
-		if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpGetPortaApplicativaEnabled()){
+		if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled()){
 			errore404 = true;
 		}
 		
 		if(errore404){
-			res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.PORTA_APPLICATIVA_HTTP_GET));
+			res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeHttpMethodNotSupported(ID_SERVICE, method)));
 		}
 		else{
 		
 			res.setStatus(500);
 			
-			res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, ConnectorCostanti.METHOD_HTTP_GET_NOT_SUPPORTED, false, true).getBytes());
+			ConnectorUtils.generateErrorMessage(ID_SERVICE,method,req,res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
 					
 			try{
 				res.getOutputStream().flush();

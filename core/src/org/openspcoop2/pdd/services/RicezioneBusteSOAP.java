@@ -54,6 +54,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorOutMessage;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -84,6 +85,7 @@ public class RicezioneBusteSOAP  {
 		
 		// IDModulo
 		String idModulo = req.getIdModulo();
+		IDService idModuloAsService = req.getIdModuloAsIDService();
 		
 		// Timestamp
 		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
@@ -165,7 +167,7 @@ public class RicezioneBusteSOAP  {
 			proprietaErroreAppl.setDominio(openSPCoopProperties.getIdentificativoPortaDefault(protocolFactory.getProtocol()));
 			proprietaErroreAppl.setIdModulo(idModulo);
 			
-			context = new RicezioneBusteContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()));
+			context = new RicezioneBusteContext(idModuloAsService, dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()));
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 			context.setTipoPorta(TipoPdD.APPLICATIVA);
 			context.setIdModulo(idModulo);
@@ -355,7 +357,7 @@ public class RicezioneBusteSOAP  {
 		} catch (ProtocolException e) {
 			try{
 				// Capita nell'instanziazione della ProtocolFactory. Uso la factory basic per costruire l'errore.
-				context = RicezioneBusteContext.newRicezioneBusteContext(dataIngressoMessaggio, openSPCoopProperties.getIdentitaPortaDefault(protocol));
+				context = RicezioneBusteContext.newRicezioneBusteContext(idModuloAsService,dataIngressoMessaggio, openSPCoopProperties.getIdentitaPortaDefault(protocol));
 				pddContext = context.getPddContext();
 				if(postOutResponseContext!=null){
 					postOutResponseContext.setPddContext(pddContext);
@@ -372,7 +374,7 @@ public class RicezioneBusteSOAP  {
 			
 			if(context==null){
 				// Errore durante la generazione dell'id
-				context = RicezioneBusteContext.newRicezioneBusteContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
+				context = RicezioneBusteContext.newRicezioneBusteContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 				context.setTipoPorta(TipoPdD.APPLICATIVA);
 				context.setIdModulo(idModulo);
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -608,6 +610,7 @@ public class RicezioneBusteSOAP  {
 		}
 		finally{
 			
+			statoServletResponse = res.getResponseStatus(); // puo' essere "trasformato" da api engine
 			msgDiag.addKeyword(CostantiPdD.KEY_CODICE_CONSEGNA, ""+statoServletResponse);
 			msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, descrizioneSoapFault);
 			

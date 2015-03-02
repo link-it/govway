@@ -28,6 +28,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -1511,10 +1512,11 @@ public class OpenSPCoop2Properties {
 			
 			// Informazioni generazione errori
 			this.isGenerazioneErroreProtocolloNonSupportato();
-			this.isGenerazioneErroreHttpGetPortaDelegataEnabled();
-			this.isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled();
-			this.isGenerazioneErroreHttpGetPortaApplicativaEnabled();
-			this.isGenerazioneErroreHttpGetIntegrationManagerEnabled();
+			this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled();
+			this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled();
+			this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled();
+			this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled();
+			this.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled();
 			
 			// Informazioni generazione WSDL
 			this.isGenerazioneWsdlPortaDelegataEnabled();
@@ -1525,6 +1527,11 @@ public class OpenSPCoop2Properties {
 			this.isCheckPdDReadJMXResourcesEnabled();
 			this.getCheckPdDReadJMXResourcesUsername();
 			this.getCheckPdDReadJMXResourcesPassword();
+			
+			// API Services
+			this.isAPIServicesEnabled();
+			this.getAPIServicesWhiteListRequestHeaderList();
+			this.getAPIServicesWhiteListResponseHeaderList();
 			
 			// NotifierInputStreamCallback
 			String notifierClass = null;
@@ -9421,90 +9428,111 @@ public class OpenSPCoop2Properties {
 	
 	
 	
-	/* ------------- Generazione Errore HttpGet ---------------------*/
+	/* ------------- Generazione Errore HttpMethodUnsupported ---------------------*/
 	
-	private static Boolean isGenerazioneErroreHttpGetPortaDelegataEnabled = null;
-	public boolean isGenerazioneErroreHttpGetPortaDelegataEnabled() {	
-		if(OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataEnabled==null){
+	private static Boolean isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled = null;
+	public boolean isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled() {	
+		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pd.httpGET.generateErrorMessage");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpGET.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataEnabled = Boolean.parseBoolean(name);
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpGET.generateErrorMessage': "+e.getMessage());
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataEnabled = true;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage': "+e.getMessage());
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled = true;
 			}    
 		}
 
-		return OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataEnabled;
+		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled;
 	}
 	
-	private static Boolean isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled = null;
-	public boolean isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled() {	
-		if(OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled==null){
+	private static Boolean isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled = null;
+	public boolean isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled() {	
+		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pdToSoap.httpGET.generateErrorMessage");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpGET.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled = Boolean.parseBoolean(name);
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpGET.generateErrorMessage': "+e.getMessage());
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled = true;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage': "+e.getMessage());
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled = true;
 			}    
 		}
 
-		return OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled;
+		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled;
 	}
 	
-	private static Boolean isGenerazioneErroreHttpGetPortaApplicativaEnabled = null;
-	public boolean isGenerazioneErroreHttpGetPortaApplicativaEnabled() {	
-		if(OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaApplicativaEnabled==null){
+	private static Boolean isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled = null;
+	public boolean isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled() {	
+		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pa.httpGET.generateErrorMessage");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpGET.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaApplicativaEnabled = Boolean.parseBoolean(name);
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpGET.generateErrorMessage': "+e.getMessage());
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaApplicativaEnabled = true;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage': "+e.getMessage());
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled = true;
 			}    
 		}
 
-		return OpenSPCoop2Properties.isGenerazioneErroreHttpGetPortaApplicativaEnabled;
+		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled;
 	}
 	
-	private static Boolean isGenerazioneErroreHttpGetIntegrationManagerEnabled = null;
-	public boolean isGenerazioneErroreHttpGetIntegrationManagerEnabled() {	
-		if(OpenSPCoop2Properties.isGenerazioneErroreHttpGetIntegrationManagerEnabled==null){
+	private static Boolean isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled = null;
+	public boolean isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled() {	
+		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.im.httpGET.generateErrorMessage");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpGET.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetIntegrationManagerEnabled = Boolean.parseBoolean(name);
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpGET.generateErrorMessage': "+e.getMessage());
-				OpenSPCoop2Properties.isGenerazioneErroreHttpGetIntegrationManagerEnabled = true;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage': "+e.getMessage());
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled = true;
 			}    
 		}
 
-		return OpenSPCoop2Properties.isGenerazioneErroreHttpGetIntegrationManagerEnabled;
+		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled;
+	}
+	
+	private static Boolean isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled = null;
+	public boolean isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled() {	
+		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.httpMethodUnsupported.generateErrorMessage");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.httpMethodUnsupported.generateErrorMessage': "+e.getMessage());
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled;
 	}
 	
 	
@@ -9639,6 +9667,87 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword;
 	}
 	
+	
+	
+	
+	/* ------------- API ---------------------*/
+	
+	private static Boolean isAPIServicesEnabled = null;
+	public boolean isAPIServicesEnabled() {	
+		if(OpenSPCoop2Properties.isAPIServicesEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.api.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.api.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isAPIServicesEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.api.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isAPIServicesEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isAPIServicesEnabled;
+	}
+	
+	private static Boolean getAPIServicesWhiteListRequestHeaderRead = null;
+	private static List<String> getAPIServicesWhiteListRequestHeaderList = null;
+	public List<String> getAPIServicesWhiteListRequestHeaderList() {	
+		if(OpenSPCoop2Properties.getAPIServicesWhiteListRequestHeaderRead==null){
+			try{ 
+				getAPIServicesWhiteListRequestHeaderList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.api.headers.request.forward");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getAPIServicesWhiteListRequestHeaderList.add(split[i].trim());
+						}
+					}
+				}
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.api.headers.request.forward': "+e.getMessage());
+			}    
+		}
+
+		OpenSPCoop2Properties.getAPIServicesWhiteListRequestHeaderRead = true;
+		
+		return OpenSPCoop2Properties.getAPIServicesWhiteListRequestHeaderList;
+	}
+	
+	private static Boolean getAPIServicesWhiteListResponseHeaderRead = null;
+	private static List<String> getAPIServicesWhiteListResponseHeaderList = null;
+	public List<String> getAPIServicesWhiteListResponseHeaderList() {	
+		if(OpenSPCoop2Properties.getAPIServicesWhiteListResponseHeaderRead==null){
+			try{ 
+				getAPIServicesWhiteListResponseHeaderList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.api.headers.response.forward");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getAPIServicesWhiteListResponseHeaderList.add(split[i].trim());
+						}
+					}
+				}
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.api.headers.response.forward': "+e.getMessage());
+			}    
+		}
+
+		OpenSPCoop2Properties.getAPIServicesWhiteListResponseHeaderRead = true;
+		
+		return OpenSPCoop2Properties.getAPIServicesWhiteListResponseHeaderList;
+	}
 	
 	
 	

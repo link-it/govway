@@ -117,6 +117,18 @@
 	    <servlet-name>TestSuiteServerOpenSPCoop2PingService</servlet-name>
 	    <servlet-class>org.openspcoop2.testsuite.server.ServerOpenSPCoop2PingService</servlet-class>
   </servlet>
+  
+  <!-- Servlet OpenSPCoop2 APIEchoService -->
+  <servlet>
+	    <servlet-name>TestSuiteServerOpenSPCoop2APIEchoService</servlet-name>
+	    <servlet-class>org.openspcoop2.testsuite.server.ServerOpenSPCoop2APIEchoService</servlet-class>
+  </servlet>
+  
+  <!-- Servlet OpenSPCoop2 APIPingService -->
+  <servlet>
+	    <servlet-name>TestSuiteServerOpenSPCoop2APIPingService</servlet-name>
+	    <servlet-class>org.openspcoop2.testsuite.server.ServerOpenSPCoop2APIPingService</servlet-class>
+  </servlet>
 
 
 
@@ -221,6 +233,18 @@
   <servlet-mapping>
 	    	<servlet-name>TestSuiteServerOpenSPCoop2PingService</servlet-name>
 	    	<url-pattern>/pingService</url-pattern>
+  </servlet-mapping>
+  
+    <!-- Servlet OpenSPCoop2 APIEchoService -->
+  <servlet-mapping>
+	    	<servlet-name>TestSuiteServerOpenSPCoop2APIEchoService</servlet-name>
+	    	<url-pattern>/api/service/echo/*</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet OpenSPCoop2 APIPingService -->
+  <servlet-mapping>
+	    	<servlet-name>TestSuiteServerOpenSPCoop2APIPingService</servlet-name>
+	    	<url-pattern>/api/service/ping/*</url-pattern>
   </servlet-mapping>
 
 </web-app>

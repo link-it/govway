@@ -62,6 +62,10 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.core.api.constants.CostantiApi;
+import org.openspcoop2.core.api.constants.MethodType;
+import org.openspcoop2.core.api.utils.Imbustamento;
+import org.openspcoop2.core.api.utils.Sbustamento;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -151,7 +155,20 @@ public class ConnettoreHTTP extends ConnettoreBase {
 	/** Connessione */
 	private InputStream is = null;
 	private HttpURLConnection httpConn = null;
-
+	
+	/** httpMethod */
+	private String httpMethod = null;
+	public String getHttpMethod() {
+		return this.httpMethod;
+	}
+	
+	/** Indicazione su di un eventuale sbustamento API */
+	private boolean sbustamentoApi;	
+	public boolean isSbustamentoApi() {
+		return this.sbustamentoApi;
+	}
+	
+	
 	/* Costruttori */
 	public ConnettoreHTTP(){
 		this.https = false;
@@ -159,7 +176,6 @@ public class ConnettoreHTTP extends ConnettoreBase {
 	public ConnettoreHTTP(boolean https){
 		this.https = https;
 	}
-	
 	
 	
 	
@@ -201,6 +217,18 @@ public class ConnettoreHTTP extends ConnettoreBase {
 		this.busta = request.getBusta();
 		if(this.busta!=null)
 			this.idMessaggio=this.busta.getID();
+		
+		try{
+			Object o = this.requestMsg.getContextProperty(CostantiApi.MESSAGGIO_API);
+			if(o!=null){
+				this.sbustamentoApi = (Boolean) o;
+			}
+		}catch(Exception e){
+			this.eccezioneProcessamento = e;
+			this.log.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
+			return false;
+		}
 
 		//this.tipoAutenticazione = request.getAutenticazione();
 		this.credenziali = request.getCredenziali();
@@ -351,8 +379,16 @@ public class ConnettoreHTTP extends ConnettoreBase {
 		
 		FileInputStream finKeyStore = null;
 		FileInputStream finTrustStore = null;
+		Sbustamento sbustamentoAPIengine = null;
+		Imbustamento imbustamentoAPIengine = null;
 		try{
 
+			// Sbustamento API
+			if(this.sbustamentoApi){
+				sbustamentoAPIengine = new Sbustamento(this.requestMsg);
+			}
+			
+			
 			// Gestione https
 			SSLContext sslContext = null;
 			if(this.https){
@@ -400,17 +436,25 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			// Creazione URL
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] creazione URL...");
-			this.location = this.properties.get("location");
-			
-			// Impostazione Proprieta urlBased
-			if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
-				this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, this.location);
-			}
 
+			this.location = this.properties.get("location");			
+			// Impostazione Proprieta urlBased
+			if(this.sbustamentoApi){
+				if(this.debug)
+					this.log.debug("["+this.idMessaggio+"] build URL for API ...");
+				this.location = sbustamentoAPIengine.buildUrl(this.location,this.propertiesUrlBased);
+			}
+			else{
+				if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
+					this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, this.location);
+				}
+			}			
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] creazione URL ["+this.location+"]...");
 			URL url = new URL( this.location );	
 
+
+			
 			// Creazione Connessione
 			URLConnection connection = null;
 			if(this.proxyType==null){
@@ -433,6 +477,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 				connection = url.openConnection(proxy);
 			}
 			this.httpConn = (HttpURLConnection) connection;	
+			
 			
 			// Imposta Contesto SSL se attivo
 			if(this.https){
@@ -468,25 +513,38 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			// Alcune implementazioni richiedono di aggiornare il Content-Type
 			this.requestMsg.updateContentType();
 			
-			
-			
-			// Impostazione Content-Type della Spedizione su HTTP
-	        
+					
+			// Impostazione Content-Type della Spedizione su HTTP	        
+			String contentTypeRichiesta = null;
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione content type...");
-			String contentTypeRichiesta = null;
-			if(this.sbustamentoSoap && this.requestMsg.countAttachments()>0 && SoapUtils.isTunnelOpenSPCoopSoap(this.requestMsg.getSOAPBody())){
-				contentTypeRichiesta = SoapUtils.getContentTypeTunnelOpenSPCoopSoap(this.requestMsg.getSOAPBody());
-			}else{
-				contentTypeRichiesta = this.requestMsg.getContentType();
+			if(this.sbustamentoApi){
+				contentTypeRichiesta = sbustamentoAPIengine.getContentType();
 			}
-			if(contentTypeRichiesta==null){
-                                throw new Exception("Content-Type del messaggio da spedire non definito");
+			else{
+				if(this.sbustamentoSoap && this.requestMsg.countAttachments()>0 && SoapUtils.isTunnelOpenSPCoopSoap(this.requestMsg.getSOAPBody())){
+					contentTypeRichiesta = SoapUtils.getContentTypeTunnelOpenSPCoopSoap(this.requestMsg.getSOAPBody());
+				}else{
+					contentTypeRichiesta = this.requestMsg.getContentType();
+				}
+				if(contentTypeRichiesta==null){
+	                                throw new Exception("Content-Type del messaggio da spedire non definito");
+				}
 			}
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione http content type ["+contentTypeRichiesta+"]...");
-			this.httpConn.setRequestProperty("Content-Type",contentTypeRichiesta);	
+			if(contentTypeRichiesta!=null){
+				this.httpConn.setRequestProperty("Content-Type",contentTypeRichiesta);
+			}
+			
+			
+			// HttpMethod
+			this.httpMethod = MethodType.POST.name();
+			if(this.sbustamentoApi){
+				this.httpMethod = sbustamentoAPIengine.getHttpMethod();
+			}
 
+			
 			// Impostazione transfer-length
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione transfer-length...");
@@ -504,10 +562,12 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			}
 			transferEncodingChunked = TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(tlm);
 			if(transferEncodingChunked){
-				this.httpConn.setChunkedStreamingMode(chunkLength);
+				HttpUtilities.setChunkedStreamingMode(this.httpConn, chunkLength, this.httpMethod, contentTypeRichiesta);
+				//this.httpConn.setChunkedStreamingMode(chunkLength);
 			}
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione transfer-length effettuata (chunkLength:"+chunkLength+"): "+tlm);
+			
 			
 			// Impostazione timeout
 			if(this.debug)
@@ -544,7 +604,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione soap action...");
 			String soapAction = null;
-			if(this.sbustamentoSoap == false){
+			if(this.sbustamentoSoap == false && this.sbustamentoApi==false){
 				soapAction = (String) this.requestMsg.getProperty("SOAPAction");
 				if(soapAction==null && SOAPVersion.SOAP11.equals(this.requestMsg.getVersioneSoap())){
 					soapAction="\"OpenSPCoop\"";
@@ -557,6 +617,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 				}
 			}
 
+			
 			// Authentication BASIC
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione autenticazione...");
@@ -578,9 +639,23 @@ public class ConnettoreHTTP extends ConnettoreBase {
 					this.log.debug("["+this.idMessaggio+"] impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]...");
 			}
 
+			
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione header di trasporto...");
+			if(this.sbustamentoApi){
+				if(this.debug)
+					this.log.debug("["+this.idMessaggio+"] aggiunta header di trasporto api...");
+				Properties pTrasporto = sbustamentoAPIengine.getTransportProperties();
+				if(pTrasporto!=null && pTrasporto.size()>0){
+					if(this.propertiesTrasporto==null){
+						this.propertiesTrasporto = new Properties();
+					}
+					this.propertiesTrasporto.putAll(pTrasporto);
+					if(this.debug)
+						this.log.debug("["+this.idMessaggio+"] aggiunta header di trasporto api ("+pTrasporto.size()+")");
+				}
+			}
 			if(this.propertiesTrasporto != null){
 				Enumeration<?> enumProperties = this.propertiesTrasporto.keys();
 				while( enumProperties.hasMoreElements() ) {
@@ -592,12 +667,16 @@ public class ConnettoreHTTP extends ConnettoreBase {
 				}
 			}
 			
+			
+			// Impostazione Metodo
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione POST...");
-			this.httpConn.setRequestMethod( "POST" );
-			this.httpConn.setDoOutput(true);
-			this.httpConn.setDoInput(true);
+				this.log.debug("["+this.idMessaggio+"] impostazione "+this.httpMethod+"...");
+			HttpUtilities.setStream(this.httpConn, this.httpMethod, contentTypeRichiesta);
+//			this.httpConn.setRequestMethod( method );
+//			this.httpConn.setDoOutput(false);
+//			this.httpConn.setDoInput(true);
 
+			
 			// Spedizione byte
 			boolean consumeRequestMessage = true;
 			if(this.followRedirects){
@@ -605,30 +684,46 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			}
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
-			OutputStream out = this.httpConn.getOutputStream();
-			if(this.debug){
-				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				if(this.sbustamentoSoap){
-					this.log.debug("["+this.idMessaggio+"] Sbustamento...");
-					SoapUtils.sbustamentoMessaggio(this.requestMsg,bout);
-				}else{
-					this.requestMsg.writeTo(bout, consumeRequestMessage);
-				}
-				bout.flush();
-				bout.close();
-				out.write(bout.toByteArray());
-				this.log.debug("["+this.idMessaggio+"] Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString());
-				bout.close();
-			}else{
-				if(this.sbustamentoSoap){
-					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] Sbustamento...");
-					SoapUtils.sbustamentoMessaggio(this.requestMsg,out);
-				}else{
-					this.requestMsg.writeTo(out, consumeRequestMessage);
+			if(this.sbustamentoApi){
+				byte[] resource = sbustamentoAPIengine.getBody();
+				if(resource!=null){
+					OutputStream out = this.httpConn.getOutputStream();
+					if(this.debug){
+						this.log.debug("["+this.idMessaggio+"] Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+new String(resource));
+					}
+					out.write(resource);
+					out.flush();
+					out.close();
 				}
 			}
-			out.close();
+			else{
+				OutputStream out = this.httpConn.getOutputStream();
+				if(this.debug){
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					if(this.sbustamentoSoap){
+						this.log.debug("["+this.idMessaggio+"] Sbustamento...");
+						SoapUtils.sbustamentoMessaggio(this.requestMsg,bout);
+					}else{
+						this.requestMsg.writeTo(bout, consumeRequestMessage);
+					}
+					bout.flush();
+					bout.close();
+					out.write(bout.toByteArray());
+					this.log.debug("["+this.idMessaggio+"] Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString());
+					bout.close();
+				}else{
+					if(this.sbustamentoSoap){
+						if(this.debug)
+							this.log.debug("["+this.idMessaggio+"] Sbustamento...");
+						SoapUtils.sbustamentoMessaggio(this.requestMsg,out);
+					}else{
+						this.requestMsg.writeTo(out, consumeRequestMessage);
+					}
+				}
+				out.flush();
+				out.close();
+			}
+			
 
 			// Analisi MimeType e ContentLocation della risposta
 			if(this.debug)
@@ -702,12 +797,17 @@ public class ConnettoreHTTP extends ConnettoreBase {
 
 			// Ricezione Risposta
 			boolean acceptOnlyReturnCode_202_200 = true;
-			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				acceptOnlyReturnCode_202_200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi();
+			if(this.sbustamentoApi){
+				acceptOnlyReturnCode_202_200 = false;
 			}
 			else{
-				// InoltroBuste e InoltroRisposte
-				acceptOnlyReturnCode_202_200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_inoltroBuste();
+				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+					acceptOnlyReturnCode_202_200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi();
+				}
+				else{
+					// InoltroBuste e InoltroRisposte
+					acceptOnlyReturnCode_202_200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_inoltroBuste();
+				}
 			}
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] Analisi risposta input stream e risultato http...");
@@ -818,90 +918,35 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			
 			String tipoLetturaRisposta = null;
 			
-			/*
-			 * Se il messaggio e' un html di errore me ne esco 
-			 */			
-			if(this.codice>=400 && tipoRisposta!=null && tipoRisposta.contains("text/html")){
-				tipoLetturaRisposta = "("+this.codice+") " + resultHTTPMessage ;
-				
-				// Registro HTML ricevuto.
-				String htmlRicevuto = null;
-				if(this.is!=null){
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-					int readByte = 0;
-					while((readByte = this.is.read(readB))!= -1){
-						bout.write(readB,0,readByte);
-					}
-					this.is.close();
-					bout.flush();
-					bout.close();
-					htmlRicevuto = bout.toString();
-				}
-				
-				if(htmlRicevuto!=null && !"".equals(htmlRicevuto))
-					this.errore = tipoLetturaRisposta +"\nhttp response: "+htmlRicevuto;
-				else
-					this.errore = tipoLetturaRisposta;
-				return false;
-			}
 			
-			if(this.is!=null){
+			if(this.sbustamentoApi){
 				
-				SOAPVersion soapVersionRisposta = null;
-				//Exception soapVersionUnknown = null;
-				IProtocolConfiguration protocolConfiguration = this.getProtocolFactory().createProtocolConfiguration();
-				if(tipoRisposta!=null){
-					try{
-						soapVersionRisposta = ServletUtils.getVersioneSoap(this.log,tipoRisposta);
-					}catch(Exception e){
-						this.log.error("SOAPVersion response unknown: "+e.getMessage(),e);
-						//soapVersionUnknown = e;
-					}
-				}
 				
-				if(tipoRisposta==null || 
-						soapVersionRisposta==null ||
-						!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap()) || 
-						!ServletUtils.isContentTypeSupported(this.requestMsg.getVersioneSoap(), this.getProtocolFactory())){
+				if(this.debug)
+					this.log.debug("["+this.idMessaggio+"] gestione API in corso ...");
+				
+				imbustamentoAPIengine = new Imbustamento(this.requestMsg.getVersioneSoap(), notifierInputStreamParams, this.is, MethodType.toEnumConstant(this.httpMethod), 
+						tipoRisposta, this.propertiesTrasportoRisposta, this.codice, resultHTTPMessage, this.openspcoopProperties.getAPIServicesWhiteListResponseHeaderList());
+				
+				this.responseMsg = imbustamentoAPIengine.getMessage();
+				
+			}
+			else{
+			
+				// gestione ordinaria via WS/SOAP
+			
+				if(this.debug)
+					this.log.debug("["+this.idMessaggio+"] gestione WS/SOAP in corso ...");
+				
+				/*
+				 * Se il messaggio e' un html di errore me ne esco 
+				 */			
+				if(this.codice>=400 && tipoRisposta!=null && tipoRisposta.contains("text/html")){
+					tipoLetturaRisposta = "("+this.codice+") " + resultHTTPMessage ;
 					
-					boolean checkContentType = true;
-					if(this.idModulo!=null){
-						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-							checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneBuste();
-						}else{
-							checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi();
-						}
-					}
-					String msgErrore = null;
-					if(tipoRisposta==null){
-						msgErrore = "Header Content-Type non definito nell'http reply";
-					}
-					else if(soapVersionRisposta==null){
-						msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
-								+") non rientra tra quelli conosciuti ("+SOAPVersion.getKnownContentTypesAsString()+")";
-					}
-					else if(!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap())){
-						msgErrore = "Header Content-Type definito nell'http reply ("+tipoRisposta+") indica una versione "+soapVersionRisposta.getSoapVersionAsString()
-								+" non compatibile con la versione "+this.requestMsg.getVersioneSoap().getSoapVersionAsString()+" del messaggio di richiesta";
-					}
-					else{
-						msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
-								+") non rientra tra quelli supportati dal protocollo ("+SOAPVersion.getKnownContentTypesAsString(protocolConfiguration.isSupportoSOAP11(), protocolConfiguration.isSupportoSOAP12())+")";
-					}
-					
-					if(checkContentType){
-						throw new Exception(msgErrore);
-					}else{
-						this.log.warn(msgErrore+"; viene utilizzato forzatamente il tipo: "+SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments());
-						tipoRisposta = SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments();
-					}
-				}
-				
-
-				try{
-					if(this.debug){
-						// Registro Debug.
+					// Registro HTML ricevuto.
+					String htmlRicevuto = null;
+					if(this.is!=null){
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
 						int readByte = 0;
@@ -911,176 +956,253 @@ public class ConnettoreHTTP extends ConnettoreBase {
 						this.is.close();
 						bout.flush();
 						bout.close();
-						this.log.debug("["+this.idMessaggio+"] Messaggio ricevuto (ContentType:"+tipoRisposta+") :\n"+bout.toString());
-						// Creo nuovo inputStream
-						this.is = new ByteArrayInputStream(bout.toByteArray());
+						htmlRicevuto = bout.toString();
 					}
 					
-					if(this.sbustamentoSoap==false){
-						if(this.debug)
-							this.log.debug("["+this.idMessaggio+"] Ricostruzione normale...");
-						
-						// Ricostruzione messaggio soap: secondo parametro a false, indica che il messaggio e' gia un SOAPMessage
-						tipoLetturaRisposta = "Costruzione messaggio SOAP";
-						
-						
-						
-						if(contentLenght>0){
-							this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.is,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+					if(htmlRicevuto!=null && !"".equals(htmlRicevuto))
+						this.errore = tipoLetturaRisposta +"\nhttp response: "+htmlRicevuto;
+					else
+						this.errore = tipoLetturaRisposta;
+					return false;
+				}
+				
+				if(this.is!=null){
+					
+					SOAPVersion soapVersionRisposta = null;
+					//Exception soapVersionUnknown = null;
+					IProtocolConfiguration protocolConfiguration = this.getProtocolFactory().createProtocolConfiguration();
+					if(tipoRisposta!=null){
+						try{
+							soapVersionRisposta = ServletUtils.getVersioneSoap(this.log,tipoRisposta);
+						}catch(Exception e){
+							this.log.error("SOAPVersion response unknown: "+e.getMessage(),e);
+							//soapVersionUnknown = e;
 						}
-						else if(contentLenght==0){
-							this.responseMsg = null;
+					}
+					
+					if(tipoRisposta==null || 
+							soapVersionRisposta==null ||
+							!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap()) || 
+							!ServletUtils.isContentTypeSupported(this.requestMsg.getVersioneSoap(), this.getProtocolFactory())){
+						
+						boolean checkContentType = true;
+						if(this.idModulo!=null){
+							if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+								checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneBuste();
+							}else{
+								checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi();
+							}
+						}
+						String msgErrore = null;
+						if(tipoRisposta==null){
+							msgErrore = "Header Content-Type non definito nell'http reply";
+						}
+						else if(soapVersionRisposta==null){
+							msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
+									+") non rientra tra quelli conosciuti ("+SOAPVersion.getKnownContentTypesAsString()+")";
+						}
+						else if(!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap())){
+							msgErrore = "Header Content-Type definito nell'http reply ("+tipoRisposta+") indica una versione "+soapVersionRisposta.getSoapVersionAsString()
+									+" non compatibile con la versione "+this.requestMsg.getVersioneSoap().getSoapVersionAsString()+" del messaggio di richiesta";
 						}
 						else{
-							//non ho trovato ContentLength. Devo scoprire se c'e' un payload. Costruisco il messaggio e poi provo ad
-							//accedere all'envelope
-							try{
-								byte [] buffer = new byte[1];
-								int letti = this.is.read(buffer);
-								if(letti==1){
-									// Per evitare il propblema del 'Premature end of file' che causa una system.out sul server.log di jboss
-									SequenceInputStream sInput = new SequenceInputStream(new ByteArrayInputStream(buffer), this.is);
-									this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(sInput,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
-								}
-							}catch(Exception e){
-								this.responseMsg=null;
-								// L'errore 'premature end of file' consiste solo nel fatto che una risposta non e' stata ricevuta.
-								boolean result2XX = (this.codice>=200 && this.codice<=299);
-								boolean premature =  Utilities.existsInnerMessageException(e, "Premature end of file", true) && result2XX;
-								// Se non ho un premature, ed un errore di lettura in 200, allora devo segnalare l'errore, altrimenti comunque 
-								// il msg ritornato e' null e nel codiceStato vi e' l'errore.
-								
-								if( premature == false ){
-									this.eccezioneProcessamento = e;
-									this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
-									this.log.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
-									if(result2XX){
-										return false;
+							msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
+									+") non rientra tra quelli supportati dal protocollo ("+SOAPVersion.getKnownContentTypesAsString(protocolConfiguration.isSupportoSOAP11(), protocolConfiguration.isSupportoSOAP12())+")";
+						}
+						
+						if(checkContentType){
+							throw new Exception(msgErrore);
+						}else{
+							this.log.warn(msgErrore+"; viene utilizzato forzatamente il tipo: "+SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments());
+							tipoRisposta = SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments();
+						}
+					}
+					
+	
+					try{
+						if(this.debug){
+							// Registro Debug.
+							ByteArrayOutputStream bout = new ByteArrayOutputStream();
+							byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+							int readByte = 0;
+							while((readByte = this.is.read(readB))!= -1){
+								bout.write(readB,0,readByte);
+							}
+							this.is.close();
+							bout.flush();
+							bout.close();
+							this.log.debug("["+this.idMessaggio+"] Messaggio ricevuto (ContentType:"+tipoRisposta+") :\n"+bout.toString());
+							// Creo nuovo inputStream
+							this.is = new ByteArrayInputStream(bout.toByteArray());
+						}
+						
+						if(this.sbustamentoSoap==false){
+							if(this.debug)
+								this.log.debug("["+this.idMessaggio+"] Ricostruzione normale...");
+							
+							// Ricostruzione messaggio soap: secondo parametro a false, indica che il messaggio e' gia un SOAPMessage
+							tipoLetturaRisposta = "Costruzione messaggio SOAP";
+							
+							
+							
+							if(contentLenght>0){
+								this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.is,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+							}
+							else if(contentLenght==0){
+								this.responseMsg = null;
+							}
+							else{
+								//non ho trovato ContentLength. Devo scoprire se c'e' un payload. Costruisco il messaggio e poi provo ad
+								//accedere all'envelope
+								try{
+									byte [] buffer = new byte[1];
+									int letti = this.is.read(buffer);
+									if(letti==1){
+										// Per evitare il propblema del 'Premature end of file' che causa una system.out sul server.log di jboss
+										SequenceInputStream sInput = new SequenceInputStream(new ByteArrayInputStream(buffer), this.is);
+										this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(sInput,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+									}
+								}catch(Exception e){
+									this.responseMsg=null;
+									// L'errore 'premature end of file' consiste solo nel fatto che una risposta non e' stata ricevuta.
+									boolean result2XX = (this.codice>=200 && this.codice<=299);
+									boolean premature =  Utilities.existsInnerMessageException(e, "Premature end of file", true) && result2XX;
+									// Se non ho un premature, ed un errore di lettura in 200, allora devo segnalare l'errore, altrimenti comunque 
+									// il msg ritornato e' null e nel codiceStato vi e' l'errore.
+									
+									if( premature == false ){
+										this.eccezioneProcessamento = e;
+										this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
+										this.log.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
+										if(result2XX){
+											return false;
+										}
 									}
 								}
 							}
-						}
-						
-						// Check eventuale 'xml instruction presente nel body' 
-						/*try{
-							this.checkXMLInstructionTargetMachine();
-						}catch(Exception e){
-							this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta, check xml instruction): " + e.getMessage();
-							this.log.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta, check xml instruction)",e);
-							return false;
-						}*/
-					}else{
-						CountingInputStream cis = null;
-						try{
-							cis = new CountingInputStream(this.is);
 							
-							if(imbustamentoConAttachment){
-								if(this.debug)
-									this.log.debug("["+this.idMessaggio+"] Imbustamento con attachments...");
+							// Check eventuale 'xml instruction presente nel body' 
+							/*try{
+								this.checkXMLInstructionTargetMachine();
+							}catch(Exception e){
+								this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta, check xml instruction): " + e.getMessage();
+								this.log.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta, check xml instruction)",e);
+								return false;
+							}*/
+						}else{
+							CountingInputStream cis = null;
+							try{
+								cis = new CountingInputStream(this.is);
 								
-								// Imbustamento per Tunnel OpenSPCoop
-								tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+mimeTypeAttachment;
-								try{
-									this.responseMsg = SoapUtils.
-									imbustamentoMessaggioConAttachment(this.requestMsg.getVersioneSoap(), cis,mimeTypeAttachment,
-											MailcapActivationReader.existsDataContentHandler(mimeTypeAttachment),tipoRisposta, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
-								}catch(UtilsException e){
-									if(e.getMessage()!=null && e.getMessage().equals("Contenuto da imbustare non presente")){
-										// L'errore consiste solo nel fatto che una risposta non e' stata ricevuta.
-									}else{
-										throw e;
-									}
-								}
-							}else{
-								if(tipoRisposta!=null && tipoRisposta.contains("multipart/related")){
-									
+								if(imbustamentoConAttachment){
 									if(this.debug)
-										this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio multipart/related...");
+										this.log.debug("["+this.idMessaggio+"] Imbustamento con attachments...");
 									
-									// Imbustamento di un messaggio multipart/related
-									tipoLetturaRisposta = "Imbustamento messaggio multipart/related in un SOAP WithAttachments";
-									java.io.ByteArrayOutputStream byteBuffer = new java.io.ByteArrayOutputStream();
-									byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-									int readByte = 0;
-									while((readByte = cis.read(readB))!= -1){
-										byteBuffer.write(readB,0,readByte);
-									}
-									if(byteBuffer.size()>0){
-										this.responseMsg = SoapUtils.imbustamentoMessaggio(notifierInputStreamParams,byteBuffer.toByteArray(),this.openspcoopProperties.isDeleteInstructionTargetMachineXml(), this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+									// Imbustamento per Tunnel OpenSPCoop
+									tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+mimeTypeAttachment;
+									try{
+										this.responseMsg = SoapUtils.
+										imbustamentoMessaggioConAttachment(this.requestMsg.getVersioneSoap(), cis,mimeTypeAttachment,
+												MailcapActivationReader.existsDataContentHandler(mimeTypeAttachment),tipoRisposta, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+									}catch(UtilsException e){
+										if(e.getMessage()!=null && e.getMessage().equals("Contenuto da imbustare non presente")){
+											// L'errore consiste solo nel fatto che una risposta non e' stata ricevuta.
+										}else{
+											throw e;
+										}
 									}
 								}else{
-									
-									if(this.debug)
-										this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio...");
-									// Imbustamento di un messaggio normale: secondo parametro a true, indica che il messaggio deve essere imbustato in un msg SOAP
-									tipoLetturaRisposta = "Imbustamento messaggio xml in un messaggio SOAP";
-									this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(cis,notifierInputStreamParams,true,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+									if(tipoRisposta!=null && tipoRisposta.contains("multipart/related")){
+										
+										if(this.debug)
+											this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio multipart/related...");
+										
+										// Imbustamento di un messaggio multipart/related
+										tipoLetturaRisposta = "Imbustamento messaggio multipart/related in un SOAP WithAttachments";
+										java.io.ByteArrayOutputStream byteBuffer = new java.io.ByteArrayOutputStream();
+										byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+										int readByte = 0;
+										while((readByte = cis.read(readB))!= -1){
+											byteBuffer.write(readB,0,readByte);
+										}
+										if(byteBuffer.size()>0){
+											this.responseMsg = SoapUtils.imbustamentoMessaggio(notifierInputStreamParams,byteBuffer.toByteArray(),this.openspcoopProperties.isDeleteInstructionTargetMachineXml(), this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+										}
+									}else{
+										
+										if(this.debug)
+											this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio...");
+										// Imbustamento di un messaggio normale: secondo parametro a true, indica che il messaggio deve essere imbustato in un msg SOAP
+										tipoLetturaRisposta = "Imbustamento messaggio xml in un messaggio SOAP";
+										this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(cis,notifierInputStreamParams,true,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+									}
+		
 								}
-	
+								
+								if(this.responseMsg!=null){
+									this.responseMsg.updateIncomingMessageContentLength(cis.getByteCount());
+								}
+								
+							}finally{
+								try{
+									if(cis!=null){
+										cis.close();
+									}
+								}catch(Exception eClose){}
 							}
 							
-							if(this.responseMsg!=null){
-								this.responseMsg.updateIncomingMessageContentLength(cis.getByteCount());
-							}
-							
-						}finally{
-							try{
-								if(cis!=null){
-									cis.close();
-								}
-							}catch(Exception eClose){}
 						}
-						
+						try{
+							if(this.responseMsg!=null){
+								this.responseMsg.getSOAPPart().getEnvelope();
+							}
+						}
+						catch(Exception e){
+							this.responseMsg=null;
+							// L'errore 'premature end of file' consiste solo nel fatto che una risposta non e' stata ricevuta.
+							boolean result2XX = (this.codice>=200 && this.codice<=299);
+							boolean premature =  Utilities.existsInnerMessageException(e, "Premature end of file", true) && result2XX;
+							// Se non ho un premature, ed un errore di lettura in 200, allora devo segnalare l'errore, altrimenti comunque 
+							// il msg ritornato e' null e nel codiceStato vi e' l'errore.
+							
+							if( premature == false ){
+								this.eccezioneProcessamento = e;
+								this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
+								this.log.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
+								if(result2XX){
+									return false;
+								}
+							}
+						}
+					}catch(Exception e){
+						this.eccezioneProcessamento = e;
+						this.errore = "Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+"): " + e.getMessage();
+						this.log.error("Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+")",e);
+						return false;
 					}
+	
+					
+	
+					// save Msg
+					if(this.debug)
+						this.log.debug("["+this.idMessaggio+"] save messaggio...");
 					try{
 						if(this.responseMsg!=null){
-							this.responseMsg.getSOAPPart().getEnvelope();
-						}
-					}
-					catch(Exception e){
-						this.responseMsg=null;
-						// L'errore 'premature end of file' consiste solo nel fatto che una risposta non e' stata ricevuta.
-						boolean result2XX = (this.codice>=200 && this.codice<=299);
-						boolean premature =  Utilities.existsInnerMessageException(e, "Premature end of file", true) && result2XX;
-						// Se non ho un premature, ed un errore di lettura in 200, allora devo segnalare l'errore, altrimenti comunque 
-						// il msg ritornato e' null e nel codiceStato vi e' l'errore.
-						
-						if( premature == false ){
-							this.eccezioneProcessamento = e;
-							this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
-							this.log.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
-							if(result2XX){
-								return false;
+							// save changes.
+							// N.B. il countAttachments serve per il msg con attachments come saveMessage!
+							if(this.responseMsg.countAttachments()==0){
+								this.responseMsg.getSOAPPart();
 							}
 						}
+					}catch(Exception e){
+						this.eccezioneProcessamento = e;
+						this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage();
+						this.log.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage());
+						return false;
 					}
-				}catch(Exception e){
-					this.eccezioneProcessamento = e;
-					this.errore = "Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+"): " + e.getMessage();
-					this.log.error("Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+")",e);
-					return false;
+	
 				}
-
 				
-
-				// save Msg
-				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] save messaggio...");
-				try{
-					if(this.responseMsg!=null){
-						// save changes.
-						// N.B. il countAttachments serve per il msg con attachments come saveMessage!
-						if(this.responseMsg.countAttachments()==0){
-							this.responseMsg.getSOAPPart();
-						}
-					}
-				}catch(Exception e){
-					this.eccezioneProcessamento = e;
-					this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage();
-					this.log.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage());
-					return false;
-				}
-
 			}
 
 			if(this.debug)

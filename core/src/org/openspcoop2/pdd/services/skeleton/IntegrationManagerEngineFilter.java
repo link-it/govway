@@ -10,8 +10,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
+import org.openspcoop2.protocol.engine.constants.IDService;
 
 public class IntegrationManagerEngineFilter implements Filter {
 
@@ -26,7 +26,7 @@ public class IntegrationManagerEngineFilter implements Filter {
 
 		// L'invocazione dell'I.M. deve avvenire via OpenSPCoopServlet dispatcher
 		HttpServletResponse httpRes = (HttpServletResponse) response;
-		httpRes.sendError(404, ConnectorUtils.generateError404Message(ConnectorCostanti.INTEGRATION_MANAGER_ENGINE_FILTER));
+		httpRes.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeEngineFilter(IDService.INTEGRATION_MANAGER_SOAP)));
 
 	}
 

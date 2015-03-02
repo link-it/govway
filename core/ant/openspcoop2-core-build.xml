@@ -54,7 +54,7 @@
 				</antcall>
 						
 				<!-- org.openspcoop.2.core.config -->
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.config,org.openspcoop2.core.config.constants,org.openspcoop2.core.config.model" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.config,org.openspcoop2.core.config.constants,org.openspcoop2.core.config.model,org.openspcoop2.core.config.utils,org.openspcoop2.core.config.utils.serializer" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/config"/>
@@ -70,7 +70,7 @@
 				</antcall>
 				
 				<!-- org.openspcoop.2.core.registry -->	
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry,org.openspcoop2.core.registry.constants,org.openspcoop2.core.registry.model" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry,org.openspcoop2.core.registry.constants,org.openspcoop2.core.registry.model,org.openspcoop2.core.registry.utils,org.openspcoop2.core.registry.utisl.serializer" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/registry"/>
@@ -150,7 +150,7 @@
 				</antcall>
 				
 				<!-- org.openspcoop.2.core.tracciamento -->	
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.tracciamento,org.openspcoop2.core.tracciamento.constants,org.openspcoop2.core.tracciamento.utils" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.tracciamento,org.openspcoop2.core.tracciamento.constants,org.openspcoop2.core.tracciamento.models,org.openspcoop2.core.tracciamento.utils,org.openspcoop2.core.tracciamento.utils.serializer" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/tracciamento"/>
@@ -165,7 +165,7 @@
 				</antcall>
 				
 				<!-- org.openspcoop.2.core.diagnostica -->	
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica,org.openspcoop2.core.diagnostica.constants,org.openspcoop2.core.diagnostica.utils" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica,org.openspcoop2.core.diagnostica.constants,org.openspcoop2.core.diagnostica.models,org.openspcoop2.core.diagnostica.utils,org.openspcoop2.core.diagnostica.utils.serializer" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/diagnostica"/>
@@ -174,6 +174,21 @@
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.diagnostica"/>
+					<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+					<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.core.api -->	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.api,org.openspcoop2.core.api.constants,org.openspcoop2.core.api.models,org.openspcoop2.core.api.utils,org.openspcoop2.core.api.utils.serializer" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/api"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="core-api"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.api"/>
 					<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
 					<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>

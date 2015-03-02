@@ -31,10 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
@@ -48,20 +50,55 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 @SuppressWarnings("serial")
 public class OpenSPCoop2Servlet extends HttpServlet {
 
-	@Override public void doPost(HttpServletRequest req, HttpServletResponse res)
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, res, true);
+		dispatch(req, resp, MethodType.DELETE);
 	}
-	
-	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, res, false);
+		dispatch(req, resp, MethodType.GET);
 	}
+
+	@Override
+	protected void doHead(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.HEAD);
+	}
+
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.OPTIONS);
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.POST);
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.PUT);
+	}
+
+	@Override
+	protected void doTrace(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		dispatch(req, resp, MethodType.TRACE);
+	}
+
 	
-	private void dispatch(HttpServletRequest req, HttpServletResponse res,boolean doPost) throws ServletException, IOException {
+	private void dispatch(HttpServletRequest req, HttpServletResponse res,MethodType method) throws ServletException, IOException {
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		Logger logOpenSPCoop2Servlet = Logger.getLogger("openspcoop2.startup");
+		
+		boolean doPost = MethodType.POST.equals(method);
 		
 		OpenSPCoop2Properties op2Properties = null;
 		try {
@@ -85,7 +122,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				if(doPost)
 					r.doPost(req, res);
 				else
-					r.doGet(req, res);
+					r.engine(req, res, method);
 			}
 			else if(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION)){
 				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
@@ -93,7 +130,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				if(doPost)
 					r.doPost(req, res);
 				else
-					r.doGet(req, res);
+					r.engine(req, res, method);
 			}
 			else if(function.equals(URLProtocolContext.PA_FUNCTION)){
 				RicezioneBusteSOAPConnector r = new RicezioneBusteSOAPConnector();
@@ -101,24 +138,26 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				if(doPost)
 					r.doPost(req, res);
 				else
-					r.doGet(req, res);
+					r.engine(req, res, method);
 			}
 			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION)){
 				
 				boolean wsdl = false;
-				Enumeration<?> parameters = req.getParameterNames();
-				while(parameters.hasMoreElements()){
-					String key = (String) parameters.nextElement();
-					String value = req.getParameter(key);
-					if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
-						// richiesta del wsdl
-						if(op2Properties!=null && op2Properties.isGenerazioneWsdlIntegrationManagerEnabled()==false){
-							res.sendError(404, ConnectorUtils.generateError404Message(ConnectorCostanti.INTEGRATION_MANAGER_WSDL));
-							return;
-						}
-						else{
-							wsdl = true;
-							break;
+				if(MethodType.GET.equals(method)){
+					Enumeration<?> parameters = req.getParameterNames();
+					while(parameters.hasMoreElements()){
+						String key = (String) parameters.nextElement();
+						String value = req.getParameter(key);
+						if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
+							// richiesta del wsdl
+							if(op2Properties!=null && op2Properties.isGenerazioneWsdlIntegrationManagerEnabled()==false){
+								res.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(IDService.INTEGRATION_MANAGER_SOAP)));
+								return;
+							}
+							else{
+								wsdl = true;
+								break;
+							}
 						}
 					}
 				}
@@ -126,19 +165,19 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				if(!doPost && !wsdl){
 					// messaggio di errore
 					boolean errore404 = false;
-					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpGetIntegrationManagerEnabled()){
+					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled()){
 						errore404 = true;
 					}
 					
 					if(errore404){
-						res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.INTEGRATION_MANAGER_HTTP_GET));
+						res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeHttpMethodNotSupported(IDService.INTEGRATION_MANAGER_SOAP, method)));
 						return;
 					}
 					else{
 					
 						res.setStatus(500);
 						
-						res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, ConnectorCostanti.METHOD_HTTP_GET_NOT_SUPPORTED, false, true).getBytes());
+						ConnectorUtils.generateErrorMessage(IDService.INTEGRATION_MANAGER_SOAP, method, req, res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
 								
 						try{
 							res.getOutputStream().flush();
@@ -161,15 +200,65 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			else if(function.equals(URLProtocolContext.CheckPdD_FUNCTION)){
 				
-				// Dispatching al servizio di IntegrationManager implementato tramite CXF
-				String forwardUrl = "/"+URLProtocolContext.CheckPdD_FUNCTION;
-				if(protocolContext.getFunctionParameters()!=null){
-					forwardUrl = forwardUrl+"/"+protocolContext.getFunctionParameters();
+				if(MethodType.GET.equals(method)==false){
+					// messaggio di errore
+					boolean errore404 = false;
+					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled()){
+						errore404 = true;
+					}
+					
+					if(errore404){
+						res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeHttpMethodNotSupported(IDService.CHECK_PDD, method)));
+						return;
+					}
+					else{
+						
+						res.setStatus(500);
+						
+						ConnectorUtils.generateErrorMessage(IDService.CHECK_PDD,method,req,res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
+								
+						try{
+							res.getOutputStream().flush();
+						}catch(Exception eClose){}
+						try{
+							res.getOutputStream().close();
+						}catch(Exception eClose){}
+						
+						return;
+					}
 				}
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolContext.getProtocol());
-				RequestDispatcher dispatcher = req.getRequestDispatcher(forwardUrl);
-				dispatcher.forward(req, res);
 				
+				// Dispatching al servizio 
+				CheckStatoPdD checkStatoPdD = new CheckStatoPdD();
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolContext.getProtocol());
+				checkStatoPdD.doGet(req, res);
+				
+			}
+			else if(function.equals(URLProtocolContext.API_ENGINE+"/"+URLProtocolContext.API_FUNCTION_PD)){
+				if(op2Properties.isAPIServicesEnabled()==false){
+					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeFunctionUnsupported(IDService.PORTA_DELEGATA_API)));
+					return;
+				}
+				RicezioneContenutiApplicativiAPIConnector r = new RicezioneContenutiApplicativiAPIConnector();
+				r.init();
+				r.engine(req, res);
+			}
+			else if(function.equals(URLProtocolContext.API_ENGINE+"/"+URLProtocolContext.API_FUNCTION_PA)){
+				if(op2Properties.isAPIServicesEnabled()==false){
+					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeFunctionUnsupported(IDService.PORTA_APPLICATIVA_API)));
+					return;
+				}
+				RicezioneBusteAPIConnector r = new RicezioneBusteAPIConnector();
+				r.init();
+				r.engine(req, res);
+			}
+			else if(function.equals(URLProtocolContext.API_ENGINE+"/"+URLProtocolContext.API_FUNCTION_MessageBox)){
+				if(op2Properties.isAPIServicesEnabled()==false){
+					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeFunctionUnsupported(IDService.INTEGRATION_MANAGER_API)));
+					return;
+				}
+				// TODO
+				throw new Exception("Service ["+function+"] not implemented (TODO)");
 			}
 			else{
 				throw new Exception("Service ["+function+"] not supported");
@@ -198,11 +287,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			
 			// log su file core
+			StringBuffer bfLogError = new StringBuffer();
+			ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,bfLogError, e.getMessage(), true, false);
 			if(logCore!=null){
-				logCore.error(ConnectorUtils.generateErrorMessage(req, e.getMessage(), true, false));
+				logCore.error(bfLogError.toString());
 			}
 			else{
-				logOpenSPCoop2Servlet.error(ConnectorUtils.generateErrorMessage(req, e.getMessage(), true, false));
+				logOpenSPCoop2Servlet.error(bfLogError.toString());
 			}
 			
 			// messaggio di errore
@@ -212,12 +303,12 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			
 			if(errore404){
-				res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.PROTOCOL_NOT_SUPPORTED));
+				res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeProtocolUnsupported(IDService.OPENSPCOOP2_SERVLET)));
 			}
 			else{
 				res.setStatus(500);
 
-				res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, e.getMessage(), true, true).getBytes());
+				ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,res, e.getMessage(), true, true);
 				
 				try{
 					res.getOutputStream().flush();

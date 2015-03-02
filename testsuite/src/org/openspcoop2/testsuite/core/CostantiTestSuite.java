@@ -67,6 +67,11 @@ public class CostantiTestSuite {
 	/** Proprieta' del caricamento MAILCAP */
 	public static final String PROPERTY_MAILCAP = "org.openspcoop2.testsuite.server.mailcap.load";
 	
+	/** Nome della Servlet Invocata */
+	public static final String PROPERTY_HEADER_RISPOSTA_SERVLET_NAME="org.openspcoop2.testsuite.server.risposta.headerServletName";
+	/** Header http generico della risposta */
+	public static final String PROPERTY_HEADER_RISPOSTA_GENERICO="org.openspcoop2.testsuite.server.risposta.header.";
+	
 	/** Nome della Proprieta' che contiene l'id della richiesta in corso */
 	public static final String PROPERTY_ID_MESSAGGIO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.id";
 	/** Nome della Proprieta' che contiene il riferimento asincrono */

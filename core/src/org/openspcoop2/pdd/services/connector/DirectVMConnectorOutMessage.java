@@ -99,13 +99,14 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 		this.type = type;
 	}
 	
-	int status = 200;
-	public int getStatus() {
-		return this.status;
-	}
+	private int status = 200;
 	@Override
 	public void setStatus(int status) throws ConnectorException{
 		this.status = status;
+	}
+	@Override
+	public int getResponseStatus() throws ConnectorException{
+		return this.status;
 	}
 	
 	@Override

@@ -35,6 +35,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPEnvelope;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -879,6 +880,7 @@ public class RicezioneContenutiApplicativi {
 		// Raccolgo dati
 		IDSoggetto soggettoFruitore = identificazione.getSoggetto();
 		PortaDelegata pd = identificazione.getPd();
+		requestMessage.addContextProperty(CostantiApi.NOME_PORTA, pd.getNome());
 		identitaPdD = soggettoFruitore; // la PdD Assume l'identita del soggetto
 		this.msgContext.getProtocol().setDominio(identitaPdD);
 		this.msgContext.setIdentitaPdD(identitaPdD);

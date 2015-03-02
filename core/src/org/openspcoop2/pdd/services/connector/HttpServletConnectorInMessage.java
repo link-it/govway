@@ -34,6 +34,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.ServletUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.Utilities;
@@ -50,15 +51,16 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 
 	public static OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
 	
-	private HttpServletRequest req;
-	private OpenSPCoop2Properties openspcoopProperties;
-	private OpenSPCoop2Message message;
-	private InputStream is;
-	private Logger log;
-	private String idModulo;
-	private Identity identity;
+	protected HttpServletRequest req;
+	protected OpenSPCoop2Properties openspcoopProperties;
+	protected OpenSPCoop2Message message;
+	protected InputStream is;
+	protected Logger log;
+	protected String idModulo;
+	private IDService idModuloAsIDService;
+	protected Identity identity;
 	
-	public HttpServletConnectorInMessage(HttpServletRequest req,String idModulo) throws ConnectorException{
+	public HttpServletConnectorInMessage(HttpServletRequest req,IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
 			this.req = req;
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -68,6 +70,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			if(this.log==null)
 				this.log = Logger.getLogger(HttpServletConnectorInMessage.class);
 			
+			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
 			
 		}catch(Exception e){
@@ -75,6 +78,11 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}
 	}
 
+	@Override
+	public IDService getIdModuloAsIDService(){
+		return this.idModuloAsIDService;
+	}
+	
 	@Override
 	public String getIdModulo(){
 		return this.idModulo;

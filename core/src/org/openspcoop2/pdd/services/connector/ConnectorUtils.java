@@ -1,29 +1,122 @@
 package org.openspcoop2.pdd.services.connector;
 
+import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.resources.MapReader;
 
 public class ConnectorUtils {
 
+	public static String getMessageHttpMethodNotSupported(MethodType method){
+		return ConnectorCostanti.MESSAGE_METHOD_HTTP_NOT_SUPPORTED.replace(ConnectorCostanti.KEYWORD_METHOD_HTTP, method.name());
+	}
+	
+	private static StringBuffer getPrefixCode(IDService idService) {
+		
+		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		if(log==null){
+			log = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
+		}
+		if(log==null){
+			log = Logger.getLogger(ConnectorUtils.class);
+		}
+		
+		StringBuffer bf = new StringBuffer();
+		try{
+			bf.append(idService.getCode()).append(ConnectorCostanti.SEPARATOR_CODE);
+		}catch(Exception e){
+			log.error(e.getMessage(),e);
+			bf = new StringBuffer();
+			bf.append(ConnectorCostanti.ID_ERRORE_GENERICO);
+		}
+		return bf;
+	}
+	
+	public static String getFullCodeProtocolUnsupported(IDService idService) {
+		StringBuffer bf = getPrefixCode(idService);
+		bf.append(ConnectorCostanti.CODE_PROTOCOL_NOT_SUPPORTED);
+		return bf.toString();
+	}
+	
+	public static String getFullCodeWsdlUnsupported(IDService idService) {
+		StringBuffer bf = getPrefixCode(idService);
+		bf.append(ConnectorCostanti.CODE_WSDL);
+		return bf.toString();
+	}
+	
+	public static String getFullCodeEngineFilter(IDService idService) {
+		StringBuffer bf = getPrefixCode(idService);
+		bf.append(ConnectorCostanti.CODE_ENGINE_FILTER);
+		return bf.toString();
+	}
+	
+	public static String getFullCodeFunctionUnsupported(IDService idService) {
+		StringBuffer bf = getPrefixCode(idService);
+		bf.append(ConnectorCostanti.CODE_FUNCTION_UNSUPPORTED);
+		return bf.toString();
+	}
+	
+	public static String getFullCodeHttpMethodNotSupported(IDService idService, MethodType method) {
+		StringBuffer bf = getPrefixCode(idService);
+		switch (method) {
+		case GET:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_GET_UNSUPPORTED);
+			break;
+		case POST:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_POST_UNSUPPORTED);
+			break;
+		case PUT:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_PUT_UNSUPPORTED);
+			break;
+		case HEAD:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_HEAD_UNSUPPORTED);
+			break;
+		case DELETE:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_DELETE_UNSUPPORTED);
+			break;
+		case OPTIONS:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_OPTIONS_UNSUPPORTED);
+			break;
+		case TRACE:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_TRACE_UNSUPPORTED);
+			break;
+		}
+		return bf.toString();
+	}
+	
+	
 	public static String generateError404Message(String code){
 		return "OpenSPCoop2-"+code;
 	}
 	
-	public static String generateErrorMessage(HttpServletRequest req, String msgErrore, boolean erroreGenerale, boolean htmlMessage){
+	public static void generateErrorMessage(IDService idService, MethodType httpMethod,
+			HttpServletRequest req, HttpServletResponse res, String msgErrore, boolean erroreGenerale, boolean htmlMessage) throws IOException{
+		generateErrorMessage(idService, httpMethod, req, res, msgErrore, erroreGenerale, htmlMessage, null);
+	}
+	public static void generateErrorMessage(IDService idService, MethodType httpMethod,
+			HttpServletRequest req, StringBuffer log, String msgErrore, boolean erroreGenerale, boolean htmlMessage) throws IOException{
+		generateErrorMessage(idService, httpMethod, req, null, msgErrore, erroreGenerale, htmlMessage, log);
+	}
+	private static void generateErrorMessage(IDService idService, MethodType httpMethod,
+			HttpServletRequest req, HttpServletResponse response, String msgErrore, boolean erroreGenerale, boolean htmlMessage, StringBuffer log) throws IOException{
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		
+		
 		
 		// versione
 		String versione = "Porta di Dominio "+CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
@@ -33,7 +126,22 @@ public class ConnectorUtils {
 		if(htmlMessage){
 			versione = StringEscapeUtils.escapeHtml(versione);
 		}
+
 		
+		// produzione Body
+		boolean doBody = !MethodType.HEAD.equals(httpMethod);
+		if(!doBody){
+			if(log!=null){
+				log.append(CostantiPdD.HEADER_HTTP_X_PDD).append("=").append(versione);
+				log.append(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS).append("=").append(msgErrore);
+			}
+			else{
+				response.setHeader(CostantiPdD.HEADER_HTTP_X_PDD, versione);
+				response.setHeader(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS, msgErrore);
+				response.setContentLength(0);
+			}
+			return;
+		}
 		
 		StringBuffer risposta = new StringBuffer();
 		risposta.append("<html>\n");
@@ -78,16 +186,17 @@ public class ConnectorUtils {
 		
 		
 		// other infos
-		if(!erroreGenerale && URLProtocolContext.PD_FUNCTION.equals(function)){
+		switch (idService) {
+		case PORTA_DELEGATA_SOAP:
 			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
-		}
-		else if(!erroreGenerale && URLProtocolContext.PA_FUNCTION.equals(function)){
+			break;
+		case PORTA_APPLICATIVA_SOAP:
 			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Applicative esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
-		}
-		else if(!erroreGenerale && URLProtocolContext.PDtoSOAP_FUNCTION.equals(function)){
+			break;
+		case PORTA_DELEGATA_XML_TO_SOAP:
 			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2, con messaggi xml non imbustati nel protocollo SOAP</i><br/><br/>\n");
-		}
-		else if(!erroreGenerale && URLProtocolContext.IntegrationManager_FUNCTION.equals(function)){
+			break;
+		case INTEGRATION_MANAGER_SOAP:
 			if(parameters==null){
 				risposta.append("<i>Servizio IntegrationManager</i><br/><br/>\n");
 			}
@@ -106,8 +215,20 @@ public class ConnectorUtils {
 			else{
 				risposta.append("<i>Servizio IntegrationManager della PdD OpenSPCoop v2</i><br/><br/>\n");
 			}
-		}
-		else{
+			break;
+		case CHECK_PDD:
+			risposta.append("<i>Servizio utilizzabile per comprendere lo stato di funzionamento della PdD OpenSPCoop v2</i><br/><br/>\n");
+			break;
+		case PORTA_DELEGATA_API:
+			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2, attraverso richieste HTTP</i><br/><br/>\n");
+			break;
+		case PORTA_APPLICATIVA_API:
+			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Applicative esposte dalla PdD OpenSPCoop v2, attraverso richieste HTTP</i><br/><br/>\n");
+			break;
+		case INTEGRATION_MANAGER_API:
+			risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dalla PdD OpenSPCoop v2, attraverso richieste HTTP</i><br/><br/>\n");
+			break;
+		default:
 			if(htmlMessage){
 				// use as
 				String useAs = "Use as http[s]://<server>"+ req.getContextPath()+"/<protocol-context>/<service>[/...]";
@@ -160,11 +281,17 @@ public class ConnectorUtils {
 				// web site
 				risposta.append("<i>Official website: http://www.openspcoop.org</i><br/><br/>\n");
 			}
+			break;
 		}
+
 			
 		risposta.append("</body>\n");
 		risposta.append("</html>\n");
-		return risposta.toString();
+		if(log!=null){
+			log.append(risposta.toString());
+		}else{
+			response.getOutputStream().write(risposta.toString().getBytes());
+		}
 	}
 	
 }

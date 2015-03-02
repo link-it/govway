@@ -25,6 +25,7 @@ package org.openspcoop2.testsuite.server;
 
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -59,11 +60,10 @@ public class ServerOpenSPCoop2EchoService extends ServerCore{
 	public void init() {}
 
 
-	@Override
-	public void doGet(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
-
+	public void engine(HttpServletRequest request,HttpServletResponse response, Properties pHeaderRisposta) throws IOException, ServletException{
+		
 		ServletTestService servlet = new ServletTestService(this.log);
-		servlet.doEngine(request, response, false);
+		servlet.doEngine(request, response, false, pHeaderRisposta);
 		
 		try{
 
@@ -115,6 +115,18 @@ public class ServerOpenSPCoop2EchoService extends ServerCore{
 		}
 	}
 
+	@Override
+	public void doGet(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
+		
+		Properties pHeaderRisposta = this.testsuiteProperties.getHeaderRisposta();
+		if(pHeaderRisposta==null){
+			pHeaderRisposta = new Properties();
+		}
+		pHeaderRisposta.put(this.testsuiteProperties.getHeaderRispostaServletName(), "EchoService");
+		this.engine(request, response, pHeaderRisposta);
+		
+	}
+	
 	@Override
 	public void doPost(HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
 		doGet(request,response);

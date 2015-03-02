@@ -55,6 +55,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorOutMessage;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -87,6 +88,7 @@ public class RicezioneContenutiApplicativiSOAP {
 
 		// IDModulo
 		String idModulo = req.getIdModulo();
+		IDService idModuloAsService = req.getIdModuloAsIDService();
 		
 		// Timestamp
 		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
@@ -169,7 +171,7 @@ public class RicezioneContenutiApplicativiSOAP {
 			proprietaErroreAppl.setDominio(openSPCoopProperties.getIdentificativoPortaDefault(protocol));
 			proprietaErroreAppl.setIdModulo(idModulo);
 			
-			context = new RicezioneContenutiApplicativiContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
+			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setIdModulo(idModulo);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -358,7 +360,7 @@ public class RicezioneContenutiApplicativiSOAP {
 						openSPCoopProperties.getIdentitaPortaDefault(protocol), null, null, idModulo, 
 						proprietaErroreAppl, versioneSoap, TipoPdD.DELEGATA, null);
 				
-				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
+				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setIdModulo(idModulo);
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -379,7 +381,7 @@ public class RicezioneContenutiApplicativiSOAP {
 			
 			if(context==null){
 				// Errore durante la generazione dell'id
-				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
+				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setIdModulo(idModulo);
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -608,6 +610,7 @@ public class RicezioneContenutiApplicativiSOAP {
 			
 		}finally{
 						
+			statoServletResponse = res.getResponseStatus(); // puo' essere "trasformato" da api engine
 			msgDiag.addKeyword(CostantiPdD.KEY_CODICE_CONSEGNA, ""+statoServletResponse);
 			msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, descrizioneSoapFault);
 			

@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.utils.id.UniqueIdentifierException;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -113,16 +114,25 @@ public abstract class AbstractContext implements java.io.Serializable{
 	private java.util.Properties headerIntegrazioneRisposta;
 
 	/** NotifierInputStreamParameters */
-	private NotifierInputStreamParams notifierInputStreamParams; 
+	private NotifierInputStreamParams notifierInputStreamParams;
+	
+	private IDService idModuloAsIDService;
 	
 	/** Costruttore */
-	public AbstractContext(Date dataIngressoRichiesta,IDSoggetto identitaPdD) throws UniqueIdentifierException{
+	public AbstractContext(IDService idModuloAsIDService, Date dataIngressoRichiesta,IDSoggetto identitaPdD) throws UniqueIdentifierException{
 		this.pddContext = new PdDContext();
 		this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,UniqueIdentifierManager.newUniqueIdentifier().getAsString());
 		this.dataIngressoRichiesta = dataIngressoRichiesta;
 		this.identitaPdD = identitaPdD;
+		this.idModuloAsIDService = idModuloAsIDService;
 	}
-	protected AbstractContext(){}
+	protected AbstractContext(IDService idModuloAsIDService){
+		this.idModuloAsIDService = idModuloAsIDService;
+	}
+	
+	public IDService getIdModuloAsIDService() {
+		return this.idModuloAsIDService;
+	}
 	
 	/**
 	 * ID Modulo Richiedente

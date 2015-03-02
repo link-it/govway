@@ -124,6 +124,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
@@ -943,7 +944,7 @@ public class RicezioneBuste {
 		Busta busta = null;
 		try {
 			is = new InformazioniServizioURLMapping(requestMessage,protocolFactory,urlProtocolContext,
-					registroServiziReader,logCore);
+					registroServiziReader,logCore, this.msgContext.getIdModuloAsIDService());
 			logCore.debug("InformazioniServizioTramiteURLMapping: "+is.toString());		
 		} catch (ProtocolException e) {
 			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
@@ -978,7 +979,39 @@ public class RicezioneBuste {
 						listaPA = configurazionePdDReader.getPorteApplicative(nomePA, tipoProprietario, nomeProprietario);
 					}
 				} catch (Exception e) {
-					throw new ProtocolException("Impossibile trovare la Porta Applicativa ["+nomePA+"] nella configurazione: "+e.getMessage(), e);
+					
+					// Nel caso di API provo ad utilizzare lo stesso algoritmo della PD scendendo a ritroso con gli '/'
+					if(IDService.PORTA_APPLICATIVA_API.equals(this.msgContext.getIdModuloAsIDService())){
+						if(nomePA.contains("/")){
+							String tmpNome = new String(nomePA);
+							while(tmpNome.contains("/")){
+								
+								int indexCut = -1;
+								for(int i=(tmpNome.length()-1); i>=0 ;i--){
+									if(tmpNome.charAt(i) == '/'){
+										indexCut = i;
+										break;
+									}
+								}
+								tmpNome = tmpNome.substring(0,indexCut);
+								
+								try{
+									listaPA = configurazionePdDReader.getPorteApplicative(tmpNome, tipoProprietario, nomeProprietario);
+								}catch(DriverConfigurazioneNotFound dNotFoud){}
+								if(listaPA!=null && listaPA.size()>0){
+									break;
+								}
+								
+							}
+						}
+					}
+					if(listaPA==null || listaPA.size()<=0){
+						String nomeError = nomePA;
+						if(is.getPaInfo().getAzione()!=null){
+							nomeError = nomeError +"[/"+is.getPaInfo().getAzione()+"]";
+						}
+						throw new ProtocolException("Impossibile trovare la Porta Applicativa ( "+nomeError+" ) nella configurazione: "+e.getMessage(), e);
+					}
 				}
 				
 				if(listaPA.size()>1){
@@ -988,7 +1021,11 @@ public class RicezioneBuste {
 					if(nomeProprietario==null){
 						nomeProprietario="*";
 					}
-					throw new ProtocolException("Identificate piu' di una Porta Applicativa con i seguenti filtri: nomePA["+nomePA+"] tipoSoggetto["+tipoProprietario+"] nomeSoggetto["+nomeProprietario+"]");
+					String nomeError = nomePA;
+					if(is.getPaInfo().getAzione()!=null){
+						nomeError = nomeError +"[/"+is.getPaInfo().getAzione()+"]";
+					}
+					throw new ProtocolException("Identificate piu' di una Porta Applicativa con i seguenti filtri: nomePA( "+nomeError+" ) tipoSoggetto( "+tipoProprietario+" ) nomeSoggetto( "+nomeProprietario+" )");
 				}
 				pa = listaPA.get(0);
 			}

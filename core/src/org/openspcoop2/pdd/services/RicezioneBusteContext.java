@@ -28,6 +28,7 @@ import java.util.Hashtable;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.utils.id.UniqueIdentifierException;
 
 /**
@@ -61,12 +62,14 @@ public class RicezioneBusteContext extends AbstractContext implements java.io.Se
 
 	
 	/** Costruttore */
-	public RicezioneBusteContext(Date dataIngressoRichiesta,IDSoggetto identitaPdD) throws UniqueIdentifierException{
-		super(dataIngressoRichiesta,identitaPdD);
+	public RicezioneBusteContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,IDSoggetto identitaPdD) throws UniqueIdentifierException{
+		super(idModuloAsIDService,dataIngressoRichiesta,identitaPdD);
 	}
-	private RicezioneBusteContext(){}
-	public static RicezioneBusteContext newRicezioneBusteContext(Date dataIngressoRichiesta,IDSoggetto identitaPdD){
-		RicezioneBusteContext context = new RicezioneBusteContext();
+	private RicezioneBusteContext(IDService idModuloAsIDService){
+		super(idModuloAsIDService);
+	}
+	public static RicezioneBusteContext newRicezioneBusteContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,IDSoggetto identitaPdD){
+		RicezioneBusteContext context = new RicezioneBusteContext(idModuloAsIDService);
 		context.dataIngressoRichiesta=dataIngressoRichiesta;
 		context.identitaPdD=identitaPdD;
 		context.pddContext = new PdDContext();

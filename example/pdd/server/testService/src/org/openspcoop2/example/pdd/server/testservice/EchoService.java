@@ -24,6 +24,7 @@
 package org.openspcoop2.example.pdd.server.testservice;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -75,6 +76,8 @@ public class EchoService extends ServletTestService {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
-		this.doEngine(req, res, false);
+		Properties headerTrasporto = new Properties();
+		headerTrasporto.put("X-OpenSPCoop2", "EchoService");
+		this.doEngine(req, res, false, headerTrasporto);
 	}
 }

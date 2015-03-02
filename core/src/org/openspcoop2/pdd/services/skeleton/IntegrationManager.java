@@ -80,6 +80,7 @@ import org.openspcoop2.protocol.engine.LetturaParametriBusta;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -113,7 +114,7 @@ import org.openspcoop2.utils.resources.Loader;
 		
 public abstract class IntegrationManager implements IntegrationManagerMessageBoxInterface,IntegrationManagerPDInterface {
 
-	public static String ID_MODULO = "IntegrationManager";
+	public static String ID_MODULO = IDService.INTEGRATION_MANAGER_SOAP.getValue();
 	
 	private OpenSPCoop2Properties propertiesReader;
 	private ClassNameProperties className;
@@ -1525,7 +1526,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		RicezioneContenutiApplicativiContext context = null;
 		try{
 			// viene generato l'UUID
-			context = new RicezioneContenutiApplicativiContext(dataIngressoMessaggio,this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()));
+			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataIngressoMessaggio,this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()));
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e,"invocaPortaDelegata_engine("+tipoOperazione+").newRicezioneContenutiApplicativiContext()");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());

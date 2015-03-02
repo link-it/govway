@@ -34,6 +34,7 @@ import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -52,13 +53,14 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private OpenSPCoop2Message message;
 	private Logger log;
 	private String idModulo;
+	private IDService idModuloAsIDService;
 	private IProtocolFactory protocolFactory;
 	private String function;
 	private String url;
 	private Credenziali credenziali;
 	private String functionParameters;
 	
-	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,String idModulo,
+	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Properties trasporto,
 			Properties formUrl,
 			IProtocolFactory protocolFactory,
@@ -72,6 +74,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			if(this.log==null)
 				this.log = Logger.getLogger(DirectVMConnectorInMessage.class);
 			
+			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
 			
 			Enumeration<?> enTrasporto = trasporto.keys();
@@ -100,6 +103,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 		}
 	}
 
+	@Override
+	public IDService getIdModuloAsIDService(){
+		return this.idModuloAsIDService;
+	}
+	
 	@Override
 	public String getIdModulo(){
 		return this.idModulo;

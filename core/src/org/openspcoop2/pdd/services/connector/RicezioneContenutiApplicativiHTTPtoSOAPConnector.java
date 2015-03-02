@@ -30,9 +30,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiHTTPtoSOAP;
+import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
  * Servlet che serve per creare un tunnel da un servizio che non conosce SOAP verso OpenSPCoop (che utilizza SOAP)
@@ -52,7 +55,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector extends HttpServle
 	/* ********  F I E L D S  P R I V A T I S T A T I C I  ******** */
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static String ID_MODULO = "RicezioneContenutiApplicativiHTTP";
+	public final static IDService ID_SERVICE = IDService.PORTA_DELEGATA_XML_TO_SOAP;
+	public final static String ID_MODULO = ID_SERVICE.getValue();
 
 
 	@Override public void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -62,15 +66,20 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector extends HttpServle
 		
 		HttpServletConnectorInMessage httpIn = null;
 		try{
-			httpIn = new HttpServletConnectorInMessage(req, ID_MODULO);
+			httpIn = new HttpServletConnectorInMessage(req, ID_SERVICE, ID_MODULO);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 		
+		IProtocolFactory protocolFactory = null;
+		try{
+			protocolFactory = httpIn.getProtocolFactory();
+		}catch(Throwable e){}
+		
 		HttpServletConnectorOutMessage httpOut = null;
 		try{
-			httpOut = new HttpServletConnectorOutMessage(res);
+			httpOut = new HttpServletConnectorOutMessage(protocolFactory, res);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
@@ -85,25 +94,25 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector extends HttpServle
 		
 	}
 	
-	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
+	public void engine(HttpServletRequest req, HttpServletResponse res, MethodType method)
 	throws ServletException, IOException {		
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 
 		// messaggio di errore
 		boolean errore404 = false;
-		if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpGetPortaDelegataImbustamentoSOAPEnabled()){
+		if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled()){
 			errore404 = true;
 		}
 		
 		if(errore404){
-			res.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.PORTA_DELEGATA_IMBUSTAMENTO_SOAP_HTTP_GET));
+			res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeHttpMethodNotSupported(ID_SERVICE, method)));
 		}
 		else{
 		
 			res.setStatus(500);
 			
-			res.getOutputStream().write(ConnectorUtils.generateErrorMessage(req, ConnectorCostanti.METHOD_HTTP_GET_NOT_SUPPORTED, false, true).getBytes());
+			ConnectorUtils.generateErrorMessage(ID_SERVICE,method,req, res,ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
 			
 			try{
 				res.getOutputStream().flush();

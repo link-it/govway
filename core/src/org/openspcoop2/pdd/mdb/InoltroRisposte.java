@@ -53,6 +53,7 @@ import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.MTOMProcessor;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.ProtocolContext;
+import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -977,12 +978,17 @@ public class InoltroRisposte extends GenericLib{
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
 				
 				// Il Connettore potrebbe aggiungere informazioni alla location.
-				location = connectorSender.getLocation();
-				if(location!=null){
+				String tmpLocation = connectorSender.getLocation();
+				if(tmpLocation!=null){
+					// aggiorno
+					location = tmpLocation;
+				
+					if(connectorSender instanceof ConnettoreHTTP){
+						if(((ConnettoreHTTP)connectorSender).isSbustamentoApi()){
+							location = org.openspcoop2.core.api.utils.Utilities.updateLocation(((ConnettoreHTTP)connectorSender).getHttpMethod(), location);
+						}
+					}
 					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
-				}
-				else{
-					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
 				}
 				
 				//	dump applicativo

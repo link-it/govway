@@ -172,6 +172,33 @@ public class TestSuiteProperties {
 
 	
 	
+	
+	/* ********  HEADER RISPOSTA  ******** */
+	
+	public String getHeaderRispostaServletName(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_SERVLET_NAME).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_SERVLET_NAME+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	public Properties getHeaderRisposta(){
+		try{
+			return this.reader.readProperties_convertEnvProperties(CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_GENERICO);
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura delle proprieta' '"+CostantiTestSuite.PROPERTY_HEADER_RISPOSTA_GENERICO+"*':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	
+	
+	
+	
 	/* ************* TRASPORTO ************ */
 	
 	/**

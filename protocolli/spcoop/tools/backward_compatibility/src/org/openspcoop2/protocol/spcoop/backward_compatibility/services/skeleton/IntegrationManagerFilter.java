@@ -12,9 +12,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
+import org.openspcoop2.protocol.engine.constants.IDService;
 
 public class IntegrationManagerFilter implements Filter {
 
@@ -30,7 +31,9 @@ public class IntegrationManagerFilter implements Filter {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 		HttpServletResponse httpRes = (HttpServletResponse) response;
 		
-		if("GET".equalsIgnoreCase(httpReq.getMethod())){
+		MethodType method = MethodType.toEnumConstant(httpReq.getMethod());
+		
+		if(MethodType.GET.equals(method)){
 			
 			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 							
@@ -42,7 +45,7 @@ public class IntegrationManagerFilter implements Filter {
 				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
 					// richiesta del wsdl
 					if(op2Properties!=null && op2Properties.isGenerazioneWsdlIntegrationManagerEnabled()==false){
-						httpRes.sendError(404, ConnectorUtils.generateError404Message(ConnectorCostanti.INTEGRATION_MANAGER_WSDL));
+						httpRes.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(IDService.INTEGRATION_MANAGER_SOAP)));
 						return;
 					}
 					else{
@@ -55,19 +58,19 @@ public class IntegrationManagerFilter implements Filter {
 			if(!wsdl){
 				// messaggio di errore
 				boolean errore404 = false;
-				if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpGetIntegrationManagerEnabled()){
+				if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled()){
 					errore404 = true;
 				}
 				
 				if(errore404){
-					httpRes.sendError(404,ConnectorUtils.generateError404Message(ConnectorCostanti.INTEGRATION_MANAGER_HTTP_GET));
+					httpRes.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeHttpMethodNotSupported(IDService.INTEGRATION_MANAGER_SOAP, method)));
 					return;
 				}
 				else{
 				
 					httpRes.setStatus(500);
 					
-					httpRes.getOutputStream().write(ConnectorUtils.generateErrorMessage(httpReq, ConnectorCostanti.METHOD_HTTP_GET_NOT_SUPPORTED, false, true).getBytes());
+					ConnectorUtils.generateErrorMessage(IDService.INTEGRATION_MANAGER_SOAP, method, httpReq, httpRes, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
 							
 					try{
 						httpRes.getOutputStream().flush();

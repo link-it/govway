@@ -42,6 +42,7 @@ public interface ConnectorOutMessage {
 	public void setContentType(String type) throws ConnectorException; 
 	
 	public void setStatus(int status) throws ConnectorException;
+	public int getResponseStatus() throws ConnectorException; // ritorna lo stato precedentemente impostato (puo' essere "nattato")
 	
 	public void flush(boolean throwException) throws ConnectorException; 
 	

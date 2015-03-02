@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.UrlMapping;
 import org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType;
@@ -178,7 +179,7 @@ public class InformazioniServizioURLMapping {
 		
 
 	public InformazioniServizioURLMapping(OpenSPCoop2Message msg,IProtocolFactory protocolFactory,
-			URLProtocolContext urlProtocolContext, RegistroServiziManager registroServiziManager, Logger log) throws ProtocolException{
+			URLProtocolContext urlProtocolContext, RegistroServiziManager registroServiziManager, Logger log, IDService idService) throws ProtocolException{
 				
 		this.mp = InformazioniServizioURLMapping.getMappingProperties(protocolFactory);
 				
@@ -188,7 +189,7 @@ public class InformazioniServizioURLMapping {
 		this.log = log;
 		
 		// Id Mapping
-		this.idMapping = resolveMappingName(urlProtocolContext);
+		this.idMapping = resolveMappingName(urlProtocolContext, idService);
 
 		// Mittente
 		this.tipoMittente = this.getMappingInfo(TIPO_MITTENTE);
@@ -213,7 +214,7 @@ public class InformazioniServizioURLMapping {
 		
 		// PAInfo
 		if(this.existsPABasedIdentificationMode()){
-			this.paInfo = this.getMappingPAInfo(this.msg.getProtocolName(), urlProtocolContext);
+			this.paInfo = this.getMappingPAInfo(this.msg.getProtocolName(), urlProtocolContext, idService);
 		}
 		
 		// ListaTrasmissione
@@ -327,10 +328,10 @@ public class InformazioniServizioURLMapping {
 	 * @throws ProtocolException Se la configurazione non e' corretta.
 	 */
 	
-	private String resolveMappingName(URLProtocolContext urlProtocolContext) throws ProtocolException {
+	private String resolveMappingName(URLProtocolContext urlProtocolContext, IDService idService) throws ProtocolException {
 			
 		// Recupero il nome del mapping per la url invocata
-		String mappingName = this.mp.getMappingName(this.msg.getProtocolName(), urlProtocolContext.getRequestURI());
+		String mappingName = this.mp.getMappingName(this.msg.getProtocolName(), urlProtocolContext.getRequestURI(), idService);
 
 		return mappingName;
 	}
@@ -437,7 +438,7 @@ public class InformazioniServizioURLMapping {
 	}
 	
 	
-	private MappingPAInfo getMappingPAInfo(String protocol,URLProtocolContext urlProtocolContext) throws ProtocolException {
+	private MappingPAInfo getMappingPAInfo(String protocol,URLProtocolContext urlProtocolContext, IDService idService) throws ProtocolException {
 		
 		/*
 		# - paBased: il valore viene recuperato accedendo alla porta applicativa. 
@@ -448,7 +449,7 @@ public class InformazioniServizioURLMapping {
 		#			 Infine se la PA non possiede una azione all'interno della propria configurazione, e' possibile indicarla nella url.
 		*/
 			
-		String urlWithoutContext = this.mp.getUrlWithoutContext(protocol,urlProtocolContext.getRequestURI());
+		String urlWithoutContext = this.mp.getUrlWithoutContext(protocol,urlProtocolContext.getRequestURI(), idService);
 		if(urlWithoutContext.startsWith("/")){
 			urlWithoutContext = urlWithoutContext.substring(1, urlWithoutContext.length());
 		}	

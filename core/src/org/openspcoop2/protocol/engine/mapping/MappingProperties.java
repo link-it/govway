@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -58,14 +59,26 @@ public class MappingProperties {
 		}	
 	}
 	
-	public String getUrlWithoutContext(String protocol,String urlWithContext) throws ProtocolException{
+	public String getUrlWithoutContext(String protocol,String urlWithContext,IDService idService) throws ProtocolException{
 		IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 		Openspcoop2 manifestProtocol = pf.getManifest();
 		String urlWithoutContext = null;
+		
+		String paContext = null;
+		if(IDService.PORTA_APPLICATIVA_SOAP.equals(idService)){
+			paContext = "/PA";
+		}
+		else if(IDService.PORTA_APPLICATIVA_API.equals(idService)){
+			paContext = "/API/PA";
+		}
+		else{
+			throw new ProtocolException("Service ["+idService+"] non gestito tramite UrlMapping");
+		}
+		
 		// context con un nome
 		for (int i = 0; i < manifestProtocol.getWeb().sizeContextList(); i++) {
 			String context = manifestProtocol.getWeb().getContext(i);
-			String prefixProtocol = context + "/PA";
+			String prefixProtocol = context + paContext;
 			if(urlWithContext.contains(prefixProtocol)){
 				if(urlWithContext.endsWith(prefixProtocol)){
 					urlWithoutContext = "";
@@ -80,7 +93,7 @@ public class MappingProperties {
 		// empty context
 		if(urlWithoutContext==null){
 			if(manifestProtocol.getWeb().getEmptyContext()!=null && manifestProtocol.getWeb().getEmptyContext().getEnabled() ){
-				String prefixProtocol = "/PA";
+				String prefixProtocol = paContext;
 				if(urlWithContext.contains(prefixProtocol)){
 					if(urlWithContext.endsWith(prefixProtocol)){
 						urlWithoutContext = "";
@@ -99,7 +112,7 @@ public class MappingProperties {
 		return urlWithoutContext;
 	}
 	
-	protected String getMappingName(String protocol, String urlWithContext) throws ProtocolException{
+	protected String getMappingName(String protocol, String urlWithContext,IDService idService) throws ProtocolException{
 		
 		//devo recuperare tutte le url configurate e vedere se una matcha
 		//le proprieta' che mi interessano sono nella forma:
@@ -107,7 +120,7 @@ public class MappingProperties {
 		String prefix = protocol + ".pa.";
 		String suffix = ".url";		
 				
-		String urlWithoutContext = this.getUrlWithoutContext(protocol,urlWithContext);
+		String urlWithoutContext = this.getUrlWithoutContext(protocol,urlWithContext, idService);
 		
 		Enumeration<?> keys = this.propertiesReader.keys();
 		
