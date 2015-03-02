@@ -353,7 +353,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 			else{
 				return p;
 			}
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -368,7 +368,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 			else{
 				return p;
 			}
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -383,7 +383,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 			else{
 				return "["+key+"]=["+v+"]";
 			}
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -393,7 +393,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 		try{
 			this.spm.removeProperty(key);
 			return SysPropsJMXResource.EFFETTUATO_SUCCESSO_INFO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -403,7 +403,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 		try{
 			this.spm.updateProperty(key,value);
 			return SysPropsJMXResource.EFFETTUATO_SUCCESSO_INFO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -413,7 +413,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 		try{
 			this.spm.insertProperty(key,value);
 			return SysPropsJMXResource.EFFETTUATO_SUCCESSO_INFO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -423,7 +423,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 		try{
 			this.spm.updateSystemProperties();
 			return SysPropsJMXResource.EFFETTUATO_SUCCESSO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

@@ -305,7 +305,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 				throw new Exception("Cache non abilitata");
 			GestoreAutorizzazioneBuste.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -316,7 +316,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return GestoreAutorizzazioneBuste.printStatsCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -327,7 +327,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 			GestoreAutorizzazioneBuste.abilitaCache();
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -338,7 +338,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 			GestoreAutorizzazioneBuste.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -348,7 +348,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		try{
 			GestoreAutorizzazioneBuste.disabilitaCache();
 			this.cacheAbilitata = false;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			throw new JMException(e.getMessage());
 		}
@@ -357,7 +357,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		try{
 			disabilitaCache();
 			return JMXUtils.MSG_DISABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -368,7 +368,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return GestoreAutorizzazioneBuste.listKeysCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -379,7 +379,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return GestoreAutorizzazioneBuste.getObjectCache(key);
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

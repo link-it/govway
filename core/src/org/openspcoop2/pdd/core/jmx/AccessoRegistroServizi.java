@@ -316,7 +316,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				throw new Exception("Cache non abilitata");
 			org.openspcoop2.protocol.registry.RegistroServiziReader.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -327,7 +327,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return org.openspcoop2.protocol.registry.RegistroServiziReader.printStatsCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -337,7 +337,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			org.openspcoop2.protocol.registry.RegistroServiziReader.abilitaCache();
 			this.cacheAbilitata = true;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 		}
 	}
@@ -347,7 +347,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			org.openspcoop2.protocol.registry.RegistroServiziReader.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -358,7 +358,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			org.openspcoop2.protocol.registry.RegistroServiziReader.disabilitaCache();
 			this.cacheAbilitata = false;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			throw new JMException(e.getMessage());
 		}
@@ -367,7 +367,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		try{
 			disabilitaCache();
 			return JMXUtils.MSG_DISABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -378,7 +378,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return org.openspcoop2.protocol.registry.RegistroServiziReader.listKeysCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -389,7 +389,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return org.openspcoop2.protocol.registry.RegistroServiziReader.getObjectCache(key);
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

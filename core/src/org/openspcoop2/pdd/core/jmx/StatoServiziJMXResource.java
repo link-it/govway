@@ -556,7 +556,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 					StatoServiziPdD.setPDServiceActive(true);
 					this.componentePD = CostantiConfigurazione.ABILITATO;
 					return "Abilitazione del servizio PortaDelegata effettuata con successo";
-				}catch(Exception e){
+				}catch(Throwable e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio PortaDelegata non riuscita: "+e.getMessage(),e);
 					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 				}
@@ -574,7 +574,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 					StatoServiziPdD.setPAServiceActive(true);
 					this.componentePA = CostantiConfigurazione.ABILITATO;
 					return "Abilitazione del servizio PortaApplicativa effettuata con successo";
-				}catch(Exception e){
+				}catch(Throwable e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio PortaApplicativa non riuscita: "+e.getMessage(),e);
 					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 				}
@@ -592,7 +592,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 					StatoServiziPdD.setIMServiceActive(true);
 					this.componenteIM = CostantiConfigurazione.ABILITATO;
 					return "Abilitazione del servizio IntegrationManager effettuata con successo";
-				}catch(Exception e){
+				}catch(Throwable e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio IntegrationManager non riuscita: "+e.getMessage(),e);
 					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 				}
@@ -623,7 +623,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 					StatoServiziPdD.setPDServiceActive(false);
 					this.componentePD = CostantiConfigurazione.DISABILITATO;
 					return "Disabilitazione del servizio PortaDelegata effettuata con successo";
-				}catch(Exception e){
+				}catch(Throwable e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio PortaDelegata non riuscita: "+e.getMessage(),e);
 					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 				}
@@ -641,7 +641,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 					StatoServiziPdD.setPAServiceActive(false);
 					this.componentePA = CostantiConfigurazione.DISABILITATO;
 					return "Disabilitazione del servizio PortaApplicativa effettuata con successo";
-				}catch(Exception e){
+				}catch(Throwable e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio PortaApplicativa non riuscita: "+e.getMessage(),e);
 					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 				}
@@ -659,7 +659,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 					StatoServiziPdD.setIMServiceActive(false);
 					this.componenteIM = CostantiConfigurazione.DISABILITATO;
 					return "Disabilitazione del servizio IntegrationManager effettuata con successo";
-				}catch(Exception e){
+				}catch(Throwable e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio IntegrationManager non riuscita: "+e.getMessage(),e);
 					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 				}
@@ -683,7 +683,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String visualizzaFiltriAbilitazioniServizioPortaDelegata(){
 		try{
 			return StatoServiziPdD.getPDServiceFiltriAbilitazioneAttivi();
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione visualizzaFiltriAbilitazioniServizioPortaDelegata non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -691,7 +691,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String visualizzaFiltriDisabilitazioniServizioPortaDelegata(){
 		try{
 			return StatoServiziPdD.getPDServiceFiltriDisabilitazioneAttivi();
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione visualizzaFiltriDisabilitazioniServizioPortaDelegata non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -701,7 +701,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.addFiltroAbilitazionePD(tipo);
 			this.componentePD_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroAbilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -711,7 +711,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.addFiltroDisabilitazionePD(tipo);
 			this.componentePD_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroDisabilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -721,7 +721,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.removeFiltroAbilitazionePD(tipo);
 			this.componentePD_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroAbilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -731,7 +731,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.removeFiltroDisabilitazionePD(tipo);
 			this.componentePD_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroDisabilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -740,7 +740,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String visualizzaFiltriAbilitazioniServizioPortaApplicativa(){
 		try{
 			return StatoServiziPdD.getPAServiceFiltriAbilitazioneAttivi();
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione visualizzaFiltriAbilitazioniServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -748,7 +748,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String visualizzaFiltriDisabilitazioniServizioPortaApplicativa(){
 		try{
 			return StatoServiziPdD.getPAServiceFiltriDisabilitazioneAttivi();
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione visualizzaFiltriDisabilitazioniServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -758,7 +758,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.addFiltroAbilitazionePA(tipo);
 			this.componentePA_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroAbilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -768,7 +768,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.addFiltroDisabilitazionePA(tipo);
 			this.componentePA_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroDisabilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -778,7 +778,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.removeFiltroAbilitazionePA(tipo);
 			this.componentePA_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroAbilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}
@@ -788,7 +788,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			StatoServiziPdD.removeFiltroDisabilitazionePA(tipo);
 			this.componentePA_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
-		}catch(Exception e){
+		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroDisabilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 		}

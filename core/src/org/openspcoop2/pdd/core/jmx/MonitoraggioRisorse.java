@@ -574,7 +574,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 				this.datiMonitoraggioPdD = "Non disponibili: e' necessario indicare il tipo di database in openspcoop2.properties";
 				throw new Exception("Per il monitoraggio della porta di dominio e' necessario indicare il tipo di database in openspcoop2.properties");
 			}
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error("DriverMonitoraggio non inizializzato",e);
 			this.datiMonitoraggioPdD = "Non disponibili: "+e.getMessage();
 		}
@@ -587,7 +587,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	public String getStatoCaches(){
 		try{
 			return Cache.printStatistics("\n","\n-----------------------------------------------------\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -597,7 +597,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		String[] risorse = null;
 		try{
 			risorse = DBManager.getStatoRisorse();
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -616,7 +616,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		String[] risorse = null;
 		try{
 			risorse = QueueManager.getStatoRisorse();
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

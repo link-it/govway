@@ -277,7 +277,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 				throw new Exception("Cache non abilitata");
 			GestoreMessaggi.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -288,7 +288,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return GestoreMessaggi.printStatsCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -299,7 +299,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			GestoreMessaggi.abilitaCache();
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -310,7 +310,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			GestoreMessaggi.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -320,7 +320,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 		try{
 			GestoreMessaggi.disabilitaCache();
 			this.cacheAbilitata = false;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			throw new JMException(e.getMessage());
 		}
@@ -329,7 +329,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 		try{
 			disabilitaCache();
 			return JMXUtils.MSG_DISABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -340,7 +340,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return GestoreMessaggi.listKeysCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -351,7 +351,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return GestoreMessaggi.getObjectCache(key);
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

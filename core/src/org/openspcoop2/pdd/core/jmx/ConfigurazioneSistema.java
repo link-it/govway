@@ -275,7 +275,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				versione = "Porta di Dominio "+this.openspcoopProperties.getPddDetailsForServices();
 			}
 			return versione;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -330,7 +330,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				}catch(Exception eClose){}
 			}
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -344,7 +344,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			throw new Exception("Versione di Java non disponibile");
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -357,7 +357,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			throw new Exception("Tipo di Database non disponibile");
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -511,7 +511,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				}catch(Exception eClose){}
 			}
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -542,7 +542,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				return bf.toString();
 			}
 			throw new Exception("Directory di Configurazione non disponibile");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -578,7 +578,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				String enabledProtocols = bfProtocols.toString();
 				return enabledProtocols;
 			}
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}

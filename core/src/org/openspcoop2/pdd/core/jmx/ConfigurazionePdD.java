@@ -419,7 +419,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				throw new Exception("Cache non abilitata");
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -430,7 +430,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return org.openspcoop2.pdd.config.ConfigurazionePdDReader.printStatsCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -440,7 +440,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.abilitaCache();
 			this.cacheAbilitata = true;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 		}
 	}
@@ -450,7 +450,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -460,7 +460,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.disabilitaCache();
 			this.cacheAbilitata = false;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			throw new JMException(e.getMessage());
 		}
@@ -469,7 +469,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			disabilitaCache();
 			return JMXUtils.MSG_DISABILITAZIONE_CACHE_EFFETTUATA;
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -480,7 +480,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return org.openspcoop2.pdd.config.ConfigurazionePdDReader.listKeysCache("\n");
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
@@ -491,7 +491,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return org.openspcoop2.pdd.config.ConfigurazionePdDReader.getObjectCache(key);
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
