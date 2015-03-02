@@ -47,7 +47,9 @@ import org.apache.axis.client.Service;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.ByteArrayOutputStream;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 
 /**
@@ -99,14 +101,30 @@ public class SOAPEngine {
 	/** Indicazione sulla gestione degli attachments */
 	boolean withAttachment;
 
+	private SOAPVersion soapVersion;
 
 	/**
 	 * Costruttore che costruisce una richiesta di tipo webservice verso una url con nome della operazione, metodo, e i parametri passati
 	 **/	
 	public SOAPEngine(String url) throws FatalTestSuiteException {
+		this(url, SOAPVersion.SOAP11);
+	}
+	public SOAPEngine(String url,SOAPVersion soapVersione) throws FatalTestSuiteException {
+		this.soapVersion = soapVersione;
 		this.url = url;
 		this.withAttachment=false;
 		initCall();
+		switch (soapVersione) {
+		case SOAP11:
+			this.call.setSOAPVersion(SOAPConstants.SOAP11_CONSTANTS);
+			this.call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);
+			break;
+		case SOAP12:
+			this.call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+			this.call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP12_ENC);
+			break;
+		}
+		
 	}
 
 
@@ -165,7 +183,16 @@ public class SOAPEngine {
 	public void invoke() throws AxisFault {
 
 		// Backup msg richiesta da spedire
-		String contentType = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP11Constants());
+		String contentType = null;
+		switch (this.soapVersion) {
+		case SOAP11:
+			contentType = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP11Constants());
+			break;
+		case SOAP12:
+			contentType = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP12Constants());
+			break;
+		}
+		
 		byte[] msg = null;
 		MimeHeaders mh = this.sentMessage.getMimeHeaders();
 		try{
@@ -353,7 +380,7 @@ public class SOAPEngine {
 	 * @throws IOException lancia un Ecezione di tipo IO
 	 */
 	public void setMessageWithAttachmentsFromFile(String fileName, boolean generaIDUnivoco,boolean soapBodyEmpty) throws IOException{
-		this.sentMessage=Utilities.createMessageWithAttachmentsFromFile(fileName, soapBodyEmpty);
+		this.sentMessage=Utilities.createMessageWithAttachmentsFromFile(this.soapVersion,fileName, soapBodyEmpty);
 		if(generaIDUnivoco)
 			this.addIDUnivoco();
 	}

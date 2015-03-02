@@ -37,6 +37,7 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -53,6 +54,7 @@ import org.apache.axis.soap.SOAPFactoryImpl;
 import org.openspcoop2.message.AttachmentsUtils;
 import org.openspcoop2.message.OpenSPCoop2DataContentHandler;
 import org.openspcoop2.message.OpenSPCoop2DataContentHandlerInputStream;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.w3c.dom.NamedNodeMap;
@@ -857,12 +859,21 @@ public class Axis14SoapUtils {
 	 * 
 	 */
 	public static org.apache.axis.Message build(byte[] byteMsg,boolean isBodyStream) throws UtilsException{
-		return Axis14SoapUtils.build(byteMsg,isBodyStream,false,true);
+		return Axis14SoapUtils.build(SOAPVersion.SOAP11,byteMsg,isBodyStream,false,true);
+	}
+	public static org.apache.axis.Message build(SOAPVersion soapVersion,byte[] byteMsg,boolean isBodyStream) throws UtilsException{
+		return Axis14SoapUtils.build(soapVersion,byteMsg,isBodyStream,false,true);
 	}
 	public static org.apache.axis.Message build(byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag) throws UtilsException{
-		return Axis14SoapUtils.build(byteMsg,isBodyStream,eraserXMLTag,true);
+		return Axis14SoapUtils.build(SOAPVersion.SOAP11,byteMsg,isBodyStream,eraserXMLTag,true);
+	}
+	public static org.apache.axis.Message build(SOAPVersion soapVersion,byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag) throws UtilsException{
+		return Axis14SoapUtils.build(soapVersion,byteMsg,isBodyStream,eraserXMLTag,true);
 	}
 	public static org.apache.axis.Message build(byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag,boolean checkEmptyBody) throws UtilsException{
+		return Axis14SoapUtils.build(SOAPVersion.SOAP11,byteMsg,isBodyStream,eraserXMLTag,checkEmptyBody);
+	}
+	public static org.apache.axis.Message build(SOAPVersion soapVersion, byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag,boolean checkEmptyBody) throws UtilsException{
 
 		try{
 			
@@ -871,12 +882,16 @@ public class Axis14SoapUtils {
 			
 			int offset = 0;
 			
-			String contentType = "text/xml";
+			String contentType = SOAPConstants.SOAP_1_1_CONTENT_TYPE;
+			if(SOAPVersion.SOAP12.equals(soapVersion)){
+				contentType = SOAPConstants.SOAP_1_2_CONTENT_TYPE;
+			}
+			String IDfirst  = null;
 			//BNCL TEST: String contentType = "application/xml";
 			if(AttachmentsUtils.messageWithAttachment(byteMsg)){
 				// con attachments
 				
-				String IDfirst  = AttachmentsUtils.firstContentID(byteMsg);
+				IDfirst  = AttachmentsUtils.firstContentID(byteMsg);
 				String boundary = AttachmentsUtils.findBoundary(byteMsg);
 				//if(IDfirst==null){
 					//SoapUtils.log.warn("Errore avvenuto durante la lettura del punto di start del multipart message.");
@@ -886,10 +901,21 @@ public class Axis14SoapUtils {
 				if(boundary==null){
 					throw new Exception("Errore avvenuto durante la lettura del boundary associato al multipart message.");
 				}
-				if(IDfirst==null)
-					contentType = "multipart/related; type=\"text/xml\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
-				else
-					contentType = "multipart/related; type=\"text/xml\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+
+				switch (soapVersion) {
+				case SOAP11:
+					if(IDfirst==null)
+						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_1_CONTENT_TYPE+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+					else
+						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_1_CONTENT_TYPE+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+					break;
+				case SOAP12:
+					if(IDfirst==null)
+						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_2_CONTENT_TYPE+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+					else
+						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_2_CONTENT_TYPE+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+					break;
+				}
 				
 				if(isBodyStream){
 					// Il messaggio deve essere imbustato.
@@ -986,6 +1012,7 @@ public class Axis14SoapUtils {
 			ByteArrayInputStream messageInput = new ByteArrayInputStream(byteMsg,offset,byteMsg.length);
 			org.apache.axis.Message message = 
 				new org.apache.axis.Message(messageInput,isBodyStream,contentType,null);
+			
 			
 			// save changes.
 			// N.B. il countAttachments serve per il msg con attachments come saveMessage!

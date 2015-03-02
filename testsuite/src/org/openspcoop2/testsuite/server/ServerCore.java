@@ -108,18 +108,26 @@ public class ServerCore extends HttpServlet{
 	 * 
 	 * @param id Identi
 	 * */
-	protected void tracciaIsArrivedIntoDatabase(String id,String destinatario,String protocollo) {
+	protected void tracciaIsArrivedIntoDatabase(final String id,final String destinatario,final String protocollo) {
 
-		DatabaseComponent db = null;
-		try{
-			db = DatabaseProperties.getDatabaseComponentErogatore(protocollo);
-			db.getVerificatoreTracciaRichiesta().tracciaIsArrivedIntoDatabase(id, destinatario);
-		}catch (Exception e) {
-			this.log.error("Impostazione isArrived non riuscita: "+e.getMessage(),e);
-		}
-		finally{
-			db.close();
-		}
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				
+				DatabaseComponent db = null;
+				try{
+					db = DatabaseProperties.getDatabaseComponentErogatore(protocollo);
+					db.getVerificatoreTracciaRichiesta().tracciaIsArrivedIntoDatabase(id, destinatario);
+				}catch (Exception e) {
+					ServerCore.this.log.error("Impostazione isArrived non riuscita: "+e.getMessage(),e);
+				}
+				finally{
+					db.close();
+				}
+			}
+		};
+		
+		t.start();
 
 	}
 

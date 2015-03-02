@@ -166,7 +166,7 @@ public class ClientAsincronoAsimmetrico_ModalitaAsincrona extends ClientCore{
         // Impostazione porta delegata correlata da invocare
         this.portaDelegata=this.portaDelegataCorrelata;
         // Effettua la connessione al SoapEngine
-        connectToSoapEngine();
+        connectToSoapEngine(this.soapVersion);
         // Messaggio di richiesta stato da spedire
         ByteArrayInputStream messageInput = new ByteArrayInputStream(msg);
 		Message tmp = new Message(messageInput,false,contentType,null);

@@ -64,26 +64,26 @@ import org.testng.Reporter;
 public class CooperazioneBase {
 
 	/** Tipo di gestione */
-	private boolean soapWithAttachments;
-	private SOAPVersion soapVersion;
+	protected boolean soapWithAttachments;
+	protected SOAPVersion soapVersion;
 	/** String tipoCooperazione */
-	private String tipoCooperazione;
+	protected String tipoCooperazione;
 	
 	/** Mittente */
-	private IDSoggetto mittente;
+	protected IDSoggetto mittente;
 	/** Destinatario */
-	private IDSoggetto destinatario;
+	protected IDSoggetto destinatario;
 	/** Conferma Ricezione */
-	private boolean confermaRicezione;
+	protected boolean confermaRicezione;
 	/** Inoltro */
-	private String inoltro;
-	private Inoltro inoltroSdk;
+	protected String inoltro;
+	protected Inoltro inoltroSdk;
 	
-	private CooperazioneBaseInformazioni info;
+	protected CooperazioneBaseInformazioni info;
 	
-	private UnitsTestSuiteProperties unitsTestsuiteProperties;
-	private UnitsDatabaseProperties unitsDatabaseProperties;
-	private Logger log;
+	protected UnitsTestSuiteProperties unitsTestsuiteProperties;
+	protected UnitsDatabaseProperties unitsDatabaseProperties;
+	protected Logger log;
 	
 	
 	public boolean isSoapWithAttachments() {
@@ -240,6 +240,9 @@ public class CooperazioneBase {
 	 * Test per il profilo di collaborazione OneWay
 	 */
 	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco) throws FatalTestSuiteException, Exception{
+		this.oneWay(repository, portaDelegata, addIDUnivoco, null, null);
+	}
+	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws FatalTestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -248,7 +251,9 @@ public class CooperazioneBase {
 			ClientOneWay client=new ClientOneWay(repository);
 			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
-			client.connectToSoapEngine();
+			client.connectToSoapEngine(this.soapVersion);
+			if(username!=null && password!=null)
+				client.setAutenticazione(username,password);
 			if(this.soapWithAttachments){
 				switch (this.soapVersion) {
 				case SOAP11:
@@ -358,12 +363,20 @@ public class CooperazioneBase {
 	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco) throws FatalTestSuiteException, IOException, SOAPException{
 		sincrono(repository,portaDelegata,addIDUnivoco,false);
 	}
+	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws FatalTestSuiteException, IOException, SOAPException{
+		sincrono(repository,portaDelegata,addIDUnivoco,false, username, password);
+	}
 	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay) throws FatalTestSuiteException, IOException, SOAPException{
+		this.sincrono(repository, portaDelegata, addIDUnivoco, isOneWay, null, null);
+	}
+	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay,String username,String password) throws FatalTestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(repository);
 		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(portaDelegata);
-		client.connectToSoapEngine();
+		client.connectToSoapEngine(this.soapVersion);
+		if(username!=null && password!=null)
+			client.setAutenticazione(username,password);
 		if(this.soapWithAttachments){
 			switch (this.soapVersion) {
 			case SOAP11:
@@ -513,7 +526,7 @@ public class CooperazioneBase {
 						portaDelegataCorrelata);
 			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
-			client.connectToSoapEngine();
+			client.connectToSoapEngine(this.soapVersion);
 			client.setAutenticazione(user,password);
 			if(this.soapWithAttachments){
 				switch (this.soapVersion) {
@@ -781,7 +794,7 @@ public class CooperazioneBase {
 					portaDelegataCorrelata);
 		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(portaDelegata);
-		client.connectToSoapEngine();
+		client.connectToSoapEngine(this.soapVersion);
 		client.setAutenticazione(user,password);
 		if(this.soapWithAttachments){
 			switch (this.soapVersion) {
@@ -1027,7 +1040,7 @@ public class CooperazioneBase {
 			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
 			client.setPortaDelegataCorrelata(portaDelegataCorrelata);
-			client.connectToSoapEngine();
+			client.connectToSoapEngine(this.soapVersion);
 			client.setGeneraIDUnivoco(addIDUnivoco);
 			if(this.soapWithAttachments){
 				switch (this.soapVersion) {
@@ -1288,7 +1301,7 @@ public class CooperazioneBase {
 		client.setPortaDelegata(portaDelegata);
 		client.setGeneraIDUnivoco(addIDUnivoco);
 		client.setPortaDelegataCorrelata(portaDelegataCorrelata);
-		client.connectToSoapEngine();
+		client.connectToSoapEngine(this.soapVersion);
 		if(this.soapWithAttachments){
 			switch (this.soapVersion) {
 			case SOAP11:

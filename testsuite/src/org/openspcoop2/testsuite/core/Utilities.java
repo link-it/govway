@@ -53,6 +53,7 @@ import org.apache.axis.message.Text;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.utils.EsitoRichiestaXMLUtils;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -424,6 +425,9 @@ public class Utilities {
 	 * @throws IOException
 	 */
 	public static Message createMessageWithAttachmentsFromFile(String fileName,boolean soapBodyEmpty) throws IOException{
+		return createMessageWithAttachmentsFromFile(SOAPVersion.SOAP11, fileName, soapBodyEmpty);
+	}
+	public static Message createMessageWithAttachmentsFromFile(SOAPVersion soapVersion, String fileName,boolean soapBodyEmpty) throws IOException{
 		/*UtilitiesGestioneMessaggiSoap utility=new UtilitiesGestioneMessaggiSoap();
 		utility.readFromFile(fileName, mime);
 		Message build=utility.buildMessage();*/
@@ -439,7 +443,7 @@ public class Utilities {
 			bout.flush();
 			bout.close();
 			
-			return Axis14SoapUtils.build(bout.toByteArray(), false, false, !soapBodyEmpty);
+			return Axis14SoapUtils.build(soapVersion, bout.toByteArray(), false, false, !soapBodyEmpty);
 		}catch(Exception e){
 			e.printStackTrace(System.out);
 			throw new IOException(e.getMessage());

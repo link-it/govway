@@ -54,6 +54,7 @@ import org.apache.axis.encoding.Base64;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSHostNameVerifierDisabled;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
@@ -275,7 +276,11 @@ public class ClientHttpGenerico extends ClientCore{
 	 * Deve essere chiamato dopo aver impostato la url della Porta di Dominio, e la porta delegata da invocare
 	 */
 	@Override
-	public void connectToSoapEngine() throws FatalTestSuiteException {
+	public void connectToSoapEngine() throws FatalTestSuiteException{
+		this.connectToSoapEngine(SOAPVersion.SOAP11);
+	}
+	@Override
+	public void connectToSoapEngine(SOAPVersion soapVersion) throws FatalTestSuiteException {
 		FileInputStream finKeyStore = null;
 		FileInputStream finTrustStore = null;
 		try{

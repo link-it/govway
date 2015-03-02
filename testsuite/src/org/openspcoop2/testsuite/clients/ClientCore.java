@@ -36,6 +36,7 @@ import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.message.SOAPBody;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.testsuite.axis14.Axis14WSSBaseUtils;
 import org.openspcoop2.testsuite.axis14.Axis14WSSReceiver;
 import org.openspcoop2.testsuite.axis14.Axis14WSSSender;
@@ -77,6 +78,8 @@ public class ClientCore {
 	protected Logger log;
 	/** SOAPEngine utilizzato dal Client */
 	protected SOAPEngine soapEngine;
+	/** SOAPVersion */
+	protected SOAPVersion soapVersion;
 
 	/** Messaggio da spedire */
 	public Message sentMessage;
@@ -203,9 +206,13 @@ public class ClientCore {
 	 * Deve essere chiamato dopo aver impostato la url della Porta di Dominio, e la porta delegata da invocare
 	 */
 	public void connectToSoapEngine() throws FatalTestSuiteException{
+		this.connectToSoapEngine(SOAPVersion.SOAP11);
+	}
+	public void connectToSoapEngine(SOAPVersion soapVersion) throws FatalTestSuiteException{
 		if(this.portaDelegata==null)
 			this.portaDelegata="";
-		this.soapEngine=new SOAPEngine(this.urlPortaDiDominio+this.portaDelegata);
+		this.soapEngine=new SOAPEngine(this.urlPortaDiDominio+this.portaDelegata,soapVersion);
+		this.soapVersion = soapVersion;
 	}
 
 	/**

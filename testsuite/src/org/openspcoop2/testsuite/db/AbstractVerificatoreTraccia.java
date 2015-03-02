@@ -3331,7 +3331,7 @@ public abstract class AbstractVerificatoreTraccia {
 		java.sql.Timestamp minDate = null;
 		int giro = 0;
 		int giriMax = 300;
-		Logger.getLogger("TestSuite.tracer").debug("Query in corso...:  select tracce.gdo from tracce where tracce.id='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '"+destinatario+"%"+"' ORDER BY tracce.gdo");
+		Logger.getLogger("TestSuite.tracer").debug("Query in corso...:  select tracce.gdo from tracce where tracce."+CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '"+destinatario+"%"+"' ORDER BY tracce.gdo");
 		while(giro<giriMax){
 			try {
 				//System.out.println("SELECT [select "+CostantiDB.TRACCE_COLUMN_GDO+" from "+CostantiDB.TRACCE+" where  "+CostantiDB.TRACCE_COLUMN_ID+"="+id+" AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"=0 AND "+CostantiDatabase.ID_PORTA+" LIKE "+destinatario+"%"+" ORDER BY "+CostantiDB.TRACCE_COLUMN_GDO+"]");

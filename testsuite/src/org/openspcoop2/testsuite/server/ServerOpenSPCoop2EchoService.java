@@ -75,15 +75,28 @@ public class ServerOpenSPCoop2EchoService extends ServerCore{
 			if(destinatario==null){
 				this.log.error("Destinatario della richiesta non presente");
 			} 
-			
+			String mittente = request.getHeader(this.testsuiteProperties.getMittenteTrasporto());
+			if(mittente==null){
+				this.log.error("Destinatario della richiesta non presente");
+			} 
+
 			String protocollo = request.getParameter("protocol");
 			if(protocollo==null){
 				protocollo = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol();
 			}
 			
+			
+			String dominio = destinatario;
+			String traceIsArrived = request.getParameter("traceIsArrived");
+			if(traceIsArrived!=null){
+				if("mittente".equalsIgnoreCase(traceIsArrived.trim())){
+					dominio = mittente;
+				}
+			}
+
 			if(this.testsuiteProperties.traceArrivedIntoDB()){
 				if(id!=null){
-					this.tracciaIsArrivedIntoDatabase(id,destinatario,protocollo);
+					this.tracciaIsArrivedIntoDatabase(id,dominio,protocollo);
 				}
 			}
 			
