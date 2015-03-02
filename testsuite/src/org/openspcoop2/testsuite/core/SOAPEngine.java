@@ -36,6 +36,7 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
@@ -47,6 +48,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.ByteArrayOutputStream;
+import org.openspcoop2.message.SoapUtils;
 
 /**
  * Engine per la gestione/spedizion di messaggi Soap
@@ -369,7 +371,13 @@ public class SOAPEngine {
 				MessageElement m = new MessageElement("idUnivoco", "test","http://www.openspcoop.org");
 				this.lastIDUnivoco = "ID-"+SOAPEngine.getIDUnivoco();
 				m.setValue(this.lastIDUnivoco);
-				this.sentMessage.getSOAPBody().addChildElement(m);
+				SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(this.sentMessage.getSOAPBody());
+				if(child!=null){
+					child.addChildElement(m);
+				}
+				else{
+					this.sentMessage.getSOAPBody().addChildElement(m);
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("Errore durante la generazione dell'id unico: "+e.getMessage());
