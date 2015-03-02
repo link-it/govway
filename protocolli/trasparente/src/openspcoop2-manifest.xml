@@ -6,8 +6,7 @@
     <factory>org.openspcoop2.protocol.trasparente.TrasparenteFactory</factory>
 
     <web>
-        <context>trasparente</context>
-        <emptyContext enabled="true"/>
+        <context>proxy</context>
     </web>
 
     <registroServizi>

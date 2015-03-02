@@ -22,7 +22,7 @@
     <soggetto tipo="PROXY" nome="MinisteroFruitore">
 
         <connettore tipo="http" nome="PdDMinisteroFruitore">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/PA"/>
+            <property nome="location" valore="http://localhost:8080/openspcoop2/proxy/PA"/>
         </connettore>
 
     </soggetto>
@@ -32,7 +32,7 @@
     <soggetto tipo="PROXY" nome="MinisteroErogatore" >
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/PA"/>
+            <property nome="location" valore="http://localhost:8080/openspcoop2/proxy/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -43,14 +43,14 @@
                 <parametri-azione nome="stateless">
                     <connettore tipo="http" nome="stateless">
                         <property nome="location"
-                            valore="http://localhost:8080/openspcoop2/PA/ServizioOneWayStateless"
+                            valore="http://localhost:8080/openspcoop2/proxy/PA/ServizioOneWayStateless"
                         />
                     </connettore>
                 </parametri-azione>
                 <parametri-azione nome="stateful">
                     <connettore tipo="http" nome="stateful">
                         <property nome="location"
-                            valore="http://localhost:8080/openspcoop2/PA/ServizioOneWayStateful"
+                            valore="http://localhost:8080/openspcoop2/proxy/PA/ServizioOneWayStateful"
                         />
                     </connettore>
                 </parametri-azione>
@@ -66,21 +66,21 @@
                 <parametri-azione nome="stateless">
                     <connettore tipo="http" nome="stateless">
                         <property nome="location"
-                            valore="http://localhost:8080/openspcoop2/PA/ServizioSincronoStateless"
+                            valore="http://localhost:8080/openspcoop2/proxy/PA/ServizioSincronoStateless"
                         />
                     </connettore>
                 </parametri-azione>
                 <parametri-azione nome="stateful">
                     <connettore tipo="http" nome="stateful">
                         <property nome="location"
-                            valore="http://localhost:8080/openspcoop2/PA/ServizioSincronoStateful"
+                            valore="http://localhost:8080/openspcoop2/proxy/PA/ServizioSincronoStateful"
                         />
                     </connettore>
                 </parametri-azione>
 		<parametri-azione nome="wss">
                     <connettore tipo="http" nome="wss">
                         <property nome="location"
-                            valore="http://localhost:8080/openspcoop2/PA/ServizioWSS"
+                            valore="http://localhost:8080/openspcoop2/proxy/PA/ServizioWSS"
                         />
                     </connettore>
                 </parametri-azione>

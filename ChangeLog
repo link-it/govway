@@ -1,10 +1,28 @@
-2015-02-11  Andrea Poli <apoli@link.it
+2015-02-16  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSPCoop]
+	Aggiunta funzionalità #294
+	Assegnato, oltre al contesto 'spcoop', anche il contesto speciale EMPTY.
+	Il protocollo e' adesso indirizzabile attraverso le seguenti alternative url:
+	- http://<host>/openspcoop2/spcoop/<SERVICE>
+	- http://<host>/openspcoop2/<SERVICE>
+	dove <SERVICE> puo' assumere i valori PD, PA e IntegrationManager
+
+	* [ProtocolloTrasparente]
+	Aggiunta funzionalità #295
+	Eliminato il contesto Empty tra i contesti utilizzabili per il protocollo.
+	Rinominato contesto 'trasparente' in contesto 'proxy'.
+        Il protocollo e' adesso indirizzabile attraverso la seguente url:
+        - http://<host>/openspcoop2/proxy/<SERVICE>
+        dove <SERVICE> puo' assumere i valori PD, PA e IntegrationManager
+
+2015-02-11  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
 	Aggiunta funzionalità #292
 	Aggiunta una voce alla sezione 'Configurazione' che riporti le informazioni sull'installazione ('Configurazione Sistema')
 
-2015-02-09  Andrea Poli <apoli@link.it
+2015-02-09  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
 	Aggiunta funzionalità #291
@@ -27,7 +45,7 @@
 	  . ConfigurationDirectory
 	  . Protocolli installati
 
-2015-02-04  Andrea Poli <apoli@link.it
+2015-02-04  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
 	Risolto Bug #286
