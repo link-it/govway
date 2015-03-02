@@ -157,7 +157,7 @@ public class LocalForwardEngine {
 				this.busta = new Busta(this.localForwardParameter.getProtocolFactory(), 
 						this.localForwardParameter.getInfoServizio(), 
 						soggettoFruitore,idServizio.getSoggettoErogatore(), 
-						this.localForwardParameter.getIdRequest());
+						this.localForwardParameter.getIdRequest(), false);
 				this.busta.setID(this.localForwardParameter.getIdRequest());
 			}
 			
