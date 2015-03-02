@@ -29,361 +29,264 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.tracciamento.Dominio;
+import org.openspcoop2.core.tracciamento.DominioSoggetto;
+import org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione;
+import org.openspcoop2.core.tracciamento.constants.TipoEsitoElaborazione;
 import org.openspcoop2.protocol.sdk.Allegato;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.constants.EsitoElaborazioneMessaggioTracciatura;
 import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
-import org.openspcoop2.utils.jaxb.DateTime2Date;
 
 /**
  * Bean Contenente le informazioni relative alle tracce
- * 
- * <p>Java class for traccia complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="traccia">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="busta" type="{http://sdk.protocol.openspcoop2.org}busta" minOccurs="0"/>
- *         &lt;element name="correlazioneApplicativa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="gdo" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="idSoggetto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="properties">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="servizioApplicativoFruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoMessaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  * 
  * @author Stefano Corallo <corallo@link.it>
  * @author Nardi Lorenzo
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "traccia", propOrder = {
-    "busta",
-    "correlazioneApplicativa",
-    "gdo",
-    "idSoggetto",
-    "location",
-    "properties",
-    "servizioApplicativoFruitore",
-    "tipoMessaggio"
-})
 
-public class Traccia implements java.io.Serializable {
+public class Traccia  implements java.io.Serializable {
 
 	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private long id;
-	
-	// data
-    @XmlElement(type = String.class)
-    @XmlJavaTypeAdapter(DateTime2Date .class)
-    @XmlSchemaType(name = "dateTime")
-    protected Date gdo;
-	
-    // dominio
-    protected IDSoggetto idSoggetto;
-    @XmlTransient
-	private TipoPdD tipoPdD;
-    
-    // tipoTraccia
-    protected TipoTraccia tipoMessaggio;
-    
 	// Busta
 	protected Busta busta;
-	@XmlTransient
 	private byte[] bustaInByte;
-	@XmlTransient
     private SOAPElement bustaInDom;
-	@XmlTransient
-	private String bustaAsString;
-	
-	// correlazione
-    protected String correlazioneApplicativa;
-    protected String correlazioneApplicativaRisposta;
-    
-    // location
-    protected String location;
-    
+
     // properties
-    @XmlJavaTypeAdapter(Properties2Hashtable .class)
     protected Hashtable<String, String> properties;
     
     // protocollo
-    @XmlTransient
     private String protocollo;
     
-    // esito		
-    @XmlTransient
-    private EsitoElaborazioneMessaggioTracciato esitoElaborazioneMessaggioTracciato;
+    // traccia
+    private org.openspcoop2.core.tracciamento.Traccia traccia;
     
-    // allegati
-    @XmlElement(nillable = true)
-    protected List<Allegato> listaAllegati;
-	
+    // lista allegati
+    private List<Allegato> allegati = new ArrayList<Allegato>();
     
-    public Traccia() {
-    	this.properties = new Hashtable<String, String>();
-    	this.listaAllegati = new ArrayList<Allegato>();
+    
+	public Traccia() {
+    	this.traccia =  new org.openspcoop2.core.tracciamento.Traccia();
 	}
-    /**
-     * Gets the value of the busta property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Busta }
-     *     
-     */
+    public Traccia(org.openspcoop2.core.tracciamento.Traccia traccia) {
+    	
+    	this.traccia = traccia;
+    	
+    	// protocollo
+    	if(traccia.getBusta()!=null && traccia.getBusta().getProtocollo()!=null){
+    		this.protocollo = traccia.getBusta().getProtocollo().getIdentificativo();
+    	}
+    	
+    	// allegati
+    	if(traccia.getAllegati()!=null && traccia.getAllegati().sizeAllegatoList()>0)
+    	for (org.openspcoop2.core.tracciamento.Allegato allegato : traccia.getAllegati().getAllegatoList()) {
+			this.addAllegato(new Allegato(allegato));
+		}
+	}
+    
+    
+    
+    // base
+    
+    public org.openspcoop2.core.tracciamento.Traccia getTraccia() {
+		return this.traccia;
+	}
+	public void setTraccia(org.openspcoop2.core.tracciamento.Traccia traccia) {
+		this.traccia = traccia;
+		
+    	// protocollo
+    	if(traccia.getBusta()!=null && traccia.getBusta().getProtocollo()!=null){
+    		this.protocollo = traccia.getBusta().getProtocollo().getIdentificativo();
+    	}
+    	
+    	// allegati
+    	if(traccia.getAllegati()!=null && traccia.getAllegati().sizeAllegatoList()>0)
+    	for (org.openspcoop2.core.tracciamento.Allegato allegato : traccia.getAllegati().getAllegatoList()) {
+			this.addAllegato(new Allegato(allegato));
+		}
+	}
+    
+    
+	
+	// id  [Wrapper]
+	
+	public Long getId() {
+		return this.traccia.getId();
+	}
+	public void setId(Long id) {
+		this.traccia.setId(id);
+	}
+	
+	
+    // data [Wrapper]
+    
+	public Date getGdo() {
+        return this.traccia.getOraRegistrazione();
+    }
+    public void setGdo(Date value) {
+        this.traccia.setOraRegistrazione(value);
+    }
+    
+    
+    // dominio [wrapper]
+    
+    public IDSoggetto getIdSoggetto() {
+    	IDSoggetto idSoggetto = null;
+    	if(this.traccia.getDominio()!=null){
+    		if(this.traccia.getDominio().getSoggetto()!=null){
+    			if(idSoggetto==null){
+    				idSoggetto = new IDSoggetto();
+    			}
+    			idSoggetto.setTipo(this.traccia.getDominio().getSoggetto().getTipo());
+    			idSoggetto.setNome(this.traccia.getDominio().getSoggetto().getBase());
+    		}
+    		if(this.traccia.getDominio().getIdentificativoPorta()!=null){
+    			if(idSoggetto==null){
+    				idSoggetto = new IDSoggetto();
+    			}
+    			idSoggetto.setCodicePorta(this.traccia.getDominio().getIdentificativoPorta());
+    		}
+    	}
+    	return idSoggetto;
+    }
+    public void setIdSoggetto(IDSoggetto value) {
+        if(value!=null && (value.getTipo()!=null || value.getNome()!=null || value.getCodicePorta()!=null)){
+        	if(value.getTipo()!=null || value.getNome()!=null){
+		    	if(this.traccia.getDominio()==null){
+		        	this.traccia.setDominio(new Dominio());
+		        }
+		    	if(this.traccia.getDominio().getSoggetto()==null){
+		    		this.traccia.getDominio().setSoggetto(new DominioSoggetto());
+		    	}
+		    	this.traccia.getDominio().getSoggetto().setTipo(value.getTipo());
+		    	this.traccia.getDominio().getSoggetto().setBase(value.getNome());
+        	}
+        	else{
+        		if(this.traccia.getDominio()!=null){
+		        	this.traccia.getDominio().setSoggetto(null);
+		        }
+        	}
+        	
+        	if(value.getCodicePorta()!=null){
+        		if(this.traccia.getDominio()==null){
+		        	this.traccia.setDominio(new Dominio());
+		        }
+        		this.traccia.getDominio().setIdentificativoPorta(value.getCodicePorta());
+        	}
+        	else{
+        		if(this.traccia.getDominio()!=null){
+		        	this.traccia.getDominio().setIdentificativoPorta(null);
+		        }
+        	}
+        }
+        else{
+        	if(this.traccia.getDominio()!=null){
+        		if(this.traccia.getDominio().getFunzione()==null){
+        			this.traccia.setDominio(null);
+        		}
+        		else{
+        			this.traccia.getDominio().setIdentificativoPorta(null);
+        			this.traccia.getDominio().setSoggetto(null);
+        		}
+        	}
+        }
+    }
+	public TipoPdD getTipoPdD() {
+		if(this.traccia.getDominio()!=null && this.traccia.getDominio().getFunzione()!=null){
+			switch (this.traccia.getDominio().getFunzione()) {
+			case PORTA_DELEGATA:
+				return TipoPdD.DELEGATA;
+			case PORTA_APPLICATIVA:
+				return TipoPdD.APPLICATIVA;
+			case INTEGRATION_MANAGER:
+				return TipoPdD.INTEGRATION_MANAGER;
+			case ROUTER:
+				return TipoPdD.ROUTER;
+			}
+		}
+		return null;
+	}
+	public void setTipoPdD(TipoPdD tipoPdD) {
+		if(tipoPdD!=null){
+			if(this.traccia.getDominio()==null){
+				this.traccia.setDominio(new Dominio());
+			}
+			switch (tipoPdD) {
+			case DELEGATA:
+				this.traccia.getDominio().setFunzione(org.openspcoop2.core.tracciamento.constants.TipoPdD.PORTA_DELEGATA);
+				break;
+			case APPLICATIVA:
+				this.traccia.getDominio().setFunzione(org.openspcoop2.core.tracciamento.constants.TipoPdD.PORTA_APPLICATIVA);
+				break;
+			case INTEGRATION_MANAGER:
+				this.traccia.getDominio().setFunzione(org.openspcoop2.core.tracciamento.constants.TipoPdD.INTEGRATION_MANAGER);
+				break;
+			case ROUTER:
+				this.traccia.getDominio().setFunzione(org.openspcoop2.core.tracciamento.constants.TipoPdD.ROUTER);
+				break;
+			}
+		}
+		else{
+        	if(this.traccia.getDominio()!=null){
+        		if(this.traccia.getDominio().getIdentificativoPorta()==null && this.traccia.getDominio().getSoggetto()==null){
+        			this.traccia.setDominio(null);
+        		}
+        		else{
+        			this.traccia.getDominio().setFunzione(null);
+        		}
+        	}
+        }
+	}
+    
+    
+    // tipoTraccia [wrapper]
+    
+	public TipoTraccia getTipoMessaggio() {
+		if(this.traccia.getTipo()!=null){
+			switch (this.traccia.getTipo()) {
+			case RICHIESTA:
+				return TipoTraccia.RICHIESTA;
+			case RISPOSTA:
+				return TipoTraccia.RISPOSTA;
+			}
+		}
+		return null;
+    }
+    public void setTipoMessaggio(TipoTraccia value) {
+    	if(value!=null){
+			switch (value) {
+			case RICHIESTA:
+				this.traccia.setTipo(org.openspcoop2.core.tracciamento.constants.TipoTraccia.RICHIESTA);
+				break;
+			case RISPOSTA:
+				this.traccia.setTipo(org.openspcoop2.core.tracciamento.constants.TipoTraccia.RISPOSTA);
+				break;
+			}
+		}
+    }
+
+    
+    
+	// Busta
+    
     public Busta getBusta() {
         return this.busta;
     }
-
-    /**
-     * Sets the value of the busta property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Busta }
-     *     
-     */
     public void setBusta(Busta value) {
         this.busta = value;
     }
-
-    /**
-     * Gets the value of the correlazioneApplicativa property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCorrelazioneApplicativa() {
-        return this.correlazioneApplicativa;
-    }
-
-    /**
-     * Sets the value of the correlazioneApplicativa property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCorrelazioneApplicativa(String value) {
-        this.correlazioneApplicativa = value;
-    }
-    
-    /**
-     * Gets the value of the correlazioneApplicativaRisposta property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCorrelazioneApplicativaRisposta() {
-        return this.correlazioneApplicativaRisposta;
-    }
-
-    
-    /**
-     * Sets the value of the correlazioneApplicativaRisposta property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCorrelazioneApplicativaRisposta(String value) {
-        this.correlazioneApplicativaRisposta = value;
-    }
-    
-    /**
-     * Gets the value of the gdo property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public Date getGdo() {
-        return this.gdo;
-    }
-    
-    /**
-     * Sets the value of the gdo property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setGdo(Date value) {
-        this.gdo = value;
-    }
-
-    /**
-     * Gets the value of the idporta property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public IDSoggetto getIdSoggetto() {
-        return this.idSoggetto;
-    }
-
-    /**
-     * Sets the value of the idporta property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIdSoggetto(IDSoggetto value) {
-        this.idSoggetto = value;
-    }
-
-	public long getId() {
-		return this.id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-    
-    /**
-     * Gets the value of the location property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getLocation() {
-        return this.location;
-    }
-
-    /**
-     * Sets the value of the location property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setLocation(String value) {
-        this.location = value;
-    }
-
-    /**
-     * Gets the value of the tipoMessaggio property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public TipoTraccia getTipoMessaggio() {
-        return this.tipoMessaggio;
-    }
-
-    /**
-     * Sets the value of the tipoMessaggio property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTipoMessaggio(TipoTraccia value) {
-        this.tipoMessaggio = value;
-    }
-
-    public void addProperty(String key,String value){
-    	this.properties.put(key,value);
-    }
-    
-    public int sizeProperties(){
-    	return this.properties.size();
-    }
-
-    public String getProperty(String key){
-    	return this.properties.get(key);
-    }
-    
-    public String removeProperty(String key){
-    	return this.properties.remove(key);
-    }
-    
-    public String[] getPropertiesValues() {
-    	return this.properties.values().toArray(new String[this.properties.size()]);
-    }
-    
-    public String[] getPropertiesNames() {
-    	return this.properties.keySet().toArray(new String[this.properties.size()]);
-    }
-    
-    public void setProperties(Hashtable<String, String> params) {
-    	this.properties = params;
-    }
-    
-    public Hashtable<String, String> getProperties() {
-    	return this.properties;
-    }
-	public String getProtocollo() {
-		return this.protocollo;
-	}
-	public void setProtocollo(String protocollo) {
-		this.protocollo = protocollo;
-	}
-	public byte[] getBustaAsByteArray() {
+    public byte[] getBustaAsByteArray() {
 		return this.bustaInByte;
 	}
 	public void setBustaAsByteArray(byte[] bustaInByte) {
@@ -395,70 +298,178 @@ public class Traccia implements java.io.Serializable {
 	public void setBustaAsElement(SOAPElement bustaInDom) {
 		this.bustaInDom = bustaInDom;
 	}
-	public TipoPdD getTipoPdD() {
-		return this.tipoPdD;
+	// [wrapper]
+	public String getBustaAsString() {
+		return this.traccia.getBustaXml();
 	}
-	public void setTipoPdD(TipoPdD tipoPdD) {
-		this.tipoPdD = tipoPdD;
+	public void setBustaAsString(String bustaAsString) {
+		this.traccia.setBustaXml(bustaAsString);
 	}
+	
+	
+	// correlazione [wrapper]
+    
+	public String getCorrelazioneApplicativa() {
+        return this.traccia.getIdentificativoCorrelazioneRichiesta();
+    }
+    public void setCorrelazioneApplicativa(String value) {
+    	this.traccia.setIdentificativoCorrelazioneRichiesta(value);
+    }
+    
+    public String getCorrelazioneApplicativaRisposta() {
+        return this.traccia.getIdentificativoCorrelazioneRisposta();
+    }
+    public void setCorrelazioneApplicativaRisposta(String value) {
+    	this.traccia.setIdentificativoCorrelazioneRisposta(value);
+    }
+    
+    
+    
+    // location [wrapper]
+    
+    public String getLocation() {
+        return this.traccia.getLocation();
+    }
+    public void setLocation(String value) {
+    	this.traccia.setLocation(value);
+    }
+    
+    
+
+
+    // properties
+    public void addProperty(String key,String value){
+    	this.properties.put(key,value);
+    }  
+    public int sizeProperties(){
+    	return this.properties.size();
+    }
+    public String getProperty(String key){
+    	return this.properties.get(key);
+    }
+    public String removeProperty(String key){
+    	return this.properties.remove(key);
+    }
+    public String[] getPropertiesValues() {
+    	return this.properties.values().toArray(new String[this.properties.size()]);
+    }
+    public String[] getPropertiesNames() {
+    	return this.properties.keySet().toArray(new String[this.properties.size()]);
+    }
+    public void setProperties(Hashtable<String, String> params) {
+    	this.properties = params;
+    }
+    public Hashtable<String, String> getProperties() {
+    	return this.properties;
+    }
+    
+    
+    // protocollo
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
+	}
+	
+	
+    // esito [Wrapper]
 	public EsitoElaborazioneMessaggioTracciato getEsitoElaborazioneMessaggioTracciato() {
-		return this.esitoElaborazioneMessaggioTracciato;
+		if(this.traccia.getEsitoElaborazione()!=null){
+			EsitoElaborazioneMessaggioTracciato esito = new EsitoElaborazioneMessaggioTracciato();
+			esito.setDettaglio(this.traccia.getEsitoElaborazione().getDettaglio());
+			if(this.traccia.getEsitoElaborazione().getTipo()!=null){
+				switch (this.traccia.getEsitoElaborazione().getTipo()) {
+				case INVIATO:
+					esito.setEsito(EsitoElaborazioneMessaggioTracciatura.INVIATO);
+					break;
+				case RICEVUTO:
+					esito.setEsito(EsitoElaborazioneMessaggioTracciatura.RICEVUTO);
+					break;
+				case ERRORE:
+					esito.setEsito(EsitoElaborazioneMessaggioTracciatura.ERRORE);
+					break;
+				}
+			}
+			return esito;
+		}
+		return null;
 	}
 	public void setEsitoElaborazioneMessaggioTracciato(
 			EsitoElaborazioneMessaggioTracciato esitoElaborazioneMessaggioTracciato) {
-		this.esitoElaborazioneMessaggioTracciato = esitoElaborazioneMessaggioTracciato;
+		if(esitoElaborazioneMessaggioTracciato==null){
+			return;
+		}
+		if(this.traccia.getEsitoElaborazione()==null){
+			this.traccia.setEsitoElaborazione(new TracciaEsitoElaborazione());
+		}
+		this.traccia.getEsitoElaborazione().setDettaglio(esitoElaborazioneMessaggioTracciato.getDettaglio());
+		if(esitoElaborazioneMessaggioTracciato.getEsito()!=null){
+			switch (esitoElaborazioneMessaggioTracciato.getEsito()) {
+			case INVIATO:
+				this.traccia.getEsitoElaborazione().setTipo(TipoEsitoElaborazione.INVIATO);
+				break;
+			case RICEVUTO:
+				this.traccia.getEsitoElaborazione().setTipo(TipoEsitoElaborazione.RICEVUTO);
+				break;
+			case ERRORE:
+				this.traccia.getEsitoElaborazione().setTipo(TipoEsitoElaborazione.ERRORE);
+				break;
+			}
+		}
 	}
 	
+	
+    // allegati [wrapped]
 	public List<Allegato> getListaAllegati() {
-        if (this.listaAllegati == null) {
-            this.listaAllegati = new ArrayList<Allegato>();
-        }
-        return this.listaAllegati;
+		return this.allegati;
     }
 	public int sizeListaAllegati() {
-		return this.listaAllegati.size();
+		return this.allegati.size();
 	}
 	public void addAllegato(Allegato a) {
-		this.listaAllegati.add(a);
+		this.allegati.add(a);
 	}
 	public Allegato getAllegato(int index) {
-		return this.listaAllegati.get( index );
+		return this.allegati.get(index);
 	}
 	public Allegato removeAllegato(int index) {
-		return this.listaAllegati.remove(index);
+		return this.allegati.remove(index);
 	}
-	public String getBustaAsString() {
-		return this.bustaAsString;
-	}
-	public void setBustaAsString(String bustaAsString) {
-		this.bustaAsString = bustaAsString;
-	}
-
 	protected void setListaAllegati(List<Allegato> listaAllegati) {
-		this.listaAllegati = listaAllegati;
+		this.allegati = listaAllegati;
 	}
+	
+	
+	
 	
 	@Override
 	public Traccia clone(){
+		
+		// Non uso il base clone per far si che venga usato il costruttore new String()
+		
 		Traccia clone = new Traccia();
 		
-		// data
-		clone.setGdo(this.gdo!=null ? new Date(this.gdo.getTime()) : null);
+		// id
+		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
 		
-		// dominio
-		clone.setIdSoggetto(this.idSoggetto!=null ? this.idSoggetto.clone() : null);
-		clone.setTipoPdD(this.tipoPdD);
+    	// data
+		clone.setGdo(this.getGdo()!=null ? new Date(this.getGdo().getTime()) : null);
 		
-	    // tipoTraccia
-		clone.setTipoMessaggio(this.tipoMessaggio);
+        // dominio
+		clone.setIdSoggetto(this.getIdSoggetto()!=null ? this.getIdSoggetto().clone() : null);
+		clone.setTipoPdD(this.getTipoPdD());
+    	
+        // tipoTraccia
+		clone.setTipoMessaggio(this.getTipoMessaggio());
 		
 		// busta
-		clone.setBusta(this.busta!=null ? this.busta.clone() : null);
+		clone.setBusta(this.getBusta()!=null ? this.getBusta().clone() : null);
 		ByteArrayOutputStream bout = null;
-		if(this.bustaInByte!=null){
+		if(this.getBustaAsByteArray()!=null){
 			bout = new ByteArrayOutputStream();
 			try{
-				bout.write(this.bustaInByte);
+				bout.write(this.getBustaAsByteArray());
 				bout.flush();
 				bout.close();
 			}catch(Exception e){
@@ -466,15 +477,18 @@ public class Traccia implements java.io.Serializable {
 			}
 			clone.setBustaAsByteArray(bout.toByteArray());
 		}
-		clone.setBustaAsElement(this.bustaInDom); // non clonato, vedere se si trova un modo efficente se serve
-		clone.setBustaAsString(this.bustaAsString!=null ? new String(this.bustaAsString) : null);
+		clone.setBustaAsElement(this.getBustaAsElement()); // non clonato, vedere se si trova un modo efficente se serve
+		clone.setBustaAsString(this.getBustaAsString()!=null ? new String(this.getBustaAsString()) : null);
 		
-		// correlazione
-		clone.setCorrelazioneApplicativa(this.correlazioneApplicativa!=null ? new String(this.correlazioneApplicativa) : null);
-		clone.setCorrelazioneApplicativaRisposta(this.correlazioneApplicativaRisposta!=null ? new String(this.correlazioneApplicativaRisposta) : null);
-
-		// location
-		clone.setLocation(this.location!=null ? new String(this.location) : null);
+    	// correlazione
+		clone.setCorrelazioneApplicativa(this.getCorrelazioneApplicativa()!=null ? new String(this.getCorrelazioneApplicativa()) : null);
+		clone.setCorrelazioneApplicativaRisposta(this.getCorrelazioneApplicativaRisposta()!=null ? new String(this.getCorrelazioneApplicativaRisposta()) : null);
+    	
+    	// location
+		clone.setLocation(this.getLocation()!=null ? new String(this.getLocation()) : null);
+		
+    	// esito
+		clone.setEsitoElaborazioneMessaggioTracciato(this.getEsitoElaborazioneMessaggioTracciato()!=null ? this.getEsitoElaborazioneMessaggioTracciato().clone() : null);
 		
 		// properties
 		if(this.properties!=null && this.properties.size()>0){
@@ -491,10 +505,7 @@ public class Traccia implements java.io.Serializable {
 		// protocollo
 		clone.setProtocollo(this.protocollo!=null ? new String(this.protocollo) : null);
 		
-		// esito
-		clone.setEsitoElaborazioneMessaggioTracciato(this.esitoElaborazioneMessaggioTracciato!=null ? this.esitoElaborazioneMessaggioTracciato.clone() : null);
-		
-		// ListaAllegati
+    	// allegati
 		for(int i=0; i<this.sizeListaAllegati(); i++){
 			clone.addAllegato(this.getAllegato(i).clone());
 		}

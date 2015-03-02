@@ -53,7 +53,7 @@ public class DriverMonitor {
 		    return true;
 		}
 		catch(Exception e) {
-			log.error("Errore durante l'inizializzazione del DriverRegistroServizi: "+e.getMessage(),e);
+			log.error("Errore durante l'inizializzazione del Driver: "+e.getMessage(),e);
 			DriverMonitor.driverMonitoraggio = null;
 		    return false;
 		}
@@ -61,7 +61,7 @@ public class DriverMonitor {
     
 	public static DriverMonitor getInstance() throws UtilsException{
 		if(DriverMonitor.driverMonitoraggio==null){
-	    	throw new UtilsException("DriverRegistroServizi non inizializzato");
+	    	throw new UtilsException("Driver non inizializzato");
 	    }
 	    return DriverMonitor.driverMonitoraggio;
 	}

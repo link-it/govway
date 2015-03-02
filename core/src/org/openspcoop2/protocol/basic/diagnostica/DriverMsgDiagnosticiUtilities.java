@@ -27,9 +27,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Vector;
 
@@ -273,6 +272,10 @@ public class DriverMsgDiagnosticiUtilities {
 			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".severita<=?");
 		}
 		
+		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getCodice())){
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".codice=?");
+		}
+		
 		if( DriverMsgDiagnosticiUtilities.isDefined(filter.getMessaggioCercatoInternamenteTestoDiagnostico()) )
 			sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".messaggio", filter.getMessaggioCercatoInternamenteTestoDiagnostico(),true,true);
 		
@@ -368,11 +371,11 @@ public class DriverMsgDiagnosticiUtilities {
 		
 		//data inizio
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataInizio())){
-			pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataInizio().getTime().getTime()));
+			pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataInizio().getTime()));
 		}
 		//data fine
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataFine())){
-			pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataFine().getTime().getTime()));
+			pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataFine().getTime()));
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.isDelegata())){
@@ -474,6 +477,10 @@ public class DriverMsgDiagnosticiUtilities {
 			pstmt.setInt(startIndex++, filter.getSeverita());
 		}
 		
+		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getCodice())){
+			pstmt.setString(startIndex++, filter.getCodice());
+		}
+		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getProtocollo())){
 			pstmt.setString(startIndex++, filter.getProtocollo());
 		}
@@ -530,10 +537,7 @@ public class DriverMsgDiagnosticiUtilities {
 				msg.addProperty(DriverMsgDiagnostici.IDDIAGNOSTICI, msg.getId()+"");
 				
 				Timestamp gdo=rs.getTimestamp("gdo");
-				// INEFFICENTE Calendar cal=Calendar.getInstance();
-				Calendar cal=new GregorianCalendar();
-				cal.setTime(gdo);
-				msg.setGdo(cal);
+				msg.setGdo(gdo);
 				
 				IDSoggetto idSoggetto = new IDSoggetto();
 				idSoggetto.setCodicePorta(rs.getString("pdd_codice"));
@@ -616,10 +620,7 @@ public class DriverMsgDiagnosticiUtilities {
 				msg.setIdSoggetto(idSoggetto);
 				
 				Timestamp gdo=rs.getTimestamp("gdo");
-				// INEFFICENTE Calendar cal=Calendar.getInstance();
-				Calendar cal=new GregorianCalendar();
-				cal.setTime(gdo);
-				msg.setGdo(cal);
+				msg.setGdo(gdo);
 				
 				msg.setNomePorta(rs.getString("porta"));
 				
@@ -716,7 +717,7 @@ public class DriverMsgDiagnosticiUtilities {
 	protected static boolean isDefined(List<?> v){
 		return v!=null && v.size()>0;
 	}
-	protected static boolean isDefined(Calendar v){
+	protected static boolean isDefined(Date v){
 		return v!=null;
 	}
 	protected static boolean isDefined(IDSoggetto v){

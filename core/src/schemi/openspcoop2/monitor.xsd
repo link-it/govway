@@ -57,6 +57,7 @@
 							<linkit:ws-crud-method-interface create="false" update="false" 
 								updateOrCreate="false" deleteById="false" deleteAll="false" 
 								deleteAllByFilter="false" delete="false"/>
+							<linkit:ws-filter sortCondition="false"/>
 						</linkit:ws-interface>
 					</linkit:interface>
 				</linkit:generator>
@@ -233,7 +234,8 @@
 								inUse="false" find="false" findAllIds="false" />
 							<linkit:ws-crud-method-interface create="false" update="false" 
 								updateOrCreate="false" deleteById="false" deleteAll="false" 
-								delete="false"/>							
+								delete="false"/>	
+							<linkit:ws-filter sortCondition="false"/>
 						</linkit:ws-interface>
 					</linkit:interface>
 				</linkit:generator>

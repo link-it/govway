@@ -28,105 +28,20 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
-import org.openspcoop2.utils.jaxb.DateTime2Date;
 
 /**
- * Interfaccia Tracciamento
- *
- * <p>Java class for filtroRicercaTracce complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="filtroRicercaTracce">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="idCorrelazioneApplicativa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="idBusta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="identificativoPorta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="maxDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="minDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="nomeServizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="nomeSoggettoDestinatario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="nomeSoggettoMittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="profiloCollaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="properties">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="rifMessaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="errore" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="tipoServizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoSoggettoDestinatario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoSoggettoMittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoTraccia" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
+ * FiltroRicercaTracce
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author Nardi Lorenzo
 * @author $Author$
 * @version $Rev$, $Date$
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "filtroRicercaTracce", propOrder = {
-		"azione",
-		"idCorrelazioneApplicativa",
-		"idBusta",
-		"identificativoPorta",
-		"limit",
-		"maxDate",
-		"minDate",
-		"nomeServizio",
-		"nomeSoggettoDestinatario",
-		"nomeSoggettoMittente",
-		"offset",
-		"profiloCollaborazione",
-		"properties",
-		"rifMessaggio",
-		"errore",
-		"tipoServizio",
-		"tipoSoggettoDestinatario",
-		"tipoSoggettoMittente",
-		"tipoTraccia"
-})
 public class FiltroRicercaTracce implements java.io.Serializable {
 
 	/**
@@ -134,22 +49,14 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(type = String.class)
-	@XmlJavaTypeAdapter(DateTime2Date .class)
-	@XmlSchemaType(name = "dateTime")
 	protected Date maxDate;
-	@XmlElement(type = String.class)
-	@XmlJavaTypeAdapter(DateTime2Date .class)
-	@XmlSchemaType(name = "dateTime")
 	protected Date minDate;
 
 	protected TipoTraccia tipoTraccia;
-	@XmlTransient
 	private TipoPdD tipoPdD;
 	protected IDSoggetto dominio;
 
 	protected String idBusta;
-	@XmlElement(required = true, nillable = true)
 	protected String riferimentoMessaggio;
 	protected boolean ricercaSoloBusteErrore;
 	protected InformazioniProtocollo informazioniProtocollo;
@@ -161,13 +68,10 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	protected String idCorrelazioneApplicativaRisposta;
 	protected boolean idCorrelazioneApplicativaOrMatch = false;
 
-	@XmlTransient
 	private String protocollo;
 
-	@XmlJavaTypeAdapter(Properties2Hashtable .class)
 	protected Hashtable<String, String> properties;
 
-	@XmlElement(required = true, nillable = true)
 	protected List<IDSoggetto> filtroSoggetti;
 
 

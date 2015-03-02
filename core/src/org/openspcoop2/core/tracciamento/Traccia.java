@@ -20,42 +20,62 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.tracciamento.constants.TipoTraccia;
 import java.io.Serializable;
-import java.util.Date;
 
 
-/** <p>Java class Traccia.
+/** <p>Java class for traccia complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="traccia">
+ * 		&lt;sequence>
+ * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/tracciamento}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="esito-elaborazione" type="{http://www.openspcoop2.org/core/tracciamento}traccia-esito-elaborazione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="identificativo-correlazione-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="identificativo-correlazione-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="busta" type="{http://www.openspcoop2.org/core/tracciamento}busta" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="busta-xml" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="allegati" type="{http://www.openspcoop2.org/core/tracciamento}allegati" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoTraccia" use="optional"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "traccia", 
+  propOrder = {
+  	"dominio",
+  	"oraRegistrazione",
+  	"esitoElaborazione",
+  	"identificativoCorrelazioneRichiesta",
+  	"identificativoCorrelazioneRisposta",
+  	"location",
+  	"busta",
+  	"bustaXml",
+  	"allegati"
+  }
+)
+
+@XmlRootElement(name = "traccia")
 
 public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected Dominio dominio;
-
-  protected Date oraRegistrazione;
-
-  protected TracciaEsitoElaborazione esitoElaborazione;
-
-  protected String identificativoCorrelazioneRichiesta;
-
-  protected String identificativoCorrelazioneRisposta;
-
-  protected String location;
-
-  protected Busta busta;
-
-  protected String bustaXml;
-
-  protected Allegati allegati;
-
-  protected String tipo;
-
-
   public Traccia() {
   }
 
@@ -81,11 +101,11 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.dominio = dominio;
   }
 
-  public Date getOraRegistrazione() {
+  public java.util.Date getOraRegistrazione() {
     return this.oraRegistrazione;
   }
 
-  public void setOraRegistrazione(Date oraRegistrazione) {
+  public void setOraRegistrazione(java.util.Date oraRegistrazione) {
     this.oraRegistrazione = oraRegistrazione;
   }
 
@@ -97,42 +117,39 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.esitoElaborazione = esitoElaborazione;
   }
 
-  public String getIdentificativoCorrelazioneRichiesta() {
-    if(this.identificativoCorrelazioneRichiesta!=null && ("".equals(this.identificativoCorrelazioneRichiesta)==false)){
-		return this.identificativoCorrelazioneRichiesta.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getIdentificativoCorrelazioneRichiesta() {
+    return this.identificativoCorrelazioneRichiesta;
   }
 
-  public void setIdentificativoCorrelazioneRichiesta(String identificativoCorrelazioneRichiesta) {
+  public void setIdentificativoCorrelazioneRichiesta(java.lang.String identificativoCorrelazioneRichiesta) {
     this.identificativoCorrelazioneRichiesta = identificativoCorrelazioneRichiesta;
   }
 
-  public String getIdentificativoCorrelazioneRisposta() {
-    if(this.identificativoCorrelazioneRisposta!=null && ("".equals(this.identificativoCorrelazioneRisposta)==false)){
-		return this.identificativoCorrelazioneRisposta.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getIdentificativoCorrelazioneRisposta() {
+    return this.identificativoCorrelazioneRisposta;
   }
 
-  public void setIdentificativoCorrelazioneRisposta(String identificativoCorrelazioneRisposta) {
+  public void setIdentificativoCorrelazioneRisposta(java.lang.String identificativoCorrelazioneRisposta) {
     this.identificativoCorrelazioneRisposta = identificativoCorrelazioneRisposta;
   }
 
-  public String getLocation() {
-    if(this.location!=null && ("".equals(this.location)==false)){
-		return this.location.trim();
-	}else{
-		return null;
-	}
-
+  public boolean isCorrelazioneApplicativaAndMatch() {
+    return this.correlazioneApplicativaAndMatch;
   }
 
-  public void setLocation(String location) {
+  public boolean getCorrelazioneApplicativaAndMatch() {
+    return this.correlazioneApplicativaAndMatch;
+  }
+
+  public void setCorrelazioneApplicativaAndMatch(boolean correlazioneApplicativaAndMatch) {
+    this.correlazioneApplicativaAndMatch = correlazioneApplicativaAndMatch;
+  }
+
+  public java.lang.String getLocation() {
+    return this.location;
+  }
+
+  public void setLocation(java.lang.String location) {
     this.location = location;
   }
 
@@ -144,16 +161,23 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.busta = busta;
   }
 
-  public String getBustaXml() {
-    if(this.bustaXml!=null && ("".equals(this.bustaXml)==false)){
-		return this.bustaXml.trim();
-	}else{
-		return null;
-	}
-
+  public boolean isRicercaSoloBusteErrore() {
+    return this.ricercaSoloBusteErrore;
   }
 
-  public void setBustaXml(String bustaXml) {
+  public boolean getRicercaSoloBusteErrore() {
+    return this.ricercaSoloBusteErrore;
+  }
+
+  public void setRicercaSoloBusteErrore(boolean ricercaSoloBusteErrore) {
+    this.ricercaSoloBusteErrore = ricercaSoloBusteErrore;
+  }
+
+  public java.lang.String getBustaXml() {
+    return this.bustaXml;
+  }
+
+  public void setBustaXml(java.lang.String bustaXml) {
     this.bustaXml = bustaXml;
   }
 
@@ -165,53 +189,88 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.allegati = allegati;
   }
 
-  public String getTipo() {
-    if(this.tipo!=null && ("".equals(this.tipo)==false)){
-		return this.tipo.trim();
-	}else{
-		return null;
-	}
-
+  public void set_value_tipo(String value) {
+    this.tipo = (TipoTraccia) TipoTraccia.toEnumConstantFromString(value);
   }
 
-  public void setTipo(String tipo) {
+  public String get_value_tipo() {
+    if(this.tipo == null){
+    	return null;
+    }else{
+    	return this.tipo.toString();
+    }
+  }
+
+  public org.openspcoop2.core.tracciamento.constants.TipoTraccia getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(org.openspcoop2.core.tracciamento.constants.TipoTraccia tipo) {
     this.tipo = tipo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String DOMINIO = "dominio";
+  private static org.openspcoop2.core.tracciamento.model.TracciaModel modelStaticInstance = null;
+  private static synchronized void initModelStaticInstance(){
+	  if(org.openspcoop2.core.tracciamento.Traccia.modelStaticInstance==null){
+  			org.openspcoop2.core.tracciamento.Traccia.modelStaticInstance = new org.openspcoop2.core.tracciamento.model.TracciaModel();
+	  }
+  }
+  public static org.openspcoop2.core.tracciamento.model.TracciaModel model(){
+	  if(org.openspcoop2.core.tracciamento.Traccia.modelStaticInstance==null){
+	  		initModelStaticInstance();
+	  }
+	  return org.openspcoop2.core.tracciamento.Traccia.modelStaticInstance;
+  }
 
-  public static final String ORA_REGISTRAZIONE = "oraRegistrazione";
 
-  public static final String ESITO_ELABORAZIONE = "esitoElaborazione";
+  @XmlElement(name="dominio",required=true,nillable=false)
+  protected Dominio dominio;
 
-  public static final String IDENTIFICATIVO_CORRELAZIONE_RICHIESTA = "identificativoCorrelazioneRichiesta";
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
+  protected java.util.Date oraRegistrazione;
 
-  public static final String IDENTIFICATIVO_CORRELAZIONE_RISPOSTA = "identificativoCorrelazioneRisposta";
+  @XmlElement(name="esito-elaborazione",required=true,nillable=false)
+  protected TracciaEsitoElaborazione esitoElaborazione;
 
-  public static final String LOCATION = "location";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo-correlazione-richiesta",required=false,nillable=false)
+  protected java.lang.String identificativoCorrelazioneRichiesta;
 
-  public static final String BUSTA = "busta";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo-correlazione-risposta",required=false,nillable=false)
+  protected java.lang.String identificativoCorrelazioneRisposta;
 
-  public static final String BUSTA_XML = "bustaXml";
+  @javax.xml.bind.annotation.XmlTransient
+  protected boolean correlazioneApplicativaAndMatch = false;
 
-  public static final String ALLEGATI = "allegati";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="location",required=true,nillable=false)
+  protected java.lang.String location;
 
-  public static final String TIPO = "tipo";
+  @XmlElement(name="busta",required=true,nillable=false)
+  protected Busta busta;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected boolean ricercaSoloBusteErrore = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="busta-xml",required=false,nillable=false)
+  protected java.lang.String bustaXml;
+
+  @XmlElement(name="allegati",required=false,nillable=false)
+  protected Allegati allegati;
+
+  @XmlTransient
+  protected java.lang.String _value_tipo;
+
+  @XmlAttribute(name="tipo",required=false)
+  protected TipoTraccia tipo;
 
 }

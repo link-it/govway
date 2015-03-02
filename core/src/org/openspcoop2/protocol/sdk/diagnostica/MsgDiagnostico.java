@@ -24,69 +24,22 @@
 package org.openspcoop2.protocol.sdk.diagnostica;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import org.openspcoop2.core.diagnostica.DominioDiagnostico;
+import org.openspcoop2.core.diagnostica.DominioSoggetto;
+import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
+import org.openspcoop2.core.diagnostica.Proprieta;
+import org.openspcoop2.core.diagnostica.Protocollo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.utils.jaxb.DateTime2Calendar;
 
 
 /**
  * Bean Contenente le informazioni relative ai messaggi diagnostici
- * 
- * <p>Java class for MsgDiagnostico complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="MsgDiagnostico">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="codice" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="gdo" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="idBusta" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="idBustaRisposta" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="idFunzione" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="idSoggetto" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="messaggio" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="properties">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="severita" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  * 
  * @author Stefano Corallo <corallo@link.it>
  * @author Lorenzo Nardi <nardi@link.it>
@@ -94,145 +47,316 @@ import org.openspcoop2.utils.jaxb.DateTime2Calendar;
  * @version $Rev$, $Date$
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "MsgDiagnostico", propOrder = {
-    "codice",
-    "gdo",
-    "id",
-    "idBusta",
-    "idBustaRisposta",
-    "idFunzione",
-    "idSoggetto",
-    "messaggio",
-    "properties",
-    "severita"
-})
 public class MsgDiagnostico implements Serializable{
 
 	private static final long serialVersionUID = -3157816024001587816L;
 
-	@XmlElement(required = true, nillable = true)
-    protected String codice;
-    @XmlElement(required = true, type = String.class, nillable = true)
-    @XmlJavaTypeAdapter(DateTime2Calendar .class)
-    @XmlSchemaType(name = "dateTime")
-    protected Calendar gdo;
-    protected long id;
-    @XmlElement(required = true, nillable = true)
-    protected String idBusta;
-    @XmlElement(required = true, nillable = true)
-    protected String idBustaRisposta;
-    @XmlElement(required = true, nillable = true)
-    protected String idFunzione;
-    @XmlElement(required = true, nillable = true)
-    protected IDSoggetto idSoggetto;
-    @XmlElement(required = true, nillable = true)
-    protected String messaggio;
-    @XmlJavaTypeAdapter(Properties2Hashtable .class)
-    protected Hashtable<String, String> properties;
-    @XmlElement(required = true, nillable = true)
-    protected int severita;
-    @XmlTransient
-    private String protocollo;
+    // msgdiagnostico
+    private org.openspcoop2.core.diagnostica.MessaggioDiagnostico messaggioDiagnostico;
+
 	
     public MsgDiagnostico(){
-    	this.properties = new Hashtable<String, String>();
+    	this.messaggioDiagnostico = new MessaggioDiagnostico();
+    }
+    public MsgDiagnostico(org.openspcoop2.core.diagnostica.MessaggioDiagnostico messaggioDiagnostico) {
+    	this.messaggioDiagnostico = messaggioDiagnostico;
     }
     
-	public long getId() {
-		return this.id;
+    
+    
+    // base
+    
+    public org.openspcoop2.core.diagnostica.MessaggioDiagnostico getMessaggioDiagnostico() {
+		return this.messaggioDiagnostico;
 	}
-	public void setId(long id) {
-		this.id = id;
+	public void setMessaggioDiagnostico(org.openspcoop2.core.diagnostica.MessaggioDiagnostico messaggioDiagnostico) {
+		this.messaggioDiagnostico = messaggioDiagnostico;
 	}
-	public Calendar getGdo() {
-		return this.gdo;
+    
+    
+	
+	// id  [Wrapper]
+	
+	public Long getId() {
+		return this.messaggioDiagnostico.getId();
 	}
-	public void setGdo(Calendar gdo) {
-		this.gdo = gdo;
-	}
-	public IDSoggetto getIdSoggetto() {
-		return this.idSoggetto;
-	}
-	public void setIdSoggetto(IDSoggetto idPorta) {
-		this.idSoggetto = idPorta;
-	}
-	public String getIdFunzione() {
-		return this.idFunzione;
-	}
-	public void setIdFunzione(String idFunzione) {
-		this.idFunzione = idFunzione;
-	}
-	public int getSeverita() {
-		return this.severita;
-	}
-	public void setSeverita(int severita) {
-		this.severita = severita;
-	}
-	public String getMessaggio() {
-		return this.messaggio;
-	}
-	public void setMessaggio(String messaggio) {
-		this.messaggio = messaggio;
-	}
-	public String getIdBusta() {
-		return this.idBusta;
-	}
-	public void setIdBusta(String idBusta) {
-		this.idBusta = idBusta;
-	}
-	public String getIdBustaRisposta() {
-		return this.idBustaRisposta;
-	}
-	public void setIdBustaRisposta(String idBustaRisposta) {
-		this.idBustaRisposta = idBustaRisposta;
-	}
-	public String getCodice() {
-		return this.codice;
-	}
-	public void setCodice(String codice) {
-		this.codice = codice;
+	public void setId(Long id) {
+		this.messaggioDiagnostico.setId(id);
 	}
 	
-    public void addProperty(String key,String value){
-    	this.properties.put(key,value);
-    }
+	
+	
     
-    public int sizeProperties(){
-    	return this.properties.size();
-    }
-
-    public String getProperty(String key){
-    	return this.properties.get(key);
-    }
-    
-    public String removeProperty(String key){
-    	return this.properties.remove(key);
-    }
-    
-    public String[] getPropertiesValues() {
-    	return this.properties.values().toArray(new String[this.properties.size()]);
-    }
-    
-    public String[] getPropertiesNames() {
-    	return this.properties.keySet().toArray(new String[this.properties.size()]);
-    }
-    
-    public void setProperties(Hashtable<String, String> params) {
-    	this.properties = params;
-    }
-    
-    public Hashtable<String, String> getProperties() {
-    	return this.properties;
-    }
-
+	// gdo  [Wrapper]
+	
+	public Date getGdo() {
+		return this.messaggioDiagnostico.getOraRegistrazione();
+	}
+	public void setGdo(Date gdo) {
+		this.messaggioDiagnostico.setOraRegistrazione(gdo);
+	}
+	
+	
+	
+	// dominio  [Wrapper]
+	
+	public IDSoggetto getIdSoggetto() {
+		if(this.messaggioDiagnostico.getDominio()!=null){
+			IDSoggetto idSoggetto = null;
+			if(this.messaggioDiagnostico.getDominio().getIdentificativoPorta()!=null){
+				if(idSoggetto==null){
+					idSoggetto = new IDSoggetto();
+				}
+				idSoggetto.setCodicePorta(this.messaggioDiagnostico.getDominio().getIdentificativoPorta());
+			}
+			if(this.messaggioDiagnostico.getDominio().getSoggetto()!=null){
+				if(idSoggetto==null){
+					idSoggetto = new IDSoggetto();
+				}
+				idSoggetto.setTipo(this.messaggioDiagnostico.getDominio().getSoggetto().getTipo());
+				idSoggetto.setNome(this.messaggioDiagnostico.getDominio().getSoggetto().getBase());
+			}
+		}
+		
+		return null;
+	}
+	public void setIdSoggetto(IDSoggetto idPorta) {
+		if(idPorta!=null){
+			if(this.messaggioDiagnostico.getDominio()==null){
+				this.messaggioDiagnostico.setDominio(new DominioDiagnostico());
+			}
+			this.messaggioDiagnostico.getDominio().setIdentificativoPorta(idPorta.getCodicePorta());
+			if(this.messaggioDiagnostico.getDominio().getSoggetto()==null){
+				this.messaggioDiagnostico.getDominio().setSoggetto(new DominioSoggetto());
+			}
+			this.messaggioDiagnostico.getDominio().getSoggetto().setBase(idPorta.getNome());
+			this.messaggioDiagnostico.getDominio().getSoggetto().setTipo(idPorta.getTipo());
+		}else{
+			if(this.messaggioDiagnostico.getDominio()!=null){
+				if(this.messaggioDiagnostico.getDominio().getModulo()!=null){
+					if(this.messaggioDiagnostico.getDominio().getSoggetto()!=null){
+						this.messaggioDiagnostico.getDominio().setSoggetto(null);
+					}
+					this.messaggioDiagnostico.getDominio().setIdentificativoPorta(null);
+				}
+				else{
+					this.messaggioDiagnostico.setDominio(null);
+				}
+				
+			}
+		}
+	}
+	public String getIdFunzione() {
+		if(this.messaggioDiagnostico.getDominio()!=null){
+			return this.messaggioDiagnostico.getDominio().getModulo();
+		}
+		return null;
+	}
+	public void setIdFunzione(String idFunzione) {
+		if(idFunzione!=null){
+			if(this.messaggioDiagnostico.getDominio()==null){
+				this.messaggioDiagnostico.setDominio(new DominioDiagnostico());
+			}
+			this.messaggioDiagnostico.getDominio().setModulo(idFunzione);
+		}else{
+			if(this.messaggioDiagnostico.getDominio()!=null){
+				if(this.messaggioDiagnostico.getDominio().getSoggetto()!=null || this.messaggioDiagnostico.getDominio().getIdentificativoPorta()!=null){
+					this.messaggioDiagnostico.getDominio().setModulo(null);
+				}
+				else{
+					this.messaggioDiagnostico.setDominio(null);
+				}
+				
+			}
+		}
+	}
+	
+	
+	
+	// severita  [Wrapper]
+	
+	public int getSeverita() {
+		if(this.messaggioDiagnostico.getSeverita()!=null){
+			return this.messaggioDiagnostico.getSeverita();
+		}
+		return -1;
+	}
+	public void setSeverita(int severita) {
+		this.messaggioDiagnostico.setSeverita(severita);
+	}
+	
+	
+	
+	// messaggio  [Wrapper]
+	
+	public String getMessaggio() {
+		return this.messaggioDiagnostico.getMessaggio();
+	}
+	public void setMessaggio(String messaggio) {
+		this.messaggioDiagnostico.setMessaggio(messaggio);
+	}
+	
+	
+	
+	// identificativi busta [Wrapper]
+	
+	public String getIdBusta() {
+		return this.messaggioDiagnostico.getIdentificativoRichiesta();
+	}
+	public void setIdBusta(String idBusta) {
+		this.messaggioDiagnostico.setIdentificativoRichiesta(idBusta);
+	}
+	public String getIdBustaRisposta() {
+		return this.messaggioDiagnostico.getIdentificativoRisposta();
+	}
+	public void setIdBustaRisposta(String idBustaRisposta) {
+		this.messaggioDiagnostico.setIdentificativoRisposta(idBustaRisposta);
+	}
+	
+	
+	
+	// codice [Wrapper]
+	
+	public String getCodice() {
+		return this.messaggioDiagnostico.getCodice();
+	}
+	public void setCodice(String codice) {
+		this.messaggioDiagnostico.setCodice(codice);
+	}
+	
+	
+	
+	
+	// protocollo [wrapper]
+	
 	public String getProtocollo() {
-		return this.protocollo;
+		if(this.messaggioDiagnostico.getProtocollo()!=null)
+			return this.messaggioDiagnostico.getProtocollo().getIdentificativo();
+		return null;
 	}
 
 	public void setProtocollo(String protocollo) {
-		this.protocollo = protocollo;
+		if(protocollo!=null){
+			if(this.messaggioDiagnostico.getProtocollo()==null){
+				this.messaggioDiagnostico.setProtocollo(new Protocollo());
+			}
+			this.messaggioDiagnostico.getProtocollo().setIdentificativo(protocollo);
+		}
+		else{
+			if(this.messaggioDiagnostico.getProtocollo()!=null){
+				if(this.messaggioDiagnostico.getProtocollo().sizeProprietaList()<=0){
+					this.messaggioDiagnostico.setProtocollo(null);
+				}
+				else{
+					this.messaggioDiagnostico.getProtocollo().setIdentificativo(null);
+				}
+			}
+		}
 	}
+	
+	
+	
+	
+	// properties [wrapped]
+	
+    public void addProperty(String key,String value){
+    	// Per evitare nullPointer durante la serializzazione
+		// Non deve essere inserito nemmeno il valore ""
+		if(value!=null && !"".equals(value)){
+			if(this.messaggioDiagnostico.getProtocollo()==null){
+				this.messaggioDiagnostico.setProtocollo(new Protocollo());
+			}
+			Proprieta proprieta = new Proprieta();
+			proprieta.setNome(key);
+			proprieta.setValore(value);
+			this.messaggioDiagnostico.getProtocollo().addProprieta(proprieta);
+		}
+    }
+    
+    public int sizeProperties(){
+    	if(this.messaggioDiagnostico.getProtocollo()!=null){
+			return this.messaggioDiagnostico.getProtocollo().sizeProprietaList();
+		}
+		return 0;
+    }
+
+    public String getProperty(String key){
+    	if(this.messaggioDiagnostico.getProtocollo()!=null){
+			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
+				if(proprieta.getNome().equals(key)){
+					return proprieta.getValore();
+				}
+			}
+		}
+		return null;
+    }
+    
+    public String removeProperty(String key){
+    	if(this.messaggioDiagnostico.getProtocollo()!=null){
+			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
+				if(proprieta.getNome().equals(key)){
+					this.messaggioDiagnostico.getProtocollo().removeProprieta(i);
+					return proprieta.getValore();
+				}
+			}
+		}
+		return null;
+    }
+    
+    public String[] getPropertiesValues() {
+    	List<String> propertiesValues = new ArrayList<String>();
+		if(this.messaggioDiagnostico.getProtocollo()!=null){
+			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
+				propertiesValues.add(proprieta.getValore());
+			}
+		}
+		if(propertiesValues.size()>0){
+			return propertiesValues.toArray(new String[1]);
+		}
+		else{
+			return null;
+		}
+    }
+    
+    public String[] getPropertiesNames() {
+    	List<String> propertiesValues = new ArrayList<String>();
+		if(this.messaggioDiagnostico.getProtocollo()!=null){
+			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
+				propertiesValues.add(proprieta.getNome());
+			}
+		}
+		if(propertiesValues.size()>0){
+			return propertiesValues.toArray(new String[1]);
+		}
+		else{
+			return null;
+		}
+    }
+    
+    public void setProperties(Hashtable<String, String> params) {
+    	Enumeration<String> keys = params.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			this.addProperty(key, params.get(key));
+		}
+    }
+    
+    public Hashtable<String, String> getProperties() {
+    	Hashtable<String, String> map = new Hashtable<String, String>();
+		if(this.messaggioDiagnostico.getProtocollo()!=null){
+			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
+				map.put(proprieta.getNome(), proprieta.getValore());
+			}
+		}
+		return map;
+    }
+
+
 
 }
 

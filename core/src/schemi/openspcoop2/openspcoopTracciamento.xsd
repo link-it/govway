@@ -1,0 +1,518 @@
+<xsd:schema xmlns="http://www.openspcoop2.org/core/tracciamento"
+    targetNamespace="http://www.openspcoop2.org/core/tracciamento"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xsd:annotation>
+        <xsd:appinfo>
+            <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:info version="1.0" project-name="tracciamento">
+                    <linkit:authors>
+                        <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                    </linkit:authors>
+                </linkit:info>
+                <linkit:jax-ws xml-annotations="true" ws="true" binding-soap-11="true" binding-soap-12="true" search="true" crud="false" all="false"/>
+            </linkit:project_generator>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:dao>
+                    <linkit:xml root-element="traccia" generate="true"/>
+                    <linkit:sql>
+                        <linkit:sql-script generate="false"/>
+                        <linkit:sql-mapping single-table-mapping="false"
+                            on-delete-cascade="false" />
+                    </linkit:sql>
+                </linkit:dao>
+            </linkit:generator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    
+    
+    <xsd:element name="traccia" type="traccia" />
+    <xsd:complexType name="traccia">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="id-traccia" >
+                        <linkit:ws-interface search="true" crud="false" all="false" >
+                            <linkit:ws-search-method-interface inUse="false" />
+                        </linkit:ws-interface>
+                    </linkit:interface>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <!-- Dati Porta di Dominio che ha emesso la traccia -->
+            <xsd:element name="dominio" type="dominio"/>
+            <!-- Traccia -->
+            <xsd:element name="ora-registrazione" type="xsd:dateTime">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" filter-interval="true"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="esito-elaborazione" type="traccia-esito-elaborazione">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="identificativo-correlazione-richiesta" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="identificativo-correlazione-risposta" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="correlazione-applicativa-and-match" type="xsd:boolean" default="false" minOccurs="0" >
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping transient="true" filter="true"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="location" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <!-- Dati Busta -->
+            <xsd:element name="busta" type="busta" />
+            <xsd:element name="ricerca-solo-buste-errore" type="xsd:boolean" default="false" minOccurs="0" >
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping transient="true" filter="true"/>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="busta-xml" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <!-- Dati Allegati -->
+            <xsd:element name="allegati" type="allegati" minOccurs="0" >
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="tipo" type="TipoTraccia"/>
+    </xsd:complexType>
+    
+    
+    <!-- Tipi -->
+    
+    <xsd:complexType name="traccia-esito-elaborazione">
+        <xsd:sequence>
+            <xsd:element name="dettaglio" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute name="tipo" type="TipoEsitoElaborazione" use="required"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="dominio">
+        <xsd:sequence>
+            <xsd:element name="identificativo-porta" type="xsd:string"/>
+            <xsd:element name="soggetto" type="dominio-soggetto"/>
+        </xsd:sequence>
+        <xsd:attribute name="funzione" type="TipoPdD"/>
+    </xsd:complexType>
+    <xsd:complexType name="dominio-soggetto">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="busta">
+        <xsd:sequence>
+            <xsd:element name="mittente" type="soggetto" minOccurs="0"/>
+            <xsd:element name="destinatario" type="soggetto" minOccurs="0"/>
+            <xsd:element name="profilo-collaborazione" type="profilo-collaborazione" minOccurs="0"/>
+            <xsd:element name="servizio" type="servizio" minOccurs="0"/>
+            <xsd:element name="azione" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="servizio-correlato" type="servizio" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="collaborazione" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="identificativo" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="riferimento-messaggio" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ora-registrazione" type="data" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="scadenza" type="xsd:dateTime" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="profilo-trasmissione" type="profilo-trasmissione" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="servizio-applicativo-fruitore" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="digest" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <!-- Dati Liste -->
+            <xsd:element name="trasmissioni" type="trasmissioni" minOccurs="0" >
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="riscontri" type="riscontri" minOccurs="0" >
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="eccezioni" type="eccezioni" minOccurs="0" >
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <!-- Protocol Info -->
+            <xsd:element name="protocollo" type="protocollo"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="soggetto">
+        <xsd:sequence>
+            <xsd:element name="identificativo" type="soggetto-identificativo" />
+            <xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="indirizzo" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:ws-field-mapping filter="false" />
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="soggetto-identificativo">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="profilo-collaborazione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoProfiloCollaborazione" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="servizio">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+                <xsd:attribute name="versione" type="xsd:integer" use="optional" default="1"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="data">
+        <xsd:sequence>
+            <xsd:element name="date-time" type="xsd:dateTime" minOccurs="0"/>
+            <xsd:element name="sorgente" type="TipoData" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="TipoData">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoTempo" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="profilo-trasmissione">
+        <xsd:sequence>
+            <xsd:element name="inoltro" type="inoltro"  minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute name="conferma-ricezione" type="xsd:boolean" use="optional" default="false"/>
+        <xsd:attribute name="sequenza" type="xsd:integer" use="optional"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="inoltro">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoInoltro" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="trasmissioni">
+        <xsd:sequence>
+            <xsd:element name="trasmissione" type="trasmissione" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="trasmissione">
+        <xsd:sequence>
+            <xsd:element name="origine" type="soggetto" minOccurs="0"/>
+            <xsd:element name="destinazione" type="soggetto" minOccurs="0"/>
+            <xsd:element name="ora-registrazione" type="data" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="riscontri">
+        <xsd:sequence>
+            <xsd:element name="riscontro" type="riscontro" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="riscontro">
+        <xsd:sequence>
+            <xsd:element name="identificativo" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ora-registrazione" type="data" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="eccezioni">
+        <xsd:sequence>
+            <xsd:element name="eccezione" type="eccezione" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="eccezione">
+        <xsd:sequence>
+            <xsd:element name="codice" type="CodiceEccezione" minOccurs="0"/>
+            <xsd:element name="contesto-codifica" type="ContestoCodificaEccezione" minOccurs="0"/>
+            <xsd:element name="descrizione" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="rilevanza" type="RilevanzaEccezione" minOccurs="0"/>
+            <xsd:element name="modulo" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="CodiceEccezione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:integer" use="required"/>
+                <xsd:attribute name="sottotipo" type="xsd:integer" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ContestoCodificaEccezione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoCodificaEccezione" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="RilevanzaEccezione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoRilevanzaEccezione" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="allegati">
+        <xsd:sequence>
+            <xsd:element name="allegato" type="allegato" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="allegato">
+        <xsd:sequence>
+            <xsd:element name="content-id" type="xsd:string" minOccurs="0" />
+            <xsd:element name="content-location" type="xsd:string" minOccurs="0" />
+            <xsd:element name="content-type" type="xsd:string" />
+            <xsd:element name="digest" type="xsd:string" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="protocollo">
+        <xsd:sequence>
+            <xsd:element name="proprieta" type="proprieta" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="identificativo" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    <xsd:complexType name="proprieta">
+        <xsd:attribute name="nome" type="xsd:string" use="required"/>
+        <xsd:attribute name="valore" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    
+    
+    
+    <!-- Identificativi -->
+    
+    <xsd:complexType name="id-traccia">
+        <xsd:sequence>
+            <xsd:element name="identificativo" type="xsd:string" />
+            <xsd:element name="dominio" type="dominio-id-traccia" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="dominio-id-traccia">
+        <xsd:sequence>
+            <xsd:element name="identificativo-porta" type="xsd:string"/>
+            <xsd:element name="soggetto" type="dominio-soggetto"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="dominio-id-traccia-soggetto">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    
+    
+    <!-- Enumeration -->
+    
+    <xsd:simpleType name="TipoTraccia">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Richiesta"/>
+            <xsd:enumeration value="Risposta"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoPdD">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PortaDelegata"/>
+            <xsd:enumeration value="PortaApplicativa"/>
+            <xsd:enumeration value="IntegrationManager"/>
+            <xsd:enumeration value="Router"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoEsitoElaborazione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Inviato"/>
+            <xsd:enumeration value="Ricevuto"/>
+            <xsd:enumeration value="Errore"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoProfiloCollaborazione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Oneway"/>
+            <xsd:enumeration value="Sincrono"/>
+            <xsd:enumeration value="AsincronoSimmetrico"/>
+            <xsd:enumeration value="AsincronoAsimmetrico"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoTempo">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Locale"/>
+            <xsd:enumeration value="Sincronizzato"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoInoltro">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="InoltroConDuplicati"/>
+            <xsd:enumeration value="InoltroSenzaDuplicati"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoCodificaEccezione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EccezioneValidazioneProtocollo"/>
+            <xsd:enumeration value="EccezioneProcessamento"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoRilevanzaEccezione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="DEBUG"/>
+            <xsd:enumeration value="INFO"/>
+            <xsd:enumeration value="WARN"/>
+            <xsd:enumeration value="ERROR"/>
+            <xsd:enumeration value="FATAL"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    
+</xsd:schema>

@@ -88,7 +88,7 @@
 				<antcall target="set_property">
 				    <param name="file" value="${build_monitor_ws}/properties/wsmonitor.datasource.properties"/>
 					<param name="token" value="db.dataSource"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
+					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource"/>
 				</antcall>
 			</then>
 		</if>

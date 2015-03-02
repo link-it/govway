@@ -26,80 +26,15 @@ package org.openspcoop2.protocol.sdk.diagnostica;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.utils.jaxb.DateTime2Calendar;
 
 /**
- * Oggetto contenente informazioni per la ricerca di loggedEntry
+ * Oggetto contenente informazioni per la ricerca di Diagnostici
  * 
- * <p>Java class for FilterSearch complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="FilterSearch">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="correlatiOnly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="correlazioneApplicativa" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="dataFine" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="dataInizio" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="delegata" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="busta" type="{http://logger.dto.openspcoop.org}Busta"/>
- *         &lt;element name="filtroSoggetti" type="{http://ws.monitor.openspcoop.org}ArrayOf_tns2_IDSoggetto"/>
- *         &lt;element name="filtroSoggetto" type="{http://commons.dao.openspcoop.org}IDSoggetto" maxOccurs="unbounded"/>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="idBusta" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="idFunzione" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="identificativoPorta" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="nomePorta" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="offsetMap" maxOccurs="unbounded" nillable="true" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="partial" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="pdd" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="properties">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="servizioApplicativo" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="severita" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  * 
  * @author Stefano Corallo <corallo@link.it>
  * @author Lorenzo Nardi <nardi@link.it>
@@ -107,85 +42,41 @@ import org.openspcoop2.utils.jaxb.DateTime2Calendar;
  * @version $Rev$, $Date$
  */
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FilterSearch", propOrder = {
-    "correlatiOnly",
-    "correlazioneApplicativa",
-    "dataFine",
-    "dataInizio",
-    "delegata",
-    "busta",
-    "filtroSoggetti",
-    "id",
-    "idBusta",
-    "idFunzione",
-    "identificativoPorta",
-    "limit",
-    "nomePorta",
-    "offset",
-    "offsetMap",
-    "partial",
-    "pdd",
-    "properties",
-    "servizioApplicativo",
-    "severita"
-})
-
 public class FiltroRicercaDiagnostici implements Serializable{
 
 
 	private static final long serialVersionUID = 2103096411857601491L;
 
-    @XmlElement(required = true, type = String.class, nillable = true)
-    @XmlJavaTypeAdapter(DateTime2Calendar .class)
-    @XmlSchemaType(name = "dateTime")
-    protected Calendar dataFine;
-    @XmlElement(required = true, type = String.class, nillable = true)
-    @XmlJavaTypeAdapter(DateTime2Calendar .class)
-    @XmlSchemaType(name = "dateTime")
-    protected Calendar dataInizio;
+    protected Date dataFine;
+    protected Date dataInizio;
 	
-    @XmlElement(required = true, type = Boolean.class, nillable = true)
     protected Boolean delegata;
-    @XmlElement(required = true, nillable = true)
     protected String nomePorta; // nomePortaDelegata o Applicativa
-    @XmlElement(required = true, nillable = true)
     protected String idFunzione;
-    @XmlElement(required = true, nillable = true)
     protected IDSoggetto dominio;
     
-    @XmlElement(required = true, type = Boolean.class, nillable = true)
     protected Boolean ricercaSoloMessaggiCorrelatiInformazioniProtocollo;
 	
-    @XmlElement(required = true, nillable = true)
     protected String idBustaRichiesta;
-    @XmlElement(required = true, nillable = true)
     protected String idBustaRisposta;
-    @XmlElement(required = true, nillable = true)
     protected InformazioniProtocollo busta;
 	
-    @XmlElement(required = true, nillable = true)
     protected String servizioApplicativo;
     
-    @XmlElement(required = true, nillable = true)
     protected String correlazioneApplicativa;
-    @XmlElement(required = true, nillable = true)
     protected String correlazioneApplicativaRisposta;
-    @XmlElement(required = true, nillable = true)
     protected boolean correlazioneApplicativaOrMatch = false;
 		
-    @XmlElement(required = true, type = Integer.class, nillable = true)
     protected Integer severita;
     
-    private String messaggioCercatoInternamenteTestoDiagnostico;
+    protected String codice;
     
-	@XmlTransient
+	private String messaggioCercatoInternamenteTestoDiagnostico;
+    
     private String protocollo;
     
-    @XmlJavaTypeAdapter(Properties2Hashtable .class)
     protected Hashtable<String, String> properties;
 	
-    @XmlElement(required = true, nillable = true)
     protected List<IDSoggetto> filtroSoggetti;
    
     
@@ -254,6 +145,13 @@ public class FiltroRicercaDiagnostici implements Serializable{
 		this.severita = severita;
 	}
 	
+    public String getCodice() {
+		return this.codice;
+	}
+	public void setCodice(String codice) {
+		this.codice = codice;
+	}
+	
 	public String getIdFunzione() {
 		return this.idFunzione;
 	}
@@ -263,19 +161,19 @@ public class FiltroRicercaDiagnostici implements Serializable{
 	}
   
 	
-	public Calendar getDataInizio() {
+	public Date getDataInizio() {
 		return this.dataInizio;
 	}
 	
-	public void setDataInizio(Calendar dataInizio) {
+	public void setDataInizio(Date dataInizio) {
 		this.dataInizio = dataInizio;
 	}
 	
-	public Calendar getDataFine() {
+	public Date getDataFine() {
 		return this.dataFine;
 	}
 	
-	public void setDataFine(Calendar dataFine) {
+	public void setDataFine(Date dataFine) {
 		this.dataFine = dataFine;
 	}
 	
@@ -395,7 +293,7 @@ public class FiltroRicercaDiagnostici implements Serializable{
 	
 	@Override
 	public String toString() {
-				
+		
 		String pattern="idBustaRichiesta [{0}]" +
 				"idBustaRisposta [{1}]" +
 				" nomePorta [{2}]" +
@@ -410,8 +308,12 @@ public class FiltroRicercaDiagnostici implements Serializable{
 				" correlazioneApplicativaRichiesta [{11}]"+
 				" correlazioneApplicativaRisposta [{12}]"+
 				" correlazioneApplicativaOrMatch [{13}]"+
-				" messaggioCercatoInternamenteTestoDiagnostico [{14}]";
-		
+				" messaggioCercatoInternamenteTestoDiagnostico [{14}]"+
+				" idFunzione [{15}]"+
+				" servizioApplicativo [{16}]"+
+				" severita [{17}]"+
+				" codice [{18}]"+
+				" filtroSoggettiSize [{19}]";
 		
 		return MessageFormat.format(pattern, 
 				this.idBustaRichiesta!=null ? this.idBustaRichiesta : "not set",
@@ -428,7 +330,12 @@ public class FiltroRicercaDiagnostici implements Serializable{
 				this.correlazioneApplicativa!=null ? this.correlazioneApplicativa : "not set",
 				this.correlazioneApplicativaRisposta!=null ? this.correlazioneApplicativaRisposta : "not set",
 				this.correlazioneApplicativaOrMatch,
-				this.messaggioCercatoInternamenteTestoDiagnostico!=null ? this.messaggioCercatoInternamenteTestoDiagnostico : "not set"
+				this.messaggioCercatoInternamenteTestoDiagnostico!=null ? this.messaggioCercatoInternamenteTestoDiagnostico : "not set",
+				this.idFunzione!=null ? this.idFunzione : "not set",
+				this.servizioApplicativo!=null ? this.servizioApplicativo : "not set",
+				this.severita!=null ? this.severita : "not set",
+				this.codice!=null ? this.codice : "not set",
+				this.filtroSoggetti!=null ? this.filtroSoggetti.size() : "not set"
 				);
 	}
 

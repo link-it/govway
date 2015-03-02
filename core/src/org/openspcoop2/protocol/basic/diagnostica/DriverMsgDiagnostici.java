@@ -29,8 +29,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -728,12 +726,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			for(int j=1;j<=numRipetizioni;j++){
 				//data inizio
 				if(filter.getDataInizio()!=null){
-					stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTimeInMillis()));
+					stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTime()));
 					count++;
 				}
 				//data fine
 				if(filter.getDataFine()!=null){
-					stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTimeInMillis()));
+					stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTime()));
 					count++;
 				}
 				//idmessaggio
@@ -769,10 +767,7 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 				entry.setIdBusta(rs.getString("idmessaggio"));
 				entry.setProtocollo(rs.getString("protocollo"));
 				Timestamp gdo=rs.getTimestamp("gdo");
-				// INEFFICENTE Calendar cal=Calendar.getInstance();
-				Calendar cal=new GregorianCalendar();
-				cal.setTime(gdo);
-				entry.setGdo(cal);
+				entry.setGdo(gdo);
 				entry.setCorrelazioneApplicativa(rs.getString("id_correlazione_applicativa"));
 				if(this.propertiesMsgDiagCorrelazione!=null){
 					for (int i = 0; i < this.propertiesMsgDiagCorrelazione.size(); i++) {
@@ -1019,12 +1014,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			for(int j=1;j<2;j++){
 				//data inizio
 				if(filter.getDataInizio()!=null){
-					stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTimeInMillis()));
+					stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTime()));
 					count++;
 				}
 				//data fine
 				if(filter.getDataFine()!=null){
-					stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTimeInMillis()));
+					stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTime()));
 					count++;
 				}
 				//idbusta
@@ -1103,12 +1098,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			for(int j=1;j<2;j++){
 				//data inizio
 				if(filter.getDataInizio()!=null){
-					stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTimeInMillis()));
+					stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTime()));
 					count++;
 				}
 				//data fine
 				if(filter.getDataFine()!=null){
-					stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTimeInMillis()));
+					stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTime()));
 					count++;
 				}
 				//idbusta
@@ -1200,12 +1195,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 				for(int j=1;j<2;j++){
 					//data inizio
 					if(filter.getDataInizio()!=null){
-						stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTimeInMillis()));
+						stmt.setTimestamp(count, new Timestamp(filter.getDataInizio().getTime()));
 						count++;
 					}
 					//data fine
 					if(filter.getDataFine()!=null){
-						stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTimeInMillis()));
+						stmt.setTimestamp(count, new Timestamp(filter.getDataFine().getTime()));
 						count++;
 					}
 					//idbusta

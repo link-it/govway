@@ -20,60 +20,79 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.Date;
 
 
-/** <p>Java class Busta.
+/** <p>Java class for busta complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="busta">
+ * 		&lt;sequence>
+ * 			&lt;element name="mittente" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="destinatario" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/tracciamento}profilo-collaborazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/tracciamento}servizio" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio-correlato" type="{http://www.openspcoop2.org/core/tracciamento}servizio" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="riferimento-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="ora-registrazione" type="{http://www.openspcoop2.org/core/tracciamento}data" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="scadenza" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="profilo-trasmissione" type="{http://www.openspcoop2.org/core/tracciamento}profilo-trasmissione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio-applicativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="digest" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="trasmissioni" type="{http://www.openspcoop2.org/core/tracciamento}trasmissioni" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="riscontri" type="{http://www.openspcoop2.org/core/tracciamento}riscontri" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="eccezioni" type="{http://www.openspcoop2.org/core/tracciamento}eccezioni" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocollo" type="{http://www.openspcoop2.org/core/tracciamento}protocollo" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "busta", 
+  propOrder = {
+  	"mittente",
+  	"destinatario",
+  	"profiloCollaborazione",
+  	"servizio",
+  	"azione",
+  	"servizioCorrelato",
+  	"collaborazione",
+  	"identificativo",
+  	"riferimentoMessaggio",
+  	"oraRegistrazione",
+  	"scadenza",
+  	"profiloTrasmissione",
+  	"servizioApplicativoFruitore",
+  	"servizioApplicativoErogatore",
+  	"digest",
+  	"trasmissioni",
+  	"riscontri",
+  	"eccezioni",
+  	"protocollo"
+  }
+)
+
+@XmlRootElement(name = "busta")
 
 public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected Soggetto mittente;
-
-  protected Soggetto destinatario;
-
-  protected ProfiloCollaborazione profiloCollaborazione;
-
-  protected Servizio servizio;
-
-  protected String azione;
-
-  protected Servizio servizioCorrelato;
-
-  protected String collaborazione;
-
-  protected String identificativo;
-
-  protected String riferimentoMessaggio;
-
-  protected Data oraRegistrazione;
-
-  protected Date scadenza;
-
-  protected ProfiloTrasmissione profiloTrasmissione;
-
-  protected String servizioApplicativoFruitore;
-
-  protected String servizioApplicativoErogatore;
-
-  protected String digest;
-
-  protected Trasmissioni trasmissioni;
-
-  protected Riscontri riscontri;
-
-  protected Eccezioni eccezioni;
-
-  protected Protocollo protocollo;
-
-
   public Busta() {
   }
 
@@ -123,16 +142,11 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Seria
     this.servizio = servizio;
   }
 
-  public String getAzione() {
-    if(this.azione!=null && ("".equals(this.azione)==false)){
-		return this.azione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getAzione() {
+    return this.azione;
   }
 
-  public void setAzione(String azione) {
+  public void setAzione(java.lang.String azione) {
     this.azione = azione;
   }
 
@@ -144,42 +158,27 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Seria
     this.servizioCorrelato = servizioCorrelato;
   }
 
-  public String getCollaborazione() {
-    if(this.collaborazione!=null && ("".equals(this.collaborazione)==false)){
-		return this.collaborazione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getCollaborazione() {
+    return this.collaborazione;
   }
 
-  public void setCollaborazione(String collaborazione) {
+  public void setCollaborazione(java.lang.String collaborazione) {
     this.collaborazione = collaborazione;
   }
 
-  public String getIdentificativo() {
-    if(this.identificativo!=null && ("".equals(this.identificativo)==false)){
-		return this.identificativo.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getIdentificativo() {
+    return this.identificativo;
   }
 
-  public void setIdentificativo(String identificativo) {
+  public void setIdentificativo(java.lang.String identificativo) {
     this.identificativo = identificativo;
   }
 
-  public String getRiferimentoMessaggio() {
-    if(this.riferimentoMessaggio!=null && ("".equals(this.riferimentoMessaggio)==false)){
-		return this.riferimentoMessaggio.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getRiferimentoMessaggio() {
+    return this.riferimentoMessaggio;
   }
 
-  public void setRiferimentoMessaggio(String riferimentoMessaggio) {
+  public void setRiferimentoMessaggio(java.lang.String riferimentoMessaggio) {
     this.riferimentoMessaggio = riferimentoMessaggio;
   }
 
@@ -191,11 +190,11 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Seria
     this.oraRegistrazione = oraRegistrazione;
   }
 
-  public Date getScadenza() {
+  public java.util.Date getScadenza() {
     return this.scadenza;
   }
 
-  public void setScadenza(Date scadenza) {
+  public void setScadenza(java.util.Date scadenza) {
     this.scadenza = scadenza;
   }
 
@@ -207,42 +206,27 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Seria
     this.profiloTrasmissione = profiloTrasmissione;
   }
 
-  public String getServizioApplicativoFruitore() {
-    if(this.servizioApplicativoFruitore!=null && ("".equals(this.servizioApplicativoFruitore)==false)){
-		return this.servizioApplicativoFruitore.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getServizioApplicativoFruitore() {
+    return this.servizioApplicativoFruitore;
   }
 
-  public void setServizioApplicativoFruitore(String servizioApplicativoFruitore) {
+  public void setServizioApplicativoFruitore(java.lang.String servizioApplicativoFruitore) {
     this.servizioApplicativoFruitore = servizioApplicativoFruitore;
   }
 
-  public String getServizioApplicativoErogatore() {
-    if(this.servizioApplicativoErogatore!=null && ("".equals(this.servizioApplicativoErogatore)==false)){
-		return this.servizioApplicativoErogatore.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getServizioApplicativoErogatore() {
+    return this.servizioApplicativoErogatore;
   }
 
-  public void setServizioApplicativoErogatore(String servizioApplicativoErogatore) {
+  public void setServizioApplicativoErogatore(java.lang.String servizioApplicativoErogatore) {
     this.servizioApplicativoErogatore = servizioApplicativoErogatore;
   }
 
-  public String getDigest() {
-    if(this.digest!=null && ("".equals(this.digest)==false)){
-		return this.digest.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDigest() {
+    return this.digest;
   }
 
-  public void setDigest(String digest) {
+  public void setDigest(java.lang.String digest) {
     this.digest = digest;
   }
 
@@ -280,56 +264,75 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String MITTENTE = "mittente";
 
-  public static final String DESTINATARIO = "destinatario";
 
-  public static final String PROFILO_COLLABORAZIONE = "profiloCollaborazione";
+  @XmlElement(name="mittente",required=false,nillable=false)
+  protected Soggetto mittente;
 
-  public static final String SERVIZIO = "servizio";
+  @XmlElement(name="destinatario",required=false,nillable=false)
+  protected Soggetto destinatario;
 
-  public static final String AZIONE = "azione";
+  @XmlElement(name="profilo-collaborazione",required=false,nillable=false)
+  protected ProfiloCollaborazione profiloCollaborazione;
 
-  public static final String SERVIZIO_CORRELATO = "servizioCorrelato";
+  @XmlElement(name="servizio",required=false,nillable=false)
+  protected Servizio servizio;
 
-  public static final String COLLABORAZIONE = "collaborazione";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="azione",required=false,nillable=false)
+  protected java.lang.String azione;
 
-  public static final String IDENTIFICATIVO = "identificativo";
+  @XmlElement(name="servizio-correlato",required=false,nillable=false)
+  protected Servizio servizioCorrelato;
 
-  public static final String RIFERIMENTO_MESSAGGIO = "riferimentoMessaggio";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="collaborazione",required=false,nillable=false)
+  protected java.lang.String collaborazione;
 
-  public static final String ORA_REGISTRAZIONE = "oraRegistrazione";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo",required=false,nillable=false)
+  protected java.lang.String identificativo;
 
-  public static final String SCADENZA = "scadenza";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="riferimento-messaggio",required=false,nillable=false)
+  protected java.lang.String riferimentoMessaggio;
 
-  public static final String PROFILO_TRASMISSIONE = "profiloTrasmissione";
+  @XmlElement(name="ora-registrazione",required=false,nillable=false)
+  protected Data oraRegistrazione;
 
-  public static final String SERVIZIO_APPLICATIVO_FRUITORE = "servizioApplicativoFruitore";
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="scadenza",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date scadenza;
 
-  public static final String SERVIZIO_APPLICATIVO_EROGATORE = "servizioApplicativoErogatore";
+  @XmlElement(name="profilo-trasmissione",required=false,nillable=false)
+  protected ProfiloTrasmissione profiloTrasmissione;
 
-  public static final String DIGEST = "digest";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="servizio-applicativo-fruitore",required=false,nillable=false)
+  protected java.lang.String servizioApplicativoFruitore;
 
-  public static final String TRASMISSIONI = "trasmissioni";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="servizio-applicativo-erogatore",required=false,nillable=false)
+  protected java.lang.String servizioApplicativoErogatore;
 
-  public static final String RISCONTRI = "riscontri";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="digest",required=false,nillable=false)
+  protected java.lang.String digest;
 
-  public static final String ECCEZIONI = "eccezioni";
+  @XmlElement(name="trasmissioni",required=false,nillable=false)
+  protected Trasmissioni trasmissioni;
 
-  public static final String PROTOCOLLO = "protocollo";
+  @XmlElement(name="riscontri",required=false,nillable=false)
+  protected Riscontri riscontri;
+
+  @XmlElement(name="eccezioni",required=false,nillable=false)
+  protected Eccezioni eccezioni;
+
+  @XmlElement(name="protocollo",required=true,nillable=false)
+  protected Protocollo protocollo;
 
 }

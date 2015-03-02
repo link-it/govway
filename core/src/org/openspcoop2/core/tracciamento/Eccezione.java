@@ -20,29 +20,51 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class Eccezione.
+/** <p>Java class for eccezione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="eccezione">
+ * 		&lt;sequence>
+ * 			&lt;element name="codice" type="{http://www.openspcoop2.org/core/tracciamento}CodiceEccezione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="contesto-codifica" type="{http://www.openspcoop2.org/core/tracciamento}ContestoCodificaEccezione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="rilevanza" type="{http://www.openspcoop2.org/core/tracciamento}RilevanzaEccezione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="modulo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "eccezione", 
+  propOrder = {
+  	"codice",
+  	"contestoCodifica",
+  	"descrizione",
+  	"rilevanza",
+  	"modulo"
+  }
+)
+
+@XmlRootElement(name = "eccezione")
 
 public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected CodiceEccezione codice;
-
-  protected ContestoCodificaEccezione contestoCodifica;
-
-  protected String posizione;
-
-  protected RilevanzaEccezione rilevanza;
-
-
   public Eccezione() {
   }
 
@@ -76,17 +98,12 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
     this.contestoCodifica = contestoCodifica;
   }
 
-  public String getPosizione() {
-    if(this.posizione!=null && ("".equals(this.posizione)==false)){
-		return this.posizione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
   }
 
-  public void setPosizione(String posizione) {
-    this.posizione = posizione;
+  public void setDescrizione(java.lang.String descrizione) {
+    this.descrizione = descrizione;
   }
 
   public RilevanzaEccezione getRilevanza() {
@@ -97,28 +114,36 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
     this.rilevanza = rilevanza;
   }
 
+  public java.lang.String getModulo() {
+    return this.modulo;
+  }
+
+  public void setModulo(java.lang.String modulo) {
+    this.modulo = modulo;
+  }
+
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String CODICE = "codice";
 
-  public static final String CONTESTO_CODIFICA = "contestoCodifica";
 
-  public static final String POSIZIONE = "posizione";
+  @XmlElement(name="codice",required=false,nillable=false)
+  protected CodiceEccezione codice;
 
-  public static final String RILEVANZA = "rilevanza";
+  @XmlElement(name="contesto-codifica",required=false,nillable=false)
+  protected ContestoCodificaEccezione contestoCodifica;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="descrizione",required=false,nillable=false)
+  protected java.lang.String descrizione;
+
+  @XmlElement(name="rilevanza",required=false,nillable=false)
+  protected RilevanzaEccezione rilevanza;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="modulo",required=false,nillable=false)
+  protected java.lang.String modulo;
 
 }

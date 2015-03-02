@@ -20,25 +20,45 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class Riscontro.
+/** <p>Java class for riscontro complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="riscontro">
+ * 		&lt;sequence>
+ * 			&lt;element name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="ora-registrazione" type="{http://www.openspcoop2.org/core/tracciamento}data" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "riscontro", 
+  propOrder = {
+  	"identificativo",
+  	"oraRegistrazione"
+  }
+)
+
+@XmlRootElement(name = "riscontro")
 
 public class Riscontro extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String identificativo;
-
-  protected Data oraRegistrazione;
-
-
   public Riscontro() {
   }
 
@@ -56,16 +76,11 @@ public class Riscontro extends org.openspcoop2.utils.beans.BaseBean implements S
 		this.id=new Long(-1);
   }
 
-  public String getIdentificativo() {
-    if(this.identificativo!=null && ("".equals(this.identificativo)==false)){
-		return this.identificativo.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getIdentificativo() {
+    return this.identificativo;
   }
 
-  public void setIdentificativo(String identificativo) {
+  public void setIdentificativo(java.lang.String identificativo) {
     this.identificativo = identificativo;
   }
 
@@ -79,22 +94,16 @@ public class Riscontro extends org.openspcoop2.utils.beans.BaseBean implements S
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String IDENTIFICATIVO = "identificativo";
 
-  public static final String ORA_REGISTRAZIONE = "oraRegistrazione";
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo",required=false,nillable=false)
+  protected java.lang.String identificativo;
+
+  @XmlElement(name="ora-registrazione",required=false,nillable=false)
+  protected Data oraRegistrazione;
 
 }

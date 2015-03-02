@@ -23,10 +23,6 @@
 
 package org.openspcoop2.protocol.sdk;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 
 /**
  * Classe utilizzata per rappresentare un Allegato.
@@ -37,34 +33,6 @@ import javax.xml.bind.annotation.XmlType;
  * @version $Rev$, $Date$
  */
 
-/**
- * <p>Java class for riscontro complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="allegato">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="contentId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="contentLocation" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="contentType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "allegato", propOrder = {
-    "contentId",
-    "contentLocation",
-    "contentType"
-})
-
 public class Allegato implements java.io.Serializable {
 
 	/**
@@ -72,13 +40,10 @@ public class Allegato implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected String contentId;
-	protected String contentLocation;
-	protected String contentType;
-	protected String digest;
+	private org.openspcoop2.core.tracciamento.Allegato allegato;
 
 
-    /* ********  C O S T R U T T O R E  ******** */
+	/* ********  C O S T R U T T O R E  ******** */
 
 	/**
 	 * Costruttore. 
@@ -86,48 +51,92 @@ public class Allegato implements java.io.Serializable {
 	 * 
 	 */
 	public Allegato(){
+		this.allegato = new org.openspcoop2.core.tracciamento.Allegato();
 	}
+	public Allegato(org.openspcoop2.core.tracciamento.Allegato allegato){
+		this.allegato = allegato;
+	}
+
+
 	
-	public String getContentId() {
-		return this.contentId;
+	// base
+	
+	public org.openspcoop2.core.tracciamento.Allegato getAllegato() {
+		return this.allegato;
 	}
-	public void setContentId(String contentId) {
-		this.contentId = contentId;
-	}
-
-	public String getContentLocation() {
-		return this.contentLocation;
-	}
-	public void setContentLocation(String contentLocation) {
-		this.contentLocation = contentLocation;
-	}
-
-	public String getContentType() {
-		return this.contentType;
-	}
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-	public String getDigest() {
-		return this.digest;
-	}
-
-	public void setDigest(String digest) {
-		this.digest = digest;
+	public void setAllegato(org.openspcoop2.core.tracciamento.Allegato allegato) {
+		this.allegato = allegato;
 	}
 	
 	
+
+	// id  [Wrapper]
+	
+	public Long getId() {
+		return this.allegato.getId();
+	}
+	public void setId(Long id) {
+		this.allegato.setId(id);
+	}
+
+	
+	// content-id  [Wrapper]
+	
+	public java.lang.String getContentId() {
+		return this.allegato.getContentId();
+	}
+	public void setContentId(java.lang.String contentId) {
+		this.allegato.setContentId(contentId);
+	}
+
+	
+	// content-location  [Wrapper]
+	
+	public java.lang.String getContentLocation() {
+		return this.allegato.getContentLocation();
+	}
+	public void setContentLocation(java.lang.String contentLocation) {
+		this.allegato.setContentLocation(contentLocation);
+	}
+
+	
+	// content-type  [Wrapper]
+	
+	public java.lang.String getContentType() {
+		return this.allegato.getContentType();
+	}
+	public void setContentType(java.lang.String contentType) {
+		this.allegato.setContentType(contentType);
+	}
+
+	
+	// digest  [Wrapper]
+	
+	public java.lang.String getDigest() {
+		return this.allegato.getDigest();
+	}
+	public void setDigest(java.lang.String digest) {
+		this.allegato.setDigest(digest);
+	}
+
+
+
+
+
+
 	@Override
 	public Allegato clone(){
-		
+
+		// Non uso il base clone per far si che venga usato il costruttore new String()
+
 		Allegato clone = new Allegato();
-		
-		clone.setContentId(this.contentId!=null ? new String(this.contentId) : null);
-		clone.setContentLocation(this.contentLocation!=null ? new String(this.contentLocation) : null);
-		clone.setContentType(this.contentType!=null ? new String(this.contentType) : null);
-		clone.setDigest(this.digest!=null ? new String(this.digest) : null);
-		
+
+		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
+		clone.setContentId(this.getContentId()!=null ? new String(this.getContentId()) : null);
+		clone.setContentLocation(this.getContentLocation()!=null ? new String(this.getContentLocation()) : null);
+		clone.setContentType(this.getContentType()!=null ? new String(this.getContentType()) : null);
+		clone.setDigest(this.getDigest()!=null ? new String(this.getDigest()) : null);
+
 		return clone;
 	}
 }

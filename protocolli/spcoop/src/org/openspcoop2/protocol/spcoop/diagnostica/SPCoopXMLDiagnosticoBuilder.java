@@ -59,7 +59,7 @@ public class SPCoopXMLDiagnosticoBuilder extends XMLDiagnosticoBuilder implement
 			if(msgDiag.getGdo()==null){
 				gdoD = new Date(DateManager.getTimeMillis());
 			}else{
-				gdoD = new Date(msgDiag.getGdo().getTime().getTime());
+				gdoD = new Date(msgDiag.getGdo().getTime());
 			}
 			gdoMsgDiag.setTextContent(SPCoopUtils.getDate_eGovFormat(gdoD));
 			diagnostico.appendChild(gdoMsgDiag);

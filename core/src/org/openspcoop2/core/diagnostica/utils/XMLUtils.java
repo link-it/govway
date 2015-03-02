@@ -31,10 +31,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
-import org.openspcoop2.core.diagnostica.Dominio;
+import org.openspcoop2.core.diagnostica.DominioDiagnostico;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.diagnostica.Protocollo;
-import org.openspcoop2.core.diagnostica.constants.Costanti;
+import org.openspcoop2.core.diagnostica.constants.CostantiDiagnostica;
 import org.openspcoop2.message.ValidatoreXSD;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -97,7 +97,7 @@ public class XMLUtils  {
 			return true;
 
 	}
-	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
+	private static void validate(DominioDiagnostico dominio,StringBuffer motivoErroreValidazione){
 		if(dominio.getIdentificativoPorta()==null){
 			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
 		}
@@ -312,8 +312,8 @@ public class XMLUtils  {
 	private static boolean isMessaggioDiagnostico_engine(Node nodeXml){
 		try{
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(Costanti.ROOT_LOCAL_NAME_MESSAGGIO_DIAGNOSTICO.equals(nodeXml.getLocalName()) && 
-					Costanti.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
+			if(CostantiDiagnostica.ROOT_LOCAL_NAME_MESSAGGIO_DIAGNOSTICO.equals(nodeXml.getLocalName()) && 
+					CostantiDiagnostica.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
 				){
 				return true;
 			}

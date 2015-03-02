@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/tracciamento" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/tracciamento">
+    
+    
+    
+    
+    <xsd:element name="traccia" type="traccia"/>
+    <xsd:complexType name="traccia">
+        
+        <xsd:sequence>
+            <!-- Dati Porta di Dominio che ha emesso la traccia -->
+            <xsd:element name="dominio" type="dominio"/>
+            <!-- Traccia -->
+            <xsd:element name="ora-registrazione" type="xsd:dateTime">
+                
+            </xsd:element>
+            <xsd:element name="esito-elaborazione" type="traccia-esito-elaborazione">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="identificativo-correlazione-richiesta" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="identificativo-correlazione-risposta" type="xsd:string"/>
+            <xsd:element default="false" minOccurs="0" name="correlazione-applicativa-and-match" type="xsd:boolean">
+                
+            </xsd:element>
+            <xsd:element name="location" type="xsd:string">
+                
+            </xsd:element>
+            <!-- Dati Busta -->
+            <xsd:element name="busta" type="busta"/>
+            <xsd:element default="false" minOccurs="0" name="ricerca-solo-buste-errore" type="xsd:boolean">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="busta-xml" type="xsd:string">
+                
+            </xsd:element>
+            <!-- Dati Allegati -->
+            <xsd:element minOccurs="0" name="allegati" type="allegati">
+                
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="tipo" type="TipoTraccia"/>
+    </xsd:complexType>
+    
+    
+    <!-- Tipi -->
+    
+    <xsd:complexType name="traccia-esito-elaborazione">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="dettaglio" type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attribute name="tipo" type="TipoEsitoElaborazione" use="required"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="dominio">
+        <xsd:sequence>
+            <xsd:element name="identificativo-porta" type="xsd:string"/>
+            <xsd:element name="soggetto" type="dominio-soggetto"/>
+        </xsd:sequence>
+        <xsd:attribute name="funzione" type="TipoPdD"/>
+    </xsd:complexType>
+    <xsd:complexType name="dominio-soggetto">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="busta">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="mittente" type="soggetto"/>
+            <xsd:element minOccurs="0" name="destinatario" type="soggetto"/>
+            <xsd:element minOccurs="0" name="profilo-collaborazione" type="profilo-collaborazione"/>
+            <xsd:element minOccurs="0" name="servizio" type="servizio"/>
+            <xsd:element minOccurs="0" name="azione" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="servizio-correlato" type="servizio">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="collaborazione" type="xsd:string">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="identificativo" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="riferimento-messaggio" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="ora-registrazione" type="data">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="scadenza" type="xsd:dateTime">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="profilo-trasmissione" type="profilo-trasmissione">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="servizio-applicativo-fruitore" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="servizio-applicativo-erogatore" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="digest" type="xsd:string">
+                
+            </xsd:element>
+            <!-- Dati Liste -->
+            <xsd:element minOccurs="0" name="trasmissioni" type="trasmissioni">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="riscontri" type="riscontri">
+                
+            </xsd:element>
+            <xsd:element minOccurs="0" name="eccezioni" type="eccezioni">
+                
+            </xsd:element>
+            <!-- Protocol Info -->
+            <xsd:element name="protocollo" type="protocollo"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="soggetto">
+        <xsd:sequence>
+            <xsd:element name="identificativo" type="soggetto-identificativo"/>
+            <xsd:element minOccurs="0" name="identificativo-porta" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="indirizzo" type="xsd:string">
+                
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="soggetto-identificativo">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="profilo-collaborazione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoProfiloCollaborazione" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="servizio">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+                <xsd:attribute default="1" name="versione" type="xsd:integer" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="data">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="date-time" type="xsd:dateTime"/>
+            <xsd:element minOccurs="0" name="sorgente" type="TipoData"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="TipoData">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoTempo" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="profilo-trasmissione">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="inoltro" type="inoltro"/>
+        </xsd:sequence>
+        <xsd:attribute default="false" name="conferma-ricezione" type="xsd:boolean" use="optional"/>
+        <xsd:attribute name="sequenza" type="xsd:integer" use="optional"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="inoltro">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoInoltro" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="trasmissioni">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="trasmissione" type="trasmissione"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="trasmissione">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="origine" type="soggetto"/>
+            <xsd:element minOccurs="0" name="destinazione" type="soggetto"/>
+            <xsd:element minOccurs="0" name="ora-registrazione" type="data"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="riscontri">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="riscontro" type="riscontro"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="riscontro">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="identificativo" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="ora-registrazione" type="data"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="eccezioni">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="eccezione" type="eccezione"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="eccezione">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="codice" type="CodiceEccezione"/>
+            <xsd:element minOccurs="0" name="contesto-codifica" type="ContestoCodificaEccezione"/>
+            <xsd:element minOccurs="0" name="descrizione" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="rilevanza" type="RilevanzaEccezione"/>
+            <xsd:element minOccurs="0" name="modulo" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="CodiceEccezione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:integer" use="required"/>
+                <xsd:attribute name="sottotipo" type="xsd:integer" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ContestoCodificaEccezione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoCodificaEccezione" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="RilevanzaEccezione">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="TipoRilevanzaEccezione" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="allegati">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="allegato" type="allegato"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="allegato">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="content-id" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="content-location" type="xsd:string"/>
+            <xsd:element name="content-type" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="digest" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="protocollo">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
+        </xsd:sequence>
+        <xsd:attribute name="identificativo" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    <xsd:complexType name="proprieta">
+        <xsd:attribute name="nome" type="xsd:string" use="required"/>
+        <xsd:attribute name="valore" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    
+    
+    
+    <!-- Identificativi -->
+    
+    <xsd:complexType name="id-traccia">
+        <xsd:sequence>
+            <xsd:element name="identificativo" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="dominio" type="dominio-id-traccia"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="dominio-id-traccia">
+        <xsd:sequence>
+            <xsd:element name="identificativo-porta" type="xsd:string"/>
+            <xsd:element name="soggetto" type="dominio-soggetto"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="dominio-id-traccia-soggetto">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    
+    
+    <!-- Enumeration -->
+    
+    <xsd:simpleType name="TipoTraccia">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Richiesta"/>
+            <xsd:enumeration value="Risposta"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoPdD">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PortaDelegata"/>
+            <xsd:enumeration value="PortaApplicativa"/>
+            <xsd:enumeration value="IntegrationManager"/>
+            <xsd:enumeration value="Router"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoEsitoElaborazione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Inviato"/>
+            <xsd:enumeration value="Ricevuto"/>
+            <xsd:enumeration value="Errore"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoProfiloCollaborazione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Oneway"/>
+            <xsd:enumeration value="Sincrono"/>
+            <xsd:enumeration value="AsincronoSimmetrico"/>
+            <xsd:enumeration value="AsincronoAsimmetrico"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoTempo">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Locale"/>
+            <xsd:enumeration value="Sincronizzato"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoInoltro">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="InoltroConDuplicati"/>
+            <xsd:enumeration value="InoltroSenzaDuplicati"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoCodificaEccezione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EccezioneValidazioneProtocollo"/>
+            <xsd:enumeration value="EccezioneProcessamento"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="TipoRilevanzaEccezione">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="DEBUG"/>
+            <xsd:enumeration value="INFO"/>
+            <xsd:enumeration value="WARN"/>
+            <xsd:enumeration value="ERROR"/>
+            <xsd:enumeration value="FATAL"/>
+            <xsd:enumeration value="Sconosciuto"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    
+</xsd:schema>

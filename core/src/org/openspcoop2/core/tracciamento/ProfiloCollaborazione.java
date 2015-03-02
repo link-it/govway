@@ -20,25 +20,42 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione;
 import java.io.Serializable;
 
 
-/** <p>Java class ProfiloCollaborazione.
+/** <p>Java class for profilo-collaborazione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="profilo-collaborazione">
+ * 		<xsd:simpleContent>
+ * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
+ * 				&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoProfiloCollaborazione" use="required"/>
+ * 			</xsd:extension>
+ * 		</xsd:simpleContent>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "profilo-collaborazione")
+
+@XmlRootElement(name = "profilo-collaborazione")
 
 public class ProfiloCollaborazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  public String base;
-
-  protected String tipo;
-
-
   public ProfiloCollaborazione() {
   }
 
@@ -57,44 +74,53 @@ public class ProfiloCollaborazione extends org.openspcoop2.utils.beans.BaseBean 
   }
 
   public String getBase() {
-    return this.base;
-  }
-
-  public void setBase(String base) {
-    this.base=base;
-  }
-
-  public String getTipo() {
-    if(this.tipo!=null && ("".equals(this.tipo)==false)){
-		return this.tipo.trim();
+    if(this.base!=null && ("".equals(this.base)==false)){
+		return this.base.trim();
 	}else{
 		return null;
 	}
 
   }
 
-  public void setTipo(String tipo) {
+  public void setBase(String base) {
+    this.base=base;
+  }
+
+  public void set_value_tipo(String value) {
+    this.tipo = (TipoProfiloCollaborazione) TipoProfiloCollaborazione.toEnumConstantFromString(value);
+  }
+
+  public String get_value_tipo() {
+    if(this.tipo == null){
+    	return null;
+    }else{
+    	return this.tipo.toString();
+    }
+  }
+
+  public org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione tipo) {
     this.tipo = tipo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String BASE = "base";
 
-  public static final String TIPO = "tipo";
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlValue()
+  public String base;
+
+  @XmlTransient
+  protected java.lang.String _value_tipo;
+
+  @XmlAttribute(name="tipo",required=true)
+  protected TipoProfiloCollaborazione tipo;
 
 }

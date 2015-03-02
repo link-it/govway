@@ -348,7 +348,7 @@ public class MsgDiagnosticoOpenSPCoopAppenderDB implements IMsgDiagnosticoOpenSP
 		MsgDiagnosticoConnectionResult cr = null;
 		try{
 			
-			Date gdo = msgDiagnostico.getGdo().getTime();
+			Date gdo = msgDiagnostico.getGdo();
 			IDSoggetto idPorta = msgDiagnostico.getIdSoggetto();
 			String idFunzione = msgDiagnostico.getIdFunzione();
 			int severita = msgDiagnostico.getSeverita();
@@ -433,7 +433,7 @@ public class MsgDiagnosticoOpenSPCoopAppenderDB implements IMsgDiagnosticoOpenSP
 			try{
 				
 				String idBusta = msgDiagCorrelazione.getIdBusta();
-				Date gdo = msgDiagCorrelazione.getGdo().getTime();
+				Date gdo = msgDiagCorrelazione.getGdo();
 				String porta = msgDiagCorrelazione.getNomePorta();
 				boolean delegata = msgDiagCorrelazione.isDelegata();
 				IDSoggetto idPorta = msgDiagCorrelazione.getIdSoggetto();

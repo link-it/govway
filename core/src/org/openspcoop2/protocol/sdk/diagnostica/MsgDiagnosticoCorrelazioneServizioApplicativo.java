@@ -25,8 +25,6 @@ package org.openspcoop2.protocol.sdk.diagnostica;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 /**
  * MsgDiagnosticoCorrelazioneServizioApplicativo
  *
@@ -41,7 +39,6 @@ public class MsgDiagnosticoCorrelazioneServizioApplicativo implements Serializab
 	private boolean delegata;
     private String idBusta;
     private String servizioApplicativo;
-    @XmlTransient
     private String protocollo;
 	
     public MsgDiagnosticoCorrelazioneServizioApplicativo() {

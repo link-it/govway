@@ -251,14 +251,10 @@ public class DiagnosticaExporter extends HttpServlet {
 		}
 
 		if (dataInizioData != null) {
-			Calendar cal_start = Calendar.getInstance();
-			cal_start.setTime(dataInizioData);
-			filter.setDataInizio(cal_start);
+			filter.setDataInizio(dataInizioData);
 		}
 		if (dataFineData != null) {
-			Calendar cal_end = Calendar.getInstance();
-			cal_end.setTime(dataFineData);
-			filter.setDataFine(cal_end);
+			filter.setDataFine(dataFineData);
 		}
 
 		InformazioniProtocollo informazioniProtocollo = null;

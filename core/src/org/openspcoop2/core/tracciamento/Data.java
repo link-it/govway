@@ -20,26 +20,45 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.Date;
 
 
-/** <p>Java class Data.
+/** <p>Java class for data complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="data">
+ * 		&lt;sequence>
+ * 			&lt;element name="date-time" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="sorgente" type="{http://www.openspcoop2.org/core/tracciamento}TipoData" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "data", 
+  propOrder = {
+  	"dateTime",
+  	"sorgente"
+  }
+)
+
+@XmlRootElement(name = "data")
 
 public class Data extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected Date dateTime;
-
-  protected TipoData sorgente;
-
-
   public Data() {
   }
 
@@ -57,11 +76,11 @@ public class Data extends org.openspcoop2.utils.beans.BaseBean implements Serial
 		this.id=new Long(-1);
   }
 
-  public Date getDateTime() {
+  public java.util.Date getDateTime() {
     return this.dateTime;
   }
 
-  public void setDateTime(Date dateTime) {
+  public void setDateTime(java.util.Date dateTime) {
     this.dateTime = dateTime;
   }
 
@@ -75,22 +94,17 @@ public class Data extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String DATE_TIME = "dateTime";
 
-  public static final String SORGENTE = "sorgente";
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="date-time",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dateTime;
+
+  @XmlElement(name="sorgente",required=false,nillable=false)
+  protected TipoData sorgente;
 
 }

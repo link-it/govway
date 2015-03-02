@@ -21,13 +21,7 @@
 
 package org.openspcoop2.protocol.basic.diagnostica;
 
-import java.math.BigInteger;
-
 import org.apache.log4j.Logger;
-import org.openspcoop2.core.diagnostica.Dominio;
-import org.openspcoop2.core.diagnostica.DominioSoggetto;
-import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
-import org.openspcoop2.core.diagnostica.Protocollo;
 import org.openspcoop2.core.diagnostica.utils.XMLUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -65,41 +59,8 @@ public class XMLDiagnosticoBuilder implements org.openspcoop2.protocol.sdk.diagn
 	@Override
 	public Element toElement(MsgDiagnostico msgDiag) throws ProtocolException{
 		try{
-			
-			MessaggioDiagnostico messaggioDiagnosticoBase = new MessaggioDiagnostico();
-			
-			// Dati Porta di Comunicazione che ha emesso i diagnostici
-			if(msgDiag.getIdSoggetto()!=null){
-				Dominio dominio = new Dominio();
-				dominio.setIdentificativoPorta(msgDiag.getIdSoggetto().getCodicePorta());
-				DominioSoggetto dominioSoggetto = new DominioSoggetto();
-				dominioSoggetto.setTipo(msgDiag.getIdSoggetto().getTipo());
-				dominioSoggetto.setBase(msgDiag.getIdSoggetto().getNome());
-				dominio.setSoggetto(dominioSoggetto);
-				dominio.setModulo(msgDiag.getIdFunzione());
-				messaggioDiagnosticoBase.setDominio(dominio);
-			}
-			
-			
-			// Identificativi
-			messaggioDiagnosticoBase.setIdentificativoRichiesta(msgDiag.getIdBusta());
-			messaggioDiagnosticoBase.setIdentificativoRisposta(msgDiag.getIdBustaRisposta());
-			
-			// Altro
-			if(msgDiag.getGdo()!=null){
-				messaggioDiagnosticoBase.setOraRegistrazione(msgDiag.getGdo().getTime());
-			}
-			messaggioDiagnosticoBase.setCodice(msgDiag.getCodice());
-			messaggioDiagnosticoBase.setMessaggio(msgDiag.getMessaggio());
-			messaggioDiagnosticoBase.setSeverita(new BigInteger(msgDiag.getSeverita()+""));
-			
-			// Protocol Info
-			if(msgDiag.getProtocollo()!=null){
-				Protocollo protocollo = new Protocollo();
-				protocollo.setIdentificativo(msgDiag.getProtocollo());
-			}
-			
-			byte[] xmlDiagnostico = XMLUtils.generateMessaggioDiagnostico(messaggioDiagnosticoBase);
+						
+			byte[] xmlDiagnostico = XMLUtils.generateMessaggioDiagnostico(msgDiag.getMessaggioDiagnostico());
 			Element diagnostico = this.xmlUtils.newElement(xmlDiagnostico);
 
 			return  diagnostico;

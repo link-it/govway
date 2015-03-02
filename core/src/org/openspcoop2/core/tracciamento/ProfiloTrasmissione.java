@@ -20,28 +20,46 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.math.BigInteger;
 
 
-/** <p>Java class ProfiloTrasmissione.
+/** <p>Java class for profilo-trasmissione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="profilo-trasmissione">
+ * 		&lt;sequence>
+ * 			&lt;element name="inoltro" type="{http://www.openspcoop2.org/core/tracciamento}inoltro" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="conferma-ricezione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="sequenza" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "profilo-trasmissione", 
+  propOrder = {
+  	"inoltro"
+  }
+)
+
+@XmlRootElement(name = "profilo-trasmissione")
 
 public class ProfiloTrasmissione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected Inoltro inoltro;
-
-  protected boolean confermaRicezione;
-
-  protected BigInteger sequenza;
-
-
   public ProfiloTrasmissione() {
   }
 
@@ -79,34 +97,30 @@ public class ProfiloTrasmissione extends org.openspcoop2.utils.beans.BaseBean im
     this.confermaRicezione = confermaRicezione;
   }
 
-  public BigInteger getSequenza() {
+  public java.lang.Integer getSequenza() {
     return this.sequenza;
   }
 
-  public void setSequenza(BigInteger sequenza) {
+  public void setSequenza(java.lang.Integer sequenza) {
     this.sequenza = sequenza;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String INOLTRO = "inoltro";
 
-  public static final String CONFERMA_RICEZIONE = "confermaRicezione";
 
-  public static final String SEQUENZA = "sequenza";
+  @XmlElement(name="inoltro",required=false,nillable=false)
+  protected Inoltro inoltro;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="conferma-ricezione",required=false)
+  protected boolean confermaRicezione = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlAttribute(name="sequenza",required=false)
+  protected java.lang.Integer sequenza;
 
 }

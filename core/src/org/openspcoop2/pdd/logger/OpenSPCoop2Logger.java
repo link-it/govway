@@ -557,7 +557,7 @@ public class OpenSPCoop2Logger {
 	public static String humanReadable(MsgDiagnostico msgDiag,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
 			String porta,boolean delegata,IDSoggetto fruitore,IDServizio servizio,String servizioApplicativo,String protocol){
 
-		Date gdo = msgDiag.getGdo().getTime();
+		Date gdo = msgDiag.getGdo();
 		String idPorta = msgDiag.getIdSoggetto().getCodicePorta()+"."+msgDiag.getIdSoggetto().toString();
 		String idFunzione = msgDiag.getIdFunzione();
 		int valueLivello = msgDiag.getSeverita();

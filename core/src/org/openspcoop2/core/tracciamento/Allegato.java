@@ -20,29 +20,49 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class Allegato.
+/** <p>Java class for allegato complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="allegato">
+ * 		&lt;sequence>
+ * 			&lt;element name="content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="digest" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "allegato", 
+  propOrder = {
+  	"contentId",
+  	"contentLocation",
+  	"contentType",
+  	"digest"
+  }
+)
+
+@XmlRootElement(name = "allegato")
 
 public class Allegato extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String contentId;
-
-  protected String contentLocation;
-
-  protected String contentType;
-
-  protected String digest;
-
-
   public Allegato() {
   }
 
@@ -60,80 +80,59 @@ public class Allegato extends org.openspcoop2.utils.beans.BaseBean implements Se
 		this.id=new Long(-1);
   }
 
-  public String getContentId() {
-    if(this.contentId!=null && ("".equals(this.contentId)==false)){
-		return this.contentId.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getContentId() {
+    return this.contentId;
   }
 
-  public void setContentId(String contentId) {
+  public void setContentId(java.lang.String contentId) {
     this.contentId = contentId;
   }
 
-  public String getContentLocation() {
-    if(this.contentLocation!=null && ("".equals(this.contentLocation)==false)){
-		return this.contentLocation.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getContentLocation() {
+    return this.contentLocation;
   }
 
-  public void setContentLocation(String contentLocation) {
+  public void setContentLocation(java.lang.String contentLocation) {
     this.contentLocation = contentLocation;
   }
 
-  public String getContentType() {
-    if(this.contentType!=null && ("".equals(this.contentType)==false)){
-		return this.contentType.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getContentType() {
+    return this.contentType;
   }
 
-  public void setContentType(String contentType) {
+  public void setContentType(java.lang.String contentType) {
     this.contentType = contentType;
   }
 
-  public String getDigest() {
-    if(this.digest!=null && ("".equals(this.digest)==false)){
-		return this.digest.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDigest() {
+    return this.digest;
   }
 
-  public void setDigest(String digest) {
+  public void setDigest(java.lang.String digest) {
     this.digest = digest;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String CONTENT_ID = "contentId";
 
-  public static final String CONTENT_LOCATION = "contentLocation";
 
-  public static final String CONTENT_TYPE = "contentType";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="content-id",required=false,nillable=false)
+  protected java.lang.String contentId;
 
-  public static final String DIGEST = "digest";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="content-location",required=false,nillable=false)
+  protected java.lang.String contentLocation;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="content-type",required=true,nillable=false)
+  protected java.lang.String contentType;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="digest",required=false,nillable=false)
+  protected java.lang.String digest;
 
 }

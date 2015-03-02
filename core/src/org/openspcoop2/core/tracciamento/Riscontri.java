@@ -20,23 +20,45 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class Riscontri.
+/** <p>Java class for riscontri complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="riscontri">
+ * 		&lt;sequence>
+ * 			&lt;element name="riscontro" type="{http://www.openspcoop2.org/core/tracciamento}riscontro" minOccurs="1" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "riscontri", 
+  propOrder = {
+  	"riscontro"
+  }
+)
+
+@XmlRootElement(name = "riscontri")
 
 public class Riscontri extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public Riscontri() {
   }
 
@@ -80,20 +102,12 @@ public class Riscontri extends org.openspcoop2.utils.beans.BaseBean implements S
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
+
+
+  @XmlElement(name="riscontro",required=true,nillable=false)
   protected List<Riscontro> riscontro = new ArrayList<Riscontro>();
 
   /**
@@ -122,7 +136,5 @@ public class Riscontri extends org.openspcoop2.utils.beans.BaseBean implements S
   public int sizeRiscontro() {
   	return this.riscontro.size();
   }
-
-  public static final String RISCONTRO = "riscontro";
 
 }

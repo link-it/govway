@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="tracciamento.dao.ws.server" basedir=".">
+
+	<description>
+        	Ambiente di compilazione del Progetto tracciamento
+	</description>
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-wstracciamento-build.xml" />
+	<import file="./ant/openspcoop2-wstracciamento-war.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	
+	<!-- directory root -->
+	<property name="svn_rootDir" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<!--
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${required_lib_tracciamento}/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	-->
+	
+	<!-- Versione Application Server -->
+	<var name="log4j_jar" value="" />
+	<var name="log4j_properties" value=""/>
+	<var name="commons_logging_jar" value="" />
+	<var name="jaxp_ri_jar" value=""/>
+	<var name="jboss_classloading" value="" />
+	<var name="jboss_scanning" value="" />
+	<var name="jboss_deployment_structure" value="" />
+	<runtarget target="check_as_version" />	
+	<!-- log -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="log4j_jar" value="log4j-1.2.16.jar" />
+		</then>
+	</if>
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+		</or>
+		<then>
+			<var name="log4j_properties" value="log4j.properties"/>
+		</then>
+	</if>    
+	<!-- commons_logging -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="commons_logging_jar" value="commons-logging-1.1.1.jar" />
+		</then>
+	</if>        
+	<!-- jaxp_ri -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+		</then>
+	</if>
+	<!-- jboss_classloading -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_classloading" value="jboss-classloading.xml" />
+		</then>
+	</if>
+	<!-- jboss_scanning -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_scanning" value="jboss-scanning.xml" />
+		</then>
+	</if>
+	<!-- jboss_deployment_structure -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<equals arg1="${as}" arg2="jboss8"/>
+			<equals arg1="${as}" arg2="wildfly8"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>  
+	
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${openspcoop2.lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	
+	<!-- Properties -->
+	<property name="src_dir_tracciamento_ws" location="src" />
+	<property name="src_tracciamento_ws" location="${src_dir_tracciamento_ws}" />
+	<property name="build_dir_tracciamento_ws" location="build" />
+	<property name="build_tracciamento_ws" location="${build_dir_tracciamento_ws}" />
+	<property name="dist_tracciamento_ws" location="dist" />
+	<property name="doc_tracciamento_ws" location="doc" />
+	<property name="properties_tracciamento_ws" location="deploy/properties" />
+	<property name="wsdl_tracciamento_ws" location="deploy/wsdl" />
+	<property name="tmp_jboss_conf" location="tmp" />
+	
+	<target name="clean_ws_exclude_war">
+		<delete dir="${build_dir_tracciamento_ws}" />
+		<delete dir="${dist_tracciamento_ws}">
+			<exclude name="*.war"/>
+		</delete>
+		<delete dir="${tmp_jboss_conf}" />
+	</target>
+	<target name="clean_ws">
+		<delete dir="${build_dir_tracciamento_ws}" />
+		<delete dir="${dist_tracciamento_ws}" />
+		<delete dir="${tmp_jboss_conf}" />
+	</target>
+	<target name="clean" depends="clean_ws"/>
+
+
+	<target name="init_compile_tracciamento_ws">
+		<mkdir dir="${build_tracciamento_ws}" />
+		<mkdir dir="${dist_tracciamento_ws}" />
+	</target>
+
+	<target name="build_tracciamento_ws" depends="init_compile_tracciamento_ws" description="compila la libreria">
+		
+		<antcall target="compile_openspcoop2_tracciamento_ws">
+			<param name="war_type" value="${war_type}"/>
+		</antcall>
+		
+	</target>
+
+	<target name="build_ws" depends="build_tracciamento_ws"/>
+
+	
+
+
+	<target name="war_all" depends="clean_ws_exclude_war">
+		<antcall target="preprocess_all">
+			<param name="war_type" value="All"/>
+		</antcall>
+		<antcall target="build_tracciamento_ws">
+			<param name="war_type" value="All"/>
+		</antcall>
+		<antcall target="-war">
+			<param name="war_type" value="All"/>
+		</antcall>
+	</target>
+	<target name="war">
+		<antcall target="war_all"/>
+		<antcall target="clean_ws_exclude_war"/>
+	</target>
+
+	
+
+
+</project>

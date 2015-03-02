@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+				  xmlns:tns="http://www.openspcoop2.org/core/tracciamento/management" 
+				  name="TracciaService"
+				  targetNamespace="http://www.openspcoop2.org/core/tracciamento/management">
+
+	<!-- TYPES -->
+	
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://www.openspcoop2.org/core/tracciamento/management"
+						schemaLocation="TracciaSearch.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+  
+	<!-- MESSAGES -->
+	  
+	<wsdl:message name="findAll">
+		<wsdl:part element="tns:findAll" name="findAll"/>
+	</wsdl:message>
+	<wsdl:message name="findAllResponse">
+		<wsdl:part element="tns:findAllResponse" name="findAllResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="find">
+		<wsdl:part element="tns:find" name="find"/>
+	</wsdl:message>
+	<wsdl:message name="findResponse">
+		<wsdl:part element="tns:findResponse" name="findResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="count">
+		<wsdl:part element="tns:count" name="count"/>
+	</wsdl:message>
+	<wsdl:message name="countResponse">
+		<wsdl:part element="tns:countResponse" name="countResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="get">
+		<wsdl:part element="tns:get" name="get"/>
+	</wsdl:message>
+	<wsdl:message name="getResponse">
+		<wsdl:part element="tns:getResponse" name="getResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="exists">
+		<wsdl:part element="tns:exists" name="exists"/>
+	</wsdl:message>
+	<wsdl:message name="existsResponse">
+		<wsdl:part element="tns:existsResponse" name="existsResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="findAllIds">
+		<wsdl:part element="tns:findAllIds" name="findAllIds"/>
+	</wsdl:message>
+	<wsdl:message name="findAllIdsResponse">
+		<wsdl:part element="tns:findAllIdsResponse" name="findAllIdsResponse"/>
+	</wsdl:message>
+
+
+
+	<wsdl:message name="tracciamento-service-exception">
+		<wsdl:part element="tns:tracciamento-service-exception" name="tracciamento-service-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="tracciamento-not-found-exception">
+		<wsdl:part element="tns:tracciamento-not-found-exception" name="tracciamento-not-found-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="tracciamento-multiple-result-exception">
+		<wsdl:part element="tns:tracciamento-multiple-result-exception" name="tracciamento-multiple-result-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="tracciamento-not-implemented-exception">
+		<wsdl:part element="tns:tracciamento-not-implemented-exception" name="tracciamento-not-implemented-exception"/>
+	</wsdl:message>
+
+	<wsdl:message name="tracciamento-not-authorized-exception">
+		<wsdl:part element="tns:tracciamento-not-authorized-exception" name="tracciamento-not-authorized-exception"/>
+	</wsdl:message>
+
+
+	<!-- INTERFACE --> 
+	 
+	<wsdl:portType name="Traccia">
+
+		<wsdl:operation name="findAll">
+			<wsdl:input message="tns:findAll" name="findAll"/>
+			<wsdl:output message="tns:findAllResponse" name="findAllResponse"/>
+			<wsdl:fault message="tns:tracciamento-service-exception" name="tracciamento-service-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-implemented-exception" name="tracciamento-not-implemented-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-authorized-exception" name="tracciamento-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="find">
+			<wsdl:input message="tns:find" name="find"/>
+			<wsdl:output message="tns:findResponse" name="findResponse"/>
+			<wsdl:fault message="tns:tracciamento-service-exception" name="tracciamento-service-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-found-exception" name="tracciamento-not-found-exception"/>
+			<wsdl:fault message="tns:tracciamento-multiple-result-exception" name="tracciamento-multiple-result-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-implemented-exception" name="tracciamento-not-implemented-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-authorized-exception" name="tracciamento-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="count">
+			<wsdl:input message="tns:count" name="count"/>
+			<wsdl:output message="tns:countResponse" name="countResponse"/>
+			<wsdl:fault message="tns:tracciamento-service-exception" name="tracciamento-service-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-implemented-exception" name="tracciamento-not-implemented-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-authorized-exception" name="tracciamento-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="get">
+			<wsdl:input message="tns:get" name="get"/>
+			<wsdl:output message="tns:getResponse" name="getResponse"/>
+			<wsdl:fault message="tns:tracciamento-service-exception" name="tracciamento-service-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-found-exception" name="tracciamento-not-found-exception"/>
+			<wsdl:fault message="tns:tracciamento-multiple-result-exception" name="tracciamento-multiple-result-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-implemented-exception" name="tracciamento-not-implemented-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-authorized-exception" name="tracciamento-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="exists">
+			<wsdl:input message="tns:exists" name="exists"/>
+			<wsdl:output message="tns:existsResponse" name="existsResponse"/>
+			<wsdl:fault message="tns:tracciamento-service-exception" name="tracciamento-service-exception"/>
+			<wsdl:fault message="tns:tracciamento-multiple-result-exception" name="tracciamento-multiple-result-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-implemented-exception" name="tracciamento-not-implemented-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-authorized-exception" name="tracciamento-not-authorized-exception"/>
+		</wsdl:operation>
+
+		<wsdl:operation name="findAllIds">
+			<wsdl:input message="tns:findAllIds" name="findAllIds"/>
+			<wsdl:output message="tns:findAllIdsResponse" name="findAllIdsResponse"/>
+			<wsdl:fault message="tns:tracciamento-service-exception" name="tracciamento-service-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-implemented-exception" name="tracciamento-not-implemented-exception"/>
+			<wsdl:fault message="tns:tracciamento-not-authorized-exception" name="tracciamento-not-authorized-exception"/>
+		</wsdl:operation>
+
+
+
+	</wsdl:portType>
+	
+</wsdl:definitions>

@@ -26,11 +26,6 @@ package org.openspcoop2.protocol.sdk.tracciamento;
 import java.io.Serializable;
 import java.text.MessageFormat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 
@@ -38,24 +33,6 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
  *
  * Informazioni Busta
  * 
- * <p>Java class for Busta complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="Busta">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="erogatore" type="{http://commons.dao.openspcoop.org}IDSoggetto"/>
- *         &lt;element name="fruitore" type="{http://commons.dao.openspcoop.org}IDSoggetto"/>
- *         &lt;element name="servizio" type="{http://driver.registry.dao.openspcoop.org}IDServizio"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
  * 
  * @author Stefano Corallo <corallo@link.it>
  * @author Lorenzo Nardi <nardi@link.it>
@@ -63,24 +40,13 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 * @version $Rev$, $Date$
  */
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Busta", propOrder = {
-    "azione",
-    "erogatore",
-    "fruitore",
-    "servizio"
-})
 public class InformazioniProtocollo implements Serializable{
 
 	private static final long serialVersionUID = -3415656968896569068L;
 
-    @XmlElement(required = true, nillable = true)
     protected String azione;
-    @XmlElement(required = true, nillable = true)
     protected IDSoggetto destinatario;
-    @XmlElement(required = true, nillable = true)
     protected IDSoggetto mittente;
-    @XmlElement(required = true, nillable = true)
     protected String servizio;
     protected String tipoServizio;
     protected Integer versioneServizio;

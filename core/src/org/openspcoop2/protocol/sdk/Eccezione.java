@@ -23,13 +23,10 @@
 
 package org.openspcoop2.protocol.sdk;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 import org.apache.commons.lang.NotImplementedException;
+import org.openspcoop2.core.tracciamento.CodiceEccezione;
+import org.openspcoop2.core.tracciamento.constants.TipoCodificaEccezione;
+import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
 import org.openspcoop2.message.SOAPFaultCode;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
@@ -50,36 +47,6 @@ import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
  * @version $Rev$, $Date$
  */
 
-/**
- * <p>Java class for eccezione complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="eccezione">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="codiceEccezione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="contestoCodifica" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="posizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="rilevanza" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "eccezione", propOrder = {
-    "codiceEccezione",
-    "contestoCodifica",
-    "posizione",
-    "rilevanza"
-})
-
 public class Eccezione implements java.io.Serializable{
 
 	/**
@@ -87,63 +54,76 @@ public class Eccezione implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@XmlTransient
-	private CodiceErroreCooperazione codiceEccezione;
-	@XmlTransient
-	private SubCodiceErrore subCodiceEccezione;
-	@XmlElement(name="codiceEccezione")
-	protected String codiceEccezioneValue;
-
-    protected String descrizione;
-    
-    @XmlTransient
-    private ErroreCooperazione errore;
+	private org.openspcoop2.core.tracciamento.Eccezione eccezione;
 	
-	@XmlTransient
-	private ContestoCodificaEccezione contestoCodifica;
-    protected String contestoCodificaValue;
-    
-	@XmlTransient
-    private LivelloRilevanza rilevanza;
-	@XmlElement(name="rilevanza")
-	protected String rilevanzaValue;
-    
-	private String modulo;
-		
-	@XmlTransient
+	private ErroreCooperazione errore;
+	
 	private SOAPFaultCode soapFaultCode;
+	
+
+	
 	
 	/* Metodi da utilizzare solo nelle implementazioni dei protocolli */
 	public Eccezione() {
+		this.eccezione = new org.openspcoop2.core.tracciamento.Eccezione();
 	}
 	
     public Eccezione(String codiceEcc, String descrizione, boolean isErroreValidazione, IProtocolFactory protocolFactory) throws ProtocolException{
 		this(new ErroreCooperazione(descrizione,CodiceErroreCooperazione.UNKNOWN), isErroreValidazione, null, protocolFactory); // codice lo imposto subito dopo
-		this.codiceEccezioneValue = codiceEcc;
-		this.codiceEccezione = protocolFactory.createTraduttore().toCodiceErroreCooperazione(codiceEcc);
-		this.descrizione = descrizione; // in modo che non venga tradotto alla chiamata della get
+		this.setCodiceEccezioneValue(codiceEcc);
+		this.setCodiceEccezione(protocolFactory.createTraduttore().toCodiceErroreCooperazione(codiceEcc));
+		this.setDescrizione(descrizione); // in modo che non venga tradotto alla chiamata della get
 	}
     public Eccezione(CodiceErroreCooperazione codiceEcc, String descrizione, boolean isErroreValidazione, IProtocolFactory protocolFactory) throws ProtocolException{
 		this(new ErroreCooperazione(descrizione,codiceEcc), isErroreValidazione, null, protocolFactory);
-		this.descrizione = descrizione; // in modo che non venga tradotto alla chiamata della get
+		this.setDescrizione(descrizione); // in modo che non venga tradotto alla chiamata della get
 	}
     
     /* Metodi da utilizzare per fare attuare la traduzione della descrizione */
 	public Eccezione(ErroreCooperazione errore,boolean isErroreValidazione, String modulo,IProtocolFactory protocolFactory) throws ProtocolException{
+		this.eccezione = new org.openspcoop2.core.tracciamento.Eccezione();
 		if(isErroreValidazione){
-			this.contestoCodifica = ContestoCodificaEccezione.INTESTAZIONE;
-			this.contestoCodificaValue = protocolFactory.createTraduttore().toString(this.contestoCodifica);
+			this.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+			this.setContestoCodificaValue(protocolFactory.createTraduttore().toString(this.getContestoCodifica()));
 		}else{
-			this.contestoCodifica = ContestoCodificaEccezione.PROCESSAMENTO;
-			this.contestoCodificaValue = protocolFactory.createTraduttore().toString(this.contestoCodifica);
+			this.setContestoCodifica(ContestoCodificaEccezione.PROCESSAMENTO);
+			this.setContestoCodificaValue(protocolFactory.createTraduttore().toString(this.getContestoCodifica()));
 		}
 		this.errore = errore;
-		this.codiceEccezione = this.errore.getCodiceErrore(); // viene tradotto dopo nel metodo get
-		//this.descrizione = this.errore.getDescrizioneRawValue(); // viene tradotto dopo nel metodo get
-		this.rilevanza = LivelloRilevanza.ERROR;
+		this.setCodiceEccezione(this.errore.getCodiceErrore()); // viene tradotto dopo nel metodo get
+		//this.setDescrizione(this.errore.getDescrizioneRawValue()); // viene tradotto dopo nel metodo get
+		this.setRilevanza(LivelloRilevanza.ERROR);
+	}
+	
+	/* Wrapper */
+	public Eccezione(org.openspcoop2.core.tracciamento.Eccezione eccezione){
+		this.eccezione = eccezione;
+		this.errore = new ErroreCooperazione(this.eccezione.getDescrizione(),this.getCodiceEccezione());
 	}
 
-
+	// base
+	
+	public org.openspcoop2.core.tracciamento.Eccezione getEccezione() {
+		return this.eccezione;
+	}
+	public void setEccezione(org.openspcoop2.core.tracciamento.Eccezione eccezione) {
+		this.eccezione = eccezione;
+		this.errore = new ErroreCooperazione(this.eccezione.getDescrizione(),this.getCodiceEccezione());
+	}
+	
+	
+	
+	// id  [Wrapper]
+	
+	public Long getId() {
+		return this.eccezione.getId();
+	}
+	public void setId(Long id) {
+		this.eccezione.setId(id);
+	}
+	
+	
+	
 	/* Metodi da utilizzare solo nelle implementazioni dei protocolli */
 	public static Eccezione newEccezione(){
 		Eccezione ecc = new Eccezione();
@@ -167,39 +147,98 @@ public class Eccezione implements java.io.Serializable{
 	
 	
 	
-	/* --- CODICE ECCEZIONE --- */
+	
+	/* --- CODICE ECCEZIONE [Wrapper] --- */
 	
     public CodiceErroreCooperazione getCodiceEccezione() {
-        return this.codiceEccezione;
+    	if(this.eccezione.getCodice()!=null && this.eccezione.getCodice().getTipo()!=null){
+    		return CodiceErroreCooperazione.toCodiceErroreCooperazione(this.eccezione.getCodice().getTipo());
+    	}
+        return null;
     }
     public void setCodiceEccezione(CodiceErroreCooperazione value) {
-        this.codiceEccezione = value;
+        if(value!=null){
+        	if(this.eccezione.getCodice()==null){
+        		this.eccezione.setCodice(new CodiceEccezione());
+        	}
+        	this.eccezione.getCodice().setTipo(value.getCodice());
+        }
+        else{
+        	if(this.eccezione.getCodice()!=null){
+        		if(this.eccezione.getCodice().getBase()==null && this.eccezione.getCodice().getSottotipo()==null){
+        			this.eccezione.setCodice(null);
+        		}
+        		else{
+        			this.eccezione.getCodice().setTipo(null);
+        		}
+        	}
+        }
     }
     
     public String getCodiceEccezioneValue(IProtocolFactory protocolFactory) throws ProtocolException {
-    	return this.codiceEccezioneValue == null ? protocolFactory.createTraduttore().toString(this.codiceEccezione,this.subCodiceEccezione) : this.codiceEccezioneValue;
+    	String codiceEccezioneValue = null;
+    	if(this.eccezione.getCodice()!=null){
+    		codiceEccezioneValue = this.eccezione.getCodice().getBase();
+    	}
+    	return codiceEccezioneValue == null ? protocolFactory.createTraduttore().toString(this.getCodiceEccezione(),this.getSubCodiceEccezione()) : codiceEccezioneValue;
     }
     public void setCodiceEccezioneValue(String value) {
-        this.codiceEccezioneValue = value;
+        if(value!=null){
+        	if(this.eccezione.getCodice()==null){
+        		this.eccezione.setCodice(new CodiceEccezione());
+        	}
+        	this.eccezione.getCodice().setBase(value);
+        }
+        else{
+        	if(this.eccezione.getCodice()!=null){
+        		if(this.eccezione.getCodice().getTipo()==null && this.eccezione.getCodice().getSottotipo()==null){
+        			this.eccezione.setCodice(null);
+        		}
+        		else{
+        			this.eccezione.getCodice().setBase(null);
+        		}
+        	}
+        }
     }
     
 	public SubCodiceErrore getSubCodiceEccezione() {
-		return this.subCodiceEccezione;
+		if(this.eccezione.getCodice()!=null && this.eccezione.getCodice().getSottotipo()!=null){
+			SubCodiceErrore sub = new SubCodiceErrore();
+			sub.setSubCodice(this.eccezione.getCodice().getSottotipo());
+			return sub;
+    	}
+        return null;
 	}
 	public void setSubCodiceEccezione(SubCodiceErrore subCodiceEccezione) {
-		this.subCodiceEccezione = subCodiceEccezione;
+		if(subCodiceEccezione!=null){
+        	if(this.eccezione.getCodice()==null){
+        		this.eccezione.setCodice(new CodiceEccezione());
+        	}
+        	this.eccezione.getCodice().setSottotipo(subCodiceEccezione.getSubCodice());
+        }
+        else{
+        	if(this.eccezione.getCodice()!=null){
+        		if(this.eccezione.getCodice().getTipo()==null && this.eccezione.getCodice().getBase()==null){
+        			this.eccezione.setCodice(null);
+        		}
+        		else{
+        			this.eccezione.getCodice().setSottotipo(null);
+        		}
+        	}
+        }
 	}
     
 	
 	
 	
-	/* --- DESCRIZIONE ECCEZIONE --- */
+	/* --- DESCRIZIONE ECCEZIONE [Wrapper] --- */
 	
 	public String getDescrizione(IProtocolFactory protocolFactory) throws ProtocolException {
-        return this.descrizione == null ? protocolFactory.createTraduttore().toString(this.errore) : this.descrizione;
+		String descrizione = this.eccezione.getDescrizione();
+        return descrizione == null ? protocolFactory.createTraduttore().toString(this.getErrore()) : descrizione;
     }
     public void setDescrizione(String value) {
-        this.descrizione = value;
+       this.eccezione.setDescrizione(value);
     }
 
     
@@ -207,7 +246,6 @@ public class Eccezione implements java.io.Serializable{
     
     /* --- ERRORE COOPERAZIONE --- */
     
-    @XmlTransient
     public ErroreCooperazione getErrore() {
 		return this.errore;
 	}
@@ -218,17 +256,71 @@ public class Eccezione implements java.io.Serializable{
 	/* --- CONTESTO CODIFICA ECCEZIONE --- */
 
     public ContestoCodificaEccezione getContestoCodifica() {
-        return this.contestoCodifica;
+    	if(this.eccezione.getContestoCodifica()!=null && this.eccezione.getContestoCodifica().getTipo()!=null){
+    		switch (this.eccezione.getContestoCodifica().getTipo()) {
+			case ECCEZIONE_PROCESSAMENTO:
+				return ContestoCodificaEccezione.PROCESSAMENTO;
+			case ECCEZIONE_VALIDAZIONE_PROTOCOLLO:
+				return ContestoCodificaEccezione.INTESTAZIONE;
+			case SCONOSCIUTO:
+				return null;
+			}
+    	}
+        return null;
     }
     public void setContestoCodifica(ContestoCodificaEccezione value) {
-        this.contestoCodifica = value;
+    	if(value!=null){
+        	if(this.eccezione.getContestoCodifica()==null){
+        		this.eccezione.setContestoCodifica(new org.openspcoop2.core.tracciamento.ContestoCodificaEccezione());
+        	}
+        	switch (value) {
+			case INTESTAZIONE:
+				this.eccezione.getContestoCodifica().setTipo(TipoCodificaEccezione.ECCEZIONE_VALIDAZIONE_PROTOCOLLO);
+				break;
+			case PROCESSAMENTO:
+				this.eccezione.getContestoCodifica().setTipo(TipoCodificaEccezione.ECCEZIONE_PROCESSAMENTO);
+				break;
+			default:
+				this.eccezione.getContestoCodifica().setTipo(TipoCodificaEccezione.SCONOSCIUTO);
+				break;
+			}
+        }
+        else{
+        	if(this.eccezione.getContestoCodifica()!=null){
+        		if(this.eccezione.getContestoCodifica().getBase()==null){
+        			this.eccezione.setContestoCodifica(null);
+        		}
+        		else{
+        			this.eccezione.getContestoCodifica().setTipo(null);
+        		}
+        	}
+        }
     }
     
     public String getContestoCodificaValue(IProtocolFactory protocolFactory) throws ProtocolException {
-    	return this.contestoCodificaValue == null ? protocolFactory.createTraduttore().toString(this.contestoCodifica) : this.contestoCodificaValue;
+    	String contestoCodificaValue = null;
+    	if(this.eccezione.getContestoCodifica()!=null){
+    		contestoCodificaValue = this.eccezione.getContestoCodifica().getBase();
+    	}
+    	return contestoCodificaValue == null ? protocolFactory.createTraduttore().toString(this.getContestoCodifica()) : contestoCodificaValue;
     }
     public void setContestoCodificaValue(String value) {
-        this.contestoCodificaValue = value;
+    	if(value!=null){
+        	if(this.eccezione.getContestoCodifica()==null){
+        		this.eccezione.setContestoCodifica(new org.openspcoop2.core.tracciamento.ContestoCodificaEccezione());
+        	}
+        	this.eccezione.getContestoCodifica().setBase(value);
+        }
+        else{
+        	if(this.eccezione.getContestoCodifica()!=null){
+        		if(this.eccezione.getContestoCodifica().getTipo()==null){
+        			this.eccezione.setContestoCodifica(null);
+        		}
+        		else{
+        			this.eccezione.getContestoCodifica().setBase(null);
+        		}
+        	}
+        }
     }
  
    
@@ -238,17 +330,86 @@ public class Eccezione implements java.io.Serializable{
     /* --- LIVELLO RILEVANZA ECCEZIONE --- */
     
     public LivelloRilevanza getRilevanza() {
-        return this.rilevanza;
+    	if(this.eccezione.getRilevanza()!=null && this.eccezione.getRilevanza().getTipo()!=null){
+    		switch (this.eccezione.getRilevanza().getTipo()) {
+			case DEBUG:
+				return LivelloRilevanza.DEBUG;
+			case INFO:
+				return LivelloRilevanza.INFO;
+			case WARN:
+				return LivelloRilevanza.WARN;
+			case ERROR:
+				return LivelloRilevanza.ERROR;
+			case FATAL:
+				return LivelloRilevanza.FATAL;
+			case SCONOSCIUTO:
+				return LivelloRilevanza.UNKNOWN;
+			}
+    	}
+        return null;
     }
     public void setRilevanza(LivelloRilevanza value) {
-        this.rilevanza = value;
+    	if(value!=null){
+        	if(this.eccezione.getRilevanza()==null){
+        		this.eccezione.setRilevanza(new org.openspcoop2.core.tracciamento.RilevanzaEccezione());
+        	}
+        	switch (value) {
+			case DEBUG:
+				this.eccezione.getRilevanza().setTipo(TipoRilevanzaEccezione.DEBUG);
+				break;
+			case INFO:
+				this.eccezione.getRilevanza().setTipo(TipoRilevanzaEccezione.INFO);
+				break;
+			case ERROR:
+				this.eccezione.getRilevanza().setTipo(TipoRilevanzaEccezione.ERROR);
+				break;
+			case FATAL:
+				this.eccezione.getRilevanza().setTipo(TipoRilevanzaEccezione.FATAL);
+				break;
+			case WARN:
+				this.eccezione.getRilevanza().setTipo(TipoRilevanzaEccezione.WARN);
+				break;
+			case UNKNOWN:
+				this.eccezione.getRilevanza().setTipo(TipoRilevanzaEccezione.SCONOSCIUTO);
+				break;
+			}
+        }
+        else{
+        	if(this.eccezione.getRilevanza()!=null){
+        		if(this.eccezione.getRilevanza().getBase()==null){
+        			this.eccezione.setRilevanza(null);
+        		}
+        		else{
+        			this.eccezione.getRilevanza().setTipo(null);
+        		}
+        	}
+        }
     }
     
     public String getRilevanzaValue(IProtocolFactory protocolFactory) throws ProtocolException {
-		return this.rilevanzaValue == null ? protocolFactory.createTraduttore().toString(this.rilevanza) : this.rilevanzaValue;
+    	String rilevanzaValue = null;
+    	if(this.eccezione.getRilevanza()!=null){
+    		rilevanzaValue = this.eccezione.getRilevanza().getBase();
+    	}
+		return rilevanzaValue == null ? protocolFactory.createTraduttore().toString(this.getRilevanza()) : rilevanzaValue;
     }
     public void setRilevanzaValue(String value) {
-        this.rilevanzaValue = value;
+    	if(value!=null){
+        	if(this.eccezione.getRilevanza()==null){
+        		this.eccezione.setRilevanza(new org.openspcoop2.core.tracciamento.RilevanzaEccezione());
+        	}
+        	this.eccezione.getRilevanza().setBase(value);
+        }
+        else{
+        	if(this.eccezione.getRilevanza()!=null){
+        		if(this.eccezione.getRilevanza().getTipo()==null){
+        			this.eccezione.setRilevanza(null);
+        		}
+        		else{
+        			this.eccezione.getRilevanza().setBase(null);
+        		}
+        	}
+        }
     }
 
 
@@ -257,10 +418,10 @@ public class Eccezione implements java.io.Serializable{
     /* --- MODULO FUNZIONALE --- */
     
 	public String getModulo() {
-		return this.modulo;
+		return this.eccezione.getModulo();
 	}
 	public void setModulo(String modulo) {
-		this.modulo = modulo;
+		this.eccezione.setModulo(modulo);
 	}
 	
 	
@@ -273,6 +434,9 @@ public class Eccezione implements java.io.Serializable{
 	}
 	
 	
+	
+	
+	
 	/* --- TO STRING --- */
 	@Override
 	public String toString(){
@@ -283,22 +447,22 @@ public class Eccezione implements java.io.Serializable{
 		StringBuffer bf = new StringBuffer();
 		bf.append("Eccezione");
 		
-		if(this.rilevanza!=null){
+		if(this.getRilevanza()!=null){
 			bf.append(" ");	
 			bf.append(this.getRilevanzaValue(protocolFactory));
 		}
 		
-		if(this.codiceEccezione!=null){
+		if(this.getCodiceEccezione()!=null){
 			bf.append(" con codice [");
 			bf.append(this.getCodiceEccezioneValue(protocolFactory));
 			bf.append("]");
 		}
 		
-		if(this.codiceEccezione!=null && this.contestoCodifica!=null){
+		if(this.getCodiceEccezione()!=null && this.getContestoCodifica()!=null){
 			bf.append(" -");
 		}
 		
-		if(this.contestoCodifica!=null){
+		if(this.getContestoCodifica()!=null){
 			bf.append(" ");
 			bf.append(this.getContestoCodificaValue(protocolFactory));
 		}
@@ -319,21 +483,27 @@ public class Eccezione implements java.io.Serializable{
 	public Eccezione clone(){
 		Eccezione clone = new Eccezione();
 		
-		clone.setCodiceEccezione(this.codiceEccezione);
-		clone.setCodiceEccezioneValue(this.codiceEccezioneValue!=null ? new String(this.codiceEccezioneValue) : null );
-		clone.setSubCodiceEccezione(this.subCodiceEccezione!=null ? this.subCodiceEccezione.clone() : null);
+		// id
+		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
 		
-		clone.setDescrizione(this.descrizione!=null ? new String(this.descrizione) : null);
+		clone.setCodiceEccezione(this.getCodiceEccezione());
+		clone.setCodiceEccezioneValue(this.eccezione.getCodice()!=null && this.eccezione.getCodice().getBase()!=null ? 
+				new String(this.eccezione.getCodice().getBase()) : null );
+		clone.setSubCodiceEccezione(this.getSubCodiceEccezione()!=null ? this.getSubCodiceEccezione().clone() : null);
+		
+		clone.setDescrizione(this.eccezione.getDescrizione()!=null ? new String(this.eccezione.getDescrizione()) : null);
 		
 		clone.errore = (this.errore!=null ? this.errore.clone() : null);
 		
-		clone.setContestoCodifica(this.contestoCodifica);
-		clone.setContestoCodificaValue(this.contestoCodificaValue!=null ? new String(this.contestoCodificaValue) : null);
+		clone.setContestoCodifica(this.getContestoCodifica());
+		clone.setContestoCodificaValue(this.eccezione.getContestoCodifica()!=null && this.eccezione.getContestoCodifica().getBase()!=null ? 
+				new String(this.eccezione.getContestoCodifica().getBase()) : null);
 		
-		clone.setRilevanza(this.rilevanza);
-		clone.setRilevanzaValue(this.rilevanzaValue!=null ? new String(this.rilevanzaValue) : null);
+		clone.setRilevanza(this.getRilevanza());
+		clone.setRilevanzaValue(this.eccezione.getRilevanza()!=null && this.eccezione.getRilevanza().getBase()!=null ? 
+				new String(this.eccezione.getRilevanza().getBase()) : null);
 		
-		clone.setModulo(this.modulo!=null ? new String(this.modulo) : null);
+		clone.setModulo(this.getModulo()!=null ? new String(this.getModulo()) : null);
 		
 		clone.setSoapFaultCode(this.soapFaultCode);
 		

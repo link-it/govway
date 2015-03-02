@@ -40,8 +40,8 @@ import org.openspcoop2.core.tracciamento.Eccezione;
 import org.openspcoop2.core.tracciamento.Eccezioni;
 import org.openspcoop2.core.tracciamento.ProfiloCollaborazione;
 import org.openspcoop2.core.tracciamento.ProfiloTrasmissione;
+import org.openspcoop2.core.tracciamento.Proprieta;
 import org.openspcoop2.core.tracciamento.Protocollo;
-import org.openspcoop2.core.tracciamento.ProtocolloProprieta;
 import org.openspcoop2.core.tracciamento.Riscontri;
 import org.openspcoop2.core.tracciamento.Riscontro;
 import org.openspcoop2.core.tracciamento.Servizio;
@@ -49,7 +49,7 @@ import org.openspcoop2.core.tracciamento.Soggetto;
 import org.openspcoop2.core.tracciamento.Traccia;
 import org.openspcoop2.core.tracciamento.Trasmissione;
 import org.openspcoop2.core.tracciamento.Trasmissioni;
-import org.openspcoop2.core.tracciamento.constants.Costanti;
+import org.openspcoop2.core.tracciamento.constants.CostantiTracciamento;
 import org.openspcoop2.message.ValidatoreXSD;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -306,7 +306,7 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("Busta.protocollo.identificativo non definito\n");
 		}
 		for (int i = 0; i < protocollo.sizeProprietaList(); i++) {
-			ProtocolloProprieta pp = protocollo.getProprieta(i);
+			Proprieta pp = protocollo.getProprieta(i);
 			if(pp==null){
 				motivoErroreValidazione.append("Busta.protocollo.proprieta["+i+"] non definito\n");
 			}
@@ -511,8 +511,8 @@ public class XMLUtils  {
 	private static boolean isTraccia_engine(Node nodeXml){
 		try{
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(Costanti.ROOT_LOCAL_NAME_TRACCIA.equals(nodeXml.getLocalName()) && 
-					Costanti.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
+			if(CostantiTracciamento.ROOT_LOCAL_NAME_TRACCIA.equals(nodeXml.getLocalName()) && 
+					CostantiTracciamento.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
 				){
 				return true;
 			}

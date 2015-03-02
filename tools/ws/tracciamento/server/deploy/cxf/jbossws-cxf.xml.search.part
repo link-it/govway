@@ -1,0 +1,23 @@
+	
+	<jaxws:endpoint 
+		id="Traccia_PortSoap11"
+		serviceName="TracciaSoap11Service"
+		implementor="org.openspcoop2.core.tracciamento.ws.server.impl.Traccia@IMPLEMENTOR@Impl_PortSoap11"
+		address="/Traccia/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/tracciamento/management"
+		wsdlLocation="/WEB-INF/classes/Traccia@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="Traccia_PortSoap12"
+		serviceName="TracciaSoap12Service"
+		implementor="org.openspcoop2.core.tracciamento.ws.server.impl.Traccia@IMPLEMENTOR@Impl_PortSoap12"
+		address="/Traccia/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/tracciamento/management"
+		wsdlLocation="/WEB-INF/classes/Traccia@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>

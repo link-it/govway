@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tns="http://www.openspcoop2.org/core/tracciamento/management" 
+			xmlns:api="http://www.openspcoop2.org/core/tracciamento" 
+			attributeFormDefault="unqualified" 
+			elementFormDefault="qualified" 
+			targetNamespace="http://www.openspcoop2.org/core/tracciamento/management">
+			
+ 	<xsd:import schemaLocation="openspcoopTracciamento.xsd" namespace="http://www.openspcoop2.org/core/tracciamento"/>
+
+	<!-- FILTRI -->
+
+	<xsd:element name="search-filter-traccia" type="tns:search-filter-traccia" />
+	<xsd:complexType name="search-filter-traccia">
+		<xsd:sequence>
+ 			<xsd:element name="dominio" type="tns:dominio" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="identificativo-correlazione-richiesta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="identificativo-correlazione-risposta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="correlazione-applicativa-and-match" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="busta" type="tns:busta" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ricerca-solo-buste-errore" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="api:TipoTraccia" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="orCondition" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="descOrder" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="dominio-soggetto" type="tns:dominio-soggetto" />
+	<xsd:complexType name="dominio-soggetto">
+		<xsd:sequence>
+ 			<xsd:element name="base" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="dominio" type="tns:dominio" />
+	<xsd:complexType name="dominio">
+		<xsd:sequence>
+ 			<xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="soggetto" type="tns:dominio-soggetto" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="funzione" type="api:TipoPdD" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="soggetto-identificativo" type="tns:soggetto-identificativo" />
+	<xsd:complexType name="soggetto-identificativo">
+		<xsd:sequence>
+ 			<xsd:element name="base" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="soggetto" type="tns:soggetto" />
+	<xsd:complexType name="soggetto">
+		<xsd:sequence>
+ 			<xsd:element name="identificativo" type="tns:soggetto-identificativo" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="profilo-collaborazione" type="tns:profilo-collaborazione" />
+	<xsd:complexType name="profilo-collaborazione">
+		<xsd:sequence>
+ 			<xsd:element name="base" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="api:TipoProfiloCollaborazione" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="servizio" type="tns:servizio" />
+	<xsd:complexType name="servizio">
+		<xsd:sequence>
+ 			<xsd:element name="base" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="versione" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="protocollo" type="tns:protocollo" />
+	<xsd:complexType name="protocollo">
+		<xsd:sequence>
+ 			<xsd:element name="identificativo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="busta" type="tns:busta" />
+	<xsd:complexType name="busta">
+		<xsd:sequence>
+ 			<xsd:element name="mittente" type="tns:soggetto" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="destinatario" type="tns:soggetto" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="profilo-collaborazione" type="tns:profilo-collaborazione" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="servizio" type="tns:servizio" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="azione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="identificativo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="riferimento-messaggio" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="servizio-applicativo-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="protocollo" type="tns:protocollo" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+	<!-- EXCEPTION -->
+	<xsd:element name="tracciamento-service-exception" type="tns:tracciamento-service-exception"/>
+	<xsd:complexType name="tracciamento-service-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="tracciamento-not-found-exception" type="tns:tracciamento-not-found-exception"/>
+	<xsd:complexType name="tracciamento-not-found-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="tracciamento-multiple-result-exception" type="tns:tracciamento-multiple-result-exception"/>
+	<xsd:complexType name="tracciamento-multiple-result-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="tracciamento-not-implemented-exception" type="tns:tracciamento-not-implemented-exception"/>
+	<xsd:complexType name="tracciamento-not-implemented-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="tracciamento-not-authorized-exception" type="tns:tracciamento-not-authorized-exception"/>
+	<xsd:complexType name="tracciamento-not-authorized-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<!-- WRAPPED ELEMENT -->
+
+	<xsd:element name="findAll" type="tns:findAll" />
+	<xsd:complexType name="findAll">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findAllResponse" type="tns:findAllResponse" />
+	<xsd:complexType name="findAllResponse">
+		<xsd:sequence>
+			<xsd:element name="traccia" type="api:traccia" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="find" type="tns:find" />
+	<xsd:complexType name="find">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findResponse" type="tns:findResponse" />
+	<xsd:complexType name="findResponse">
+		<xsd:sequence>
+			<xsd:element name="traccia" type="api:traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="count" type="tns:count" />
+	<xsd:complexType name="count">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="countResponse" type="tns:countResponse" />
+	<xsd:complexType name="countResponse">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="get" type="tns:get" />
+	<xsd:complexType name="get">
+		<xsd:sequence>
+			<xsd:element name="idTraccia" type="api:id-traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="getResponse" type="tns:getResponse" />
+	<xsd:complexType name="getResponse">
+		<xsd:sequence>
+			<xsd:element name="traccia" type="api:traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="exists" type="tns:exists" />
+	<xsd:complexType name="exists">
+		<xsd:sequence>
+			<xsd:element name="idTraccia" type="api:id-traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="existsResponse" type="tns:existsResponse" />
+	<xsd:complexType name="existsResponse">
+		<xsd:sequence>
+			<xsd:element name="exists" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="findAllIds" type="tns:findAllIds" />
+	<xsd:complexType name="findAllIds">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-traccia" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findAllIdsResponse" type="tns:findAllIdsResponse" />
+	<xsd:complexType name="findAllIdsResponse">
+		<xsd:sequence>
+			<xsd:element name="idTraccia" type="api:id-traccia" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+</xsd:schema>

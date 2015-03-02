@@ -25,17 +25,12 @@ package org.openspcoop2.protocol.sdk;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.datatype.XMLGregorianCalendar;
-
+import org.openspcoop2.core.tracciamento.Data;
+import org.openspcoop2.core.tracciamento.Soggetto;
+import org.openspcoop2.core.tracciamento.SoggettoIdentificativo;
+import org.openspcoop2.core.tracciamento.TipoData;
+import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
-import org.openspcoop2.utils.jaxb.DateTime2Date;
 
 
 /**
@@ -48,43 +43,6 @@ import org.openspcoop2.utils.jaxb.DateTime2Date;
  * @version $Rev$, $Date$
  */
 
-/**
- * <p>Java class for trasmissione complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="trasmissione">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="destinazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="indirizzoTelematicoDestinazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="indirizzoTelematicoOrigine" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="oraRegistrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="origine" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tempo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoDestinazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoOrigine" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "trasmissione", propOrder = {
-    "destinazione",
-    "indirizzoTelematicoDestinazione",
-    "indirizzoTelematicoOrigine",
-    "oraRegistrazione",
-    "origine",
-    "tempo",
-    "tipoDestinazione",
-    "tipoOrigine"
-})
 
 public class Trasmissione implements java.io.Serializable{
 
@@ -93,266 +51,426 @@ public class Trasmissione implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	// origine
-	protected String origine;
-	protected String tipoOrigine;
-	protected String identificativoPortaOrigine;
-	protected String indirizzoOrigine;
-	 
-	// destinazione
-	protected String destinazione;
-	protected String tipoDestinazione;
-    protected String identificativoPortaDestinazione;
-    protected String indirizzoDestinazione;
-    
-    // date
-    @XmlElement(type = String.class)
-    @XmlJavaTypeAdapter(DateTime2Date .class)
-    @XmlSchemaType(name = "dateTime")
-    protected Date oraRegistrazione;
-   
-    @XmlTransient
-    private TipoOraRegistrazione tempo;
-    @XmlElement(name="tempo")
-    protected String tempoValue;
+	private org.openspcoop2.core.tracciamento.Trasmissione trasmissione;
+
         
     public Trasmissione() {}
     
-    
-    /**
-     * Gets the value of the destinazione property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDestinazione() {
-        return this.destinazione;
-    }
-
-    /**
-     * Sets the value of the destinazione property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDestinazione(String value) {
-        this.destinazione = value;
-    }
-
-    /**
-     * Gets the value of the indirizzoDestinazione property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIndirizzoDestinazione() {
-        return this.indirizzoDestinazione;
-    }
-
-    /**
-     * Sets the value of the indirizzoDestinazione property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIndirizzoDestinazione(String value) {
-        this.indirizzoDestinazione = value;
-    }
-
-    /**
-     * Gets the value of the indirizzoOrigine property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIndirizzoOrigine() {
-        return this.indirizzoOrigine;
-    }
-
-    /**
-     * Sets the value of the indirizzoOrigine property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIndirizzoOrigine(String value) {
-        this.indirizzoOrigine = value;
-    }
-
-    /**
-     * Gets the value of the oraRegistrazione property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public Date getOraRegistrazione() {
-        return this.oraRegistrazione;
-    }
-    
-    /**
-     * Sets the value of the oraRegistrazione property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setOraRegistrazione(Date value) {
-        this.oraRegistrazione = value;
-    }
-    /**
-     * Gets the value of the origine property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getOrigine() {
-        return this.origine;
-    }
-
-    /**
-     * Sets the value of the origine property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setOrigine(String value) {
-        this.origine = value;
-    }
-
-    /**
-     * Gets the value of the tempo property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public TipoOraRegistrazione getTempo() {
-        return this.tempo;
-    }
-
-    /**
-     * Sets the value of the tempo property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTempo(TipoOraRegistrazione value) {
-        this.tempo = value;
-    }
-
-    /**
-     * Gets the value of the tipoDestinazione property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getTipoDestinazione() {
-        return this.tipoDestinazione;
-    }
-
-    /**
-     * Sets the value of the tipoDestinazione property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTipoDestinazione(String value) {
-        this.tipoDestinazione = value;
-    }
-
-    /**
-     * Gets the value of the tipoOrigine property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getTipoOrigine() {
-        return this.tipoOrigine;
-    }
-
-    /**
-     * Sets the value of the tipoOrigine property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTipoOrigine(String value) {
-        this.tipoOrigine = value;
-    }
-
-	public String getTempoValue(IProtocolFactory protocolFactory) throws ProtocolException {
-		return this.tempoValue == null ? protocolFactory.createTraduttore().toString(this.tempo) : this.tempoValue;
+    public Trasmissione(org.openspcoop2.core.tracciamento.Trasmissione trasmissione){
+		this.trasmissione = trasmissione;
 	}
 
-	public void setTempoValue(String tempoValue) {
-		this.tempoValue = tempoValue;
+
+	// base
+
+	public org.openspcoop2.core.tracciamento.Trasmissione getTrasmissione() {
+		return this.trasmissione;
+	}
+	public void setTrasmissione(org.openspcoop2.core.tracciamento.Trasmissione trasmissione) {
+		this.trasmissione = trasmissione;
+	}
+
+
+
+	// id  [Wrapper]
+
+	public Long getId() {
+		return this.trasmissione.getId();
+	}
+	public void setId(Long id) {
+		this.trasmissione.setId(id);
 	}
 	
+	
+	
+	
+
+	// mittente [wrapper]
+	
+    public String getOrigine() {
+    	if(this.trasmissione.getOrigine()!=null && this.trasmissione.getOrigine().getIdentificativo()!=null)
+			return this.trasmissione.getOrigine().getIdentificativo().getBase();
+		else
+			return null;
+    }
+    public void setOrigine(String value) {
+    	if(value!=null){
+			if(this.trasmissione.getOrigine()==null){
+				this.trasmissione.setOrigine(new Soggetto());
+			}
+			if(this.trasmissione.getOrigine().getIdentificativo()==null){
+				this.trasmissione.getOrigine().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.trasmissione.getOrigine().getIdentificativo().setBase(value);
+		}
+		else{
+			if(this.trasmissione.getOrigine()!=null){
+				if(this.trasmissione.getOrigine().getIdentificativo()!=null && this.trasmissione.getOrigine().getIdentificativo().getTipo()==null){
+					this.trasmissione.getOrigine().setIdentificativo(null);
+				}
+				else{
+					this.trasmissione.getOrigine().getIdentificativo().setBase(null);
+				}
+				if(this.trasmissione.getOrigine().getIdentificativo()==null && 
+						this.trasmissione.getOrigine().getIdentificativoPorta()==null &&
+						this.trasmissione.getOrigine().getIndirizzo()==null){
+					this.trasmissione.setOrigine(null);
+				}
+			}
+		}
+    }
+	
+    public String getTipoOrigine() {
+    	if(this.trasmissione.getOrigine()!=null && this.trasmissione.getOrigine().getIdentificativo()!=null)
+			return this.trasmissione.getOrigine().getIdentificativo().getTipo();
+		else
+			return null;
+    }
+    public void setTipoOrigine(String value) {
+    	if(value!=null){
+			if(this.trasmissione.getOrigine()==null){
+				this.trasmissione.setOrigine(new Soggetto());
+			}
+			if(this.trasmissione.getOrigine().getIdentificativo()==null){
+				this.trasmissione.getOrigine().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.trasmissione.getOrigine().getIdentificativo().setTipo(value);
+		}
+		else{
+			if(this.trasmissione.getOrigine()!=null){
+				if(this.trasmissione.getOrigine().getIdentificativo()!=null && this.trasmissione.getOrigine().getIdentificativo().getBase()==null){
+					this.trasmissione.getOrigine().setIdentificativo(null);
+				}
+				else{
+					this.trasmissione.getOrigine().getIdentificativo().setTipo(null);
+				}
+				if(this.trasmissione.getOrigine().getIdentificativo()==null && 
+						this.trasmissione.getOrigine().getIdentificativoPorta()==null &&
+						this.trasmissione.getOrigine().getIndirizzo()==null){
+					this.trasmissione.setOrigine(null);
+				}
+			}
+		}
+    }
+    
 	public String getIdentificativoPortaOrigine() {
-		return this.identificativoPortaOrigine;
+		if(this.trasmissione.getOrigine()!=null)
+			return this.trasmissione.getOrigine().getIdentificativoPorta();
+		else
+			return null;
 	}
 	public void setIdentificativoPortaOrigine(String identificativoPortaOrigine) {
-		this.identificativoPortaOrigine = identificativoPortaOrigine;
+		if(identificativoPortaOrigine!=null){
+			if(this.trasmissione.getOrigine()==null){
+				this.trasmissione.setOrigine(new Soggetto());
+			}
+			this.trasmissione.getOrigine().setIdentificativoPorta(identificativoPortaOrigine);
+		}
+		else{
+			if(this.trasmissione.getOrigine()!=null){
+				this.trasmissione.getOrigine().setIdentificativoPorta(null);
+				if(this.trasmissione.getOrigine().getIdentificativo()==null && 
+						this.trasmissione.getOrigine().getIdentificativoPorta()==null &&
+						this.trasmissione.getOrigine().getIndirizzo()==null){
+					this.trasmissione.setOrigine(null);
+				}
+			}
+		}
 	}
+    
+    public String getIndirizzoOrigine() {
+    	if(this.trasmissione.getOrigine()!=null)
+			return this.trasmissione.getOrigine().getIndirizzo();
+		else
+			return null;
+    }
+    public void setIndirizzoOrigine(String value) {
+    	if(value!=null){
+			if(this.trasmissione.getOrigine()==null){
+				this.trasmissione.setOrigine(new Soggetto());
+			}
+			this.trasmissione.getOrigine().setIndirizzo(value);
+		}
+		else{
+			if(this.trasmissione.getOrigine()!=null){
+				this.trasmissione.getOrigine().setIndirizzo(null);
+				if(this.trasmissione.getOrigine().getIdentificativo()==null && 
+						this.trasmissione.getOrigine().getIdentificativoPorta()==null &&
+						this.trasmissione.getOrigine().getIndirizzo()==null){
+					this.trasmissione.setOrigine(null);
+				}
+			}
+		}
+    }
+	
+	
+	
+	// destinatario [wrapper]
+    
+    public String getDestinazione() {
+    	if(this.trasmissione.getDestinazione()!=null && this.trasmissione.getDestinazione().getIdentificativo()!=null)
+			return this.trasmissione.getDestinazione().getIdentificativo().getBase();
+		else
+			return null;
+    }
+    public void setDestinazione(String value) {
+    	if(value!=null){
+			if(this.trasmissione.getDestinazione()==null){
+				this.trasmissione.setDestinazione(new Soggetto());
+			}
+			if(this.trasmissione.getDestinazione().getIdentificativo()==null){
+				this.trasmissione.getDestinazione().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.trasmissione.getDestinazione().getIdentificativo().setBase(value);
+		}
+		else{
+			if(this.trasmissione.getDestinazione()!=null){
+				if(this.trasmissione.getDestinazione().getIdentificativo()!=null && this.trasmissione.getDestinazione().getIdentificativo().getTipo()==null){
+					this.trasmissione.getDestinazione().setIdentificativo(null);
+				}
+				else{
+					this.trasmissione.getDestinazione().getIdentificativo().setBase(null);
+				}
+				if(this.trasmissione.getDestinazione().getIdentificativo()==null && 
+						this.trasmissione.getDestinazione().getIdentificativoPorta()==null &&
+						this.trasmissione.getDestinazione().getIndirizzo()==null){
+					this.trasmissione.setDestinazione(null);
+				}
+			}
+		}
+    }
+	
+    public String getTipoDestinazione() {
+    	if(this.trasmissione.getDestinazione()!=null && this.trasmissione.getDestinazione().getIdentificativo()!=null)
+			return this.trasmissione.getDestinazione().getIdentificativo().getTipo();
+		else
+			return null;
+    }
+    public void setTipoDestinazione(String value) {
+    	if(value!=null){
+			if(this.trasmissione.getDestinazione()==null){
+				this.trasmissione.setDestinazione(new Soggetto());
+			}
+			if(this.trasmissione.getDestinazione().getIdentificativo()==null){
+				this.trasmissione.getDestinazione().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.trasmissione.getDestinazione().getIdentificativo().setTipo(value);
+		}
+		else{
+			if(this.trasmissione.getDestinazione()!=null){
+				if(this.trasmissione.getDestinazione().getIdentificativo()!=null && this.trasmissione.getDestinazione().getIdentificativo().getBase()==null){
+					this.trasmissione.getDestinazione().setIdentificativo(null);
+				}
+				else{
+					this.trasmissione.getDestinazione().getIdentificativo().setTipo(null);
+				}
+				if(this.trasmissione.getDestinazione().getIdentificativo()==null && 
+						this.trasmissione.getDestinazione().getIdentificativoPorta()==null &&
+						this.trasmissione.getDestinazione().getIndirizzo()==null){
+					this.trasmissione.setDestinazione(null);
+				}
+			}
+		}
+    }
+    
 	public String getIdentificativoPortaDestinazione() {
-		return this.identificativoPortaDestinazione;
+		if(this.trasmissione.getDestinazione()!=null)
+			return this.trasmissione.getDestinazione().getIdentificativoPorta();
+		else
+			return null;
 	}
-	public void setIdentificativoPortaDestinazione(
-			String identificativoPortaDestinazione) {
-		this.identificativoPortaDestinazione = identificativoPortaDestinazione;
+	public void setIdentificativoPortaDestinazione(String identificativoPortaDestinazione) {
+		if(identificativoPortaDestinazione!=null){
+			if(this.trasmissione.getDestinazione()==null){
+				this.trasmissione.setDestinazione(new Soggetto());
+			}
+			this.trasmissione.getDestinazione().setIdentificativoPorta(identificativoPortaDestinazione);
+		}
+		else{
+			if(this.trasmissione.getDestinazione()!=null){
+				this.trasmissione.getDestinazione().setIdentificativoPorta(null);
+				if(this.trasmissione.getDestinazione().getIdentificativo()==null && 
+						this.trasmissione.getDestinazione().getIdentificativoPorta()==null &&
+						this.trasmissione.getDestinazione().getIndirizzo()==null){
+					this.trasmissione.setDestinazione(null);
+				}
+			}
+		}
 	}
+    
+    public String getIndirizzoDestinazione() {
+    	if(this.trasmissione.getDestinazione()!=null)
+			return this.trasmissione.getDestinazione().getIndirizzo();
+		else
+			return null;
+    }
+    public void setIndirizzoDestinazione(String value) {
+    	if(value!=null){
+			if(this.trasmissione.getDestinazione()==null){
+				this.trasmissione.setDestinazione(new Soggetto());
+			}
+			this.trasmissione.getDestinazione().setIndirizzo(value);
+		}
+		else{
+			if(this.trasmissione.getDestinazione()!=null){
+				this.trasmissione.getDestinazione().setIndirizzo(null);
+				if(this.trasmissione.getDestinazione().getIdentificativo()==null && 
+						this.trasmissione.getDestinazione().getIdentificativoPorta()==null &&
+						this.trasmissione.getDestinazione().getIndirizzo()==null){
+					this.trasmissione.setDestinazione(null);
+				}
+			}
+		}
+    }
+    
+      
+  
+    
+    // date
+    
+    public TipoOraRegistrazione getTempo() {
+		if(this.trasmissione.getOraRegistrazione()!=null && 
+				this.trasmissione.getOraRegistrazione().getSorgente()!=null &&
+				this.trasmissione.getOraRegistrazione().getSorgente().getTipo()!=null){
+			switch (this.trasmissione.getOraRegistrazione().getSorgente().getTipo()) {
+			case LOCALE:
+				return TipoOraRegistrazione.LOCALE;
+			case SINCRONIZZATO:
+				return TipoOraRegistrazione.SINCRONIZZATO;
+			case SCONOSCIUTO:
+				return TipoOraRegistrazione.UNKNOWN;
+			}
+		}
+		return null;
+	}
+	public void setTempo(TipoOraRegistrazione tipoOraRegistrazione) {
+		if(tipoOraRegistrazione!=null){
+			if(this.trasmissione.getOraRegistrazione()==null){
+				this.trasmissione.setOraRegistrazione(new Data());
+			}
+			if(this.trasmissione.getOraRegistrazione().getSorgente()==null){
+				this.trasmissione.getOraRegistrazione().setSorgente(new TipoData());
+			}
+			switch (tipoOraRegistrazione) {
+			case LOCALE:
+				this.trasmissione.getOraRegistrazione().getSorgente().setTipo(TipoTempo.LOCALE);
+				break;
+			case SINCRONIZZATO:
+				this.trasmissione.getOraRegistrazione().getSorgente().setTipo(TipoTempo.SINCRONIZZATO);
+				break;
+			case UNKNOWN:
+				this.trasmissione.getOraRegistrazione().getSorgente().setTipo(TipoTempo.SCONOSCIUTO);
+				break;
+			}
+		}
+		else {
+			if(this.trasmissione.getOraRegistrazione()!=null){
+				if(this.trasmissione.getOraRegistrazione().getSorgente()!=null && this.trasmissione.getOraRegistrazione().getSorgente().getBase()==null){
+					this.trasmissione.getOraRegistrazione().setSorgente(null);
+				}
+				else{
+					this.trasmissione.getOraRegistrazione().getSorgente().setTipo(null);
+				}
+				if(this.trasmissione.getOraRegistrazione().getSorgente()==null && this.trasmissione.getOraRegistrazione().getDateTime()==null){
+					this.trasmissione.setOraRegistrazione(null);
+				}
+			}
+		}
+	}
+
+	public void setTempo(TipoOraRegistrazione tipo, String value) {
+		this.setTempo(tipo);
+		this.setTempoValue(value);
+	}
+
+	public String getTempoValue(IProtocolFactory protocolFactory) throws ProtocolException {
+		String tipoOraRegistrazioneValue = null;
+		if(this.trasmissione.getOraRegistrazione()!=null && this.trasmissione.getOraRegistrazione().getSorgente()!=null){
+			tipoOraRegistrazioneValue = this.trasmissione.getOraRegistrazione().getSorgente().getBase();
+		}
+		return tipoOraRegistrazioneValue == null ? protocolFactory.createTraduttore().toString(this.getTempo()) : tipoOraRegistrazioneValue;
+	}
+	public void setTempoValue(String tipoOraRegistrazioneValue) {
+		if(tipoOraRegistrazioneValue!=null){
+			if(this.trasmissione.getOraRegistrazione()==null){
+				this.trasmissione.setOraRegistrazione(new Data());
+			}
+			if(this.trasmissione.getOraRegistrazione().getSorgente()==null){
+				this.trasmissione.getOraRegistrazione().setSorgente(new TipoData());
+			}
+			this.trasmissione.getOraRegistrazione().getSorgente().setBase(tipoOraRegistrazioneValue);
+		}
+		else {
+			if(this.trasmissione.getOraRegistrazione()!=null){
+				if(this.trasmissione.getOraRegistrazione().getSorgente()!=null && this.trasmissione.getOraRegistrazione().getSorgente().getTipo()==null){
+					this.trasmissione.getOraRegistrazione().setSorgente(null);
+				}
+				else{
+					this.trasmissione.getOraRegistrazione().getSorgente().setBase(null);
+				}
+				if(this.trasmissione.getOraRegistrazione().getSorgente()==null && this.trasmissione.getOraRegistrazione().getDateTime()==null){
+					this.trasmissione.setOraRegistrazione(null);
+				}
+			}
+		}
+	}
+
+	public Date getOraRegistrazione() {
+		if(this.trasmissione.getOraRegistrazione()!=null){
+			return this.trasmissione.getOraRegistrazione().getDateTime();
+		}
+		return null;
+	}
+	public void setOraRegistrazione(Date value) {
+		if(value!=null){
+			if(this.trasmissione.getOraRegistrazione()==null){
+				this.trasmissione.setOraRegistrazione(new Data());
+			}
+			this.trasmissione.getOraRegistrazione().setDateTime(value);
+		}
+		else {
+			if(this.trasmissione.getOraRegistrazione()!=null){
+				if(this.trasmissione.getOraRegistrazione().getSorgente()==null){
+					this.trasmissione.setOraRegistrazione(null);
+				}
+				else{
+					this.trasmissione.getOraRegistrazione().setDateTime(null);
+				}
+			}
+		}
+	}
+    
+    
+
+
+	
 
 	@Override
 	public Trasmissione clone(){
 		
 		Trasmissione clone = new Trasmissione();
 		
+		// id
+		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
+		
 		// origine
-		clone.setOrigine(this.origine!=null ? new String(this.origine) : null);
-		clone.setTipoOrigine(this.tipoOrigine!=null ? new String(this.tipoOrigine) : null);
-		clone.setIndirizzoOrigine(this.indirizzoOrigine!=null ? new String(this.indirizzoOrigine) : null);
-		clone.setIdentificativoPortaOrigine(this.identificativoPortaOrigine!=null ? new String(this.identificativoPortaOrigine) : null);
+		clone.setOrigine(this.getOrigine()!=null ? new String(this.getOrigine()) : null);
+		clone.setTipoOrigine(this.getTipoOrigine()!=null ? new String(this.getTipoOrigine()) : null);
+		clone.setIndirizzoOrigine(this.getIndirizzoOrigine()!=null ? new String(this.getIndirizzoOrigine()) : null);
+		clone.setIdentificativoPortaOrigine(this.getIdentificativoPortaOrigine()!=null ? new String(this.getIdentificativoPortaOrigine()) : null);
 		
 		// destinazione
-		clone.setDestinazione(this.destinazione!=null ? new String(this.destinazione) : null);
-		clone.setTipoDestinazione(this.tipoDestinazione!=null ? new String(this.tipoDestinazione) : null);
-		clone.setIndirizzoDestinazione(this.indirizzoDestinazione!=null ? new String(this.indirizzoDestinazione) : null);
-		clone.setIdentificativoPortaDestinazione(this.identificativoPortaDestinazione!=null ? new String(this.identificativoPortaDestinazione) : null);
+		clone.setDestinazione(this.getDestinazione()!=null ? new String(this.getDestinazione()) : null);
+		clone.setTipoDestinazione(this.getTipoDestinazione()!=null ? new String(this.getTipoDestinazione()) : null);
+		clone.setIndirizzoDestinazione(this.getIndirizzoDestinazione()!=null ? new String(this.getIndirizzoDestinazione()) : null);
+		clone.setIdentificativoPortaDestinazione(this.getIdentificativoPortaDestinazione()!=null ? new String(this.getIdentificativoPortaDestinazione()) : null);
 
 		// date
-		clone.setOraRegistrazione(this.oraRegistrazione!=null ? new Date(this.oraRegistrazione.getTime()) : null);
-		clone.setTempo(this.tempo);
-		clone.setTempoValue(this.tempoValue!=null ? new String(this.tempoValue) : null);
+		clone.setOraRegistrazione(this.getOraRegistrazione()!=null ? new Date(this.getOraRegistrazione().getTime()) : null);
+		clone.setTempo(this.getTempo());
+		clone.setTempoValue(this.trasmissione.getOraRegistrazione()!=null && 
+				this.trasmissione.getOraRegistrazione().getSorgente()!=null &&
+				this.trasmissione.getOraRegistrazione().getSorgente().getBase()!=null ? new String(this.trasmissione.getOraRegistrazione().getSorgente().getBase()) : null);
 
 		return clone;
 	}

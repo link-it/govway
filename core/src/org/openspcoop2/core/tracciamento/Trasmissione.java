@@ -20,27 +20,47 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class Trasmissione.
+/** <p>Java class for trasmissione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="trasmissione">
+ * 		&lt;sequence>
+ * 			&lt;element name="origine" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="destinazione" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="ora-registrazione" type="{http://www.openspcoop2.org/core/tracciamento}data" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "trasmissione", 
+  propOrder = {
+  	"origine",
+  	"destinazione",
+  	"oraRegistrazione"
+  }
+)
+
+@XmlRootElement(name = "trasmissione")
 
 public class Trasmissione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected Soggetto origine;
-
-  protected Soggetto destinazione;
-
-  protected Data oraRegistrazione;
-
-
   public Trasmissione() {
   }
 
@@ -84,24 +104,18 @@ public class Trasmissione extends org.openspcoop2.utils.beans.BaseBean implement
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String ORIGINE = "origine";
 
-  public static final String DESTINAZIONE = "destinazione";
 
-  public static final String ORA_REGISTRAZIONE = "oraRegistrazione";
+  @XmlElement(name="origine",required=false,nillable=false)
+  protected Soggetto origine;
+
+  @XmlElement(name="destinazione",required=false,nillable=false)
+  protected Soggetto destinazione;
+
+  @XmlElement(name="ora-registrazione",required=false,nillable=false)
+  protected Data oraRegistrazione;
 
 }

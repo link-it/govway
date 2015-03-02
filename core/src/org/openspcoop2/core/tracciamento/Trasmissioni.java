@@ -20,23 +20,45 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class Trasmissioni.
+/** <p>Java class for trasmissioni complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="trasmissioni">
+ * 		&lt;sequence>
+ * 			&lt;element name="trasmissione" type="{http://www.openspcoop2.org/core/tracciamento}trasmissione" minOccurs="1" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "trasmissioni", 
+  propOrder = {
+  	"trasmissione"
+  }
+)
+
+@XmlRootElement(name = "trasmissioni")
 
 public class Trasmissioni extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public Trasmissioni() {
   }
 
@@ -80,20 +102,12 @@ public class Trasmissioni extends org.openspcoop2.utils.beans.BaseBean implement
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
+
+
+  @XmlElement(name="trasmissione",required=true,nillable=false)
   protected List<Trasmissione> trasmissione = new ArrayList<Trasmissione>();
 
   /**
@@ -122,7 +136,5 @@ public class Trasmissioni extends org.openspcoop2.utils.beans.BaseBean implement
   public int sizeTrasmissione() {
   	return this.trasmissione.size();
   }
-
-  public static final String TRASMISSIONE = "trasmissione";
 
 }

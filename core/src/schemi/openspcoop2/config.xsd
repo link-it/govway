@@ -51,7 +51,9 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" id="id-soggetto" >
-						<linkit:ws-interface crud="true" all="true" />
+						<linkit:ws-interface crud="true" all="true" >
+							<linkit:ws-filter sortCondition="false"/>
+						</linkit:ws-interface>
 					</linkit:interface>
 				</linkit:generator>
 			</xsd:appinfo>
@@ -113,7 +115,9 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" id="id-porta-delegata" >
-						<linkit:ws-interface crud="true" all="true" />
+						<linkit:ws-interface crud="true" all="true" >
+							<linkit:ws-filter sortCondition="false"/>
+						</linkit:ws-interface>
 					</linkit:interface>
 				</linkit:generator>
 			</xsd:appinfo>
@@ -255,7 +259,9 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" id="id-porta-applicativa" >
-						<linkit:ws-interface crud="true" all="true" />
+						<linkit:ws-interface crud="true" all="true" >
+							<linkit:ws-filter sortCondition="false"/>
+						</linkit:ws-interface>
 					</linkit:interface>
 				</linkit:generator>
 			</xsd:appinfo>
@@ -380,7 +386,9 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" id="id-servizio-applicativo" >
-						<linkit:ws-interface crud="true" all="true" />
+						<linkit:ws-interface crud="true" all="true" >
+							<linkit:ws-filter sortCondition="false"/>
+						</linkit:ws-interface>
 					</linkit:interface>
 				</linkit:generator>
 			</xsd:appinfo>

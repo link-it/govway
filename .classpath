@@ -31,6 +31,10 @@
 	<classpathentry kind="src" path="tools/ws/config/client/src"/>
 	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/monitor/server/src"/>
 	<classpathentry kind="src" path="tools/ws/monitor/client/src"/>
+	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/diagnostica/server/src"/>
+	<classpathentry kind="src" path="tools/ws/diagnostica/client/src"/>
+	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/tracciamento/server/src"/>
+	<classpathentry kind="src" path="tools/ws/tracciamento/client/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/monitor_pdd/src"/>
 	<classpathentry excluding="*/*.xml" kind="src" path="tools/connection_pool/src"/>
 	<classpathentry kind="src" path="tools/generic_project/src"/>

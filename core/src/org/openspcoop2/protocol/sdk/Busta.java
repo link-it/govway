@@ -30,1094 +30,1122 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.tracciamento.Data;
+import org.openspcoop2.core.tracciamento.ProfiloCollaborazione;
+import org.openspcoop2.core.tracciamento.ProfiloTrasmissione;
+import org.openspcoop2.core.tracciamento.Proprieta;
+import org.openspcoop2.core.tracciamento.Protocollo;
+import org.openspcoop2.core.tracciamento.Soggetto;
+import org.openspcoop2.core.tracciamento.SoggettoIdentificativo;
+import org.openspcoop2.core.tracciamento.TipoData;
+import org.openspcoop2.core.tracciamento.constants.TipoInoltro;
+import org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione;
+import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.jaxb.DateTime2Date;
 
 /**
  * Classe utilizzata per rappresentare una Busta.
  *
- * <p>Java class for busta complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="busta">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="azioneRichiedenteBustaDiServizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="confermaRicezione" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="destinatario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="identificativoPortaDestinatario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="ID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="indirizzoTelematicoDestinatario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="indirizzoTelematicoMittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="inoltro" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="listaEccezioni" type="{http://www.openspcoop2.org/engine/busta}eccezione" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="listaRiscontri" type="{http://www.openspcoop2.org/engine/busta}riscontro" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="listaTrasmissioni" type="{http://www.openspcoop2.org/engine/busta}trasmissione" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="mittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="identificativoPortaMittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="oraRegistrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="profiloDiCollaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="riferimentoMessaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="riferimentoMsgBustaRichiedenteServizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="scadenza" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="sequenza" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="versioneServizio" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;element name="servizioCorrelato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="servizioRichiedenteBustaDiServizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoDestinatario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoMittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoOraRegistrazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoServizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoServizioCorrelato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tipoServizioRichiedenteBustaDiServizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
  * @author Poli Andrea (apoli@link.it)
  * @author Nardi Lorenzo
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "busta", propOrder = {
-		"azione",
-		"azioneRichiedenteBustaDiServizio",
-		"collaborazione",
-		"confermaRicezione",
-		"destinatario",
-		"identificativoPortaDestinatario",
-		"id",
-		"indirizzoTelematicoDestinatario",
-		"indirizzoTelematicoMittente",
-		"inoltro",
-		"listaEccezioni",
-		"listaRiscontri",
-		"listaTrasmissioni",
-		"mittente",
-		"identificativoPortaMittente",
-		"oraRegistrazione",
-		"profiloDiCollaborazione",
-		"riferimentoMessaggio",
-		"riferimentoMsgBustaRichiedenteServizio",
-		"scadenza",
-		"sequenza",
-		"servizio",
-		"versioneServizio",
-		"servizioCorrelato",
-		"servizioRichiedenteBustaDiServizio",
-		"tipoDestinatario",
-		"tipoMittente",
-		"tipoOraRegistrazione",
-		"tipoServizio",
-		"tipoServizioCorrelato",
-		"tipoServizioRichiedenteBustaDiServizio"
-})
+
 public class Busta implements java.io.Serializable { 
 
 	private static final long serialVersionUID = 1L;
 
-
-	// mittente
-	protected String tipoMittente;
-	protected String mittente;
-	protected String identificativoPortaMittente;
-	protected String indirizzoMittente;
-
-	// destinatario
-	protected String tipoDestinatario;
-	protected String destinatario;
-	protected String identificativoPortaDestinatario;
-	protected String indirizzoDestinatario;
-
-	// profilo di collaborazione
-	@XmlTransient
-	private ProfiloDiCollaborazione profiloDiCollaborazione;
-	@XmlElement(name="profiloDiCollaborazione")
-	protected String profiloDiCollaborazioneValue;
-	protected String tipoServizioCorrelato;
-	protected String servizioCorrelato;
 	
-	// collaborazione
-	protected String collaborazione;
-
-	// servizio
-	protected String tipoServizio;
-	protected String servizio;
-	protected int versioneServizio = 1;
+	// busta
+    private org.openspcoop2.core.tracciamento.Busta busta;
+	
+ 
+	// servizio [info-richiedente]
 	protected String tipoServizioRichiedenteBustaDiServizio;
 	protected String servizioRichiedenteBustaDiServizio;
-	
-	// azione
-	protected String azione;
+
+	// azione [info-richiedente]
 	protected String azioneRichiedenteBustaDiServizio;
 	
-	// identificativi
-	@XmlElement(name = "ID")
-	protected String id;
-	protected String riferimentoMessaggio;
+	// identificativi [info-richiedente]
 	protected String riferimentoMsgBustaRichiedenteServizio;
 	
-	// date
-	@XmlTransient
-	private TipoOraRegistrazione tipoOraRegistrazione;
-	@XmlElement(name = "tipoOraRegistrazione")
-	protected String tipoOraRegistrazioneValue;
-	@XmlElement(type = String.class)
-	@XmlJavaTypeAdapter(DateTime2Date .class)
-	@XmlSchemaType(name = "dateTime")
-	protected Date oraRegistrazione;
-	@XmlElement(type = String.class)
-	@XmlJavaTypeAdapter(DateTime2Date .class)
-	@XmlSchemaType(name = "dateTime")
-	protected Date scadenza;
-	
-	// profilo di trasmissione
-	protected boolean confermaRicezione;
-	@XmlTransient
-	private Inoltro inoltro;
-	@XmlElement
-	protected String inoltroValue;
-
-	// sequenza
-	protected long sequenza = -1;
-
-	// servizi applicativi
-	private String servizioApplicativoFruitore;
-	private String servizioApplicativoErogatore;
-
-	// protocollo
-	private String protocollo;
-	
-	// digest
-	private String digest;
-	
-	// properties
-	@XmlJavaTypeAdapter(Properties2Hashtable .class)
-	protected Hashtable<String, String> properties;
-	
 	// ListaEccezioni
-	@XmlElement(nillable = true)
-	protected List<Eccezione> listaEccezioni;
+	protected List<Eccezione> listaEccezioni = new ArrayList<Eccezione>();
 	
 	// ListaRiscontri
-	@XmlElement(nillable = true)
-	protected List<Riscontro> listaRiscontri;
+	protected List<Riscontro> listaRiscontri = new ArrayList<Riscontro>();
 	
 	// ListaTrasmissioni
-	@XmlElement(nillable = true)
-	protected List<Trasmissione> listaTrasmissioni;
+	protected List<Trasmissione> listaTrasmissioni = new ArrayList<Trasmissione>();
 	
-
-
 	public Busta(String protocollo){
-		this.listaEccezioni = new ArrayList<Eccezione>();
-		this.listaTrasmissioni = new ArrayList<Trasmissione>();
-		this.listaRiscontri = new ArrayList<Riscontro>();
-		this.sequenza = -1;
-		this.properties = new Hashtable<String, String>();
-		this.protocollo = protocollo;
+		this.setSequenza(-1);
+		this.setProtocollo(protocollo);
 	}
 
 	public Busta(String protocollo,Servizio infoServizio, IDSoggetto mittente, IDSoggetto destinatario, String id) {
-		this.listaEccezioni = new ArrayList<Eccezione>();
-		this.listaTrasmissioni = new ArrayList<Trasmissione>();
-		this.listaRiscontri = new ArrayList<Riscontro>();
-		this.sequenza = -1;
+		this.setSequenza(-1);
 		
 		if(infoServizio!=null){
-			this.profiloDiCollaborazione = infoServizio.getProfiloDiCollaborazione();
-			this.confermaRicezione = infoServizio.getConfermaRicezione();
-			this.scadenza = infoServizio.getScadenza();
+			this.setProfiloDiCollaborazione(infoServizio.getProfiloDiCollaborazione());
+			this.setConfermaRicezione(infoServizio.getConfermaRicezione());
+			this.setScadenza(infoServizio.getScadenza());
 			if(infoServizio.getIDServizio()!=null){
-				this.tipoServizio = infoServizio.getIDServizio().getTipoServizio();
-				this.servizio = infoServizio.getIDServizio().getServizio();
-				this.azione = infoServizio.getIDServizio().getAzione();
+				this.setTipoServizio(infoServizio.getIDServizio().getTipoServizio());
+				this.setServizio(infoServizio.getIDServizio().getServizio());
+				this.setAzione(infoServizio.getIDServizio().getAzione());
 			}
-			this.tipoServizioCorrelato = infoServizio.getTipoServizioCorrelato();
-			this.servizioCorrelato = infoServizio.getServizioCorrelato();
+			this.setTipoServizioCorrelato(infoServizio.getTipoServizioCorrelato());
+			this.setServizioCorrelato(infoServizio.getServizioCorrelato());
 		}
 		
 		if(mittente!=null){
-			this.tipoMittente = mittente.getTipo();
-			this.mittente = mittente.getNome();
-			this.identificativoPortaMittente = mittente.getCodicePorta();
+			this.setTipoMittente(mittente.getTipo());
+			this.setMittente(mittente.getNome());
+			this.setIdentificativoPortaMittente(mittente.getCodicePorta());
 		}
 		
 		if(destinatario!=null){
-			this.tipoDestinatario = destinatario.getTipo();
-			this.destinatario = destinatario.getNome();
-			this.identificativoPortaDestinatario = destinatario.getCodicePorta();
+			this.setTipoDestinatario(destinatario.getTipo());
+			this.setDestinatario(destinatario.getNome());
+			this.setIdentificativoPortaDestinatario(destinatario.getCodicePorta());
 		}
 		
-		this.id = id;
-		this.properties = new Hashtable<String, String>();
-		this.protocollo = protocollo;
-	}
-
-	
-	
-	protected void setTipoOraRegistrazione(TipoOraRegistrazione tipoOraRegistrazione) {
-		this.tipoOraRegistrazione = tipoOraRegistrazione;
-	}
-
-	protected void setInoltro(Inoltro inoltro) {
-		this.inoltro = inoltro;
-	}
-
-	public void addProperty(String key,String value){
-		// Per evitare nullPointer durante la serializzazione
-		// Non deve essere inserito nemmeno il valore ""
-		if(value!=null && !"".equals(value)){
-			this.properties.put(key,value);
-		}
-	}
-
-	public int sizeProperties(){
-		return this.properties.size();
-	}
-
-	public String getProperty(String key){
-		return this.properties.get(key);
-	}
-
-	public String removeProperty(String key){
-		return this.properties.remove(key);
-	}
-
-	public String[] getPropertiesValues() {
-		return this.properties.values().toArray(new String[this.properties.size()]);
-	}
-
-	public String[] getPropertiesNames() {
-		return this.properties.keySet().toArray(new String[this.properties.size()]);
-	}
-
-	public void setProperties(Hashtable<String, String> params) {
-		this.properties = params;
-	}
-
-	public Hashtable<String, String> getProperties() {
-		return this.properties;
+		this.setID(id);
+		this.setProtocollo(protocollo);
 	}
 	
-	public List<Map.Entry<String, String>> getPropertiesAsList(){
-		List <Map.Entry<String, String>> toRet = new ArrayList<Map.Entry<String, String>>();
-		toRet.addAll(this.properties.entrySet());
+	public Busta(org.openspcoop2.core.tracciamento.Busta busta){
+		this.busta = busta;
 		
-		return toRet;
-	}
-
-	/**
-	 * Gets the value of the azione property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getAzione() {
-		return this.azione;
-	}
-
-	/**
-	 * Sets the value of the azione property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setAzione(String value) {
-		this.azione = value;
-	}
-
-	/**
-	 * Gets the value of the azioneRichiedenteBustaDiServizio property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getAzioneRichiedenteBustaDiServizio() {
-		return this.azioneRichiedenteBustaDiServizio;
-	}
-
-	/**
-	 * Sets the value of the azioneRichiedenteBustaDiServizio property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setAzioneRichiedenteBustaDiServizio(String value) {
-		this.azioneRichiedenteBustaDiServizio = value;
-	}
-
-	/**
-	 * Gets the value of the collaborazione property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getCollaborazione() {
-		return this.collaborazione;
-	}
-
-	/**
-	 * Sets the value of the collaborazione property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setCollaborazione(String value) {
-		this.collaborazione = value;
-	}
-
-	/**
-	 * Gets the value of the confermaRicezione property.
-	 * 
-	 */
-	public boolean isConfermaRicezione() {
-		return this.confermaRicezione;
-	}
-
-	/**
-	 * Sets the value of the confermaRicezione property.
-	 * 
-	 */
-	public void setConfermaRicezione(boolean value) {
-		this.confermaRicezione = value;
-	}
-
-	/**
-	 * Gets the value of the destinatario property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getDestinatario() {
-		return this.destinatario;
-	}
-
-	/**
-	 * Sets the value of the destinatario property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setDestinatario(String value) {
-		this.destinatario = value;
-	}
-
-	/**
-	 * Gets the value of the id property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getID() {
-		return this.id;
-	}
-
-	/**
-	 * Sets the value of the id property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setID(String value) {
-		this.id = value;
-	}
-
-	/**
-	 * Gets the value of the indirizzoDestinatario property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getIndirizzoDestinatario() {
-		return this.indirizzoDestinatario;
-	}
-
-	/**
-	 * Sets the value of the indirizzoDestinatario property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setIndirizzoDestinatario(String value) {
-		this.indirizzoDestinatario = value;
-	}
-
-	/**
-	 * Gets the value of the indirizzoTelematicoMittente property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getIndirizzoMittente() {
-		return this.indirizzoMittente;
-	}
-
-	/**
-	 * Sets the value of the indirizzoMittente property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setIndirizzoMittente(String value) {
-		this.indirizzoMittente = value;
-	}
-
-	/**
-	 * Gets the value of the inoltro property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link Inoltro }
-	 *     
-	 */
-	public Inoltro getInoltro() {
-		return this.inoltro;
-	}
-
-	public void setInoltro(Inoltro inoltro, String value) {
-		this.inoltro = inoltro;
-		this.inoltroValue = value;
-	}
-
-
-	/**
-	 * Gets the value of the listaEccezioni property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list,
-	 * not a snapshot. Therefore any modification you make to the
-	 * returned list will be present inside the JAXB object.
-	 * This is why there is not a <CODE>set</CODE> method for the listaEccezioni property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * <pre>
-	 *    getListaEccezioni().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list
-	 * {@link Eccezione }
-	 * 
-	 * 
-	 */
-	public List<Eccezione> getListaEccezioni() {
-		if (this.listaEccezioni == null) {
-			this.listaEccezioni = new ArrayList<Eccezione>();
+    	// eccezioni
+    	if(busta.getEccezioni()!=null && busta.getEccezioni().sizeEccezioneList()>0)
+    	for (org.openspcoop2.core.tracciamento.Eccezione eccezione : busta.getEccezioni().getEccezioneList()) {
+			this.addEccezione(new Eccezione(eccezione));
 		}
-		return this.listaEccezioni;
-	}
-
-	/**
-	 * Gets the value of the listaRiscontri property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list,
-	 * not a snapshot. Therefore any modification you make to the
-	 * returned list will be present inside the JAXB object.
-	 * This is why there is not a <CODE>set</CODE> method for the listaRiscontri property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * <pre>
-	 *    getListaRiscontri().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list
-	 * {@link Riscontro }
-	 * 
-	 * 
-	 */
-	public List<Riscontro> getListaRiscontri() {
-		if (this.listaRiscontri == null) {
-			this.listaRiscontri = new ArrayList<Riscontro>();
+    	
+    	// riscontri
+    	if(busta.getRiscontri()!=null && busta.getRiscontri().sizeRiscontroList()>0)
+    	for (org.openspcoop2.core.tracciamento.Riscontro riscontro : busta.getRiscontri().getRiscontroList()) {
+			this.addRiscontro(new Riscontro(riscontro));
 		}
-		return this.listaRiscontri;
-	}
-
-	/**
-	 * Gets the value of the listaTrasmissioni property.
-	 * 
-	 * <p>
-	 * This accessor method returns a reference to the live list,
-	 * not a snapshot. Therefore any modification you make to the
-	 * returned list will be present inside the JAXB object.
-	 * This is why there is not a <CODE>set</CODE> method for the listaTrasmissioni property.
-	 * 
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * <pre>
-	 *    getListaTrasmissioni().add(newItem);
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list
-	 * {@link Trasmissione }
-	 * 
-	 * 
-	 */
-	public List<Trasmissione> getListaTrasmissioni() {
-		if (this.listaTrasmissioni == null) {
-			this.listaTrasmissioni = new ArrayList<Trasmissione>();
+    	
+    	// trasmissioni
+    	if(busta.getTrasmissioni()!=null && busta.getTrasmissioni().sizeTrasmissioneList()>0)
+    	for (org.openspcoop2.core.tracciamento.Trasmissione trasmissione : busta.getTrasmissioni().getTrasmissioneList()) {
+			this.addTrasmissione(new Trasmissione(trasmissione));
 		}
-		return this.listaTrasmissioni;
 	}
 
-	/**
-	 * Gets the value of the mittente property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
+	
+
+	
+	// base
+	
+	public org.openspcoop2.core.tracciamento.Busta getBusta() {
+		return this.busta;
+	}
+	public void setBusta(org.openspcoop2.core.tracciamento.Busta busta) {
+		this.busta = busta;
+		
+    	// eccezioni
+    	if(busta.getEccezioni()!=null && busta.getEccezioni().sizeEccezioneList()>0)
+    	for (org.openspcoop2.core.tracciamento.Eccezione eccezione : busta.getEccezioni().getEccezioneList()) {
+			this.addEccezione(new Eccezione(eccezione));
+		}
+    	
+    	// riscontri
+    	if(busta.getRiscontri()!=null && busta.getRiscontri().sizeRiscontroList()>0)
+    	for (org.openspcoop2.core.tracciamento.Riscontro riscontro : busta.getRiscontri().getRiscontroList()) {
+			this.addRiscontro(new Riscontro(riscontro));
+		}
+    	
+    	// trasmissioni
+    	if(busta.getTrasmissioni()!=null && busta.getTrasmissioni().sizeTrasmissioneList()>0)
+    	for (org.openspcoop2.core.tracciamento.Trasmissione trasmissione : busta.getTrasmissioni().getTrasmissioneList()) {
+			this.addTrasmissione(new Trasmissione(trasmissione));
+		}
+	}
+	
+	
+	
+	// id  [Wrapper]
+	
+	public Long getId() {
+		return this.busta.getId();
+	}
+	public void setId(Long id) {
+		this.busta.setId(id);
+	}
+	
+	
+	
+	
+	
+	// mittente [Wrapper]
+		
 	public String getMittente() {
-		return this.mittente;
+		if(this.busta.getMittente()!=null && this.busta.getMittente().getIdentificativo()!=null)
+			return this.busta.getMittente().getIdentificativo().getBase();
+		else
+			return null;
 	}
-
-	/**
-	 * Sets the value of the mittente property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
 	public void setMittente(String value) {
-		this.mittente = value;
-	}
-
-	/**
-	 * Gets the value of the oraRegistrazione property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link XMLGregorianCalendar }
-	 *     
-	 */
-	public Date getOraRegistrazione() {
-		return this.oraRegistrazione;
-	}
-
-	/**
-	 * Sets the value of the oraRegistrazione property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link XMLGregorianCalendar }
-	 *     
-	 */
-	public void setOraRegistrazione(Date value) {
-		this.oraRegistrazione = value;
-	}
-
-	/**
-	 * Gets the value of the profiloDiCollaborazione property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public ProfiloDiCollaborazione getProfiloDiCollaborazione() {
-		return this.profiloDiCollaborazione;
-	}
-
-	/**
-	 * Sets the value of the profiloDiCollaborazione property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setProfiloDiCollaborazione(ProfiloDiCollaborazione value) {
-		this.profiloDiCollaborazione = value;
+		if(value!=null){
+			if(this.busta.getMittente()==null){
+				this.busta.setMittente(new Soggetto());
+			}
+			if(this.busta.getMittente().getIdentificativo()==null){
+				this.busta.getMittente().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.busta.getMittente().getIdentificativo().setBase(value);
+		}
+		else{
+			if(this.busta.getMittente()!=null){
+				if(this.busta.getMittente().getIdentificativo()!=null && this.busta.getMittente().getIdentificativo().getTipo()==null){
+					this.busta.getMittente().setIdentificativo(null);
+				}
+				else{
+					this.busta.getMittente().getIdentificativo().setBase(null);
+				}
+				if(this.busta.getMittente().getIdentificativo()==null && 
+						this.busta.getMittente().getIdentificativoPorta()==null &&
+						this.busta.getMittente().getIndirizzo()==null){
+					this.busta.setMittente(null);
+				}
+			}
+		}
 	}
 	
-	
-	public void setProfiloDiCollaborazione(ProfiloDiCollaborazione profiloDiCollaborazione, String value) {
-		this.profiloDiCollaborazione = profiloDiCollaborazione;
-		this.profiloDiCollaborazioneValue = value;
-	}
-
-
-	/**
-	 * Gets the value of the riferimentoMessaggio property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getRiferimentoMessaggio() {
-		return this.riferimentoMessaggio;
-	}
-
-	/**
-	 * Sets the value of the riferimentoMessaggio property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setRiferimentoMessaggio(String value) {
-		this.riferimentoMessaggio = value;
-	}
-
-	/**
-	 * Gets the value of the riferimentoMsgBustaRichiedenteServizio property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getRiferimentoMsgBustaRichiedenteServizio() {
-		return this.riferimentoMsgBustaRichiedenteServizio;
-	}
-
-	/**
-	 * Sets the value of the riferimentoMsgBustaRichiedenteServizio property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setRiferimentoMsgBustaRichiedenteServizio(String value) {
-		this.riferimentoMsgBustaRichiedenteServizio = value;
-	}
-
-	/**
-	 * Gets the value of the scadenza property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link XMLGregorianCalendar }
-	 *     
-	 */
-	public Date getScadenza() {
-		return this.scadenza;
-	}
-
-	/**
-	 * Sets the value of the scadenza property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link XMLGregorianCalendar }
-	 *     
-	 */
-	public void setScadenza(Date value) {
-		this.scadenza = value;
-	}
-
-	/**
-	 * Gets the value of the sequenza property.
-	 * 
-	 */
-	public long getSequenza() {
-		return this.sequenza;
-	}
-
-	/**
-	 * Sets the value of the sequenza property.
-	 * 
-	 */
-	public void setSequenza(long value) {
-		this.sequenza = value;
-	}
-
-	/**
-	 * Gets the value of the servizio property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getServizio() {
-		return this.servizio;
-	}
-
-	/**
-	 * Sets the value of the servizio property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setServizio(String value) {
-		this.servizio = value;
-	}
-
-	/**
-	 * Gets the value of the servizioCorrelato property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getServizioCorrelato() {
-		return this.servizioCorrelato;
-	}
-
-	/**
-	 * Sets the value of the servizioCorrelato property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setServizioCorrelato(String value) {
-		this.servizioCorrelato = value;
-	}
-
-	/**
-	 * Gets the value of the servizioRichiedenteBustaDiServizio property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getServizioRichiedenteBustaDiServizio() {
-		return this.servizioRichiedenteBustaDiServizio;
-	}
-
-	/**
-	 * Sets the value of the servizioRichiedenteBustaDiServizio property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setServizioRichiedenteBustaDiServizio(String value) {
-		this.servizioRichiedenteBustaDiServizio = value;
-	}
-
-	/**
-	 * Gets the value of the tipoDestinatario property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getTipoDestinatario() {
-		return this.tipoDestinatario;
-	}
-
-	/**
-	 * Sets the value of the tipoDestinatario property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setTipoDestinatario(String value) {
-		this.tipoDestinatario = value;
-	}
-
-	/**
-	 * Gets the value of the tipoMittente property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
 	public String getTipoMittente() {
-		return this.tipoMittente;
+		if(this.busta.getMittente()!=null && this.busta.getMittente().getIdentificativo()!=null)
+			return this.busta.getMittente().getIdentificativo().getTipo();
+		else
+			return null;
 	}
-
-	/**
-	 * Sets the value of the tipoMittente property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
 	public void setTipoMittente(String value) {
-		this.tipoMittente = value;
+		if(value!=null){
+			if(this.busta.getMittente()==null){
+				this.busta.setMittente(new Soggetto());
+			}
+			if(this.busta.getMittente().getIdentificativo()==null){
+				this.busta.getMittente().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.busta.getMittente().getIdentificativo().setTipo(value);
+		}
+		else{
+			if(this.busta.getMittente()!=null){
+				if(this.busta.getMittente().getIdentificativo()!=null && this.busta.getMittente().getIdentificativo().getBase()==null){
+					this.busta.getMittente().setIdentificativo(null);
+				}
+				else{
+					this.busta.getMittente().getIdentificativo().setTipo(null);
+				}
+				if(this.busta.getMittente().getIdentificativo()==null && 
+						this.busta.getMittente().getIdentificativoPorta()==null &&
+						this.busta.getMittente().getIndirizzo()==null){
+					this.busta.setMittente(null);
+				}
+			}
+		}
 	}
 
-	/**
-	 * Gets the value of the tipoOraRegistrazione property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public TipoOraRegistrazione getTipoOraRegistrazione() {
-		return this.tipoOraRegistrazione;
+	public String getIdentificativoPortaMittente() {
+		if(this.busta.getMittente()!=null)
+			return this.busta.getMittente().getIdentificativoPorta();
+		else
+			return null;
 	}
 
-	public void setTipoOraRegistrazione(TipoOraRegistrazione tipo, String value) {
-		this.tipoOraRegistrazione = tipo;
-		this.tipoOraRegistrazioneValue = value;
+	public void setIdentificativoPortaMittente(String identificativoPortaMittente) {
+		if(identificativoPortaMittente!=null){
+			if(this.busta.getMittente()==null){
+				this.busta.setMittente(new Soggetto());
+			}
+			this.busta.getMittente().setIdentificativoPorta(identificativoPortaMittente);
+		}
+		else{
+			if(this.busta.getMittente()!=null){
+				this.busta.getMittente().setIdentificativoPorta(null);
+				if(this.busta.getMittente().getIdentificativo()==null && 
+						this.busta.getMittente().getIdentificativoPorta()==null &&
+						this.busta.getMittente().getIndirizzo()==null){
+					this.busta.setMittente(null);
+				}
+			}
+		}
 	}
-	/**
-	 * Gets the value of the tipoServizio property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getTipoServizio() {
-		return this.tipoServizio;
+	
+	public String getIndirizzoMittente() {
+		if(this.busta.getMittente()!=null)
+			return this.busta.getMittente().getIndirizzo();
+		else
+			return null;
 	}
-
-	/**
-	 * Sets the value of the tipoServizio property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setTipoServizio(String value) {
-		this.tipoServizio = value;
+	public void setIndirizzoMittente(String value) {
+		if(value!=null){
+			if(this.busta.getMittente()==null){
+				this.busta.setMittente(new Soggetto());
+			}
+			this.busta.getMittente().setIndirizzo(value);
+		}
+		else{
+			if(this.busta.getMittente()!=null){
+				this.busta.getMittente().setIndirizzo(null);
+				if(this.busta.getMittente().getIdentificativo()==null && 
+						this.busta.getMittente().getIdentificativoPorta()==null &&
+						this.busta.getMittente().getIndirizzo()==null){
+					this.busta.setMittente(null);
+				}
+			}
+		}
 	}
-
-	/**
-	 * Gets the value of the tipoServizioCorrelato property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getTipoServizioCorrelato() {
-		return this.tipoServizioCorrelato;
+	
+	
+	
+	
+	// destinatario [Wrapper]
+	
+	public String getDestinatario() {
+		if(this.busta.getDestinatario()!=null && this.busta.getDestinatario().getIdentificativo()!=null)
+			return this.busta.getDestinatario().getIdentificativo().getBase();
+		else
+			return null;
 	}
-
-	/**
-	 * Sets the value of the tipoServizioCorrelato property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setTipoServizioCorrelato(String value) {
-		this.tipoServizioCorrelato = value;
-	}
-
-	/**
-	 * Gets the value of the tipoServizioRichiedenteBustaDiServizio property.
-	 * 
-	 * @return
-	 *     possible object is
-	 *     {@link String }
-	 *     
-	 */
-	public String getTipoServizioRichiedenteBustaDiServizio() {
-		return this.tipoServizioRichiedenteBustaDiServizio;
-	}
-
-	/**
-	 * Sets the value of the tipoServizioRichiedenteBustaDiServizio property.
-	 * 
-	 * @param value
-	 *     allowed object is
-	 *     {@link String }
-	 *     
-	 */
-	public void setTipoServizioRichiedenteBustaDiServizio(String value) {
-		this.tipoServizioRichiedenteBustaDiServizio = value;
-	}
-
-
-	public String getProfiloDiCollaborazioneValue() {
-		return this.profiloDiCollaborazioneValue;
-	}
-
-	public void setProfiloDiCollaborazioneValue(String profiloDiCollaborazioneValue) {
-		this.profiloDiCollaborazioneValue = profiloDiCollaborazioneValue;
+	public void setDestinatario(String value) {
+		if(value!=null){
+			if(this.busta.getDestinatario()==null){
+				this.busta.setDestinatario(new Soggetto());
+			}
+			if(this.busta.getDestinatario().getIdentificativo()==null){
+				this.busta.getDestinatario().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.busta.getDestinatario().getIdentificativo().setBase(value);
+		}
+		else{
+			if(this.busta.getDestinatario()!=null){
+				if(this.busta.getDestinatario().getIdentificativo()!=null && this.busta.getDestinatario().getIdentificativo().getTipo()==null){
+					this.busta.getDestinatario().setIdentificativo(null);
+				}
+				else{
+					this.busta.getDestinatario().getIdentificativo().setBase(null);
+				}
+				if(this.busta.getDestinatario().getIdentificativo()==null && 
+						this.busta.getDestinatario().getIdentificativoPorta()==null &&
+						this.busta.getDestinatario().getIndirizzo()==null){
+					this.busta.setDestinatario(null);
+				}
+			}
+		}
 	}
 
-	public String getTipoOraRegistrazioneValue() {
-		return this.tipoOraRegistrazioneValue;
+	public String getTipoDestinatario() {
+		if(this.busta.getDestinatario()!=null && this.busta.getDestinatario().getIdentificativo()!=null)
+			return this.busta.getDestinatario().getIdentificativo().getTipo();
+		else
+			return null;
 	}
-
-	public void setTipoOraRegistrazioneValue(String tipoOraRegistrazioneValue) {
-		this.tipoOraRegistrazioneValue = tipoOraRegistrazioneValue;
+	public void setTipoDestinatario(String value) {
+		if(value!=null){
+			if(this.busta.getDestinatario()==null){
+				this.busta.setDestinatario(new Soggetto());
+			}
+			if(this.busta.getDestinatario().getIdentificativo()==null){
+				this.busta.getDestinatario().setIdentificativo(new SoggettoIdentificativo());
+			}
+			this.busta.getDestinatario().getIdentificativo().setTipo(value);
+		}else{
+			if(this.busta.getDestinatario()!=null){
+				if(this.busta.getDestinatario().getIdentificativo()!=null && this.busta.getDestinatario().getIdentificativo().getBase()==null){
+					this.busta.getDestinatario().setIdentificativo(null);
+				}
+				else{
+					this.busta.getDestinatario().getIdentificativo().setTipo(null);
+				}
+				if(this.busta.getDestinatario().getIdentificativo()==null && 
+						this.busta.getDestinatario().getIdentificativoPorta()==null &&
+						this.busta.getDestinatario().getIndirizzo()==null){
+					this.busta.setDestinatario(null);
+				}
+			}
+		}
 	}
-
-	public String getInoltroValue() {
-		return this.inoltroValue;
-	}
-
-	public void setInoltroValue(String inoltroValue) {
-		this.inoltroValue = inoltroValue;
-	}
-
+	
 	public String getIdentificativoPortaDestinatario() {
-		return this.identificativoPortaDestinatario;
+		if(this.busta.getDestinatario()!=null)
+			return this.busta.getDestinatario().getIdentificativoPorta();
+		else
+			return null;
 	}
 
 	public void setIdentificativoPortaDestinatario(
 			String identificativoPortaDestinatario) {
-		this.identificativoPortaDestinatario = identificativoPortaDestinatario;
+		if(identificativoPortaDestinatario!=null){
+			if(this.busta.getDestinatario()==null){
+				this.busta.setDestinatario(new Soggetto());
+			}
+			this.busta.getDestinatario().setIdentificativoPorta(identificativoPortaDestinatario);
+		}
+		else{
+			if(this.busta.getDestinatario()!=null){
+				this.busta.getDestinatario().setIdentificativoPorta(null);
+				if(this.busta.getDestinatario().getIdentificativo()==null && 
+						this.busta.getDestinatario().getIdentificativoPorta()==null &&
+						this.busta.getDestinatario().getIndirizzo()==null){
+					this.busta.setDestinatario(null);
+				}
+			}
+		}
+	}
+	
+	public String getIndirizzoDestinatario() {
+		if(this.busta.getDestinatario()!=null)
+			return this.busta.getDestinatario().getIndirizzo();
+		else
+			return null;
+	}
+	public void setIndirizzoDestinatario(String value) {
+		if(value!=null){
+			if(this.busta.getDestinatario()==null){
+				this.busta.setDestinatario(new Soggetto());
+			}
+			this.busta.getDestinatario().setIndirizzo(value);
+		}else{
+			if(this.busta.getDestinatario()!=null){
+				this.busta.getDestinatario().setIndirizzo(null);
+				if(this.busta.getDestinatario().getIdentificativo()==null && 
+						this.busta.getDestinatario().getIdentificativoPorta()==null &&
+						this.busta.getDestinatario().getIndirizzo()==null){
+					this.busta.setDestinatario(null);
+				}
+			}
+		}
 	}
 
-	public String getIdentificativoPortaMittente() {
-		return this.identificativoPortaMittente;
+	
+	
+	// profilo di collaborazione [Wrapper]
+	
+	public ProfiloDiCollaborazione getProfiloDiCollaborazione() {
+		if(this.busta.getProfiloCollaborazione()!=null){
+			switch (this.busta.getProfiloCollaborazione().getTipo()) {
+			case ONEWAY:
+				return ProfiloDiCollaborazione.ONEWAY;
+			case SINCRONO:
+				return ProfiloDiCollaborazione.SINCRONO;
+			case ASINCRONO_ASIMMETRICO:
+				return ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO;
+			case ASINCRONO_SIMMETRICO:
+				return ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO;
+			case SCONOSCIUTO:
+				return ProfiloDiCollaborazione.UNKNOWN;
+			}
+		}
+		return null;
 	}
-
-	public void setIdentificativoPortaMittente(String identificativoPortaMittente) {
-		this.identificativoPortaMittente = identificativoPortaMittente;
+	public void setProfiloDiCollaborazione(ProfiloDiCollaborazione value) {
+		if(value!=null){
+			if(this.busta.getProfiloCollaborazione()==null){
+				this.busta.setProfiloCollaborazione(new ProfiloCollaborazione());
+			}
+			switch (value) {
+			case ONEWAY:
+				this.busta.getProfiloCollaborazione().setTipo(TipoProfiloCollaborazione.ONEWAY);
+				break;
+			case SINCRONO:
+				this.busta.getProfiloCollaborazione().setTipo(TipoProfiloCollaborazione.SINCRONO);
+				break;
+			case ASINCRONO_ASIMMETRICO:
+				this.busta.getProfiloCollaborazione().setTipo(TipoProfiloCollaborazione.ASINCRONO_ASIMMETRICO);
+				break;
+			case ASINCRONO_SIMMETRICO:
+				this.busta.getProfiloCollaborazione().setTipo(TipoProfiloCollaborazione.ASINCRONO_SIMMETRICO);
+				break;
+			case UNKNOWN:
+				this.busta.getProfiloCollaborazione().setTipo(TipoProfiloCollaborazione.SCONOSCIUTO);
+				break;
+			}
+		}
+		else{
+			if(this.busta.getProfiloCollaborazione()!=null){
+				if(this.busta.getProfiloCollaborazione().getBase()==null){
+					this.busta.setProfiloCollaborazione(null);
+				}
+				else{
+					this.busta.getProfiloCollaborazione().setTipo(null);
+				}
+			}
+		}
+		
 	}
-
-	public int getVersioneServizio() {
-		return this.versioneServizio;
+	
+	public void setProfiloDiCollaborazione(ProfiloDiCollaborazione profiloDiCollaborazione, String value) {
+		this.setProfiloDiCollaborazione(profiloDiCollaborazione);
+		this.setProfiloDiCollaborazioneValue(value);
 	}
-
-	public void setVersioneServizio(int versioneServizio) {
-		this.versioneServizio = versioneServizio;
+	
+	public String getProfiloDiCollaborazioneValue() {
+		if(this.busta.getProfiloCollaborazione()!=null){
+			return this.busta.getProfiloCollaborazione().getBase();
+		}
+		return null;
 	}
-	public void setVersioneServizio(String versioneServizio) {
-		this.versioneServizio = Integer.parseInt(versioneServizio);
+	public void setProfiloDiCollaborazioneValue(String profiloDiCollaborazioneValue) {
+		if(profiloDiCollaborazioneValue!=null){
+			if(this.busta.getProfiloCollaborazione()==null){
+				this.busta.setProfiloCollaborazione(new ProfiloCollaborazione());
+			}
+			this.busta.getProfiloCollaborazione().setBase(profiloDiCollaborazioneValue);
+		}else{
+			if(this.busta.getProfiloCollaborazione()!=null){
+				if(this.busta.getProfiloCollaborazione().getTipo()==null){
+					this.busta.setProfiloCollaborazione(null);
+				}
+				else{
+					this.busta.getProfiloCollaborazione().setBase(null);
+				}
+			}
+		}
 	}
-
-	public String getServizioApplicativoFruitore() {
-		return this.servizioApplicativoFruitore;
+	
+	public String getServizioCorrelato() {
+		if(this.busta.getServizioCorrelato()!=null){
+			return this.busta.getServizioCorrelato().getBase();
+		}
+		return null;
 	}
-
-	public void setServizioApplicativoFruitore(String servizioApplicativoFruitore) {
-		this.servizioApplicativoFruitore = servizioApplicativoFruitore;
+	public void setServizioCorrelato(String value) {
+		if(value!=null){
+			if(this.busta.getServizioCorrelato()==null){
+				this.busta.setServizioCorrelato(new org.openspcoop2.core.tracciamento.Servizio());
+			}
+			this.busta.getServizioCorrelato().setBase(value);
+		}else{
+			if(this.busta.getServizioCorrelato()!=null){
+				this.busta.getServizioCorrelato().setBase(null);
+				if(this.busta.getServizioCorrelato().getTipo()==null &&
+						(this.busta.getServizioCorrelato().getVersione()==null || this.busta.getServizioCorrelato().getVersione()==1)){
+					this.busta.setServizioCorrelato(null);
+				}
+			}
+		}
 	}
-
-	public String getServizioApplicativoErogatore() {
-		return this.servizioApplicativoErogatore;
+	
+	public String getTipoServizioCorrelato() {
+		if(this.busta.getServizioCorrelato()!=null){
+			return this.busta.getServizioCorrelato().getTipo();
+		}
+		return null;
 	}
-
-	public void setServizioApplicativoErogatore(String servizioApplicativoErogatore) {
-		this.servizioApplicativoErogatore = servizioApplicativoErogatore;
-	}
-
-	public String getProtocollo() {
-		return this.protocollo;
-	}
-
-	public void setProtocollo(String protocollo) {
-		this.protocollo = protocollo;
-	}
-
-	public String getDigest() {
-		return this.digest;
-	}
-
-	public void setDigest(String digest) {
-		this.digest = digest;
+	public void setTipoServizioCorrelato(String value) {
+		if(value!=null){
+			if(this.busta.getServizioCorrelato()==null){
+				this.busta.setServizioCorrelato(new org.openspcoop2.core.tracciamento.Servizio());
+			}
+			this.busta.getServizioCorrelato().setTipo(value);
+		}else{
+			if(this.busta.getServizioCorrelato()!=null){
+				this.busta.getServizioCorrelato().setTipo(null);
+				if(this.busta.getServizioCorrelato().getBase()==null &&
+						(this.busta.getServizioCorrelato().getVersione()==null || this.busta.getServizioCorrelato().getVersione()==1)){
+					this.busta.setServizioCorrelato(null);
+				}
+			}
+		}
 	}
 	
 
+	
+	
+	// collaborazione [Wrapper]
+	
+	public String getCollaborazione() {
+		return this.busta.getCollaborazione();
+	}
+	public void setCollaborazione(String value) {
+		this.busta.setCollaborazione(value);
+	}
+	
+	
+		
+	// servizio
+	
+	public String getServizio() {
+		if(this.busta.getServizio()!=null){
+			return this.busta.getServizio().getBase();
+		}
+		return null;
+	}
+	public void setServizio(String value) {
+		if(value!=null){
+			if(this.busta.getServizio()==null){
+				this.busta.setServizio(new org.openspcoop2.core.tracciamento.Servizio());
+			}
+			this.busta.getServizio().setBase(value);
+		}else{
+			if(this.busta.getServizio()!=null){
+				this.busta.getServizio().setBase(null);
+				if(this.busta.getServizioCorrelato().getTipo()==null &&
+						(this.busta.getServizioCorrelato().getVersione()==null || this.busta.getServizioCorrelato().getVersione()==1)){
+					this.busta.setServizioCorrelato(null);
+				}
+			}
+		}
+	}
 
-	// Metodi aggiuntivi
+	public String getTipoServizio() {
+		if(this.busta.getServizio()!=null){
+			return this.busta.getServizio().getTipo();
+		}
+		return null;
+	}
+	public void setTipoServizio(String value) {
+		if(value!=null){
+			if(this.busta.getServizio()==null){
+				this.busta.setServizio(new org.openspcoop2.core.tracciamento.Servizio());
+			}
+			this.busta.getServizio().setTipo(value);
+		}else{
+			if(this.busta.getServizio()!=null){
+				this.busta.getServizio().setTipo(null);
+				if(this.busta.getServizioCorrelato().getBase()==null &&
+						(this.busta.getServizioCorrelato().getVersione()==null || this.busta.getServizioCorrelato().getVersione()==1)){
+					this.busta.setServizioCorrelato(null);
+				}
+			}
+		}
+	}
+
+	public int getVersioneServizio() {
+		if(this.busta.getServizio()!=null && this.busta.getServizio().getVersione()!=null){
+			return this.busta.getServizio().getVersione();
+		}
+		return 1;
+	}
+	public void setVersioneServizio(int versioneServizio) {
+		if(this.busta.getServizio()==null){
+			this.busta.setServizio(new org.openspcoop2.core.tracciamento.Servizio());
+		}
+		this.busta.getServizio().setVersione(versioneServizio);
+	}
+	public void setVersioneServizio(String versioneServizio) {
+		if(versioneServizio==null){
+			return;
+		}
+		this.setVersioneServizio(Integer.parseInt(versioneServizio));
+	}
+	
+	
+	
+	// servizio [info-richiedente]
+	
+	public String getTipoServizioRichiedenteBustaDiServizio() {
+		return this.tipoServizioRichiedenteBustaDiServizio;
+	}
+	public void setTipoServizioRichiedenteBustaDiServizio(String value) {
+		this.tipoServizioRichiedenteBustaDiServizio = value;
+	}
+	
+	public String getServizioRichiedenteBustaDiServizio() {
+		return this.servizioRichiedenteBustaDiServizio;
+	}
+	public void setServizioRichiedenteBustaDiServizio(String value) {
+		this.servizioRichiedenteBustaDiServizio = value;
+	}
+	
+	
+	
+	
+	// azione [wrapped] 
+		
+	public String getAzione() {
+		return this.busta.getAzione();
+	}
+	public void setAzione(String value) {
+		this.busta.setAzione(value);
+	}
+	
+	
+	
+	// azione [info-richiedente]
+	
+	public String getAzioneRichiedenteBustaDiServizio() {
+		return this.azioneRichiedenteBustaDiServizio;
+	}
+	public void setAzioneRichiedenteBustaDiServizio(String value) {
+		this.azioneRichiedenteBustaDiServizio = value;
+	}
+	
+	
+	
+	
+	// identificativi [wrapped]
+	
+	public String getID() {
+		return this.busta.getIdentificativo();
+	}
+	public void setID(String value) {
+		this.busta.setIdentificativo(value);
+	}
+	
+	public String getRiferimentoMessaggio() {
+		return this.busta.getRiferimentoMessaggio();
+	}
+	public void setRiferimentoMessaggio(String value) {
+		this.busta.setRiferimentoMessaggio(value);
+	}
+
+	
+	
+	// identificativi [info-richiedente]
+	
+	public String getRiferimentoMsgBustaRichiedenteServizio() {
+		return this.riferimentoMsgBustaRichiedenteServizio;
+	}
+	public void setRiferimentoMsgBustaRichiedenteServizio(String value) {
+		this.riferimentoMsgBustaRichiedenteServizio = value;
+	}
+	
+
+	
+	// date [wrapped]
+	
+	public TipoOraRegistrazione getTipoOraRegistrazione() {
+		if(this.busta.getOraRegistrazione()!=null && 
+				this.busta.getOraRegistrazione().getSorgente()!=null &&
+				this.busta.getOraRegistrazione().getSorgente().getTipo()!=null){
+			switch (this.busta.getOraRegistrazione().getSorgente().getTipo()) {
+			case LOCALE:
+				return TipoOraRegistrazione.LOCALE;
+			case SINCRONIZZATO:
+				return TipoOraRegistrazione.SINCRONIZZATO;
+			case SCONOSCIUTO:
+				return TipoOraRegistrazione.UNKNOWN;
+			}
+		}
+		return null;
+	}
+	protected void setTipoOraRegistrazione(TipoOraRegistrazione tipoOraRegistrazione) {
+		if(tipoOraRegistrazione!=null){
+			if(this.busta.getOraRegistrazione()==null){
+				this.busta.setOraRegistrazione(new Data());
+			}
+			if(this.busta.getOraRegistrazione().getSorgente()==null){
+				this.busta.getOraRegistrazione().setSorgente(new TipoData());
+			}
+			switch (tipoOraRegistrazione) {
+			case LOCALE:
+				this.busta.getOraRegistrazione().getSorgente().setTipo(TipoTempo.LOCALE);
+				break;
+			case SINCRONIZZATO:
+				this.busta.getOraRegistrazione().getSorgente().setTipo(TipoTempo.SINCRONIZZATO);
+				break;
+			case UNKNOWN:
+				this.busta.getOraRegistrazione().getSorgente().setTipo(TipoTempo.SCONOSCIUTO);
+				break;
+			}
+		}
+		else {
+			if(this.busta.getOraRegistrazione()!=null){
+				if(this.busta.getOraRegistrazione().getSorgente()!=null && this.busta.getOraRegistrazione().getSorgente().getBase()==null){
+					this.busta.getOraRegistrazione().setSorgente(null);
+				}
+				else{
+					this.busta.getOraRegistrazione().getSorgente().setTipo(null);
+				}
+				if(this.busta.getOraRegistrazione().getSorgente()==null && this.busta.getOraRegistrazione().getDateTime()==null){
+					this.busta.setOraRegistrazione(null);
+				}
+			}
+		}
+	}
+	
+	public void setTipoOraRegistrazione(TipoOraRegistrazione tipo, String value) {
+		this.setTipoOraRegistrazione(tipo);
+		this.setTipoOraRegistrazioneValue(value);
+	}
+
+	public String getTipoOraRegistrazioneValue() {
+		if(this.busta.getOraRegistrazione()!=null && 
+				this.busta.getOraRegistrazione().getSorgente()!=null){
+			return this.busta.getOraRegistrazione().getSorgente().getBase();
+		}
+		return null;
+	}
+	public void setTipoOraRegistrazioneValue(String tipoOraRegistrazioneValue) {
+		if(tipoOraRegistrazioneValue!=null){
+			if(this.busta.getOraRegistrazione()==null){
+				this.busta.setOraRegistrazione(new Data());
+			}
+			if(this.busta.getOraRegistrazione().getSorgente()==null){
+				this.busta.getOraRegistrazione().setSorgente(new TipoData());
+			}
+			this.busta.getOraRegistrazione().getSorgente().setBase(tipoOraRegistrazioneValue);
+		}
+		else {
+			if(this.busta.getOraRegistrazione()!=null){
+				if(this.busta.getOraRegistrazione().getSorgente()!=null && this.busta.getOraRegistrazione().getSorgente().getTipo()==null){
+					this.busta.getOraRegistrazione().setSorgente(null);
+				}
+				else{
+					this.busta.getOraRegistrazione().getSorgente().setBase(null);
+				}
+				if(this.busta.getOraRegistrazione().getSorgente()==null && this.busta.getOraRegistrazione().getDateTime()==null){
+					this.busta.setOraRegistrazione(null);
+				}
+			}
+		}
+	}
+		
+	public Date getOraRegistrazione() {
+		if(this.busta.getOraRegistrazione()!=null){
+			return this.busta.getOraRegistrazione().getDateTime();
+		}
+		return null;
+	}
+	public void setOraRegistrazione(Date value) {
+		if(value!=null){
+			if(this.busta.getOraRegistrazione()==null){
+				this.busta.setOraRegistrazione(new Data());
+			}
+			this.busta.getOraRegistrazione().setDateTime(value);
+		}
+		else {
+			if(this.busta.getOraRegistrazione()!=null){
+				if(this.busta.getOraRegistrazione().getSorgente()==null){
+					this.busta.setOraRegistrazione(null);
+				}
+				else{
+					this.busta.getOraRegistrazione().setDateTime(null);
+				}
+			}
+		}
+	}
+
+	public Date getScadenza() {
+		return this.busta.getScadenza();
+	}
+	public void setScadenza(Date value) {
+		this.busta.setScadenza(value);
+	}
+	
+		
+	
+	
+	
+	// profilo di trasmissione [wrapped]
+
+	public boolean isConfermaRicezione() {
+		if(this.busta.getProfiloTrasmissione()!=null){
+			return this.busta.getProfiloTrasmissione().getConfermaRicezione();
+		}
+		return false;
+	}
+	public void setConfermaRicezione(boolean value) {
+		if(this.busta.getProfiloTrasmissione()==null){
+			this.busta.setProfiloTrasmissione(new ProfiloTrasmissione());
+		}
+		this.busta.getProfiloTrasmissione().setConfermaRicezione(value);
+	}
+
+	public Inoltro getInoltro() {
+		if(this.busta.getProfiloTrasmissione()!=null && 
+				this.busta.getProfiloTrasmissione().getInoltro()!=null &&
+				this.busta.getProfiloTrasmissione().getInoltro().getTipo()!=null){
+			switch (this.busta.getProfiloTrasmissione().getInoltro().getTipo()) {
+			case INOLTRO_CON_DUPLICATI:
+				return Inoltro.CON_DUPLICATI;
+			case INOLTRO_SENZA_DUPLICATI:
+				return Inoltro.SENZA_DUPLICATI;
+			case SCONOSCIUTO:
+				return Inoltro.UNKNOWN;
+			}
+		}
+		return null;
+	}
+	protected void setInoltro(Inoltro inoltro) {
+		if(inoltro!=null){
+			if(this.busta.getProfiloTrasmissione()==null){
+				this.busta.setProfiloTrasmissione(new ProfiloTrasmissione());
+			}
+			if(this.busta.getProfiloTrasmissione().getInoltro()==null){
+				this.busta.getProfiloTrasmissione().setInoltro(new org.openspcoop2.core.tracciamento.Inoltro());
+			}
+			switch (inoltro) {
+			case CON_DUPLICATI:
+				this.busta.getProfiloTrasmissione().getInoltro().setTipo(TipoInoltro.INOLTRO_CON_DUPLICATI);
+				break;
+			case SENZA_DUPLICATI:
+				this.busta.getProfiloTrasmissione().getInoltro().setTipo(TipoInoltro.INOLTRO_SENZA_DUPLICATI);
+				break;
+			case UNKNOWN:
+				this.busta.getProfiloTrasmissione().getInoltro().setTipo(TipoInoltro.SCONOSCIUTO);
+				break;
+			}
+		}
+		else{
+			if(this.busta.getProfiloTrasmissione()!=null){
+				if(this.busta.getProfiloTrasmissione().getInoltro()!=null && this.getBusta().getProfiloTrasmissione().getInoltro().getBase()!=null){
+					this.busta.getProfiloTrasmissione().getInoltro().setTipo(null);
+				}
+				else{
+					this.busta.getProfiloTrasmissione().setInoltro(null);
+				}
+			}
+		}
+	}
+	
+	public void setInoltro(Inoltro inoltro, String value) {
+		this.setInoltro(inoltro);
+		this.setInoltroValue(value);
+	}
+	
+	public String getInoltroValue() {
+		if(this.busta.getProfiloTrasmissione()!=null && 
+				this.busta.getProfiloTrasmissione().getInoltro()!=null){
+			return this.busta.getProfiloTrasmissione().getInoltro().getBase();
+		}
+		return null;
+	}
+	public void setInoltroValue(String inoltroValue) {
+		if(inoltroValue!=null){
+			if(this.busta.getProfiloTrasmissione()==null){
+				this.busta.setProfiloTrasmissione(new ProfiloTrasmissione());
+			}
+			if(this.busta.getProfiloTrasmissione().getInoltro()==null){
+				this.busta.getProfiloTrasmissione().setInoltro(new org.openspcoop2.core.tracciamento.Inoltro());
+			}
+			this.busta.getProfiloTrasmissione().getInoltro().setBase(inoltroValue);
+		}
+		else{
+			if(this.busta.getProfiloTrasmissione()!=null){
+				if(this.busta.getProfiloTrasmissione().getInoltro()!=null && this.getBusta().getProfiloTrasmissione().getInoltro().getTipo()!=null){
+					this.busta.getProfiloTrasmissione().getInoltro().setBase(null);
+				}
+				else{
+					this.busta.getProfiloTrasmissione().setInoltro(null);
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	// sequenza [wrapped]
+	
+	public long getSequenza() {
+		if(this.busta.getProfiloTrasmissione()!=null &&
+				this.busta.getProfiloTrasmissione().getSequenza()!=null){
+			return this.busta.getProfiloTrasmissione().getSequenza();
+		}
+		return -1;
+	}
+	public void setSequenza(long value) {
+		if(value>=0){
+			if(this.busta.getProfiloTrasmissione()==null){
+				this.busta.setProfiloTrasmissione(new ProfiloTrasmissione());
+			}
+			this.busta.getProfiloTrasmissione().setSequenza(new Long(value).intValue());
+		}
+		else{
+			if(this.busta.getProfiloTrasmissione()!=null){
+				this.busta.getProfiloTrasmissione().setSequenza(null);
+			}
+		}
+	}
 
 
-	/**
-	 * Ritorna, il numero di  oggetti {@link Eccezione} presenti nella busta.
-	 *
-	 * @return dimensione della lista di eccezioni presenti nella busta.
-	 * 
-	 */
+
+
+	
+	// servizi applicativi
+	
+	public String getServizioApplicativoFruitore() {
+		return this.busta.getServizioApplicativoFruitore();
+	}
+	public void setServizioApplicativoFruitore(String servizioApplicativoFruitore) {
+		this.busta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+	}
+
+	public String getServizioApplicativoErogatore() {
+		return this.busta.getServizioApplicativoErogatore();
+	}
+	public void setServizioApplicativoErogatore(String servizioApplicativoErogatore) {
+		this.busta.setServizioApplicativoErogatore(servizioApplicativoErogatore);
+	}
+	
+
+	
+	
+	// protocollo [wrapped]
+	
+	public String getProtocollo() {
+		if(this.busta.getProtocollo()!=null){
+			return this.busta.getProtocollo().getIdentificativo();
+		}
+		return null;
+	}
+	public void setProtocollo(String protocollo) {
+		if(protocollo!=null){
+			if(this.busta.getProtocollo()==null){
+				this.busta.setProtocollo(new Protocollo());
+			}
+			this.busta.getProtocollo().setIdentificativo(protocollo);
+		}
+		else{
+			if(this.busta.getProtocollo()!=null){
+				if(this.busta.getProtocollo().sizeProprietaList()<=0){
+					this.busta.setProtocollo(null);
+				}
+				else{
+					this.busta.getProtocollo().setIdentificativo(null);
+				}
+			}
+		}
+	}
+
+
+	
+	
+	// digest [wrapped]
+	
+	public String getDigest() {
+		return this.busta.getDigest();
+	}
+	public void setDigest(String digest) {
+		this.busta.setDigest(digest);
+	}
+	
+
+		
+	// properties [wrapped]
+	
+	public void addProperty(String key,String value){
+		// Per evitare nullPointer durante la serializzazione
+		// Non deve essere inserito nemmeno il valore ""
+		if(value!=null && !"".equals(value)){
+			if(this.busta.getProtocollo()==null){
+				this.busta.setProtocollo(new Protocollo());
+			}
+			Proprieta proprieta = new Proprieta();
+			proprieta.setNome(key);
+			proprieta.setValore(value);
+			this.busta.getProtocollo().addProprieta(proprieta);
+		}
+	}
+
+	public int sizeProperties(){
+		if(this.busta.getProtocollo()!=null){
+			return this.busta.getProtocollo().sizeProprietaList();
+		}
+		return 0;
+	}
+
+	public String getProperty(String key){
+		if(this.busta.getProtocollo()!=null){
+			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
+				if(proprieta.getNome().equals(key)){
+					return proprieta.getValore();
+				}
+			}
+		}
+		return null;
+	}
+
+	public String removeProperty(String key){
+		if(this.busta.getProtocollo()!=null){
+			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
+				if(proprieta.getNome().equals(key)){
+					this.busta.getProtocollo().removeProprieta(i);
+					return proprieta.getValore();
+				}
+			}
+		}
+		return null;
+	}
+
+	public String[] getPropertiesValues() {
+		List<String> propertiesValues = new ArrayList<String>();
+		if(this.busta.getProtocollo()!=null){
+			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
+				propertiesValues.add(proprieta.getValore());
+			}
+		}
+		if(propertiesValues.size()>0){
+			return propertiesValues.toArray(new String[1]);
+		}
+		else{
+			return null;
+		}
+	}
+
+	public String[] getPropertiesNames() {
+		List<String> propertiesValues = new ArrayList<String>();
+		if(this.busta.getProtocollo()!=null){
+			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
+				propertiesValues.add(proprieta.getNome());
+			}
+		}
+		if(propertiesValues.size()>0){
+			return propertiesValues.toArray(new String[1]);
+		}
+		else{
+			return null;
+		}
+	}
+
+	public void setProperties(Hashtable<String, String> params) {
+		Enumeration<String> keys = params.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			this.addProperty(key, params.get(key));
+		}
+	}
+
+	public Hashtable<String, String> getProperties() {
+		Hashtable<String, String> map = new Hashtable<String, String>();
+		if(this.busta.getProtocollo()!=null){
+			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
+				map.put(proprieta.getNome(), proprieta.getValore());
+			}
+		}
+		return map;
+	}
+	
+	public List<Map.Entry<String, String>> getPropertiesAsList(){
+		List <Map.Entry<String, String>> toRet = new ArrayList<Map.Entry<String, String>>();
+		toRet.addAll(this.getProperties().entrySet());
+		return toRet;
+	}
+
+
+
+
+
+	
+	// ListaEccezioni
+		
+	public List<Eccezione> getListaEccezioni() {
+		return this.listaEccezioni;
+	}
+
 	public int sizeListaEccezioni() {
 		return this.listaEccezioni.size();
 	}
-	/**
-	 * Ritorna, il numero di  oggetti {@link Trasmissione} presenti nella busta.
-	 *
-	 * @return dimensione della lista di trasmissioni presenti nella busta.
-	 * 
-	 */
-	public int sizeListaTrasmissioni() {
-		return this.listaTrasmissioni.size();
-	}
-	/**
-	 * Ritorna, il numero di  oggetti {@link Riscontro} presenti nella busta.
-	 *
-	 * @return dimensione della lista di riscontri presenti nella busta.
-	 * 
-	 */
-	public int sizeListaRiscontri() {
-		return this.listaRiscontri.size();
-	}
 
-	/**
-	 * Ritorna, le {@link Eccezione} presenti nella lista Eccezioni.
-	 *
-	 * @return la lista eccezioni
-	 * 
-	 */
 	public List<Eccezione> cloneListaEccezioni() {
 		if(this.listaEccezioni!=null){
 			List<Eccezione> eccs = new ArrayList<Eccezione>();
@@ -1129,106 +1157,17 @@ public class Busta implements java.io.Serializable {
 			return null;
 		}
 	}
-	/**
-	 * Ritorna, l'{@link Eccezione} presente nella lista Eccezioni all'indice <var>index</var>.
-	 *
-	 * @param index indice della eccezione da ritornare.
-	 * @return l'eccezione alla posizione <var>index</var>.
-	 * 
-	 */
+
 	public Eccezione getEccezione(int index) {
 		return this.listaEccezioni.get( index );
 	}
 
-	/**
-	 * Ritorna, la {@link Trasmissione} presente nella lista Trasmissioni all'indice <var>index</var>.
-	 *
-	 * @param index indice della trasmissione da ritornare.
-	 * @return la trasmissione alla posizione <var>index</var>.
-	 * 
-	 */
-	public Trasmissione getTrasmissione(int index) {
-		return this.listaTrasmissioni.get( index );
-	}
-
-	/**
-	 * Ritorna, il {@link Riscontro} presente nella lista Riscontri all'indice <var>index</var>.
-	 *
-	 * @param index indice del riscontro da ritornare.
-	 * @return il riscontro alla posizione <var>index</var>.
-	 * 
-	 */
-	public Riscontro getRiscontro(int index) {
-		return this.listaRiscontri.get( index );
-	}
-
-	/**
-	 * Aggiunge, l'{@link Eccezione}, passata come parametro <var>e</var>,
-	 * nella lista Eccezioni.
-	 *
-	 * @param e eccezione da aggiungere nella lista eccezioni.
-	 * 
-	 */
 	public void addEccezione(Eccezione e) {
 		this.listaEccezioni.add(e);
 	}
 
-	/**
-	 * Aggiunge, la {@link Trasmissione}, passata come parametro <var>t</var>,
-	 * nella lista Trasmissioni.
-	 *
-	 * @param t trasmissione da aggiungere nella lista trasmissioni.
-	 * 
-	 */
-	public void addTrasmissione(Trasmissione t) {
-		this.listaTrasmissioni.add(t);
-	}
-
-	/**
-	 * Aggiunge, il {@link Riscontro}, passata come parametro <var>r</var>,
-	 * nella lista Riscontri.
-	 *
-	 * @param r riscontro da aggiungere nella lista riscontri.
-	 * 
-	 */
-	public void addRiscontro(Riscontro r) {
-		this.listaRiscontri.add(r);
-	}
-
-	/**
-	 * Ritorna, l'{@link Eccezione} presente nella lista Eccezioni all'indice <var>index</var>;
-	 * Inoltre l'eccezione viene eliminata dalla lista eccezioni.
-	 *
-	 * @param index indice della eccezione da rimuovere.
-	 * @return l'eccezione alla posizione <var>index</var>.
-	 * 
-	 */
 	public Eccezione removeEccezione(int index) {
 		return this.listaEccezioni.remove(index);
-	}
-
-	/**
-	 * Ritorna, la {@link Trasmissione} presente nella lista Trasmissioni all'indice <var>index</var>;
-	 * Inoltre la trasmissione viene eliminata dalla lista trasmissioni.
-	 *
-	 * @param index indice della trasmissione da rimuovere.
-	 * @return la trasmissione alla posizione <var>index</var>.
-	 * 
-	 */
-	public Trasmissione removeTrasmissione(int index) {
-		return this.listaTrasmissioni.remove(index);
-	}
-
-	/**
-	 * Ritorna, il {@link Riscontro} presente nella lista Riscontri all'indice <var>index</var>;
-	 * Inoltre il riscontro viene eliminato dalla lista riscontri.
-	 *
-	 * @param index indice del riscontro da rimuovere.
-	 * @return il riscontro alla posizione <var>index</var>.
-	 * 
-	 */
-	public Riscontro removeRiscontro(int index) {
-		return this.listaRiscontri.remove(index);
 	}
 
 	public String toStringListaEccezioni(IProtocolFactory protocolFactory) throws ProtocolException{
@@ -1244,7 +1183,6 @@ public class Busta implements java.io.Serializable {
 			return null;
 		}
 	}
-
 
 	public String toStringListaEccezioni_erroriNonGravi(IProtocolFactory protocolFactory) throws ProtocolException{
 		if(this.sizeListaEccezioni()>0){
@@ -1278,7 +1216,6 @@ public class Busta implements java.io.Serializable {
 		}
 	}
 
-
 	public boolean containsEccezioniGravi(){
 		for(int i=0; i<this.sizeListaEccezioni(); i++){
 			if(LivelloRilevanza.ERROR.equals(this.getEccezione(i).getRilevanza())){
@@ -1287,7 +1224,6 @@ public class Busta implements java.io.Serializable {
 		}
 		return false;
 	}
-
 
 	public static String toStringListaEccezioni(java.util.Vector<Eccezione> errors, IProtocolFactory protocolFactory) throws ProtocolException{
 		if(errors.size()>0){
@@ -1302,7 +1238,6 @@ public class Busta implements java.io.Serializable {
 			return null;
 		}
 	}
-
 
 	public static String toStringListaEccezioni_erroriNonGravi(java.util.Vector<Eccezione> errors, IProtocolFactory protocolFactory) throws ProtocolException{
 		if(errors.size()>0){
@@ -1345,6 +1280,72 @@ public class Busta implements java.io.Serializable {
 		return false;
 
 	}
+	
+	
+	
+	
+	
+	// ListaRiscontri
+
+	public List<Riscontro> getListaRiscontri() {
+		if (this.listaRiscontri == null) {
+			this.listaRiscontri = new ArrayList<Riscontro>();
+		}
+		return this.listaRiscontri;
+	}
+	
+	public int sizeListaRiscontri() {
+		return this.listaRiscontri.size();
+	}	
+
+	public Riscontro getRiscontro(int index) {
+		return this.listaRiscontri.get( index );
+	}
+	
+	public void addRiscontro(Riscontro r) {
+		this.listaRiscontri.add(r);
+	}
+	
+	public Riscontro removeRiscontro(int index) {
+		return this.listaRiscontri.remove(index);
+	}
+	
+	
+	
+	
+	// ListaTrasmissioni
+	
+	public List<Trasmissione> getListaTrasmissioni() {
+		if (this.listaTrasmissioni == null) {
+			this.listaTrasmissioni = new ArrayList<Trasmissione>();
+		}
+		return this.listaTrasmissioni;
+	}
+	
+	public int sizeListaTrasmissioni() {
+		return this.listaTrasmissioni.size();
+	}
+	
+	public Trasmissione getTrasmissione(int index) {
+		return this.listaTrasmissioni.get( index );
+	}
+
+	public void addTrasmissione(Trasmissione t) {
+		this.listaTrasmissioni.add(t);
+	}
+
+	public Trasmissione removeTrasmissione(int index) {
+		return this.listaTrasmissioni.remove(index);
+	}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1388,77 +1389,96 @@ public class Busta implements java.io.Serializable {
 	 */
 	@Override 
 	public Busta clone(){
-		Busta clone = new Busta(this.getProtocollo());
+		
+		// Non uso il base clone per far si che venga usato il costruttore new String()
+		
+		Busta clone = null;
+		if(this.getProtocollo()!=null){
+			clone = new Busta(new String(this.getProtocollo()));
+		}else{
+			String pNull = null;
+			clone = new Busta(pNull);
+		}
 
+		// id 
+		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
+		
 		// mittente
-		clone.setTipoMittente(this.tipoMittente!=null ? new String(this.tipoMittente) : null);
-		clone.setIndirizzoMittente(this.indirizzoMittente!=null ? new String(this.indirizzoMittente) : null);
-		clone.setMittente(this.mittente!=null ? new String(this.mittente) : null);
-		clone.setIdentificativoPortaMittente(this.identificativoPortaMittente!=null ? new String(this.identificativoPortaMittente) : null);
+		clone.setTipoMittente(this.getTipoMittente()!=null ? new String(this.getTipoMittente()) : null);
+		clone.setIndirizzoMittente(this.getIndirizzoMittente()!=null ? new String(this.getIndirizzoMittente()) : null);
+		clone.setMittente(this.getMittente()!=null ? new String(this.getMittente()) : null);
+		clone.setIdentificativoPortaMittente(this.getIdentificativoPortaMittente()!=null ? new String(this.getIdentificativoPortaMittente()) : null);
 
 		// destinatario
-		clone.setTipoDestinatario(this.tipoDestinatario!=null ? new String(this.tipoDestinatario) : null);
-		clone.setIndirizzoDestinatario(this.indirizzoDestinatario!=null ? new String(this.indirizzoDestinatario) : null);
-		clone.setDestinatario(this.destinatario!=null ? new String(this.destinatario) : null);
-		clone.setIdentificativoPortaDestinatario(this.identificativoPortaDestinatario!=null ? new String(this.identificativoPortaDestinatario) : null);
-
+		clone.setTipoDestinatario(this.getTipoDestinatario()!=null ? new String(this.getTipoDestinatario()) : null);
+		clone.setIndirizzoDestinatario(this.getIndirizzoDestinatario()!=null ? new String(this.getIndirizzoDestinatario()) : null);
+		clone.setDestinatario(this.getDestinatario()!=null ? new String(this.getDestinatario()) : null);
+		clone.setIdentificativoPortaDestinatario(this.getIdentificativoPortaDestinatario()!=null ? new String(this.getIdentificativoPortaDestinatario()) : null);
+		
 		// profilo di collaborazione
-		clone.setProfiloDiCollaborazione(this.profiloDiCollaborazione);
-		clone.setProfiloDiCollaborazioneValue(this.profiloDiCollaborazioneValue!=null ? new String(this.profiloDiCollaborazioneValue) : null);
-		clone.setServizioCorrelato(this.servizioCorrelato!=null ? new String(this.servizioCorrelato) : null);
-		clone.setTipoServizioCorrelato(this.tipoServizioCorrelato!=null ? new String(this.tipoServizioCorrelato) : null);
+		clone.setProfiloDiCollaborazione(this.getProfiloDiCollaborazione());
+		clone.setProfiloDiCollaborazioneValue(this.getProfiloDiCollaborazioneValue()!=null ? new String(this.getProfiloDiCollaborazioneValue()) : null);
+		clone.setServizioCorrelato(this.getServizioCorrelato()!=null ? new String(this.getServizioCorrelato()) : null);
+		clone.setTipoServizioCorrelato(this.getTipoServizioCorrelato()!=null ? new String(this.getTipoServizioCorrelato()) : null);
 		
 		// collaborazione
-		clone.setCollaborazione(this.collaborazione!=null ? new String(this.collaborazione) : null);
+		clone.setCollaborazione(this.getCollaborazione()!=null ? new String(this.getCollaborazione()) : null);
 		
 		// servizio
-		clone.setServizio(this.servizio!=null ? new String(this.servizio) : null);
-		clone.setTipoServizio(this.tipoServizio!=null ? new String(this.tipoServizio) : null);
-		clone.setVersioneServizio(new Integer(this.versioneServizio));
+		clone.setServizio(this.getServizio()!=null ? new String(this.getServizio()) : null);
+		clone.setTipoServizio(this.getTipoServizio()!=null ? new String(this.getTipoServizio()) : null);
+		clone.setVersioneServizio(new Integer(this.getVersioneServizio()));
+		
+		// servizio [info-richiedente]
 		clone.setServizioRichiedenteBustaDiServizio(this.servizioRichiedenteBustaDiServizio!=null ? new String(this.servizioRichiedenteBustaDiServizio) : null);
 		clone.setTipoServizioRichiedenteBustaDiServizio(this.tipoServizioRichiedenteBustaDiServizio!=null ? new String(this.tipoServizioRichiedenteBustaDiServizio) : null);
 		
 		// azione
-		clone.setAzione(this.azione!=null ? new String(this.azione) : null);
+		clone.setAzione(this.getAzione()!=null ? new String(this.getAzione()) : null);
+		
+		// azione [info-richiedente]
 		clone.setAzioneRichiedenteBustaDiServizio(this.azioneRichiedenteBustaDiServizio!=null ? new String(this.azioneRichiedenteBustaDiServizio) : null);
 		
 		// identificativi
-		clone.setID(this.id!=null ? new String(this.id) : null);
-		clone.setRiferimentoMessaggio(this.riferimentoMessaggio!=null ? new String(this.riferimentoMessaggio) : null);
+		clone.setID(this.getID()!=null ? new String(this.getID()) : null);
+		clone.setRiferimentoMessaggio(this.getRiferimentoMessaggio()!=null ? new String(this.getRiferimentoMessaggio()) : null);
+		
+		// identificativi [info-richiedente]
 		clone.setRiferimentoMsgBustaRichiedenteServizio(this.riferimentoMsgBustaRichiedenteServizio!=null ? new String(this.riferimentoMsgBustaRichiedenteServizio) : null);
 		
 		// date
-		clone.setOraRegistrazione(this.oraRegistrazione!=null ? new Date(this.oraRegistrazione.getTime()) : null);
-		clone.setTipoOraRegistrazione(this.tipoOraRegistrazione,
-				this.tipoOraRegistrazioneValue!=null ? new String(this.tipoOraRegistrazioneValue) : null);
-		clone.setTipoOraRegistrazioneValue(this.tipoOraRegistrazioneValue!=null ? new String(this.tipoOraRegistrazioneValue) : null);
-		clone.setScadenza(this.scadenza!=null ? new Date(this.scadenza.getTime()) : null);
+		clone.setOraRegistrazione(this.getOraRegistrazione()!=null ? new Date(this.getOraRegistrazione().getTime()) : null);
+		clone.setTipoOraRegistrazione(this.getTipoOraRegistrazione(),
+				this.getTipoOraRegistrazioneValue()!=null ? new String(this.getTipoOraRegistrazioneValue()) : null);
+		clone.setTipoOraRegistrazioneValue(this.getTipoOraRegistrazioneValue()!=null ? new String(this.getTipoOraRegistrazioneValue()) : null);
+		clone.setScadenza(this.getScadenza()!=null ? new Date(this.getScadenza().getTime()) : null);
 
 		// profilo di trasmissione
-		clone.setInoltro(this.inoltro,
-				this.inoltroValue!=null ? new String(this.inoltroValue) : null);
-		clone.setInoltroValue(this.inoltroValue!=null ? new String(this.inoltroValue) : null);
-		clone.setConfermaRicezione(new Boolean(this.confermaRicezione));
+		clone.setInoltro(this.getInoltro(),
+				this.getInoltroValue()!=null ? new String(this.getInoltroValue()) : null);
+		clone.setInoltroValue(this.getInoltroValue()!=null ? new String(this.getInoltroValue()) : null);
+		clone.setConfermaRicezione(new Boolean(this.isConfermaRicezione()));
 		
 		// sequenza
-		clone.setSequenza(new Long(this.sequenza));
+		clone.setSequenza(new Long(this.getSequenza()));
 		
 		// servizi applicativi
-		clone.setServizioApplicativoFruitore(this.servizioApplicativoFruitore!=null ? new String(this.servizioApplicativoFruitore) : null);
-		clone.setServizioApplicativoErogatore(this.servizioApplicativoErogatore!=null ? new String(this.servizioApplicativoErogatore) : null);
+		clone.setServizioApplicativoFruitore(this.getServizioApplicativoFruitore()!=null ? new String(this.getServizioApplicativoFruitore()) : null);
+		clone.setServizioApplicativoErogatore(this.getServizioApplicativoErogatore()!=null ? new String(this.getServizioApplicativoErogatore()) : null);
 
 		// protocollo
-		clone.setProtocollo(this.protocollo!=null ? new String(this.protocollo) : null);
+		clone.setProtocollo(this.getProtocollo()!=null ? new String(this.getProtocollo()) : null);
 
 		// digest
-		clone.setDigest(this.digest!=null ? new String(this.digest) : null);
+		clone.setDigest(this.getDigest()!=null ? new String(this.getDigest()) : null);
 
 		// properties
-		if(this.properties!=null && this.properties.size()>0){
-			Enumeration<String> keys = this.properties.keys();
+		Hashtable<String, String> properties = this.getProperties();
+		if(properties!=null && properties.size()>0){
+			Enumeration<String> keys = properties.keys();
 			while (keys.hasMoreElements()) {
 				String key = keys.nextElement();
-				String value = this.properties.get(key);
+				String value = properties.get(key);
 				if(key!=null && value!=null){
 					clone.addProperty(new String(key), new String(value));
 				}

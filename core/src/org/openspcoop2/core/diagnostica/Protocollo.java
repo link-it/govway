@@ -20,23 +20,47 @@
  */
 package org.openspcoop2.core.diagnostica;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
-/** <p>Java class Protocollo.
+/** <p>Java class for protocollo complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="protocollo">
+ * 		&lt;sequence>
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/diagnostica}proprieta" minOccurs="0" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "protocollo", 
+  propOrder = {
+  	"proprieta"
+  }
+)
+
+@XmlRootElement(name = "protocollo")
 
 public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String identificativo;
-
-
   public Protocollo() {
   }
 
@@ -54,35 +78,77 @@ public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements 
 		this.id=new Long(-1);
   }
 
-  public String getIdentificativo() {
-    if(this.identificativo!=null && ("".equals(this.identificativo)==false)){
-		return this.identificativo.trim();
-	}else{
-		return null;
-	}
-
+  public void addProprieta(Proprieta proprieta) {
+    this.proprieta.add(proprieta);
   }
 
-  public void setIdentificativo(String identificativo) {
+  public Proprieta getProprieta(int index) {
+    return this.proprieta.get( index );
+  }
+
+  public Proprieta removeProprieta(int index) {
+    return this.proprieta.remove( index );
+  }
+
+  public List<Proprieta> getProprietaList() {
+    return this.proprieta;
+  }
+
+  public void setProprietaList(List<Proprieta> proprieta) {
+    this.proprieta=proprieta;
+  }
+
+  public int sizeProprietaList() {
+    return this.proprieta.size();
+  }
+
+  public java.lang.String getIdentificativo() {
+    return this.identificativo;
+  }
+
+  public void setIdentificativo(java.lang.String identificativo) {
     this.identificativo = identificativo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String IDENTIFICATIVO = "identificativo";
+
+
+  @XmlElement(name="proprieta",required=true,nillable=false)
+  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaList
+   * @return List<Proprieta>
+  */
+  @Deprecated
+  public List<Proprieta> getProprieta() {
+  	return this.proprieta;
+  }
+
+  /**
+   * @deprecated Use method setProprietaList
+   * @param proprieta List<Proprieta>
+  */
+  @Deprecated
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.proprieta=proprieta;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprieta() {
+  	return this.proprieta.size();
+  }
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="identificativo",required=true)
+  protected java.lang.String identificativo;
 
 }

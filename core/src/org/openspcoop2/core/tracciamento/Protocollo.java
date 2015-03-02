@@ -20,25 +20,47 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class Protocollo.
+/** <p>Java class for protocollo complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="protocollo">
+ * 		&lt;sequence>
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/tracciamento}proprieta" minOccurs="0" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "protocollo", 
+  propOrder = {
+  	"proprieta"
+  }
+)
+
+@XmlRootElement(name = "protocollo")
 
 public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String identificativo;
-
-
   public Protocollo() {
   }
 
@@ -56,23 +78,23 @@ public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements 
 		this.id=new Long(-1);
   }
 
-  public void addProprieta(ProtocolloProprieta proprieta) {
+  public void addProprieta(Proprieta proprieta) {
     this.proprieta.add(proprieta);
   }
 
-  public ProtocolloProprieta getProprieta(int index) {
+  public Proprieta getProprieta(int index) {
     return this.proprieta.get( index );
   }
 
-  public ProtocolloProprieta removeProprieta(int index) {
+  public Proprieta removeProprieta(int index) {
     return this.proprieta.remove( index );
   }
 
-  public List<ProtocolloProprieta> getProprietaList() {
+  public List<Proprieta> getProprietaList() {
     return this.proprieta;
   }
 
-  public void setProprietaList(List<ProtocolloProprieta> proprieta) {
+  public void setProprietaList(List<Proprieta> proprieta) {
     this.proprieta=proprieta;
   }
 
@@ -80,52 +102,39 @@ public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements 
     return this.proprieta.size();
   }
 
-  public String getIdentificativo() {
-    if(this.identificativo!=null && ("".equals(this.identificativo)==false)){
-		return this.identificativo.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getIdentificativo() {
+    return this.identificativo;
   }
 
-  public void setIdentificativo(String identificativo) {
+  public void setIdentificativo(java.lang.String identificativo) {
     this.identificativo = identificativo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  protected List<ProtocolloProprieta> proprieta = new ArrayList<ProtocolloProprieta>();
+
+
+  @XmlElement(name="proprieta",required=true,nillable=false)
+  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<ProtocolloProprieta>
+   * @return List<Proprieta>
   */
   @Deprecated
-  public List<ProtocolloProprieta> getProprieta() {
+  public List<Proprieta> getProprieta() {
   	return this.proprieta;
   }
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<ProtocolloProprieta>
+   * @param proprieta List<Proprieta>
   */
   @Deprecated
-  public void setProprieta(List<ProtocolloProprieta> proprieta) {
+  public void setProprieta(List<Proprieta> proprieta) {
   	this.proprieta=proprieta;
   }
 
@@ -138,8 +147,8 @@ public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements 
   	return this.proprieta.size();
   }
 
-  public static final String PROPRIETA = "proprieta";
-
-  public static final String IDENTIFICATIVO = "identificativo";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="identificativo",required=true)
+  protected java.lang.String identificativo;
 
 }

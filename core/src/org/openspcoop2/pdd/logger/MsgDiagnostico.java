@@ -26,9 +26,7 @@ package org.openspcoop2.pdd.logger;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -633,10 +631,7 @@ public class MsgDiagnostico {
 						msgDiagCorrelazione.setProtocollo(this.protocolFactory.getProtocol());
 						msgDiagCorrelazione.setIdBusta(this.idMessaggioRichiesta);
 						msgDiagCorrelazione.setIdSoggetto(this.idSoggettoDominio);
-						// INEFFICENTE: Calendar c = Calendar.getInstance();
-						Calendar c = new GregorianCalendar();
-						c.setTime(gdo);
-						msgDiagCorrelazione.setGdo(c);
+						msgDiagCorrelazione.setGdo(gdo);
 						msgDiagCorrelazione.setNomePorta(this.porta);
 						msgDiagCorrelazione.setDelegata(this.delegata);
 						msgDiagCorrelazione.setProtocollo(this.protocolFactory.getProtocol());
@@ -1841,10 +1836,7 @@ public class MsgDiagnostico {
 		
 		org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiagnostico = new org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico();
 		
-		// INEFFICENTE: Calendar c = Calendar.getInstance();
-		Calendar c = new GregorianCalendar();
-		c.setTime(gdo);
-		msgDiagnostico.setGdo(c);
+		msgDiagnostico.setGdo(gdo);
 		
 		msgDiagnostico.setIdSoggetto(this.idSoggettoDominio);
 		msgDiagnostico.setIdFunzione(this.idModulo);

@@ -25,16 +25,10 @@ package org.openspcoop2.protocol.sdk;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import org.openspcoop2.core.tracciamento.Data;
+import org.openspcoop2.core.tracciamento.TipoData;
+import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
-import org.openspcoop2.utils.jaxb.DateTime2Date;
 
 
 /**
@@ -47,34 +41,6 @@ import org.openspcoop2.utils.jaxb.DateTime2Date;
  * @version $Rev$, $Date$
  */
 
-/**
- * <p>Java class for riscontro complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="riscontro">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="ID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="oraRegistrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="tipoOraRegistrazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "riscontro", propOrder = {
-    "id",
-    "oraRegistrazione",
-    "tipoOraRegistrazione"
-})
-
 public class Riscontro implements java.io.Serializable {
 
 	/**
@@ -82,21 +48,10 @@ public class Riscontro implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "ID")
-    protected String id;
-	
-    @XmlElement(type = String.class)
-    @XmlJavaTypeAdapter(DateTime2Date .class)
-    @XmlSchemaType(name = "dateTime")
-    protected Date oraRegistrazione;
-    
-    @XmlTransient
-    private TipoOraRegistrazione tipoOraRegistrazione;
-    @XmlElement(name="tipoOraRegistrazione")
-    protected String tipoOraRegistrazioneValue;
-    
-    
-    /* ********  C O S T R U T T O R E  ******** */
+	private org.openspcoop2.core.tracciamento.Riscontro riscontro;
+
+
+	/* ********  C O S T R U T T O R E  ******** */
 
 	/**
 	 * Costruttore. 
@@ -105,96 +60,179 @@ public class Riscontro implements java.io.Serializable {
 	 */
 	public Riscontro(){}
 
+	public Riscontro(org.openspcoop2.core.tracciamento.Riscontro riscontro){
+		this.riscontro = riscontro;
+	}
+
+
+	// base
+
+	public org.openspcoop2.core.tracciamento.Riscontro getRiscontro() {
+		return this.riscontro;
+	}
+	public void setRiscontro(org.openspcoop2.core.tracciamento.Riscontro riscontro) {
+		this.riscontro = riscontro;
+	}
 
 
 
+	// id  [Wrapper]
 
-	/* ********  S E T T E R   ******** */
+	public Long getId() {
+		return this.riscontro.getId();
+	}
+	public void setId(Long id) {
+		this.riscontro.setId(id);
+	}
 
-	/**
-	 * Imposta Identificatore della busta  da riscontrare.
-	 *
-	 * @param id identificatore della busta  da riscontrare.
-	 * 
-	 */
+
+
+	// identificativo riscontro [wrapper]
 	public void setID(String id ){
-		this.id = id;
+		this.riscontro.getIdentificativo();
 	}
-	/**
-	 * Imposta la Data di registrazione, in formato ,  del messaggio.
-	 *
-	 * @param data Data di registrazione del messaggio.
-	 * 
-	 */
-	public void setOraRegistrazione(Date data){
-		this.oraRegistrazione = data;
-	}
-	
-	/**
-	 * Imposta il tipo della Data di registrazione, in formato ,  del messaggio.
-	 *
-	 * @param tipo Tipo della Data di registrazione del messaggio.
-	 * 
-	 */
-	public void setTipoOraRegistrazione(TipoOraRegistrazione tipo){
-		this.tipoOraRegistrazione = tipo;
-	} 
-
-
-
-
-
-	/* ********  G E T T E R   ******** */
-
-	/**
-	 * Ritorna l'identificatore della busta  riscontrata.
-	 *
-	 * @return identificatore della busta  riscontrata.
-	 * 
-	 */
 	public String getID(){
-		return this.id;
+		return this.riscontro.getIdentificativo();
 	}
-	/**
-	 * Ritorna la Data di registrazione, in formato ,  del messaggio.
-	 *
-	 * @return Data di registrazione del messaggio.
-	 * 
-	 */
 
-	public Date getOraRegistrazione(){
-		return this.oraRegistrazione;
+
+
+	// date [wrapped]
+
+	public TipoOraRegistrazione getTipoOraRegistrazione() {
+		if(this.riscontro.getOraRegistrazione()!=null && 
+				this.riscontro.getOraRegistrazione().getSorgente()!=null &&
+				this.riscontro.getOraRegistrazione().getSorgente().getTipo()!=null){
+			switch (this.riscontro.getOraRegistrazione().getSorgente().getTipo()) {
+			case LOCALE:
+				return TipoOraRegistrazione.LOCALE;
+			case SINCRONIZZATO:
+				return TipoOraRegistrazione.SINCRONIZZATO;
+			case SCONOSCIUTO:
+				return TipoOraRegistrazione.UNKNOWN;
+			}
+		}
+		return null;
 	}
-	/**
-	 * Ritorna il tipo della Data di registrazione, in formato ,  del messaggio.
-	 *
-	 * @return Tipo della Data di registrazione del messaggio.
-	 * 
-	 */
-	public TipoOraRegistrazione getTipoOraRegistrazione(){
-		return this.tipoOraRegistrazione;
+	public void setTipoOraRegistrazione(TipoOraRegistrazione tipoOraRegistrazione) {
+		if(tipoOraRegistrazione!=null){
+			if(this.riscontro.getOraRegistrazione()==null){
+				this.riscontro.setOraRegistrazione(new Data());
+			}
+			if(this.riscontro.getOraRegistrazione().getSorgente()==null){
+				this.riscontro.getOraRegistrazione().setSorgente(new TipoData());
+			}
+			switch (tipoOraRegistrazione) {
+			case LOCALE:
+				this.riscontro.getOraRegistrazione().getSorgente().setTipo(TipoTempo.LOCALE);
+				break;
+			case SINCRONIZZATO:
+				this.riscontro.getOraRegistrazione().getSorgente().setTipo(TipoTempo.SINCRONIZZATO);
+				break;
+			case UNKNOWN:
+				this.riscontro.getOraRegistrazione().getSorgente().setTipo(TipoTempo.SCONOSCIUTO);
+				break;
+			}
+		}
+		else {
+			if(this.riscontro.getOraRegistrazione()!=null){
+				if(this.riscontro.getOraRegistrazione().getSorgente()!=null && this.riscontro.getOraRegistrazione().getSorgente().getBase()==null){
+					this.riscontro.getOraRegistrazione().setSorgente(null);
+				}
+				else{
+					this.riscontro.getOraRegistrazione().getSorgente().setTipo(null);
+				}
+				if(this.riscontro.getOraRegistrazione().getSorgente()==null && this.riscontro.getOraRegistrazione().getDateTime()==null){
+					this.riscontro.setOraRegistrazione(null);
+				}
+			}
+		}
+	}
+
+	public void setTipoOraRegistrazione(TipoOraRegistrazione tipo, String value) {
+		this.setTipoOraRegistrazione(tipo);
+		this.setTipoOraRegistrazioneValue(value);
 	}
 
 	public String getTipoOraRegistrazioneValue(IProtocolFactory protocolFactory) throws ProtocolException {
-		return this.tipoOraRegistrazioneValue == null ? protocolFactory.createTraduttore().toString(this.tipoOraRegistrazione) : this.tipoOraRegistrazioneValue;
+		String tipoOraRegistrazioneValue = null;
+		if(this.riscontro.getOraRegistrazione()!=null && this.riscontro.getOraRegistrazione().getSorgente()!=null){
+			tipoOraRegistrazioneValue = this.riscontro.getOraRegistrazione().getSorgente().getBase();
+		}
+		return tipoOraRegistrazioneValue == null ? protocolFactory.createTraduttore().toString(this.getTipoOraRegistrazione()) : tipoOraRegistrazioneValue;
+	}
+	public void setTipoOraRegistrazioneValue(String tipoOraRegistrazioneValue) {
+		if(tipoOraRegistrazioneValue!=null){
+			if(this.riscontro.getOraRegistrazione()==null){
+				this.riscontro.setOraRegistrazione(new Data());
+			}
+			if(this.riscontro.getOraRegistrazione().getSorgente()==null){
+				this.riscontro.getOraRegistrazione().setSorgente(new TipoData());
+			}
+			this.riscontro.getOraRegistrazione().getSorgente().setBase(tipoOraRegistrazioneValue);
+		}
+		else {
+			if(this.riscontro.getOraRegistrazione()!=null){
+				if(this.riscontro.getOraRegistrazione().getSorgente()!=null && this.riscontro.getOraRegistrazione().getSorgente().getTipo()==null){
+					this.riscontro.getOraRegistrazione().setSorgente(null);
+				}
+				else{
+					this.riscontro.getOraRegistrazione().getSorgente().setBase(null);
+				}
+				if(this.riscontro.getOraRegistrazione().getSorgente()==null && this.riscontro.getOraRegistrazione().getDateTime()==null){
+					this.riscontro.setOraRegistrazione(null);
+				}
+			}
+		}
 	}
 
-	public void setTipoOraRegistrazioneValue(String tipoOraRegistrazioneValue) {
-		this.tipoOraRegistrazioneValue = tipoOraRegistrazioneValue;
-	} 
+	public Date getOraRegistrazione() {
+		if(this.riscontro.getOraRegistrazione()!=null){
+			return this.riscontro.getOraRegistrazione().getDateTime();
+		}
+		return null;
+	}
+	public void setOraRegistrazione(Date value) {
+		if(value!=null){
+			if(this.riscontro.getOraRegistrazione()==null){
+				this.riscontro.setOraRegistrazione(new Data());
+			}
+			this.riscontro.getOraRegistrazione().setDateTime(value);
+		}
+		else {
+			if(this.riscontro.getOraRegistrazione()!=null){
+				if(this.riscontro.getOraRegistrazione().getSorgente()==null){
+					this.riscontro.setOraRegistrazione(null);
+				}
+				else{
+					this.riscontro.getOraRegistrazione().setDateTime(null);
+				}
+			}
+		}
+	}
+
+
+
+
+
 
 	@Override
 	public Riscontro clone(){
-		
+
 		Riscontro clone = new Riscontro();
+
+		// id
+		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
 		
-		clone.setID(this.id!=null ? new String(this.id) : null);
-		
-		clone.setOraRegistrazione(this.oraRegistrazione!=null ? new Date(this.oraRegistrazione.getTime()) : null);
-		
-		clone.setTipoOraRegistrazione(this.tipoOraRegistrazione);
-		clone.setTipoOraRegistrazioneValue(this.tipoOraRegistrazioneValue!=null ? new String(this.tipoOraRegistrazioneValue) : null);
-		
+		clone.setID(this.getID()!=null ? new String(this.getID()) : null);
+
+		clone.setOraRegistrazione(this.getOraRegistrazione()!=null ? new Date(this.getOraRegistrazione().getTime()) : null);
+
+		clone.setTipoOraRegistrazione(this.getTipoOraRegistrazione());
+		clone.setTipoOraRegistrazioneValue(this.riscontro.getOraRegistrazione()!=null && 
+				this.riscontro.getOraRegistrazione().getSorgente()!=null &&
+				this.riscontro.getOraRegistrazione().getSorgente().getBase()!=null ? new String(this.riscontro.getOraRegistrazione().getSorgente().getBase()) : null);
+
 		return clone;
 	}
 }

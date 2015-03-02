@@ -20,25 +20,46 @@
  */
 package org.openspcoop2.core.tracciamento;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.tracciamento.constants.TipoEsitoElaborazione;
 import java.io.Serializable;
 
 
-/** <p>Java class TracciaEsitoElaborazione.
+/** <p>Java class for traccia-esito-elaborazione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="traccia-esito-elaborazione">
+ * 		&lt;sequence>
+ * 			&lt;element name="dettaglio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoEsitoElaborazione" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "traccia-esito-elaborazione", 
+  propOrder = {
+  	"dettaglio"
+  }
+)
+
+@XmlRootElement(name = "traccia-esito-elaborazione")
 
 public class TracciaEsitoElaborazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String dettaglio;
-
-  protected String tipo;
-
-
   public TracciaEsitoElaborazione() {
   }
 
@@ -56,50 +77,49 @@ public class TracciaEsitoElaborazione extends org.openspcoop2.utils.beans.BaseBe
 		this.id=new Long(-1);
   }
 
-  public String getDettaglio() {
-    if(this.dettaglio!=null && ("".equals(this.dettaglio)==false)){
-		return this.dettaglio.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDettaglio() {
+    return this.dettaglio;
   }
 
-  public void setDettaglio(String dettaglio) {
+  public void setDettaglio(java.lang.String dettaglio) {
     this.dettaglio = dettaglio;
   }
 
-  public String getTipo() {
-    if(this.tipo!=null && ("".equals(this.tipo)==false)){
-		return this.tipo.trim();
-	}else{
-		return null;
-	}
-
+  public void set_value_tipo(String value) {
+    this.tipo = (TipoEsitoElaborazione) TipoEsitoElaborazione.toEnumConstantFromString(value);
   }
 
-  public void setTipo(String tipo) {
+  public String get_value_tipo() {
+    if(this.tipo == null){
+    	return null;
+    }else{
+    	return this.tipo.toString();
+    }
+  }
+
+  public org.openspcoop2.core.tracciamento.constants.TipoEsitoElaborazione getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(org.openspcoop2.core.tracciamento.constants.TipoEsitoElaborazione tipo) {
     this.tipo = tipo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String DETTAGLIO = "dettaglio";
 
-  public static final String TIPO = "tipo";
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="dettaglio",required=false,nillable=false)
+  protected java.lang.String dettaglio;
+
+  @XmlTransient
+  protected java.lang.String _value_tipo;
+
+  @XmlAttribute(name="tipo",required=true)
+  protected TipoEsitoElaborazione tipo;
 
 }
