@@ -686,7 +686,8 @@ public class ControlStationCore {
 			else{
 				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX gestoreJMX = null;
 				
-				if(this.getJmxPdD_remoteAccess_url(alias)!=null && !"".equals(this.getJmxPdD_remoteAccess_url(alias))){
+				if(this.getJmxPdD_remoteAccess_url(alias)!=null && !"".equals(this.getJmxPdD_remoteAccess_url(alias)) 
+						&& !"locale".equals(this.getJmxPdD_remoteAccess_url(alias)) ){
 					//System.out.println("=================== REMOTA =======================");
 					String remoteUrl = this.getJmxPdD_remoteAccess_url(alias);
 					String factory = this.getJmxPdD_remoteAccess_factory(alias);

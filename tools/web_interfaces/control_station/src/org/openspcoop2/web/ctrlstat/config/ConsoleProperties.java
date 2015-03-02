@@ -280,7 +280,7 @@ public class ConsoleProperties {
 	
 	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{
 		String tmp = this.readProperty(false, alias+"."+prop);
-		if(tmp==null || !"".equals(tmp)){
+		if(tmp==null || "".equals(tmp)){
 			tmp = this.readProperty(required, prop);
 		}
 		return tmp;
