@@ -33,6 +33,12 @@ package org.openspcoop2.testsuite.core;
 
 public class CostantiTestSuite {
 
+	public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+	
+    public final static String OPENSPCOOP2_TESTSUITE_LOCAL_PATH = "testsuite_local.properties";
+    public final static String OPENSPCOOP2_TESTSUITE_PROPERTIES = "OPENSPCOOP2_TESTSUITE_PROPERTIES";
+	
+	
 	/** Timeout */
 	public static final int TIMEOUT=6000;
 	

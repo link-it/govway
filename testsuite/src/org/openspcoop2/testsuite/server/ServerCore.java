@@ -49,6 +49,14 @@ public class ServerCore extends HttpServlet{
 	protected DatabaseProperties databaseProperties;
 	/** ServerProperties */
 	protected TestSuiteProperties testsuiteProperties;
+	
+	public TestSuiteProperties getTestsuiteProperties() {
+		return this.testsuiteProperties;
+	}
+
+
+
+
 	/** Logger */
 	protected Logger log;
 	

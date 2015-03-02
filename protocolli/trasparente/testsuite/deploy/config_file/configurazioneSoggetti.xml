@@ -135,7 +135,7 @@
 		<servizio-applicativo nome="ping">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_pingPROXYMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/TestService/ping"/>
+			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>
@@ -143,7 +143,7 @@
 		<servizio-applicativo nome="faultPingSoap11">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11PROXYMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true"/>
+			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>
@@ -151,7 +151,7 @@
 		<servizio-applicativo nome="faultPingSoap11_500">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11_500PROXYMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true&amp;returnCode=500"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;returnCode=500"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -159,7 +159,7 @@
                 <servizio-applicativo nome="faultPingSoap12">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12PROXYMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true&amp;faultSoapVersion=12"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -167,7 +167,7 @@
                 <servizio-applicativo nome="faultPingSoap12_500">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12_500PROXYMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -178,7 +178,7 @@
 		<servizio-applicativo nome="echo">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_echoPROXYMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/TestService/echo"/>
+			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>	
@@ -186,7 +186,7 @@
 		<servizio-applicativo nome="faultSoap11">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11PROXYMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true"/>
+			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>
@@ -194,7 +194,7 @@
 		<servizio-applicativo nome="faultSoap11_500">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11_500PROXYMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;returnCode=500"/>
+			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;returnCode=500"/>
 			        </connettore>
 			    </invocazione-servizio>
 		</servizio-applicativo>
@@ -202,7 +202,7 @@
                 <servizio-applicativo nome="faultSoap12">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultSoap12PROXYMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -210,7 +210,7 @@
                 <servizio-applicativo nome="faultSoap12_500">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultSoap12_500PROXYMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                             </invocazione-servizio>
                 </servizio-applicativo>

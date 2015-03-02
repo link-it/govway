@@ -51,7 +51,7 @@
 		<accordo-servizio-parte-specifica nome="Oneway" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
 			<servizio tipo="PROXY" nome="Oneway">
 			        <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Oneway">
-			            <property nome="location" valore="http://localhost:8080/TestService/ping"/>
+			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService&amp;traceIsArrived=mittente"/>
 			        </connettore>
 			</servizio>
 			<fruitore tipo="PROXY" nome="Anonimo" />
@@ -61,7 +61,7 @@
                 <accordo-servizio-parte-specifica nome="Sincrono" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <servizio tipo="PROXY" nome="Sincrono">
                                 <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Sincrono">
-                                    <property nome="location" valore="http://localhost:8080/TestService/echo"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService&amp;traceIsArrived=mittente"/>
                                 </connettore>
                         </servizio>
                         <fruitore tipo="PROXY" nome="Anonimo" />
@@ -78,28 +78,28 @@
                 <accordo-servizio-parte-specifica nome="Oneway" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
                         <servizio tipo="PROXY" nome="Oneway">
                                 <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Oneway">
-                                    <property nome="location" valore="http://localhost:8080/TestService/ping"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
                                 </connettore>
                         </servizio>
                         <fruitore tipo="PROXY" nome="MinisteroFruitore" />
 			<fruitore tipo="PROXY" nome="ClientSoapFault11">
 			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
-			        <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true"/>
+			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
 			<fruitore tipo="PROXY" nome="ClientSoapFault11500">
 			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11500_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
-			        <property nome="location" valore="http://localhost:8080/TestService/echo?ping=true&amp;returnCode=500"/>
+			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?ping=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
 			<fruitore tipo="PROXY" nome="ClientSoapFault12">
 			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
-			        <property nome="location" valore="http://localhost:8080/TestService/echo?ping=true&amp;faultSoapVersion=12"/>
+			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?ping=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
 			<fruitore tipo="PROXY" nome="ClientSoapFault12500">
 			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12500_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
-			        <property nome="location" valore="http://localhost:8080/TestService/echo?ping=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?ping=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
                 </accordo-servizio-parte-specifica>
@@ -107,28 +107,28 @@
                 <accordo-servizio-parte-specifica nome="Sincrono" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <servizio tipo="PROXY" nome="Sincrono">
                                 <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Sincrono">
-                                    <property nome="location" valore="http://localhost:8080/TestService/echo"/>
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService&amp;traceIsArrived=mittente"/>
                                 </connettore>
                         </servizio>
                         <fruitore tipo="PROXY" nome="MinisteroFruitore" />
                         <fruitore tipo="PROXY" nome="ClientSoapFault11">
                             <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true"/>
+                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
                         <fruitore tipo="PROXY" nome="ClientSoapFault11500">
                             <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11500_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;returnCode=500"/>
+                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
                         <fruitore tipo="PROXY" nome="ClientSoapFault12">
                             <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12"/>
+                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
                         <fruitore tipo="PROXY" nome="ClientSoapFault12500">
                             <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12500_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
                 </accordo-servizio-parte-specifica>

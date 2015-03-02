@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.tracciamento.Allegati;
 import org.openspcoop2.core.tracciamento.Dominio;
 import org.openspcoop2.core.tracciamento.DominioSoggetto;
 import org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione;
@@ -86,6 +87,11 @@ public class Traccia  implements java.io.Serializable {
     	// protocollo
     	if(traccia.getBusta()!=null && traccia.getBusta().getProtocollo()!=null){
     		this.protocollo = traccia.getBusta().getProtocollo().getIdentificativo();
+    	}
+    	
+    	// busta
+    	if(traccia.getBusta()!=null){
+    		this.busta = new Busta(traccia.getBusta());
     	}
     	
     	// allegati
@@ -285,6 +291,10 @@ public class Traccia  implements java.io.Serializable {
     }
     public void setBusta(Busta value) {
         this.busta = value;
+        if(value!=null)
+        	this.traccia.setBusta(value.getBusta());
+        else
+        	this.traccia.setBusta(null);
     }
     public byte[] getBustaAsByteArray() {
 		return this.bustaInByte;
@@ -429,11 +439,16 @@ public class Traccia  implements java.io.Serializable {
 	}
 	public void addAllegato(Allegato a) {
 		this.allegati.add(a);
+		if(this.traccia.getAllegati()==null){
+			this.traccia.setAllegati(new Allegati());
+		}
+		this.traccia.getAllegati().addAllegato(a.getAllegato());
 	}
 	public Allegato getAllegato(int index) {
 		return this.allegati.get(index);
 	}
 	public Allegato removeAllegato(int index) {
+		this.traccia.getAllegati().removeAllegato(index);
 		return this.allegati.remove(index);
 	}
 	protected void setListaAllegati(List<Allegato> listaAllegati) {

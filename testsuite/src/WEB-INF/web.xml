@@ -111,6 +111,14 @@
 	    <servlet-name>TestSuiteServerOpenSPCoop2EchoService</servlet-name>
 	    <servlet-class>org.openspcoop2.testsuite.server.ServerOpenSPCoop2EchoService</servlet-class>
   </servlet>
+  
+  <!-- Servlet OpenSPCoop2 PingService -->
+  <servlet>
+	    <servlet-name>TestSuiteServerOpenSPCoop2PingService</servlet-name>
+	    <servlet-class>org.openspcoop2.testsuite.server.ServerOpenSPCoop2PingService</servlet-class>
+  </servlet>
+
+
 
 
   <!-- Server Generico -->
@@ -207,6 +215,12 @@
   <servlet-mapping>
 	    	<servlet-name>TestSuiteServerOpenSPCoop2EchoService</servlet-name>
 	    	<url-pattern>/echoService</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet OpenSPCoop2 PingService -->
+  <servlet-mapping>
+	    	<servlet-name>TestSuiteServerOpenSPCoop2PingService</servlet-name>
+	    	<url-pattern>/pingService</url-pattern>
   </servlet-mapping>
 
 </web-app>

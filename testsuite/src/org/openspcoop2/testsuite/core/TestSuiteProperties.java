@@ -26,6 +26,7 @@ package org.openspcoop2.testsuite.core;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.utils.UtilsException;
 
 /**
  * Reader delle proprieta' della TestSuite
@@ -37,15 +38,14 @@ import org.apache.log4j.Logger;
 
 public class TestSuiteProperties {
 
-	/** Logger utilizzato per errori eventuali. */
-	private static Logger log = Logger.getLogger("TestSuiteProperties");
-
-
-
+	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
+	/** Logger utilizzato per errori eventuali. */
+	private Logger log = null;
+	
 	/** Reader delle proprieta' impostate nel file 'testsuite.properties' */
-	private Properties reader;
+	private TestSuiteInstanceProperties reader;
 
 	/** Copia Statica */
 	private static TestSuiteProperties testsuiteProperties = null;
@@ -59,21 +59,34 @@ public class TestSuiteProperties {
 	 */
 	public TestSuiteProperties() throws Exception {
 
+		this.log = Logger.getLogger(TestSuiteProperties.class);
+		
 		/* ---- Lettura del cammino del file di configurazione ---- */
-		this.reader = new Properties();
+		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
+		String confDir = null;
 		try{  
 			properties = TestSuiteProperties.class.getResourceAsStream("/"+CostantiTestSuite.TESTSUITE_PROPERTIES);
-			this.reader.load(properties);
-			properties.close();
+			if(properties==null){
+				throw new Exception("File '"+"/"+CostantiTestSuite.TESTSUITE_PROPERTIES+"' not found");
+			}
+			propertiesReader.load(properties);
+			
+			confDir = propertiesReader.getProperty("confDirectory");
+			if(confDir!=null){
+				confDir = confDir.trim();
+			}
 		}catch(java.io.IOException e) {
-			log.error("Riscontrato errore durante la lettura del file '"+CostantiTestSuite.TESTSUITE_PROPERTIES+"': \n\n"+e.getMessage());
-			try{
-				if(properties!=null)
-					properties.close();
-			}catch(Exception er){}
+			this.log.error("Riscontrato errore durante la lettura del file '"+CostantiTestSuite.TESTSUITE_PROPERTIES+"': \n\n"+e.getMessage());
 			throw new Exception("ClassName initialize error: "+e.getMessage());
+		}finally{
+		    try{
+				if(properties!=null)
+				    properties.close();
+		    }catch(Exception er){}
 		}
+		
+		this.reader = new TestSuiteInstanceProperties(propertiesReader, this.log, confDir);
 
 	}
 
@@ -88,7 +101,7 @@ public class TestSuiteProperties {
 			return true;
 		}
 		catch(Exception e) {
-			e.printStackTrace(System.out);
+			Logger.getLogger(TestSuiteProperties.class).error("Errore durante l'inizializzazione del TestSuiteProperties: "+e.getMessage(),e);		   
 			return false;
 		}
 	}
@@ -109,11 +122,17 @@ public class TestSuiteProperties {
 	 * Ritorna l'istanza di questa classe
 	 *
 	 * @return Istanza di TestSuiteProperties
+	 * @throws UtilsException 
 	 */
-	public static TestSuiteProperties getInstance(){
-		if(TestSuiteProperties.testsuiteProperties==null)
-			TestSuiteProperties.initialize();
+	public static TestSuiteProperties getInstance() {
+		if(TestSuiteProperties.testsuiteProperties==null){
+			initialize();
+		}
 		return TestSuiteProperties.testsuiteProperties;
+	}
+	
+	public static void updateLocalImplementation(Properties prop){
+		TestSuiteProperties.testsuiteProperties.reader.setLocalObjectImplementation(prop);
 	}
 
 
@@ -133,20 +152,20 @@ public class TestSuiteProperties {
 	 */
 	public boolean traceArrivedIntoDB(){
 		try{
-			return Boolean.parseBoolean(this.reader.getProperty(CostantiTestSuite.PROPERTY_IS_ARRIVED).trim());
+			return Boolean.parseBoolean(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_IS_ARRIVED).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_IS_ARRIVED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return false;
 		}
 	}
 	
 	public boolean loadMailcap(){
 		try{
-			return Boolean.parseBoolean(this.reader.getProperty(CostantiTestSuite.PROPERTY_MAILCAP).trim());
+			return Boolean.parseBoolean(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MAILCAP).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MAILCAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return false;
 		}
 	}
@@ -161,10 +180,10 @@ public class TestSuiteProperties {
 	 */
 	public String getIdMessaggioTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_MESSAGGIO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -175,10 +194,10 @@ public class TestSuiteProperties {
 	 */
 	public String getRiferimentoAsincronoTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -189,10 +208,10 @@ public class TestSuiteProperties {
 	 */
 	public String getCollaborazioneTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_COLLABORAZIONE_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_COLLABORAZIONE_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -203,10 +222,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoMittenteTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_MITTENTE_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -217,10 +236,10 @@ public class TestSuiteProperties {
 	 */
 	public String getMittenteTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_MITTENTE_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MITTENTE_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -231,10 +250,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoDestinatarioTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -245,10 +264,10 @@ public class TestSuiteProperties {
 	 */
 	public String getDestinatarioTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_DESTINATARIO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_DESTINATARIO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -259,10 +278,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoServizioTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -273,10 +292,10 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_SERVIZIO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -287,10 +306,10 @@ public class TestSuiteProperties {
 	 */
 	public String getAzioneTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_AZIONE_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_AZIONE_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -301,10 +320,10 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioApplicativoTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -315,10 +334,10 @@ public class TestSuiteProperties {
 	 */
 	public String getIDApplicativoTrasporto(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_TRASPORTO).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_APPLICATIVO_TRASPORTO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -333,10 +352,10 @@ public class TestSuiteProperties {
 	 */
 	public String getIdUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_ID_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -347,10 +366,10 @@ public class TestSuiteProperties {
 	 */
 	public String getRiferimentoAsincronoUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -361,10 +380,10 @@ public class TestSuiteProperties {
 	 */
 	public String getCollaborazioneUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_COLLABORAZIONE_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_COLLABORAZIONE_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -375,10 +394,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoMittenteUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_MITTENTE_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -389,10 +408,10 @@ public class TestSuiteProperties {
 	 */
 	public String getMittenteUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_MITTENTE_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MITTENTE_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -403,10 +422,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoDestinatarioUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -417,10 +436,10 @@ public class TestSuiteProperties {
 	 */
 	public String getDestinatarioUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_DESTINATARIO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_DESTINATARIO_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -431,10 +450,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoServizioUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -445,10 +464,10 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_SERVIZIO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -459,10 +478,10 @@ public class TestSuiteProperties {
 	 */
 	public String getAzioneUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_AZIONE_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_AZIONE_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -473,10 +492,10 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioApplicativoUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -487,10 +506,10 @@ public class TestSuiteProperties {
 	 */
 	public String getIDApplicativoUrlBased(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_URL_BASED).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_APPLICATIVO_URL_BASED+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -505,10 +524,10 @@ public class TestSuiteProperties {
 	 */
 	public String getIdMessaggioSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_MESSAGGIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_MESSAGGIO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -519,10 +538,10 @@ public class TestSuiteProperties {
 	 */
 	public String getRiferimentoAsincronoSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_RIFERIMENTO_ASINCRONO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -533,10 +552,10 @@ public class TestSuiteProperties {
 	 */
 	public String getCollaborazioneSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_COLLABORAZIONE_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_COLLABORAZIONE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_COLLABORAZIONE_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -547,10 +566,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoMittenteSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_MITTENTE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_MITTENTE_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -561,10 +580,10 @@ public class TestSuiteProperties {
 	 */
 	public String getMittenteSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_MITTENTE_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_MITTENTE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_MITTENTE_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -575,10 +594,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoDestinatarioSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_DESTINATARIO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -589,10 +608,10 @@ public class TestSuiteProperties {
 	 */
 	public String getDestinatarioSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_DESTINATARIO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_DESTINATARIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_DESTINATARIO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -603,10 +622,10 @@ public class TestSuiteProperties {
 	 */
 	public String getTipoServizioSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIPO_SERVIZIO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -617,10 +636,10 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_SERVIZIO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -631,10 +650,10 @@ public class TestSuiteProperties {
 	 */
 	public String getAzioneSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_AZIONE_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_AZIONE_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_AZIONE_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -645,10 +664,10 @@ public class TestSuiteProperties {
 	 */
 	public String getServizioApplicativoSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_APPLICATIVO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -659,10 +678,10 @@ public class TestSuiteProperties {
 	 */
 	public String getIDApplicativoSoap(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -675,10 +694,10 @@ public class TestSuiteProperties {
 	 */
 	public long timeToSleep_generazioneRispostaAsincrona(){
 		try{
-			return Long.parseLong(this.reader.getProperty(CostantiTestSuite.PROPERTY_TIME_TO_SLEEP_SERVER_ASINCRONO).trim());
+			return Long.parseLong(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_TIME_TO_SLEEP_SERVER_ASINCRONO).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_TIME_TO_SLEEP_SERVER_ASINCRONO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return -1;
 		}
 	}
@@ -689,10 +708,10 @@ public class TestSuiteProperties {
 	 */
 	public boolean attendiTerminazioneMessaggi_generazioneRispostaAsincrona(){
 		try{
-			return Boolean.parseBoolean(this.reader.getProperty(CostantiTestSuite.PROPERTY_ATTESA_TERMINAZIONI_MESSAGGI_SERVER_ASINCRONO).trim());
+			return Boolean.parseBoolean(this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ATTESA_TERMINAZIONI_MESSAGGI_SERVER_ASINCRONO).trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ATTESA_TERMINAZIONI_MESSAGGI_SERVER_ASINCRONO+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return false;
 		}
 	}
@@ -703,10 +722,10 @@ public class TestSuiteProperties {
 	 */
 	public int getTimeoutProcessamentoMessaggiOpenSPCoop(){
 		try{
-			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.completamentoProcessamento.timeout").trim());
+			return Integer.parseInt(this.reader.getValue_convertEnvProperties("org.openspcoop2.testsuite.completamentoProcessamento.timeout").trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.completamentoProcessamento.timeout':"+e.getMessage();
-			TestSuiteProperties.log.error(msgErrore);
+			this.log.error(msgErrore);
 			return -1;
 		}
 	}
@@ -717,10 +736,10 @@ public class TestSuiteProperties {
 	 */
 	public int getCheckIntervalProcessamentoMessaggiOpenSPCoop(){
 		try{
-			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.completamentoProcessamento.checkInterval").trim());
+			return Integer.parseInt(this.reader.getValue_convertEnvProperties("org.openspcoop2.testsuite.completamentoProcessamento.checkInterval").trim());
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.completamentoProcessamento.checkInterval':"+e.getMessage();
-			TestSuiteProperties.log.error(msgErrore);
+			this.log.error(msgErrore);
 			return -1;
 		}
 	}
@@ -732,11 +751,11 @@ public class TestSuiteProperties {
 	 */
 	public String getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(String protocol){
 		try{
-			String url = this.reader.getProperty(CostantiTestSuite.PROPERTY_OPENSPCOOP_PD_CONSEGNA_RISPOSTA_ASINCRONA_SIMMETRICA).trim();
+			String url = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_OPENSPCOOP_PD_CONSEGNA_RISPOSTA_ASINCRONA_SIMMETRICA).trim();
 			return url.replace("<protocol>", protocol);
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_OPENSPCOOP_PD_CONSEGNA_RISPOSTA_ASINCRONA_SIMMETRICA+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -744,10 +763,10 @@ public class TestSuiteProperties {
 	
 	public String getTipoRepositoryBuste(){
 		try{
-			return this.reader.getProperty(CostantiTestSuite.TIPO_REPOSITORY_BUSTE).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.TIPO_REPOSITORY_BUSTE).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.TIPO_REPOSITORY_BUSTE+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}
@@ -755,14 +774,14 @@ public class TestSuiteProperties {
 	
 	public String getProtocolloDefault(){
 		try{
-			String p = this.reader.getProperty(CostantiTestSuite.PROTOCOLLO_DEFAULT);
+			String p = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROTOCOLLO_DEFAULT);
 			if(p!=null)
 				return p.trim();
 			else
 				return null;
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROTOCOLLO_DEFAULT+"':"+e.getMessage();
-			log.error(msgErrore);
+			this.log.error(msgErrore);
 			return null;
 		}
 	}

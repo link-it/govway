@@ -121,6 +121,7 @@ Requisiti globali:
 2) Configurazione PdD. La configurazione della PdD richiesta dai test deve essere attuata attraverso i seguenti step:
 	2.a) Deve essere copiato il contenuto del file ./protocolli/spcoop/testsuite/src/className_local.properties in /etc/openspcoop2
 	2.b) Deve essere copiato il contenuto del file ./protocolli/spcoop/testsuite/src/openspcoop2_local.properties in /etc/openspcoop2
+	2.c) Deve essere copiato il contenuto del file ./protocolli/spcoop/testsuite/src/testsuite_local.properties in /etc/openspcoop2
 3) Impostare un tempo di rispedizione per la coda JMS 'toInoltroBuste' e 'toConsegnaContenutiApplicativi' a 15 secondi
    (<attribute name="RedeliveryDelay">15000</attribute>)
 

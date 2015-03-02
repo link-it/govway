@@ -32,13 +32,16 @@ import java.util.Map;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.tracciamento.Data;
+import org.openspcoop2.core.tracciamento.Eccezioni;
 import org.openspcoop2.core.tracciamento.ProfiloCollaborazione;
 import org.openspcoop2.core.tracciamento.ProfiloTrasmissione;
 import org.openspcoop2.core.tracciamento.Proprieta;
 import org.openspcoop2.core.tracciamento.Protocollo;
+import org.openspcoop2.core.tracciamento.Riscontri;
 import org.openspcoop2.core.tracciamento.Soggetto;
 import org.openspcoop2.core.tracciamento.SoggettoIdentificativo;
 import org.openspcoop2.core.tracciamento.TipoData;
+import org.openspcoop2.core.tracciamento.Trasmissioni;
 import org.openspcoop2.core.tracciamento.constants.TipoInoltro;
 import org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
@@ -1186,9 +1189,14 @@ public class Busta implements java.io.Serializable {
 
 	public void addEccezione(Eccezione e) {
 		this.listaEccezioni.add(e);
+		if(this.busta.getEccezioni()==null){
+			this.busta.setEccezioni(new Eccezioni());
+		}
+		this.busta.getEccezioni().addEccezione(e.getEccezione());
 	}
 
 	public Eccezione removeEccezione(int index) {
+		this.busta.getEccezioni().removeEccezione(index);
 		return this.listaEccezioni.remove(index);
 	}
 
@@ -1326,9 +1334,14 @@ public class Busta implements java.io.Serializable {
 	
 	public void addRiscontro(Riscontro r) {
 		this.listaRiscontri.add(r);
+		if(this.busta.getRiscontri()==null){
+			this.busta.setRiscontri(new Riscontri());
+		}
+		this.busta.getRiscontri().addRiscontro(r.getRiscontro());
 	}
 	
 	public Riscontro removeRiscontro(int index) {
+		this.busta.getRiscontri().removeRiscontro(index);
 		return this.listaRiscontri.remove(index);
 	}
 	
@@ -1354,9 +1367,14 @@ public class Busta implements java.io.Serializable {
 
 	public void addTrasmissione(Trasmissione t) {
 		this.listaTrasmissioni.add(t);
+		if(this.busta.getTrasmissioni()==null){
+			this.busta.setTrasmissioni(new Trasmissioni());
+		}
+		this.busta.getTrasmissioni().addTrasmissione(t.getTrasmissione());
 	}
 
 	public Trasmissione removeTrasmissione(int index) {
+		this.busta.getTrasmissioni().removeTrasmissione(index);
 		return this.listaTrasmissioni.remove(index);
 	}
 
