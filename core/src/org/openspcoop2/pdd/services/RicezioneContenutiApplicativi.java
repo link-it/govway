@@ -3064,6 +3064,7 @@ public class RicezioneContenutiApplicativi {
 		/* ---------- Parametri Gestione risposta ------------- */
 		RicezioneContenutiApplicativiGestioneRisposta parametriGestioneRisposta =
 			new RicezioneContenutiApplicativiGestioneRisposta();
+
 		parametriGestioneRisposta.setOpenspcoopstate(openspcoopstate);
 		
 		parametriGestioneRisposta.setRegistroServiziReader(registroServiziReader);
@@ -3732,11 +3733,19 @@ public class RicezioneContenutiApplicativi {
 					if(gestore instanceof IGestoreIntegrazionePDSoap){
 						if(propertiesReader.processHeaderIntegrazionePDResponse(false)){
 							if(propertiesReader.deleteHeaderIntegrazioneResponsePD()){
+								if(responseMessage==null){
+									responseMessage = this.fac.createEmptySOAPMessage(versioneSoap);
+									outResponsePDMessage.setMessage(responseMessage);
+								}
 								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePDMessage);
 							}else{
 								// gia effettuato l'update dell'header in InoltroBuste
 							}
 						}else{
+							if(responseMessage==null){
+								responseMessage = this.fac.createEmptySOAPMessage(versioneSoap);
+								outResponsePDMessage.setMessage(responseMessage);
+							}
 							gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePDMessage);
 						}
 					}else{
@@ -3754,7 +3763,7 @@ public class RicezioneContenutiApplicativi {
 		// Imposto header di trasporto per la risposta
 		this.msgContext.setHeaderIntegrazioneRisposta(propertiesIntegrazioneRisposta);
 		
-
+		
 		
 		
 		

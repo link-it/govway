@@ -4851,11 +4851,19 @@ public class RicezioneBuste {
 						if (gestore != null) {
 							if(gestore instanceof IGestoreIntegrazionePASoap){
 								if(propertiesReader.deleteHeaderIntegrazioneResponsePA()){
+									if(responseMessage==null){
+										responseMessage = this.fac.createEmptySOAPMessage(versioneSoap);
+										outResponsePAMessage.setMessage(responseMessage);
+									}
 									gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
 								}else{
 									// gia effettuato l'update dell'header in InoltroBuste
 								}
 							}else{
+								if(responseMessage==null){
+									responseMessage = this.fac.createEmptySOAPMessage(versioneSoap);
+									outResponsePAMessage.setMessage(responseMessage);
+								}
 								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
 							}
 						} else {
