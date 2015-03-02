@@ -28,6 +28,7 @@ import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.state.IState;
 
@@ -49,6 +50,26 @@ public class TrasparenteBustaBuilder extends BustaBuilder {
 			boolean isRichiesta,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
+		
+		// aggiunto lista trasmissione
+		if(busta.sizeListaTrasmissioni()<=0){
+			Trasmissione trasmissione = new Trasmissione();
+			
+			trasmissione.setTipoOrigine(busta.getTipoMittente());
+			trasmissione.setOrigine(busta.getMittente());
+			trasmissione.setIdentificativoPortaOrigine(busta.getIdentificativoPortaMittente());
+			trasmissione.setIndirizzoOrigine(busta.getIndirizzoMittente());
+			
+			trasmissione.setTipoDestinazione(busta.getTipoDestinatario());
+			trasmissione.setDestinazione(busta.getDestinatario());
+			trasmissione.setIdentificativoPortaDestinazione(busta.getIdentificativoPortaDestinatario());
+			trasmissione.setIndirizzoDestinazione(busta.getIndirizzoDestinatario());
+			
+			trasmissione.setOraRegistrazione(busta.getOraRegistrazione());
+			trasmissione.setTempo(busta.getTipoOraRegistrazione(), busta.getTipoOraRegistrazioneValue());
+			
+			busta.addTrasmissione(trasmissione);
+		}
 		
 		super.imbustamento(state, msg, busta, isRichiesta, proprietaManifestAttachments);
 				
