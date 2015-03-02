@@ -102,6 +102,7 @@ public class SOAPEngine {
 	boolean withAttachment;
 
 	private SOAPVersion soapVersion;
+	private String idMessaggioSoap;
 
 	/**
 	 * Costruttore che costruisce una richiesta di tipo webservice verso una url con nome della operazione, metodo, e i parametri passati
@@ -124,7 +125,7 @@ public class SOAPEngine {
 			this.call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP12_ENC);
 			break;
 		}
-		
+		this.idMessaggioSoap = TestSuiteProperties.getInstance().getIdMessaggioSoap();
 	}
 
 
@@ -180,7 +181,7 @@ public class SOAPEngine {
 	 * Invokazione 
 	 * @throws FileNotFoundException 
 	 */
-	public void invoke() throws AxisFault {
+	public void invoke(Repository repository) throws AxisFault {
 
 		// Backup msg richiesta da spedire
 		String contentType = null;
@@ -220,6 +221,20 @@ public class SOAPEngine {
 			this.call.setTimeout(CostantiTestSuite.TIMEOUT);
 			this.call.invoke(this.sentMessage);
 		} catch (AxisFault e) {
+			if(e.getHeaders() != null) {
+				String id = null;
+				for(Object header : e.getHeaders()) {
+					org.apache.axis.message.SOAPHeaderElement headerElement = (org.apache.axis.message.SOAPHeaderElement) header;
+					id = headerElement.getAttribute(this.idMessaggioSoap);
+					if(id != null) {
+						break;
+					}
+					
+				}
+				if(id != null) {
+					repository.add(id);
+				}
+			}
 			throw e;			
 		}
 		

@@ -86,7 +86,12 @@ public class CooperazioneBase {
 	protected Logger log;
 	
 	protected boolean portaDelegata;
-
+	
+	private boolean responseIsFault = false;
+	public void setResponseIsFault(boolean responseIsFault) {
+		this.responseIsFault = responseIsFault;
+	}
+	
 	public boolean isSoapWithAttachments() {
 		return this.soapWithAttachments;
 	}
@@ -250,9 +255,15 @@ public class CooperazioneBase {
 	 * Test per il profilo di collaborazione OneWay
 	 */
 	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco) throws FatalTestSuiteException, Exception{
-		this.oneWay(repository, portaDelegata, addIDUnivoco, null, null);
+		this.oneWay(repository, portaDelegata, addIDUnivoco, null, null, null);
+	}
+	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,Boolean attesaTerminazioneMessaggi) throws FatalTestSuiteException, Exception{
+		this.oneWay(repository, portaDelegata, addIDUnivoco, null, null,attesaTerminazioneMessaggi);
 	}
 	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws FatalTestSuiteException, Exception{
+		this.oneWay(repository, portaDelegata, addIDUnivoco, username, password, null);
+	}
+	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password,Boolean attesaTerminazioneMessaggi) throws FatalTestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -286,7 +297,8 @@ public class CooperazioneBase {
 			}			
 
 			// AttesaTerminazioneMessaggi
-			if(this.unitsTestsuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+			if(this.unitsTestsuiteProperties.attendiTerminazioneMessaggi_verificaDatabase() && 
+					(attesaTerminazioneMessaggi==null || attesaTerminazioneMessaggi)){
 				dbComponentFruitore = this.unitsDatabaseProperties.newInstanceDatabaseComponentFruitore();
 				dbComponentErogatore = this.unitsDatabaseProperties.newInstanceDatabaseComponentErogatore();
 				
@@ -513,7 +525,9 @@ public class CooperazioneBase {
 		}else{
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedTrasmissione(id, this.destinatario,null, this.mittente, null, true,tipoTempoAtteso,tipoTempoAttesoSdk));
 		}
-		checkCountAttachmentsResponse(data, id, null, manifestAbilitato,  numeroAttachments);
+		
+		if(!this.responseIsFault)
+			checkCountAttachmentsResponse(data, id, null, manifestAbilitato,  numeroAttachments);
 	}
 
 

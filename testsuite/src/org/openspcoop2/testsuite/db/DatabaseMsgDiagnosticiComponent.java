@@ -297,6 +297,37 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
+	public boolean isTracedCodice(String id,String codice)throws FatalTestSuiteException{
+		if(id==null)throw new TestSuiteException("Id vale null");
+		if(codice==null)throw new TestSuiteException("Codice vale null");
+
+		ResultSet res = null;
+		PreparedStatement prep = null;
+		try {
+			prep = this.connectionMsgDiagnostici
+			.prepareStatement("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+					CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=? AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"=?");
+			prep.setString(1, id);
+			prep.setString(2, codice);
+			//System.out.println("ESEGUO:[select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+			//		CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSSAGGIO+"='"+messaggio+"']");
+			res = prep.executeQuery();
+			return res.next();
+		} catch (SQLException e) {
+			throw new TestSuiteException("Errore nel database: "+e.getMessage(),
+			"nella fase DBC.getResult");
+		} finally{
+			try{
+				if(res!=null)
+					res.close();
+			}catch(Exception e){}
+			try{
+				if(prep!=null)
+					prep.close();
+			}catch(Exception e){}
+		}
+	}
+	
 	public boolean isTracedMessaggio(String messaggio)throws FatalTestSuiteException{
 		if(messaggio==null)throw new TestSuiteException("Messaggio vale null");
 
@@ -463,6 +494,41 @@ public class DatabaseMsgDiagnosticiComponent {
 			}
 			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
 
+			res = prep.executeQuery();
+			return res.next();
+		} catch (Exception e) {
+			throw new TestSuiteException("Errore nel database: "+e.getMessage(),
+			"nella fase DBC.getResult");
+		} finally{
+			try{
+				if(res!=null)
+					res.close();
+			}catch(Exception e){}
+			try{
+				if(prep!=null)
+					prep.close();
+			}catch(Exception e){}
+		}
+	}
+	
+	public boolean isTracedMessaggio(String id, boolean richiesta, String ... valoriContenutiMsg)throws FatalTestSuiteException{
+		if(valoriContenutiMsg==null)throw new TestSuiteException("Parametri non passati");
+
+		ResultSet res = null;
+		PreparedStatement prep = null;
+		try {
+			StringBuffer sql = new StringBuffer();
+			String idMsgColumn = richiesta ? CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO : CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA;
+			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where " + idMsgColumn+" = ? AND ");
+			for(int i=0; i<valoriContenutiMsg.length;i++){
+				if(i>0)
+					sql.append(" AND ");
+				String msgFiltro = org.openspcoop2.utils.sql.SQLQueryObjectCore.getEscapeStringValue(valoriContenutiMsg[i]);
+				sql.append("("+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" LIKE '%"+msgFiltro+"%')");
+			}
+			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
+
+			prep.setString(1, id);
 			res = prep.executeQuery();
 			return res.next();
 		} catch (Exception e) {

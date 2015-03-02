@@ -305,7 +305,7 @@ public class ClientCore {
 	 * @throws AxisFault 
 	 * @throws SOAPException */
 	protected void invocazioneAsincrona() throws FatalTestSuiteException, AxisFault{
-		this.soapEngine.invoke();
+		this.soapEngine.invoke(this.repository);
 		this.receivedMessage=this.soapEngine.getResponseMessage();
 		if(this.receivedMessage!=null && !Utilities.isOpenSPCoopOKMessage(this.receivedMessage))
 				throw new TestSuiteException("Il messaggio ricevuto con una interazione asincrona, non e' conforme allo schema OpenSPCoopOK.xsd");
@@ -343,7 +343,7 @@ public class ClientCore {
 	 * @throws AxisFault
 	 */
 	protected void invocazioneSincrona() throws FatalTestSuiteException,AxisFault{
-		this.soapEngine.invoke();
+		this.soapEngine.invoke(this.repository);
 		this.receivedMessage=this.soapEngine.getResponseMessage();
 		if(this.testsuiteProperties.getIdMessaggioTrasporto()==null)
 			throw new TestSuiteException("Nome dell'header contenente l'id nella riposta http, non definito");
