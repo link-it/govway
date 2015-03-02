@@ -37,7 +37,6 @@ package org.openspcoop2.core.tracciamento.ws.server.filter;
  *         &lt;element name="busta" type="{http://www.openspcoop2.org/core/tracciamento/management}busta" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ricerca-solo-buste-errore" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
  *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoTraccia" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
@@ -75,7 +74,6 @@ import org.openspcoop2.core.tracciamento.ws.server.filter.beans.Dominio;
     "busta",
     "ricercaSoloBusteErrore",
     "tipo",
-    "orCondition",
     "limit",
     "offset",
     "descOrder"
@@ -200,19 +198,6 @@ public class SearchFilterTraccia extends org.openspcoop2.utils.beans.BaseBean im
 	
 	public TipoTraccia getTipo(){
 		return this.tipo;
-	}
-	
-	
-	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="orCondition",required=false,nillable=false,defaultValue="false")
-	private Boolean orCondition = new Boolean("false");
-	
-	public void setOrCondition(Boolean orCondition){
-		this.orCondition = orCondition;
-	}
-	
-	public Boolean getOrCondition(){
-		return this.orCondition;
 	}
 	
 	

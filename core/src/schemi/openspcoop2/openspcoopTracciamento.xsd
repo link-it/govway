@@ -35,6 +35,7 @@
                     <linkit:interface crud="false" id="id-traccia" >
                         <linkit:ws-interface search="true" crud="false" all="false" >
                             <linkit:ws-search-method-interface inUse="false" />
+                            <linkit:ws-filter orCondition="false"/>
                         </linkit:ws-interface>
                     </linkit:interface>
                 </linkit:generator>
