@@ -170,19 +170,19 @@
 	
 
 
-	<target name="war_all" depends="clean_ws_exclude_war">
-		<antcall target="preprocess_all">
-			<param name="war_type" value="All"/>
+	<target name="war_search" depends="clean_ws_exclude_war">
+		<antcall target="preprocess_search">
+			<param name="war_type" value="Search"/>
 		</antcall>
 		<antcall target="build_diagnostica_ws">
-			<param name="war_type" value="All"/>
+			<param name="war_type" value="Search"/>
 		</antcall>
 		<antcall target="-war">
-			<param name="war_type" value="All"/>
+			<param name="war_type" value="Search"/>
 		</antcall>
 	</target>
 	<target name="war">
-		<antcall target="war_all"/>
+		<antcall target="war_search"/>
 		<antcall target="clean_ws_exclude_war"/>
 	</target>
 

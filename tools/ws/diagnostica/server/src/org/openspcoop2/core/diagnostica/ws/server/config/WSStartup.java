@@ -29,6 +29,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.utils.resources.Loader;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
  * 
@@ -125,6 +128,16 @@ public class WSStartup implements ServletContextListener {
 			}
 			
 			if(DatasourceProperties.initialize(confDir,WSStartup.log)==false){
+				return;
+			}
+			
+			ConfigurazionePdD config = new ConfigurazionePdD();
+			config.setLoader(new Loader());
+			config.setLog(WSStartup.log);
+			try{
+				ProtocolFactoryManager.initialize(WSStartup.log, config, ServerProperties.getInstance().readProperty(false, "protocolloDefault"));
+			}catch(Exception e){
+				WSStartup.log.error(e.getMessage(),e);
 				return;
 			}
 			

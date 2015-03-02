@@ -37,7 +37,7 @@ import java.io.Serializable;
  * &lt;complexType name="soggetto">
  * 		&lt;sequence>
  * 			&lt;element name="identificativo" type="{http://www.openspcoop2.org/core/diagnostica}soggetto-identificativo" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -103,7 +103,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   protected SoggettoIdentificativo identificativo;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="identificativo-porta",required=true,nillable=false)
+  @XmlElement(name="identificativo-porta",required=false,nillable=false)
   protected java.lang.String identificativoPorta;
 
 }

@@ -102,7 +102,7 @@
 	<xsd:complexType name="soggetto">
 		<xsd:sequence>
 			<xsd:element name="identificativo" type="soggetto-identificativo" />
-			<xsd:element name="identificativo-porta" type="xsd:string" />
+			<xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="soggetto-identificativo">

@@ -78,13 +78,13 @@
   <mapping name="fruitore" class="org.openspcoop2.core.diagnostica.Soggetto" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
     <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.diagnostica.SoggettoIdentificativo"/>
-    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="optional"/>
   </mapping>
 
   <mapping type-name="_Soggetto_Type" class="org.openspcoop2.core.diagnostica.Soggetto" abstract="true">
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
     <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.diagnostica.SoggettoIdentificativo"/>
-    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="optional"/>
   </mapping>
   <mapping name="identificativo" class="org.openspcoop2.core.diagnostica.SoggettoIdentificativo">
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>

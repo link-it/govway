@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
+import org.openspcoop2.core.diagnostica.Proprieta;
 import org.openspcoop2.core.diagnostica.ws.server.MessaggioDiagnosticoSearch;
 import org.openspcoop2.core.diagnostica.ws.server.config.Constants;
 import org.openspcoop2.core.diagnostica.ws.server.config.DriverDiagnostica;
@@ -240,7 +241,7 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 
 	private FiltroRicercaDiagnosticiConPaginazione toPaginatedFilterSearch(SearchFilterMessaggioDiagnostico filter) throws ServiceException, NotImplementedException, Exception{
 	
-		FiltroRicercaDiagnostici filterSearch = this.toFilterSearch(filter);
+		FiltroRicercaDiagnostici filterSearch = this.toFilterSearch(filter, true);
 		
 		if(filter.getLimit()!=null) {
 			((FiltroRicercaDiagnosticiConPaginazione)filterSearch).setLimit(filter.getLimit());
@@ -263,7 +264,20 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 	}
 	
 	
-	
+
+	private void cleanIdDB(MessaggioDiagnostico msgDiag){
+		if(msgDiag.getProtocollo()!=null){
+			if(msgDiag.getProtocollo().sizeProprietaList()>0){
+				for (int i = 0; i < msgDiag.getProtocollo().sizeProprietaList(); i++) {
+					Proprieta p = msgDiag.getProtocollo().getProprieta(i);
+					if(org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici.IDDIAGNOSTICI.equals(p.getNome())){
+						msgDiag.getProtocollo().removeProprieta(i);
+						break;
+					}
+				}
+			}
+		}
+	}
 
 
 
@@ -280,7 +294,9 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 				List<MsgDiagnostico> resultOp2 = this.diagnosticaService.getDriver().getMessaggiDiagnostici(pagExp);
 				if(resultOp2!=null && resultOp2.size()>0){
 					for (MsgDiagnostico msgDiagnostico : resultOp2) {
-						result.add(msgDiagnostico.getMessaggioDiagnostico());
+						MessaggioDiagnostico msgDiag = msgDiagnostico.getMessaggioDiagnostico();
+						cleanIdDB(msgDiag);
+						result.add(msgDiag);
 					}
 				}
 			}catch(DriverMsgDiagnosticiNotFoundException notFound){

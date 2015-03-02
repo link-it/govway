@@ -16,26 +16,26 @@
 	<target name="-build_stub_cxf_from_wsdl">
 
 		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value="All"/>
+			<param name="stubInterfaceType" value="Search"/>
 			<param name="stubClassEntity" value="Traccia"/>
 			<param name="stubVariableEntity" value="traccia"/>
 			<param name="stubSoapVersion" value="11"/>
 			<param name="stubOutputDir" value="${src_dir_tracciamento_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.tracciamento.ws.client.traccia.all"/>
+			<param name="stubPackage" value="org.openspcoop2.core.tracciamento.ws.client.traccia.search"/>
 			<param name="stubWsdl" value="deploy/wsdl/TracciaSearch_PortSoap11.wsdl"/>
-			<param name="stubDirClient" value="${src_dir_tracciamento_ws_client}/org/openspcoop2/core/tracciamento/ws/client/traccia/all"/>
+			<param name="stubDirClient" value="${src_dir_tracciamento_ws_client}/org/openspcoop2/core/tracciamento/ws/client/traccia/search"/>
 			<param name="stubJavaClassNameClient" value="Traccia_TracciaPortSoap11_Client.java"/>
 		</antcall>
 
 		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value="All"/>
+			<param name="stubInterfaceType" value="Search"/>
 			<param name="stubClassEntity" value="Traccia"/>
 			<param name="stubVariableEntity" value="traccia"/>
 			<param name="stubSoapVersion" value="12"/>
 			<param name="stubOutputDir" value="${src_dir_tracciamento_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.tracciamento.ws.client.traccia.all"/>
+			<param name="stubPackage" value="org.openspcoop2.core.tracciamento.ws.client.traccia.search"/>
 			<param name="stubWsdl" value="deploy/wsdl/TracciaSearch_PortSoap12.wsdl"/>
-			<param name="stubDirClient" value="${src_dir_tracciamento_ws_client}/org/openspcoop2/core/tracciamento/ws/client/traccia/all"/>
+			<param name="stubDirClient" value="${src_dir_tracciamento_ws_client}/org/openspcoop2/core/tracciamento/ws/client/traccia/search"/>
 			<param name="stubJavaClassNameClient" value="Traccia_TracciaPortSoap12_Client.java"/>
 		</antcall>
 		

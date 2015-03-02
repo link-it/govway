@@ -36,8 +36,8 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dominio-id-traccia">
  * 		&lt;sequence>
- * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/tracciamento}dominio-soggetto" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/tracciamento}dominio-soggetto" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -100,10 +100,10 @@ public class DominioIdTraccia extends org.openspcoop2.utils.beans.BaseBean imple
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="identificativo-porta",required=true,nillable=false)
+  @XmlElement(name="identificativo-porta",required=false,nillable=false)
   protected java.lang.String identificativoPorta;
 
-  @XmlElement(name="soggetto",required=true,nillable=false)
+  @XmlElement(name="soggetto",required=false,nillable=false)
   protected DominioSoggetto soggetto;
 
 }

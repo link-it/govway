@@ -62,7 +62,7 @@ public class DominioSoggetto extends org.openspcoop2.utils.beans.BaseBean implem
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @javax.xml.bind.annotation.XmlValue()
+  @XmlElement(name="base",required=false,nillable=false)
 	private String base;
 	
 	public void setBase(String base){

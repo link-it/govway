@@ -16,51 +16,51 @@
 	<target name="-build_stub_cxf_from_wsdl">
 
 		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value="All"/>
+			<param name="stubInterfaceType" value="Search"/>
 			<param name="stubClassEntity" value="MessaggioDiagnostico"/>
 			<param name="stubVariableEntity" value="messaggioDiagnostico"/>
 			<param name="stubSoapVersion" value="11"/>
 			<param name="stubOutputDir" value="${src_dir_diagnostica_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.all"/>
+			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.search"/>
 			<param name="stubWsdl" value="deploy/wsdl/MessaggioDiagnosticoSearch_PortSoap11.wsdl"/>
-			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/all"/>
+			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/search"/>
 			<param name="stubJavaClassNameClient" value="MessaggioDiagnostico_MessaggioDiagnosticoPortSoap11_Client.java"/>
 		</antcall>
 
 		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value="All"/>
+			<param name="stubInterfaceType" value="Search"/>
 			<param name="stubClassEntity" value="MessaggioDiagnostico"/>
 			<param name="stubVariableEntity" value="messaggioDiagnostico"/>
 			<param name="stubSoapVersion" value="12"/>
 			<param name="stubOutputDir" value="${src_dir_diagnostica_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.all"/>
+			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.search"/>
 			<param name="stubWsdl" value="deploy/wsdl/MessaggioDiagnosticoSearch_PortSoap12.wsdl"/>
-			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/all"/>
+			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/search"/>
 			<param name="stubJavaClassNameClient" value="MessaggioDiagnostico_MessaggioDiagnosticoPortSoap12_Client.java"/>
 		</antcall>
 
 
 		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value="All"/>
+			<param name="stubInterfaceType" value="Search"/>
 			<param name="stubClassEntity" value="InformazioniProtocolloTransazione"/>
 			<param name="stubVariableEntity" value="informazioniProtocolloTransazione"/>
 			<param name="stubSoapVersion" value="11"/>
 			<param name="stubOutputDir" value="${src_dir_diagnostica_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.all"/>
+			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.search"/>
 			<param name="stubWsdl" value="deploy/wsdl/InformazioniProtocolloTransazioneSearch_PortSoap11.wsdl"/>
-			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/informazioniprotocollotransazione/all"/>
+			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/informazioniprotocollotransazione/search"/>
 			<param name="stubJavaClassNameClient" value="InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap11_Client.java"/>
 		</antcall>
 
 		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value="All"/>
+			<param name="stubInterfaceType" value="Search"/>
 			<param name="stubClassEntity" value="InformazioniProtocolloTransazione"/>
 			<param name="stubVariableEntity" value="informazioniProtocolloTransazione"/>
 			<param name="stubSoapVersion" value="12"/>
 			<param name="stubOutputDir" value="${src_dir_diagnostica_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.all"/>
+			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.search"/>
 			<param name="stubWsdl" value="deploy/wsdl/InformazioniProtocolloTransazioneSearch_PortSoap12.wsdl"/>
-			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/informazioniprotocollotransazione/all"/>
+			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/informazioniprotocollotransazione/search"/>
 			<param name="stubJavaClassNameClient" value="InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap12_Client.java"/>
 		</antcall>
 

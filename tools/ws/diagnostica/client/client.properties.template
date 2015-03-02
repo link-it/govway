@@ -1,16 +1,16 @@
-messaggioDiagnostico.soap11.url=http://127.0.0.1:8080/diagnostica/MessaggioDiagnostico/Soap11
+messaggioDiagnostico.soap11.url=http://127.0.0.1:8080/openspcoop2Diagnostica/MessaggioDiagnostico/Soap11
 #messaggioDiagnostico.soap11.username=INSERIRE_USERNAME
 #messaggioDiagnostico.soap11.password=INSERIRE_PASSWORD
 
-messaggioDiagnostico.soap12.url=http://127.0.0.1:8080/diagnostica/MessaggioDiagnostico/Soap12
+messaggioDiagnostico.soap12.url=http://127.0.0.1:8080/openspcoop2Diagnostica/MessaggioDiagnostico/Soap12
 #messaggioDiagnostico.soap12.username=INSERIRE_USERNAME
 #messaggioDiagnostico.soap12.password=INSERIRE_PASSWORD
 
-informazioniProtocolloTransazione.soap11.url=http://127.0.0.1:8080/diagnostica/InformazioniProtocolloTransazione/Soap11
+informazioniProtocolloTransazione.soap11.url=http://127.0.0.1:8080/openspcoop2Diagnostica/InformazioniProtocolloTransazione/Soap11
 #informazioniProtocolloTransazione.soap11.username=INSERIRE_USERNAME
 #informazioniProtocolloTransazione.soap11.password=INSERIRE_PASSWORD
 
-informazioniProtocolloTransazione.soap12.url=http://127.0.0.1:8080/diagnostica/InformazioniProtocolloTransazione/Soap12
+informazioniProtocolloTransazione.soap12.url=http://127.0.0.1:8080/openspcoop2Diagnostica/InformazioniProtocolloTransazione/Soap12
 #informazioniProtocolloTransazione.soap12.username=INSERIRE_USERNAME
 #informazioniProtocolloTransazione.soap12.password=INSERIRE_PASSWORD
 

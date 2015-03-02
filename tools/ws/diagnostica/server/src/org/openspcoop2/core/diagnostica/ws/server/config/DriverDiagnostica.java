@@ -81,6 +81,7 @@ public class DriverDiagnostica {
 			try{
 				this.driver = new DriverMsgDiagnostici(jndiName, tipoDatabase, jndiProp, logDAO);
 			}catch(Exception e){
+				logDAO.error(e.getMessage(),e);
 				throw new Exception("Driver non inizializzato correttamente (Per ulteriori dettagli vedi log '*_sql')");
 			}
 			

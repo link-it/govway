@@ -28,8 +28,8 @@
 				<!-- org.openspcoop2.core.diagnostica.ws.client -->
 				<var name="packagesCompiled" value="org.openspcoop2.core.diagnostica.ws.client" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica.ws.client.utils" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.all" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.all" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.search" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.search" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_diagnostica_ws_client}"/>
@@ -82,13 +82,13 @@
 					</then>
 				</if>
 				<if>
-		 			<available file="${build_classes_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/all/package-info.class" type="file"/>
+		 			<available file="${build_classes_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/search/package-info.class" type="file"/>
 					<then>
 						<antcall target="build_jar_schema">
 							<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${build_diagnostica_ws_client}/classes"/>
-							<param name="compile_src_openspcoop2.SVN_ID_NAME" value="ws-diagnostica-client-all"/>
-							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**/org/openspcoop2/core/diagnostica/ws/client/*/all/*"/>
+							<param name="compile_src_openspcoop2.SVN_ID_NAME" value="ws-diagnostica-client-search"/>
+							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**/org/openspcoop2/core/diagnostica/ws/client/*/search/*"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_2" value="**/ws/client/utils/RequestContextUtils.class"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_3" value="**/org/openspcoop2/core/diagnostica/*.class"/> <!-- Classi rimaste non presenti in API -->
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_4" value="**/*Search*.wsdl"/>

@@ -239,8 +239,8 @@
     </xsd:complexType>
     <xsd:complexType name="dominio-id-traccia">
         <xsd:sequence>
-            <xsd:element name="identificativo-porta" type="xsd:string"/>
-            <xsd:element name="soggetto" type="dominio-soggetto"/>
+            <xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="soggetto" type="dominio-soggetto" minOccurs="0"/>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="dominio-id-traccia-soggetto">

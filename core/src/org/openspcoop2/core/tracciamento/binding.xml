@@ -207,8 +207,8 @@
   </mapping>
   <mapping name="dominio" class="org.openspcoop2.core.tracciamento.DominioIdTraccia">
     <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
-    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
-    <structure name="soggetto" field="soggetto" usage="required" map-as="_DominioSoggetto_Type"/>
+    <value name="identificativo-porta" field="identificativoPorta" usage="optional"/>
+    <structure name="soggetto" field="soggetto" usage="optional" map-as="_DominioSoggetto_Type"/>
   </mapping>
   <mapping name="dominio-id-traccia-soggetto" class="org.openspcoop2.core.tracciamento.DominioIdTracciaSoggetto">
     <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>

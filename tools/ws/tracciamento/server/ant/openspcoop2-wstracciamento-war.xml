@@ -16,8 +16,8 @@
 	</taskdef>
 	
 
-	<target name="preprocess_all" depends="concat_all">
-		<replace file="${tmp_jboss_conf}/jbossws-cxf.xml" token="@IMPLEMENTOR@" value="All"/>
+	<target name="preprocess_search" depends="concat_search">
+		<replace file="${tmp_jboss_conf}/jbossws-cxf.xml" token="@IMPLEMENTOR@" value="Search"/>
 		<replace dir="${tmp_jboss_conf}" token="@WAR_EXTENSION@" value=""/>  
 		<delete dir="${build_dir_tracciamento_ws}/wsdl" />
 		<mkdir dir="${build_dir_tracciamento_ws}/wsdl" />
@@ -42,10 +42,10 @@
 		</copy>
 	</target>
 
-	<target name="concat_all" depends="concat">
+	<target name="concat_search" depends="concat">
 		<concat destfile="${tmp_jboss_conf}/jbossws-cxf.xml">
 			<fileset file="deploy/cxf/jbossws-cxf.xml.head.part" />
-			<fileset file="deploy/cxf/jbossws-cxf.xml.all.part" />
+			<fileset file="deploy/cxf/jbossws-cxf.xml.search.part" />
 			<fileset file="deploy/cxf/jbossws-cxf.xml.tail.part" />
 		</concat>
 	</target>
@@ -58,7 +58,8 @@
 				<var name="ext_war" value="" />
 			</then>
 			<else>
-				<var name="ext_war" value="_${war_type}" />
+				<!-- <var name="ext_war" value="_${war_type}" /> -->
+				<var name="ext_war" value="" />
 			</else>
 		</if>
 	

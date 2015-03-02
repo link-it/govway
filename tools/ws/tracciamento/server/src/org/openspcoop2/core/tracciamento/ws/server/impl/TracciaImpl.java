@@ -274,7 +274,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 			
 		}
 	
-		if(filter.getBusta().getProtocollo()!=null && filter.getBusta().getProtocollo().getIdentificativo()!=null){
+		if(filter.getBusta()!=null && filter.getBusta().getProtocollo()!=null && filter.getBusta().getProtocollo().getIdentificativo()!=null){
 			filterSearch.setProtocollo(filter.getBusta().getProtocollo().getIdentificativo());
 		}
 		
@@ -283,7 +283,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 
 	private FiltroRicercaTracceConPaginazione toPaginatedFilterSearch(SearchFilterTraccia filter) throws ServiceException, NotImplementedException, Exception{
 	
-		FiltroRicercaTracce filterSearch = this.toFilterSearch(filter);
+		FiltroRicercaTracce filterSearch = this.toFilterSearch(filter, true);
 		
 		if(filter.getLimit()!=null) {
 			((FiltroRicercaTracceConPaginazione)filterSearch).setLimit(filter.getLimit());

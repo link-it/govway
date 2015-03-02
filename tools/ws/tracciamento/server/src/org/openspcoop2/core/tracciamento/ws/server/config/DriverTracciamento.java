@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 
 /**
-* DriverDiagnostica
+* DriverTracciamento
 *
 * @author Andrea Poli <apoli@link.it>
  * @author $Author$
@@ -80,6 +80,7 @@ public class DriverTracciamento {
 			try{
 				this.driver = new org.openspcoop2.pdd.logger.DriverTracciamento(jndiName, tipoDatabase, jndiProp, logDAO);
 			}catch(Exception e){
+				logDAO.error(e.getMessage(),e);
 				throw new Exception("Driver non inizializzato correttamente (Per ulteriori dettagli vedi log '*_sql')");
 			}
 			

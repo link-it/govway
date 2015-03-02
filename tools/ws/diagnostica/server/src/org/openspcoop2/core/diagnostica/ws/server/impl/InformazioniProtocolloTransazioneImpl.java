@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione;
 import org.openspcoop2.core.diagnostica.InformazioniProtocolloTransazione;
+import org.openspcoop2.core.diagnostica.Proprieta;
 import org.openspcoop2.core.diagnostica.constants.TipoPdD;
 import org.openspcoop2.core.diagnostica.ws.server.InformazioniProtocolloTransazioneSearch;
 import org.openspcoop2.core.diagnostica.ws.server.config.Constants;
@@ -242,7 +243,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 
 	private FiltroRicercaDiagnosticiConPaginazione toPaginatedFilterSearch(SearchFilterInformazioniProtocolloTransazione filter) throws ServiceException, NotImplementedException, Exception{
 	
-		FiltroRicercaDiagnostici filterSearch = this.toFilterSearch(filter);
+		FiltroRicercaDiagnostici filterSearch = this.toFilterSearch(filter, true);
 		
 		if(filter.getLimit()!=null) {
 			((FiltroRicercaDiagnosticiConPaginazione)filterSearch).setLimit(filter.getLimit());
@@ -266,7 +267,19 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 
 	
 
-
+	private void cleanIdDB(InformazioniProtocolloTransazione info){
+		if(info.getProtocollo()!=null){
+			if(info.getProtocollo().sizeProprietaList()>0){
+				for (int i = 0; i < info.getProtocollo().sizeProprietaList(); i++) {
+					Proprieta p = info.getProtocollo().getProprieta(i);
+					if(org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici.IDDIAGNOSTICI.equals(p.getNome())){
+						info.getProtocollo().removeProprieta(i);
+						break;
+					}
+				}
+			}
+		}
+	}
 	
 
 
@@ -284,7 +297,9 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 				List<MsgDiagnosticoCorrelazione> resultOp2 = this.diagnosticaService.getDriver().getInfoCorrelazioniMessaggiDiagnostici(pagExp);
 				if(resultOp2!=null && resultOp2.size()>0){
 					for (MsgDiagnosticoCorrelazione msgDiagnosticoCorrelazione : resultOp2) {
-						result.add(msgDiagnosticoCorrelazione.getInformazioniProtocolloTransazione());
+						InformazioniProtocolloTransazione info = msgDiagnosticoCorrelazione.getInformazioniProtocolloTransazione();
+						this.cleanIdDB(info);
+						result.add(info);
 					}
 				}
 			}catch(DriverMsgDiagnosticiNotFoundException notFound){
@@ -327,6 +342,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 					throw new MultipleResultException("Found "+resultOp2.size()+" elements");
 				}
 				result = resultOp2.get(0).getInformazioniProtocolloTransazione();
+				this.cleanIdDB(result);
 			}catch(DriverMsgDiagnosticiNotFoundException notFound){
 				throw new NotFoundException(notFound.getMessage(),notFound);
 			}
@@ -414,6 +430,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 					throw new MultipleResultException("Found "+resultOp2.size()+" elements");
 				}
 				result = resultOp2.get(0).getInformazioniProtocolloTransazione();
+				this.cleanIdDB(result);
 			}catch(DriverMsgDiagnosticiNotFoundException notFound){
 				throw new NotFoundException(notFound.getMessage(),notFound);
 			}
