@@ -101,7 +101,7 @@ public class FiltroDuplicatiEGov {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(repository);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);

@@ -132,7 +132,7 @@ public class SOAPMessageScorretti {
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		msg.getSOAPPartAsBytes();
 
@@ -188,7 +188,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryHeaderDontUnderstandPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.setContentType("application/soap+xml"); // ContentType per messaggi SOAP 1.2
 			client.connectToSoapEngine();
 			client.setMessage(msg);
@@ -250,7 +250,7 @@ public class SOAPMessageScorretti {
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		
 		Name nameMustUnderstand = new PrefixedQName("http://openspcoop.exampleMustUnderstand.unknown/1","headerUnknownA",CostantiPdD.OPENSPCOOP2);
@@ -347,7 +347,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryHeaderDontUnderstandPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -409,7 +409,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		xml = xml.replace("http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/2003/05/soap-envelope"); // imposto namespace di SOAP 1.2
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
@@ -484,7 +484,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespaceErratoPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -580,7 +580,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		xml = xml.replace("</ns1:getQuote>", "<ns1:getQuote>"); // imposto struttura xml errata
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
@@ -664,7 +664,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		xml = xml.replace("</soapenv:Body>", "<soapenv:Body>"); // imposto struttura xml errata
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
@@ -744,7 +744,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		xml = xml.replace("</symbol>", "<symbol>"); // imposto struttura xml errata
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
@@ -833,7 +833,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		xml = xml.replace("</ns1:getQuote>", "<ns1:getQuote>"); // imposto struttura xml errata
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
@@ -909,7 +909,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		xml = xml.replace("</soapenv:Body>", "<soapenv:Body>"); // imposto struttura xml errata
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
@@ -982,7 +982,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		xml = xml.replace("</symbol>", "<symbol>"); // imposto struttura xml errata
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
@@ -1072,7 +1072,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1150,7 +1150,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1227,7 +1227,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1314,7 +1314,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPAStateful);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1390,7 +1390,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPAStateful);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1467,7 +1467,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPAStateful);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1564,7 +1564,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPA_BustaErrata);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1645,7 +1645,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErrataPA_Stateful_BustaErrata);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1725,7 +1725,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErratoPA_RispostaApplicativa);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1808,7 +1808,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErratoPA_RispostaApplicativa);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1890,7 +1890,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErratoPA_RispostaApplicativa);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1981,7 +1981,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErratoPA_Stateful_RispostaApplicativa);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2069,7 +2069,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErratoPA_Stateful_RispostaApplicativa);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2151,7 +2151,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLErratoPA_Stateful_RispostaApplicativa);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2235,7 +2235,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 	
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
 
@@ -2315,7 +2315,7 @@ public class SOAPMessageScorretti {
 		Date dataInizioTest = DateManager.getDate();
 		
 		// costruzione busta
-		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+		String xml = FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 		msg.getSOAPPartAsBytes();
 

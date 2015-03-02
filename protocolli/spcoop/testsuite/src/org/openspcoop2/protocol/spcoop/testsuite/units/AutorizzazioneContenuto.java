@@ -29,14 +29,17 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
@@ -45,6 +48,8 @@ import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -65,12 +70,15 @@ public class AutorizzazioneContenuto {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "AutorizzazioneContenuto";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+			new CooperazioneBase(false, SOAPVersion.SOAP11, this.info, 
+					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
 
 	private static boolean addIDUnivoco = true;
@@ -141,7 +149,7 @@ public class AutorizzazioneContenuto {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
@@ -261,7 +269,7 @@ public class AutorizzazioneContenuto {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorysincronoPA_KO);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);

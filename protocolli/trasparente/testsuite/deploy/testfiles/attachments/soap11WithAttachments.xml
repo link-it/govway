@@ -1,0 +1,22 @@
+
+------=_Part_0_6330713.1171639717331
+Content-Type: text/xml; charset=UTF-8
+Content-Transfer-Encoding: binary
+Content-Id: <56D2051AED8F9598BB61721D8C95BA6F>
+
+<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><eseguiServizio xmlns="http://openspcoop.org/example"><Richiesta>&lt;persona nome=&quot;mario&quot; cognome=&quot;rossi&quot;/&gt;</Richiesta><attachInZIP1 href="cid:D559E7E9E29638A15AD37B90FCAEAD53" xmlns=""/><attachInZIP2 href="cid:FF5ED4B1298A2E36CF986C32638C5257" xmlns=""/></eseguiServizio></soapenv:Body></soapenv:Envelope>
+------=_Part_0_6330713.1171639717331
+Content-Type: text/plain
+Content-Transfer-Encoding: binary
+Content-Id: <D559E7E9E29638A15AD37B90FCAEAD53>
+
+HELLO WORLD
+
+------=_Part_0_6330713.1171639717331
+Content-Type: text/plain
+Content-Transfer-Encoding: binary
+Content-Id: <FF5ED4B1298A2E36CF986C32638C5257>
+
+HELLO WORLD
+
+------=_Part_0_6330713.1171639717331--

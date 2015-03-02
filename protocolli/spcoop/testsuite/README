@@ -26,10 +26,6 @@ Installare l'applicazione OpenSPCoop2TestSuiteServer copiando il file testsuite/
 L'applicazione richiede l'installazione dei datasource
 - org.openspcoop2.dataSource: database di gestione dei messaggi della Porta di Dominio
 - org.openspcoop2.dataSource.tracciamento: database di tracciamento della Porta di Dominio
-Esempi di datasource sono forniti in 
-- ./testsuite/deploy/datasource/jboss/openspcoop2-ds.xml
-- ./testsuite/deploy/datasource/jboss/tracciamento-ds.xml
-
 
 L'esecuzione dei test comporta una fase di pre-configurazione dove vengono installati in /etc/openspcoop le configurazioni necessarie per i test
 Per configurare la porta con gli scenari di esempio utilizzare il comando:

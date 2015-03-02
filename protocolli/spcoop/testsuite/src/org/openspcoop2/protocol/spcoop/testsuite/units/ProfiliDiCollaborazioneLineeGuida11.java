@@ -36,14 +36,19 @@ import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsi
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
@@ -64,12 +69,15 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "ProfiliDiCollaborazioneLineeGuida11";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
 
 	private static boolean addIDUnivoco = true;
@@ -1390,7 +1398,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_COOPERAZIONE_AFFIDABILE_LINEE_GUIDA);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
@@ -1486,11 +1494,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseTESTCollaborazioneDeprecata = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI, Inoltro.SENZA_DUPLICATI);
+	private CooperazioneBaseInformazioni infoTESTCollaborazioneDeprecata = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseTESTCollaborazioneDeprecata = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoTESTCollaborazioneDeprecata, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	Repository repositorySincronoTESTCollaborazioneDeprecata=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,"CollaborazioneDeprecata"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")

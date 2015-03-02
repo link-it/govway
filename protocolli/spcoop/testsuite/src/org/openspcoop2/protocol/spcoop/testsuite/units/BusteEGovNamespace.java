@@ -140,7 +140,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespace1);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -256,7 +256,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespace2);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -380,7 +380,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespace3);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -491,7 +491,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespace4);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -614,7 +614,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespace5);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -732,7 +732,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespace6);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -850,7 +850,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryNamespaceErrato1);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -971,7 +971,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActorMustUnderstand1);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1088,7 +1088,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActorMustUnderstand2);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1209,7 +1209,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActorMustUnderstand3);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1391,7 +1391,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActorMustUnderstand4);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1510,7 +1510,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActorMustUnderstand5);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1642,7 +1642,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryManifest1);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1775,7 +1775,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryManifest2);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -1907,7 +1907,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryManifest3);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2036,7 +2036,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryManifest4);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2173,7 +2173,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryManifest5);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2308,7 +2308,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryErroreManifest1);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2451,7 +2451,7 @@ public class BusteEGovNamespace {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryErroreManifest2);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);

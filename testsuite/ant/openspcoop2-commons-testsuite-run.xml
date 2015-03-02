@@ -1,8 +1,10 @@
-<project name="openspcoop2-compile-spcoop-testsuite-run">
+<project name="openspcoop2-commmons-testsuite-run">
     <description>
         Esecuzione dei test
     </description>
 
+	<import file="openspcoop2-commons-testsuite-config.xml" />
+	
 	
 	<!-- estensione di ant (if .... ) -->
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
@@ -15,6 +17,7 @@
 	
 	<!--  ************* RUN TESTSUITE FUNZIONALITA PdD **************** -->
 
+	
 
 	<!-- configurazione default -->
 	<property name="testHaltOnFailure" value="true"/>
@@ -24,8 +27,7 @@
 			<equals arg1="${reinizializzaConfigurazione}" arg2="true" />
 			<then>
 				<!-- Preparazione Ambiente -->
-				<antcall target="creazioneFileConfigurazioneDefault"/>
-				<antcall target="preparazioneAmbienteCore"/>
+				<antcall target="preparazioneAmbienteDefault_engine"/>
 			</then>
 		</if>
 
@@ -33,7 +35,7 @@
 		<echo message="Avvio testSuite OpenSPCoop (gruppo: ${group}) (haltOnFailure:${testHaltOnFailure})" />
 		<testng classpathref="classpath_run"
             outputdir="${output}/default"
-            listeners="org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer"
+            listeners="${testsuite_transformer}"
             haltonfailure="${testHaltOnFailure}" groups="${group}">
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 		</testng>
@@ -45,7 +47,7 @@
 				<echo message="Check risorse utilizzate (gruppo: RisorseEsterne)" />
 				<testng classpathref="classpath_run"
 		            outputdir="${output}/defaultRisorseUtilizzate"
-		            listeners="org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer"
+		            listeners="${testsuite_transformer}"
 		            haltonfailure="${testHaltOnFailure}" groups="RisorseEsterne">
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 				</testng>
@@ -69,25 +71,15 @@
 			<equals arg1="${reinizializzaConfigurazione}" arg2="true" />
 			<then>
 				<!-- Preparazione Ambiente -->
-				<antcall target="creazioneFileConfigurazioneConnectionNew"/>
-				<antcall target="preparazioneAmbienteCore"/>
+				<antcall target="preparazioneAmbienteNewConnection_engine"/>
 			</then>
 		</if>
 
 		<!-- Chiamata per TestNG -->
-		<!--
-           <echo message="Avvio testSuite OpenSPCoop con la configurazione con connection new" />
-           <testng classpathref="classpath_run"
-               outputdir="${output}/connectionNew"
-               listeners="org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer"
-               haltonfailure="${testHaltOnFailure}">
-               <classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
-           </testng>
-        -->
 		<echo message="Avvio testSuite OpenSPCoop (gruppo: ${group})" />
 		<testng classpathref="classpath_run"
              outputdir="${output}/connectionNew"
-             listeners="org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer"
+             listeners="${testsuite_transformer}"
              haltonfailure="${testHaltOnFailure}" groups="${group}">
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 		</testng>
@@ -99,7 +91,7 @@
 				<echo message="Check risorse utilizzate (gruppo: RisorseEsterne)" />
 				<testng classpathref="classpath_run"
 		            outputdir="${output}/defaultRisorseUtilizzate"
-		            listeners="org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer"
+		            listeners="${testsuite_transformer}"
 		            haltonfailure="${testHaltOnFailure}" groups="RisorseEsterne">
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 				</testng>
@@ -133,100 +125,11 @@
 
 		<mkdir dir="risultati-testsuite-completa"/>
 			
-		<!-- TODO: impostare OpenSPCoop.ear Correttamente -->
-		<available property="CheckOpenSPCoopDir" type="dir" file="${server_ear}"/>
-		<if>
-			<not>
-				<istrue value="${CheckOpenSPCoopDir}"/>
-			</not>
-			<then>
-				<fail message="Archivio installato nell'application server [${server_ear}] non esistente, o non scompattato come directory"/>
-			</then>
-		</if>
-		<!-- logger.log4j.properties -->
-		<replace file="${server_ear}/properties/logger.log4j.properties" 
-				 token="log4j.category.openspcoop2.tracciamento" 
-				 value="#log4j.category.openspcoop2.tracciamento"/>
-		<replace file="${server_ear}/properties/logger.log4j.properties" 
-				 token="log4j.category.openspcoop2.msgDiagnostico" 
-				 value="#log4j.category.openspcoop2.msgDiagnostico"/>
-		<replace file="${server_ear}/properties/logger.log4j.properties" 
-				 token="log4j.category.openspcoop2.portaDiDominio" 
-				 value="#log4j.category.openspcoop2.portaDiDominio"/>
-		<replace file="${server_ear}/properties/logger.log4j.properties" 
-				 token="log4j.category.openspcoop2.integrationManager" 
-				 value="#log4j.category.openspcoop2.integrationManager"/>
-		<replace file="${server_ear}/properties/logger.log4j.properties" 
-				 token="log4j.category.openspcoop2.dump" 
-				 value="#log4j.category.openspcoop2.dump"/>
-		<replace file="${server_ear}/properties/logger.log4j.properties" 
-				 token="log4j.category.openspcoop2.core" 
-				 value="#log4j.category.openspcoop2.core"/>
-    	<concat destfile="${server_ear}/properties/logger.log4j.properties" append="yes">   
-# IMPOSTAZIONI - TESTSUITE #
-log4j.category.openspcoop2.tracciamento=ALL,openspcoop2.tracciamento.file
-log4j.category.openspcoop2.msgDiagnostico=ALL,openspcoop2.msgDiagnostico.file
-log4j.category.openspcoop2.portaDiDominio=ALL,openspcoop2.portaDiDominio.file
-log4j.category.openspcoop2.integrationManager=ALL,openspcoop2.integrationManager.file
-log4j.category.openspcoop2.dump=ALL,openspcoop2.dump.file
-log4j.category.openspcoop2.core=ALL,openspcoop2.core.file
-    	</concat>
-		<!-- openspcoop2.properties -->
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="org.openspcoop2.pdd.repository.tipoDatabase" 
-				 value="#org.openspcoop2.pdd.repository.tipoDatabase"/>
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString" 
-				 value="#org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString"/>
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="org.openspcoop2.pdd.services.ricezioneBusteEGov.soapAction.checkQuotedString" 
-				 value="#org.openspcoop2.pdd.services.ricezioneBusteEGov.soapAction.checkQuotedString"/>		
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="org.openspcoop2.pdd.autorizzazioneSPCoop.tipo" 
-				 value="#org.openspcoop2.pdd.autorizzazioneSPCoop.tipo"/>		
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="org.openspcoop2.pdd.services.pd.gestoriCredenziali" 
-				 value="#org.openspcoop2.pdd.services.pd.gestoriCredenziali"/>		
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="org.openspcoop2.pdd.services.pa.gestoriCredenziali" 
-				 value="#org.openspcoop2.pdd.services.pa.gestoriCredenziali"/>	
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali" 
-				 value="#org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali"/>
-    	<concat destfile="${server_ear}/properties/openspcoop2.properties" append="yes">   
-# IMPOSTAZIONI - TESTSUITE #
-org.openspcoop2.pdd.repository.tipoDatabase=@@TIPO_DATABASE@@
-org.openspcoop2.pdd.autorizzazioneBuste.tipo=registro
-org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString=true
-org.openspcoop2.pdd.services.ricezioneBusteEGov.soapAction.checkQuotedString=true
-org.openspcoop2.pdd.services.pd.gestoriCredenziali=testOpenSPCoop
-org.openspcoop2.pdd.services.pa.gestoriCredenziali=testOpenSPCoop
-org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali=testOpenSPCoop
-    	</concat>
-		<replace file="${server_ear}/properties/openspcoop2.properties" 
-				 token="@@TIPO_DATABASE@@" 
-				 value="${openspcoop2.tipoDatabase}"/>
-		<!-- jar per handlers -->
-		<copy file="${dist}/testsuite_handler.jar" todir="${server_ear}/lib"/>
-		<!-- redeploy -->
-		<!-- touch file="${server_ear}/META-INF/application.xml"/ -->
-		<exec executable="service">
-			<arg value="jbossas"/>
-		        <arg value="restart"/>
-		</exec>
-
-		<echo message="Attendo 1 minuto in modo da dare tempo a OpenSPCoop di avviarsi correttamente ..."/>
-		<sleep milliseconds="60000"/>
-		
 		<!-- tests -->
 		<property name="testUnitsDir" location="src/org/openspcoop/testsuite/test/units/"/>
 		<fileset dir="${testUnitsDir}" id="testsPathCompleto">
 		        <include name="*.java"/>
 		 		<exclude name="LogXML.java"/>
-		 		<exclude name="GestioneConfigurazionePdD.java"/>
-		 		<exclude name="GestioneGestoreEventi.java"/>
-		 		<exclude name="GestioneRegistroServizi.java"/>
-		 		<exclude name="CooperazioneSPCoopBase.java"/>
 		</fileset>
 		<pathconvert pathsep=" " property="testsEstensioneJava" refid="testsPathCompleto">
 		         <map from="${testUnitsDir}/" to=""/>
@@ -266,10 +169,11 @@ org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali=testOpenSPCoo
 		    	password="${openspcoop2.password}" 
 				classpathref="classpath_run">
 UPDATE messaggi SET proprietario ='GestoreMessaggi';
-delete from repository_egov ;
+delete from repository_buste ;
 delete from lista_eccezioni;
 delete from lista_riscontri;
 delete from lista_trasmissioni;
+delete from lista_ext_protocol_info;			
 delete from asincrono;
 delete from riscontri_da_ricevere;
 delete from msg_servizi_applicativi;

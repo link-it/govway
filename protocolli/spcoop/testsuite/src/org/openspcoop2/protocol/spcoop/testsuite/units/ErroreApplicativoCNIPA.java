@@ -125,7 +125,7 @@ public class ErroreApplicativoCNIPA {
 			client.connectToSoapEngine();
 			if(username!=null && password!=null)
 				client.setAutenticazione(username,password);
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -377,7 +377,7 @@ public class ErroreApplicativoCNIPA {
 			client.connectToSoapEngine();
 			if(username!=null && password!=null)
 				client.setAutenticazione(username,password);
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -601,7 +601,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -847,7 +847,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -936,7 +936,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1012,7 +1012,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1249,7 +1249,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1478,7 +1478,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1709,7 +1709,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1940,7 +1940,7 @@ public class ErroreApplicativoCNIPA {
 			if(servizioApplicativoFruitore!=null){
 				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
 			}
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){

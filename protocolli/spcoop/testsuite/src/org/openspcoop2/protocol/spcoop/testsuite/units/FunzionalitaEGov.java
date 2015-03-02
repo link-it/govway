@@ -109,7 +109,7 @@ public class FunzionalitaEGov {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_COOPERAZIONE_AFFIDABILE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
@@ -282,7 +282,7 @@ public class FunzionalitaEGov {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryConsengaConFiltroDuplicati);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();				
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -336,7 +336,7 @@ public class FunzionalitaEGov {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryConsegnaAffidabileConFiltroDuplicati);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -466,7 +466,7 @@ public class FunzionalitaEGov {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryBustaConOraRegistrazioneIntoIDEGovScaduta);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -610,7 +610,7 @@ public class FunzionalitaEGov {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryBustaConOraRegistrazioneScaduta);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -748,7 +748,7 @@ public class FunzionalitaEGov {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryConsegnaAffidabileConScadenza);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -854,7 +854,7 @@ public class FunzionalitaEGov {
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_COOPERAZIONE_CON_ID_DI_COLLABORAZIONE);
 		client.connectToSoapEngine();
-		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 		client.run();
 	}
 	@DataProvider (name="CooperazioneConIDDiCollaborazione")
@@ -1009,7 +1009,7 @@ public class FunzionalitaEGov {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
@@ -1142,7 +1142,7 @@ public class FunzionalitaEGov {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
@@ -1276,7 +1276,7 @@ public class FunzionalitaEGov {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setAttesaTerminazioneMessaggi(false);
 			client.run();
 		}catch(Exception e){
@@ -1293,7 +1293,7 @@ public class FunzionalitaEGov {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setAttesaTerminazioneMessaggi(false);
 			client.run();
 		}catch(Exception e){
@@ -1537,7 +1537,7 @@ public class FunzionalitaEGov {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
@@ -1681,7 +1681,7 @@ public class FunzionalitaEGov {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();

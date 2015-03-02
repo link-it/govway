@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.testsuite.units.UnitsTestSuiteProperties;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -39,7 +40,7 @@ import org.openspcoop2.utils.Utilities;
  * @version $Rev$, $Date$
  */
 
-public class TestSuiteProperties {
+public class TestSuiteProperties implements UnitsTestSuiteProperties {
 
 	/** Logger utilizzato per errori eventuali. */
 	private static Logger log = Logger.getLogger("TestSuiteProperties");
@@ -130,24 +131,25 @@ public class TestSuiteProperties {
 
 	/* ********  M E T O D I  ******** */
 
-	/**
-	 * Ritorna Servizio di trace
-	 *
-	 */
-	public String getServizioTracer(){
+	@Override
+	public String getApplicationServerVersion() {
 		try{
-			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.trace").trim();
+			return org.openspcoop2.protocol.spcoop.testsuite.core.Utilities.readApplicationServerVersion();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.openspcoop.trace':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della versione dell'A.S.:"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}
 	}
+	
+	
+
 	/**
 	 * Ritorna Servizio di ricezione contenuti applicativi della Porta di Dominio
 	 * della porta di dominio fruitore
 	 *
 	 */
+	@Override
 	public String getServizioRicezioneContenutiApplicativiFruitore(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PD.fruitore").trim();
@@ -162,6 +164,7 @@ public class TestSuiteProperties {
 	 * della porta di dominio erogatore
 	 *
 	 */
+	@Override
 	public String getServizioRicezioneContenutiApplicativiErogatore(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PD.erogatore").trim();
@@ -176,6 +179,7 @@ public class TestSuiteProperties {
 	 * Ritorna Servizio di ricezione contenuti applicativi della Porta di Dominio frutore (https con autenticazione client)
 	 *
 	 */
+	@Override
 	public String getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PD.fruitore.https").trim();
@@ -187,11 +191,12 @@ public class TestSuiteProperties {
 	}
 	
 	/**
-	 * Ritorna Servizio di ricezione buste egov della Porta di Dominio
+	 * Ritorna Servizio di ricezione buste della Porta di Dominio
 	 * della porta di dominio fruitore
 	 *
 	 */
-	public String getServizioRicezioneBusteEGovFruitore(){
+	@Override
+	public String getServizioRicezioneBusteFruitore(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PA.fruitore").trim();
 		}catch(Exception e){
@@ -201,11 +206,12 @@ public class TestSuiteProperties {
 		}
 	}
 	/**
-	 * Ritorna Servizio di ricezione buste egov della Porta di Dominio
+	 * Ritorna Servizio di ricezione buste della Porta di Dominio
 	 * della porta di dominio erogatore
 	 *
 	 */
-	public String getServizioRicezioneBusteEGovErogatore(){
+	@Override
+	public String getServizioRicezioneBusteErogatore(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PA.erogatore").trim();
 		}catch(Exception e){
@@ -216,10 +222,11 @@ public class TestSuiteProperties {
 	}
 	
 	/**
-	 * Ritorna Servizio di ricezione buste egov della Porta di Dominio erogatore (https con autenticazione client)
+	 * Ritorna Servizio di ricezione buste della Porta di Dominio erogatore (https con autenticazione client)
 	 *
 	 */
-	public String getServizioRicezioneBusteEGovErogatore_httpsConAutenticazioneClient(){
+	@Override
+	public String getServizioRicezioneBusteErogatore_httpsConAutenticazioneClient(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PA.erogatore.https").trim();
 		}catch(Exception e){
@@ -233,7 +240,8 @@ public class TestSuiteProperties {
 	 * Ritorna la location del file da utilizzare per la spedizione di messaggi Soap
 	 *
 	 */
-	public String getSoapFileName(){
+	@Override
+	public String getSoap11FileName(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.files.soap").trim();
 		}catch(Exception e){
@@ -241,6 +249,11 @@ public class TestSuiteProperties {
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}
+	}
+	@Override
+	public String getSoap12FileName(){
+		// non usato in spcoop
+		return null;
 	}
 	
 	/**
@@ -372,7 +385,8 @@ public class TestSuiteProperties {
 	 * Ritorna la location del file da utilizzare per la spedizione di messaggi Soap With Attachments
 	 *
 	 */
-	public String getSoapWithAttachmentsFileName(){
+	@Override
+	public String getSoap11WithAttachmentsFileName(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.files.soapWithAttachments").trim();
 		}catch(Exception e){
@@ -380,6 +394,11 @@ public class TestSuiteProperties {
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}
+	}
+	@Override
+	public String getSoap12WithAttachmentsFileName(){
+		// non usato in spcoop
+		return null;
 	}
 	
 	
@@ -532,6 +551,7 @@ public class TestSuiteProperties {
 	 * Ritorna il Numero di Worker per Test
 	 *
 	 */
+	@Override
 	public int getWorkerNumber(){
 		try{
 			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.workerNumber").trim());
@@ -547,6 +567,7 @@ public class TestSuiteProperties {
 	 * Ritorna la dimensione del Pool dei thread
 	 *
 	 */
+	@Override
 	public int getPoolSize(){
 		try{
 			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.poolSize").trim());
@@ -565,9 +586,9 @@ public class TestSuiteProperties {
 	 */
 	public long getIntervalloGenerazioneRispostaAsincrona(){
 		try{
-			return Long.parseLong(this.reader.getProperty("org.openspcoop2.testsuite.generazioneRispostAsincrona").trim());
+			return Long.parseLong(this.reader.getProperty("org.openspcoop2.testsuite.generazioneRispostaAsincrona").trim());
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.generazioneRispostAsincrona':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.generazioneRispostaAsincrona':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return -1;
 		}
@@ -582,6 +603,7 @@ public class TestSuiteProperties {
 	 * Ritorna l'indicazione se sequenzializzare i test
 	 *
 	 */
+	@Override
 	public boolean sequentialTests(){
 		try{
 			return Boolean.parseBoolean(this.reader.getProperty("org.openspcoop2.testsuite.sequential").trim());
@@ -728,6 +750,7 @@ public class TestSuiteProperties {
 	 * Ritorna il  Tempo di attesa in millisecondi, prima della verifica sul database
 	 *
 	 */
+	@Override
 	public long timeToSleep_verificaDatabase(){
 		try{
 			return Long.parseLong(this.reader.getProperty("org.openspcoop2.testsuite.repository.timeToSleep").trim());
@@ -742,6 +765,7 @@ public class TestSuiteProperties {
 	 * Ritorna true se devono essere verificati la terminazione dei msg sul database, prima della verifica sul database
 	 *
 	 */
+	@Override
 	public boolean attendiTerminazioneMessaggi_verificaDatabase(){
 		try{
 			return Boolean.parseBoolean(this.reader.getProperty("org.openspcoop2.testsuite.repository.attesaTerminazioneMessaggi").trim());
@@ -948,6 +972,7 @@ public class TestSuiteProperties {
 	
 	
 	
+	@Override
 	public String getLogDirectoryOpenSPCoop(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.log").trim();
@@ -961,6 +986,7 @@ public class TestSuiteProperties {
 	
 	
 	
+	@Override
 	public String getJMXFactory(){
 		try{
 			return this.reader.getProperty("jmx.factory").trim();
@@ -970,6 +996,7 @@ public class TestSuiteProperties {
 			return null;
 		}
 	}
+	@Override
 	public String getJMXServer(){
 		try{
 			return this.reader.getProperty("jmx.server").trim();
@@ -979,6 +1006,7 @@ public class TestSuiteProperties {
 			return null;
 		}
 	}
+	@Override
 	public String getJMXServiceURL(){
 		try{
 			return this.reader.getProperty("jmx.service.url").trim();
@@ -988,6 +1016,7 @@ public class TestSuiteProperties {
 			return null;
 		}
 	}
+	@Override
 	public String getJMXServiceURL(String applicationServer){
 		try{
 			String url = this.reader.getProperty("jmx.service.url."+applicationServer);
@@ -1003,6 +1032,7 @@ public class TestSuiteProperties {
 			return null;
 		}
 	}
+	@Override
 	public String getJMXUsername(){
 		try{
 			return this.reader.getProperty("jmx.username").trim();
@@ -1012,6 +1042,7 @@ public class TestSuiteProperties {
 			return null;
 		}
 	}
+	@Override
 	public String getJMXPassword(){
 		try{
 			return this.reader.getProperty("jmx.password").trim();
@@ -1098,6 +1129,7 @@ public class TestSuiteProperties {
 	
 	
 	
+	@Override
 	public boolean isSoapEngineAxis14(){
 		try{
 			return "axis14".equals(this.reader.getProperty("org.openspcoop2.testsuite.soapEngine").trim());
@@ -1107,6 +1139,7 @@ public class TestSuiteProperties {
 			return false;
 		}
 	}
+	@Override
 	public boolean isSoapEngineCxf(){
 		try{
 			return "cxf".equals(this.reader.getProperty("org.openspcoop2.testsuite.soapEngine").trim());
@@ -1116,6 +1149,7 @@ public class TestSuiteProperties {
 			return false;
 		}
 	}
+
 	
 	
 }

@@ -125,7 +125,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -211,7 +211,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
 			client.connectToSoapEngine();
 			client.setAutenticazione(username,password);
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -274,7 +274,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
 			client.connectToSoapEngine();
 			client.setAutenticazione(username,password);
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -331,7 +331,7 @@ public class RichiesteApplicativeScorrette {
 			client.connectToSoapEngine();
 			TestSuiteProperties testsuiteProperties = TestSuiteProperties.getInstance();
 			client.setProperty(testsuiteProperties.getServizioApplicativoTrasporto(),"ServizioApplicativoNonEsistente");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -395,7 +395,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONTENT_BASED_EXAMPLE1);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -445,7 +445,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_URL_BASED_EXAMPLE1);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -495,7 +495,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_URL_FORM_BASED_EXAMPLE1);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -545,7 +545,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_INPUT_BASED_EXAMPLE1);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -606,7 +606,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_EXAMPLE);
 			client.connectToSoapEngine();
 			client.setAutenticazione("adminSilY", "123456");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -664,7 +664,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_INESISTENTE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -876,7 +876,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_CORRELATO_NON_ESISTENTE);
 			client.connectToSoapEngine();
 			client.setAutenticazione("ProfiloAsincrono_richiestaSincrona_testRichiesteApplicativeScorrette", "123456");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -924,7 +924,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_ASIMMETRICO_CORRELATO_NON_ESISTENTE);
 			client.connectToSoapEngine();
 			client.setAutenticazione("ProfiloAsincrono_richiestaSincrona_testRichiesteApplicativeScorrette", "123456");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -988,7 +988,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA);
 			client.connectToSoapEngine();
 			client.setProperty(testsuiteProperties.getRiferimentoAsincronoTrasporto(), "ID_EGOV_XXX");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1061,7 +1061,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA);
 			client.connectToSoapEngine();
 			client.setProperty(testsuiteProperties.getRiferimentoAsincronoTrasporto(), "ID_EGOV_XXX");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1138,7 +1138,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_PD_SENZA_AUTENTICAZIONE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1200,7 +1200,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA);
 			client.connectToSoapEngine();
 			client.setAutenticazione("adminSilY", "123456");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1261,7 +1261,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_MESSAGE_BOX_INVOCAZIONE_PER_RIFERIMENTO);
 			client.connectToSoapEngine();
 			client.setAutenticazione("gop1", "123456");
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1324,7 +1324,7 @@ public class RichiesteApplicativeScorrette {
 			
 			Reporter.log("Pubblico un messaggio");
 			SOAPEngine utility = new SOAPEngine(null);
-			utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,false);
+			utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,false);
 			Message msgAxis = utility.getRequestMessage();
 			idEGov = IntegrationManager.gestioneProfiloOneway(CostantiTestSuite.PORTA_DELEGATA_MESSAGE_BOX, null, null, null,msgAxis,false);
 			try{
@@ -1337,7 +1337,7 @@ public class RichiesteApplicativeScorrette {
 				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"),
 						"adminSilX", "123456");
 			IntegrationManagerMessage msg = new IntegrationManagerMessage();
-			msg.setMessage(org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			msg.setMessage(org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 			im.invocaPortaDelegataPerRiferimento(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC, msg, idEGov);
 			
 			throw new Exception("Metodo invocaPortaDelegataPerRiferimento non ha causato errori");
@@ -1402,7 +1402,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_PROFILO_SINCRONO);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1468,7 +1468,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_CONFERMA_RICEZIONE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1515,7 +1515,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_FILTRO_DUPLICATI);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1562,7 +1562,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_ID_COLLABORAZIONE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1632,7 +1632,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_URL_BASED);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1709,7 +1709,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_XSD);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1767,7 +1767,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_WSDL);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -1825,7 +1825,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_OPENSPCOOP);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -2337,7 +2337,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_NON_INVOCABILE_SENZA_AZIONE);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -2400,7 +2400,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ALLEGA_BODY);
 			client.connectToSoapEngine();
-			client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+			client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -2463,7 +2463,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_SCARTA_BODY);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -2529,7 +2529,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
 			client.connectToSoapEngine();
 			// NOTA: invio un messaggio con SOAPAction malformata 
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setSoapAction("\"soapAction");
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
@@ -2676,7 +2676,7 @@ public class RichiesteApplicativeScorrette {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -2737,7 +2737,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
 			client.setContentType("application/soap+xml"); // ContentType per messaggi SOAP 1.2
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -2795,7 +2795,7 @@ public class RichiesteApplicativeScorrette {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-			String xml = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoapFileName());
+			String xml = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
 			xml = xml.replace("http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/2003/05/soap-envelope"); // imposto namespace di SOAP 1.2
 			Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
 			msg.getSOAPPartAsBytes();
@@ -2897,7 +2897,7 @@ public class RichiesteApplicativeScorrette {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -2994,7 +2994,7 @@ public class RichiesteApplicativeScorrette {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
 			client.connectToSoapEngine();
 			// NOTA: invio un messaggio malformato forzando il test in modo da mangare un soap with attachments come fosse un messaggio senza attachments
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 			//client.setMessaggioXMLRichiesta("CONTENTUO_ERRATO".getBytes()); QUESTO non rilancia il soap fault
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
@@ -3092,7 +3092,7 @@ public class RichiesteApplicativeScorrette {
 //			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
 //			client.connectToSoapEngine();
 //			// NOTA: invio un messaggio malformato forzando il test in modo da mangare un soap with attachments come fosse un messaggio senza attachments
-//			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+//			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 //			//client.setMessaggioXMLRichiesta("CONTENTUO_ERRATO".getBytes()); QUESTO non rilancia il soap fault
 //			client.setRispostaDaGestire(true);
 //			// AttesaTerminazioneMessaggi
@@ -3160,7 +3160,7 @@ public class RichiesteApplicativeScorrette {
 
 		java.io.FileInputStream fin = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();

@@ -42,10 +42,14 @@ import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsi
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
@@ -70,12 +74,15 @@ public class IntegrationManager {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "IntegrationManager";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
 
 	private static boolean addIDUnivoco = true;
@@ -316,7 +323,7 @@ public class IntegrationManager {
 		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"]");
 		// Costruzione msg di richiesta
 		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 		// SPCoopMessage
 		Message msgAxis = utility.getRequestMessage();
@@ -451,7 +458,7 @@ public class IntegrationManager {
 		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"]");
 		// Costruzione msg di richiesta
 		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 				
 		// Info PortaCorrelata per profilo asincrono simmetrico
 		String idPortaDelegataCorrelata = 
@@ -662,7 +669,7 @@ public class IntegrationManager {
 		
 		// Costruzione msg di richiesta
 		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 				
 		// Info PortaCorrelata per profilo asincrono simmetrico
 		String idPortaDelegataCorrelata = 
@@ -1213,16 +1220,16 @@ public class IntegrationManager {
 		
 		// Costruzione msg di richiesta
 		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 		Message msgAxis = utility.getRequestMessage();
 		SOAPEngine utility2 = new SOAPEngine(null);
-		utility2.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility2.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 		Message msgAxis2 = utility.getRequestMessage();
 		SOAPEngine utility3 = new SOAPEngine(null);
-		utility3.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility3.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 		Message msgAxis3 = utility.getRequestMessage();
 		SOAPEngine utility4 = new SOAPEngine(null);
-		utility4.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility4.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 		Message msgAxis4 = utility.getRequestMessage();
 		
 		String [] idMsgSilGop1 = null;
@@ -2274,7 +2281,7 @@ public class IntegrationManager {
 		
 		// Costruzione msg di richiesta
 		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 		Message msgAxis = utility.getRequestMessage();
 		
 		// Pulizia repository per test
@@ -2436,11 +2443,13 @@ public class IntegrationManager {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseIM = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni infoIM = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseIM = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoIM, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX"},dataProvider="SincronoIM",dependsOnMethods={"message_box_invocazione_per_riferimento"})
 	public void testSincronoIM(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
@@ -2477,7 +2486,7 @@ public class IntegrationManager {
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneAsincrona) throws Exception{
 		//		 Costruzione msg di richiesta
 		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 		// SPCoopMessage
 		Message msgAxis = utility.getRequestMessage();
@@ -2590,7 +2599,7 @@ public class IntegrationManager {
 
 	    // Costruzione msg di risposta
 		utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 		// SPCoopMessage
 		Message msgAxisRichiestaStatoAsincrona = utility.getRequestMessage();
@@ -2713,7 +2722,7 @@ public class IntegrationManager {
 			String tipoSoggettoErogatore,String soggettoErogatore,String tipoServizio,String servizio,String azione) throws Exception{
 		// Costruzione msg di richiesta
 		SOAPEngine utility = new SOAPEngine(null);
-		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		utility.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 		// SPCoopMessage
 		Message msgAxis = null;

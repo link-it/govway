@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="TestSuite_trasparente_LocalEnv_testUnits" basedir=".">
+
+      <!-- Personalizzazione testsuite -->
+      <property name="output" location="RisultatiTestSuite" />
+
+	  <!-- ApplicationServer version -->
+	  <property name="as" value="jboss/tomcat" />
+
+      <!-- Libreria jdbc verso i database di tracciamento di OpenSPCoop-->
+      <property name="jdbc_lib" location="JDBC_DRIVER.jar" />
+
+      <!-- ** Parametri necessari per eseguire al completo la testsuite ** -->
+      <!-- Log della Porta di Dominio -->
+      <property name="openspcoop_log" location="/var/openspcoop2/log" />
+      <!-- Log dell'application server -->
+      <property name="server_log" location="JBOSS/server/default/log/server.log" />
+      <!-- Database Messaggi di OpenSPCoop -->
+      <property name="openspcoop.tipoDatabase" value="INDICARE_IL_TIPO_DI_DATABASE"  />
+      <property name="openspcoop.driverJDBCAccessoDatabase" value="DRIVER_JDBC"  />
+      <property name="openspcoop.urlAccessoDatabase" value="URL_JDBC"  />
+      <property name="openspcoop.username" value="openspcoop"  />
+      <property name="openspcoop.password" value="openspcoop"  />
+      <!-- Database Diagnostica di OpenSPCoop -->
+      <property name="diagnostica.tipoDatabase" value="INDICARE_IL_TIPO_DI_DATABASE"  />
+      <property name="diagnostica.driverJDBCAccessoDatabase" value="DRIVER_JDBC"  />
+      <property name="diagnostica.urlAccessoDatabase" value="URL_JDBC"  />
+      <property name="diagnostica.username" value="openspcoop"  />
+      <property name="diagnostica.password" value="openspcoop"  />
+      <!-- ** Parametri necessari per eseguire al completo la testsuite ** -->
+
+      <!-- Indicazione se la configurazione deve essere re-inizializzata ogni volta che viene lanciato un test -->
+      <property name="reinizializzaConfigurazione" value="false" />
+	
+	  <!-- Testsuite Trasformer -->
+	  <property name="testsuite_transformer" value="org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteTransformer" /> 
+
+      <!-- openspcoop config dir -->
+      <property name="openspcoop_configuration_dir" location="/etc/openspcoop2"/>      
+      <property name="openspcoop_configuration_dir_backup" location="backup_openspcoop2" />
+
+      <!-- files di test -->
+      <property name="attachments_file" location="deploy/testfiles/attachments" />
+      <property name="soap_file" location="deploy/testfiles/soap" />
+      <property name="config_file" location="deploy/config_file" />
+
+      <!-- OpenSPCoop Location and Library -->
+      <property name="openspcoop2" location="../../../" />
+      <!-- Lib di OpenSPCoop -->
+      <property name="openspcoop2_lib" location="${openspcoop2}/lib" />
+      <property name="required_lib" location="${openspcoop2_lib}" />
+      <!-- OpenSPCoop2 TestSuite LIB -->
+      <property name="openspcoop2_testsuite" location="${openspcoop2}/testsuite" />
+      <property name="openspcoop2_testsuite_dist" location="${openspcoop2_testsuite}/dist" />
+      <property name="openspcoop2_testsuite_properties" location="${openspcoop2_testsuite}/deploy/properties" />
+      <!-- Trasparente Protocol Plugin -->
+      <property name="openspcoop2_protocol_trasparente" location="${openspcoop2}/protocolli/trasparente/dist/" />
+      <!-- Protocollo (Per XML Loader) -->
+	  <property name="protocolloDefault" location="trasparente" />
+
+      <!-- Tipo di configurazione, valori possibili: none/xml/db -->
+      <property name="tipoConfigurazione" value="xml" />
+      <!-- Configuration.properties -->
+      <property name="proprietaConfigurazione" location="deploy/properties_xml2Backend/configurazione.properties" />
+      <!-- Reset della configurazione (in caso di config db) -->
+      <property name="resetConfigurazione" value="false" />
+      <!-- Gestione parte di Configurazione/AccessoRegistro/RoutingTable -->
+      <property name="gestioneSezioneConfigurazione" value="false" />
+
+      <!-- Tipo del registroServizi, valori possibili: none/xml/db/uddi/web -->
+      <property name="tipoRegistroServizi" value="xml" />
+      <!-- RegistroServizi.properties -->
+      <property name="proprietaRegistroServizi" location="deploy/properties_xml2Backend/registroServizi.properties" />
+      <!-- Reset del registro dei servizi (in caso di registro db/uddi/web) -->
+      <property name="resetRegistroServizi" value="false" />
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildTestsuite" value="true"/>
+      <property name="buildAPI" value="true"/>
+
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+      <property name="printServerInfo" value="false" />
+
+
+</project>

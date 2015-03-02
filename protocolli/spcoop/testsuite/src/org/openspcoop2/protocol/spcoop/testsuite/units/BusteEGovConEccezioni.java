@@ -142,7 +142,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayEccezioniNonGravi);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -260,7 +260,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronaEccezioniNonGravi);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -374,7 +374,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayEccezioniAlcuneGravi);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -490,7 +490,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronaEccezioniAlcuneGravi);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -602,7 +602,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayEccezioniAlcuneGravi_faultCorretto);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -729,7 +729,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayEccezioniAlcuneGravi_faultCorretto_CDATA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -856,7 +856,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayEccezioniAlcuneGravi_faultStringScorretto);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -967,7 +967,7 @@ public class BusteEGovConEccezioni {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayEccezioniAlcuneGravi_faultCodeScorretto);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);

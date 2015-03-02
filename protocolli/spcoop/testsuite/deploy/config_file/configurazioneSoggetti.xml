@@ -7881,9 +7881,11 @@
         </porta-delegata>
         
     </soggetto>
-    
+   
+    <!-- Start Configurazione valida solo per xml --> 
     <soggetto tipo="SPC" nome="SoggettoNonEsistenteRegistro">
     </soggetto>
+    <!-- End Configurazione valida solo per xml -->
     
     <soggetto tipo="SPC" nome="TestRichiesteScorrette">
         

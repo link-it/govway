@@ -35,12 +35,17 @@ import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsi
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
@@ -61,12 +66,15 @@ public class ProfiliDiCollaborazione {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "ProfiliDiCollaborazione";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+			new CooperazioneBase(false, SOAPVersion.SOAP11, this.info, 
+					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
 
 	private static boolean addIDUnivoco = true;
@@ -176,11 +184,14 @@ public class ProfiliDiCollaborazione {
 	/***
 	 * Test per il profilo di collaborazione oneway trasmissione sincrona affidabile
 	 */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseStatelessOnewayAffidabile = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+	private CooperazioneBaseInformazioni infoStatelessOnewayAffidabile = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				true,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);
+				true,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseStatelessOnewayAffidabile = 
+			new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoStatelessOnewayAffidabile, 
+					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+
 	Repository repositoryOneWay_statelessAffidabile=new Repository();
 	@Test(groups={ProfiliDiCollaborazione.ID_GRUPPO,ProfiliDiCollaborazione.ID_GRUPPO+".ONEWAY_STATELESS_AFFIDABILE"},description="Test di tipo oneway, con trasmissione sincrona")
 	public void oneway_statelessAffidabile() throws FatalTestSuiteException, IOException, SOAPException{

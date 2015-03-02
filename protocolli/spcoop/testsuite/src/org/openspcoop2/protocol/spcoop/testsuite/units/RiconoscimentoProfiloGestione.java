@@ -37,13 +37,18 @@ import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.BusteEGovDaFile;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
@@ -123,11 +128,13 @@ public class RiconoscimentoProfiloGestione {
 	//            non verra prodotto l'elemento collaborazione
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseTEST1 = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni infoTEST1 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseTEST1 = 
+		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoTEST1, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	/***
 	 * Test per il profilo di collaborazione Asincrono Asimmetrico, modalita sincrona (azione correlata)
@@ -205,11 +212,13 @@ public class RiconoscimentoProfiloGestione {
 	//            verra prodotto l'elemento collaborazione poiche' il soggetto possiede un profilo lineeGuida1.1-bustaEGov1.1
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseTEST2 = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);
+	private CooperazioneBaseInformazioni infoTEST2 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseTEST2 = 
+		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoTEST2, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	/***
 	 * Test per il profilo di collaborazione Asincrono Asimmetrico, modalita sincrona (azione correlata)
@@ -287,11 +296,13 @@ public class RiconoscimentoProfiloGestione {
 	//            verra prodotto l'elemento collaborazione poiche' il servizio possiede un profilo lineeGuida1.1-bustaEGov1.1
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseTEST3 = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
-				CostantiTestSuite.SPCOOP_SOGGETTO_TMP,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);
+	private CooperazioneBaseInformazioni infoTEST3 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
+			CostantiTestSuite.SPCOOP_SOGGETTO_TMP,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseTEST3 = 
+		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoTEST3, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	/***
 	 * Test per il profilo di collaborazione Asincrono Asimmetrico, modalita sincrona (azione correlata)
@@ -397,7 +408,7 @@ public class RiconoscimentoProfiloGestione {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryCollaborazioneAsincronoSimmetricoTEST1);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -524,7 +535,7 @@ public class RiconoscimentoProfiloGestione {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryCollaborazioneAsincronoSimmetricoTEST2);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -652,7 +663,7 @@ public class RiconoscimentoProfiloGestione {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryCollaborazioneAsincronoSimmetricoTEST3);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);

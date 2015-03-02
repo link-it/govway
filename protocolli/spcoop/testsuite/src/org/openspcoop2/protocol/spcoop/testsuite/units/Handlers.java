@@ -35,7 +35,6 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Esito;
-import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
@@ -68,12 +67,8 @@ public class Handlers {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "Handlers";
-	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	
+
 
 
 	// TODO:
@@ -133,7 +128,7 @@ public class Handlers {
 		FileInputStream fin = null;
 		ClientHttpGenerico client=null;
 		try{
-			Message msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoapFileName()));
+			Message msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoap11FileName()));
 			msg.getSOAPPartAsBytes();
 			
 			client=new ClientHttpGenerico(new Repository());
@@ -270,9 +265,9 @@ public class Handlers {
 			
 			Message msg=null;
 			if(attachments){
-				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 			}else{
-				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoapFileName()));
+				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoap11FileName()));
 				msg.getSOAPPartAsBytes();
 			}
 			
@@ -410,9 +405,9 @@ public class Handlers {
 			
 			Message msg=null;
 			if(attachments){
-				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 			}else{
-				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoapFileName()));
+				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoap11FileName()));
 				msg.getSOAPPartAsBytes();
 			}
 			
@@ -545,9 +540,9 @@ public class Handlers {
 			
 			Message msg=null;
 			if(attachments){
-				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 			}else{
-				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoapFileName()));
+				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoap11FileName()));
 				msg.getSOAPPartAsBytes();
 			}
 			
@@ -678,9 +673,9 @@ public class Handlers {
 			
 			Message msg=null;
 			if(attachments){
-				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 			}else{
-				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoapFileName()));
+				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoap11FileName()));
 				msg.getSOAPPartAsBytes();
 			}
 			
@@ -818,9 +813,9 @@ public class Handlers {
 			
 			Message msg=null;
 			if(attachments){
-				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+				msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false);
 			}else{
-				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoapFileName()));
+				msg=new Message(fin = new FileInputStream(Utilities.testSuiteProperties.getSoap11FileName()));
 				msg.getSOAPPartAsBytes();
 			}
 			

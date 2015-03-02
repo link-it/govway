@@ -21,7 +21,7 @@
 
 
 
-package org.openspcoop2.protocol.spcoop.testsuite.units;
+package org.openspcoop2.testsuite.units;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -30,6 +30,7 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.Message;
 import org.apache.axis.attachments.AttachmentPart;
+import org.apache.log4j.Logger;
 import org.openspcoop2.testsuite.clients.ClientAsincronoAsimmetrico_ModalitaAsincrona;
 import org.openspcoop2.testsuite.clients.ClientAsincronoAsimmetrico_ModalitaSincrona;
 import org.openspcoop2.testsuite.clients.ClientAsincronoSimmetrico_ModalitaAsincrona;
@@ -44,14 +45,10 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.db.DatiServizioAzione;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
-import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
-import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
-import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
-import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
-import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.testng.Assert;
 import org.testng.Reporter;
 
@@ -61,13 +58,14 @@ import org.testng.Reporter;
  * utilizzabili con messaggi Soap normali o con attachments
  * 
  * @author Andi Rexha (rexha@openspcoop.org)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 10489 $, $Date: 2015-01-13 10:15:51 +0100 (Tue, 13 Jan 2015) $
  */
-public class CooperazioneSPCoopBase {
+public class CooperazioneBase {
 
 	/** Tipo di gestione */
 	private boolean soapWithAttachments;
+	private SOAPVersion soapVersion;
 	/** String tipoCooperazione */
 	private String tipoCooperazione;
 	
@@ -81,6 +79,12 @@ public class CooperazioneSPCoopBase {
 	private String inoltro;
 	private Inoltro inoltroSdk;
 	
+	private CooperazioneBaseInformazioni info;
+	
+	private UnitsTestSuiteProperties unitsTestsuiteProperties;
+	private UnitsDatabaseProperties unitsDatabaseProperties;
+	private Logger log;
+	
 	
 	public boolean isSoapWithAttachments() {
 		return this.soapWithAttachments;
@@ -88,24 +92,26 @@ public class CooperazioneSPCoopBase {
 	public void setSoapWithAttachments(boolean soapWithAttachments) {
 		this.soapWithAttachments = soapWithAttachments;
 	}
-	public CooperazioneSPCoopBase(boolean soapWithAttachments){
-		this(soapWithAttachments,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
-	}
-	public CooperazioneSPCoopBase(boolean soapWithAttachments,IDSoggetto mittente, IDSoggetto destinatario,boolean confermaRicezione,String inoltro,Inoltro inoltroSdk) {
+	public CooperazioneBase(boolean soapWithAttachments,SOAPVersion soapVersion,CooperazioneBaseInformazioni info,
+			UnitsTestSuiteProperties unitsTestsuiteProperties, UnitsDatabaseProperties unitsDatabaseProperties, Logger log) {
 		super();
 		this.soapWithAttachments = soapWithAttachments;
+		this.soapVersion = soapVersion;
 		if(this.soapWithAttachments)
 			this.tipoCooperazione = "SOAPWithAttachments";
 		else
 			this.tipoCooperazione = "SOAP";
-		this.mittente = mittente;
-		this.destinatario =destinatario;
-		this.confermaRicezione = confermaRicezione;
-		this.inoltro = inoltro;
-		this.inoltroSdk = inoltroSdk;
+		this.mittente = info.getMittente();
+		this.destinatario = info.getDestinatario();
+		this.confermaRicezione = info.isConfermaRicezione();
+		this.inoltro = info.getInoltro();
+		this.inoltroSdk = info.getInoltroSdk();
+		
+		this.info = info;
+		
+		this.unitsTestsuiteProperties = unitsTestsuiteProperties;
+		this.unitsDatabaseProperties = unitsDatabaseProperties;
+		this.log = log;
 	}
 
 
@@ -124,7 +130,14 @@ public class CooperazioneSPCoopBase {
 				if(msgFromCheck!=null){
 					msg = msgFromCheck;
 				}else{
-					msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+					switch (this.soapVersion) {
+					case SOAP11:
+						msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false);
+						break;
+					case SOAP12:
+						msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false);
+						break;
+					}
 				}
 				Iterator<?> itAp = msg.getAttachments();
 				while (itAp.hasNext()) {
@@ -143,7 +156,7 @@ public class CooperazioneSPCoopBase {
 				
 				}
 			}catch(Exception e){
-				SPCoopTestsuiteLogger.getInstance().error("Errore durante la verifica degli attachments: "+e.getMessage(),e);
+				this.log.error("Errore durante la verifica degli attachments: "+e.getMessage(),e);
 				throw new  FatalTestSuiteException(e.getMessage());
 			}
 		}
@@ -169,7 +182,16 @@ public class CooperazioneSPCoopBase {
 			}catch(Exception e){}
 			
 			try{
-				Message msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false);
+				Message msg = null;
+				switch (this.soapVersion) {
+				case SOAP11:
+					msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false);
+					break;
+				case SOAP12:
+					msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false);
+					break;
+				}
+				
 				int countAttachments = msg.countAttachments();
 				if(numeroAttachments!=null){
 					countAttachments = numeroAttachments;
@@ -203,7 +225,7 @@ public class CooperazioneSPCoopBase {
 					}
 				}
 			}catch(Exception e){
-				SPCoopTestsuiteLogger.getInstance().error("Errore durante la verifica degli attachments: "+e.getMessage(),e);
+				this.log.error("Errore durante la verifica degli attachments: "+e.getMessage(),e);
 				throw new  FatalTestSuiteException(e.getMessage());
 			}
 		}
@@ -224,18 +246,34 @@ public class CooperazioneSPCoopBase {
 		try{
 			// Creazione client OneWay
 			ClientOneWay client=new ClientOneWay(repository);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
-			if(this.soapWithAttachments)
-				client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false,addIDUnivoco);
-			else
-				client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+			if(this.soapWithAttachments){
+				switch (this.soapVersion) {
+				case SOAP11:
+					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+					break;
+				case SOAP12:
+					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
+					break;
+				}
+			}
+			else{
+				switch (this.soapVersion) {
+				case SOAP11:
+					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+					break;
+				case SOAP12:
+					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
+					break;
+				}
+			}			
 
 			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
-				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+			if(this.unitsTestsuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = this.unitsDatabaseProperties.newInstanceDatabaseComponentFruitore();
+				dbComponentErogatore = this.unitsDatabaseProperties.newInstanceDatabaseComponentErogatore();
 				
 				client.setAttesaTerminazioneMessaggi(true);
 				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
@@ -283,14 +321,14 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id,datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY, ProfiloDiCollaborazione.ONEWAY));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_oneway(), ProfiloDiCollaborazione.ONEWAY));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -323,13 +361,29 @@ public class CooperazioneSPCoopBase {
 	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay) throws FatalTestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(repository);
-		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(portaDelegata);
 		client.connectToSoapEngine();
-		if(this.soapWithAttachments)
-			client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false,addIDUnivoco);
-		else
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		if(this.soapWithAttachments){
+			switch (this.soapVersion) {
+			case SOAP11:
+				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+				break;
+			case SOAP12:
+				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
+				break;
+			}
+		}
+		else{
+			switch (this.soapVersion) {
+			case SOAP11:
+				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+				break;
+			case SOAP12:
+				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
+				break;
+			}
+		}
 		client.run();
 
 		// Test uguaglianza Body (e attachments)
@@ -376,14 +430,14 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO, ProfiloDiCollaborazione.SINCRONO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_sincrono(), ProfiloDiCollaborazione.SINCRONO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -423,7 +477,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta della risposta con riferimento id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO, ProfiloDiCollaborazione.SINCRONO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_sincrono(), ProfiloDiCollaborazione.SINCRONO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -457,19 +511,35 @@ public class CooperazioneSPCoopBase {
 				new ClientAsincronoSimmetrico_ModalitaAsincrona(repositoryConsegnaRisposteAsincroneSimmetriche_modalitaAsincrona,
 						repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,
 						portaDelegataCorrelata);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			client.setAutenticazione(user,password);
-			if(this.soapWithAttachments)
-				client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false,addIDUnivoco);
-			else
-				client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
-
+			if(this.soapWithAttachments){
+				switch (this.soapVersion) {
+				case SOAP11:
+					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+					break;
+				case SOAP12:
+					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
+					break;
+				}
+			}
+			else{
+				switch (this.soapVersion) {
+				case SOAP11:
+					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+					break;
+				case SOAP12:
+					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
+					break;
+				}
+			}
+			
 			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
-				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+			if(this.unitsTestsuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = this.unitsDatabaseProperties.newInstanceDatabaseComponentFruitore();
+				dbComponentErogatore = this.unitsDatabaseProperties.newInstanceDatabaseComponentErogatore();
 
 				client.setAttesaTerminazioneMessaggi(true);
 				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
@@ -527,20 +597,20 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(), ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloTrasmissione(id, this.confermaRicezione,this.inoltro, this.inoltroSdk));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore tipo e servizio correlato");
-		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato,servizioCorrelato, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato,servizioCorrelato, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizioCorrelato(id, datiServizioCorrelato));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo che la busta non abbia generato eccezioni, id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().existsListaEccezioni(id)==false);
@@ -558,7 +628,7 @@ public class CooperazioneSPCoopBase {
 		}
 		Reporter.log("["+this.tipoCooperazione+"] ----------------------------------------------------------");
 
-		DatiServizioAzione datiServizioAzione = new DatiServizioAzione(tipoServizio, servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT,azione);
+		DatiServizioAzione datiServizioAzione = new DatiServizioAzione(tipoServizio, servizio, this.info.getServizio_versioneDefault(),azione);
 		
 		Reporter.log("["+this.tipoCooperazione+"] Controllo ricevuta richiesta asincrona simmetrica con riferimento messaggio: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTraced(id,datiServizioAzione));
@@ -579,7 +649,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione,azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione,SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione,this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(),ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione,collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -632,7 +702,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta risposta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta risposta con id: " +id);
@@ -641,7 +711,7 @@ public class CooperazioneSPCoopBase {
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore RiferimentoMessaggio (valore atteso: "+idCorrelazioneAsincrona+")  della risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedRiferimentoMessaggio(id, idCorrelazioneAsincrona));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta risposta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(), ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -658,7 +728,7 @@ public class CooperazioneSPCoopBase {
 		Reporter.log("["+this.tipoCooperazione+"] ----------------------------------------------------------");
 
 		//String id = repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona.getNextInvAssociate(id);
-		DatiServizioAzione datiServizioAzione = new DatiServizioAzione(tipoServizio, servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT,azione);
+		DatiServizioAzione datiServizioAzione = new DatiServizioAzione(tipoServizio, servizio, this.info.getServizio_versioneDefault(),azione);
 				
 		Reporter.log("["+this.tipoCooperazione+"] Controllo ricevuta risposta asincrona simmetrica con riferimento messaggio: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTraced(id,datiServizioAzione));
@@ -679,7 +749,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione,azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(), ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -709,14 +779,30 @@ public class CooperazioneSPCoopBase {
 			new ClientAsincronoSimmetrico_ModalitaSincrona(repositoryConsegnaRisposteAsincroneSimmetriche_modalitaSincrona,
 					repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaSincrona,
 					portaDelegataCorrelata);
-		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(portaDelegata);
 		client.connectToSoapEngine();
 		client.setAutenticazione(user,password);
-		if(this.soapWithAttachments)
-			client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false,addIDUnivoco);
-		else
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		if(this.soapWithAttachments){
+			switch (this.soapVersion) {
+			case SOAP11:
+				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+				break;
+			case SOAP12:
+				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
+				break;
+			}
+		}
+		else{
+			switch (this.soapVersion) {
+			case SOAP11:
+				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+				break;
+			case SOAP12:
+				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
+				break;
+			}
+		}
 		client.run();
 
 		// Test uguaglianza Body (e attachments)
@@ -764,20 +850,20 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(), ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloTrasmissione(id, this.confermaRicezione,this.inoltro, this.inoltroSdk));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore tipo e servizio correlato");
-		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato,servizioCorrelato, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato,servizioCorrelato, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizioCorrelato(id, datiServizioCorrelato));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo che la busta non abbia generato eccezioni, id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().existsListaEccezioni(id)==false);
@@ -815,7 +901,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(), ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -861,7 +947,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta risposta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta risposta con id: " +id);
@@ -870,7 +956,7 @@ public class CooperazioneSPCoopBase {
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore RiferimentoMessaggio (valore atteso: "+idCorrelazioneAsincrona+")  della risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedRiferimentoMessaggio(id, idCorrelazioneAsincrona));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta risposta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(), ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -907,7 +993,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione,azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, this.info.getProfiloCollaborazione_protocollo_asincronoSimmetrico(),ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -938,20 +1024,36 @@ public class CooperazioneSPCoopBase {
 		try{
 
 			ClientAsincronoAsimmetrico_ModalitaAsincrona client = new ClientAsincronoAsimmetrico_ModalitaAsincrona(repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
 			client.setPortaDelegataCorrelata(portaDelegataCorrelata);
 			client.connectToSoapEngine();
 			client.setGeneraIDUnivoco(addIDUnivoco);
-			if(this.soapWithAttachments)
-				client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false,addIDUnivoco);
-			else
-				client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
-
+			if(this.soapWithAttachments){
+				switch (this.soapVersion) {
+				case SOAP11:
+					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+					break;
+				case SOAP12:
+					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
+					break;
+				}
+			}
+			else{
+				switch (this.soapVersion) {
+				case SOAP11:
+					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+					break;
+				case SOAP12:
+					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
+					break;
+				}
+			}
+			
 			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
-				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+			if(this.unitsTestsuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = this.unitsDatabaseProperties.newInstanceDatabaseComponentFruitore();
+				dbComponentErogatore = this.unitsDatabaseProperties.newInstanceDatabaseComponentErogatore();
 
 				client.setAttesaTerminazioneMessaggi(true);
 				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
@@ -1009,14 +1111,14 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(),ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -1057,9 +1159,9 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(),ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore tipo e servizio correlato");
-		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato, servizioCorrelato, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato, servizioCorrelato, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizioCorrelato(id, datiServizioAzione, datiServizioCorrelato));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione, collaborazione));
@@ -1107,7 +1209,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
@@ -1116,7 +1218,7 @@ public class CooperazioneSPCoopBase {
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore RiferimentoMessaggio (valore atteso: "+idCorrelazioneAsincrona+")  della risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedRiferimentoMessaggio(id, idCorrelazioneAsincrona));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(),ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -1156,7 +1258,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione,azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(),ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -1182,15 +1284,31 @@ public class CooperazioneSPCoopBase {
 	public void asincronoAsimmetrico_modalitaSincrona(String portaDelegata,String portaDelegataCorrelata,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona,boolean addIDUnivoco) throws FatalTestSuiteException, IOException, SOAPException{
 		ClientAsincronoAsimmetrico_ModalitaSincrona client = new ClientAsincronoAsimmetrico_ModalitaSincrona(repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona);
-		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(portaDelegata);
 		client.setGeneraIDUnivoco(addIDUnivoco);
 		client.setPortaDelegataCorrelata(portaDelegataCorrelata);
 		client.connectToSoapEngine();
-		if(this.soapWithAttachments)
-			client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoapWithAttachmentsFileName(), false,addIDUnivoco);
-		else
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+		if(this.soapWithAttachments){
+			switch (this.soapVersion) {
+			case SOAP11:
+				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+				break;
+			case SOAP12:
+				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
+				break;
+			}
+		}
+		else{
+			switch (this.soapVersion) {
+			case SOAP11:
+				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+				break;
+			case SOAP12:
+				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
+				break;
+			}
+		}
 		client.run();
 
 		// Test uguaglianza Body (e attachments)
@@ -1238,14 +1356,14 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(), ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -1286,13 +1404,13 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione,azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id, datiServizioAzione, this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(),ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloTrasmissione(id, datiServizioAzione, this.confermaRicezione,this.inoltro, this.inoltroSdk));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore tipo["+tipoServizioCorrelato+"] e servizio correlato["+servizioCorrelato+"]");
-		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato, servizioCorrelato, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizioCorrelato = new DatiServizio(tipoServizioCorrelato, servizioCorrelato, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizioCorrelato(id, datiServizioAzione,datiServizioCorrelato));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo che la busta non abbia generato eccezioni, riferimento messaggio: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().existsListaEccezioni(id)==false);
@@ -1336,7 +1454,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Servizio Busta con id: " +id);
-		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+		DatiServizio datiServizio = new DatiServizio(tipoServizio,servizio, this.info.getServizio_versioneDefault());
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id,datiServizio));
 		if(azione!=null){
 			Reporter.log("["+this.tipoCooperazione+"] Controllo valore Azione Busta con id: " +id);
@@ -1345,7 +1463,7 @@ public class CooperazioneSPCoopBase {
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore RiferimentoMessaggio (valore atteso: "+idCorrelazioneAsincrona+")  della risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedRiferimentoMessaggio(id, idCorrelazioneAsincrona));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con id: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(), ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCollaborazione(id, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
@@ -1385,7 +1503,7 @@ public class CooperazioneSPCoopBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, datiServizioAzione,azione));
 		}
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Profilo di Collaborazione Busta con riferimento messaggio: " +id);
-		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id,datiServizioAzione,SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
+		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloDiCollaborazione(id,datiServizioAzione,this.info.getProfiloCollaborazione_protocollo_asincronoAsimmetrico(),ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO));
 		Reporter.log("Controllo valore Collaborazione Busta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCollaborazione(id, datiServizioAzione, collaborazione));
 		Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);

@@ -37,11 +37,16 @@ import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
@@ -63,17 +68,25 @@ public class TunnelSOAP {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "TunnelSOAP";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseWithAttach = 
-		new CooperazioneSPCoopBase(true,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseWithoutAttach = 
-			new CooperazioneSPCoopBase(false,
-					CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-					false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	
+	private CooperazioneBaseInformazioni infoWithAttach = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseWithAttach = 
+		new CooperazioneBase(true, SOAPVersion.SOAP11, this.infoWithAttach, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	
+	private CooperazioneBaseInformazioni infoWithoutAttach = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseWithoutAttach = 
+		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoWithoutAttach, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	
 
 
 
@@ -1934,7 +1947,7 @@ public class TunnelSOAP {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ALLEGA_BODY);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){

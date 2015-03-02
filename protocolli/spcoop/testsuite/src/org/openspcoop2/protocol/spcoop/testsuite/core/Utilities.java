@@ -74,7 +74,7 @@ public class Utilities {
 	public static TestSuiteProperties testSuiteProperties = TestSuiteProperties.getInstance();
 	
 	/** Database Properties */
-	public static DatabaseProperties databaseProperties = DatabaseProperties.getInstance();
+	public static org.openspcoop2.testsuite.units.utils.DatabaseProperties databaseProperties = DatabaseProperties.getInstance();
 	
 	public static String readApplicationServerVersion() throws Exception{
 		byte[] local_env = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(new File("local_env.xml"));

@@ -1,0 +1,13 @@
+[echo]
+compile_openspcoop2_testsuite_trasparente
+compile_testunits
+openspcoop2-commmons-testsuite-run.run_testsuite_completa
+openspcoop2-commmons-testsuite-run.run_testsuite_connectionNew
+openspcoop2-commmons-testsuite-run.run_testsuite_default
+openspcoop2-compile-trasparente-testsuite.compile_openspcoop2_testsuite_trasparente
+run_all_tests
+run_test
+run_test_connectionNew
+run_testsuite_completa
+run_testsuite_connectionNew
+run_testsuite_default

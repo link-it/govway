@@ -1,0 +1,155 @@
+TestSuite di OpenSPCoop2 per il protocollo Trasparente
+location: protocolli/trasparente/testsuite
+
+
+
+1. Overview
+
+L'applicazione permette di testare le funzionalita' base della Porta di Dominio OpenSPCoop2 con il protocollo Trasparente
+
+L'applicazione e' suddivisa in
+- Servizio Applicativo OpenSPCoop2TestSuiteServer (server fornito con la testsuite base di OpenSPCoop2)
+- Batteria di test (TestNG) che verificano le varie funzionalita'
+
+
+
+
+1.1 Quick Start
+
+Questo paragrafo illustra come utilizzare la testsuite su di una Porta di Dominio con configurazione e registro dei servizi in formato XML.
+La porta di dominio deve essere configurata per tracciare le buste gestite sul database tracciamento (./core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioTracce.sql) e i messaggi diagnostici gestiti sul database msg diagnostici (core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioMessaggiDiagnostici.sql).
+Deve essere attivata la registrazione delle tracce e dei msg diagnostici per mezzo degli 'OpenSPCoopAppender'.
+Un esempio lo si puo' trovare in ./protocolli/trasparente/testsuite/deploy/config_file/configurazioneDefault.xml 
+
+
+Installare l'applicazione OpenSPCoop2TestSuiteServer copiando il file testsuite/dist/OpenSPCoop2TestSuite.war nell'Application Server in JBOSS/server/default/deploy/
+L'applicazione richiede l'installazione dei datasource
+- org.openspcoop2.dataSource: database di gestione dei messaggi della Porta di Dominio
+- org.openspcoop2.dataSource.tracciamento: database di tracciamento della Porta di Dominio
+
+L'esecuzione dei test comporta una fase di pre-configurazione dove vengono installati in /etc/openspcoop le configurazioni necessarie per i test
+Per configurare la porta con gli scenari di esempio utilizzare il comando:
+  ant preparazioneAmbiente -DtipoDatabase=<tipo_database>
+NOTA: per gli utenti Windows, cambiare il path di default della configurazione in ./protocolli/trasparente/testsuite/local_env.xml attraverso la proprieta': openspcoop_configuration_dir
+NOTA: Per default vengono soscritti i file di configurazione XML della porta. Se si desidera' configurare una porta configurata tramite un registro dei servizi od una configurazione non XML, e' possibile agire nel file ./protocolli/trasparente/testsuite/local_env.xml, attraverso le proprieta' tipoConfigurazione e tipoRegistroServizi.
+I parametri di resetConfigurazione/resetRegistroServizi indicano se deve essere effettuata prima della configurazione un reset.
+I parametri proprietaConfigurazione/proprietaRegistroServizi indicano come la testsuite puo' collegarsi alla configurazione/registro 
+
+Lanciare i test spostandosi in ./protocolli/trasparente/testsuite/ e lanciando il comando:
+  ant run_test -Dgroup=FUNZIONALITADATESTARE
+
+Ad esempio 'ant run_testsuite -Dgroup=PortaDelegataSoap11' verifica le funzionalita' di invocazione della Porta Delegata con messaggi Soap11
+
+L'elenco completo delle funzionalita' da testare sono descritte nel paragrafo 1.3
+
+
+
+
+1.2 Servizio Applicativo OpenSPCoop2TestSuiteServer
+
+Il servizio applicativo e' una servlet che fornisce i servizi funzionali ai test del protocollo Trasparente
+
+L'applicazione necessita di accedere al database dei messaggi della porta di dominio ( org.openspcoop2.dataSource ) e al database del tracciamento ( org.openspcoop2.dataSource.tracciamento )
+Le configurazioni di accesso ai dataSource possono essere indicati:
+- versione sorgente, ./testsuite/deploy/properties/database.properties prima della compilazione
+- versione binaria, file database.properties presente in OpenSPCoop2TestSuite.war/WEB-INF/classes
+
+L'applicazione puo' essere configurata nei parametri di integrazione con la porta di dominio attraverso:
+- versione sorgente, ./testsuite/deploy/properties/testsuite.properties prima della compilazione
+- versione binaria, file testsuite.properties presente in OpenSPCoop2TestSuite.war/WEB-INF/classes
+
+L'applicazione produce un file di log che registra le operazioni effettuate, in /var/openspcoop2/log/openspcoop2_testsuite.log. 
+È possibile personalizzare la produzione dei log attraverso la modifica del file ./testsuite/deploy/properties/testsuite.log4j.properties
+prima della compilazione dei sorgenti o modificando il file all'interno dell'applicazione OpenSPCoop2TestSuite.war
+
+Prerequisito:
+La porta di dominio deve essere configurata in maniera che le tracce e i messaggi diagnostici vengano registrati su Database
+Le tabelle tracciamento e messaggi diagnostici sono definiti in:
+- ./core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioTracce.sql
+- ./core/deploy/sql/<tipo_database>/archiviComunicazioni/ArchivioMessaggiDiagnostici.sql
+Deve essere attivata la registrazione delle tracce e dei msg diagnostici per mezzo degli 'OpenSPCoopAppender'.
+Un esempio lo si puo' trovare in ./protocolli/trasparente/testsuite/deploy/config_file/configurazioneDefault.xml
+
+
+
+
+1.3 Batteria di Test (TestNG)
+
+Le batterie di test sono situate nella distribuzione in ./protocolli/trasparente/testsuite/
+
+Le configurazioni dei test, comprendenti soggetti/servizi/porteDelegate/porteApplicative sono presenti in:
+- protocolli/trasparente/testsuite/deploy/config_file/registroServizi.xml
+- protocolli/trasparente/testsuite/deploy/config_file/configurazioneSoggetti.xml
+Le configurazioni assumono che i vari soggetti dei test sia gestiti da un unica porta di dominio multisoggetto.
+Inoltre la configurazione della Porta viene gestita da una delle seguenti configurazioni (a seconda del test lanciato):
+- protocolli/trasparente/testsuite/configurazioneDefault.xml
+- protocolli/trasparente/testsuite/configurazioneNewConnectionForResponse.xml: dove la porta e' configurata per far tornare le risposte su connessioni http nuove, e non sulla connection reply (a meno del profilo sincrono)
+
+La configurazione della porta di dominio e del registro possono essere create (a meno di impostazione a 'none') dal task 'preparazioneAmbiente -DtipoDatabase=TIPODATABASE'.
+Il task ant utilizza la configurazione indicata nel file local_env.xml:
+CONFIGURAZIONE
+  - <property name="tipoConfigurazione" value="xml" /> indica il tipo di configurazione da creare, xml, db o none.
+  - <property name="proprietaConfigurazione" location="deploy/properties/configurazione.properties" /> contiene i parametri di accesso alla configurazione (per db)
+  - <property name="gestioneSezioneConfigurazione" value="false" /> Indicazione se deve essere gestita la configurazione della Porta di Dominio (lasciare a false per db)
+REGISTRO
+  - <property name="tipoRegistroServizi" value="xml" /> indica il tipo di registro da creare, xml, web, uddi, db o none.
+  - <property name="proprietaRegistroServizi" location="deploy/properties/registroServizi.properties" /> contiene i parametri di accesso al registro (per uddi,web o db)
+
+Per lanciare i test e' possibile utilizzare in testsuite/test il comando:
+  ant run_testsuite -Dgroup=FUNZIONALITADATESTARE
+
+NOTA: 
+Al termino di una batteria di test vieno verificato la consistenza dell'ambiente, attraverso i seguenti controlli:
+- Controllo che le tabelle 'runtime' di OpenSPCoop non possiedano messaggi e/o buste in carico
+- I messaggi diagnostici non contengano:
+  . NullPointer message
+  . @KEYWORD@ non risolte
+  . messaggi senza un codice
+  . messaggi che indicano un tracciamento non riuscito
+- Controllo risorse JMX:
+  . non siano rimaste connessioni al database allocate
+  . non siano rimaste connessioni http attive verso PD e PA
+  . non siano rimaste connessioni al broker jms
+La batteria di verifica dell'ambiente può anche essere eseguita singolarmente usando come nome del gruppo 'RisorseEsterne' 
+!! Requesito !! : si richiede che sia disponibile un accesso remoto sulle risorse jmx dell'application server (tomcat o jboss).
+Eventuali indicazioni su come abilitare l'accesso remoto sono indicate in protocolli/trasparente/testsuite/deploy/jmx/README
+
+Le batterie di test fornite permettono di testare diverse funzionalita' elencate di seguito.
+
+Requisiti globali:
+1) JMX protocolli/trasparente/testsuite/deploy/jmx/README
+2) Configurazione PdD. La configurazione della PdD richiesta dai test deve essere attuata attraverso i seguenti step:
+	2.a) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/className_local.properties in /etc/openspcoop2
+	2.b) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/openspcoop2_local.properties in /etc/openspcoop2
+3) Impostare un tempo di rispedizione per la coda JMS 'toInoltroBuste' e 'toConsegnaContenutiApplicativi' a 15 secondi
+   (<attribute name="RedeliveryDelay">15000</attribute>)
+
+** Porta Delegata **
+
+Batterie di test che verificano la normale gestione del servizio Porta Delegata
+- 'PortaDelegataSoap11' viene verificato il servizio porta delegata con messaggi SOAP 11
+
+// ....
+
+
+
+2. Installazione
+
+
+
+2.1 Versione Sorgente
+
+Per creare il servizio applicativo di test, eseguire in testsuite/ il comando 'ant build'.
+Verra creato:
+- OpenSPCoop2TestSuite.war
+Copiare il file OpenSPCoop2TestSuite.war in JBOSS/server/default/deploy/
+Inoltre copiare in OpenSPCoop2TestSuite.war/WEB-INF/lib il jar relativo al protocollo 'trasparente'.
+Tale jar lo si puo' produrre eseguendo in protocolli/trasparente il comando 'ant build'.
+
+Per creare i binari della batteria di test eseguire in protocolli/trasparente/testsuite il comando 'ant build'.
+
+
+
+2.2 Versione Binaria
+
+Copiare il file testsuite/OpenSPCoop2TestSuite.war in JBOSS/server/default/deploy/ ed installare in OpenSPCoop2TestSuite.war/WEB-INF/lib il jar relativo al protocollo 'trasparente' situato in protocolli/trasparente/dist/

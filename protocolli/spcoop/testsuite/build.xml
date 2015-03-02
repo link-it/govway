@@ -1,11 +1,11 @@
-<project name="TestSuite_OpenSPCoop" basedir="." default="compile_testunits">
+<project name="TestSuite_spcoop_OpenSPCoop" basedir="." default="compile_testunits">
 
 	<import file="./local_env.xml" />
 	<import file="./ant/openspcoop2-spcoop-testsuite-build.xml" />
-	<import file="./ant/openspcoop2-spcoop-testsuite-config.xml" />
-	<import file="./ant/openspcoop2-spcoop-testsuite-run.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
 	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	<import file="${openspcoop2_testsuite}/ant/openspcoop2-commons-testsuite-config.xml" />
+	<import file="${openspcoop2_testsuite}/ant/openspcoop2-commons-testsuite-run.xml" />
 
 
 	<!-- estensione di ant (if .... ) -->

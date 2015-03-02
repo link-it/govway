@@ -1,0 +1,162 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+	<accordo-servizio-parte-comune nome="EsempioASParteComune" profilo-collaborazione="oneway" utilizzo-senza-azione="true" filtro-duplicati="abilitato" versione="1">
+                    <soggetto-referente tipo="PROXY" nome="MinisteroReferente"/>
+                    <port-type nome="Oneway" profilo-collaborazione="oneway" filtro-duplicati="abilitato">
+                        <azione nome="notifica"/>
+                        <azione nome="gestioneSOAPFault11"/>
+                        <azione nome="gestioneSOAPFault12"/>
+                        <azione nome="gestioneSOAPFault11_500"/>
+                        <azione nome="gestioneSOAPFault12_500"/>
+                    </port-type>
+                    <port-type nome="Sincrono" profilo-collaborazione="sincrono" filtro-duplicati="abilitato">
+                        <azione nome="aggiornamento"/>
+                        <azione nome="gestioneSOAPFault11"/>
+                        <azione nome="gestioneSOAPFault12"/>
+                        <azione nome="gestioneSOAPFault11_500"/>
+                        <azione nome="gestioneSOAPFault12_500"/>
+                    </port-type>
+	</accordo-servizio-parte-comune>
+
+	<soggetto tipo="PROXY" nome="Anonimo" identificativo-porta="AnonimoPdD">
+    
+		<connettore tipo="disabilitato" nome="CNT_PROXY_Anonimo"/>
+	
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="applicativoComunePisa" identificativo-porta="applicativoComunePisaPdD">
+    
+		<connettore tipo="disabilitato" nome="CNT_PROXY_applicativoComunePisa"/>
+
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="MinisteroReferente" identificativo-porta="MinisteroReferentePdD">
+
+    		<connettore tipo="disabilitato" nome="CNT_PROXY_MinisteroReferente"/>
+
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="MinisteroFruitore" identificativo-porta="MinisteroFruitorePdD">
+    
+		<connettore tipo="disabilitato" nome="CNT_PROXY_MinisteroFruitore"/>
+	
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="MinisteroErogatore" identificativo-porta="MinisteroErogatorePdD">
+		
+		<connettore tipo="disabilitato" nome="CNT_PROXY_MinisteroErogatore"/>
+
+		<accordo-servizio-parte-specifica nome="Oneway" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+			<servizio tipo="PROXY" nome="Oneway">
+			        <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Oneway">
+			            <property nome="location" valore="http://localhost:8080/TestService/ping"/>
+			        </connettore>
+			</servizio>
+			<fruitore tipo="PROXY" nome="Anonimo" />
+			<fruitore tipo="PROXY" nome="applicativoComunePisa"/>
+		</accordo-servizio-parte-specifica>
+
+                <accordo-servizio-parte-specifica nome="Sincrono" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                        <servizio tipo="PROXY" nome="Sincrono">
+                                <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Sincrono">
+                                    <property nome="location" valore="http://localhost:8080/TestService/echo"/>
+                                </connettore>
+                        </servizio>
+                        <fruitore tipo="PROXY" nome="Anonimo" />
+                        <fruitore tipo="PROXY" nome="applicativoComunePisa"/>
+                </accordo-servizio-parte-specifica>
+
+
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="MinisteroErogatoreEsterno" identificativo-porta="MinisteroErogatoreEsternoPdD">
+    
+		<connettore tipo="disabilitato" nome="CNT_PROXY_MinisteroErogatoreEsterno"/>
+
+                <accordo-servizio-parte-specifica nome="Oneway" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+                        <servizio tipo="PROXY" nome="Oneway">
+                                <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Oneway">
+                                    <property nome="location" valore="http://localhost:8080/TestService/ping"/>
+                                </connettore>
+                        </servizio>
+                        <fruitore tipo="PROXY" nome="MinisteroFruitore" />
+			<fruitore tipo="PROXY" nome="ClientSoapFault11">
+			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
+			        <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true"/>
+			    </connettore>
+			</fruitore>
+			<fruitore tipo="PROXY" nome="ClientSoapFault11500">
+			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11500_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
+			        <property nome="location" valore="http://localhost:8080/TestService/echo?ping=true&amp;returnCode=500"/>
+			    </connettore>
+			</fruitore>
+			<fruitore tipo="PROXY" nome="ClientSoapFault12">
+			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
+			        <property nome="location" valore="http://localhost:8080/TestService/echo?ping=true&amp;faultSoapVersion=12"/>
+			    </connettore>
+			</fruitore>
+			<fruitore tipo="PROXY" nome="ClientSoapFault12500">
+			    <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12500_PROXY/MinisteroErogatoreEsterno_PROXY/Oneway">
+			        <property nome="location" valore="http://localhost:8080/TestService/echo?ping=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+			    </connettore>
+			</fruitore>
+                </accordo-servizio-parte-specifica>
+
+                <accordo-servizio-parte-specifica nome="Sincrono" versione="1" accordo-servizio-parte-comune="PROXY/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                        <servizio tipo="PROXY" nome="Sincrono">
+                                <connettore tipo="http" nome="CNT_PROXY/MinisteroErogatore_PROXY/Sincrono">
+                                    <property nome="location" valore="http://localhost:8080/TestService/echo"/>
+                                </connettore>
+                        </servizio>
+                        <fruitore tipo="PROXY" nome="MinisteroFruitore" />
+                        <fruitore tipo="PROXY" nome="ClientSoapFault11">
+                            <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
+                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true"/>
+                            </connettore>
+                        </fruitore>
+                        <fruitore tipo="PROXY" nome="ClientSoapFault11500">
+                            <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault11500_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
+                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;returnCode=500"/>
+                            </connettore>
+                        </fruitore>
+                        <fruitore tipo="PROXY" nome="ClientSoapFault12">
+                            <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
+                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12"/>
+                            </connettore>
+                        </fruitore>
+                        <fruitore tipo="PROXY" nome="ClientSoapFault12500">
+                            <connettore tipo="http" nome="CNT_SF_PROXY/ClientSoapFault12500_PROXY/MinisteroErogatoreEsterno_PROXY/Sincrono">
+                                <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                            </connettore>
+                        </fruitore>
+                </accordo-servizio-parte-specifica>
+	
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="ClientSoapFault11" identificativo-porta="ClientSoapFault11PdD">
+    
+		<connettore tipo="disabilitato" nome="CNT_PROXY_ClientSoapFault11"/>
+	
+	</soggetto>
+
+        <soggetto tipo="PROXY" nome="ClientSoapFault11500" identificativo-porta="ClientSoapFault11500PdD"> 
+    
+                <connettore tipo="disabilitato" nome="CNT_PROXY_ClientSoapFault11500"/>
+        
+        </soggetto>
+
+        <soggetto tipo="PROXY" nome="ClientSoapFault12" identificativo-porta="ClientSoapFault12PdD"> 
+    
+                <connettore tipo="disabilitato" nome="CNT_PROXY_ClientSoapFault12"/>
+        
+        </soggetto>
+
+        <soggetto tipo="PROXY" nome="ClientSoapFault12500" identificativo-porta="ClientSoapFault12500PdD"> 
+    
+                <connettore tipo="disabilitato" nome="CNT_PROXY_ClientSoapFault12500"/>
+        
+        </soggetto>
+
+</registro-servizi>

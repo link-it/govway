@@ -38,16 +38,21 @@ import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.db.DatiServizioAzione;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
@@ -125,7 +130,7 @@ public class CooperazioneConErrori {
 		DatabaseComponent dbComponentErogatore = null;
 		java.io.FileInputStream fin = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -331,7 +336,7 @@ public class CooperazioneConErrori {
 		}
 	}
 	
-	public void controllaTracciamentoRichiesta(String id,DatabaseComponent data,CooperazioneSPCoopBase cooperazione,
+	public void controllaTracciamentoRichiesta(String id,DatabaseComponent data,CooperazioneBase cooperazione,
 			String tipoServizio,String servizio,String azione,String collaborazione,String profiloCollaborazione,boolean existsListaEccezioni){
 		Reporter.log("Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
@@ -361,12 +366,12 @@ public class CooperazioneConErrori {
 		//	Assert.assertTrue(data.getVerificatoreTracciaRichiesta()isArrivedCount(id)==1);
 		//}
 	}
-	public void controllaTracciamentoRisposta(String id,DatabaseComponent data,CooperazioneSPCoopBase cooperazione,
+	public void controllaTracciamentoRisposta(String id,DatabaseComponent data,CooperazioneBase cooperazione,
 			String tipoServizio,String servizio,String azione,String collaborazione,String profiloCollaborazione,
 			String codiceEccezione){
 		controllaTracciamentoRisposta(id, data, cooperazione, tipoServizio, servizio, azione, collaborazione, profiloCollaborazione, codiceEccezione, null);
 	}
-	public void controllaTracciamentoRisposta(String id,DatabaseComponent data,CooperazioneSPCoopBase cooperazione,
+	public void controllaTracciamentoRisposta(String id,DatabaseComponent data,CooperazioneBase cooperazione,
 			String tipoServizio,String servizio,String azione,String collaborazione,String profiloCollaborazione,
 			String codiceEccezione,IDSoggetto [] mittenteRisposta){
 		Reporter.log("Controllo ricevuta richiesta asincrona simmetrica con riferimento messaggio: " +id);
@@ -453,11 +458,13 @@ public class CooperazioneConErrori {
 	/* ------------ Connettore Errato ---------------- */
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseConnettoreErrato = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+	private CooperazioneBaseInformazioni infoConnettoreErrato = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_SOGGETTO_CONNETTORE_ERRATO,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseConnettoreErrato = 
+			new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoConnettoreErrato, 
+					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	
 	
@@ -787,12 +794,13 @@ public class CooperazioneConErrori {
 	/* ------------ SOAPFault PdD Destinazione ---------------- */
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseSOAPFaultPdDDestinazione = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_SOAP_FAULT_PDD_DEST,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
-	
+	private CooperazioneBaseInformazioni infoSOAPFaultPdDDestinazione = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_SOAP_FAULT_PDD_DEST,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseSOAPFaultPdDDestinazione = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoSOAPFaultPdDDestinazione, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	
 	Repository repositorySOAPFaultPdDDestinazione=new Repository();
@@ -1131,12 +1139,13 @@ public class CooperazioneConErrori {
 	/* ------------ ConnettoreErrato Servizio Applicativo ---------------- */
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseConnettoreErratoServizioApplicativo = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
-	
+	private CooperazioneBaseInformazioni infoConnettoreErratoServizioApplicativo = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseConnettoreErratoServizioApplicativo = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoConnettoreErratoServizioApplicativo, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	
 	Repository repositoryConnettoreErratoServizioApplicativo=new Repository();
@@ -1538,12 +1547,13 @@ public class CooperazioneConErrori {
 	/* ------------ SOAPFault Servizio Applicativo ---------------- */
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseSOAPFaultServizioApplicativo = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI, Inoltro.CON_DUPLICATI);
-	
+	private CooperazioneBaseInformazioni infoSOAPFaultServizioApplicativo = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseSOAPFaultServizioApplicativo = 
+		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoSOAPFaultServizioApplicativo, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	
 	Repository repositorySOAPFaultServizioApplicativo=new Repository();
@@ -1937,12 +1947,13 @@ public class CooperazioneConErrori {
 	/* ------------ Errore Processamento ---------------- */
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseErroreProcessamento = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_ERRORE_PROCESSAMENTO,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI, Inoltro.CON_DUPLICATI);
-	
+	private CooperazioneBaseInformazioni infoErroreProcessamento = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_ERRORE_PROCESSAMENTO,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseErroreProcessamento = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoErroreProcessamento, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	
 	Repository repositoryErroreProcessamento=new Repository();
@@ -2407,12 +2418,13 @@ public class CooperazioneConErrori {
 	/* ------------ Errore Validazione ---------------- */
 	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBaseErroreValidazione = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI, Inoltro.CON_DUPLICATI);
-	
+	private CooperazioneBaseInformazioni infoErroreValidazione = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseErroreValidazione = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoErroreValidazione, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	
 	Repository repositoryErroreValidazione=new Repository();
@@ -3017,11 +3029,13 @@ public class CooperazioneConErrori {
 				
 				else if(i==7){
 					// Test Oneway con riscontri, con soap fault della PdD Destinazione
-					CooperazioneSPCoopBase collaborazioneSPCoopBaseTEST7 = 
-						new CooperazioneSPCoopBase(false,
-								CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-								CostantiTestSuite.SPCOOP_SOGGETTO_SOAP_FAULT_PDD_DEST,
-								true,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+					CooperazioneBaseInformazioni infoTEST7 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+							CostantiTestSuite.SPCOOP_SOGGETTO_SOAP_FAULT_PDD_DEST,
+							true,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+					CooperazioneBase collaborazioneSPCoopBaseTEST7 = 
+						new CooperazioneBase(false,SOAPVersion.SOAP11,  infoTEST7, 
+								org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+								DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 					this.controllaTracciamentoRichiesta(id,data,collaborazioneSPCoopBaseTEST7, 
 							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, 
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 

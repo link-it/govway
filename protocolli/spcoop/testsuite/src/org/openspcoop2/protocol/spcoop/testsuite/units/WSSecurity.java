@@ -43,13 +43,18 @@ import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsi
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
@@ -72,13 +77,16 @@ public class WSSecurity {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "WSSecurity";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
-
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	
 
 	private static boolean addIDUnivoco = false;
 	
@@ -159,7 +167,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_HELLO_WORLD_AUTORIZZAZIONE_OK);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -399,7 +407,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_ENCRYPT_MESSAGGIO_ALTERATO);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -459,7 +467,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_SIGNATURE_MESSAGGIO_ALTERATO);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
@@ -585,7 +593,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_AFFIDABILE_CON_FILTRO_DUPLICATI);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
 				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
@@ -825,7 +833,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_MU_ENCRYPT+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMU_PdDActorMU_Encrypt);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -864,7 +872,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -928,7 +936,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_Actor_ENCRYPT+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMU_PdDActor_Encrypt);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -967,7 +975,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1033,7 +1041,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_MU_ENCRYPT+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientActor_PdDMU_Encrypt);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1074,7 +1082,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1137,7 +1145,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_Actor_ENCRYPT+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientActor_PdDActor_Encrypt);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1178,7 +1186,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1243,7 +1251,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_MU_ENCRYPT+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMUActor_PdDMU_Encrypt);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1284,7 +1292,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1347,7 +1355,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_Actor_ENCRYPT+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMUActor_PdDActor_Encrypt);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1388,7 +1396,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1457,7 +1465,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_MU_SIGNATURE+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMU_PdDActorMU_Signature);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1494,7 +1502,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1557,7 +1565,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_Actor_SIGNATURE+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMU_PdDActor_Signature);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1594,7 +1602,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1660,7 +1668,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_MU_SIGNATURE+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientActor_PdDMU_Signature);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1699,7 +1707,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1762,7 +1770,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_Actor_SIGNATURE+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientActor_PdDActor_Signature);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1801,7 +1809,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1866,7 +1874,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_MU_SIGNATURE+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMUActor_PdDMU_Signature);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -1905,7 +1913,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){
@@ -1968,7 +1976,7 @@ public class WSSecurity {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_Actor_SIGNATURE+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMUActor_PdDActor_Signature);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
 			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
@@ -2007,7 +2015,7 @@ public class WSSecurity {
 			client.processWSSResponse(wssPropertiesResponse, baseWSS);
 			
 			// Test uguaglianza Body (e attachments)
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false); // reinizializzo messaggio prima di averlo cambiato con WSS
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(client.getSentMessage(), client.getResponseMessage()));
 			
 		}catch(Exception e){

@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreCredenzialiTest;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
@@ -37,6 +38,8 @@ import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -44,8 +47,10 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.utils.date.DateManager;
@@ -70,12 +75,15 @@ public class LetturaCredenzialiIngresso {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "LetturaCredenzialiIngresso";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI, Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
 
 	
@@ -165,7 +173,7 @@ public class LetturaCredenzialiIngresso {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -283,7 +291,7 @@ public class LetturaCredenzialiIngresso {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -405,7 +413,7 @@ public class LetturaCredenzialiIngresso {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -529,7 +537,7 @@ public class LetturaCredenzialiIngresso {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -651,7 +659,7 @@ public class LetturaCredenzialiIngresso {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -787,7 +795,7 @@ public class LetturaCredenzialiIngresso {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -922,7 +930,7 @@ public class LetturaCredenzialiIngresso {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -1009,7 +1017,7 @@ public class LetturaCredenzialiIngresso {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -1137,7 +1145,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNONEtoBASIC_PA);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "adminSilY");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD, "123456");
@@ -1258,7 +1266,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNONEtoSSL_PA);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT, "CN=clientkey");
 			client.setMessage(msg);
@@ -1380,7 +1388,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeBASICtoBASIC_PA);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setAutenticazione("adminSilX", "123456");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "adminSilY");
@@ -1502,7 +1510,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeBASICtoSSL_PA);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setAutenticazione("adminSilY", "123456");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT, "CN=clientkey");
@@ -1636,7 +1644,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeSSLtoBASIC_PA,sslContext);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore_httpsConAutenticazioneClient());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore_httpsConAutenticazioneClient());
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "adminSilY");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD, "123456");
@@ -1770,7 +1778,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeSSLtoSSL_PA,sslContext);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore_httpsConAutenticazioneClient());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore_httpsConAutenticazioneClient());
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT, "CN=clientkey");
 			client.setMessage(msg);
@@ -1907,7 +1915,7 @@ public class LetturaCredenzialiIngresso {
 		
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PA);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_CONFIGURAZIONE, "errore");
 			client.setMessage(msg);
@@ -1996,7 +2004,7 @@ public class LetturaCredenzialiIngresso {
 		
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeERRORE_GENERALE_PA);
 			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE, "errore");
 			client.setMessage(msg);

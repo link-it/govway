@@ -1,0 +1,12 @@
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header>
+	<a:example1 xmlns:a="http://www.openspcoop.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova</a:example1>
+        <b:example2 xmlns:b="http://www.openspcoop.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova2</b:example2>
+	</soapenv:Header>
+	<soapenv:Body>
+<ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:se="http://schemas.xmlsoap.org/soap/envelope/" se:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+	<symbol xsi:type="xsd:string">IBM</symbol>
+        <symbol xsi:type="xsd:string">IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII</symbol>
+</ns1:getQuote>
+</soapenv:Body>
+</soapenv:Envelope>

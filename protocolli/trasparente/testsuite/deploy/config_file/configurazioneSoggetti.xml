@@ -1,0 +1,288 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
+
+	<soggetto tipo="PROXY" nome="Anonimo" identificativo-porta="AnonimoPdD"/>
+
+	<soggetto xmlns="http://www.openspcoop2.org/core/config" tipo="PROXY" nome="applicativoComunePisa" identificativo-porta="applicativoComunePisaPdD"/>
+
+	<soggetto tipo="PROXY" nome="MinisteroReferente" identificativo-porta="MinisteroReferentePdD"/>
+
+	<soggetto tipo="PROXY" nome="MinisteroFruitore" identificativo-porta="MinisteroFruitorePdD">
+
+		<!-- OneWay -->
+
+		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOneway" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+			 <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+			 <servizio tipo="PROXY" nome="Oneway"/>
+			 <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOneway/([^/|^?]*).*"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="notifica"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatore"/>
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayLocalForward/([^/|^?]*).*"/>
+		</porta-delegata>
+
+	
+		<!-- Sincrono -->
+
+		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincrono" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincrono/([^/|^?]*).*"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatore"/>
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoLocalForward/([^/|^?]*).*"/>
+		</porta-delegata>
+
+
+		<servizio-applicativo nome="EsempioFruitoreTrasparente">
+		    <invocazione-porta>
+		        <credenziali tipo="basic" user="esempioFruitoreTrasparente" password="123456"/>
+		        <gestione-errore fault="soap"/>
+		    </invocazione-porta>
+		</servizio-applicativo>
+
+	
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="MinisteroErogatore" identificativo-porta="MinisteroErogatorePdD">
+
+		<!-- OneWay -->
+
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <servizio-applicativo nome="ping"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault11"/>
+		    <servizio-applicativo nome="faultPingSoap11"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11500" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault11_500"/>
+		    <servizio-applicativo nome="faultPingSoap11_500"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault12"/>
+		    <servizio-applicativo nome="faultPingSoap12"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12500" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault12_500"/>
+		    <servizio-applicativo nome="faultPingSoap12_500"/>
+		    <validazione-contenuti-applicativi/>
+		</porta-applicativa>
+
+		
+		<!-- Sincrono -->
+
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>		
+		
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione nome="gestioneSOAPFault11"/>
+		    <servizio-applicativo nome="faultSoap11"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11500" gestione-manifest="disabilitato">
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione nome="gestioneSOAPFault11_500"/>
+		    <servizio-applicativo nome="faultSoap11_500"/>
+		</porta-applicativa>
+
+                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12" gestione-manifest="disabilitato">
+                    <servizio tipo="PROXY" nome="Sincrono"/>
+                    <azione nome="gestioneSOAPFault12"/>
+                    <servizio-applicativo nome="faultSoap12"/>
+                </porta-applicativa>
+
+                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12500" gestione-manifest="disabilitato">
+                    <servizio tipo="PROXY" nome="Sincrono"/>
+                    <azione nome="gestioneSOAPFault12_500"/>
+                    <servizio-applicativo nome="faultSoap12_500"/>
+                </porta-applicativa>
+
+
+
+		<!-- OneWay -->
+
+		<servizio-applicativo nome="ping">
+    			<invocazione-servizio>
+			        <connettore tipo="http" nome="ConnettoreINV_pingPROXYMinisteroErogatore">
+			            <property nome="location" valore="http://localhost:8080/TestService/ping"/>
+			        </connettore>
+			</invocazione-servizio>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="faultPingSoap11">
+    			<invocazione-servizio>
+			        <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11PROXYMinisteroErogatore">
+			            <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true"/>
+			        </connettore>
+			</invocazione-servizio>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="faultPingSoap11_500">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11_500PROXYMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true&amp;returnCode=500"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+                <servizio-applicativo nome="faultPingSoap12">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12PROXYMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true&amp;faultSoapVersion=12"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+                <servizio-applicativo nome="faultPingSoap12_500">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12_500PROXYMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/TestService/ping?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+
+		<!-- Sincrono -->
+
+		<servizio-applicativo nome="echo">
+    			<invocazione-servizio>
+			        <connettore tipo="http" nome="ConnettoreINV_echoPROXYMinisteroErogatore">
+			            <property nome="location" valore="http://localhost:8080/TestService/echo"/>
+			        </connettore>
+			</invocazione-servizio>
+		</servizio-applicativo>	
+
+		<servizio-applicativo nome="faultSoap11">
+    			<invocazione-servizio>
+			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11PROXYMinisteroErogatore">
+			            <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true"/>
+			        </connettore>
+			</invocazione-servizio>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="faultSoap11_500">
+    			<invocazione-servizio>
+			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11_500PROXYMinisteroErogatore">
+			            <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;returnCode=500"/>
+			        </connettore>
+			    </invocazione-servizio>
+		</servizio-applicativo>
+
+                <servizio-applicativo nome="faultSoap12">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_faultSoap12PROXYMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+                <servizio-applicativo nome="faultSoap12_500">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_faultSoap12_500PROXYMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/TestService/echo?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                                </connettore>
+                            </invocazione-servizio>
+                </servizio-applicativo>
+
+
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="MinisteroErogatoreEsterno" identificativo-porta="MinisteroErogatoreEsternoPdD"/>
+
+	<soggetto tipo="PROXY" nome="ClientSoapFault11" identificativo-porta="ClientSoapFault11PdD">
+
+		<porta-delegata nome="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYOneway" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault11"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYSincrono" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione nome="gestioneSOAPFault11"/>
+		</porta-delegata>
+
+	</soggetto>
+
+	<soggetto tipo="PROXY" nome="ClientSoapFault11500" identificativo-porta="ClientSoapFault11500PdD">
+
+		<porta-delegata nome="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYOneway" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault11_500"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYSincrono" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione nome="gestioneSOAPFault11_500"/>
+		</porta-delegata>
+
+	</soggetto>
+
+        <soggetto tipo="PROXY" nome="ClientSoapFault12" identificativo-porta="ClientSoapFault12PdD">
+
+		<porta-delegata nome="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYOneway" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault12"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYSincrono" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione nome="gestioneSOAPFault12"/>
+		</porta-delegata>
+
+	</soggetto>
+
+        <soggetto tipo="PROXY" nome="ClientSoapFault12500" identificativo-porta="ClientSoapFault12500PdD">
+
+		<porta-delegata nome="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYOneway" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Oneway"/>
+		    <azione nome="gestioneSOAPFault12_500"/>
+		</porta-delegata>
+
+		<porta-delegata nome="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYSincrono" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato">
+		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="PROXY" nome="Sincrono"/>
+		    <azione nome="gestioneSOAPFault12_500"/>
+		</porta-delegata>
+
+	</soggetto>
+
+
+

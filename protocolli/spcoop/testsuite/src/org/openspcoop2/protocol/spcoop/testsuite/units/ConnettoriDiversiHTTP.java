@@ -43,12 +43,15 @@ import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 import javax.naming.Context;
 
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
@@ -58,6 +61,8 @@ import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.testng.Assert;
@@ -77,12 +82,15 @@ public class ConnettoriDiversiHTTP {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "ConnettoriDiversiHTTP";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+			new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
 
 
@@ -401,7 +409,7 @@ public class ConnettoriDiversiHTTP {
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
-			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapFileName(), false,addIDUnivoco);
+			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 
 			// AttesaTerminazioneMessaggi
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){

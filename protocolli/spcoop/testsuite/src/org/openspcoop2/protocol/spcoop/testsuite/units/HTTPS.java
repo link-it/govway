@@ -39,14 +39,19 @@ import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
+import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
@@ -69,12 +74,16 @@ public class HTTPS {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "HTTPS";
+	
 	/** Gestore della Collaborazione di Base */
-	public CooperazioneSPCoopBase collaborazioneSPCoopBase = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBase = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+
 
 
 	private static boolean addIDUnivoco = true;
@@ -282,7 +291,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -481,7 +490,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -600,7 +609,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -730,7 +739,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -831,7 +840,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -928,17 +937,20 @@ public class HTTPS {
 	 * Test https con autenticazione client
 	 */
 	Repository repositoryHTTPSAutenticazioneSIL_Test2=new Repository();
-	CooperazioneSPCoopBase collaborazioneSPCoopBaseTestSil2 = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_1,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni infoTestSil2 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopBaseTestSil2 = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoTestSil2, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+		
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_SIL_2"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void httpsAutenticazioneSIL_2() throws FatalTestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -1049,7 +1061,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -1139,11 +1151,14 @@ public class HTTPS {
 	/***
 	 * Test https con autorizzazione spcoop ok
 	 */
-	public CooperazioneSPCoopBase collaborazioneSPCoopFruitoreSoggetto1 = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_1,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto1 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto1 = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoFruitoreSoggetto1, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	
 	Repository repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_SPCOOP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void httpsAutorizzazioneSPCoopOkSoggetto1() throws FatalTestSuiteException, IOException, SOAPException{
@@ -1220,7 +1235,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -1390,11 +1405,13 @@ public class HTTPS {
 	/***
 	 * Test spoofing rilevato
 	 */
-	public CooperazioneSPCoopBase collaborazioneSPCoopFruitoreSoggetto2 = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_2,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto2 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_2,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto2 = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoFruitoreSoggetto2, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	Repository repositorySpoofingRilevato=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void SpoofingRilevato() throws FatalTestSuiteException, IOException, Exception{
@@ -1404,7 +1421,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
@@ -1584,11 +1601,14 @@ public class HTTPS {
 	/***
 	 * Test spoofing rilevato
 	 */
-	public CooperazioneSPCoopBase collaborazioneSPCoopFruitoreSoggettoNonAutenticato = 
-		new CooperazioneSPCoopBase(false,
-				CostantiTestSuite.SPCOOP_SOGGETTO_NON_AUTENTICATO,
-				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
-				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);
+	private CooperazioneBaseInformazioni infoFruitoreSoggettoNonAutenticato = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_NON_AUTENTICATO,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggettoNonAutenticato = 
+		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoFruitoreSoggettoNonAutenticato, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+
 	Repository repositorySpoofingRilevatoTramiteFruitore=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_TRAMITE_FRUIZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void SpoofingRilevatoTramiteFruitore() throws FatalTestSuiteException, IOException, Exception{
@@ -1598,7 +1618,7 @@ public class HTTPS {
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoapFileName()));
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
 
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();

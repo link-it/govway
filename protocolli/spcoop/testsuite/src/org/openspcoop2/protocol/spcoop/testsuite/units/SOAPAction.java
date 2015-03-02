@@ -126,7 +126,7 @@ public class SOAPAction {
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		msg.getSOAPPartAsBytes();
 
@@ -198,7 +198,7 @@ public class SOAPAction {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActionNonPresentePA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.setSoapAction(null);
 			client.connectToSoapEngine();
 			client.setMessage(msg);
@@ -279,7 +279,7 @@ public class SOAPAction {
 				
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		msg.getSOAPPartAsBytes();
 
@@ -362,7 +362,7 @@ public class SOAPAction {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActionValueNonPresentePA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.setSoapAction(ClientHttpGenerico.SOAP_ACTION_VALUE_NULL);
 			client.connectToSoapEngine();
 			client.setMessage(msg);
@@ -458,7 +458,7 @@ public class SOAPAction {
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		msg.getSOAPPartAsBytes();
 
@@ -530,7 +530,7 @@ public class SOAPAction {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActionStringVuotaNonQuotataPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.setSoapAction("");
 			client.connectToSoapEngine();
 			client.setMessage(msg);
@@ -620,7 +620,7 @@ public class SOAPAction {
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		msg.getSOAPPartAsBytes();
 
@@ -692,7 +692,7 @@ public class SOAPAction {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActionNonQuotataPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.setSoapAction("Action");
 			client.connectToSoapEngine();
 			client.setMessage(msg);
@@ -771,7 +771,7 @@ public class SOAPAction {
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		msg.getSOAPPartAsBytes();
 
@@ -821,7 +821,7 @@ public class SOAPAction {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActionStringVuotaQuotataPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.setSoapAction("\"\"");
 			client.connectToSoapEngine();
 			client.setMessage(msg);
@@ -865,7 +865,7 @@ public class SOAPAction {
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
-			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapFileName()));
+			new java.io.ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
 		Message msg=new Message(bin);
 		msg.getSOAPPartAsBytes();
 
@@ -915,7 +915,7 @@ public class SOAPAction {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySoapActionStringQuotataPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteEGovErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
 			client.setSoapAction("\"Action\"");
 			client.connectToSoapEngine();
 			client.setMessage(msg);

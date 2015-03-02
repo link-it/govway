@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="TestSuite_LocalEnv_testUnits" basedir=".">
+<project name="TestSuite_spcoop_LocalEnv_testUnits" basedir=".">
 
       <!-- Personalizzazione testsuite -->
       <property name="output" location="RisultatiTestSuite" />
@@ -15,7 +15,6 @@
       <!-- Log della Porta di Dominio -->
       <property name="openspcoop_log" location="/var/openspcoop2/log" />
       <!-- Log dell'application server -->
-      <property name="server_ear" location="JBOSS/server/default/deploy/OpenSPCoop.ear" />
       <property name="server_log" location="JBOSS/server/default/log/server.log" />
       <!-- Database Messaggi di OpenSPCoop -->
       <property name="openspcoop.tipoDatabase" value="INDICARE_IL_TIPO_DI_DATABASE"  />
@@ -31,8 +30,11 @@
       <property name="diagnostica.password" value="openspcoop"  />
       <!-- ** Parametri necessari per eseguire al completo la testsuite ** -->
 
-     <!-- Indicazione se la configurazione deve essere re-inizializzata ogni volta che viene lanciato un test -->
-     <property name="reinizializzaConfigurazione" value="false" />
+      <!-- Indicazione se la configurazione deve essere re-inizializzata ogni volta che viene lanciato un test -->
+      <property name="reinizializzaConfigurazione" value="false" />
+	
+	  <!-- Testsuite Trasformer -->
+	  <property name="testsuite_transformer" value="org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer" /> 
 
       <!-- openspcoop config dir -->
       <property name="openspcoop_configuration_dir" location="/etc/openspcoop2"/>      
@@ -43,7 +45,6 @@
       <property name="soap_file" location="deploy/testfiles/soap" />
       <property name="xml_encoding_file" location="deploy/testfiles/xmlencoding" />
       <property name="config_file" location="deploy/config_file" />
-	  <property name="guitest" location="deploy/guitest" />
 
       <!-- OpenSPCoop Location and Library -->
       <property name="openspcoop2" location="../../../" />
@@ -56,6 +57,8 @@
       <property name="openspcoop2_testsuite_properties" location="${openspcoop2_testsuite}/deploy/properties" />
       <!-- SPCoop Protocol Plugin -->
       <property name="openspcoop2_protocol_spcoop" location="${openspcoop2}/protocolli/spcoop/dist/" />
+      <!-- Protocollo (Per XML Loader) -->
+	  <property name="protocolloDefault" location="spcoop" />
 
       <!-- Tipo di configurazione, valori possibili: none/xml/db -->
       <property name="tipoConfigurazione" value="xml" />
