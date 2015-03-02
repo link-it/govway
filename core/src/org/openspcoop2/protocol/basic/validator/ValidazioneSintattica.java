@@ -30,10 +30,10 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
@@ -83,7 +83,19 @@ public class ValidazioneSintattica implements
 		
 		Date oraRegistrazione = DateManager.getDate();
 		busta.setOraRegistrazione(oraRegistrazione);
-		busta.setTipoOraRegistrazione(TipoOraRegistrazione.LOCALE, Costanti.TIPO_TEMPO_LOCALE);
+		if(busta.getTipoOraRegistrazione()==null){
+			busta.setTipoOraRegistrazione(TipoOraRegistrazione.LOCALE,this.protocolFactory.createTraduttore().toString(busta.getTipoOraRegistrazione()));
+		}
+		if(busta.sizeListaTrasmissioni()>0){
+			for (Trasmissione trasmissione : busta.getListaTrasmissioni()) {
+				if(trasmissione.getOraRegistrazione()==null){
+					trasmissione.setOraRegistrazione(oraRegistrazione);
+				}
+				if(trasmissione.getTempo()==null){
+					trasmissione.setTempo(TipoOraRegistrazione.LOCALE,this.protocolFactory.createTraduttore().toString(busta.getTipoOraRegistrazione()));
+				}
+			}
+		}
 		
 		return new ValidazioneSintatticaResult(null, null, null, busta, null, null, null, true);
 	}
