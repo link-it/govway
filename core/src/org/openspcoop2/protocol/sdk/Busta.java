@@ -96,7 +96,7 @@ public class Busta implements java.io.Serializable {
 		this.setProtocollo(protocollo);
 	}
 
-	public Busta(String protocollo,Servizio infoServizio, IDSoggetto mittente, IDSoggetto destinatario, String id) {
+	public Busta(IProtocolFactory protocolFactory,Servizio infoServizio, IDSoggetto mittente, IDSoggetto destinatario, String id) throws ProtocolException {
 		
 		this.busta = new org.openspcoop2.core.tracciamento.Busta();
 		
@@ -104,6 +104,9 @@ public class Busta implements java.io.Serializable {
 		
 		if(infoServizio!=null){
 			this.setProfiloDiCollaborazione(infoServizio.getProfiloDiCollaborazione());
+			if(infoServizio.getProfiloDiCollaborazione()!=null){
+				this.setProfiloDiCollaborazioneValue(protocolFactory.createTraduttore().toString(infoServizio.getProfiloDiCollaborazione()));
+			}
 			this.setConfermaRicezione(infoServizio.getConfermaRicezione());
 			this.setScadenza(infoServizio.getScadenza());
 			if(infoServizio.getIDServizio()!=null){
@@ -128,7 +131,9 @@ public class Busta implements java.io.Serializable {
 		}
 		
 		this.setID(id);
-		this.setProtocollo(protocollo);
+		if(protocolFactory!=null){
+			this.setProtocollo(protocolFactory.getProtocol());
+		}
 	}
 	
 	public Busta(org.openspcoop2.core.tracciamento.Busta busta){

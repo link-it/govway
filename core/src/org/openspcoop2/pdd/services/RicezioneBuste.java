@@ -1082,7 +1082,7 @@ public class RicezioneBuste {
 			}
 			
 			// Build Busta
-			busta = new Busta(protocolFactory.getProtocol(),infoServizio, idSoggettoFruitore, idSoggettoErogatore, id);
+			busta = new Busta(protocolFactory,infoServizio, idSoggettoFruitore, idSoggettoErogatore, id);
 			
 		}catch(Exception e){
 			openspcoopstate.releaseResource();
