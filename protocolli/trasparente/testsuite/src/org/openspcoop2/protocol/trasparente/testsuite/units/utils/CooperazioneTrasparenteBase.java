@@ -140,9 +140,10 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 	public void testFaultOneWay(DatabaseComponent data,
 			DatabaseMsgDiagnosticiComponent msgDiagData, String id,
 			String tipoServizio, String nomeServizio,
-			boolean is500, boolean stateful) throws Exception {
+			boolean is500, boolean stateful,
+			boolean checkServizioApplicativo) throws Exception {
 	
-		this.testOneWay(data, id, tipoServizio, nomeServizio,null, true,null);
+		this.testOneWay(data, id, tipoServizio, nomeServizio,null, checkServizioApplicativo,null);
 		boolean checkMsgInProcessamento = !(!this.portaDelegata && is500 && stateful);
 		this.testFaultDiag(data, msgDiagData, id, tipoServizio, nomeServizio, is500, stateful, checkMsgInProcessamento);
 	}

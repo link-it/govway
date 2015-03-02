@@ -21,7 +21,7 @@ public class PortaDelegataFault500 extends PortaImpl {
 	Repository repositoryPortaDelegataOneWayFault500_Soap11Stateful=new Repository();
 	@DataProvider (name=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap11Stateful")
 	public Object[][]testPortaDelegataOneWayFault500_Soap11Stateful() throws Exception{
-		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap11Stateful);
+		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap11Stateful,false); // non verifico il servizioApplicativo, poiche' il fault causa un rollback, e potrebbe essere presente un numero >1 delle tracce che provoca il fallimento del test.
 	}
 
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault500",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP11.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap11Stateful",dependsOnMethods={"oneWayFault500_pdSOAP11Stateful"})
@@ -54,7 +54,7 @@ public class PortaDelegataFault500 extends PortaImpl {
 	Repository repositoryPortaDelegataOneWayFault500_Soap12Stateful=new Repository();
 	@DataProvider (name=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap12Stateful")
 	public Object[][]testPortaDelegataOneWayFault500_Soap12Stateful() throws Exception{
-		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap12Stateful);
+		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap12Stateful,false); // non verifico il servizioApplicativo, poiche' il fault causa un rollback, e potrebbe essere presente un numero >1 delle tracce che provoca il fallimento del test.
 	}
 
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault500",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP12.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap12Stateful",dependsOnMethods={"oneWayFault500_pdSOAP12Stateful"})
@@ -87,7 +87,7 @@ public class PortaDelegataFault500 extends PortaImpl {
 	Repository repositoryPortaDelegataOneWayFault500_Soap11WithAttachmentsStateful=new Repository();
 	@DataProvider (name=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap11WithAttachmentsStateful")
 	public Object[][]testPortaDelegataOneWayFault500_Soap11WithAttachmentsStateful() throws Exception{
-		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap11WithAttachmentsStateful);
+		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap11WithAttachmentsStateful,false); // non verifico il servizioApplicativo, poiche' il fault causa un rollback, e potrebbe essere presente un numero >1 delle tracce che provoca il fallimento del test.
 	}
 
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault500",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP11.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap11WithAttachmentsStateful",dependsOnMethods={"oneWayFault500_pdSOAP11WithAttachmentsStateful"})
@@ -120,7 +120,7 @@ public class PortaDelegataFault500 extends PortaImpl {
 	Repository repositoryPortaDelegataOneWayFault500_Soap12WithAttachmentsStateful=new Repository();
 	@DataProvider (name=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap12WithAttachmentsStateful")
 	public Object[][]testPortaDelegataOneWayFault500_Soap12WithAttachmentsStateful() throws Exception{
-		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap12WithAttachmentsStateful);
+		return Porta._getDataProvider(this.repositoryPortaDelegataOneWayFault500_Soap12WithAttachmentsStateful,false); // non verifico il servizioApplicativo, poiche' il fault causa un rollback, e potrebbe essere presente un numero >1 delle tracce che provoca il fallimento del test.
 	}
 
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault500",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP12.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWayFault500_Soap12WithAttachmentsStateful",dependsOnMethods={"oneWayFault500_pdSOAP12WithAttachmentsStateful"})

@@ -244,7 +244,7 @@ public class Porta {
 	public void testOneWayFault500(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneTrasparenteBaseFault500.testFaultOneWay(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,true, this.stateful);
+					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,true, this.stateful,checkServizioApplicativo);
 			
 		}catch(Exception e){
 			throw e;
@@ -261,7 +261,7 @@ public class Porta {
 	public void testOneWayFault200(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneTrasparenteBaseFault200.testFaultOneWay(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,false, this.stateful);
+					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,false, this.stateful,checkServizioApplicativo);
 			
 		}catch(Exception e){
 			throw e;
@@ -370,6 +370,9 @@ public class Porta {
 	
 	
 	public static Object[][]_getDataProvider(Repository repository) throws Exception{
+		return _getDataProvider(repository,true);
+	}
+	public static Object[][]_getDataProvider(Repository repository, boolean checkServizioApplicativo) throws Exception{
 		String id= repository.getNext();
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
@@ -379,7 +382,7 @@ public class Porta {
 			}
 		}
 		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(), DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,true}	
+				{DatabaseProperties.getDatabaseComponentFruitore(), DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,checkServizioApplicativo}	
 		};
 	}
 
