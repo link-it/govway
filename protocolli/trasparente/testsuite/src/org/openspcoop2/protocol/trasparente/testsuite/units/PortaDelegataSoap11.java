@@ -59,7 +59,7 @@ public class PortaDelegataSoap11 {
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneTrasparenteBase.getCooperazioneBaseInformazioni(CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
 				CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
-				false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
+				false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneTrasparenteBase = 
 			new CooperazioneBase(false, SOAPVersion.SOAP11, this.info, 
 					org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance(), 
@@ -103,7 +103,7 @@ public class PortaDelegataSoap11 {
 			}
 		}
 		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false}	
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,true}	
 		};
 	}
 	@Test(groups={PortaDelegataSoap11.ID_GRUPPO,PortaDelegataSoap11.ID_GRUPPO+".ONEWAY"},dataProvider="OneWay",dependsOnMethods={"oneWay"})

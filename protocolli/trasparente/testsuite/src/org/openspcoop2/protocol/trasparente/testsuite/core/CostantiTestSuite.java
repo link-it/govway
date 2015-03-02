@@ -77,9 +77,9 @@ public class CostantiTestSuite {
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_EROGATORE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_EROGATORE);
 	
 	/** ENTITA SPCOOP: Nome Soggetto Erogatore Esterno */
-	public static final String PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatore";
+	public static final String PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatoreEsterno";
 	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore Esterno */
-	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatorePdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatoreEsternoPdD";
 	/** ENTITA SPCOOP: IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_EROGATORE_ESTERNO = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO);
