@@ -290,7 +290,8 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			// Aggiunta di un servizio applicativo passando dal menu' 
 			if(!useIdSogg){
 				de.setType(DataElementType.SELECT);
-
+				de.setPostBack(true);
+				
 				de.setValues(soggettiList);
 				de.setLabels(soggettiListLabel);
 				// selezion il provider (se)/che era stato precedentemente
