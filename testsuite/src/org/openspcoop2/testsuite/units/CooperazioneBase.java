@@ -85,7 +85,8 @@ public class CooperazioneBase {
 	protected UnitsDatabaseProperties unitsDatabaseProperties;
 	protected Logger log;
 	
-	
+	protected boolean portaDelegata;
+
 	public boolean isSoapWithAttachments() {
 		return this.soapWithAttachments;
 	}
@@ -94,7 +95,13 @@ public class CooperazioneBase {
 	}
 	public CooperazioneBase(boolean soapWithAttachments,SOAPVersion soapVersion,CooperazioneBaseInformazioni info,
 			UnitsTestSuiteProperties unitsTestsuiteProperties, UnitsDatabaseProperties unitsDatabaseProperties, Logger log) {
+		this(soapWithAttachments, soapVersion, info, unitsTestsuiteProperties, unitsDatabaseProperties, log, true);
+	}
+	
+	public CooperazioneBase(boolean soapWithAttachments,SOAPVersion soapVersion,CooperazioneBaseInformazioni info,
+			UnitsTestSuiteProperties unitsTestsuiteProperties, UnitsDatabaseProperties unitsDatabaseProperties, Logger log, boolean portaDelegata) {
 		super();
+		this.portaDelegata = portaDelegata;
 		this.soapWithAttachments = soapWithAttachments;
 		this.soapVersion = soapVersion;
 		if(this.soapWithAttachments)
@@ -232,6 +239,9 @@ public class CooperazioneBase {
 	}
 	
 	
+	private String getUrlPortaDiDominio() {
+		return (this.portaDelegata) ? this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore() :this.unitsTestsuiteProperties.getServizioRicezioneBusteErogatore();
+	}
 	
 	
 
@@ -249,7 +259,7 @@ public class CooperazioneBase {
 		try{
 			// Creazione client OneWay
 			ClientOneWay client=new ClientOneWay(repository);
-			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine(this.soapVersion);
 			if(username!=null && password!=null)
@@ -372,7 +382,7 @@ public class CooperazioneBase {
 	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay,String username,String password) throws FatalTestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(repository);
-		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 		client.setPortaDelegata(portaDelegata);
 		client.connectToSoapEngine(this.soapVersion);
 		if(username!=null && password!=null)
@@ -524,7 +534,7 @@ public class CooperazioneBase {
 				new ClientAsincronoSimmetrico_ModalitaAsincrona(repositoryConsegnaRisposteAsincroneSimmetriche_modalitaAsincrona,
 						repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,
 						portaDelegataCorrelata);
-			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine(this.soapVersion);
 			client.setAutenticazione(user,password);
@@ -792,7 +802,7 @@ public class CooperazioneBase {
 			new ClientAsincronoSimmetrico_ModalitaSincrona(repositoryConsegnaRisposteAsincroneSimmetriche_modalitaSincrona,
 					repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaSincrona,
 					portaDelegataCorrelata);
-		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 		client.setPortaDelegata(portaDelegata);
 		client.connectToSoapEngine(this.soapVersion);
 		client.setAutenticazione(user,password);
@@ -1037,7 +1047,7 @@ public class CooperazioneBase {
 		try{
 
 			ClientAsincronoAsimmetrico_ModalitaAsincrona client = new ClientAsincronoAsimmetrico_ModalitaAsincrona(repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona);
-			client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 			client.setPortaDelegata(portaDelegata);
 			client.setPortaDelegataCorrelata(portaDelegataCorrelata);
 			client.connectToSoapEngine(this.soapVersion);
@@ -1297,7 +1307,7 @@ public class CooperazioneBase {
 	public void asincronoAsimmetrico_modalitaSincrona(String portaDelegata,String portaDelegataCorrelata,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona,boolean addIDUnivoco) throws FatalTestSuiteException, IOException, SOAPException{
 		ClientAsincronoAsimmetrico_ModalitaSincrona client = new ClientAsincronoAsimmetrico_ModalitaSincrona(repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona);
-		client.setUrlPortaDiDominio(this.unitsTestsuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 		client.setPortaDelegata(portaDelegata);
 		client.setGeneraIDUnivoco(addIDUnivoco);
 		client.setPortaDelegataCorrelata(portaDelegataCorrelata);
