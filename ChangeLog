@@ -1,3 +1,9 @@
+2015-03-02  Giovanni Bussu <bussu@link.it>
+
+        * [TestsuiteProtocolloTrasparente]
+        Aggiunta funzionalità #296
+        Realizzata la testsuite per il protocollo Trasparente
+
 2015-02-20  Andrea Poli <apoli@link.it>
 
 	* [WebServiceDiagnostica]
