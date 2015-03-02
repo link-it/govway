@@ -31,6 +31,7 @@ import org.openspcoop2.core.tracciamento.SoggettoIdentificativo;
 import org.openspcoop2.core.tracciamento.TipoData;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.utils.date.DateManager;
 
 
 /**
@@ -489,6 +490,31 @@ public class Trasmissione implements java.io.Serializable{
 		return clone;
 	}
 
+	
+	public Trasmissione invertiTrasmissione(TipoOraRegistrazione tipoOraRegistrazione, String tipoTempo){
+		
+		Trasmissione inverti = new Trasmissione();
+				
+		// origine
+		inverti.setOrigine(this.getDestinazione()!=null ? new String(this.getDestinazione()) : null);
+		inverti.setTipoOrigine(this.getTipoDestinazione()!=null ? new String(this.getTipoDestinazione()) : null);
+		inverti.setIndirizzoOrigine(this.getIndirizzoDestinazione()!=null ? new String(this.getIndirizzoDestinazione()) : null);
+		inverti.setIdentificativoPortaOrigine(this.getIdentificativoPortaDestinazione()!=null ? new String(this.getIdentificativoPortaDestinazione()) : null);
+		
+		// destinazione
+		inverti.setDestinazione(this.getOrigine()!=null ? new String(this.getOrigine()) : null);
+		inverti.setTipoDestinazione(this.getTipoOrigine()!=null ? new String(this.getTipoOrigine()) : null);
+		inverti.setIndirizzoDestinazione(this.getIndirizzoOrigine()!=null ? new String(this.getIndirizzoOrigine()) : null);
+		inverti.setIdentificativoPortaDestinazione(this.getIdentificativoPortaOrigine()!=null ? new String(this.getIdentificativoPortaOrigine()) : null);
+
+		// date
+		Date oraRegistrazione = DateManager.getDate();
+		inverti.setOraRegistrazione(oraRegistrazione);
+		inverti.setTempo(tipoOraRegistrazione);
+		inverti.setTempoValue(tipoTempo);
+
+		return inverti;
+	}
 }
 
 

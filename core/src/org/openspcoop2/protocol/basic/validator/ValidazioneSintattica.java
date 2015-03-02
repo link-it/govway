@@ -116,6 +116,11 @@ public class ValidazioneSintattica implements
 				idSenzaData, false));
 		bustaRisposta.setInoltro(bustaRichiesta.getInoltro(), bustaRichiesta.getInoltroValue());
 		
+		// Se e' presente UNA lista trasmissione la inverto
+		if(bustaRichiesta.sizeListaTrasmissioni()==1){
+			bustaRisposta.addTrasmissione(bustaRichiesta.getTrasmissione(0).invertiTrasmissione(bustaRichiesta.getTipoOraRegistrazione(), bustaRichiesta.getTipoOraRegistrazioneValue()));
+		}
+		
 		boolean hasFault = false;
 		try {
 			hasFault = msg.getSOAPBody().hasFault();
