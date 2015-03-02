@@ -1,3 +1,7 @@
+2015-03-02  Andrea Poli <apoli@link.it>
+
+	Aggiunta informazione sul nome della Porta, all'interno della registrazione di un servizio applicativo
+
 2014-11-06  Andrea Poli <apoli@link.it>
 
 	Aggiunta tabella 'LISTA_EXT_PROTOCOL_INFO' in modo da gestire in maniera persistente

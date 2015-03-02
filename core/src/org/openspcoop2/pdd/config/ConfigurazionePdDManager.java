@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -324,17 +325,19 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.existsPA(this.getConnection(), idPA);
 	}
 	
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getPortaApplicativa(this.getConnection(), idPA, proprietaPresentiBustaRicevuta);
+	public IDPortaApplicativaByNome convertTo_SafeMethod(IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.convertTo_SafeMethod(this.getConnection(), idServizio, proprietaPresentiBustaRicevuta);
+	}
+	public IDPortaApplicativaByNome convertTo(IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.convertTo(this.getConnection(), idServizio, proprietaPresentiBustaRicevuta);
 	}
 	
-	public PortaApplicativa getPortaApplicativa_SafeMethod(IDPortaApplicativa idPA,
-			Hashtable<String, String> proprietaPresentiBustaRicevuta)throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getPortaApplicativa_SafeMethod(this.getConnection(), idPA, proprietaPresentiBustaRicevuta);
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPortaApplicativa(this.getConnection(), idPA);
 	}
 	
-	public PortaApplicativa getPortaApplicativa(String nomePA, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getPortaApplicativa(this.getConnection(), nomePA, soggettoProprietario);
+	public PortaApplicativa getPortaApplicativa_SafeMethod(IDPortaApplicativaByNome idPA)throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getPortaApplicativa_SafeMethod(this.getConnection(), idPA);
 	}
 	
 	public String[] getServiziApplicativi(PortaApplicativa pa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

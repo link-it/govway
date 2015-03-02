@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -206,7 +207,10 @@ public class TimerConsegnaContenutiApplicativi  {
 											bustaToSend.getDestinatario(),dominioRD);
 								}
 								
-								RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore, servizioBusta, identitaPdD);
+								IDPortaApplicativaByNome idPAbyNome = new IDPortaApplicativaByNome();
+								idPAbyNome.setNome(msgServizioApplicativo.getNomePorta());
+								idPAbyNome.setSoggetto(servizioBusta.getSoggettoErogatore());
+								RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore, servizioBusta, identitaPdD, idPAbyNome);
 								richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
 								
 								ConsegnaContenutiApplicativiMessage consegnaMSG = new ConsegnaContenutiApplicativiMessage();

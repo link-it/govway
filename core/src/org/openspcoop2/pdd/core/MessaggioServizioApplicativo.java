@@ -33,7 +33,14 @@ public class MessaggioServizioApplicativo {
 	private String servizioApplicativo;
 	private boolean sbustamentoSoap;
 	private boolean sbustamentoInformazioniProtocollo;
+	private String nomePorta;
 	
+	public String getNomePorta() {
+		return this.nomePorta;
+	}
+	public void setNomePorta(String nomePorta) {
+		this.nomePorta = nomePorta;
+	}
 	public String getIdMessaggio() {
 		return this.idMessaggio;
 	}

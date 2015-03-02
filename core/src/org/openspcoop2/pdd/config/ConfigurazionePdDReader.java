@@ -76,6 +76,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -1813,7 +1814,7 @@ public class ConfigurazionePdDReader {
 		if( isSoggettoVirtuale(connectionPdD,idPA.getIDServizio().getSoggettoErogatore())  ){
 			Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = null;
 			try{
-				paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idPA.getIdPortaApplicativa(),idPA.getFiltroProprietaPorteApplicative(),true);
+				paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idPA.getIdPA(),idPA.getFiltroProprietaPorteApplicative(),true);
 			}catch(DriverConfigurazioneNotFound e){
 				return false;
 			}
@@ -1824,7 +1825,11 @@ public class ConfigurazionePdDReader {
 		}else{
 			PortaApplicativa pa = null;
 			try{
-				pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA.getIdPortaApplicativa(),idPA.getFiltroProprietaPorteApplicative());
+				IDPortaApplicativaByNome idByNome = idPA.getIdPAbyNome();
+				if(idByNome==null){
+					return false;
+				}
+				pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idByNome.getNome(),idByNome.getSoggetto());
 			}catch(DriverConfigurazioneNotFound e){
 				return false;
 			}
@@ -1832,6 +1837,23 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	 public IDPortaApplicativaByNome convertTo(Connection connectionPdD,IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		 IDPortaApplicativa idPA = new IDPortaApplicativa();
+		 idPA.setIDServizio(idServizio);
+		 PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD, idPA, proprietaPresentiBustaRicevuta);
+		 IDPortaApplicativaByNome id = new IDPortaApplicativaByNome();
+		 id.setNome(pa.getNome());
+		 id.setSoggetto(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+		 return id;
+	 }
+	 public IDPortaApplicativaByNome convertTo_SafeMethod(Connection connectionPdD,IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		 try{
+			 return this.convertTo(connectionPdD, idServizio, proprietaPresentiBustaRicevuta);
+		 }catch(DriverConfigurazioneNotFound e){
+			 return null;
+		 }
+	 }
+	 
 	/**
 	 * Ritorna la porta applicativa
 	 * 
@@ -1840,20 +1862,20 @@ public class ConfigurazionePdDReader {
 	 * @throws DriverConfigurazioneException
 	 * @throws DriverConfigurazioneNotFound
 	 */
-	protected PortaApplicativa getPortaApplicativa(Connection connectionPdD,IDPortaApplicativa idPA,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA,proprietaPresentiBustaRicevuta);
+	protected PortaApplicativa getPortaApplicativa(Connection connectionPdD,IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		if(idPA==null){
+			throw new DriverConfigurazioneException("[getPortaApplicativa]: Parametro non definito (idPA is null)");
+		}
+		return this.getPortaApplicativa(connectionPdD,idPA.getNome(),idPA.getSoggetto());
 	}
 	
-	protected PortaApplicativa getPortaApplicativa_SafeMethod(Connection connectionPdD,IDPortaApplicativa idPA,
-			Hashtable<String, String> proprietaPresentiBustaRicevuta)throws DriverConfigurazioneException{
+	protected PortaApplicativa getPortaApplicativa_SafeMethod(Connection connectionPdD,IDPortaApplicativaByNome idPA)throws DriverConfigurazioneException{
 		try{
-			if(idPA!=null && idPA.getIDServizio()!=null &&
-					idPA.getIDServizio().getServizio()!=null &&
-					idPA.getIDServizio().getTipoServizio()!=null &&
-					idPA.getIDServizio().getSoggettoErogatore()!=null &&
-					idPA.getIDServizio().getSoggettoErogatore().getTipo()!=null &&
-					idPA.getIDServizio().getSoggettoErogatore().getNome()!=null)
-				return this.getPortaApplicativa(connectionPdD,idPA,proprietaPresentiBustaRicevuta);
+			if(idPA!=null && idPA.getNome()!=null &&
+					idPA.getSoggetto()!=null &&
+					idPA.getSoggetto().getTipo()!=null &&
+					idPA.getSoggetto().getNome()!=null)
+				return this.getPortaApplicativa(connectionPdD,idPA.getNome(),idPA.getSoggetto());
 			else
 				return null;
 		}catch(DriverConfigurazioneNotFound e){
@@ -1902,12 +1924,12 @@ public class ConfigurazionePdDReader {
 	 */
 	protected SoggettoVirtuale getServiziApplicativi_SoggettiVirtuali(Connection connectionPdD,RichiestaApplicativa idPA)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
-		Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idPA.getIdPortaApplicativa()
+		Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idPA.getIdPA()
 				,idPA.getFiltroProprietaPorteApplicative(),true);
 		if(paConSoggetti == null)
-			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPortaApplicativa()+"] non trovate");
+			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovate");
 		if(paConSoggetti.size() ==0)
-			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPortaApplicativa()+"] non trovate");
+			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovate");
 
 		java.util.Vector<IDSoggetto> soggettiRealiTrovati = new java.util.Vector<IDSoggetto>();
 		java.util.Vector<String> serviziApplicativiTrovati = new java.util.Vector<String>();
@@ -1922,7 +1944,7 @@ public class ConfigurazionePdDReader {
 		}
 
 		if(soggettiRealiTrovati.size() == 0)
-			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPortaApplicativa()+"] non trovati soggetti virtuali");
+			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovati soggetti virtuali");
 		else{
 			IDSoggetto [] soggettiReali = new IDSoggetto[soggettiRealiTrovati.size()];
 			String [] serviziApplicativi = new String[serviziApplicativiTrovati.size()];
@@ -2708,7 +2730,7 @@ public class ConfigurazionePdDReader {
 
 
 		// Porta Applicativa
-		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA.getIdPortaApplicativa(),idPA.getFiltroProprietaPorteApplicative());
+		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA.getIdPAbyNome().getNome(),idPA.getIdPAbyNome().getSoggetto());
 
 
 		// CONNETTORE
@@ -3058,7 +3080,7 @@ public class ConfigurazionePdDReader {
 
 
 		// Porta Applicativa
-		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA.getIdPortaApplicativa(),idPA.getFiltroProprietaPorteApplicative());
+		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA.getIdPAbyNome().getNome(),idPA.getIdPAbyNome().getSoggetto());
 
 
 		// CONNETTORE

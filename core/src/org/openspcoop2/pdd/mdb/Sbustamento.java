@@ -966,8 +966,7 @@ public class Sbustamento extends GenericLib{
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pd);
 									}else{
 										msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), 
-												richiestaApplicativa.getFiltroProprietaPorteApplicative());
+										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pa);
 									}
 								}catch(Exception e){
@@ -998,8 +997,7 @@ public class Sbustamento extends GenericLib{
 								//	Asincrono Asimmetrico
 								
 								msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), 
-										richiestaApplicativa.getFiltroProprietaPorteApplicative());
+								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
 								
 								if(configurazionePdDManager.ricevutaAsincronaAsimmetricaAbilitata(pa)==false){
 									if(bustaRichiesta.getRiferimentoMessaggio()==null){
@@ -1218,8 +1216,7 @@ public class Sbustamento extends GenericLib{
 				
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), 
-						richiestaApplicativa.getFiltroProprietaPorteApplicative());
+				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
 				
 				// Modalita di trasmissione sincrona/asincrona
 				if(configurazionePdDManager.isModalitaStateless(pa, bustaRichiesta.getProfiloDiCollaborazione())==false){
@@ -1276,8 +1273,7 @@ public class Sbustamento extends GenericLib{
 
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), 
-						richiestaApplicativa.getFiltroProprietaPorteApplicative());
+				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
 				
 				msgDiag.mediumDebug("Gestione profilo di collaborazione Sincrono (registra busta ricevuta)...");
 				try{
@@ -1333,8 +1329,7 @@ public class Sbustamento extends GenericLib{
 					
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), 
-							richiestaApplicativa.getFiltroProprietaPorteApplicative());
+					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
 					
 					
 					//	gestione ricevute asincrone
@@ -1516,8 +1511,7 @@ public class Sbustamento extends GenericLib{
 
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), 
-							richiestaApplicativa.getFiltroProprietaPorteApplicative());
+					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
 					
 					// assegnamento servizioApplicativo
 					msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoAsimmetrico richiesta (lettura servizio applicativo)...");
@@ -1548,7 +1542,7 @@ public class Sbustamento extends GenericLib{
 					//	Lettura Servizio Applicativo
 					msgDiag.mediumDebug("Lettura Servizio Applicativo ...");
 					try{
-						sa = configurazionePdDManager.getServizioApplicativo(richiestaApplicativa.getIdPortaApplicativa(), servizioApplicativo[0]);
+						sa = configurazionePdDManager.getServizioApplicativo(richiestaApplicativa.getIdPA(), servizioApplicativo[0]);
 					}catch(DriverConfigurazioneNotFound e){
 						msgDiag.logErroreGenerico("Servizio applicativo ["+servizioApplicativo[0]+"] non esistente", "getServizioApplicativoProfiloAsincronoAsimmetrico");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1750,8 +1744,7 @@ public class Sbustamento extends GenericLib{
 						
 						// Lettura Porta Applicativa
 						msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), 
-								richiestaApplicativa.getFiltroProprietaPorteApplicative());
+						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
 						
 
 					}

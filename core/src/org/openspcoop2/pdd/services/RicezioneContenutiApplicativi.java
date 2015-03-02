@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -2598,14 +2599,15 @@ public class RicezioneContenutiApplicativi {
 				
 				RichiestaApplicativa ra = null;
 				if(erroreConfigurazione==null){
-					ra = new RichiestaApplicativa(soggettoFruitore, idServizio, identitaPdD);
+					IDPortaApplicativaByNome idPaByNome = configurazionePdDReader.convertTo_SafeMethod(idServizio, null);
+					ra = new RichiestaApplicativa(soggettoFruitore, idServizio, identitaPdD, idPaByNome);
 					if(configurazionePdDReader.existsPA(ra)==false){
 						erroreConfigurazione = "non risulta esistere una porta applicativa associata al servizio richiesto";
 					}
 				}
 				
 				if(erroreConfigurazione==null){
-					pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(ra.getIdPortaApplicativa(), null);
+					pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(ra.getIdPAbyNome());
 					if(pa.sizeServizioApplicativoList()<=0){
 						erroreConfigurazione = "non risultano registrati servizi applicativi erogatori associati alla porta applicativa ("+pa.getNome()
 								+") relativa al servizio richiesto";

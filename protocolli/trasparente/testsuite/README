@@ -38,7 +38,7 @@ I parametri proprietaConfigurazione/proprietaRegistroServizi indicano come la te
 Lanciare i test spostandosi in ./protocolli/trasparente/testsuite/ e lanciando il comando:
   ant run_test -Dgroup=FUNZIONALITADATESTARE
 
-Ad esempio 'ant run_testsuite -Dgroup=PortaDelegataSoap11' verifica le funzionalita' di invocazione della Porta Delegata con messaggi Soap11
+Ad esempio 'ant run_testsuite -Dgroup=PortaDelegata' verifica le funzionalita' di invocazione della Porta Delegata
 
 L'elenco completo delle funzionalita' da testare sono descritte nel paragrafo 1.3
 
@@ -121,16 +121,33 @@ Requisiti globali:
 2) Configurazione PdD. La configurazione della PdD richiesta dai test deve essere attuata attraverso i seguenti step:
 	2.a) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/className_local.properties in /etc/openspcoop2
 	2.b) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/openspcoop2_local.properties in /etc/openspcoop2
-        2.c) Deve essere copiato il contenuto del file ./protocolli/spcoop/testsuite/src/testsuite_local.properties in /etc/openspcoop2
+        2.c) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/testsuite_local.properties in /etc/openspcoop2
 3) Impostare un tempo di rispedizione per la coda JMS 'toInoltroBuste' e 'toConsegnaContenutiApplicativi' a 15 secondi
    (<attribute name="RedeliveryDelay">15000</attribute>)
 
 ** Porta Delegata **
 
 Batterie di test che verificano la normale gestione del servizio Porta Delegata
-- 'PortaDelegataSoap11' viene verificato il servizio porta delegata con messaggi SOAP 11
+- 'PortaDelegata':  vengono eseguiti tutti i test riguardanti la PortaDelegata
+Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gruppi:
+- 'PortaDelegataNonAutenticato': viene verificato il profilo di collaborazione oneway e sincrono utilizzando messaggi SOAP 1.1 e 1.2 sia con che senza attachments. Vengono inoltre verificate sia la modalita' stateless che la modalita' stateful
+- 'PortaDelegataAutenticato': vengono effettuate le stesse verifiche del gruppo 'PortaDelegataNonAutenticato', previa autenticazione/autorizzazione del servizio applicativo fruitore.
+- 'PortaDelegataLocalForward': vengono effettuate le stesse verifiche del gruppo 'PortaDelegataNonAutenticato', con configurazione in local-forward.
+- 'PortaDelegataFault200': vengono effettuate le stesse verifiche del gruppo 'PortaDelegataNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPFault con codice di trasporto 200
+- 'PortaDelegataFault500': vengono effettuate le stesse verifiche del gruppo 'PortaDelegataNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPF
+ault con codice di trasporto 500
 
-// ....
+** Porta Applicativa **
+
+Batterie di test che verificano la normale gestione del servizio Porta Delegata
+- 'PortaApplicativa':  vengono eseguiti tutti i test riguardanti la PortaApplicativa
+Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gruppi:
+- 'PortaApplicativaNonAutenticato': viene verificato il profilo di collaborazione oneway e sincrono utilizzando messaggi SOAP 1.1 e 1.2 sia con che senza attachments. Vengono inoltre verificate sia la modalita' stateless che la modalita' stateful
+- 'PortaApplicativaAutenticato': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', previa autenticazione/autorizzazione del servizio applicativo fruitore.
+- 'PortaApplicativaLocalForward': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', con configurazione in local-forward.
+- 'PortaApplicativaFault200': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPFault con codice di trasporto 200
+- 'PortaApplicativaFault500': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPF
+ault con codice di trasporto 500
 
 
 

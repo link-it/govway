@@ -459,8 +459,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(richiestaApplicativa!=null){
 			try{
 				msgDiag.mediumDebug("getPortaApplicativa...");
-				pa = configurazionePdDManager.getPortaApplicativa(richiestaApplicativa.getIdPortaApplicativa(), 
-						richiestaApplicativa.getFiltroProprietaPorteApplicative());
+				pa = configurazionePdDManager.getPortaApplicativa(richiestaApplicativa.getIdPAbyNome());
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -469,7 +468,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			try{
 				msgDiag.mediumDebug("getServizioApplicativo(pa)...");
-				sa = configurazionePdDManager.getServizioApplicativo(richiestaApplicativa.getIdPortaApplicativa(), 
+				sa = configurazionePdDManager.getServizioApplicativo(richiestaApplicativa.getIdPA(), 
 						richiestaApplicativa.getServizioApplicativo());
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getServizioApplicativo");

@@ -14,7 +14,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	/* TEST ONE WAY */
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL"})
 	public void oneWay_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11Stateful, this.repositoryPortaDelegataOneWaySOAP11Stateful);
 	}
@@ -25,13 +25,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP11Stateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11Stateful",dependsOnMethods={"oneWay_pdSOAP11Stateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11Stateful",dependsOnMethods={"oneWay_pdSOAP11Stateful"})
 	public void testOneWay_pdSOAP11Stateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP11Stateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS"})
 	public void oneWay_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11Stateless, this.repositoryPortaDelegataOneWaySOAP11Stateless);
 	}
@@ -42,12 +42,12 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP11Stateless);
 	}
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11Stateless",dependsOnMethods={"oneWay_pdSOAP11Stateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11Stateless",dependsOnMethods={"oneWay_pdSOAP11Stateless"})
 	public void testOneWay_pdSOAP11Stateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP11Stateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL"})
 	public void oneWay_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12Stateful, this.repositoryPortaDelegataOneWaySOAP12Stateful);
 	}
@@ -58,13 +58,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP12Stateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12Stateful",dependsOnMethods={"oneWay_pdSOAP12Stateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12Stateful",dependsOnMethods={"oneWay_pdSOAP12Stateful"})
 	public void testOneWay_pdSOAP12Stateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP12Stateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS"})
 	public void oneWay_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12Stateless, this.repositoryPortaDelegataOneWaySOAP12Stateless);
 	}
@@ -75,12 +75,12 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP12Stateless);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12Stateless",dependsOnMethods={"oneWay_pdSOAP12Stateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12Stateless",dependsOnMethods={"oneWay_pdSOAP12Stateless"})
 	public void testOneWay_pdSOAP12Stateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP12Stateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL.ATTACHMENTS"})
 	public void oneWay_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataOneWaySOAP11WithAttachmentsStateful);
 	}
@@ -91,13 +91,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP11WithAttachmentsStateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11WithAttachmentsStateful",dependsOnMethods={"oneWay_pdSOAP11WithAttachmentsStateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11WithAttachmentsStateful",dependsOnMethods={"oneWay_pdSOAP11WithAttachmentsStateful"})
 	public void testOneWay_pdSOAP11WithAttachmentsStateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP11WithAttachmentsStateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS.ATTACHMENTS"})
 	public void oneWay_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataOneWaySOAP11WithAttachmentsStateless);
 	}
@@ -108,12 +108,12 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP11WithAttachmentsStateless);
 	}
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11WithAttachmentsStateless",dependsOnMethods={"oneWay_pdSOAP11WithAttachmentsStateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP11WithAttachmentsStateless",dependsOnMethods={"oneWay_pdSOAP11WithAttachmentsStateless"})
 	public void testOneWay_pdSOAP11WithAttachmentsStateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP11WithAttachmentsStateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL.ATTACHMENTS"})
 	public void oneWay_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataOneWaySOAP12WithAttachmentsStateful);
 	}
@@ -124,13 +124,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP12WithAttachmentsStateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12WithAttachmentsStateful",dependsOnMethods={"oneWay_pdSOAP12WithAttachmentsStateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12WithAttachmentsStateful",dependsOnMethods={"oneWay_pdSOAP12WithAttachmentsStateful"})
 	public void testOneWay_pdSOAP12WithAttachmentsStateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP12WithAttachmentsStateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS.ATTACHMENTS"})
 	public void oneWay_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataOneWaySOAP12WithAttachmentsStateless);
 	}
@@ -141,14 +141,14 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataOneWaySOAP12WithAttachmentsStateless);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12WithAttachmentsStateless",dependsOnMethods={"oneWay_pdSOAP12WithAttachmentsStateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12WithAttachmentsStateless",dependsOnMethods={"oneWay_pdSOAP12WithAttachmentsStateless"})
 	public void testOneWay_pdSOAP12WithAttachmentsStateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP12WithAttachmentsStateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	/* TEST SINCRONO */
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL"})
 	public void sincrono_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11Stateful, this.repositoryPortaDelegataSincronoSOAP11Stateful);
 	}
@@ -159,13 +159,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP11Stateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11Stateful",dependsOnMethods={"sincrono_pdSOAP11Stateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11Stateful",dependsOnMethods={"sincrono_pdSOAP11Stateful"})
 	public void testSincrono_pdSOAP11Stateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP11Stateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS"})
 	public void sincrono_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11Stateless, this.repositoryPortaDelegataSincronoSOAP11Stateless);
 	}
@@ -176,12 +176,12 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP11Stateless);
 	}
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11Stateless",dependsOnMethods={"sincrono_pdSOAP11Stateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11Stateless",dependsOnMethods={"sincrono_pdSOAP11Stateless"})
 	public void testSincrono_pdSOAP11Stateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP11Stateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL"})
 	public void sincrono_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12Stateful, this.repositoryPortaDelegataSincronoSOAP12Stateful);
 	}
@@ -192,13 +192,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP12Stateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12Stateful",dependsOnMethods={"sincrono_pdSOAP12Stateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12Stateful",dependsOnMethods={"sincrono_pdSOAP12Stateful"})
 	public void testSincrono_pdSOAP12Stateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP12Stateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS"})
 	public void sincrono_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12Stateless, this.repositoryPortaDelegataSincronoSOAP12Stateless);
 	}
@@ -209,12 +209,12 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP12Stateless);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12Stateless",dependsOnMethods={"sincrono_pdSOAP12Stateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12Stateless",dependsOnMethods={"sincrono_pdSOAP12Stateless"})
 	public void testSincrono_pdSOAP12Stateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP12Stateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL.ATTACHMENTS"})
 	public void sincrono_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataSincronoSOAP11WithAttachmentsStateful);
 	}
@@ -225,13 +225,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP11WithAttachmentsStateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11WithAttachmentsStateful",dependsOnMethods={"sincrono_pdSOAP11WithAttachmentsStateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11WithAttachmentsStateful",dependsOnMethods={"sincrono_pdSOAP11WithAttachmentsStateful"})
 	public void testSincrono_pdSOAP11WithAttachmentsStateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP11WithAttachmentsStateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS.ATTACHMENTS"})
 	public void sincrono_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataSincronoSOAP11WithAttachmentsStateless);
 	}
@@ -242,12 +242,12 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP11WithAttachmentsStateless);
 	}
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11WithAttachmentsStateless",dependsOnMethods={"sincrono_pdSOAP11WithAttachmentsStateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP11WithAttachmentsStateless",dependsOnMethods={"sincrono_pdSOAP11WithAttachmentsStateless"})
 	public void testSincrono_pdSOAP11WithAttachmentsStateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP11WithAttachmentsStateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL.ATTACHMENTS"})
 	public void sincrono_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataSincronoSOAP12WithAttachmentsStateful);
 	}
@@ -258,13 +258,13 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP12WithAttachmentsStateful);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12WithAttachmentsStateful",dependsOnMethods={"sincrono_pdSOAP12WithAttachmentsStateful"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12WithAttachmentsStateful",dependsOnMethods={"sincrono_pdSOAP12WithAttachmentsStateful"})
 	public void testSincrono_pdSOAP12WithAttachmentsStateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP12WithAttachmentsStateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
 	
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS.ATTACHMENTS"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS.ATTACHMENTS"})
 	public void sincrono_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataSincronoSOAP12WithAttachmentsStateless);
 	}
@@ -275,7 +275,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 		return Porta._getDataProvider(this.repositoryPortaDelegataSincronoSOAP12WithAttachmentsStateless);
 	}
 
-	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12WithAttachmentsStateless",dependsOnMethods={"sincrono_pdSOAP12WithAttachmentsStateless"})
+	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS.ATTACHMENTS"},dataProvider=PortaDelegata.ID_GRUPPO+"SincronoSOAP12WithAttachmentsStateless",dependsOnMethods={"sincrono_pdSOAP12WithAttachmentsStateless"})
 	public void testSincrono_pdSOAP12WithAttachmentsStateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testSincrono(this.pdSOAP12WithAttachmentsStateless, data, msgDiagData, id, checkServizioApplicativo);
 	}	

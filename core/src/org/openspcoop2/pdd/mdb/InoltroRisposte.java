@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -495,7 +496,9 @@ public class InoltroRisposte extends GenericLib{
 				try{
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setIDServizio(new IDServizio(busta.getTipoMittente(),busta.getMittente(),busta.getTipoServizio(),busta.getServizio(),busta.getAzione()));
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null);
+					IDPortaApplicativaByNome idByNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
+					if(idByNome!=null)
+						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idByNome);
 				}catch(Exception e){
 					if( !(e instanceof DriverConfigurazioneNotFound)  ){
 						msgDiag.logErroreGenerico(e, "getPortaApplicativa_SafeMethod");
@@ -611,7 +614,7 @@ public class InoltroRisposte extends GenericLib{
 				
 				try{
 					flowProperties = this.getFlowProperties(busta,configurazionePdDManager,openspcoopstate.getStatoRisposta(),
-							msgDiag,protocolFactory);
+							msgDiag,protocolFactory,pa);
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "RaccoltaFlowParameter_MTOM_Security");
 					ejbUtils.rollbackMessage("RaccoltaFlowParameter_MTOM_Security non riuscita:"+e.getMessage(), esito);
@@ -1393,7 +1396,8 @@ public class InoltroRisposte extends GenericLib{
 	private FlowProperties  getFlowProperties(Busta bustaRisposta,
 			ConfigurazionePdDManager configurazionePdDManager, IState state,
 			MsgDiagnostico msgDiag, 
-			org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory)throws DriverConfigurazioneException{
+			org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory,
+			PortaApplicativa paFind)throws DriverConfigurazioneException{
 
 		//	Proprieta' Message-Security relative alla spedizione della busta
 
@@ -1421,7 +1425,13 @@ public class InoltroRisposte extends GenericLib{
 						bustaRisposta.getServizioRichiedenteBustaDiServizio()!=null){
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),bustaRisposta.getTipoServizioRichiedenteBustaDiServizio(),bustaRisposta.getServizioRichiedenteBustaDiServizio(),bustaRisposta.getAzioneRichiedenteBustaDiServizio()));
-					PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null);
+					PortaApplicativa pa = paFind;
+					if(pa==null){
+						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
+						if(idPAbyNome!=null){
+							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
+						}
+					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
 				}
@@ -1432,7 +1442,13 @@ public class InoltroRisposte extends GenericLib{
 			) {	
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(), bustaRisposta.getMittente(), bustaRisposta.getTipoServizio(), bustaRisposta.getServizio(),bustaRisposta.getAzione()));
-				PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null);
+				PortaApplicativa pa = paFind;
+				if(pa==null){
+					IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
+					if(idPAbyNome!=null){
+						pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
+					}
+				}
 				flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 				flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
 			}
@@ -1447,7 +1463,13 @@ public class InoltroRisposte extends GenericLib{
 
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),bustaRisposta.getAzione()));
-					PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null);
+					PortaApplicativa pa = paFind;
+					if(pa==null){
+						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
+						if(idPAbyNome!=null){
+							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
+						}
+					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
 
@@ -1479,7 +1501,13 @@ public class InoltroRisposte extends GenericLib{
 
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),bustaRisposta.getAzione()));
-					PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null);
+					PortaApplicativa pa = paFind;
+					if(pa==null){
+						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
+						if(idPAbyNome!=null){
+							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
+						}
+					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
 
@@ -1494,7 +1522,13 @@ public class InoltroRisposte extends GenericLib{
 
 					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
 							idServizioOriginale.getTipoServizio(),idServizioOriginale.getServizio(),idServizioOriginale.getAzione()));
-					PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, null);
+					PortaApplicativa pa = paFind;
+					if(pa==null){
+						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
+						if(idPAbyNome!=null){
+							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
+						}
+					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
 

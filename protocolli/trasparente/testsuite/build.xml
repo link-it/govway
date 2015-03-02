@@ -287,6 +287,20 @@
 	<target name="run_test_connectionNew"
 	        depends="init_compile_testunits,run_testsuite_connectionNew" description="Esegue la testsuite con gruppo indicato" />
 	<target name="run_all_tests"
-	        depends="init_compile_testunits,run_testsuite_completa" description="Esegue la testsuite completa" />
+	        depends="init_compile_testunits" description="Esegue la testsuite completa">
+		<antcall target="run_testsuite_completa_engine">
+		    <param name="testUnitsLocation" value="${src_testunits}/org/openspcoop2/protocol/trasparente/testsuite/units/"/>
+			
+			<param name="openspcoop2.driverJDBCAccessoDatabase" value="${openspcoop.driverJDBCAccessoDatabase}"/>
+			<param name="openspcoop2.urlAccessoDatabase" value="${openspcoop.urlAccessoDatabase}"/>
+			<param name="openspcoop2.username" value="${openspcoop.username}"/>
+			<param name="openspcoop2.password" value="${openspcoop.password}"/>
+			
+			<param name="diagnostica.driverJDBCAccessoDatabase" value="${diagnostica.driverJDBCAccessoDatabase}"/>
+			<param name="diagnostica.urlAccessoDatabase" value="${diagnostica.urlAccessoDatabase}"/>
+			<param name="diagnostica.username" value="${diagnostica.username}"/>
+			<param name="diagnostica.password" value="${diagnostica.password}"/>
+		</antcall>
+	</target>
 
 </project>

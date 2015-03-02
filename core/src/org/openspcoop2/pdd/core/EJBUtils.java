@@ -681,6 +681,10 @@ public class EJBUtils {
 		if(richiestaDelegata!=null)
 			correlazioneApplicativaRisposta = richiestaDelegata.getIdCorrelazioneApplicativaRisposta();
 		
+		String nomePorta = null;
+		if(richiestaDelegata!=null)
+			nomePorta = richiestaDelegata.getLocationPD();
+		
 		RollbackRepositoryBuste rollbackBuste = null;
 		RollbackRepositoryBuste rollbackBusteRifMessaggio = null;
 		GestoreMessaggi msgRequest = null;
@@ -818,7 +822,8 @@ public class EJBUtils {
 
 				// ---- Registra SIL Destinatario del Messaggio
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
-						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio);
+						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
+						nomePorta);
 
 			} // end Gestione Risposta
 
@@ -957,6 +962,10 @@ public class EJBUtils {
 		if(richiestaDelegata!=null)
 			correlazioneApplicativaRisposta = richiestaDelegata.getIdCorrelazioneApplicativaRisposta();
 		
+		String nomePorta = null;
+		if(richiestaDelegata!=null)
+			nomePorta = richiestaDelegata.getLocationPD();
+		
 		// Aggiungo costante servizio applicativo
 		this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
 		
@@ -1062,7 +1071,8 @@ public class EJBUtils {
 
 				// --- Registra SIL Destinatario del Messaggio
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
-						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio);
+						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
+						nomePorta);
 			} // end Gestione Risposta
 
 
@@ -1283,6 +1293,10 @@ public class EJBUtils {
 
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
 			
+			String nomePorta = null;
+			if(richiestaDelegata!=null)
+				nomePorta = richiestaDelegata.getLocationPD();
+			
 			//	Aggiorno dati di consegna
 			this.msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 			this.msgDiag.logCorrelazioneServizioApplicativo();
@@ -1303,7 +1317,8 @@ public class EJBUtils {
 			Timestamp oraRegistrazioneMessaggio = gestoreMessaggi.getOraRegistrazioneMessaggio();
 
 			gestoreMessaggi.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
-					sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio);
+					sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
+					nomePorta);
 
 			// Aggiungo costante servizio applicativo
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
@@ -1591,7 +1606,7 @@ public class EJBUtils {
 						(this.openSPCoopState instanceof OpenSPCoopStateless) &&
 						(serviziApplicativiAbilitati.size() > 1) )  {
 					for (String nomeServizioApplicativo : serviziApplicativiAbilitati) {
-						ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(richiestaApplicativa.getIdPortaApplicativa(), 
+						ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(richiestaApplicativa.getIdPA(), 
 								nomeServizioApplicativo);
 						boolean servizioApplicativoConConnettore = this.configurazionePdDReader.invocazioneServizioConConnettore(sappl);
 						boolean getMessageAbilitato = this.configurazionePdDReader.invocazioneServizioConGetMessage(sappl);
@@ -1728,6 +1743,11 @@ public class EJBUtils {
 		Hashtable<String, Timestamp> mapOraRegistrazione = new Hashtable<String, Timestamp>();
 		Hashtable<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage = new Hashtable<String, ConsegnaContenutiApplicativiMessage>();
 		
+		String nomePorta = null;
+		if(richiestaApplicativa!=null && richiestaApplicativa.getIdPAbyNome()!=null){
+			nomePorta = richiestaApplicativa.getIdPAbyNome().getNome();
+		}
+		
 		// Fase di Registrazione
 		for (String servizioApplicativo : serviziApplicativi) {
 
@@ -1759,7 +1779,7 @@ public class EJBUtils {
 			// identificativo Porta Applicativa
 			richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
 			
-			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(richiestaApplicativa.getIdPortaApplicativa(), 
+			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(richiestaApplicativa.getIdPA(), 
 					servizioApplicativo);
 
 			this.msgDiag.setServizioApplicativo(servizioApplicativo);
@@ -1833,7 +1853,7 @@ public class EJBUtils {
 			}
 			gestoreMessaggi.registraDestinatarioMessaggio(servizioApplicativo,
 					sbustamento_soap,sbustamento_informazioni_protocollo,
-					getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio);
+					getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio, nomePorta);
 			
 			mapServizioApplicativoConConnettore.put(servizioApplicativo, servizioApplicativoConConnettore);
 			mapSbustamentoSoap.put(servizioApplicativo, sbustamento_soap);
@@ -1958,7 +1978,8 @@ public class EJBUtils {
 					gestoreMessaggi.setOneWayVersione11(true);
 					gestoreMessaggi.registraDestinatarioMessaggio(servizioApplicativo,
 							sbustamento_soap,sbustamento_informazioni_protocollo,
-							getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio);
+							getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
+							nomePorta);
 					gestoreMessaggi.setOneWayVersione11(false);
 				}
 				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"integrationManager.messaggioDisponibile");

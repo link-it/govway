@@ -1258,7 +1258,8 @@ public class GestoreMessaggi  {
 	 */
 	public void registraDestinatarioMessaggio(String serv, 
 			boolean sbustamentoSOAP,boolean sbustamentoInfoProtocol,
-			boolean integrationManager,String tipoConsegna,Timestamp oraRegistrazioneMessaggio)throws GestoreMessaggiException{
+			boolean integrationManager,String tipoConsegna,Timestamp oraRegistrazioneMessaggio,
+			String nomePorta)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful || this.oneWayVersione11) {
 			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
@@ -1271,7 +1272,7 @@ public class GestoreMessaggi  {
 				StringBuffer query = new StringBuffer();
 				query.append("INSERT INTO ");
 				query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,RISPEDIZIONE) VALUES ( ? , ? , ? , ? , ? , ? , ? )");
+				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,RISPEDIZIONE,NOME_PORTA) VALUES ( ? , ? , ? , ? , ? , ? , ? , ?)");
 
 				pstmt = connectionDB.prepareStatement(query.toString());
 				pstmt.setString(1,this.idBusta);
@@ -1291,6 +1292,8 @@ public class GestoreMessaggi  {
 				pstmt.setString(6,tipoConsegna);
 
 				pstmt.setTimestamp(7,oraRegistrazioneMessaggio);
+				
+				pstmt.setString(8,nomePorta);
 
 				//this.log.debug("[registraDestinatarioMessaggio] Aggiorno MSG["+this.tipo+"/"+this.idBusta+"] RISPEDIZIONE["+oraRegistrazioneMessaggio.toString()+"]");
 
@@ -4257,6 +4260,7 @@ public class GestoreMessaggi  {
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO as sa, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_SOAP as sbSoap, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_INFO_PROTOCOL as sbProtocol ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".NOME_PORTA as nomePorta ");
 					
 					query.append(" FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
@@ -4289,6 +4293,7 @@ public class GestoreMessaggi  {
 					sqlQueryObject.addSelectAliasField("sa", "SERVIZIO_APPLICATIVO", "sa");
 					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_SOAP", "sbSoap");
 					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_INFO_PROTOCOL", "sbProtocol");
+					sqlQueryObject.addSelectAliasField("sa", "NOME_PORTA", "nomePorta");
 					sqlQueryObject.addSelectField("m","ORA_REGISTRAZIONE");
 					sqlQueryObject.addSelectField("m","PROPRIETARIO");
 					sqlQueryObject.addSelectField("m","TIPO");
@@ -4339,6 +4344,7 @@ public class GestoreMessaggi  {
 					msg.setSbustamentoSoap(sbSoap==CostantiDB.TRUE);
 					int sbInfoProt = rs.getInt("sbProtocol");
 					msg.setSbustamentoInformazioniProtocollo(sbInfoProt==CostantiDB.TRUE);
+					msg.setNomePorta(rs.getString("nomePorta"));
 					idMsg.add(msg);
 					// LIMIT Applicativo
 					if(Configurazione.getSqlQueryObjectType()==null){

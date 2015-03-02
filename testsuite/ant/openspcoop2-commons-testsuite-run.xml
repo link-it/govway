@@ -112,7 +112,7 @@
 	<!-- run all testsuite -->
 	<!-- <target name="run_testsuite_completa"
 	        depends="init_compile_testunits,compile_testsuitelib_handler" description="Esegue la testsuite gruppo per gruppo" > -->
-	<target name="run_testsuite_completa"  description="Esegue la testsuite gruppo per gruppo" >
+	<target name="run_testsuite_completa_engine"  description="Esegue la testsuite gruppo per gruppo" >
 	
 	    <!-- Preparo ambiente -->
 		<available file="risultati-testsuite-completa" property="existsDirResocontoTest"/>
@@ -126,7 +126,7 @@
 		<mkdir dir="risultati-testsuite-completa"/>
 			
 		<!-- tests -->
-		<property name="testUnitsDir" location="src/org/openspcoop/testsuite/test/units/"/>
+		<property name="testUnitsDir" location="${testUnitsLocation}"/>
 		<fileset dir="${testUnitsDir}" id="testsPathCompleto">
 		        <include name="*.java"/>
 		 		<exclude name="LogXML.java"/>
@@ -197,7 +197,7 @@ delete from tracce;
 			</sql>
 		
 			<!-- Esecuzione test -->
-			<antcall target="run_testsuite" >
+			<antcall target="run_test" >
 				 <param name="group" value="${nomeTest}"/>
 				 <param name="testHaltOnFailure" value="false"/>
 			</antcall>

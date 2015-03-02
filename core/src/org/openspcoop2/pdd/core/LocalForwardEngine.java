@@ -32,7 +32,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -84,7 +84,7 @@ public class LocalForwardEngine {
 	private ErroreApplicativoBuilder erroreApplicativoBuilder = null;
 	private SOAPVersion versioneSoap = null;
 	private Busta busta = null;
-	private IDPortaApplicativa idPA = null;
+	private IDPortaApplicativaByNome idPAByNome = null;
 	private PortaApplicativa pa = null;
 	private RichiestaApplicativa richiestaApplicativa = null;
 	private RichiestaDelegata richiestaDelegata = null;
@@ -120,7 +120,7 @@ public class LocalForwardEngine {
 				servizioApplicativo = this.richiestaApplicativa.getServizioApplicativo();
 				scenarioCooperazione = this.richiestaApplicativa.getScenario();
 				
-				this.idPA = this.richiestaApplicativa.getIdPortaApplicativa();
+				this.idPAByNome = this.richiestaApplicativa.getIdPAbyNome();
 				
 				this.busta = this.localForwardParameter.getBusta();
 								
@@ -137,11 +137,11 @@ public class LocalForwardEngine {
 					scenarioCooperazione = Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
 				}
 				
+				this.idPAByNome = this.localForwardParameter.getConfigurazionePdDReader().convertTo(idServizio, null);
 				this.richiestaApplicativa = 
 						new RichiestaApplicativa(soggettoFruitore, idServizio, 
-								this.localForwardParameter.getIdModulo(), this.localForwardParameter.getIdentitaPdD());
+								this.localForwardParameter.getIdModulo(), this.localForwardParameter.getIdentitaPdD(),this.idPAByNome);
 				this.richiestaApplicativa.setIdCorrelazioneApplicativa(this.localForwardParameter.getIdCorrelazioneApplicativa());
-				this.richiestaApplicativa.setIdPortaApplicativa(this.idPA);
 				this.richiestaApplicativa.setProfiloGestione(profiloGestione);
 				this.richiestaApplicativa.setRicevutaAsincrona(false);
 				this.richiestaApplicativa.setLocalForward(true);
@@ -149,10 +149,6 @@ public class LocalForwardEngine {
 				if(!CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)){
 					this.richiestaApplicativa.setIdentitaServizioApplicativoFruitore(servizioApplicativo);
 				}
-				
-				this.idPA = new IDPortaApplicativa();
-				this.idPA.setIDServizio(idServizio);
-				this.richiestaApplicativa.setIdPortaApplicativa(this.idPA);
 								
 				this.busta = new Busta(this.localForwardParameter.getProtocolFactory(), 
 						this.localForwardParameter.getInfoServizio(), 
@@ -191,7 +187,7 @@ public class LocalForwardEngine {
 					this.localForwardParameter.getIdModulo(), fault, 
 					this.versioneSoap,TipoPdD.DELEGATA,servizioApplicativo);
 									
-			this.pa = this.localForwardParameter.getConfigurazionePdDReader().getPortaApplicativa(this.idPA, null);
+			this.pa = this.localForwardParameter.getConfigurazionePdDReader().getPortaApplicativa(this.idPAByNome);
 			
 		}catch(Exception e){
 			throw new LocalForwardException(e.getMessage(),e);

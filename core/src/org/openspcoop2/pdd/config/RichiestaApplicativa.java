@@ -27,6 +27,7 @@ import java.util.Hashtable;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 
@@ -52,8 +53,10 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	private IDSoggetto soggettoFruitore;
 	/** IDAccordo */
 	private IDAccordo idAccordo;
+	/** IDServizio */
+	private IDServizio idServizio;
 	/** Identificatore della PortaApplicativa */
-	private IDPortaApplicativa idPA;
+	private IDPortaApplicativaByNome idPAbyNome;
 	/** Nome del Servizio Applicativo che eroga il servizio */
 	private String servizioApplicativo;
 	/** Identificatore del modulo OpenSPCoop che ha gestito la richiesta, e che sta aspettando una risposta */
@@ -89,12 +92,12 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	 * @param dominio Dominio di gestione, puo' essere differente dal soggetto fruitore (es. Router)
 	 * 
 	 */
-	public RichiestaApplicativa(IDSoggetto sog,IDServizio idServ, String idModulo, IDSoggetto dominio){
+	public RichiestaApplicativa(IDSoggetto sog,IDServizio idServ, String idModulo, IDSoggetto dominio, IDPortaApplicativaByNome idByNome){
 		this.soggettoFruitore = sog;
-		this.idPA = new IDPortaApplicativa();
-		this.idPA.setIDServizio(idServ);
+		this.idServizio = idServ;
 		this.idModuloInAttesa = idModulo;
 		this.dominio = dominio;
+		this.idPAbyNome = idByNome;
 	}
 	/**
 	 * Costruttore. 
@@ -104,11 +107,11 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	 * @param dominio Dominio di gestione, puo' essere differente dal soggetto fruitore (es. Router)
 	 * 
 	 */
-	public RichiestaApplicativa(IDSoggetto sog,IDServizio idServ,IDSoggetto dominio){
+	public RichiestaApplicativa(IDSoggetto sog,IDServizio idServ,IDSoggetto dominio, IDPortaApplicativaByNome idByNome){
 		this.soggettoFruitore = sog;
-		this.idPA = new IDPortaApplicativa();
-		this.idPA.setIDServizio(idServ);
+		this.idServizio = idServ;
 		this.dominio = dominio;
+		this.idPAbyNome = idByNome;
 	}
 
 
@@ -123,15 +126,6 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	 */
 	public void setSoggettoFruitore(IDSoggetto idSoggetto){
 		this.soggettoFruitore = idSoggetto;
-	}
-	/**
-	 * Imposta l'identificativo della porta applicativa
-	 *
-	 * @param idPA identificativo della porta applicativa
-	 * 
-	 */
-	public void setIdPortaApplicativa(IDPortaApplicativa idPA){
-		this.idPA = idPA;
 	}
 	/**
 	 * Imposta il nome del Servizio Applicativo che eroga il servizio
@@ -202,19 +196,17 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	 * 
 	 */
 	public IDServizio getIDServizio(){
-		if(this.idPA!=null)
-			return this.idPA.getIDServizio();
-		else
-			return null;
+		return this.idServizio;
 	}
-	/**
-	 * Ritorna l'identificativo della porta applicativa
-	 *
-	 * @return identificativo della porta applicativa
-	 * 
-	 */
-	public IDPortaApplicativa getIdPortaApplicativa(){
-		return this.idPA;
+	public IDPortaApplicativa getIdPA(){
+		if(this.idServizio!=null){
+			IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+			idPortaApplicativa.setIDServizio(this.idServizio);
+			return idPortaApplicativa;
+		}
+		else{
+			return null;
+		}
 	}
 	/**
 	 * Ritorna il nome del Servizio Applicativo che eroga il servizio
@@ -308,6 +300,13 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	}
 	public void setLocalForward(boolean localForward) {
 		this.localForward = localForward;
+	}
+	
+	public IDPortaApplicativaByNome getIdPAbyNome() {
+		return this.idPAbyNome;
+	}
+	public void setIdPAbyNome(IDPortaApplicativaByNome idPAbyNome) {
+		this.idPAbyNome = idPAbyNome;
 	}
 }
 

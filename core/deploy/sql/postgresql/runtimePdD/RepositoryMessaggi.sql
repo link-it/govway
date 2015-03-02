@@ -62,6 +62,7 @@ CREATE TABLE MSG_SERVIZI_APPLICATIVI
 	ERRORE_PROCESSAMENTO TEXT,
 	-- data dalla quale il msg puo' essere rispedito in caso di errori
 	RISPEDIZIONE TIMESTAMP NOT NULL,
+	NOME_PORTA VARCHAR(255),
 	-- fk/pk columns
 	-- check constraints
 	CONSTRAINT chk_MSG_SERVIZI_APPLICATIVI_1 CHECK (TIPO IN ('INBOX','OUTBOX')),
