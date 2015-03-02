@@ -947,10 +947,12 @@ public class ZIPUtils  {
 			
 			// recupero archivio precedentemente letto
 			AccordoServizioParteSpecifica as = null;
-			if(archivio.getAccordiServizioParteSpecifica().containsKey(key)==false){
-				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
+			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)==false){
+				if(archivio.getAccordiServizioParteSpecifica().containsKey(key)==false){
+					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
+				}
+				as = archivio.getAccordiServizioParteSpecifica().get(key).getAccordoServizioParteSpecifica();
 			}
-			as = archivio.getAccordiServizioParteSpecifica().get(key).getAccordoServizioParteSpecifica();
 			
 			// wsdl
 			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar)){
