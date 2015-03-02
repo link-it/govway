@@ -94,7 +94,13 @@ public class ServerOpenSPCoop2EchoService extends ServerCore{
 				}
 			}
 
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(id!=null){
 					this.tracciaIsArrivedIntoDatabase(id,dominio,protocollo);
 				}

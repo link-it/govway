@@ -77,7 +77,7 @@ public class ServerOpenSPCoop2PingService extends ServerCore{
 			} 
 			String mittente = request.getHeader(this.testsuiteProperties.getMittenteTrasporto());
 			if(mittente==null){
-				this.log.error("Destinatario della richiesta non presente");
+				this.log.error("Mittente della richiesta non presente");
 			} 
 			
 			String protocollo = request.getParameter("protocol");
@@ -93,7 +93,14 @@ public class ServerOpenSPCoop2PingService extends ServerCore{
 				}
 			}
 			
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+			
+			
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(id!=null){
 					this.tracciaIsArrivedIntoDatabase(id,dominio,protocollo);
 				}

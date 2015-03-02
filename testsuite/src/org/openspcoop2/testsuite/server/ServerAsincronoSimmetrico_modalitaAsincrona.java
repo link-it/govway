@@ -106,7 +106,13 @@ public class ServerAsincronoSimmetrico_modalitaAsincrona extends ServerCore {
 			response.setContentType(msgRisposta.getContentType(new org.apache.axis.soap.SOAP11Constants()));
 			msgRisposta.writeTo(response.getOutputStream());
 
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+			
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(id!=null)
 					this.tracciaIsArrivedIntoDatabase(id,destinatario,protocollo);
 			}

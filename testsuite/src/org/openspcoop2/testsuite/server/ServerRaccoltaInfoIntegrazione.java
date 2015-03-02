@@ -625,7 +625,13 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			bos.close();
 
 			
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+			
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(idTrasporto!=null){
 					this.tracciaIsArrivedIntoDatabase(idTrasporto,idDestinatario,protocollo);
 				}

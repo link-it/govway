@@ -24,6 +24,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +96,13 @@ public class ServerAsincronoSimmetrico_modalitaSincrona extends ServerCore{
 			bos.write(bout.toByteArray());
 			bos.close();
 
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+			
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(id!=null)
 					this.tracciaIsArrivedIntoDatabase(id,destinatario,protocollo);
 			}

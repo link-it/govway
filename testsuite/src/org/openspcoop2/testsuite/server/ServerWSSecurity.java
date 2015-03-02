@@ -206,7 +206,13 @@ public class ServerWSSecurity extends ServerCore{
 			bos.flush();
 			bos.close();
 
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+			
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(id!=null){
 					this.tracciaIsArrivedIntoDatabase(id,destinatario,protocollo);
 				}

@@ -108,7 +108,13 @@ public class ServerGenerico extends ServerCore{
 			}
 
 			
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+			
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(id!=null){
 					if(bout.toString().contains("http://www.openspcoop2.org/localForwardTest")==false){
 						this.tracciaIsArrivedIntoDatabase(id,destinatario,protocollo);

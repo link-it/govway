@@ -25,11 +25,9 @@ package org.openspcoop2.testsuite.server;
 
 
 import java.io.BufferedOutputStream;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -144,7 +142,13 @@ public class ServerTunnelSOAP extends ServerCore{
 			}
 
 			
-			if(this.testsuiteProperties.traceArrivedIntoDB()){
+			String checkTracciaString = request.getParameter("checkTraccia");
+			boolean checkTraccia = true;
+			if(checkTracciaString != null) {
+				checkTraccia = Boolean.parseBoolean(checkTracciaString.trim());
+			}
+			
+			if(this.testsuiteProperties.traceArrivedIntoDB() && checkTraccia){
 				if(id!=null){
 					this.tracciaIsArrivedIntoDatabase(id,destinatario,protocollo);
 				}
