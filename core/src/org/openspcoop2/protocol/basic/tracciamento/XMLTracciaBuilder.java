@@ -61,18 +61,16 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 	protected IProtocolFactory factory;
 	protected OpenSPCoop2MessageFactory fac = null;
 	protected AbstractXMLUtils xmlUtils;
-	protected ITraduttore protocolTraduttore = null;
 	
 	@Override
 	public IProtocolFactory getProtocolFactory() {
 		return this.factory;
 	}
 	
-	public XMLTracciaBuilder(IProtocolFactory factory) throws ProtocolException{
+	public XMLTracciaBuilder(IProtocolFactory factory) {
 		this.log = factory.getLogger();
 		this.factory = factory;
 		this.fac = OpenSPCoop2MessageFactory.getMessageFactory();
-		this.protocolTraduttore = this.factory.createTraduttore();
 		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
 	}
 
@@ -95,14 +93,14 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 			}
 			
 			// Traduzioni da factory
-
+			ITraduttore protocolTraduttore = this.factory.createTraduttore();
 			if(tracciaBase!=null){
 				if(tracciaBase.getBusta()!=null){
 					if(tracciaBase.getBusta().getOraRegistrazione()!=null){
 						if(tracciaBase.getBusta().getOraRegistrazione().getSorgente()!=null){
 							if(tracciaBase.getBusta().getOraRegistrazione().getSorgente().getBase()==null && 
 									tracciaBase.getBusta().getOraRegistrazione().getSorgente().getTipo()!=null){
-								tracciaBase.getBusta().getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(tracciaBase.getBusta().getOraRegistrazione().getSorgente().getTipo()));
+								tracciaBase.getBusta().getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,tracciaBase.getBusta().getOraRegistrazione().getSorgente().getTipo()));
 							}
 						}
 					}
@@ -112,7 +110,7 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 								if(trasmissione.getOraRegistrazione().getSorgente()!=null){
 									if(trasmissione.getOraRegistrazione().getSorgente().getBase()==null &&
 											trasmissione.getOraRegistrazione().getSorgente().getTipo()!=null){
-										trasmissione.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(trasmissione.getOraRegistrazione().getSorgente().getTipo()));
+										trasmissione.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,trasmissione.getOraRegistrazione().getSorgente().getTipo()));
 									}
 								}
 							}
@@ -124,7 +122,7 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 								if(riscontro.getOraRegistrazione().getSorgente()!=null){
 									if(riscontro.getOraRegistrazione().getSorgente().getBase()==null &&
 											riscontro.getOraRegistrazione().getSorgente().getTipo()!=null){
-										riscontro.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(riscontro.getOraRegistrazione().getSorgente().getTipo()));
+										riscontro.getOraRegistrazione().getSorgente().setBase(this.getBaseValueTipoTempo(protocolTraduttore,riscontro.getOraRegistrazione().getSorgente().getTipo()));
 									}
 								}
 							}
@@ -134,19 +132,19 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 						for (Eccezione eccezione : tracciaBase.getBusta().getEccezioni().getEccezioneList()) {
 							if(eccezione.getCodice()!=null){
 								if(eccezione.getCodice().getBase()==null && eccezione.getCodice().getTipo()!=null){
-									eccezione.getCodice().setBase(this.getBaseValueCodiceEccezione(eccezione.getCodice().getTipo(), eccezione.getCodice().getSottotipo()));
+									eccezione.getCodice().setBase(this.getBaseValueCodiceEccezione(protocolTraduttore,eccezione.getCodice().getTipo(), eccezione.getCodice().getSottotipo()));
 								}
 							}
 							if(eccezione.getContestoCodifica()!=null){
 								if(eccezione.getContestoCodifica().getBase()==null && 
 										eccezione.getContestoCodifica().getTipo()!=null){
-									eccezione.getContestoCodifica().setBase(this.getBaseValueContestoCodifica(eccezione.getContestoCodifica().getTipo()));
+									eccezione.getContestoCodifica().setBase(this.getBaseValueContestoCodifica(protocolTraduttore,eccezione.getContestoCodifica().getTipo()));
 								}
 							}
 							if(eccezione.getRilevanza()!=null){
 								if(eccezione.getRilevanza().getBase()==null &&
 										eccezione.getRilevanza().getTipo()!=null){
-									eccezione.getRilevanza().setBase(this.getBaseValueRilevanzaEccezione(eccezione.getRilevanza().getTipo()));
+									eccezione.getRilevanza().setBase(this.getBaseValueRilevanzaEccezione(protocolTraduttore,eccezione.getRilevanza().getTipo()));
 								}
 							}
 						}
@@ -185,56 +183,56 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 	
 	// UTILITIES 
 	
-	private String getBaseValueTipoTempo(TipoTempo tipoTempo){
+	private String getBaseValueTipoTempo(ITraduttore protocolTraduttore,TipoTempo tipoTempo){
 		switch (tipoTempo) {
 		case LOCALE:
-			return this.protocolTraduttore.toString(TipoOraRegistrazione.LOCALE);
+			return protocolTraduttore.toString(TipoOraRegistrazione.LOCALE);
 		case SCONOSCIUTO:
-			return this.protocolTraduttore.toString(TipoOraRegistrazione.UNKNOWN);
+			return protocolTraduttore.toString(TipoOraRegistrazione.UNKNOWN);
 		case SINCRONIZZATO:
-			return this.protocolTraduttore.toString(TipoOraRegistrazione.SINCRONIZZATO);
+			return protocolTraduttore.toString(TipoOraRegistrazione.SINCRONIZZATO);
 		}
 		return null;
 	}
 	
-	private String getBaseValueCodiceEccezione(Integer codice, Integer subCodice){
+	private String getBaseValueCodiceEccezione(ITraduttore protocolTraduttore,Integer codice, Integer subCodice){
 		CodiceErroreCooperazione errore = CodiceErroreCooperazione.toCodiceErroreCooperazione(codice);
 		if(subCodice==null){
-			return this.protocolTraduttore.toString(errore);
+			return protocolTraduttore.toString(errore);
 		}
 		else{
 			SubCodiceErrore sub = new SubCodiceErrore();
 			sub.setSubCodice(subCodice);
-			return this.protocolTraduttore.toString(errore,sub);
+			return protocolTraduttore.toString(errore,sub);
 		}
 	}
 	
-	private String getBaseValueContestoCodifica(TipoCodificaEccezione codifica){
+	private String getBaseValueContestoCodifica(ITraduttore protocolTraduttore,TipoCodificaEccezione codifica){
 		switch (codifica) {
 		case ECCEZIONE_PROCESSAMENTO:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione.PROCESSAMENTO);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione.PROCESSAMENTO);
 		case ECCEZIONE_VALIDAZIONE_PROTOCOLLO:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione.INTESTAZIONE);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione.INTESTAZIONE);
 		case SCONOSCIUTO:
 			return null;
 		}
 		return null;
 	}
 	
-	private String getBaseValueRilevanzaEccezione(TipoRilevanzaEccezione codifica){
+	private String getBaseValueRilevanzaEccezione(ITraduttore protocolTraduttore,TipoRilevanzaEccezione codifica){
 		switch (codifica) {
 		case DEBUG:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.DEBUG);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.DEBUG);
 		case ERROR:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.ERROR);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.ERROR);
 		case FATAL:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.FATAL);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.FATAL);
 		case INFO:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.INFO);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.INFO);
 		case WARN:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.WARN);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.WARN);
 		case SCONOSCIUTO:
-			return this.protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.UNKNOWN);
+			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.UNKNOWN);
 		}
 		return null;
 	}
