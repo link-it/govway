@@ -269,7 +269,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 				filterSearch.setIdCorrelazioneApplicativaRisposta(filter.getIdentificativoCorrelazioneRisposta());
 			}
 			if(filter.getCorrelazioneApplicativaAndMatch()!=null){
-				filterSearch.setIdCorrelazioneApplicativaOrMatch(filter.getCorrelazioneApplicativaAndMatch());
+				filterSearch.setIdCorrelazioneApplicativaOrMatch(!filter.getCorrelazioneApplicativaAndMatch());
 			}
 			
 		}

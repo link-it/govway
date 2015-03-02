@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -58,6 +59,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracce;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
 import org.openspcoop2.protocol.sdk.tracciamento.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -276,114 +278,218 @@ public class DriverTracciamentoUtilities {
 		
 	}
 	
-	public static int setValuesSearch(PreparedStatement pstmt,FiltroRicercaTracce filtro,int startIndex) throws SQLException{
+	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
+	
+	public static int setValuesSearch(Object object,FiltroRicercaTracce filtro,int startIndex) throws SQLException{
+		
+		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		
+		PreparedStatement pstmt = null;
+		StringWrapper query = null;
+		if(object instanceof PreparedStatement){
+			pstmt = (PreparedStatement) object;
+		}
+		else if(object instanceof StringWrapper){
+			query = (StringWrapper) object;
+		}
+		else{
+			throw new SQLException("Tipo di parametro ["+object.getClass().getName()+"] non gestito");
+		}
 		
 		if(DriverTracciamentoUtilities.isDefined(filtro.getMinDate())){
-			pstmt.setTimestamp(startIndex++, new Timestamp(filtro.getMinDate().getTime()));
+			if(pstmt!=null)
+				pstmt.setTimestamp(startIndex++, new Timestamp(filtro.getMinDate().getTime()));
+			if(query!=null)
+				query.replaceFirst("\\?","'"+dateformat.format(filtro.getMinDate())+"'");
 		}
 		if(DriverTracciamentoUtilities.isDefined(filtro.getMaxDate())){
-			pstmt.setTimestamp(startIndex++, new Timestamp(filtro.getMaxDate().getTime()));
+			if(pstmt!=null)
+				pstmt.setTimestamp(startIndex++, new Timestamp(filtro.getMaxDate().getTime()));
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+dateformat.format(filtro.getMaxDate())+"'");
 		}
 	
 		
 		if(DriverTracciamentoUtilities.isDefined(filtro.getTipoTraccia())){
-			pstmt.setString(startIndex++, filtro.getTipoTraccia().getTipo());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getTipoTraccia().getTipo());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getTipoTraccia().getTipo()+"'");
 		}		
 		if(DriverTracciamentoUtilities.isDefined(filtro.getTipoPdD())){
-			pstmt.setString(startIndex++, filtro.getTipoPdD().getTipo());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getTipoPdD().getTipo());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getTipoPdD().getTipo()+"'");
 		}
 		if(DriverTracciamentoUtilities.isDefined(filtro.getDominio())){
 			if(DriverTracciamentoUtilities.isDefined(filtro.getDominio().getCodicePorta())){
-				pstmt.setString(startIndex++, filtro.getDominio().getCodicePorta());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getDominio().getCodicePorta());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getDominio().getCodicePorta()+"'");
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getDominio().getTipo())){
-				pstmt.setString(startIndex++, filtro.getDominio().getTipo());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getDominio().getTipo());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getDominio().getTipo()+"'");
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getDominio().getNome())){
-				pstmt.setString(startIndex++, filtro.getDominio().getNome());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getDominio().getNome());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getDominio().getNome()+"'");
 			}
 		}
 		
 		
 		if(DriverTracciamentoUtilities.isDefined(filtro.getIdBusta())){
-			pstmt.setString(startIndex++, filtro.getIdBusta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getIdBusta());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getIdBusta()+"'");
 		}
 		if(DriverTracciamentoUtilities.isDefined(filtro.getRiferimentoMessaggio())){
-			pstmt.setString(startIndex++, filtro.getRiferimentoMessaggio());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getRiferimentoMessaggio());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getRiferimentoMessaggio()+"'");
 		}
 		if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo())){
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getMittente())){
 				if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getMittente().getTipo())){
-					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getMittente().getTipo());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getMittente().getTipo());
+					if(query!=null)
+						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getMittente().getTipo()+"'");
 				}
 				if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getMittente().getNome())){
-					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getMittente().getNome());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getMittente().getNome());
+					if(query!=null)
+						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getMittente().getNome()+"'");
 				}
 				if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getMittente().getCodicePorta())){
-					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getMittente().getCodicePorta());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getMittente().getCodicePorta());
+					if(query!=null)
+						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getMittente().getCodicePorta()+"'");
 				}
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getDestinatario())){
 				if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getDestinatario().getTipo())){
-					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getDestinatario().getTipo());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getDestinatario().getTipo());
+					if(query!=null)
+						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getDestinatario().getTipo()+"'");
 				}
 				if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getDestinatario().getNome())){
-					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getDestinatario().getNome());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getDestinatario().getNome());
+					if(query!=null)
+						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getDestinatario().getNome()+"'");
 				}
 				if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getDestinatario().getCodicePorta())){
-					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getDestinatario().getCodicePorta());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getDestinatario().getCodicePorta());
+					if(query!=null)
+						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getDestinatario().getCodicePorta()+"'");
 				}
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getTipoServizio())){
-				pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getTipoServizio());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getTipoServizio());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getTipoServizio()+"'");
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getServizio())){
-				pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getServizio());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getServizio());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getServizio()+"'");
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getVersioneServizio())){
-				pstmt.setInt(startIndex++, filtro.getInformazioniProtocollo().getVersioneServizio());
+				if(pstmt!=null)
+					pstmt.setInt(startIndex++, filtro.getInformazioniProtocollo().getVersioneServizio());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getVersioneServizio()+"'");
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getAzione())){
-				pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getAzione());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getAzione());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getAzione()+"'");
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getProfiloCollaborazioneProtocollo())){
-				pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProfiloCollaborazioneProtocollo());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProfiloCollaborazioneProtocollo());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProfiloCollaborazioneProtocollo()+"'");
 			}
 			if(DriverTracciamentoUtilities.isDefined(filtro.getInformazioniProtocollo().getProfiloCollaborazioneEngine())){
-				pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProfiloCollaborazioneEngine().getEngineValue());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProfiloCollaborazioneEngine().getEngineValue());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProfiloCollaborazioneEngine().getEngineValue()+"'");
 			}
 		}	
 		
 		
 		if(DriverTracciamentoUtilities.isDefined(filtro.getServizioApplicativoFruitore())){
-			pstmt.setString(startIndex++, filtro.getServizioApplicativoFruitore());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getServizioApplicativoFruitore());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getServizioApplicativoFruitore()+"'");
 		}
 		if(DriverTracciamentoUtilities.isDefined(filtro.getServizioApplicativoErogatore())){
-			pstmt.setString(startIndex++, filtro.getServizioApplicativoErogatore());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getServizioApplicativoErogatore());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getServizioApplicativoErogatore()+"'");
 		}
 		
 		
 		if(DriverTracciamentoUtilities.isDefined(filtro.getIdCorrelazioneApplicativa()) && DriverTracciamentoUtilities.isDefined(filtro.getIdCorrelazioneApplicativaRisposta())){
-			pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativa());
-			pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativaRisposta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativa());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getIdCorrelazioneApplicativa()+"'");
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativaRisposta());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getIdCorrelazioneApplicativaRisposta()+"'");
+			
 		}
 		else if(DriverTracciamentoUtilities.isDefined(filtro.getIdCorrelazioneApplicativa())){
-			pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativa());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativa());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getIdCorrelazioneApplicativa()+"'");
 		}
 		else if(DriverTracciamentoUtilities.isDefined(filtro.getIdCorrelazioneApplicativaRisposta())){
-			pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativaRisposta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getIdCorrelazioneApplicativaRisposta());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getIdCorrelazioneApplicativaRisposta()+"'");
 		}
 		
 	
 		if(DriverTracciamentoUtilities.isDefined(filtro.getProtocollo())){
-			pstmt.setString(startIndex++, filtro.getProtocollo());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getProtocollo());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getProtocollo()+"'");
 		}
 	
 		if(filtro.getPropertiesNames()!=null && filtro.getPropertiesNames().length>0){
 			String [] names = filtro.getPropertiesNames();
 			for (int i = 0; i < names.length; i++) {
 				String value = filtro.getProperty(names[i]);
-				pstmt.setString(startIndex++, value);	
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, value);
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+value+"'");
 			}
 		}
 

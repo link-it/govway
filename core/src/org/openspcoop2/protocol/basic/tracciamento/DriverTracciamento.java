@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracce;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
 import org.openspcoop2.protocol.sdk.tracciamento.IDriverTracciamento;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -266,7 +267,10 @@ public class DriverTracciamento implements IDriverTracciamento {
 			ISQLQueryObject sqlQueryObject = 
 				DriverTracciamentoUtilities.createSQLQueryObj_countTracce(filtro, this.tipoDatabase);
 			String sql = sqlQueryObject.createSQLQuery();
-			this.log.debug("Query: "+sql);
+			
+			StringWrapper sqlDebug = new StringWrapper(sqlQueryObject.createSQLQuery());
+			DriverTracciamentoUtilities.setValuesSearch(sqlDebug, filtro, 1);
+			this.log.debug("Query: "+sqlDebug);
 			
 			pstmt = connectionDB.prepareStatement(sql);
 			DriverTracciamentoUtilities.setValuesSearch(pstmt, filtro, 1);
@@ -277,6 +281,8 @@ public class DriverTracciamento implements IDriverTracciamento {
 			}
 			rs.close();
 			pstmt.close();
+			
+			this.log.debug("Query found "+contatore+" rows");
 			
 			return contatore;
 			
@@ -325,9 +331,12 @@ public class DriverTracciamento implements IDriverTracciamento {
 			ISQLQueryObject sqlQueryObject = 
 				DriverTracciamentoUtilities.createSQLQueryObj_searchTracce(filtro, this.tipoDatabase);
 			String sql = sqlQueryObject.createSQLQuery();
-			this.log.debug("Query: "+sql);
 			
-			pstmt = connectionDB.prepareStatement(sqlQueryObject.toString());
+			StringWrapper sqlDebug = new StringWrapper(sqlQueryObject.createSQLQuery());
+			DriverTracciamentoUtilities.setValuesSearch(sqlDebug, filtro, 1);
+			this.log.debug("Query: "+sqlDebug);
+			
+			pstmt = connectionDB.prepareStatement(sql);
 			DriverTracciamentoUtilities.setValuesSearch(pstmt, filtro, 1);
 			rs = pstmt.executeQuery();
 			
@@ -342,6 +351,8 @@ public class DriverTracciamento implements IDriverTracciamento {
 			}
 			rs.close();
 			pstmt.close();
+			
+			this.log.debug("Query found "+tracce.size()+" rows");
 			
 			if(tracce.size()>0)
 				return tracce;
@@ -384,11 +395,15 @@ public class DriverTracciamento implements IDriverTracciamento {
 			ISQLQueryObject sqlQueryObject = 
 				DriverTracciamentoUtilities.createSQLQueryObj_deleteTracce(filtro, this.tipoDatabase);
 			String sql = sqlQueryObject.createSQLDelete();
-			this.log.debug("Delete: "+sql);
+			
+			StringWrapper sqlDebug = new StringWrapper(sqlQueryObject.createSQLDelete());
+			DriverTracciamentoUtilities.setValuesSearch(sqlDebug, filtro, 1);
+			this.log.debug("Delete: "+sqlDebug);
 			
 			stmt = con.prepareStatement(sql);
 			DriverTracciamentoUtilities.setValuesSearch(stmt, filtro, 1);
-			deleted = stmt.executeUpdate();		
+			deleted = stmt.executeUpdate();	
+			this.log.debug("Deleted "+deleted+" rows");
 			
 			return deleted;
 			

@@ -10,7 +10,12 @@ import java.io.File;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
 import org.openspcoop2.core.tracciamento.DominioIdTraccia;
@@ -280,6 +285,81 @@ public final class Traccia_TracciaPortSoap11_Client {
 						System.out.println("["+traccia.getIdentificativo()+"]["+traccia.getDominio().getIdentificativoPorta()+"]");
 					}
 					
+				} catch (TracciamentoNotImplementedException_Exception e) { 
+					System.out.println("Expected exception: tracciamento-not-implemented-exception has occurred.");
+					System.out.println(e.toString());
+				} catch (TracciamentoNotAuthorizedException_Exception e) { 
+					System.out.println("Expected exception: tracciamento-not-authorized-exception has occurred.");
+					System.out.println(e.toString());
+				} catch (TracciamentoServiceException_Exception e) { 
+					System.out.println("Expected exception: tracciamento-service-exception has occurred.");
+					System.out.println(e.toString());
+				}
+			}
+			
+			
+			{
+				System.out.println("Invoking findAll (extended search)...");
+				org.openspcoop2.core.tracciamento.ws.client.traccia.search.SearchFilterTraccia _findAll_filter = new SearchFilterTraccia();
+				try {
+					_findAll_filter.setLimit(new BigInteger("15"));
+					_findAll_filter.setOffset(new BigInteger("0"));
+					
+					Busta busta = new Busta();
+					Soggetto mittente = new Soggetto();
+					mittente.setIdentificativoPorta(tracciaCampione.getBusta().getMittente().getIdentificativoPorta());
+					mittente.setIdentificativo(new SoggettoIdentificativo());
+					mittente.getIdentificativo().setTipo(tracciaCampione.getBusta().getMittente().getIdentificativo().getTipo());
+					mittente.getIdentificativo().setBase(tracciaCampione.getBusta().getMittente().getIdentificativo().getBase());
+					busta.setMittente(mittente);
+					Soggetto destinatario = new Soggetto();
+					destinatario.setIdentificativoPorta(tracciaCampione.getBusta().getDestinatario().getIdentificativoPorta());
+					destinatario.setIdentificativo(new SoggettoIdentificativo());
+					destinatario.getIdentificativo().setTipo(tracciaCampione.getBusta().getDestinatario().getIdentificativo().getTipo());
+					destinatario.getIdentificativo().setBase(tracciaCampione.getBusta().getDestinatario().getIdentificativo().getBase());
+					busta.setDestinatario(destinatario);
+					Servizio servizio = new Servizio();
+					servizio.setBase(tracciaCampione.getBusta().getServizio().getBase());
+					servizio.setTipo(tracciaCampione.getBusta().getServizio().getTipo());
+					servizio.setVersione(new BigInteger(""+tracciaCampione.getBusta().getServizio().getVersione()));
+					busta.setServizio(servizio);
+					busta.setAzione(tracciaCampione.getBusta().getAzione());
+					_findAll_filter.setBusta(busta);
+					
+					_findAll_filter.setCorrelazioneApplicativaAndMatch(true);
+					_findAll_filter.setIdentificativoCorrelazioneRichiesta(tracciaCampione.getIdentificativoCorrelazioneRichiesta());
+					_findAll_filter.setIdentificativoCorrelazioneRisposta(tracciaCampione.getIdentificativoCorrelazioneRisposta());
+					
+					_findAll_filter.setDescOrder(true);
+					
+					_findAll_filter.setDominio(new Dominio());
+					_findAll_filter.getDominio().setFunzione(tracciaCampione.getDominio().getFunzione());
+					_findAll_filter.getDominio().setIdentificativoPorta(tracciaCampione.getDominio().getIdentificativoPorta());
+					_findAll_filter.getDominio().setSoggetto(new DominioSoggetto());
+					_findAll_filter.getDominio().getSoggetto().setBase(tracciaCampione.getDominio().getSoggetto().getBase());
+					_findAll_filter.getDominio().getSoggetto().setTipo(tracciaCampione.getDominio().getSoggetto().getTipo());
+					
+					GregorianCalendar cMax = (GregorianCalendar) Calendar.getInstance();
+					cMax.setTime(new Date(tracciaCampione.getOraRegistrazione().getTime()+1000));
+					XMLGregorianCalendar gcMax = DatatypeFactory.newInstance().newXMLGregorianCalendar(cMax);
+					_findAll_filter.setOraRegistrazioneMax(gcMax);
+					
+					GregorianCalendar cMin = (GregorianCalendar) Calendar.getInstance();
+					cMin.setTime(new Date(tracciaCampione.getOraRegistrazione().getTime()-1000));
+					XMLGregorianCalendar gcMin = DatatypeFactory.newInstance().newXMLGregorianCalendar(cMin);
+					_findAll_filter.setOraRegistrazioneMin(gcMin);
+					
+					_findAll_filter.setRicercaSoloBusteErrore(tracciaCampione.getBusta().getEccezioni()!=null && tracciaCampione.getBusta().getEccezioni().sizeEccezioneList()>0); 
+					
+					_findAll_filter.setTipo(tracciaCampione.getTipo());
+					
+					java.util.List<org.openspcoop2.core.tracciamento.Traccia> _findAll__return = port.findAll(_findAll_filter);
+					System.out.println("findAll.result=" + _findAll__return.size());
+
+					for (org.openspcoop2.core.tracciamento.Traccia traccia : _findAll__return) {
+						System.out.println("["+traccia.getOraRegistrazione()+"]["+traccia.getTipo()+"]["+traccia.getBusta().getIdentificativo()+"]["+traccia.getDominio().getIdentificativoPorta()+"]");
+					}
+
 				} catch (TracciamentoNotImplementedException_Exception e) { 
 					System.out.println("Expected exception: tracciamento-not-implemented-exception has occurred.");
 					System.out.println(e.toString());

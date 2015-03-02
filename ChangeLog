@@ -1,3 +1,9 @@
+2015-02-20  Andrea Poli <apoli@link.it>
+
+	* [WebServiceTracciamento]
+	Aggiunta funzionalità #289
+	WebService per la consultazione delle tracce emesse dalla PdD
+
 2015-02-16  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSPCoop]
