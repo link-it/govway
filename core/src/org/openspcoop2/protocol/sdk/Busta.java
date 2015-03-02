@@ -96,7 +96,7 @@ public class Busta implements java.io.Serializable {
 		this.setProtocollo(protocollo);
 	}
 
-	public Busta(IProtocolFactory protocolFactory,Servizio infoServizio, IDSoggetto mittente, IDSoggetto destinatario, String id) throws ProtocolException {
+	public Busta(IProtocolFactory protocolFactory,Servizio infoServizio, IDSoggetto mittente, IDSoggetto destinatario, String id, boolean generateListaTrasmissione) throws ProtocolException {
 		
 		this.busta = new org.openspcoop2.core.tracciamento.Busta();
 		
@@ -137,6 +137,33 @@ public class Busta implements java.io.Serializable {
 		this.setID(id);
 		if(protocolFactory!=null){
 			this.setProtocollo(protocolFactory.getProtocol());
+		}
+		
+		if(generateListaTrasmissione){
+			// aggiunto lista trasmissione
+			if(this.sizeListaTrasmissioni()<=0){
+				Trasmissione trasmissione = new Trasmissione();
+				
+				if(this.busta.getMittente()!=null){
+					if(this.busta.getMittente().getIdentificativo()!=null){
+						trasmissione.setTipoOrigine(this.busta.getMittente().getIdentificativo().getTipo());
+						trasmissione.setOrigine(this.busta.getMittente().getIdentificativo().getBase());
+					}
+					trasmissione.setIdentificativoPortaOrigine(this.busta.getMittente().getIdentificativoPorta());
+					trasmissione.setIndirizzoOrigine(this.busta.getMittente().getIndirizzo());
+				}
+				
+				if(this.busta.getDestinatario()!=null){
+					if(this.busta.getDestinatario().getIdentificativo()!=null){
+						trasmissione.setTipoDestinazione(this.busta.getDestinatario().getIdentificativo().getTipo());
+						trasmissione.setDestinazione(this.busta.getDestinatario().getIdentificativo().getBase());
+					}
+					trasmissione.setIdentificativoPortaDestinazione(this.busta.getDestinatario().getIdentificativoPorta());
+					trasmissione.setIndirizzoDestinazione(this.busta.getDestinatario().getIndirizzo());
+				}
+				
+				this.addTrasmissione(trasmissione);
+			}
 		}
 	}
 	

@@ -73,6 +73,8 @@ public class InformazioniServizioURLMapping {
 	private static final String INFORMAZIONI_PROTOCOLLO = "identificazione-informazioni-protocollo";
 	
 	private static final String ID_PROTOCOLLO = "identificazione-id-protocollo";
+	
+	private static final String GENERAZIONE_LISTA_TRASMISSIONI = "generazione-lista-trasmissioni";
 		
 	
 	private static MappingProperties getMappingProperties(IProtocolFactory protocolFactory) throws ProtocolException{
@@ -170,6 +172,9 @@ public class InformazioniServizioURLMapping {
 	
 	// PAInfo
 	private MappingPAInfo paInfo;
+	
+	// Indicazione se generare la lista trasmissione
+	private boolean generateListaTrasmissione = false;
 		
 
 	public InformazioniServizioURLMapping(OpenSPCoop2Message msg,IProtocolFactory protocolFactory,
@@ -209,6 +214,12 @@ public class InformazioniServizioURLMapping {
 		// PAInfo
 		if(this.existsPABasedIdentificationMode()){
 			this.paInfo = this.getMappingPAInfo(this.msg.getProtocolName(), urlProtocolContext);
+		}
+		
+		// ListaTrasmissione
+		String generazioneListaTrasmissioniTmp = this.mp.getValue(this.msg.getProtocolName(), this.idMapping, GENERAZIONE_LISTA_TRASMISSIONI);
+		if(generazioneListaTrasmissioniTmp!=null){
+			this.generateListaTrasmissione = Boolean.parseBoolean(generazioneListaTrasmissioniTmp);
 		}
 		
 	}
@@ -293,6 +304,10 @@ public class InformazioniServizioURLMapping {
 			bf.append(this.paInfo.toString());
 			bf.append(") ");
 		}
+		
+		bf.append("GenerazioneListaTrasmissioni(");
+		bf.append(this.generateListaTrasmissione);
+		bf.append(") ");
 		
 		return bf.toString();
 	}
@@ -620,6 +635,10 @@ public class InformazioniServizioURLMapping {
 		}
 	
 		return false;
+	}
+	
+	public boolean isGenerateListaTrasmissione() {
+		return this.generateListaTrasmissione;
 	}
 	
 	

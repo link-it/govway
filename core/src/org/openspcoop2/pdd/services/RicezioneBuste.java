@@ -1082,7 +1082,14 @@ public class RicezioneBuste {
 			}
 			
 			// Build Busta
-			busta = new Busta(protocolFactory,infoServizio, idSoggettoFruitore, idSoggettoErogatore, id);
+			busta = new Busta(protocolFactory,infoServizio, idSoggettoFruitore, idSoggettoErogatore, id, is.isGenerateListaTrasmissione());
+			TipoOraRegistrazione tipoOraRegistrazione = propertiesReader.getTipoTempoBusta(null);
+			busta.setTipoOraRegistrazione(tipoOraRegistrazione, traduttore.toString(tipoOraRegistrazione));
+			if(busta.sizeListaTrasmissioni()>0){
+				for (Trasmissione trasmissione : busta.getListaTrasmissioni()) {
+					trasmissione.setTempo(tipoOraRegistrazione, traduttore.toString(tipoOraRegistrazione));
+				}
+			}
 			
 		}catch(Exception e){
 			openspcoopstate.releaseResource();
