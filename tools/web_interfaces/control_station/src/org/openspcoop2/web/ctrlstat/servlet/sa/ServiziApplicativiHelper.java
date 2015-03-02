@@ -1232,6 +1232,9 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
 				labels.add(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
 			}
+			else{
+				labels.add(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
+			}
 			if(supportAsincroni){
 				labels.add(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
 			}
@@ -1318,6 +1321,11 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 						}
 						e.addElement(de);
 					}
+					else{
+						de = new DataElement();
+						de.setValue(this.getTipologia(sa));
+						e.addElement(de);
+					}
 
 					if(supportAsincroni){
 						de = new DataElement();
@@ -1393,6 +1401,65 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 		}
 	}
 
+	
+	private String getTipologia(ServizioApplicativo sa){
+		
+		String ruoloFruitore = sa.getTipologiaFruizione();
+		String ruoloErogatore = sa.getTipologiaErogazione();
+		TipologiaFruizione tipologiaFruizione = TipologiaFruizione.toEnumConstant(ruoloFruitore);
+		TipologiaErogazione tipologiaErogazione = TipologiaErogazione.toEnumConstant(ruoloErogatore);
+		
+		
+		if(tipologiaFruizione==null){
+			
+			// cerco di comprenderlo dalla configurazione del sa
+			if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0){
+				tipologiaFruizione = TipologiaFruizione.NORMALE;
+			}
+			else{
+				tipologiaFruizione = TipologiaFruizione.DISABILITATO;
+			}
+			
+		}
+		
+		if(tipologiaErogazione==null){
+			
+			// cerco di comprenderlo dalla configurazione del sa
+			
+			if(sa.getInvocazioneServizio()!=null){
+				if(StatoFunzionalita.ABILITATO.equals(sa.getInvocazioneServizio().getGetMessage())){
+					tipologiaErogazione = TipologiaErogazione.TRASPARENTE;
+				}
+				else if(sa.getInvocazioneServizio().getConnettore()!=null && 
+						!TipiConnettore.DISABILITATO.getNome().equals(sa.getInvocazioneServizio().getConnettore().getTipo())){
+					tipologiaErogazione = TipologiaErogazione.TRASPARENTE;
+				}
+				else{
+					tipologiaErogazione = TipologiaErogazione.DISABILITATO;
+				}
+			}
+			else{
+				tipologiaErogazione = TipologiaErogazione.DISABILITATO;
+			}
+		}
+		
+		
+		if(!TipologiaFruizione.DISABILITATO.equals(tipologiaFruizione) && 
+				!TipologiaErogazione.DISABILITATO.equals(tipologiaErogazione) ){
+			return ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE + "/" + ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+		}
+		else if(!TipologiaFruizione.DISABILITATO.equals(tipologiaFruizione)){
+			return ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE;
+		}
+		else if(!TipologiaErogazione.DISABILITATO.equals(tipologiaErogazione)){
+			return ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+		}
+		else{
+			return ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_NON_CONFIGURATO;
+		}
+		
+	}
+	
 
 	public void addEndPointToDati(Vector<DataElement> dati,
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,

@@ -196,6 +196,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL = "https";
 	public final static String DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE = SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA;
 	
+	public final static String SERVIZI_APPLICATIVI_RUOLO_NON_CONFIGURATO = "Non Configurato";
 	public final static String SERVIZI_APPLICATIVI_RUOLO_FRUITORE = "Fruitore";
 	public final static String SERVIZI_APPLICATIVI_RUOLO_EROGATORE = "Erogatore";
 	public final static String[] SERVIZI_APPLICATIVI_RUOLO = { SERVIZI_APPLICATIVI_RUOLO_FRUITORE, 
