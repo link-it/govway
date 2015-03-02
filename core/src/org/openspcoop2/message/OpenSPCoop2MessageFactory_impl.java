@@ -29,6 +29,7 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -46,6 +47,8 @@ import org.w3c.dom.Element;
 
 public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 
+	private static Logger logger = Logger.getLogger(OpenSPCoop2MessageFactory_impl.class);
+	
 	@Override
 	public OpenSPCoop2Message createMessage(SOAPMessage msg)throws SOAPException, IOException {
 		OpenSPCoop2Message omsg = new OpenSPCoop2Message_11_impl(msg);
@@ -74,7 +77,10 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 		
 		OpenSPCoop2Message msg;
 		
-		if(getContentType(mhs).startsWith(Costanti.CONTENT_TYPE_SOAP_1_2)){
+		String contentType = getContentType(mhs);
+		SOAPVersion soapVersion = SOAPVersion.getVersioneSoap(logger, contentType, true);
+		
+		if(SOAPVersion.SOAP12.equals(soapVersion)){
 			msg = new OpenSPCoop2Message_12_impl(mhs, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
 			((OpenSPCoop2Message_12_impl) msg).setLazyAttachments(false);
 		} else {

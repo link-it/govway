@@ -38,6 +38,7 @@ import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.TransformerException;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
@@ -61,6 +62,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public abstract String getDocumentBuilderFactoryClass();
 	public abstract String getProcessPartialEncryptedMessageClass();
 	public abstract String getSignPartialMessageProcessorClass();
+	private static Logger logger = Logger.getLogger(OpenSPCoop2MessageFactory.class);
 	public static String messageFactoryImpl = org.openspcoop2.message.OpenSPCoop2MessageFactory_impl.class.getName();
 	
 	public static void setMessageFactoryImpl(String messageFactoryImpl) {
@@ -181,12 +183,15 @@ public abstract class OpenSPCoop2MessageFactory {
 
 
 	public OpenSPCoop2Message createMessage(InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean isBodyStream, String contentType, String contentLocation,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) throws IOException, SOAPException, ParseException{
+			boolean isBodyStream, String contentTypeParam, String contentLocation,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) throws IOException, SOAPException, ParseException{
 		long diff = 0;
+		
+		SOAPVersion soapVersion = SOAPVersion.getVersioneSoap(logger, contentTypeParam, true);
+		
 		if(isBodyStream){
 			Vector<InputStream> streams = new Vector<InputStream> ();
 			byte[] start = null, end = null;
-			if(contentType.equals(Costanti.CONTENT_TYPE_SOAP_1_2)){
+			if(SOAPVersion.SOAP12.equals(soapVersion)){
 				start = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body>".getBytes();
 				end = "</SOAP-ENV:Body></SOAP-ENV:Envelope>".getBytes();
 			} else {
@@ -200,7 +205,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			messageInput = new SequenceInputStream (streams.elements());
 		}
 		MimeHeaders mhs = new MimeHeaders();
-		mhs.addHeader(Costanti.CONTENT_TYPE, contentType);
+		mhs.addHeader(Costanti.CONTENT_TYPE, contentTypeParam);
 		if(contentLocation != null) 
 			mhs.addHeader(Costanti.CONTENT_LOCATION, contentLocation);
 		
