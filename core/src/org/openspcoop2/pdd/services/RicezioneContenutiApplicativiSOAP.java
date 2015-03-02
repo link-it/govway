@@ -515,9 +515,9 @@ public class RicezioneContenutiApplicativiSOAP {
 				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessage, context.getProprietaErroreAppl());
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500;
-					res.setStatus(500);
 					descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
 				}
+				res.setStatus(statoServletResponse);
 				
 				// contenuto
 				Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre scrittura risposta");

@@ -519,9 +519,9 @@ public class RicezioneBusteSOAP  {
 				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessage, proprietaErroreAppl);
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500;
-					res.setStatus(500);
 					descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
 				}
+				res.setStatus(statoServletResponse);
 				
 				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
