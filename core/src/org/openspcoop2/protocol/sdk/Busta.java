@@ -116,6 +116,10 @@ public class Busta implements java.io.Serializable {
 			}
 			this.setTipoServizioCorrelato(infoServizio.getTipoServizioCorrelato());
 			this.setServizioCorrelato(infoServizio.getServizioCorrelato());
+			if(infoServizio.getInoltro()!=null){
+				this.setInoltro(infoServizio.getInoltro());
+				this.setInoltroValue(protocolFactory.createTraduttore().toString(infoServizio.getInoltro()));
+			}
 		}
 		
 		if(mittente!=null){
