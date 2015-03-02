@@ -3,7 +3,6 @@ package org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransaz
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -18,7 +17,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="identificativo" type="{http://www.openspcoop2.org/core/diagnostica/management}soggetto-identificativo" minOccurs="0"/>
- *         &lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,14 +27,11 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "soggetto", propOrder = {
-    "identificativo",
-    "identificativoPorta"
+    "identificativo"
 })
 public class Soggetto {
 
     protected SoggettoIdentificativo identificativo;
-    @XmlElement(name = "identificativo-porta")
-    protected String identificativoPorta;
 
     /**
      * Gets the value of the identificativo property.
@@ -60,30 +55,6 @@ public class Soggetto {
      */
     public void setIdentificativo(SoggettoIdentificativo value) {
         this.identificativo = value;
-    }
-
-    /**
-     * Gets the value of the identificativoPorta property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIdentificativoPorta() {
-        return this.identificativoPorta;
-    }
-
-    /**
-     * Sets the value of the identificativoPorta property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIdentificativoPorta(String value) {
-        this.identificativoPorta = value;
     }
 
 }

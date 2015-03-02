@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -40,6 +41,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPagin
 import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
+import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -194,7 +196,7 @@ public class DriverMsgDiagnosticiUtilities {
 						sqlQueryObject.getWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione", idF),
 						sqlQueryObject.getWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione", "InoltroRisposte"));
 			}
-			if("ConsegnaContenutiApplicativi".equals(idF)){
+			else if("ConsegnaContenutiApplicativi".equals(idF)){
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione", idF);
 			}
 			else{
@@ -357,36 +359,69 @@ public class DriverMsgDiagnosticiUtilities {
 
 	}
 	
+	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
 	
-	public static int setValuesSearchMessaggiDiagnostici(FiltroRicercaDiagnostici filter,PreparedStatement pstmt,int startIndex) throws SQLQueryObjectException, SQLException{
-		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, pstmt,true,startIndex);
+	public static int setValuesSearchMessaggiDiagnostici(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,true,startIndex);
 	}
-	public static int setValuesSearchMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,PreparedStatement pstmt,int startIndex) throws SQLQueryObjectException, SQLException{
-		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, pstmt, false,startIndex);
+	public static int setValuesSearchMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object, false,startIndex);
 	}
-	private static int setValuesSearch(FiltroRicercaDiagnostici filter,PreparedStatement pstmt,boolean diagnostici,int startIndex) throws SQLQueryObjectException, SQLException{
+	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,boolean diagnostici,int startIndex) throws SQLQueryObjectException, SQLException{
+		
+		
+		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		
+		PreparedStatement pstmt = null;
+		StringWrapper query = null;
+		if(object instanceof PreparedStatement){
+			pstmt = (PreparedStatement) object;
+		}
+		else if(object instanceof StringWrapper){
+			query = (StringWrapper) object;
+		}
+		else{
+			throw new SQLException("Tipo di parametro ["+object.getClass().getName()+"] non gestito");
+		}
+		
+		
 		
 		//where
 		
 		
 		//data inizio
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataInizio())){
-			pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataInizio().getTime()));
+			if(pstmt!=null)
+				pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataInizio().getTime()));
+			if(query!=null)
+				query.replaceFirst("\\?","'"+dateformat.format(filter.getDataInizio())+"'");
 		}
 		//data fine
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataFine())){
-			pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataFine().getTime()));
+			if(pstmt!=null)
+				pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataFine().getTime()));
+			if(query!=null)
+				query.replaceFirst("\\?","'"+dateformat.format(filter.getDataFine())+"'");
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.isDelegata())){
 			if(filter.isDelegata()){
-				pstmt.setInt(startIndex++,1);
+				if(pstmt!=null)
+					pstmt.setInt(startIndex++,1);
+				if(query!=null)
+					query.replaceFirst("\\?","1");
 			}else{
-				pstmt.setInt(startIndex++,0);
+				if(pstmt!=null)
+					pstmt.setInt(startIndex++,0);
+				if(query!=null)
+					query.replaceFirst("\\?","0");
 			}
 		}
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getNomePorta())){
-			pstmt.setString(startIndex++, filter.getNomePorta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getNomePorta());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getNomePorta()+"'");
 		}
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getIdFunzione())){
 			String idF  = filter.getIdFunzione();
@@ -400,89 +435,155 @@ public class DriverMsgDiagnosticiUtilities {
 			else if("InoltroBuste".equals(idF)){
 				// Like impostato in sqlQueryObject
 			}
-			if("ConsegnaContenutiApplicativi".equals(idF)){
+			else if("ConsegnaContenutiApplicativi".equals(idF)){
 				// Like impostato in sqlQueryObject
 			}
 			else{
-				pstmt.setString(startIndex++, idF);
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, idF);
+				if(query!=null)
+					query.replaceFirst("\\?","'"+idF+"'");
 			}
 		}
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDominio())){
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDominio().getCodicePorta())){
-				pstmt.setString(startIndex++, filter.getDominio().getCodicePorta());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filter.getDominio().getCodicePorta());
+				if(query!=null)
+					query.replaceFirst("\\?","'"+filter.getDominio().getCodicePorta()+"'");
 			}
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDominio().getTipo())){
-				pstmt.setString(startIndex++, filter.getDominio().getTipo());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filter.getDominio().getTipo());
+				if(query!=null)
+					query.replaceFirst("\\?","'"+filter.getDominio().getTipo()+"'");
 			}
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDominio().getNome())){
-				pstmt.setString(startIndex++, filter.getDominio().getNome());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filter.getDominio().getNome());
+				if(query!=null)
+					query.replaceFirst("\\?","'"+filter.getDominio().getNome()+"'");
 			}
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getIdBustaRichiesta())){
-			pstmt.setString(startIndex++, filter.getIdBustaRichiesta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getIdBustaRichiesta());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getIdBustaRichiesta()+"'");
 		}
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getIdBustaRisposta())){
-			pstmt.setString(startIndex++, filter.getIdBustaRisposta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getIdBustaRisposta());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getIdBustaRisposta()+"'");
 		}
 		
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo())){
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore())){
 				if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore().getTipo())){
-					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getFruitore().getTipo());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getFruitore().getTipo());
+					if(query!=null)
+						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getFruitore().getTipo()+"'");
 				}
 				if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore().getNome())){
-					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getFruitore().getNome());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getFruitore().getNome());
+					if(query!=null)
+						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getFruitore().getNome()+"'");
 				}
 			}
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore())){
 				if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore().getTipo())){
-					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getErogatore().getTipo());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getErogatore().getTipo());
+					if(query!=null)
+						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getErogatore().getTipo()+"'");
 				}
 				if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore().getNome())){
-					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getErogatore().getNome());
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getErogatore().getNome());
+					if(query!=null)
+						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getErogatore().getNome()+"'");
 				}
 			}
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getTipoServizio())){
-				pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getTipoServizio());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getTipoServizio());
+				if(query!=null)
+					query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getTipoServizio()+"'");
 			}
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getServizio())){
-				pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getServizio());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getServizio());
+				if(query!=null)
+					query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getServizio()+"'");
 			}
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getVersioneServizio())){
-				pstmt.setInt(startIndex++, filter.getInformazioniProtocollo().getVersioneServizio());
+				if(pstmt!=null)
+					pstmt.setInt(startIndex++, filter.getInformazioniProtocollo().getVersioneServizio());
+				if(query!=null)
+					query.replaceFirst("\\?",filter.getInformazioniProtocollo().getVersioneServizio()+"");
 			}
 			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo().getAzione())){
-				pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getAzione());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getAzione());
+				if(query!=null)
+					query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getAzione()+"'");
 			}
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getServizioApplicativo())){
-			pstmt.setString(startIndex++, filter.getServizioApplicativo());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getServizioApplicativo());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getServizioApplicativo()+"'");
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativa()) && DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())){
-			pstmt.setString(startIndex++, filter.getCorrelazioneApplicativa());
-			pstmt.setString(startIndex++, filter.getCorrelazioneApplicativaRisposta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativa());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativa()+"'");
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativaRisposta());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativaRisposta()+"'");
 		}
 		else if(DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativa())){
-			pstmt.setString(startIndex++, filter.getCorrelazioneApplicativa());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativa());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativa()+"'");
 		}
 		else if(DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())){
-			pstmt.setString(startIndex++, filter.getCorrelazioneApplicativaRisposta());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativaRisposta());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativaRisposta()+"'");
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getSeverita())){
-			pstmt.setInt(startIndex++, filter.getSeverita());
+			if(pstmt!=null)
+				pstmt.setInt(startIndex++, filter.getSeverita());
+			if(query!=null)
+				query.replaceFirst("\\?",filter.getSeverita()+"");
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getCodice())){
-			pstmt.setString(startIndex++, filter.getCodice());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getCodice());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getCodice()+"'");
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getProtocollo())){
-			pstmt.setString(startIndex++, filter.getProtocollo());
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getProtocollo());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getProtocollo()+"'");
 		}
 		
 		if(filter.getProperties()!=null){
@@ -492,9 +593,15 @@ public class DriverMsgDiagnosticiUtilities {
 				String value = filter.getProperties().get(key);
 				if(DriverMsgDiagnostici.IDDIAGNOSTICI.equals(key)){
 					// Caso particolare dell'id long della traccia
-					pstmt.setLong(startIndex++, Long.parseLong(value));
+					if(pstmt!=null)
+						pstmt.setLong(startIndex++, Long.parseLong(value));
+					if(query!=null)
+						query.replaceFirst("\\?",value);
 				}else{
-					pstmt.setString(startIndex++, value);
+					if(pstmt!=null)
+						pstmt.setString(startIndex++, value);
+					if(query!=null)
+						query.replaceFirst("\\?","'"+value+"'");
 				}
 			}
 		}
@@ -503,10 +610,24 @@ public class DriverMsgDiagnosticiUtilities {
 			List<IDSoggetto> filtroSoggetti = filter.getFiltroSoggetti();
 			for(int k=0; k<filtroSoggetti.size(); k++){
 				IDSoggetto id = filtroSoggetti.get(k);
-				pstmt.setString(startIndex++, id.getTipo());
-				pstmt.setString(startIndex++, id.getNome());
-				pstmt.setString(startIndex++, id.getTipo());
-				pstmt.setString(startIndex++, id.getNome());
+				
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, id.getTipo());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, id.getNome());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, id.getTipo());
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, id.getNome());
+				
+				if(query!=null)
+					query.replaceFirst("\\?","'"+id.getTipo()+"'");
+				if(query!=null)
+					query.replaceFirst("\\?","'"+id.getNome()+"'");
+				if(query!=null)
+					query.replaceFirst("\\?","'"+id.getTipo()+"'");
+				if(query!=null)
+					query.replaceFirst("\\?","'"+id.getNome()+"'");
 			}
 		}
 
@@ -522,7 +643,7 @@ public class DriverMsgDiagnosticiUtilities {
 		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI);
 		sqlQueryObject.addWhereCondition("id=?");
 		
-		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery());
+		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+""));
 		PreparedStatement stmt=null;
 		ResultSet rs= null;
 		try{
@@ -597,7 +718,7 @@ public class DriverMsgDiagnosticiUtilities {
 		
 		MsgDiagnosticoCorrelazione msg = null;
 		
-		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery());
+		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+""));
 		PreparedStatement stmt=null;
 		ResultSet rs= null;
 		try{
@@ -674,7 +795,7 @@ public class DriverMsgDiagnosticiUtilities {
 		sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id=?");
 		sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id="+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA+".id_correlazione");
 		
-		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery());
+		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+""));
 		stmt=null;
 		rs= null;
 		try{

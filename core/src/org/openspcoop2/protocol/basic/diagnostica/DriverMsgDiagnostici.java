@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
+import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -258,9 +259,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_countMessaggiDiagnostici(filtro, this.tipoDatabase);
-			String sql = sqlObj.createSQLQuery();
-			this.log.debug("Eseguo query : "+sql);
 			
+			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
+			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, sqlDebug, 1);
+			this.log.debug("Query : "+sqlDebug);
+			
+			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
 			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, stmt, 1);
 
@@ -272,6 +276,8 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 			rs.close();
 			stmt.close();
+			
+			this.log.debug("Query found "+countDiagnostici+" rows");
 			
 			return countDiagnostici;
 			
@@ -324,9 +330,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_searchMessaggiDiagnostici(filtro, this.tipoDatabase);
-			String sql = sqlObj.createSQLQuery();
-			this.log.debug("Eseguo query : "+sql);
 			
+			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
+			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, sqlDebug, 1);
+			this.log.debug("Query : "+sqlDebug);
+			
+			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
 			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, stmt, 1);
 
@@ -341,6 +350,8 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 			rs.close();
 			stmt.close();
+			
+			this.log.debug("Query found "+listaMSGDiagnostici.size()+" rows");
 			
 			if(listaMSGDiagnostici.size()>0)
 				return listaMSGDiagnostici;
@@ -397,14 +408,20 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_deleteMessaggiDiagnostici(filter, this.tipoDatabase);
-			String sql = sqlObj.createSQLDelete();
-			this.log.debug("Eseguo query : "+sql);
 			
+			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLDelete());
+			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filter, sqlDebug, 1);
+			this.log.debug("Query : "+sqlDebug);
+			
+			String sql = sqlObj.createSQLDelete();
 			stmt=con.prepareStatement(sql);
 			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filter, stmt, 1);
+			
 			deleted = stmt.executeUpdate();		
 			
 			stmt.close();
+			
+			this.log.debug("Deleted "+deleted+" rows");
 			
 			return deleted;
 			
@@ -460,11 +477,14 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_countMsgDiagCorrelazione(filtro, this.tipoDatabase);
-			String sql = sqlObj.createSQLQuery();
-			this.log.debug("Eseguo query : "+sql);
+		
+			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
+			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, sqlDebug, 1);
+			this.log.debug("Query : "+sqlDebug);
 			
+			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
 			if(rs.next()){
@@ -474,6 +494,8 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 			rs.close();
 			stmt.close();
+			
+			this.log.debug("Query found "+countCorrelazioni+" rows");
 			
 			return countCorrelazioni;
 			
@@ -526,11 +548,14 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_searchMsgDiagCorrelazione(filtro, this.tipoDatabase);
-			String sql = sqlObj.createSQLQuery();
-			this.log.debug("Eseguo query : "+sql);
 			
+			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
+			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, sqlDebug, 1);
+			this.log.debug("Query : "+sqlDebug);
+			
+			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
 			while(rs.next()){
@@ -544,6 +569,8 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 			rs.close();
 			stmt.close();
+			
+			this.log.debug("Query found "+listaCorrelazioni.size()+" rows");
 			
 			if(listaCorrelazioni.size()>0)
 				return listaCorrelazioni;
@@ -600,14 +627,19 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			}
 
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_deleteMsgDiagCorrelazione(filter, this.tipoDatabase);
-			String sql = sqlObj.createSQLDelete();
-			this.log.debug("Eseguo query : "+sql);
 			
+			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLDelete());
+			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filter, sqlDebug, 1);
+			this.log.debug("Query : "+sqlDebug);
+			
+			String sql = sqlObj.createSQLDelete();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filter, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filter, stmt, 1);
 			deleted = stmt.executeUpdate();		
 			
 			stmt.close();
+			
+			this.log.debug("Deleted "+deleted+" rows");
 			
 			return deleted;
 			

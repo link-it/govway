@@ -29,7 +29,6 @@ package org.openspcoop2.core.diagnostica.ws.server.filter.beans;
  * &lt;complexType name="soggetto">
  *     &lt;sequence>
  *         &lt;element name="identificativo" type="{http://www.openspcoop2.org/core/diagnostica/management}soggetto-identificativo" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -52,8 +51,7 @@ import org.openspcoop2.core.diagnostica.ws.server.filter.beans.SoggettoIdentific
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "soggetto", namespace="http://www.openspcoop2.org/core/diagnostica/management", propOrder = {
-    "identificativo",
-    "identificativoPorta"
+    "identificativo"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "soggetto")
 public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
@@ -71,19 +69,6 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 	
 	public SoggettoIdentificativo getIdentificativo(){
 		return this.identificativo;
-	}
-	
-	
-	@javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="identificativo-porta",required=false,nillable=false)
-	private String identificativoPorta;
-	
-	public void setIdentificativoPorta(String identificativoPorta){
-		this.identificativoPorta = identificativoPorta;
-	}
-	
-	public String getIdentificativoPorta(){
-		return this.identificativoPorta;
 	}
 	
 	

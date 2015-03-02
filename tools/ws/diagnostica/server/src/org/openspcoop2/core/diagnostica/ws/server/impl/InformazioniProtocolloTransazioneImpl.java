@@ -70,7 +70,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 			filterSearch.setDataInizio(filter.getOraRegistrazioneMin());
 		}
 		if(filter.getOraRegistrazioneMax()!=null){
-			filterSearch.setDataInizio(filter.getOraRegistrazioneMax());
+			filterSearch.setDataFine(filter.getOraRegistrazioneMax());
 		}
 		
 		if(filter.getTipoPdD()!=null){
@@ -131,15 +131,16 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 		}
 		
 		if(filter.getFruitore()!=null){
-			if(filter.getFruitore().getIdentificativoPorta()!=null){
-				if(filterSearch.getInformazioniProtocollo()==null){
-					filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-				}
-				if(filterSearch.getInformazioniProtocollo().getFruitore()==null){
-					filterSearch.getInformazioniProtocollo().setFruitore(new IDSoggetto());
-				}
-				filterSearch.getInformazioniProtocollo().getFruitore().setCodicePorta(filter.getFruitore().getIdentificativoPorta());
-			}
+			// Filtro non supportato dal driver
+//			if(filter.getFruitore().getIdentificativoPorta()!=null){
+//				if(filterSearch.getInformazioniProtocollo()==null){
+//					filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
+//				}
+//				if(filterSearch.getInformazioniProtocollo().getFruitore()==null){
+//					filterSearch.getInformazioniProtocollo().setFruitore(new IDSoggetto());
+//				}
+//				filterSearch.getInformazioniProtocollo().getFruitore().setCodicePorta(filter.getFruitore().getIdentificativoPorta());
+//			}
 			if(filter.getFruitore().getIdentificativo()!=null){
 				if(filter.getFruitore().getIdentificativo().getBase()!=null || filter.getFruitore().getIdentificativo().getTipo()!=null){
 					if(filterSearch.getInformazioniProtocollo()==null){
@@ -155,15 +156,16 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 		}
 		
 		if(filter.getErogatore()!=null){
-			if(filter.getErogatore().getIdentificativoPorta()!=null){
-				if(filterSearch.getInformazioniProtocollo()==null){
-					filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-				}
-				if(filterSearch.getInformazioniProtocollo().getErogatore()==null){
-					filterSearch.getInformazioniProtocollo().setErogatore(new IDSoggetto());
-				}
-				filterSearch.getInformazioniProtocollo().getErogatore().setCodicePorta(filter.getErogatore().getIdentificativoPorta());
-			}
+			// Filtro non supportato dal driver
+//			if(filter.getErogatore().getIdentificativoPorta()!=null){
+//				if(filterSearch.getInformazioniProtocollo()==null){
+//					filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
+//				}
+//				if(filterSearch.getInformazioniProtocollo().getErogatore()==null){
+//					filterSearch.getInformazioniProtocollo().setErogatore(new IDSoggetto());
+//				}
+//				filterSearch.getInformazioniProtocollo().getErogatore().setCodicePorta(filter.getErogatore().getIdentificativoPorta());
+//			}
 			if(filter.getErogatore().getIdentificativo()!=null){
 				if(filter.getErogatore().getIdentificativo().getBase()!=null || filter.getErogatore().getIdentificativo().getTipo()!=null){
 					if(filterSearch.getInformazioniProtocollo()==null){
@@ -215,7 +217,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 			filterSearch.setCorrelazioneApplicativaRisposta(filter.getIdentificativoCorrelazioneRisposta());
 		}
 		if(filter.getCorrelazioneApplicativaAndMatch()!=null){
-			filterSearch.setCorrelazioneApplicativaOrMatch(filter.getCorrelazioneApplicativaAndMatch());
+			filterSearch.setCorrelazioneApplicativaOrMatch(!filter.getCorrelazioneApplicativaAndMatch());
 		}
 
 		if(filter.getFiltroInformazioniDiagnostici()!=null){

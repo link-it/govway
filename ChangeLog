@@ -1,5 +1,11 @@
 2015-02-20  Andrea Poli <apoli@link.it>
 
+	* [WebServiceDiagnostica]
+	Aggiunta funzionalità #290
+	WebService per la consultazione dei diagnostici emessi dalla PdD
+
+2015-02-20  Andrea Poli <apoli@link.it>
+
 	* [WebServiceTracciamento]
 	Aggiunta funzionalità #289
 	WebService per la consultazione delle tracce emesse dalla PdD

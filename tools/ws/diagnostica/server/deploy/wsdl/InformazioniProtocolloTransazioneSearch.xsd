@@ -63,7 +63,6 @@
 	<xsd:complexType name="soggetto">
 		<xsd:sequence>
  			<xsd:element name="identificativo" type="tns:soggetto-identificativo" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

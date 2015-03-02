@@ -65,7 +65,7 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 			filterSearch.setDataInizio(filter.getOraRegistrazioneMin());
 		}
 		if(filter.getOraRegistrazioneMax()!=null){
-			filterSearch.setDataInizio(filter.getOraRegistrazioneMax());
+			filterSearch.setDataFine(filter.getOraRegistrazioneMax());
 		}
 		
 		if(filter.getFiltroInformazioneProtocollo()!=null){
@@ -131,15 +131,16 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 		
 		if(filter.getFiltroInformazioneProtocollo()!=null){
 			if(filter.getFiltroInformazioneProtocollo().getFruitore()!=null){
-				if(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativoPorta()!=null){
-					if(filterSearch.getInformazioniProtocollo()==null){
-						filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-					}
-					if(filterSearch.getInformazioniProtocollo().getFruitore()==null){
-						filterSearch.getInformazioniProtocollo().setFruitore(new IDSoggetto());
-					}
-					filterSearch.getInformazioniProtocollo().getFruitore().setCodicePorta(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativoPorta());
-				}
+				// Filtro non supportato dal driver
+//				if(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativoPorta()!=null){
+//					if(filterSearch.getInformazioniProtocollo()==null){
+//						filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
+//					}
+//					if(filterSearch.getInformazioniProtocollo().getFruitore()==null){
+//						filterSearch.getInformazioniProtocollo().setFruitore(new IDSoggetto());
+//					}
+//					filterSearch.getInformazioniProtocollo().getFruitore().setCodicePorta(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativoPorta());
+//				}
 				if(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo()!=null){
 					if(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo().getBase()!=null || filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo().getTipo()!=null){
 						if(filterSearch.getInformazioniProtocollo()==null){
@@ -155,15 +156,16 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 			}
 			
 			if(filter.getFiltroInformazioneProtocollo().getErogatore()!=null){
-				if(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativoPorta()!=null){
-					if(filterSearch.getInformazioniProtocollo()==null){
-						filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-					}
-					if(filterSearch.getInformazioniProtocollo().getErogatore()==null){
-						filterSearch.getInformazioniProtocollo().setErogatore(new IDSoggetto());
-					}
-					filterSearch.getInformazioniProtocollo().getErogatore().setCodicePorta(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativoPorta());
-				}
+				// Filtro non supportato dal driver
+//				if(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativoPorta()!=null){
+//					if(filterSearch.getInformazioniProtocollo()==null){
+//						filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
+//					}
+//					if(filterSearch.getInformazioniProtocollo().getErogatore()==null){
+//						filterSearch.getInformazioniProtocollo().setErogatore(new IDSoggetto());
+//					}
+//					filterSearch.getInformazioniProtocollo().getErogatore().setCodicePorta(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativoPorta());
+//				}
 				if(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo()!=null){
 					if(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo().getBase()!=null || filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo().getTipo()!=null){
 						if(filterSearch.getInformazioniProtocollo()==null){
@@ -215,7 +217,7 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 				filterSearch.setCorrelazioneApplicativaRisposta(filter.getFiltroInformazioneProtocollo().getIdentificativoCorrelazioneRisposta());
 			}
 			if(filter.getFiltroInformazioneProtocollo().getCorrelazioneApplicativaAndMatch()!=null){
-				filterSearch.setCorrelazioneApplicativaOrMatch(filter.getFiltroInformazioneProtocollo().getCorrelazioneApplicativaAndMatch());
+				filterSearch.setCorrelazioneApplicativaOrMatch(!filter.getFiltroInformazioneProtocollo().getCorrelazioneApplicativaAndMatch());
 			}
 		}
 
