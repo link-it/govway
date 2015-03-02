@@ -32,8 +32,8 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  * TimestampIntervalField
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 9740 $, $Date: 2014-03-06 17:01:50 +0100 (Thu, 06 Mar 2014) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class UnixTimestampIntervalField extends CustomField {
 	

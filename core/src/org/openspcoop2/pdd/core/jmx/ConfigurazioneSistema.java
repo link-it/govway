@@ -60,8 +60,8 @@ import org.openspcoop2.utils.resources.MapReader;
  * Implementazione JMX per la gestione della Configurazione di Sistema della Porta
  *   
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10489 $, $Date: 2015-01-13 10:15:51 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ConfigurazioneSistema extends NotificationBroadcasterSupport implements DynamicMBean {
 

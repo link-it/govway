@@ -50,8 +50,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
  * @author Sandra Giangrandi (sandra@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10489 $, $Date: 2015-01-13 10:15:51 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class ConfigurazioneSistemaAdd extends Action {
