@@ -1047,24 +1047,32 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			List<InformazioniStatoPortaCache> informazioniStatoPortaCache = new ArrayList<InformazioniStatoPortaCache>();
 			
 			AccessoRegistroServizi infoRegistroServizi = new AccessoRegistroServizi();
-			InformazioniStatoPortaCache InformazioniStatoPortaCache_registro = new InformazioniStatoPortaCache(CostantiPdD.JMX_REGISTRO_SERVIZI, infoRegistroServizi.isCacheAbilitata());
-			InformazioniStatoPortaCache_registro.setStatoCache(infoRegistroServizi.printStatCache());
-			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_registro);
+			InformazioniStatoPortaCache informazioniStatoPortaCache_registro = new InformazioniStatoPortaCache(CostantiPdD.JMX_REGISTRO_SERVIZI, infoRegistroServizi.isCacheAbilitata());
+			if(infoRegistroServizi.isCacheAbilitata()){
+				informazioniStatoPortaCache_registro.setStatoCache(infoRegistroServizi.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_registro);
 			
 			org.openspcoop2.pdd.core.jmx.ConfigurazionePdD infoConfigurazione = new org.openspcoop2.pdd.core.jmx.ConfigurazionePdD();
-			InformazioniStatoPortaCache InformazioniStatoPortaCache_config = new InformazioniStatoPortaCache(CostantiPdD.JMX_CONFIGURAZIONE_PDD, infoConfigurazione.isCacheAbilitata());
-			InformazioniStatoPortaCache_config.setStatoCache(infoConfigurazione.printStatCache());
-			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_config);
+			InformazioniStatoPortaCache informazioniStatoPortaCache_config = new InformazioniStatoPortaCache(CostantiPdD.JMX_CONFIGURAZIONE_PDD, infoConfigurazione.isCacheAbilitata());
+			if(infoConfigurazione.isCacheAbilitata()){
+				informazioniStatoPortaCache_config.setStatoCache(infoConfigurazione.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_config);
 			
 			org.openspcoop2.pdd.core.jmx.EngineAutorizzazioneBuste infoAutorizzazioneBuste = new org.openspcoop2.pdd.core.jmx.EngineAutorizzazioneBuste();
-			InformazioniStatoPortaCache InformazioniStatoPortaCache_autorizzazioneBuste = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE, infoAutorizzazioneBuste.isCacheAbilitata());
-			InformazioniStatoPortaCache_autorizzazioneBuste.setStatoCache(infoAutorizzazioneBuste.printStatCache());
-			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_autorizzazioneBuste);
+			InformazioniStatoPortaCache informazioniStatoPortaCache_autorizzazioneBuste = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE, infoAutorizzazioneBuste.isCacheAbilitata());
+			if(infoAutorizzazioneBuste.isCacheAbilitata()){
+				informazioniStatoPortaCache_autorizzazioneBuste.setStatoCache(infoAutorizzazioneBuste.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autorizzazioneBuste);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
-			InformazioniStatoPortaCache InformazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
-			InformazioniStatoPortaCache_repositoryMessaggi.setStatoCache(infoRepositoryMessaggi.printStatCache());
-			informazioniStatoPortaCache.add(InformazioniStatoPortaCache_repositoryMessaggi);
+			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
+			if(infoRepositoryMessaggi.isCacheAbilitata()){
+				informazioniStatoPortaCache_repositoryMessaggi.setStatoCache(infoRepositoryMessaggi.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_repositoryMessaggi);
 			
 			ConfigurazioneSistema infoConfigSistema = new ConfigurazioneSistema();
 			OpenSPCoop2Logger.getLoggerOpenSPCoopConfigurazioneSistema().

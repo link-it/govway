@@ -54,7 +54,9 @@ public class Trasmissione implements java.io.Serializable{
 	private org.openspcoop2.core.tracciamento.Trasmissione trasmissione;
 
         
-    public Trasmissione() {}
+    public Trasmissione() {
+    	this.trasmissione = new org.openspcoop2.core.tracciamento.Trasmissione();
+    }
     
     public Trasmissione(org.openspcoop2.core.tracciamento.Trasmissione trasmissione){
 		this.trasmissione = trasmissione;
@@ -105,11 +107,13 @@ public class Trasmissione implements java.io.Serializable{
 		}
 		else{
 			if(this.trasmissione.getOrigine()!=null){
-				if(this.trasmissione.getOrigine().getIdentificativo()!=null && this.trasmissione.getOrigine().getIdentificativo().getTipo()==null){
-					this.trasmissione.getOrigine().setIdentificativo(null);
-				}
-				else{
-					this.trasmissione.getOrigine().getIdentificativo().setBase(null);
+				if(this.trasmissione.getOrigine().getIdentificativo()!=null){
+					if(this.trasmissione.getOrigine().getIdentificativo().getTipo()==null){
+						this.trasmissione.getOrigine().setIdentificativo(null);
+					}
+					else{
+						this.trasmissione.getOrigine().getIdentificativo().setBase(null);
+					}	
 				}
 				if(this.trasmissione.getOrigine().getIdentificativo()==null && 
 						this.trasmissione.getOrigine().getIdentificativoPorta()==null &&
@@ -138,11 +142,13 @@ public class Trasmissione implements java.io.Serializable{
 		}
 		else{
 			if(this.trasmissione.getOrigine()!=null){
-				if(this.trasmissione.getOrigine().getIdentificativo()!=null && this.trasmissione.getOrigine().getIdentificativo().getBase()==null){
-					this.trasmissione.getOrigine().setIdentificativo(null);
-				}
-				else{
-					this.trasmissione.getOrigine().getIdentificativo().setTipo(null);
+				if(this.trasmissione.getOrigine().getIdentificativo()!=null){
+					if(this.trasmissione.getOrigine().getIdentificativo().getBase()==null){
+						this.trasmissione.getOrigine().setIdentificativo(null);
+					}
+					else{
+						this.trasmissione.getOrigine().getIdentificativo().setTipo(null);
+					}	
 				}
 				if(this.trasmissione.getOrigine().getIdentificativo()==null && 
 						this.trasmissione.getOrigine().getIdentificativoPorta()==null &&
@@ -225,11 +231,13 @@ public class Trasmissione implements java.io.Serializable{
 		}
 		else{
 			if(this.trasmissione.getDestinazione()!=null){
-				if(this.trasmissione.getDestinazione().getIdentificativo()!=null && this.trasmissione.getDestinazione().getIdentificativo().getTipo()==null){
-					this.trasmissione.getDestinazione().setIdentificativo(null);
-				}
-				else{
-					this.trasmissione.getDestinazione().getIdentificativo().setBase(null);
+				if(this.trasmissione.getDestinazione().getIdentificativo()!=null){
+					if(this.trasmissione.getDestinazione().getIdentificativo().getTipo()==null){
+						this.trasmissione.getDestinazione().setIdentificativo(null);
+					}
+					else{
+						this.trasmissione.getDestinazione().getIdentificativo().setBase(null);
+					}
 				}
 				if(this.trasmissione.getDestinazione().getIdentificativo()==null && 
 						this.trasmissione.getDestinazione().getIdentificativoPorta()==null &&
@@ -258,11 +266,13 @@ public class Trasmissione implements java.io.Serializable{
 		}
 		else{
 			if(this.trasmissione.getDestinazione()!=null){
-				if(this.trasmissione.getDestinazione().getIdentificativo()!=null && this.trasmissione.getDestinazione().getIdentificativo().getBase()==null){
-					this.trasmissione.getDestinazione().setIdentificativo(null);
-				}
-				else{
-					this.trasmissione.getDestinazione().getIdentificativo().setTipo(null);
+				if(this.trasmissione.getDestinazione().getIdentificativo()!=null){
+					if(this.trasmissione.getDestinazione().getIdentificativo().getBase()==null){
+						this.trasmissione.getDestinazione().setIdentificativo(null);
+					}
+					else{
+						this.trasmissione.getDestinazione().getIdentificativo().setTipo(null);
+					}
 				}
 				if(this.trasmissione.getDestinazione().getIdentificativo()==null && 
 						this.trasmissione.getDestinazione().getIdentificativoPorta()==null &&
@@ -365,11 +375,13 @@ public class Trasmissione implements java.io.Serializable{
 		}
 		else {
 			if(this.trasmissione.getOraRegistrazione()!=null){
-				if(this.trasmissione.getOraRegistrazione().getSorgente()!=null && this.trasmissione.getOraRegistrazione().getSorgente().getBase()==null){
-					this.trasmissione.getOraRegistrazione().setSorgente(null);
-				}
-				else{
-					this.trasmissione.getOraRegistrazione().getSorgente().setTipo(null);
+				if(this.trasmissione.getOraRegistrazione().getSorgente()!=null){
+					if(this.trasmissione.getOraRegistrazione().getSorgente().getBase()==null){
+						this.trasmissione.getOraRegistrazione().setSorgente(null);
+					}
+					else{
+						this.trasmissione.getOraRegistrazione().getSorgente().setTipo(null);
+					}	
 				}
 				if(this.trasmissione.getOraRegistrazione().getSorgente()==null && this.trasmissione.getOraRegistrazione().getDateTime()==null){
 					this.trasmissione.setOraRegistrazione(null);
@@ -402,11 +414,13 @@ public class Trasmissione implements java.io.Serializable{
 		}
 		else {
 			if(this.trasmissione.getOraRegistrazione()!=null){
-				if(this.trasmissione.getOraRegistrazione().getSorgente()!=null && this.trasmissione.getOraRegistrazione().getSorgente().getTipo()==null){
-					this.trasmissione.getOraRegistrazione().setSorgente(null);
-				}
-				else{
-					this.trasmissione.getOraRegistrazione().getSorgente().setBase(null);
+				if(this.trasmissione.getOraRegistrazione().getSorgente()!=null){
+					if(this.trasmissione.getOraRegistrazione().getSorgente().getTipo()==null){
+						this.trasmissione.getOraRegistrazione().setSorgente(null);
+					}
+					else{
+						this.trasmissione.getOraRegistrazione().getSorgente().setBase(null);
+					}	
 				}
 				if(this.trasmissione.getOraRegistrazione().getSorgente()==null && this.trasmissione.getOraRegistrazione().getDateTime()==null){
 					this.trasmissione.setOraRegistrazione(null);

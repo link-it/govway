@@ -86,11 +86,17 @@ public class Busta implements java.io.Serializable {
 	protected List<Trasmissione> listaTrasmissioni = new ArrayList<Trasmissione>();
 	
 	public Busta(String protocollo){
+		
+		this.busta = new org.openspcoop2.core.tracciamento.Busta();
+		
 		this.setSequenza(-1);
 		this.setProtocollo(protocollo);
 	}
 
 	public Busta(String protocollo,Servizio infoServizio, IDSoggetto mittente, IDSoggetto destinatario, String id) {
+		
+		this.busta = new org.openspcoop2.core.tracciamento.Busta();
+		
 		this.setSequenza(-1);
 		
 		if(infoServizio!=null){
@@ -209,11 +215,13 @@ public class Busta implements java.io.Serializable {
 		}
 		else{
 			if(this.busta.getMittente()!=null){
-				if(this.busta.getMittente().getIdentificativo()!=null && this.busta.getMittente().getIdentificativo().getTipo()==null){
-					this.busta.getMittente().setIdentificativo(null);
-				}
-				else{
-					this.busta.getMittente().getIdentificativo().setBase(null);
+				if(this.busta.getMittente().getIdentificativo()!=null){
+					if(this.busta.getMittente().getIdentificativo().getTipo()==null){
+						this.busta.getMittente().setIdentificativo(null);
+					}
+					else{
+						this.busta.getMittente().getIdentificativo().setBase(null);
+					}	
 				}
 				if(this.busta.getMittente().getIdentificativo()==null && 
 						this.busta.getMittente().getIdentificativoPorta()==null &&
@@ -242,11 +250,13 @@ public class Busta implements java.io.Serializable {
 		}
 		else{
 			if(this.busta.getMittente()!=null){
-				if(this.busta.getMittente().getIdentificativo()!=null && this.busta.getMittente().getIdentificativo().getBase()==null){
-					this.busta.getMittente().setIdentificativo(null);
-				}
-				else{
-					this.busta.getMittente().getIdentificativo().setTipo(null);
+				if(this.busta.getMittente().getIdentificativo()!=null){
+					if(this.busta.getMittente().getIdentificativo().getBase()==null){
+						this.busta.getMittente().setIdentificativo(null);
+					}
+					else{
+						this.busta.getMittente().getIdentificativo().setTipo(null);
+					}	
 				}
 				if(this.busta.getMittente().getIdentificativo()==null && 
 						this.busta.getMittente().getIdentificativoPorta()==null &&
@@ -331,11 +341,13 @@ public class Busta implements java.io.Serializable {
 		}
 		else{
 			if(this.busta.getDestinatario()!=null){
-				if(this.busta.getDestinatario().getIdentificativo()!=null && this.busta.getDestinatario().getIdentificativo().getTipo()==null){
-					this.busta.getDestinatario().setIdentificativo(null);
-				}
-				else{
-					this.busta.getDestinatario().getIdentificativo().setBase(null);
+				if(this.busta.getDestinatario().getIdentificativo()!=null){
+					if(this.busta.getDestinatario().getIdentificativo().getTipo()==null){
+						this.busta.getDestinatario().setIdentificativo(null);
+					}
+					else{
+						this.busta.getDestinatario().getIdentificativo().setBase(null);
+					}	
 				}
 				if(this.busta.getDestinatario().getIdentificativo()==null && 
 						this.busta.getDestinatario().getIdentificativoPorta()==null &&
@@ -363,11 +375,13 @@ public class Busta implements java.io.Serializable {
 			this.busta.getDestinatario().getIdentificativo().setTipo(value);
 		}else{
 			if(this.busta.getDestinatario()!=null){
-				if(this.busta.getDestinatario().getIdentificativo()!=null && this.busta.getDestinatario().getIdentificativo().getBase()==null){
-					this.busta.getDestinatario().setIdentificativo(null);
-				}
-				else{
-					this.busta.getDestinatario().getIdentificativo().setTipo(null);
+				if(this.busta.getDestinatario().getIdentificativo()!=null){
+					if(this.busta.getDestinatario().getIdentificativo().getBase()==null){
+						this.busta.getDestinatario().setIdentificativo(null);
+					}
+					else{
+						this.busta.getDestinatario().getIdentificativo().setTipo(null);
+					}	
 				}
 				if(this.busta.getDestinatario().getIdentificativo()==null && 
 						this.busta.getDestinatario().getIdentificativoPorta()==null &&
@@ -434,7 +448,7 @@ public class Busta implements java.io.Serializable {
 	// profilo di collaborazione [Wrapper]
 	
 	public ProfiloDiCollaborazione getProfiloDiCollaborazione() {
-		if(this.busta.getProfiloCollaborazione()!=null){
+		if(this.busta.getProfiloCollaborazione()!=null && this.busta.getProfiloCollaborazione().getTipo()!=null){
 			switch (this.busta.getProfiloCollaborazione().getTipo()) {
 			case ONEWAY:
 				return ProfiloDiCollaborazione.ONEWAY;
@@ -754,11 +768,13 @@ public class Busta implements java.io.Serializable {
 		}
 		else {
 			if(this.busta.getOraRegistrazione()!=null){
-				if(this.busta.getOraRegistrazione().getSorgente()!=null && this.busta.getOraRegistrazione().getSorgente().getBase()==null){
-					this.busta.getOraRegistrazione().setSorgente(null);
-				}
-				else{
-					this.busta.getOraRegistrazione().getSorgente().setTipo(null);
+				if(this.busta.getOraRegistrazione().getSorgente()!=null){
+					if(this.busta.getOraRegistrazione().getSorgente().getBase()==null){
+						this.busta.getOraRegistrazione().setSorgente(null);
+					}
+					else{
+						this.busta.getOraRegistrazione().getSorgente().setTipo(null);
+					}	
 				}
 				if(this.busta.getOraRegistrazione().getSorgente()==null && this.busta.getOraRegistrazione().getDateTime()==null){
 					this.busta.setOraRegistrazione(null);
@@ -791,11 +807,13 @@ public class Busta implements java.io.Serializable {
 		}
 		else {
 			if(this.busta.getOraRegistrazione()!=null){
-				if(this.busta.getOraRegistrazione().getSorgente()!=null && this.busta.getOraRegistrazione().getSorgente().getTipo()==null){
-					this.busta.getOraRegistrazione().setSorgente(null);
-				}
-				else{
-					this.busta.getOraRegistrazione().getSorgente().setBase(null);
+				if(this.busta.getOraRegistrazione().getSorgente()!=null){
+					if(this.busta.getOraRegistrazione().getSorgente().getTipo()==null){
+						this.busta.getOraRegistrazione().setSorgente(null);
+					}
+					else{
+						this.busta.getOraRegistrazione().getSorgente().setBase(null);
+					}	
 				}
 				if(this.busta.getOraRegistrazione().getSorgente()==null && this.busta.getOraRegistrazione().getDateTime()==null){
 					this.busta.setOraRegistrazione(null);
@@ -892,11 +910,13 @@ public class Busta implements java.io.Serializable {
 		}
 		else{
 			if(this.busta.getProfiloTrasmissione()!=null){
-				if(this.busta.getProfiloTrasmissione().getInoltro()!=null && this.getBusta().getProfiloTrasmissione().getInoltro().getBase()!=null){
-					this.busta.getProfiloTrasmissione().getInoltro().setTipo(null);
-				}
-				else{
-					this.busta.getProfiloTrasmissione().setInoltro(null);
+				if(this.busta.getProfiloTrasmissione().getInoltro()!=null){
+					if(this.getBusta().getProfiloTrasmissione().getInoltro().getBase()!=null){
+						this.busta.getProfiloTrasmissione().getInoltro().setTipo(null);
+					}
+					else{
+						this.busta.getProfiloTrasmissione().setInoltro(null);
+					}		
 				}
 			}
 		}
@@ -926,11 +946,13 @@ public class Busta implements java.io.Serializable {
 		}
 		else{
 			if(this.busta.getProfiloTrasmissione()!=null){
-				if(this.busta.getProfiloTrasmissione().getInoltro()!=null && this.getBusta().getProfiloTrasmissione().getInoltro().getTipo()!=null){
-					this.busta.getProfiloTrasmissione().getInoltro().setBase(null);
-				}
-				else{
-					this.busta.getProfiloTrasmissione().setInoltro(null);
+				if(this.busta.getProfiloTrasmissione().getInoltro()!=null){
+					if(this.getBusta().getProfiloTrasmissione().getInoltro().getTipo()!=null){
+						this.busta.getProfiloTrasmissione().getInoltro().setBase(null);
+					}
+					else{
+						this.busta.getProfiloTrasmissione().setInoltro(null);
+					}		
 				}
 			}
 		}

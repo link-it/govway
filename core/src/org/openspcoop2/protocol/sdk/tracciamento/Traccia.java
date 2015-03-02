@@ -64,7 +64,7 @@ public class Traccia  implements java.io.Serializable {
     private SOAPElement bustaInDom;
 
     // properties
-    protected Hashtable<String, String> properties;
+    protected Hashtable<String, String> properties = new Hashtable<String, String>();
     
     // protocollo
     private String protocollo;

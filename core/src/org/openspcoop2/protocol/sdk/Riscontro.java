@@ -58,7 +58,9 @@ public class Riscontro implements java.io.Serializable {
 	 *
 	 * 
 	 */
-	public Riscontro(){}
+	public Riscontro(){
+		this.riscontro = new org.openspcoop2.core.tracciamento.Riscontro();
+	}
 
 	public Riscontro(org.openspcoop2.core.tracciamento.Riscontro riscontro){
 		this.riscontro = riscontro;
@@ -89,7 +91,7 @@ public class Riscontro implements java.io.Serializable {
 
 	// identificativo riscontro [wrapper]
 	public void setID(String id ){
-		this.riscontro.getIdentificativo();
+		this.riscontro.setIdentificativo(id);
 	}
 	public String getID(){
 		return this.riscontro.getIdentificativo();
@@ -136,11 +138,13 @@ public class Riscontro implements java.io.Serializable {
 		}
 		else {
 			if(this.riscontro.getOraRegistrazione()!=null){
-				if(this.riscontro.getOraRegistrazione().getSorgente()!=null && this.riscontro.getOraRegistrazione().getSorgente().getBase()==null){
-					this.riscontro.getOraRegistrazione().setSorgente(null);
-				}
-				else{
-					this.riscontro.getOraRegistrazione().getSorgente().setTipo(null);
+				if(this.riscontro.getOraRegistrazione().getSorgente()!=null){
+					if(this.riscontro.getOraRegistrazione().getSorgente().getBase()==null){
+						this.riscontro.getOraRegistrazione().setSorgente(null);
+					}
+					else{
+						this.riscontro.getOraRegistrazione().getSorgente().setTipo(null);
+					}	
 				}
 				if(this.riscontro.getOraRegistrazione().getSorgente()==null && this.riscontro.getOraRegistrazione().getDateTime()==null){
 					this.riscontro.setOraRegistrazione(null);
@@ -173,11 +177,13 @@ public class Riscontro implements java.io.Serializable {
 		}
 		else {
 			if(this.riscontro.getOraRegistrazione()!=null){
-				if(this.riscontro.getOraRegistrazione().getSorgente()!=null && this.riscontro.getOraRegistrazione().getSorgente().getTipo()==null){
-					this.riscontro.getOraRegistrazione().setSorgente(null);
-				}
-				else{
-					this.riscontro.getOraRegistrazione().getSorgente().setBase(null);
+				if(this.riscontro.getOraRegistrazione().getSorgente()!=null){
+					if(this.riscontro.getOraRegistrazione().getSorgente().getTipo()==null){
+						this.riscontro.getOraRegistrazione().setSorgente(null);
+					}
+					else{
+						this.riscontro.getOraRegistrazione().getSorgente().setBase(null);
+					}	
 				}
 				if(this.riscontro.getOraRegistrazione().getSorgente()==null && this.riscontro.getOraRegistrazione().getDateTime()==null){
 					this.riscontro.setOraRegistrazione(null);

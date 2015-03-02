@@ -145,6 +145,7 @@ public class MsgDiagnosticoCorrelazione implements Serializable{
 				idSoggetto.setTipo(this.infoProtocolloTransazione.getDominio().getSoggetto().getTipo());
 				idSoggetto.setNome(this.infoProtocolloTransazione.getDominio().getSoggetto().getBase());
 			}
+			return idSoggetto;
 		}
 
 		return null;

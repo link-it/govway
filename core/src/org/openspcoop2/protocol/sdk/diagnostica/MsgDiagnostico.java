@@ -116,6 +116,7 @@ public class MsgDiagnostico implements Serializable{
 				idSoggetto.setTipo(this.messaggioDiagnostico.getDominio().getSoggetto().getTipo());
 				idSoggetto.setNome(this.messaggioDiagnostico.getDominio().getSoggetto().getBase());
 			}
+			return idSoggetto;
 		}
 		
 		return null;
