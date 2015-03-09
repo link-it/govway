@@ -226,7 +226,9 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 				polSic.setIdServizio(idServizioInt);
 				polSic.setIdFruitore(idSoggFruitoreDelServizioInt);
 				// Long idPS =
-				apsCore.createPoliticheSicurezza(polSic);
+				//apsCore.createPoliticheSicurezza(polSic);
+				String superUser =   ServletUtils.getUserLoginFromSession(session);
+				apsCore.performCreateOperation(superUser, apsHelper.smista(), polSic);
 
 				String idporta = tipoSoggFruitoreServ + nomeSoggFruitoreServ + "/" + tipoSoggettoErogatore + nomeSoggettoErogatore + "/" + tipoServizio + nomeServizio;
 				IDSoggetto ids = new IDSoggetto(tipoSoggFruitoreServ, nomeSoggFruitoreServ);
@@ -238,7 +240,6 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 					ServizioApplicativo sa = saCore.getServizioApplicativo(servizioApplicativo, nomeSoggFruitoreServ, tipoSoggFruitoreServ);
 					pde.addServizioApplicativo(sa);
 
-					String superUser =   ServletUtils.getUserLoginFromSession(session);
 					apsCore.performUpdateOperation(superUser, apsHelper.smista(), pde);
 				}
 			}

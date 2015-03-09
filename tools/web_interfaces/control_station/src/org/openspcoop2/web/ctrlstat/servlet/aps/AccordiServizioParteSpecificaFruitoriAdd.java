@@ -67,6 +67,7 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -787,6 +788,12 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					ServizioApplicativo sa = new ServizioApplicativo();
 					sa.setNome(this.servizioApplicativo);
 					portaDelegata.addServizioApplicativo(sa);
+					
+					PoliticheSicurezza polSic = new PoliticheSicurezza();
+					polSic.setNomeServizioApplicativo(this.servizioApplicativo);
+					polSic.setIdServizio(idInt);
+					polSic.setIdFruitore(idProv);
+					apsCore.performCreateOperation(superUser, apsHelper.smista(), polSic);
 				}
 				
 				// Verifico prima che la porta delegata non esista già
@@ -794,8 +801,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				IDSoggetto ids = new IDSoggetto(tipoFruitore, nomeFruitore);
 				myidpd.setSoggettoFruitore(ids);
 				myidpd.setLocationPD(nomePD);
-				if (!porteDelegateCore.existsPortaDelegata(myidpd))
+				if (!porteDelegateCore.existsPortaDelegata(myidpd)){
 					porteDelegateCore.performCreateOperation(superUser, apsHelper.smista(), portaDelegata);
+				}
 			}
 
 			// Preparo la lista
