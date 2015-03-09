@@ -54,6 +54,13 @@
 		<mkdir dir="${build_backwardCompatibility}" />
 		<mkdir dir="${build_backwardCompatibility}/tmp" />
 		<mkdir dir="${dist_backwardCompatibility}" />
+		<if>
+			<equals arg1="${buildAsPlugins}" arg2="true" />
+			<then>
+				<mkdir dir="${dist_backwardCompatibility}/deploy/application_plugins/META-INF/jboss-deployment-structure" />
+				<mkdir dir="${dist_backwardCompatibility}/deploy/plugins" />
+			</then>
+		</if>
 	</target>
 	
 	

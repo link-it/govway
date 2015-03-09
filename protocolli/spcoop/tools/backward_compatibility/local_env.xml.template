@@ -13,6 +13,9 @@
       <property name="buildAsRelease" value="false"/>
       <property name="buildBackwardCompatibility" value="true"/>
       <property name="buildAPI" value="true"/>
+	
+	  <!-- Indicazione se compilare come plugins -->
+	  <property name="buildAsPlugins" value="false"/>
 
       <!-- Specifica se inserire le informazioni di debug nelle classi -->
       <property name="debug" value="true" />

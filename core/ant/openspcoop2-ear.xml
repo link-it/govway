@@ -605,6 +605,23 @@
 						</concat>
 					</then>	
 				</if>
+				<if>
+					<not>
+						<equals arg1="${plugins.application.listJbossDeploymentStructure}" arg2="" />
+					</not>
+					<then>
+						<replace file="${build}/tmp/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
+						<concat destfile="${build}/tmp/jboss-deployment-structure.xml" append="yes">
+							<filelist dir="${application_plugins}/META-INF/jboss-deployment-structure"
+		                                files="${plugins.application.listJbossDeploymentStructure}"/>
+						</concat>
+						<concat destfile="${build}/tmp/jboss-deployment-structure.xml" append="yes">
+							<![CDATA[
+</jboss-deployment-structure>						
+							]]>
+						</concat>
+					</then>
+				</if>
 				
 			</then>
 		</if>

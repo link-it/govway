@@ -242,13 +242,24 @@
 			<map from="${application_plugins}/" to=""/>
 		</pathconvert>
 		<echo message="Plugins-application di OpenSPCoop: ${plugins.application.list}"/>
+		
+		<!-- application.xml -->
 		<fileset dir="${application_plugins}/META-INF" id="plugins.application.listApplicationXMLDir">
-			<include name="**/*.xml"/>
+			<include name="*.xml"/>
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.application.listApplicationXML" refid="plugins.application.listApplicationXMLDir">
 			<map from="${application_plugins}/META-INF/" to=""/>
 		</pathconvert>
-		<echo message="Plugins-application di OpenSPCoop (definizioni xml): ${plugins.application.listApplicationXML}"/>
+		<echo message="Plugins-application di OpenSPCoop (definizioni da inserire in application.xml): ${plugins.application.listApplicationXML}"/>
+		
+		<!-- deployments-structure -->
+		<fileset dir="${application_plugins}/META-INF/jboss-deployment-structure" id="plugins.application.listJbossDeploymentStructureDir">
+			<include name="*.xml"/>
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.application.listJbossDeploymentStructure" refid="plugins.application.listJbossDeploymentStructureDir">
+			<map from="${application_plugins}/META-INF/jboss-deployment-structure/" to=""/>
+		</pathconvert>
+		<echo message="Plugins-application di OpenSPCoop (definizioni da inserire in jboss-deployment-structure): ${plugins.application.listJbossDeploymentStructure}"/>
 	</target>
 
 
