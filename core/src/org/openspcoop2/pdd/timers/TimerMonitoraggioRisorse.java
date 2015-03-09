@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
@@ -146,6 +147,12 @@ public class TimerMonitoraggioRisorse extends Thread{
 		while(this.stop == false){
 			boolean checkRisorseDisponibili = true;
 				
+			// Controllo che il sistema non sia andando in shutdown
+			if(OpenSPCoop2Startup.contextDestroyed){
+				this.logger.error("["+TimerMonitoraggioRisorse.ID_MODULO+"] Rilevato sistema in shutdown");
+				return;
+			}
+			
 			// Messaggi diagnostici personalizzati
 			// Controllo per prima per sapere se posso usare poi i msg diagnostici per segnalare problemi
 			if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati()){
@@ -296,9 +303,16 @@ public class TimerMonitoraggioRisorse extends Thread{
 						
 			// CheckInterval
 			if(this.stop==false){
-				try{
-					Thread.sleep(this.propertiesReader.getControlloRisorseCheckInterval()*1000);
-				}catch(Exception e){}
+				int i=0;
+				while(i<this.propertiesReader.getControlloRisorseCheckInterval()){
+					try{
+						Thread.sleep(1000);		
+					}catch(Exception e){}
+					if(this.stop){
+						break; // thread terminato, non lo devo far piu' dormire
+					}
+					i++;
+				}
 			}
 		} 
 	}

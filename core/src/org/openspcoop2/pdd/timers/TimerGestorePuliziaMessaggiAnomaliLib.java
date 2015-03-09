@@ -68,6 +68,12 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 	
 	public void check() throws TimerException {
 
+		// Controllo che il sistema non sia andando in shutdown
+		if(OpenSPCoop2Startup.contextDestroyed){
+			this.logTimer.error("["+TimerGestorePuliziaMessaggiAnomali.ID_MODULO+"] Rilevato sistema in shutdown");
+			return;
+		}
+		
 		// Controllo che l'inizializzazione corretta delle risorse sia effettuata
 		if(OpenSPCoop2Startup.initialize==false){
 			this.msgDiag.logFatalError("inizializzazione di OpenSPCoop non effettuata", "Check Inizializzazione");

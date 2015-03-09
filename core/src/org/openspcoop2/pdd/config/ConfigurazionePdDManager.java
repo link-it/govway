@@ -87,6 +87,9 @@ public class ConfigurazionePdDManager {
 	private RegistroServiziManager registroServiziManager = null;
 	private List<StateMessage> stati = new ArrayList<StateMessage>();
 	
+	public boolean isInitializedConfigurazionePdDReader(){
+		return this.configurazionePdDReader!=null;
+	}
 	
 	public ConfigurazionePdDManager(IState ... state){
 		this.configurazionePdDReader = ConfigurazionePdDReader.getInstance();

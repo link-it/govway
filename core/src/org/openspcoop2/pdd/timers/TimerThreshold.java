@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.threshold.ThresholdException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -117,14 +118,16 @@ public class TimerThreshold extends Thread{
 		
 		while(this.stop == false){
 			
+			// Controllo che il sistema non sia andando in shutdown
+			if(OpenSPCoop2Startup.contextDestroyed){
+				this.log.error("["+TimerThreshold.ID_MODULO+"] Rilevato sistema in shutdown");
+				return;
+			}
+			
 			// Controllo risorse di sistema disponibili
 			if( TimerMonitoraggioRisorse.risorseDisponibili == false){
 				this.log.error("["+TimerThreshold.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorse.risorsaNonDisponibile);
-				if(this.stop==false){
-					try{
-						Thread.sleep(this.propertiesReader.getRepositoryThresholdCheckInterval()*1000);
-					}catch(Exception e){}
-				}
+				this.sleep();
 				continue;
 			}
 			
@@ -155,11 +158,22 @@ public class TimerThreshold extends Thread{
 			
 			
 			// CheckInterval
-			if(this.stop==false){
-				try{
-					Thread.sleep(this.propertiesReader.getRepositoryThresholdCheckInterval()*1000);
-				}catch(Exception e){}
-			}
+			this.sleep();
 		} 
+	}
+	
+	private void sleep(){
+		if(this.stop==false){
+			int i=0;
+			while(i<this.propertiesReader.getRepositoryThresholdCheckInterval()){
+				try{
+					Thread.sleep(1000);		
+				}catch(Exception e){}
+				if(this.stop){
+					break; // thread terminato, non lo devo far piu' dormire
+				}
+				i++;
+			}
+		}
 	}
 }

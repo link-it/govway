@@ -110,6 +110,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	/** Variabile che indica il Nome del modulo attuale di OpenSPCoop */
 	private static final String ID_MODULO = "InizializzazioneRisorse";
 
+	/** Indicazione se sta avvendendo un contextDestroyed */
+	public static boolean contextDestroyed = false;
 
 	/** Context della Servlet */
 	ServletContext servletContext;
@@ -164,6 +166,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 
+		OpenSPCoop2Startup.contextDestroyed = false;
+		
 		this.startDate = System.currentTimeMillis();
 
 		/* ------  Ottiene il servletContext --------*/
@@ -1483,6 +1487,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}
 
 	}
+	
 	/**
 	 * Undeploy dell'applicazione WEB di OpenSPCoop
 	 *
@@ -1492,6 +1497,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 
+		OpenSPCoop2Startup.contextDestroyed = true;
+		
 		// ExitHandler
 		try{
 			ExitContext context = new ExitContext();
@@ -1506,19 +1513,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try {
 				if(this.timerRiscontri!=null)
 					this.timerRiscontri.stop();
-			} catch (RemoteException e) {}
+			} catch (Throwable e) {}
 			try {
 				if(this.timerEliminazioneMsg!=null)
 					this.timerEliminazioneMsg.stop();
-			} catch (RemoteException e) {}
+			} catch (Throwable e) {}
 			try {
 				if(this.timerPuliziaMsgAnomali!=null)
 					this.timerPuliziaMsgAnomali.stop();
-			} catch (RemoteException e) {}
+			} catch (Throwable e) {}
 			try {
 				if(this.timerRepositoryBuste!=null)
 					this.timerRepositoryBuste.stop();
-			} catch (RemoteException e) {}
+			} catch (Throwable e) {}
 		}else{
 			try{
 				if(this.threadEliminazioneMsg!=null)
