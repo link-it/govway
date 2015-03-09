@@ -15,6 +15,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATEFUL"})
 	public void oneWayFault200_paSOAP11Stateful() throws FatalTestSuiteException, Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._oneWayFault200(this.paSOAP11Stateful, this.repositoryPortaApplicativaOneWayFault200_Soap11Stateful);
 	}
 
@@ -26,6 +29,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATEFUL"},dataProvider=PortaApplicativa.ID_GRUPPO+"OneWayFault200_Soap11Stateful",dependsOnMethods={"oneWayFault200_paSOAP11Stateful"})
 	public void testOneWayFault200_paSOAP11Stateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._testOneWayFault200(this.paSOAP11Stateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
@@ -48,6 +54,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATEFUL"})
 	public void oneWayFault200_paSOAP12Stateful() throws FatalTestSuiteException, Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._oneWayFault200(this.paSOAP12Stateful, this.repositoryPortaApplicativaOneWayFault200_Soap12Stateful);
 	}
 
@@ -59,6 +68,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATEFUL"},dataProvider=PortaApplicativa.ID_GRUPPO+"OneWayFault200_Soap12Stateful",dependsOnMethods={"oneWayFault200_paSOAP12Stateful"})
 	public void testOneWayFault200_paSOAP12Stateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._testOneWayFault200(this.paSOAP12Stateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
@@ -81,6 +93,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATEFUL.ATTACHMENTS"})
 	public void oneWayFault200_paSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._oneWayFault200(this.paSOAP11WithAttachmentsStateful, this.repositoryPortaApplicativaOneWayFault200_Soap11WithAttachmentsStateful);
 	}
 
@@ -92,6 +107,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATEFUL.ATTACHMENTS"},dataProvider=PortaApplicativa.ID_GRUPPO+"OneWayFault200_Soap11WithAttachmentsStateful",dependsOnMethods={"oneWayFault200_paSOAP11WithAttachmentsStateful"})
 	public void testOneWayFault200_paSOAP11WithAttachmentsStateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._testOneWayFault200(this.paSOAP11WithAttachmentsStateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 
@@ -114,6 +132,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATEFUL.ATTACHMENTS"})
 	public void oneWayFault200_paSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._oneWayFault200(this.paSOAP12WithAttachmentsStateful, this.repositoryPortaApplicativaOneWayFault200_Soap12WithAttachmentsStateful);
 	}
 
@@ -125,6 +146,9 @@ public class PortaApplicativaFault200 extends PortaImpl {
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault200",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATEFUL.ATTACHMENTS"},dataProvider=PortaApplicativa.ID_GRUPPO+"OneWayFault200_Soap12WithAttachmentsStateful",dependsOnMethods={"oneWayFault200_paSOAP12WithAttachmentsStateful"})
 	public void testOneWayFault200_paSOAP12WithAttachmentsStateful(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
+		if(this.doTestStateful==false){
+			return;
+		}
 		Porta._testOneWayFault200(this.paSOAP12WithAttachmentsStateful, data, msgDiagData, id, checkServizioApplicativo);
 	}	
 

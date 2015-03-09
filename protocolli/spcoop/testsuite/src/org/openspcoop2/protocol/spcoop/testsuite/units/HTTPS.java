@@ -766,10 +766,13 @@ public class HTTPS {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryHTTPSautenticazioneSSL,sslContext);
 			client.setSoapAction("\"TEST\"");
-			if(location!=null)
+			if(location!=null){
+				//System.out.println("Location ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient()+"]");
 				client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient());
-			else
+			}else{
+				//System.out.println("NoLocation ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+"]");
 				client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			}
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL);
 			client.connectToSoapEngine();
 			client.setMessage(msg);

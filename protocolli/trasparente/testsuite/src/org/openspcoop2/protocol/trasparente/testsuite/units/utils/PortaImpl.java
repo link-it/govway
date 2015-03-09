@@ -24,6 +24,7 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
 import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
 
 /**
  * Test sui profili di collaborazione implementati nella Porta di Dominio
@@ -52,6 +53,15 @@ public class PortaImpl {
 	protected PortaApplicativa paSOAP11WithAttachmentsStateful;
 	protected PortaApplicativa paSOAP12WithAttachmentsStateful;
 
+	protected boolean doTestStateful = true;
+	private static boolean printMsg = false;
+	private static synchronized void printMsgStateful(){
+		if(printMsg==false){
+			System.out.println("WARNING: Verifiche Stateful disabilitate per Tomcat");
+			printMsg = true;
+		}
+	}	
+	
 	public PortaImpl() {
 
 		this.pdSOAP11Stateless = new PortaDelegata(SOAPVersion.SOAP11, false, false);
@@ -72,5 +82,15 @@ public class PortaImpl {
 		this.paSOAP11WithAttachmentsStateful = new PortaApplicativa(SOAPVersion.SOAP11, true, true);
 		this.paSOAP12WithAttachmentsStateful = new PortaApplicativa(SOAPVersion.SOAP12, true, true);
 		
+		try{
+			String version_jbossas = Utilities.readApplicationServerVersion();
+			if(version_jbossas.startsWith("tomcat")){
+				printMsgStateful();
+				this.doTestStateful = false;
+			}
+		}catch(Exception e){
+			System.out.println("Errore durante la comprensione dell'application server");
+			e.printStackTrace(System.out);
+		}
 	}
 }
