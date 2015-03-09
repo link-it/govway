@@ -378,7 +378,7 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 					this.log.error("[AsincronoSimmetrico_modalitaSincrona] Errore durante la ricezione della risposta");
 				  				
 			} catch (Exception e) {
-				this.log.error("[AsincronoSimmetrico_modalitaSincrona] Errore durante la creazione/esecuzione del client IntegrationManager per l'invocazione della porta delegata: "+e.getMessage());
+				this.log.error("[AsincronoSimmetrico_modalitaSincrona] Errore durante la creazione/esecuzione del client IntegrationManager per l'invocazione della porta delegata: "+e.getMessage(),e);
 			}    
 		}else{
 			javax.xml.soap.MimeHeaders mime=msg.getMimeHeaders();
@@ -403,7 +403,7 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 					this.log.error("[AsincronoSimmetrico_modalitaSincrona] Errore durante la ricezione della risposta");
 					
 			} catch (Exception e) {
-				this.log.error("[AsincronoSimmetrico_modalitaSincrona] Errore durante la creazione del client per l'invocazione della porta delegata: "+e.getMessage());
+				this.log.error("[AsincronoSimmetrico_modalitaSincrona] Errore durante la creazione del client per l'invocazione della porta delegata: "+e.getMessage(),e);
 			} 
 		}
 		

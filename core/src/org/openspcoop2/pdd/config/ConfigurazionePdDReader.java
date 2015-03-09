@@ -1843,12 +1843,19 @@ public class ConfigurazionePdDReader {
 		 PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD, idPA, proprietaPresentiBustaRicevuta);
 		 IDPortaApplicativaByNome id = new IDPortaApplicativaByNome();
 		 id.setNome(pa.getNome());
-		 id.setSoggetto(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+		 id.setSoggetto(idPA.getIDServizio().getSoggettoErogatore());
 		 return id;
 	 }
 	 public IDPortaApplicativaByNome convertTo_SafeMethod(Connection connectionPdD,IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		 try{
-			 return this.convertTo(connectionPdD, idServizio, proprietaPresentiBustaRicevuta);
+			 if(idServizio!=null && idServizio.getTipoServizio()!=null &&
+					 idServizio.getServizio()!=null &&
+					 idServizio.getSoggettoErogatore()!=null &&
+					 idServizio.getSoggettoErogatore().getTipo()!=null &&
+					 idServizio.getSoggettoErogatore().getNome()!=null){
+				 return this.convertTo(connectionPdD, idServizio, proprietaPresentiBustaRicevuta);
+			 }
+			 return null;
 		 }catch(DriverConfigurazioneNotFound e){
 			 return null;
 		 }

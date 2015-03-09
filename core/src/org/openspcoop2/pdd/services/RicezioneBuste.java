@@ -1874,7 +1874,7 @@ public class RicezioneBuste {
 		if(pa!=null){
 			idPAbyNome = new IDPortaApplicativaByNome();
 			idPAbyNome.setNome(pa.getNome());
-			idPAbyNome.setSoggetto(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+			idPAbyNome.setSoggetto(idServizio.getSoggettoErogatore());
 			msgDiag.setPorta(pa.getNome());
 			for(int i=0; i<pa.sizeServizioApplicativoList();i++){
 				this.msgContext.getIntegrazione().addServizioApplicativoErogatore(pa.getServizioApplicativo(i).getNome());

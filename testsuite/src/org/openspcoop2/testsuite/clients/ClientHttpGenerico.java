@@ -54,6 +54,7 @@ import org.apache.axis.encoding.Base64;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSHostNameVerifierDisabled;
@@ -411,9 +412,28 @@ public class ClientHttpGenerico extends ClientCore{
 		if(this.contentType!=null){
 			contentTypeSpedito = this.contentType;
 		}else if(this.sentMessage!=null){
-			contentTypeSpedito = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP11Constants());	
+			if(SOAPVersion.SOAP11.equals(this.soapVersion)){
+				contentTypeSpedito = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP11Constants());	
+			}
+			else if(SOAPVersion.SOAP12.equals(this.soapVersion)){
+				contentTypeSpedito = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP12Constants());	
+			}
+			else{
+				// default 
+				contentTypeSpedito = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP11Constants());	
+			}
 		}else{
-			contentTypeSpedito = "text/xml; charset=utf-8";
+			if(SOAPVersion.SOAP11.equals(this.soapVersion)){
+				contentTypeSpedito = Costanti.CONTENT_TYPE_SOAP_1_1;
+			}
+			else if(SOAPVersion.SOAP12.equals(this.soapVersion)){
+				contentTypeSpedito = Costanti.CONTENT_TYPE_SOAP_1_2;
+			}
+			else{
+				// default
+				//contentTypeSpedito = "text/xml; charset=utf-8";
+				contentTypeSpedito = Costanti.CONTENT_TYPE_SOAP_1_1;
+			}
 		}
 		this.conn.setRequestProperty("Content-Type",contentTypeSpedito);
 		
