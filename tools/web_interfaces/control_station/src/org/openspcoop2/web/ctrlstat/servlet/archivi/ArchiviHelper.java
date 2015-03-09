@@ -2740,8 +2740,9 @@ public class ArchiviHelper extends ConsoleHelper {
 
 			this.pd.setDati(dati);
 
-			Parameter pArchivi = new Parameter("", "" , pDs, pProfColl, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg);
-			this.request.setAttribute(ArchiviCostanti.PARAMETRI_ARCHIVI, pArchivi.getValue());
+			
+			String params = ServletUtils.getParametersAsString(false, pDs, pProfColl, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg);
+			this.request.setAttribute(ArchiviCostanti.PARAMETRI_ARCHIVI, params);
 
 			return false;
 
@@ -3561,8 +3562,8 @@ public class ArchiviHelper extends ConsoleHelper {
 			this.pd.setSelect(false);
 			this.pd.setDati(dati);
 
-			Parameter pArchivi = new Parameter("", "" , pDs, pSev,pIdFun, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg);
-			this.request.setAttribute(ArchiviCostanti.PARAMETRI_ARCHIVI, pArchivi.getValue());
+			String params = ServletUtils.getParametersAsString(false,  pDs, pSev,pIdFun, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg);
+			this.request.setAttribute(ArchiviCostanti.PARAMETRI_ARCHIVI, params);
 
 			return false;
 

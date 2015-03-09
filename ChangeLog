@@ -1,3 +1,12 @@
+2015-03-03  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+        Risolto Bug #300
+	Risolto problema della navigazione nella sezione 'Tracciamento' e
+	'Diagnostica'.
+	Verificato che il problema non esiste nelle sezioni 'CodaMessaggi' e
+	'CodaConfigurazioni'.
+
 2015-02-20  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
