@@ -97,7 +97,7 @@ public class Traccia  implements java.io.Serializable {
     	// allegati
     	if(traccia.getAllegati()!=null && traccia.getAllegati().sizeAllegatoList()>0)
     	for (org.openspcoop2.core.tracciamento.Allegato allegato : traccia.getAllegati().getAllegatoList()) {
-			this.addAllegato(new Allegato(allegato));
+			this.addAllegato(new Allegato(allegato),false);
 		}
 	}
     

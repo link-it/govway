@@ -165,12 +165,6 @@ public class Riscontro implements java.io.Serializable {
 		}
 		return tipoOraRegistrazioneValue == null ? protocolFactory.createTraduttore().toString(this.getTipoOraRegistrazione()) : tipoOraRegistrazioneValue;
 	}
-	protected String getTipoOraRegistrazioneValue() {
-		if(this.riscontro.getOraRegistrazione()!=null && this.riscontro.getOraRegistrazione().getSorgente()!=null){
-			return this.riscontro.getOraRegistrazione().getSorgente().getBase();
-		}
-		return null;
-	}
 	public void setTipoOraRegistrazioneValue(String tipoOraRegistrazioneValue) {
 		if(tipoOraRegistrazioneValue!=null){
 			if(this.riscontro.getOraRegistrazione()==null){

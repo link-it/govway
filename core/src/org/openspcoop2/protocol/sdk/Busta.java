@@ -206,19 +206,19 @@ public class Busta implements java.io.Serializable {
     	// eccezioni
     	if(busta.getEccezioni()!=null && busta.getEccezioni().sizeEccezioneList()>0)
     	for (org.openspcoop2.core.tracciamento.Eccezione eccezione : busta.getEccezioni().getEccezioneList()) {
-			this.addEccezione(new Eccezione(eccezione));
+			this.addEccezione(new Eccezione(eccezione),false);
 		}
     	
     	// riscontri
     	if(busta.getRiscontri()!=null && busta.getRiscontri().sizeRiscontroList()>0)
     	for (org.openspcoop2.core.tracciamento.Riscontro riscontro : busta.getRiscontri().getRiscontroList()) {
-			this.addRiscontro(new Riscontro(riscontro));
+			this.addRiscontro(new Riscontro(riscontro),false);
 		}
     	
     	// trasmissioni
     	if(busta.getTrasmissioni()!=null && busta.getTrasmissioni().sizeTrasmissioneList()>0)
     	for (org.openspcoop2.core.tracciamento.Trasmissione trasmissione : busta.getTrasmissioni().getTrasmissioneList()) {
-			this.addTrasmissione(new Trasmissione(trasmissione));
+			this.addTrasmissione(new Trasmissione(trasmissione),false);
 		}
 	}
 	

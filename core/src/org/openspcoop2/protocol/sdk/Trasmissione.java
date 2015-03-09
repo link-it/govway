@@ -403,12 +403,6 @@ public class Trasmissione implements java.io.Serializable{
 		}
 		return tipoOraRegistrazioneValue == null ? protocolFactory.createTraduttore().toString(this.getTempo()) : tipoOraRegistrazioneValue;
 	}
-	protected String getTempoValue() {
-		if(this.trasmissione.getOraRegistrazione()!=null && this.trasmissione.getOraRegistrazione().getSorgente()!=null){
-			return this.trasmissione.getOraRegistrazione().getSorgente().getBase();
-		}
-		return null;
-	}
 	public void setTempoValue(String tipoOraRegistrazioneValue) {
 		if(tipoOraRegistrazioneValue!=null){
 			if(this.trasmissione.getOraRegistrazione()==null){
