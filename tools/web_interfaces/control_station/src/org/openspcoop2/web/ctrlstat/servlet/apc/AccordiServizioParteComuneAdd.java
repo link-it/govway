@@ -257,8 +257,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 			List<AccordoCooperazione> listaAccordoCooperazione = new ArrayList<AccordoCooperazione>();
 			for (AccordoCooperazione accordoCooperazione : listaTmp) {
-				if(tipiSoggettiCompatibili.contains(accordoCooperazione.getSoggettoReferente().getTipo())){
-					listaAccordoCooperazione.add(accordoCooperazione);
+				if(accordoCooperazione.getSoggettoReferente()!=null){
+					if(tipiSoggettiCompatibili!=null && tipiSoggettiCompatibili.contains(accordoCooperazione.getSoggettoReferente().getTipo())){
+						listaAccordoCooperazione.add(accordoCooperazione);
+					}
 				}
 			}
 			if (listaAccordoCooperazione != null && listaAccordoCooperazione.size() > 0) {

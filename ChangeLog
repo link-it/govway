@@ -1,3 +1,11 @@
+2015-02-20  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #297
+	La PA creata automaticamente durante la creazione di un AccordoServizioParteSpecifica,
+	viene adesso rimossa automaticamente quando si effettua l'eliminazione dell'accordo.
+	E' stato inoltre risolto il bug che non permetteva l'aggiornamento della url di un connettore https
+
 2015-03-02  Giovanni Bussu <bussu@link.it>
 
         * [TestsuiteProtocolloTrasparente]

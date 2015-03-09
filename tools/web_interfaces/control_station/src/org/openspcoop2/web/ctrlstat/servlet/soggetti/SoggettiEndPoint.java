@@ -325,10 +325,25 @@ public final class SoggettiEndPoint extends Action {
 
 			int idLista = Liste.SOGGETTI;
 			ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
-			List<Soggetto> lista = soggettiCore.soggettiRegistroList(userLogin, ricerca);
-
-			soggettiHelper.prepareSoggettiList(lista, ricerca);
-
+			if(soggettiCore.isRegistroServiziLocale()){
+				List<Soggetto> lista = null;
+				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+					lista = soggettiCore.soggettiRegistroList(null, ricerca);
+				}else{
+					lista = soggettiCore.soggettiRegistroList(userLogin, ricerca);
+				}
+				soggettiHelper.prepareSoggettiList(lista, ricerca);
+			}
+			else{
+				List<org.openspcoop2.core.config.Soggetto> lista = null;
+				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+					lista = soggettiCore.soggettiList(null, ricerca);
+				}else{
+					lista = soggettiCore.soggettiList(userLogin, ricerca);
+				}
+				soggettiHelper.prepareSoggettiConfigList(lista, ricerca);
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, SoggettiCostanti.TIPO_OPERAZIONE_ENDPOINT);
