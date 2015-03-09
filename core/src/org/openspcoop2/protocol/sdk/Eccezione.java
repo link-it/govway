@@ -182,6 +182,12 @@ public class Eccezione implements java.io.Serializable{
     	}
     	return codiceEccezioneValue == null ? protocolFactory.createTraduttore().toString(this.getCodiceEccezione(),this.getSubCodiceEccezione()) : codiceEccezioneValue;
     }
+    protected String getCodiceEccezioneValue() {
+    	if(this.eccezione.getCodice()!=null){
+    		return this.eccezione.getCodice().getBase();
+    	}
+    	return null;
+    }
     public void setCodiceEccezioneValue(String value) {
         if(value!=null){
         	if(this.eccezione.getCodice()==null){
@@ -304,6 +310,12 @@ public class Eccezione implements java.io.Serializable{
     	}
     	return contestoCodificaValue == null ? protocolFactory.createTraduttore().toString(this.getContestoCodifica()) : contestoCodificaValue;
     }
+    protected String getContestoCodificaValue()  {
+    	if(this.eccezione.getContestoCodifica()!=null){
+    		return this.eccezione.getContestoCodifica().getBase();
+    	}
+    	return null;
+    }
     public void setContestoCodificaValue(String value) {
     	if(value!=null){
         	if(this.eccezione.getContestoCodifica()==null){
@@ -393,6 +405,12 @@ public class Eccezione implements java.io.Serializable{
     	}
 		return rilevanzaValue == null ? protocolFactory.createTraduttore().toString(this.getRilevanza()) : rilevanzaValue;
     }
+    protected String getRilevanzaValue() {
+    	if(this.eccezione.getRilevanza()!=null){
+    		return this.eccezione.getRilevanza().getBase();
+    	}
+    	return null;
+    }
     public void setRilevanzaValue(String value) {
     	if(value!=null){
         	if(this.eccezione.getRilevanza()==null){
@@ -411,6 +429,7 @@ public class Eccezione implements java.io.Serializable{
         	}
         }
     }
+
 
 
     
