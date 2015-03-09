@@ -177,9 +177,12 @@ public final class SoggettiChange extends Action {
 					// e possiede gia' delle PD o PA o SA,
 					// non e' piu' possibile cambiargli la porta di dominio in una esterna.
 					
-					PdDControlStation pddCtrlstat = pddCore.getPdDControlStation(soggettoRegistry.getPortaDominio());
-					boolean pddOperativa = PddTipologia.OPERATIVO.toString().equals(pddCtrlstat.getTipo());
-					
+					boolean pddOperativa = false;
+					if(soggettoRegistry.getPortaDominio()!=null && !"".equals(soggettoRegistry.getPortaDominio())){
+						PdDControlStation pddCtrlstat = pddCore.getPdDControlStation(soggettoRegistry.getPortaDominio());
+						pddOperativa = PddTipologia.OPERATIVO.toString().equals(pddCtrlstat.getTipo());
+					}
+						
 					List<PortaDominio> lista = new ArrayList<PortaDominio>();
 					if( (numPA<=0 && numPD<=0 && numSA<=0) || !pddOperativa ){
 						// aggiungo un elemento di comodo
