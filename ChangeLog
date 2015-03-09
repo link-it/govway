@@ -1,6 +1,13 @@
 2015-02-20  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
+	Risolto Bug #298
+	Il problema risolto non permetteva la visualizzazione dei servizi applicativi, associati alle porte applicative 
+	visualizzate tramite l'elenco degli accordi di servizio parte specifica
+
+2015-02-20  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
 	Risolto Bug #297
 	La PA creata automaticamente durante la creazione di un AccordoServizioParteSpecifica,
 	viene adesso rimossa automaticamente quando si effettua l'eliminazione dell'accordo.

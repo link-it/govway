@@ -1416,6 +1416,9 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
+			// Deve essere usato il soggetto per visualizzare i servizi applicativi
+			ServletUtils.setObjectIntoSession(this.session, true, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO);
+			
 			//questo e' il soggetto virtuale
 			String idSoggettoErogatoreDelServizio = this.request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {

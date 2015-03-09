@@ -61,9 +61,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * serviziDel
@@ -101,7 +99,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
 			
-			User utente = ServletUtils.getUserFromSession(session);
+			//User utente = ServletUtils.getUserFromSession(session);
 			
 			/*
 			 * Validate the request parameters specified by the user Note: Basic
