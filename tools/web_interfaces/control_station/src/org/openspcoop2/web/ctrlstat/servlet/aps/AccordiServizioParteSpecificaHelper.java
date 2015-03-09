@@ -2789,7 +2789,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			int size,
 			AccordoServizioParteSpecifica asps, String oldwsdl,
 			String tipo, boolean validazioneDocumenti,
-			Vector<DataElement> dati) {
+			Vector<DataElement> dati,
+			String tipologiaDocumentoScaricare) {
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
@@ -2812,6 +2813,18 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			de.setRows(30);
 			de.setCols(110);
 			dati.addElement(de);
+			
+			if(oldwsdl != null && !oldwsdl.isEmpty()){
+				DataElement saveAs = new DataElement();
+				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
+				saveAs.setType(DataElementType.LINK);
+				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, asps.getId()+""),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+				dati.add(saveAs);
+			}
+			
 		}
 		else{
 
@@ -2824,6 +2837,15 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_ATTUALE +":");
 				dati.addElement(de);
 
+				DataElement saveAs = new DataElement();
+				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
+				saveAs.setType(DataElementType.LINK);
+				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, asps.getId()+""),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+				dati.add(saveAs);
+				
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_AGGIORNAMENTO);
@@ -2913,7 +2935,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 	public Vector<DataElement> addFruitoreWSDLToDati(TipoOperazione tipoOp, 
 			String tipo, String idSoggettoErogatoreDelServizio, String wsdl, Boolean validazioneDocumenti,
 			Fruitore myFru,
-			Vector<DataElement> dati) {
+			Vector<DataElement> dati,
+			String id, String tipologiaDocumentoScaricare) {
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
@@ -2946,6 +2969,19 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			de.setRows(30);
 			de.setCols(110);
 			dati.addElement(de);
+			
+			if(wsdl != null && !wsdl.isEmpty()){
+				DataElement saveAs = new DataElement();
+				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
+				saveAs.setType(DataElementType.LINK);
+				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
+						new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE, myFru.getTipo()),
+						new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE, myFru.getNome()),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+				dati.add(saveAs);
+			}
 		}
 		else{
 
@@ -2958,6 +2994,17 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_ATTUALE +":");
 				dati.addElement(de);
 
+				DataElement saveAs = new DataElement();
+				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
+				saveAs.setType(DataElementType.LINK);
+				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
+						new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE, myFru.getTipo()),
+						new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE, myFru.getNome()),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+				dati.add(saveAs);
+				
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_AGGIORNAMENTO);

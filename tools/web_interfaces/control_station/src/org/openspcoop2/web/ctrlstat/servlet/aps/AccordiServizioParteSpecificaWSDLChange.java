@@ -56,6 +56,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -168,11 +169,14 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
+			String tipologiaDocumentoScaricare = null; 
 			if (this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE)) {
 				wsdlbyte = asps.getByteWsdlImplementativoErogatore();
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_EROGATORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE)) {
 				wsdlbyte = asps.getByteWsdlImplementativoFruitore();
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_FRUITORE;
 			}
 			if (wsdlbyte != null) {
 				oldwsdl = new String(wsdlbyte);
@@ -213,7 +217,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 
 				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER, apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti,
-						dati);
+						dati, tipologiaDocumentoScaricare);
 
 				pd.setDati(dati);
 
@@ -252,7 +256,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 				dati =apcHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
-				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER,  apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti, dati);
+				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER,  apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti, dati, tipologiaDocumentoScaricare);
 
 				pd.setDati(dati);
 

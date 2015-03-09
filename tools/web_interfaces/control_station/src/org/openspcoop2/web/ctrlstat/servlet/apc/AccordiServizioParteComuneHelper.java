@@ -2655,7 +2655,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 
 
 	public void addAccordiWSDLChangeToDati(Vector<DataElement> dati,String id,String tipoAccordo,String tipo,String label,
-			String oldwsdl,String statoPackage,boolean validazioneDocumenti){
+			String oldwsdl,String statoPackage,boolean validazioneDocumenti, String tipologiaDocumentoScaricare){
 
 		DataElement de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -2688,6 +2688,18 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 			de.setCols(110);
 			de.setLabel("");
 			dati.addElement(de);
+			
+			if(oldwsdl != null && !oldwsdl.isEmpty()){
+				DataElement saveAs = new DataElement();
+				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
+				saveAs.setType(DataElementType.LINK);
+				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE));
+				dati.add(saveAs);
+			}
+			
 		}
 		else{
 			//			de.setLabel(label.replace(" di ", " di <BR/>")+"<BR/>Attuale:");
@@ -2699,6 +2711,15 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 				de.setCols(110);
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE +":");
 				dati.addElement(de);
+				
+				DataElement saveAs = new DataElement();
+				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
+				saveAs.setType(DataElementType.LINK);
+				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
+						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE));
+				dati.add(saveAs);
 
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);

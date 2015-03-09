@@ -55,6 +55,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -173,13 +174,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
 			String label = null;
+			String tipologiaDocumentoScaricare = null;
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				wsdlbyte = as.getByteWsdlDefinitorio();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO+" di " + uriAS;
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_DEFINITORIO;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
 				wsdlbyte = as.getByteWsdlConcettuale();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE+" di " + uriAS;
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
 				wsdlbyte = as.getByteWsdlLogicoErogatore();
@@ -191,22 +195,27 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				} else {
 					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL+" di " + uriAS;
 				}
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
 				wsdlbyte = as.getByteWsdlLogicoFruitore();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE+" di " + uriAS;
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_FRUITORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneConcettuale();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE+" di " + uriAS;
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_CONCETTUALE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneErogatore();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE+" di " + uriAS;
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_EROGATORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneFruitore();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE+" di " + uriAS;
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_FRUITORE;
 			}
 			if (wsdlbyte != null) {
 				oldwsdl = new String(wsdlbyte);
@@ -262,7 +271,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti);
+						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare);
 
 				pd.setDati(dati);
 
@@ -299,7 +308,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
-						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti);
+						oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare);
 
 				pd.setDati(dati);
 

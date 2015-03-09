@@ -49,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -144,10 +145,14 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			int tmpProv = myFru.getIdSoggetto().intValue();
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
-			if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE))
+			String tipologiaDocumentoScaricare = null; 
+			if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE)){
 				wsdlbyte = myFru.getByteWsdlImplementativoErogatore();
-			if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_EROGATORE;
+			}if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE)){
 				wsdlbyte = myFru.getByteWsdlImplementativoFruitore();
+				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_FRUITORE;
+			}
 			if (wsdlbyte != null)
 				oldwsdl = new String(wsdlbyte);
 
@@ -206,7 +211,8 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
 				dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
-						oldwsdl, this.validazioneDocumenti, myFru, dati);
+						oldwsdl, this.validazioneDocumenti, myFru, dati,
+						idServ+"", tipologiaDocumentoScaricare);
 
 				pd.setDati(dati);
 
@@ -250,7 +256,8 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
 				dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
-						oldwsdl, this.validazioneDocumenti, myFru, dati);
+						oldwsdl, this.validazioneDocumenti, myFru, dati,
+						idServ+"", tipologiaDocumentoScaricare);
 
 				pd.setDati(dati);
 
@@ -315,7 +322,8 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			
 			 	
 			dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
-					this.wsdl, this.validazioneDocumenti, myFru, dati);
+					this.wsdl, this.validazioneDocumenti, myFru, dati,
+					idServ+"", tipologiaDocumentoScaricare);
 
 			pd.setDati(dati);
 
