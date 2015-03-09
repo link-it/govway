@@ -31,6 +31,8 @@ import org.openspcoop2.core.tracciamento.Eccezione;
 import org.openspcoop2.core.tracciamento.Riscontro;
 import org.openspcoop2.core.tracciamento.Trasmissione;
 import org.openspcoop2.core.tracciamento.constants.TipoCodificaEccezione;
+import org.openspcoop2.core.tracciamento.constants.TipoInoltro;
+import org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione;
 import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -42,6 +44,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
@@ -79,7 +83,12 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 	@Override
 	public SOAPElement toElement(Traccia tracciaObject)
 			throws ProtocolException {
-		try{			
+		String tmpId = null;
+		try{
+						
+			if(tracciaObject.sizeProperties()>0){
+				tmpId = tracciaObject.removeProperty(DriverTracciamento.IDTRACCIA); // non deve essere serializzato
+			}		
 			org.openspcoop2.core.tracciamento.Traccia tracciaBase = tracciaObject.getTraccia();
 			
 			// xml
@@ -96,6 +105,20 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 			ITraduttore protocolTraduttore = this.factory.createTraduttore();
 			if(tracciaBase!=null){
 				if(tracciaBase.getBusta()!=null){
+					if(tracciaBase.getBusta().getProfiloCollaborazione()!=null){
+						if(tracciaBase.getBusta().getProfiloCollaborazione().getBase()==null && 
+								tracciaBase.getBusta().getProfiloCollaborazione().getTipo()!=null){
+							tracciaBase.getBusta().getProfiloCollaborazione().setBase(this.getBaseValueProfiloCollaborazione(protocolTraduttore,tracciaBase.getBusta().getProfiloCollaborazione().getTipo()));
+						}
+					}
+					if(tracciaBase.getBusta().getProfiloTrasmissione()!=null){
+						if(tracciaBase.getBusta().getProfiloTrasmissione().getInoltro()!=null){
+							if(tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getBase()==null && 
+									tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getTipo()!=null){
+								tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().setBase(this.getBaseValueInoltro(protocolTraduttore,tracciaBase.getBusta().getProfiloTrasmissione().getInoltro().getTipo()));
+							}
+						}
+					}
 					if(tracciaBase.getBusta().getOraRegistrazione()!=null){
 						if(tracciaBase.getBusta().getOraRegistrazione().getSorgente()!=null){
 							if(tracciaBase.getBusta().getOraRegistrazione().getSorgente().getBase()==null && 
@@ -165,6 +188,11 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 			this.log.error("XMLBuilder.buildElement_Tracciamento error: "+e.getMessage(),e);
 			throw new ProtocolException("XMLBuilder.buildElement_Tracciamento error: "+e.getMessage(),e);
 		}
+		finally{
+			if(tmpId!=null && tracciaObject!=null){
+				tracciaObject.addProperty(DriverTracciamento.IDTRACCIA, tmpId);
+			}
+		}
 	}
 
 	@Override
@@ -182,6 +210,34 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 	
 	
 	// UTILITIES 
+	
+	private String getBaseValueProfiloCollaborazione(ITraduttore protocolTraduttore,TipoProfiloCollaborazione tipoProfiloCollaborazione){
+		switch (tipoProfiloCollaborazione) {
+		case ONEWAY:
+			return protocolTraduttore.toString(ProfiloDiCollaborazione.ONEWAY);
+		case SINCRONO:
+			return protocolTraduttore.toString(ProfiloDiCollaborazione.SINCRONO);
+		case ASINCRONO_ASIMMETRICO:
+			return protocolTraduttore.toString(ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO);
+		case ASINCRONO_SIMMETRICO:
+			return protocolTraduttore.toString(ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+		case SCONOSCIUTO:
+			return protocolTraduttore.toString(ProfiloDiCollaborazione.UNKNOWN);
+		}
+		return null;
+	}
+	
+	private String getBaseValueInoltro(ITraduttore protocolTraduttore,TipoInoltro tipoInoltro){
+		switch (tipoInoltro) {
+		case INOLTRO_CON_DUPLICATI:
+			return protocolTraduttore.toString(Inoltro.CON_DUPLICATI);
+		case INOLTRO_SENZA_DUPLICATI:
+			return protocolTraduttore.toString(Inoltro.SENZA_DUPLICATI);
+		case SCONOSCIUTO:
+			return protocolTraduttore.toString(Inoltro.UNKNOWN);
+		}
+		return null;
+	}
 	
 	private String getBaseValueTipoTempo(ITraduttore protocolTraduttore,TipoTempo tipoTempo){
 		switch (tipoTempo) {

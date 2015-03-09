@@ -58,8 +58,14 @@ public class XMLDiagnosticoBuilder implements org.openspcoop2.protocol.sdk.diagn
 
 	@Override
 	public Element toElement(MsgDiagnostico msgDiag) throws ProtocolException{
+		String tmpId = null;
 		try{
 						
+			if(msgDiag.sizeProperties()>0){
+				tmpId = msgDiag.removeProperty(DriverMsgDiagnostici.IDDIAGNOSTICI); // non deve essere serializzato
+			}
+			
+			// serializzazione
 			byte[] xmlDiagnostico = XMLUtils.generateMessaggioDiagnostico(msgDiag.getMessaggioDiagnostico());
 			Element diagnostico = this.xmlUtils.newElement(xmlDiagnostico);
 
@@ -68,6 +74,11 @@ public class XMLDiagnosticoBuilder implements org.openspcoop2.protocol.sdk.diagn
 		} catch(Exception e) {
 			this.log.error("XMLBuilder.buildElement_Diagnostico error: "+e.getMessage(),e);
 			throw new ProtocolException("XMLBuilder.buildElement_Diagnostico error: "+e.getMessage(),e);
+		}
+		finally{
+			if(tmpId!=null && msgDiag!=null){
+				msgDiag.addProperty(DriverMsgDiagnostici.IDDIAGNOSTICI, tmpId);
+			}
 		}
 	}
 

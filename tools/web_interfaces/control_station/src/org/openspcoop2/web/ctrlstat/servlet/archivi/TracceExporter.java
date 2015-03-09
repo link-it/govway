@@ -147,8 +147,8 @@ public class TracceExporter extends HttpServlet {
 						Traccia traccia = lista.get(j);
 						String newLine = j > 0 ? "\n\n" : "";
 						IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(traccia.getProtocollo());
-						TracciaBuilder diagnostico = new TracciaBuilder(protocolFactory);
-						in = new ByteArrayInputStream((newLine + diagnostico.toString(traccia)).getBytes());
+						TracciaBuilder tracciaBuilder = new TracciaBuilder(protocolFactory);
+						in = new ByteArrayInputStream((newLine + tracciaBuilder.toString(traccia)).getBytes());
 
 						// Transfer bytes from the input stream to the ZIP file
 						int len;
