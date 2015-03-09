@@ -119,7 +119,7 @@ public class Traccia  implements java.io.Serializable {
     	// allegati
     	if(traccia.getAllegati()!=null && traccia.getAllegati().sizeAllegatoList()>0)
     	for (org.openspcoop2.core.tracciamento.Allegato allegato : traccia.getAllegati().getAllegatoList()) {
-			this.addAllegato(new Allegato(allegato));
+			this.addAllegato(new Allegato(allegato),false);
 		}
 	}
     
@@ -438,11 +438,16 @@ public class Traccia  implements java.io.Serializable {
 		return this.allegati.size();
 	}
 	public void addAllegato(Allegato a) {
+		this.addAllegato(a, true);
+	}
+	private void addAllegato(Allegato a, boolean addCore) {
 		this.allegati.add(a);
-		if(this.traccia.getAllegati()==null){
-			this.traccia.setAllegati(new Allegati());
+		if(addCore){
+			if(this.traccia.getAllegati()==null){
+				this.traccia.setAllegati(new Allegati());
+			}
+			this.traccia.getAllegati().addAllegato(a.getAllegato());
 		}
-		this.traccia.getAllegati().addAllegato(a.getAllegato());
 	}
 	public Allegato getAllegato(int index) {
 		return this.allegati.get(index);

@@ -171,22 +171,25 @@ public class Busta implements java.io.Serializable {
 		this.busta = busta;
 		
     	// eccezioni
-    	if(busta.getEccezioni()!=null && busta.getEccezioni().sizeEccezioneList()>0)
-    	for (org.openspcoop2.core.tracciamento.Eccezione eccezione : busta.getEccezioni().getEccezioneList()) {
-			this.addEccezione(new Eccezione(eccezione));
-		}
+    	if(busta.getEccezioni()!=null && busta.getEccezioni().sizeEccezioneList()>0){
+    		for (org.openspcoop2.core.tracciamento.Eccezione eccezione : busta.getEccezioni().getEccezioneList()) {
+    			this.addEccezione(new Eccezione(eccezione),false);
+    		}
+    	}
     	
     	// riscontri
-    	if(busta.getRiscontri()!=null && busta.getRiscontri().sizeRiscontroList()>0)
-    	for (org.openspcoop2.core.tracciamento.Riscontro riscontro : busta.getRiscontri().getRiscontroList()) {
-			this.addRiscontro(new Riscontro(riscontro));
-		}
+    	if(busta.getRiscontri()!=null && busta.getRiscontri().sizeRiscontroList()>0){
+    		for (org.openspcoop2.core.tracciamento.Riscontro riscontro : busta.getRiscontri().getRiscontroList()) {
+    			this.addRiscontro(new Riscontro(riscontro),false);
+    		}
+    	}
     	
     	// trasmissioni
-    	if(busta.getTrasmissioni()!=null && busta.getTrasmissioni().sizeTrasmissioneList()>0)
-    	for (org.openspcoop2.core.tracciamento.Trasmissione trasmissione : busta.getTrasmissioni().getTrasmissioneList()) {
-			this.addTrasmissione(new Trasmissione(trasmissione));
-		}
+    	if(busta.getTrasmissioni()!=null && busta.getTrasmissioni().sizeTrasmissioneList()>0){
+    		for (org.openspcoop2.core.tracciamento.Trasmissione trasmissione : busta.getTrasmissioni().getTrasmissioneList()) {
+    			this.addTrasmissione(new Trasmissione(trasmissione),false);
+    		}
+    	}
 	}
 
 	
@@ -1224,11 +1227,16 @@ public class Busta implements java.io.Serializable {
 	}
 
 	public void addEccezione(Eccezione e) {
+		this.addEccezione(e, true);
+	}
+	private void addEccezione(Eccezione e, boolean addCore) {
 		this.listaEccezioni.add(e);
-		if(this.busta.getEccezioni()==null){
-			this.busta.setEccezioni(new Eccezioni());
+		if(addCore){
+			if(this.busta.getEccezioni()==null){
+				this.busta.setEccezioni(new Eccezioni());
+			}
+			this.busta.getEccezioni().addEccezione(e.getEccezione());
 		}
-		this.busta.getEccezioni().addEccezione(e.getEccezione());
 	}
 
 	public Eccezione removeEccezione(int index) {
@@ -1369,11 +1377,16 @@ public class Busta implements java.io.Serializable {
 	}
 	
 	public void addRiscontro(Riscontro r) {
+		this.addRiscontro(r, true);
+	}
+	private void addRiscontro(Riscontro r, boolean addCore) {
 		this.listaRiscontri.add(r);
-		if(this.busta.getRiscontri()==null){
-			this.busta.setRiscontri(new Riscontri());
+		if(addCore){
+			if(this.busta.getRiscontri()==null){
+				this.busta.setRiscontri(new Riscontri());
+			}
+			this.busta.getRiscontri().addRiscontro(r.getRiscontro());
 		}
-		this.busta.getRiscontri().addRiscontro(r.getRiscontro());
 	}
 	
 	public Riscontro removeRiscontro(int index) {
@@ -1402,11 +1415,16 @@ public class Busta implements java.io.Serializable {
 	}
 
 	public void addTrasmissione(Trasmissione t) {
+		this.addTrasmissione(t, true);
+	}
+	private void addTrasmissione(Trasmissione t, boolean addCore) {
 		this.listaTrasmissioni.add(t);
-		if(this.busta.getTrasmissioni()==null){
-			this.busta.setTrasmissioni(new Trasmissioni());
+		if(addCore){
+			if(this.busta.getTrasmissioni()==null){
+				this.busta.setTrasmissioni(new Trasmissioni());
+			}
+			this.busta.getTrasmissioni().addTrasmissione(t.getTrasmissione());
 		}
-		this.busta.getTrasmissioni().addTrasmissione(t.getTrasmissione());
 	}
 
 	public Trasmissione removeTrasmissione(int index) {
