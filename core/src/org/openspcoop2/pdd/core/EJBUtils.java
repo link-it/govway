@@ -2010,7 +2010,18 @@ public class EJBUtils {
 			repositoryBuste.registraBustaIntoInBox(busta,this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
 			if(!(state instanceof OpenSPCoopStateful)){
 				if(busta.sizeProperties()>0){
-					repositoryBuste.aggiornaProprietaBustaIntoInBox(busta.getProperties(), busta.getID());
+					Hashtable<String, String> bustaProperties = new Hashtable<String, String>();
+					String[]propertyNames = busta.getPropertiesNames();
+					if(propertyNames!=null){
+						for (int i = 0; i < propertyNames.length; i++) {
+							String keyP = propertyNames[i];
+							String valueP = busta.getProperty(key);
+							if(keyP!=null && valueP!=null){
+								bustaProperties.put(keyP, valueP);
+							}
+						}
+					}
+					repositoryBuste.aggiornaProprietaBustaIntoInBox(bustaProperties, busta.getID());
 				}
 			}
 		}

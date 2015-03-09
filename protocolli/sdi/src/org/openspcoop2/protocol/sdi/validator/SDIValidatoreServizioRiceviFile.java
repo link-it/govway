@@ -237,10 +237,10 @@ public class SDIValidatoreServizioRiceviFile {
 		}
 				
 		// setto i valori sdi nella busta
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, data);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, data);
 		if(errore!=null){
-			this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_ERRORE, errore);
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_ERRORE, errore);
 		}
 		
 		

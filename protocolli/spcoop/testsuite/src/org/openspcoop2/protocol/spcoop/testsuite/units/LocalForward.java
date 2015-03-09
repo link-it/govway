@@ -673,7 +673,7 @@ public class LocalForward {
 				
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi_PD", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
@@ -743,7 +743,7 @@ public class LocalForward {
 				
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi_PD", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
@@ -810,13 +810,13 @@ public class LocalForward {
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart())){
 					try{
 						Utilities.verificaFaultIntegrazione(error, 
-								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi_PD", 
+								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
 								Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 								msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 					}catch(Throwable e){
 						// test per la configurazione su db
 						Utilities.verificaFaultIntegrazione(error, 
-								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi_PD", 
+								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
 								Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 								msgErrore2, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 					}
@@ -1029,7 +1029,7 @@ public class LocalForward {
 				
 				if(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi_PD", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
 							Utilities.toString(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (200): " + error.getFaultCode().getLocalPart());
@@ -1393,7 +1393,7 @@ public class LocalForward {
 				
 				if(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi_PD", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
 							Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (200): " + error.getFaultCode().getLocalPart());

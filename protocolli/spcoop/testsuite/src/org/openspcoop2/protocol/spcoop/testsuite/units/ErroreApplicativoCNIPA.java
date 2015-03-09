@@ -173,7 +173,7 @@ public class ErroreApplicativoCNIPA {
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
-						idPorta,"RicezioneContenutiApplicativi_PD", 
+						idPorta,"RicezioneContenutiApplicativiSOAP", 
 						codice, 
 						msg, equalsMatch);	
 				
@@ -184,7 +184,7 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 								
 				Utilities.verificaFaultIntegrazione(error, actor,
-						idPorta,"RicezioneContenutiApplicativi_PD", 
+						idPorta,"RicezioneContenutiApplicativiSOAP", 
 						codice, 
 						msg, equalsMatch);				
 			}finally{
@@ -420,7 +420,7 @@ public class ErroreApplicativoCNIPA {
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
-						idPorta,"RicezioneContenutiApplicativi_PD", 
+						idPorta,"RicezioneContenutiApplicativiSOAP", 
 						codice, 
 						msg, equalsMatch);	
 				
@@ -431,7 +431,7 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 								
 				Utilities.verificaFaultIntegrazione(error, actor,
-						idPorta,"RicezioneContenutiApplicativi_PD", 
+						idPorta,"RicezioneContenutiApplicativiSOAP", 
 						codice, 
 						msg, equalsMatch);				
 			}finally{

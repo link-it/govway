@@ -326,7 +326,12 @@ public class Porta {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			data.close();
+			try{
+				data.close();
+			}catch(Exception e){}
+			try{
+				msgDiagData.close();
+			}catch(Exception e){}
 		}
 	}
 
@@ -337,7 +342,12 @@ public class Porta {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			data.close();
+			try{
+				data.close();
+			}catch(Exception e){}
+			try{
+				msgDiagData.close();
+			}catch(Exception e){}
 		}
 	}
 
@@ -348,7 +358,12 @@ public class Porta {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			data.close();
+			try{
+				data.close();
+			}catch(Exception e){}
+			try{
+				msgDiagData.close();
+			}catch(Exception e){}
 		}
 	}
 
@@ -363,7 +378,12 @@ public class Porta {
 		}catch(Exception e){
 			throw e;
 		}finally{
-			data.close();
+			try{
+				data.close();
+			}catch(Exception e){}
+			try{
+				msgDiagData.close();
+			}catch(Exception e){}
 		}
 	}
 	

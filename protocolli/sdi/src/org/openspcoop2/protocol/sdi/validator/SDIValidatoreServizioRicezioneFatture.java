@@ -283,9 +283,9 @@ public class SDIValidatoreServizioRicezioneFatture {
 		
 		
 		// setto i valori sdi nella busta
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFile);
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_METADATI, nomeFileMetadati);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFile);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_METADATI, nomeFileMetadati);
 		
 //		NOTA: Il contenuto viene gestito nella validazione semantica (poiche' deve essere applicata la sicurezza per la firma)
 //		// metadati
@@ -668,8 +668,8 @@ public class SDIValidatoreServizioRicezioneFatture {
 		
 		
 		// setto i valori sdi nella busta
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFile);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFile);
 		
 		
 	}

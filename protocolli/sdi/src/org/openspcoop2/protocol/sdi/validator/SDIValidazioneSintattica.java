@@ -211,7 +211,16 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			
 			// riporto le properties lette nella richiesta
 			if(bustaRichiesta!=null && busta.sizeProperties()>0){
-				bustaRichiesta.getProperties().putAll(busta.getProperties());
+				String [] propertiesNames = busta.getPropertiesNames();
+				if(propertiesNames!=null){
+					for (int i = 0; i < propertiesNames.length; i++) {
+						String key = propertiesNames[i];
+						String value = busta.getProperty(key);
+						if(key!=null && value!=null){
+							bustaRichiesta.addProperty(key, value);
+						}
+					}
+				}
 			}
 			
 			// riporto eventuale nome file nella busta di risposta

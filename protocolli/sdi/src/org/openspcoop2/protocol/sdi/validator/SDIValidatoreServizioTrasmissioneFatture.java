@@ -388,8 +388,8 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		
 		
 		// setto i valori sdi nella busta
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
-		this.busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFile);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFile);
 		
 		
 	}

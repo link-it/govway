@@ -26,8 +26,6 @@ package org.openspcoop2.protocol.sdk.diagnostica;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.openspcoop2.core.diagnostica.DominioDiagnostico;
@@ -338,24 +336,26 @@ public class MsgDiagnostico implements Serializable{
 		}
     }
     
-    public void setProperties(Hashtable<String, String> params) {
-    	Enumeration<String> keys = params.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			this.addProperty(key, params.get(key));
-		}
-    }
-    
-    public Hashtable<String, String> getProperties() {
-    	Hashtable<String, String> map = new Hashtable<String, String>();
-		if(this.messaggioDiagnostico.getProtocollo()!=null){
-			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
-				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
-				map.put(proprieta.getNome(), proprieta.getValore());
-			}
-		}
-		return map;
-    }
+    // Non devono essere usati.
+ 	// Altrimenti poi se viene effettuato una add o remove sulla lista o hashtable ritornata, la modifica non ha effetto
+//    public void setProperties(Hashtable<String, String> params) {
+//    	Enumeration<String> keys = params.keys();
+//		while (keys.hasMoreElements()) {
+//			String key = (String) keys.nextElement();
+//			this.addProperty(key, params.get(key));
+//		}
+//    }
+//    
+//    public Hashtable<String, String> getProperties() {
+//    	Hashtable<String, String> map = new Hashtable<String, String>();
+//		if(this.messaggioDiagnostico.getProtocollo()!=null){
+//			for (int i = 0; i < this.messaggioDiagnostico.getProtocollo().sizeProprietaList(); i++) {
+//				Proprieta proprieta = this.messaggioDiagnostico.getProtocollo().getProprieta(i);
+//				map.put(proprieta.getNome(), proprieta.getValore());
+//			}
+//		}
+//		return map;
+//    }
 
 
 

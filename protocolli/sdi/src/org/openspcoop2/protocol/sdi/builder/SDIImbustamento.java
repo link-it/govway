@@ -189,7 +189,7 @@ public class SDIImbustamento {
 			else{
 				tipoInvioFattura = SDICostanti.SDI_TIPO_FATTURA_XML;
 			}
-			busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, tipoInvioFattura);
+			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, tipoInvioFattura);
 			
 			
 			// formatoFattura
@@ -201,7 +201,7 @@ public class SDIImbustamento {
 				else{
 					formatoFattura = it.gov.fatturapa.sdi.fatturapa.v1_1.constants.FormatoTrasmissioneType.SDI11.name();
 				}
-				busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA,formatoFattura);
+				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA,formatoFattura);
 			}
 			else{
 				// TODO: capirlo aprendo lo zip o ignorarlo per p7m
@@ -321,7 +321,7 @@ public class SDIImbustamento {
 			soapBody.addChildElement(element);
 			
 			// salvo nomeFile
-			busta.getProperties().put(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, fileSdi.getNomeFile());
+			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, fileSdi.getNomeFile());
 			
 			// soapAction
 			msg.setProperty("SOAPAction", SDICostantiServizioRiceviFile.SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE);

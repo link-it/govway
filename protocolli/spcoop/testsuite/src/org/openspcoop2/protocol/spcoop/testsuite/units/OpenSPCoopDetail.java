@@ -250,7 +250,7 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 			
 			Utilities.verificaFaultOpenSPCoopDetail(error, 
-					dominio,TipoPdD.DELEGATA,"RicezioneContenutiApplicativi_PD", 
+					dominio,TipoPdD.DELEGATA,"RicezioneContenutiApplicativiSOAP", 
 					eccezioni, dettagli);
 		}
 		else{

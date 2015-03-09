@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -424,7 +425,13 @@ public class TracciamentoTesto extends Action {
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 				
-				java.util.ArrayList<String> listKeys = java.util.Collections.list(busta.getProperties().keys());
+				java.util.ArrayList<String> listKeys = new ArrayList<String>();
+				String [] propertiesNames = busta.getPropertiesNames();
+				if(propertiesNames!=null){
+					for (int i = 0; i < propertiesNames.length; i++) {
+						listKeys.add(propertiesNames[i]);
+					}
+				}
 				java.util.Collections.sort(listKeys);
 				for (String key : listKeys) {
 					de = new DataElement();

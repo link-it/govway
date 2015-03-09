@@ -25,10 +25,7 @@ package org.openspcoop2.protocol.sdk;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.tracciamento.Data;
@@ -1170,30 +1167,32 @@ public class Busta implements java.io.Serializable {
 		}
 	}
 
-	public void setProperties(Hashtable<String, String> params) {
-		Enumeration<String> keys = params.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			this.addProperty(key, params.get(key));
-		}
-	}
-
-	public Hashtable<String, String> getProperties() {
-		Hashtable<String, String> map = new Hashtable<String, String>();
-		if(this.busta.getProtocollo()!=null){
-			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
-				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
-				map.put(proprieta.getNome(), proprieta.getValore());
-			}
-		}
-		return map;
-	}
-	
-	public List<Map.Entry<String, String>> getPropertiesAsList(){
-		List <Map.Entry<String, String>> toRet = new ArrayList<Map.Entry<String, String>>();
-		toRet.addAll(this.getProperties().entrySet());
-		return toRet;
-	}
+	// Non devono essere usati.
+	// Altrimenti poi se viene effettuato una add o remove sulla lista o hashtable ritornata, la modifica non ha effetto
+//	public void setProperties(Hashtable<String, String> params) {
+//		Enumeration<String> keys = params.keys();
+//		while (keys.hasMoreElements()) {
+//			String key = (String) keys.nextElement();
+//			this.addProperty(key, params.get(key));
+//		}
+//	}
+//
+//	public Hashtable<String, String> getProperties() {
+//		Hashtable<String, String> map = new Hashtable<String, String>();
+//		if(this.busta.getProtocollo()!=null){
+//			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
+//				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
+//				map.put(proprieta.getNome(), proprieta.getValore());
+//			}
+//		}
+//		return map;
+//	}
+//	
+//	public List<Map.Entry<String, String>> getPropertiesAsList(){
+//		List <Map.Entry<String, String>> toRet = new ArrayList<Map.Entry<String, String>>();
+//		toRet.addAll(this.getProperties().entrySet());
+//		return toRet;
+//	}
 
 
 
@@ -1567,12 +1566,11 @@ public class Busta implements java.io.Serializable {
 		clone.setDigest(this.getDigest()!=null ? new String(this.getDigest()) : null);
 
 		// properties
-		Hashtable<String, String> properties = this.getProperties();
-		if(properties!=null && properties.size()>0){
-			Enumeration<String> keys = properties.keys();
-			while (keys.hasMoreElements()) {
-				String key = keys.nextElement();
-				String value = properties.get(key);
+		String[]propertiesNames = this.getPropertiesNames();
+		if(propertiesNames!=null){
+			for (int i = 0; i < propertiesNames.length; i++) {
+				String key = propertiesNames[i];
+				String value = this.getProperty(key);
 				if(key!=null && value!=null){
 					clone.addProperty(new String(key), new String(value));
 				}

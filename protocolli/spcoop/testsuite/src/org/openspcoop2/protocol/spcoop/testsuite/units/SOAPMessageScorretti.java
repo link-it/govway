@@ -224,7 +224,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				Utilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste_PA", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
 						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
@@ -382,7 +382,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				Utilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste_PA", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
 						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
@@ -526,7 +526,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				Utilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste_PA", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
 						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
 
 			}finally{
