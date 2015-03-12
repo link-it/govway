@@ -40,7 +40,11 @@ public class CostantiProtocollo {
     public static final String FAULT_CODE_SERVER_CONTENT_TYPE_UNSUPPORTED = "Server.contentTypeUnsupported";
     public static final String FAULT_CODE_MUSTUNDERSTAND = "MustUnderstand";
     public static final String FAULT_CODE_VERSION_MISMATCH = "VersionMismatch";
-        
+     
+    /** Definisce le costanti che contengono informazioni per retro-compatibilita' */
+	public final static String BACKWARD_COMPATIBILITY_ACTOR = "BACKWARD_COMPATIBILITY_ACTOR";
+	public final static String BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE = "BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE";
+    
     /** String che rappresenta il messaggio per un qualsiasi errore di processamento: SistemaNonDisponibile*/
     public final static String SISTEMA_NON_DISPONIBILE = "Sistema non disponibile";
     /** Keyword per indicare 'Porta di Dominio non disponibile' */

@@ -277,6 +277,27 @@ public class BackwardCompatibilityProperties {
 
 		return BackwardCompatibilityProperties.readCodeMapping;
 	}
+	
+	private static String getPrefixFaultCode = null;
+	public String getPrefixFaultCode() {	
+		if(BackwardCompatibilityProperties.getPrefixFaultCode==null){
+
+			try{ 
+
+				String tmp = this.reader.getValue_convertEnvProperties("org.openspcoop2.backwardCompatibility.prefixFaultCode");
+				if(tmp==null){
+					throw new Exception("Proprieta' non definita");
+				}
+				BackwardCompatibilityProperties.getPrefixFaultCode = tmp.trim();
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.backwardCompatibility.prefixFaultCode' (viene usato il default 'OPENSPCOOP_ORG_'): "+e.getMessage());
+				BackwardCompatibilityProperties.getPrefixFaultCode = "OPENSPCOOP_ORG_";
+			}    
+		}
+
+		return BackwardCompatibilityProperties.getPrefixFaultCode;
+	}
 
 	
 	/**

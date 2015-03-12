@@ -30,6 +30,7 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutResponseContext;
 import org.openspcoop2.pdd.core.handlers.OutResponseHandler;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.CodeMapping;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
@@ -124,8 +125,10 @@ public class IntegrazioneOutResponse implements OutResponseHandler {
 						}
 						
 						fault.setFaultActor(backwardCompatibilityProperties.getFaultActor());
+						msg.addContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_ACTOR, backwardCompatibilityProperties.getFaultActor());
 						
 						fault.setFaultCode(new QName("http://schemas.xmlsoap.org/soap/envelope/", codiceErrore, "soapenv"));
+						msg.addContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE, backwardCompatibilityProperties.getPrefixFaultCode());
 			
 					}
 				}

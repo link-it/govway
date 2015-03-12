@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Esito;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.w3c.dom.Node;
@@ -46,7 +47,7 @@ import org.w3c.dom.Node;
  * @version $Rev$, $Date$
  */
 public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsitoBuilder {
-
+	
 	protected Logger log;
 	protected IProtocolFactory factory;
 	
@@ -85,9 +86,20 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 					String codice = fault.getFaultCodeAsQName().getLocalPart();	
 					//System.out.println("ACTOR["+actor+"] REASON["+reason+"] CODICE["+codice+"]");	
 
-					if(erroreApplicativo!=null &&
+					Object backwardCompatibilityActorObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_ACTOR);
+					String backwardCompatibilityActor = null;
+					if(backwardCompatibilityActorObject!=null){
+						backwardCompatibilityActor = (String) backwardCompatibilityActorObject;
+					}
+					
+					boolean faultActorOpenSPCoopV2 = (erroreApplicativo!=null &&
 							erroreApplicativo.getFaultActor()!=null &&
-							erroreApplicativo.getFaultActor().equals(actor)){
+							erroreApplicativo.getFaultActor().equals(actor));
+					
+					boolean faultActorBackwardCompatibility = (backwardCompatibilityActor!=null &&
+							backwardCompatibilityActor.equals(actor));
+					
+					if(faultActorOpenSPCoopV2 || faultActorBackwardCompatibility){
 
 						// L'errore puo' essere generato dalla Porta di Dominio, l'errore puo' essere un :
 						// msg di errore 4XX
@@ -103,15 +115,43 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 							if(prefixFaultCode==null){
 								prefixFaultCode="OPENSPCOOP2_ORG_";
 							}
-							if(codice.startsWith(prefixFaultCode)){
+							boolean prefixOpv2 = codice.startsWith(prefixFaultCode);
+							
+							Object backwardCompatibilityPrefixObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE);
+							String backwardCompatibilityPrefix = null;
+							if(backwardCompatibilityPrefixObject!=null){
+								backwardCompatibilityPrefix = (String) backwardCompatibilityPrefixObject;
+							}
+							boolean prefixBackwardCompatibility = (backwardCompatibilityPrefix!=null && codice.startsWith(backwardCompatibilityPrefix));
+							
+							if(prefixOpv2 || prefixBackwardCompatibility){
 								// EccezioneProcessamento
-								String value = codice.substring(prefixFaultCode.length());
-								int valueInt = Integer.parseInt(value);
-								if(valueInt>=400 && valueInt<=499){
-									return Esito.ERRORE_PROCESSAMENTO_PDD_4XX;
-								}else if(valueInt>=500 && valueInt<=599){
-									return Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
-								}else{
+								String value = null;
+								if(prefixOpv2){
+									value = codice.substring(prefixFaultCode.length());
+								}
+								else{
+									value = codice.substring(backwardCompatibilityPrefix.length());
+								}
+								try{
+									int valueInt = Integer.parseInt(value);
+									if(valueInt>=400 && valueInt<=499){
+										return Esito.ERRORE_PROCESSAMENTO_PDD_4XX;
+									}else if(valueInt>=500 && valueInt<=599){
+										return Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+									}else{
+										return Esito.ERRORE_GENERICO;
+									}
+								}catch(Throwable t){
+									String error = "Errore calcolato da codice["+codice+"] prefixOpv2["+prefixOpv2+"] prefixFaultCode["+
+											prefixFaultCode+"] prefixBackwardCompatibility["+prefixBackwardCompatibility+
+											"] prefixBackwardCompatibility["+prefixBackwardCompatibility+"] value["+value+"]";
+									if(this.log!=null)
+										this.log.error(error+": "+t.getMessage(),t);
+									else{
+										System.err.print(error);
+										t.printStackTrace(System.err);
+									}
 									return Esito.ERRORE_GENERICO;
 								}
 							}else{
