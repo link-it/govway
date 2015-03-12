@@ -105,7 +105,9 @@ rm -f "dist/${UTILS_JAR}_${MVN_VERSION}.pom"
 
 echo "Installazione JAR Openspcoop2 nel repository Link.it completata."
 
-popd .
+popd
+
+echo "Position: [${PWD}]"
 
 rm -f ../web_generic_project/pom.xml
 
