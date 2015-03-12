@@ -1,3 +1,15 @@
+2015-03-12  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+        Risolto Bug #309
+	Risolta problematica sulla modificata del nome di una PortaDelegata. La modifica non aveva effetto sulla sua invocazione (tramite il nuovo nome)
+	Adeguata la gestione del nome di una porta per i componenti PD e PA. 
+	In modalita' di visualizzazione standard non e' consentito modificare il nome di una PortaDelegata o PortaApplicativa, 
+	mentre e' consentito se si passa alla visualizzazione avanzata.
+	E' stato inoltre risolto un problema esistente durante l'update della PortaApplicativa, 
+	che consentiva la registrazione di piu' porte che erogavano lo stesso servizio e la stessa azione per lo stesso soggetto erogatore. 
+	Adesso questa configurazione non e' piu' consentita.
+
 2015-03-10  Andrea Poli <apoli@link.it>
 
         * Rilasciata versione 2.1.1

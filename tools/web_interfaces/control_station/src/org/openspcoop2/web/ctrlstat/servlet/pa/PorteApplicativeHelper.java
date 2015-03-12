@@ -69,6 +69,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * PorteApplicativeHelper
@@ -86,7 +87,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 
 	// Controlla i dati della porta applicativa
-	public boolean porteAppCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean porteAppCheckData(TipoOperazione tipoOp, String oldNomePA) throws Exception {
 		try {
 			//String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA);
 			String nomePorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
@@ -258,8 +259,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 				IDSoggetto idSO = new IDSoggetto(proprietario.getTipo(), proprietario.getNome());
 				IDServizio idSE = new IDServizio(idSO);
-				idSE.setTipoServizio(servizio.split("/")[0]);
-				idSE.setServizio(servizio.split("/")[1]);
+				String [] tmp = servizio.split(" ");
+//				IDServizio idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
+//						tmp[1].split("/")[0],tmp[1].split("/")[1]);
+				idSE.setTipoServizio(tmp[1].split("/")[0]);
+				idSE.setServizio(tmp[1].split("/")[1]);
 				if (azione!=null && !"".equals(azione) && !"-".equals(azione) ) {
 					idSE.setAzione(azione);
 				}
@@ -286,7 +290,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					}
 
 				} else {
-					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(nomePorta, idSO);
+					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(oldNomePA, idSO);
 					PortaApplicativaServizio pa_servizio_precedente = pa.getServizio();
 					PortaApplicativaAzione pa_azione = pa.getAzione();
 
@@ -322,6 +326,16 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					return false;
 				}
 
+				
+				if (TipoOperazione.CHANGE.equals(tipoOp)) {
+					if (!nomePorta.equals(oldNomePA)) {
+						boolean exists = this.porteApplicativeCore.existsPortaApplicativa(nomePorta, idSO);
+						if (exists) {
+							this.pd.setMessage("Esiste gia' una Porta Applicativa con nome [" + nomePorta + "] associata al Soggetto [" + idSO.toString() + "]");
+							return false;
+						}
+					}
+				}
 			}
 
 			return true;
@@ -650,6 +664,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 		boolean configurazioneStandardNonApplicabile = false;
 		
+		User user = ServletUtils.getUserFromSession(this.session);
 		
 		
 		
@@ -662,11 +677,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		} else {
 			de.setValue(nomePorta);
 		}
-		if (tipoOp.equals(TipoOperazione.ADD)) {
+		if( InterfaceType.STANDARD.equals(user.getInterfaceType()) && TipoOperazione.CHANGE.equals(tipoOp) ){
+			de.setType(DataElementType.TEXT);
+		}
+		else{
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);
-		} else {
-			de.setType(DataElementType.TEXT);
 		}
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 		de.setSize(alternativeSize);

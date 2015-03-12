@@ -495,8 +495,12 @@ public final class PorteDelegateAdd extends Action {
 			PortaDelegata portaDelegata = new PortaDelegata();
 			portaDelegata.setNome(nomePD);
 			portaDelegata.setDescrizione(descr);
-			if(urlinv!=null && !"".equals(urlinv))
+			if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
+				portaDelegata.setLocation(nomePD);
+			}
+			else if(urlinv!=null && !"".equals(urlinv)){
 				portaDelegata.setLocation(urlinv);
+			}
 			if (autenticazione == null ||
 					!autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);

@@ -65,6 +65,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * PorteDelegateHelper
@@ -107,6 +108,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 		boolean configurazioneStandardNonApplicabile = false;
 		
+		User user = ServletUtils.getUserFromSession(this.session);
+		
 		int alternativeSize = 80;
 		
 		DataElement de = null;
@@ -134,15 +137,15 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 		de.setValue(nomePorta);
-		// if (tipoOp.equals("add"))
-		// de.setType("textedit");
-		// else
-		// de.setType("text");
-		de.setType(DataElementType.TEXT_EDIT);// permetto sempre di cambiare il nome della
-		// porta
+		if( InterfaceType.STANDARD.equals(user.getInterfaceType()) && TipoOperazione.CHANGE.equals(tipoOp) ){
+			de.setType(DataElementType.TEXT);
+		}
+		else{
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		}
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
 		de.setSize(alternativeSize);
-		de.setRequired(true);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -153,7 +156,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setSize(alternativeSize);
 		dati.addElement(de);
 		if ( (this.porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false) || 
-				InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+				InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
 			de.setValue("");

@@ -131,6 +131,11 @@ public final class PorteApplicativeChange extends Action {
 			String applicaMTOM = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
 			String servizioApplicativo = request.getParameter(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 
+			// check su oldNomePD
+			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
+			String oldNomePA = pdOld.getHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA);
+			oldNomePA = (((oldNomePA != null) && !oldNomePA.equals("")) ? oldNomePA : nomePorta);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -245,13 +250,13 @@ public final class PorteApplicativeChange extends Action {
 							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tipoNomeSoggettoProprietario, 
 									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
 									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-									new Parameter(nomePorta , null)
+									new Parameter(oldNomePA , null)
 							);
 				} else {
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(nomePorta, null)
+							new Parameter(oldNomePA, null)
 							);
 				}
 
@@ -504,6 +509,9 @@ public final class PorteApplicativeChange extends Action {
 					// avvenire anche se il servizio non e' selezionato
 				}
 
+				// setto oldNomePD
+				pd.addHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA, oldNomePA);
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
@@ -529,7 +537,7 @@ public final class PorteApplicativeChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.CHANGE);
+			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA);
 			if (!isOk) {
 				// setto la barra del titolo
 				if(useIdSogg){
@@ -539,13 +547,13 @@ public final class PorteApplicativeChange extends Action {
 							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tipoNomeSoggettoProprietario, 
 									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
 									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-									new Parameter(nomePorta , null)
+									new Parameter(oldNomePA , null)
 							);
 				} else {
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(nomePorta, null)
+							new Parameter(oldNomePA, null)
 							);
 				}
 
@@ -678,6 +686,9 @@ public final class PorteApplicativeChange extends Action {
 					// avvenire anche se il servizio non e' selezionato
 				}
 
+				// setto oldNomePD
+				pd.addHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA, oldNomePA);
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
@@ -702,6 +713,10 @@ public final class PorteApplicativeChange extends Action {
 			}
 
 			// Modifico i dati della porta applicativa nel db
+			pa.setNome(nomePorta);
+			pa.setOldNomeForUpdate(oldNomePA);
+			pa.setOldTipoSoggettoProprietarioForUpdate(pa.getTipoSoggettoProprietario());
+			pa.setOldNomeSoggettoProprietarioForUpdate(pa.getNomeSoggettoProprietario());
 			pa.setDescrizione(descr);
 			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			if (stateless!=null && stateless.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT))

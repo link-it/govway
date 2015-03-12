@@ -323,7 +323,7 @@ public final class PorteDelegateChange extends Action {
 						ricasim = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO; 
 					}
 				}
-				if (urlinv == null) {
+				if (urlinv == null && porteDelegateCore.isShowPortaDelegataUrlInvocazione()) {
 					urlinv = pde.getLocation();
 				}
 				if (autenticazione == null) {
@@ -924,8 +924,12 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setNome(nomePorta);
 			portaDelegata.setOldNomeForUpdate(oldPD.getNome());
 			portaDelegata.setDescrizione(descr);
-			if(urlinv!=null && !"".equals(urlinv))
+			if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
+				portaDelegata.setLocation(nomePorta);
+			}
+			else if(urlinv!=null && !"".equals(urlinv)){
 				portaDelegata.setLocation(urlinv);
+			}
 			if (autenticazione == null || !autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
 			else

@@ -738,6 +738,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				String nomePD = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
 				String descr = "Invocazione servizio " + tiposervizio + nomeservizio + " erogato da " + mytipoprov + mynomeprov;
 				String urlinv = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
+				if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
+					urlinv = nomePD;
+				}
 				PortaDelegataSoggettoErogatoreIdentificazione modesp = PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
 
 				PortaDelegata portaDelegata = new PortaDelegata();
