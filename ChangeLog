@@ -1,3 +1,15 @@
+2015-03-23  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Aggiunta funzionalità #312
+	Aggiunta al protocollo la possibilità di ricevere fatture nel formato P7M.
+	Inoltre:
+	- Aggiornato jar bcprov-ext-jdk15on-147.jar -> bcprov-ext-jdk15on-152.jar 
+	- Aggiunto jar bcpkix-jdk15on-152.jar per Gestire le Fatture P7M 
+	- Aggiunto log degli errori, in caso di validazione fallita
+	- Gestito log della ProtocolFactory (inizializzazione multiple, la pdd forza il log)
+	- Gestito setup per far abilitare la sezione 'Configurazione' che riporti le informazioni sull'installazione (vedi funzionalità #292)
+
 2015-03-12  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]

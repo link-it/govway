@@ -307,7 +307,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 		String descrizioneBehaviour = "";
 		if(bustaRichiesta!=null){
-			descrizioneBehaviour = bustaRichiesta.getProperty(CostantiPdD.KEY_DESCRIZIONE_BEHAVIOUR);
+			descrizioneBehaviour = bustaRichiesta.removeProperty(CostantiPdD.KEY_DESCRIZIONE_BEHAVIOUR);
 			if(descrizioneBehaviour==null){
 				descrizioneBehaviour = "";
 			}

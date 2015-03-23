@@ -709,6 +709,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				configPdD.setCheckIntervalJDBC(propertiesReader.getGestioneSerializableDB_CheckInterval());
 				configPdD.setLog(logCore);
 				ProtocolFactoryManager.initialize(OpenSPCoop2Startup.log, configPdD, propertiesReader.getDefaultProtocolName());
+				// forzo update logger. (viene caricato dopo il log della console)
+				ProtocolFactoryManager.updateLogger(logCore);
 				protocolFactoryManager = ProtocolFactoryManager.getInstance();
 				OpenSPCoop2Startup.log.info("ProtocolFactory default: "+protocolFactoryManager.getDefaultProtocolFactory().getProtocol());
 			} catch(Exception e) {

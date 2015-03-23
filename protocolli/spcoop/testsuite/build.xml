@@ -110,7 +110,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/security" >
-			<include name="bcprov-ext-jdk15on-147.jar"/>
+			<include name="bcprov-ext-jdk15on-152.jar"/>
 			<include name="neethi-3.0.2.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >

@@ -65,9 +65,9 @@ public class SDIFatturaUtils {
 				}
 				validatore.valida(new ByteArrayInputStream(fattura));
 			}catch(Exception e){
+				String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido rispetto allo schema XSD: "+e.getMessage();
 				eccezioniValidazione.add(
-						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido rispetto allo schema XSD: "+e.getMessage()));
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e));
 				return;	
 			}
 		}
@@ -261,9 +261,9 @@ public class SDIFatturaUtils {
 			}
 			
 		}catch(Exception e){
+			String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido: "+e.getMessage();
 			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido: "+e.getMessage()));
+					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e));
 			return;	
 		}
 		

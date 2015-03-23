@@ -217,7 +217,7 @@ public class SDIValidatoreServizioRiceviFile {
 			}catch(Exception e){
 				this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRiceviFile.RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE+"] non valido: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRiceviFile.RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE+"] non valido: "+e.getMessage(),e));
 				return;	
 			}
 			

@@ -117,6 +117,7 @@ public class SDISbustamento {
 			
 			// Leggo fattura
 			byte [] xmlFattura = null;
+			boolean p7m = false;
 			if(ctxFatturaPA!=null){
 				
 				//System.out.println("OTTIMIZZATO");
@@ -154,6 +155,13 @@ public class SDISbustamento {
 						}
 					}
 				}
+				
+				// Se la fattura e' un P7M non e' un xml.
+				// Il formato viene compreso durante la validazione sintattica
+				Object formato = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA);
+				if(formato!=null && ((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) ){
+					p7m = true;
+				}
 			}
 			
 					
@@ -164,7 +172,7 @@ public class SDISbustamento {
 			if(msg.countAttachments()>0){
 				msg.removeAllAttachments();
 			}
-			
+				
 			// imposto content type
 			if(SOAPVersion.SOAP11.equals(msg.getVersioneSoap())){
 				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_1);
@@ -174,7 +182,20 @@ public class SDISbustamento {
 			}
 			
 			// add Fattura as body
-			soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlFattura)));
+			if(p7m){
+				org.openspcoop2.utils.resources.MimeTypes mimeTypes = org.openspcoop2.utils.resources.MimeTypes.getInstance();
+				SoapUtils.
+					imbustamentoMessaggioConAttachment(msg,xmlFattura,Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
+							MailcapActivationReader.existsDataContentHandler(Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
+							mimeTypes.getMimeType(SDICostanti.SDI_TIPO_FATTURA_P7M), SDICostanti.SDI_PROTOCOL_NAMESPACE);
+				
+				// Serve per forzare il tunnel SOAP che altrimenti non viene abilitato ('tunnel openspcoop2') 
+				MessageUtils.dumpMessage(msg, true);
+
+			}else{
+				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlFattura)));
+			}
+			
 			
 			return element;
 			

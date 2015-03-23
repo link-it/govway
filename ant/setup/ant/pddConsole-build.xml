@@ -120,6 +120,16 @@
 			<param name="token" value="server.tipo"/>
 			<param name="value" value="web"/>
 		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="risorseJmxPdd.aliases"/>
+			<param name="value" value="pdd"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="pdd.risorseJmxPdd.descrizione"/>
+			<param name="value" value="PddOpenSPCoop"/>
+		</antcall>
 				
 	</target>
 	

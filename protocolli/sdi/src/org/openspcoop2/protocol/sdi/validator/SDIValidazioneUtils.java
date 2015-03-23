@@ -47,6 +47,12 @@ public class SDIValidazioneUtils {
 	public Eccezione newEccezioneValidazione(CodiceErroreCooperazione codiceErrore,String descrizioneErrore) throws ProtocolException{
 		return Eccezione.getEccezioneValidazione(codiceErrore, descrizioneErrore, this.protocolFactory);
 	}
+	public Eccezione newEccezioneValidazione(CodiceErroreCooperazione codiceErrore,String descrizioneErrore, Throwable e) throws ProtocolException{
+		if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null)
+			this.protocolFactory.getLogger().error(descrizioneErrore,e);
+		return Eccezione.getEccezioneValidazione(codiceErrore, descrizioneErrore, this.protocolFactory);
+	}
+	
 	public Eccezione newEccezioneValidazione(CodiceErroreCooperazione codiceErrore,boolean info) throws ProtocolException{
 		Eccezione ecc = Eccezione.getEccezioneValidazione(codiceErrore,null, this.protocolFactory);
 		if(info){
@@ -61,11 +67,25 @@ public class SDIValidazioneUtils {
 		}
 		return ecc;
 	}
+	public Eccezione newEccezioneValidazione(CodiceErroreCooperazione codiceErrore,String descrizioneErrore, Throwable e,boolean info) throws ProtocolException{
+		if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null)
+			this.protocolFactory.getLogger().error(descrizioneErrore,e);
+		Eccezione ecc =  Eccezione.getEccezioneValidazione(codiceErrore, descrizioneErrore, this.protocolFactory);
+		if(info){
+			ecc.setRilevanza(LivelloRilevanza.INFO);
+		}
+		return ecc;
+	}
 	
 	public Eccezione newEccezioneProcessamento(CodiceErroreCooperazione codiceErrore) throws ProtocolException{
 		return Eccezione.getEccezioneProcessamento(codiceErrore,null, this.protocolFactory);
 	}
 	public Eccezione newEccezioneProcessamento(CodiceErroreCooperazione codiceErrore,String descrizioneErrore) throws ProtocolException{
+		return Eccezione.getEccezioneProcessamento(codiceErrore, descrizioneErrore, this.protocolFactory);
+	}
+	public Eccezione newEccezioneProcessamento(CodiceErroreCooperazione codiceErrore,String descrizioneErrore, Throwable e) throws ProtocolException{
+		if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null)
+			this.protocolFactory.getLogger().error(descrizioneErrore,e);
 		return Eccezione.getEccezioneProcessamento(codiceErrore, descrizioneErrore, this.protocolFactory);
 	}
 	

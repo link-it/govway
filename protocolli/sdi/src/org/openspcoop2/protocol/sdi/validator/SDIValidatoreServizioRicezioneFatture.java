@@ -258,10 +258,16 @@ public class SDIValidatoreServizioRicezioneFatture {
 		// nomeFile
 		try{
 			SDIValidatoreNomeFile.validaNomeFileFattura(nomeFile, true);
+			if(nomeFile.endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_P7M)){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_P7M);
+			}
+			else{
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_XML);
+			}
 		}catch(Exception e){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),
+							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),e,
 							!this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()));
 			if(this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()){
 				return;	
@@ -274,7 +280,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 		}catch(Exception e){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE_METADATI+"] non valido: "+e.getMessage(),
+							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_NOME_FILE_METADATI+"] non valido: "+e.getMessage(),e,
 							!this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()));
 			if(this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()){
 				return;	
@@ -333,7 +339,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 					}catch(Exception e){
 						this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 								validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage(),e));
 						return;	
 					}
 				}else{
@@ -353,7 +359,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 						// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 						this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 								validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] decodifica base64 non riuscita: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] decodifica base64 non riuscita: "+e.getMessage(),e));
 						return;	
 					}
 				}
@@ -363,7 +369,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 				// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 				this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-						"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] non accessibile: "+e.getMessage()));
+						"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] non accessibile: "+e.getMessage(),e));
 				return;	
 			}
 			boolean validazioneMetadatiOk = 
@@ -398,7 +404,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 					}catch(Exception e){
 						this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 								validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage(),e));
 						return;	
 					}
 				}else{
@@ -417,7 +423,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 					}catch(Exception e){
 						this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 								validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage(),e));
 						return;	
 					}
 				}
@@ -426,9 +432,25 @@ public class SDIValidatoreServizioRicezioneFatture {
 				// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 				this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-						"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage()));
+						"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage(),e));
 				return;	
 			}
+			
+			// Se la fattura e' un P7M per poterla validare devo estrarne il contenuto.
+			// Il formato viene compreso durante la validazione sintattica
+			Object formato = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA);
+			if(formato!=null && ((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) ){
+				try{
+					org.bouncycastle.cms.CMSSignedData cmsSignedData = new org.bouncycastle.cms.CMSSignedData(new ByteArrayInputStream(fattura));
+					fattura = (byte[]) cmsSignedData.getSignedContent().getContent();
+				}catch(Throwable e){
+					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
+							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO, 
+									"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] decodifica p7m non riuscita: "+e.getMessage(),e));
+					return;	
+				}
+			}
+
 			SDIFatturaUtils.validazioneFattura(fattura,this.sdiValidazioneSemantica.sdiProperties,this.sdiValidazioneSemantica.erroriValidazione,
 					this.sdiValidazioneSemantica.validazioneUtils,this.sdiValidazioneSemantica.getProtocolFactory(),
 					this.busta,this.msg,true,true,false);
@@ -451,7 +473,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return false;	
 			}
 		}
@@ -469,7 +491,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido: "+e.getMessage(),e));
 			return false;	
 		}
 		
@@ -659,7 +681,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 		}catch(Exception e){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),
+							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),e,
 							!this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()));
 			if(this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()){
 				return;	
@@ -703,7 +725,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 				}catch(Exception e){
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage(),e));
 					return;	
 				}
 			}else{
@@ -723,7 +745,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 					// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage(),e));
 					return;	
 				}
 			}
@@ -733,7 +755,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 			this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-					"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage()));
+					"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -770,7 +792,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -787,7 +809,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
 			return;	
 		}
 		

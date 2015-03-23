@@ -112,9 +112,8 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 			}
 			
 		}catch(Exception e){
-			this.log.error(e.getMessage(),e);
 			this.erroriProcessamento.add(this.validazioneUtils.newEccezioneProcessamento(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO, 
-					e.getMessage()));
+					e.getMessage(),e));
 			return;
 		}
 	}

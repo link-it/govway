@@ -221,7 +221,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}catch(Exception e){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),e,
 							!this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()));
 			if(this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()){
 				return;	
@@ -263,7 +263,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 				}catch(Exception e){
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage(),e));
 					return;	
 				}
 			}else{
@@ -283,7 +283,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 					// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage(),e));
 					return;	
 				}
 			}
@@ -293,7 +293,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 			this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-					"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage()));
+					"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage(),e));
 			return;	
 		}
 		this._validazioneEsito(esito,this.sdiValidazioneSemantica.sdiProperties,this.sdiValidazioneSemantica.erroriValidazione,
@@ -318,7 +318,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -332,7 +332,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -489,7 +489,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}catch(Exception e){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_ESITO+"] non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_ESITO+"] non valido: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -508,7 +508,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			}catch(Exception e){
 				this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_NOME_FILE+"] non valido: "+e.getMessage(),
+								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_NOME_FILE+"] non valido: "+e.getMessage(),e,
 								!this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()));
 				if(this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()){
 					return;	
@@ -584,7 +584,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 						}catch(Exception e){
 							this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 									validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-									"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE+"] non valorizzato correttamente: "+e.getMessage()));
+									"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE+"] non valorizzato correttamente: "+e.getMessage(),e));
 							return;	
 						}
 					}else{
@@ -604,7 +604,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 							// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 							this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 									validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-									"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE+"] decodifica base64 non riuscita: "+e.getMessage()));
+									"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE+"] decodifica base64 non riuscita: "+e.getMessage(),e));
 							return;	
 						}
 					}
@@ -616,7 +616,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 			this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-					"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE+"] non accessibile: "+e.getMessage()));
+					"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE+"] non accessibile: "+e.getMessage(),e));
 			return;	
 		}
 		if(scartoEsito!=null){
@@ -644,7 +644,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -661,7 +661,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido: "+e.getMessage(),e));
 			return;	
 		}
 		

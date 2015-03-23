@@ -30,6 +30,7 @@
 			<param name="src_pddConsole" value="${src_pddConsole}"/>
 			<param name="openspcoop2" value="${rootDir}"/>
 			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+			<param name="singlePdD" value="true"/>
 	 	</antcall>
 		<antcall target="war_openspcoop2_pddConsole">
 	    	<param name="as" value="${TIPO_AS}" />
@@ -51,6 +52,7 @@
 			<param name="build_pddConsole" value="build"/>
 			<param name="queue" value="${queue}"/>
 			<param name="plugins_pddConsole" value="${pddConsole}/deploy/plugins"/>
+			<param name="singlePdD" value="true"/>
 	 	</antcall>
 	
 		<move file="${deploy_sw}/${TIPO_AS}/dist/pddConsole.war" todir="${deploy_sw}/${TIPO_AS}"/>

@@ -379,7 +379,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_NOME_FILE+"] non valido: "+e.getMessage(),e,
 							!this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()));
 			if(this.sdiValidazioneSintattica.sdiProperties.isEnableValidazioneNomeFile()){
 				return;	
@@ -423,7 +423,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 				}catch(Exception e){
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non valorizzato correttamente: "+e.getMessage(),e));
 					return;	
 				}
 			}else{
@@ -443,7 +443,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 					// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] decodifica base64 non riuscita: "+e.getMessage(),e));
 					return;	
 				}
 			}
@@ -453,7 +453,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 			this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-					"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage()));
+					"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] non accessibile: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -514,7 +514,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -531,7 +531,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -605,7 +605,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -622,7 +622,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -687,7 +687,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -704,7 +704,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -774,7 +774,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -791,7 +791,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -842,7 +842,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage()));
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
 				return;	
 			}
 		}
@@ -859,7 +859,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage()));
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
 			return;	
 		}
 		
@@ -919,7 +919,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml
-							+" non valido; è avvenuto un erorre durante il salvataggio dell'archivio zip: "+e.getMessage()));
+							+" non valido; è avvenuto un erorre durante il salvataggio dell'archivio zip: "+e.getMessage(),e));
 			try{
 				if(tmpZipFile!=null){
 					tmpZipFile.delete();
@@ -966,7 +966,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml
-							+" non valido; è avvenuto un erorre durante la lettura dell'archivio zip: "+e.getMessage(),
+							+" non valido; è avvenuto un erorre durante la lettura dell'archivio zip: "+e.getMessage(),e,
 							!consegnaAttestato));
 			if(consegnaAttestato){
 				return;
@@ -1001,7 +1001,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 					eccezioniValidazione.add(
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 									"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+
-											tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),
+											tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e,
 											!consegnaAttestato));
 					if(consegnaAttestato){
 						return;
@@ -1022,7 +1022,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+
-										tipoXml+" non valido: "+e.getMessage(),
+										tipoXml+" non valido: "+e.getMessage(),e,
 										!consegnaAttestato));
 				if(consegnaAttestato){
 					return;

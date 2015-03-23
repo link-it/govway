@@ -104,7 +104,8 @@
 				<include name="slf4j-jdk14-1.6.2.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-147.jar"/>
+				<include name="bcprov-ext-jdk15on-152.jar"/>
+				<include name="bcpkix-jdk15on-152.jar"/>
 				<include name="neethi-3.0.2.jar"/>
 				<include name="opensaml-2.5.1-1.jar"/>
 				<include name="openws-1.4.2-1.jar"/>

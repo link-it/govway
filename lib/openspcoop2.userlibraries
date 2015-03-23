@@ -77,7 +77,8 @@
         <archive path="/op2_2.2.dev/lib/security/openws-1.4.2-1.jar"/>
         <archive path="/op2_2.2.dev/lib/security/opensaml-2.5.1-1.jar"/>
         <archive path="/op2_2.2.dev/lib/security/neethi-3.0.2.jar"/>
-        <archive path="/op2_2.2.dev/lib/security/bcprov-ext-jdk15on-147.jar"/>
+        <archive path="/op2_2.2.dev/lib/security/bcprov-ext-jdk15on-152.jar"/>
+	<archive path="/op2_2.2.dev/lib/security/bcpkix-jdk15on-152.jar"/>
 	<!-- shared -->
         <archive path="/op2_2.2.dev/lib/shared/xom-1.2.7.jar"/>
         <archive path="/op2_2.2.dev/lib/shared/xmldb.jar"/>

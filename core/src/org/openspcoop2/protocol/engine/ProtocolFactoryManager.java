@@ -71,6 +71,11 @@ public class ProtocolFactoryManager {
 		}
 		return ProtocolFactoryManager.protocolFactoryManager;
 	}
+	public static void updateLogger(Logger log){
+		if(ProtocolFactoryManager.protocolFactoryManager!=null){
+			ProtocolFactoryManager.protocolFactoryManager.log = log;
+		}
+	}
 	
 	
 	private MapReader<String, Openspcoop2> manifests = null;
