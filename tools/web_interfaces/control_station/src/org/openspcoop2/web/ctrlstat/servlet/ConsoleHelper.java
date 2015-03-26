@@ -100,10 +100,18 @@ public class ConsoleHelper {
 
 	protected HttpServletRequest request;
 	protected PageData pd;
+	public PageData getPd() {
+		return this.pd;
+	}
 	protected HttpSession session;
-
+	public HttpSession getSession() {
+		return this.session;
+	}
 	protected Password passwordManager;
 	protected ControlStationCore core = null;
+	public ControlStationCore getCore() {
+		return this.core;
+	}
 	protected PddCore pddCore = null;
 	protected SoggettiCore soggettiCore = null;
 	protected UtentiCore utentiCore = null;

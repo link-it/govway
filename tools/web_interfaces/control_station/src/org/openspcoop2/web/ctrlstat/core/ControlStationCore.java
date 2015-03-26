@@ -104,6 +104,11 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.gestori.GestorePdDInitThread;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedCoreServlet;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
+import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
@@ -546,6 +551,25 @@ public class ControlStationCore {
 		return this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 	}
 	
+	/** Opzioni per Plugins */
+	private IExtendedFormServlet pluginConfigurazione;
+	private IExtendedListServlet pluginPortaDelegata;
+	private IExtendedListServlet pluginPortaApplicativa;
+	private IExtendedFormServlet newIExtendedFormServlet(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		if(className!=null){
+			Class<?> c = Class.forName(className);
+			return (IExtendedFormServlet) c.newInstance();
+		}
+		return null;
+	}
+	private IExtendedListServlet newIExtendedListServlet(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		if(className!=null){
+			Class<?> c = Class.forName(className);
+			return (IExtendedListServlet) c.newInstance();
+		}
+		return null;
+	}
+	
 	/** Opzioni Accesso JMX della PdD */
 	private List<String> jmxPdD_aliases = new ArrayList<String>();
 	private Map<String, String> jmxPdD_descrizioni = new Hashtable<String, String>();
@@ -946,6 +970,11 @@ public class ControlStationCore {
 		this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = core.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 		this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = core.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 		
+		/** Opzioni per Plugins */
+		this.pluginConfigurazione = core.pluginConfigurazione;
+		this.pluginPortaDelegata = core.pluginPortaDelegata;
+		this.pluginPortaApplicativa = core.pluginPortaApplicativa;
+		
 		/** Opzioni Accesso JMX della PdD */
 		this.jmxPdD_aliases = core.jmxPdD_aliases;
 		this.jmxPdD_descrizioni = core.jmxPdD_descrizioni;
@@ -1150,6 +1179,10 @@ public class ControlStationCore {
 			this.visioneOggettiGlobale = consoleProperties.isVisibilitaOggettiGlobale();
 			this.utentiConVisioneGlobale.addAll(consoleProperties.getUtentiConVisibilitaGlobale());
 
+			/// Opzioni per Plugins
+			this.pluginConfigurazione = this.newIExtendedFormServlet(consoleProperties.getPlugins_Configurazione());
+			this.pluginPortaDelegata = this.newIExtendedListServlet(consoleProperties.getPlugins_PortaDelegata());
+			this.pluginPortaApplicativa = this.newIExtendedListServlet(consoleProperties.getPlugins_PortaApplicativa());
 
 		} catch (java.lang.Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::initCore] Impossibile leggere i dati dal file console.properties:" + e.toString(),e);
@@ -1437,7 +1470,7 @@ public class ControlStationCore {
 	 * @throws DriverRegistroServiziException
 	 * @throws ControlStationCoreException
 	 */
-	private <Type> void performOperation(int[] operationTypes, String superUser, boolean smista, Type... oggetti) throws DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverConfigurazioneException, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException {
+	private void performOperation(int[] operationTypes, String superUser, boolean smista, Object... oggetti) throws DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverConfigurazioneException, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException {
 		Connection con = null;
 		DriverControlStationDB driver = null;
 		boolean doSetDati = false;
@@ -1463,8 +1496,20 @@ public class ControlStationCore {
 			for (int i = 0; i < oggetti.length; i++) {
 				// prendo il tipo di operazione da effettuare su questo oggetto
 				int operationType = operationTypes[i];
-				Type oggetto = oggetti[i];
-
+				Object oggetto = oggetti[i];
+				
+				IExtendedBean extendedBean = null;
+				IExtendedCoreServlet extendedServlet = null;
+				if(oggetto instanceof WrapperExtendedBean){
+					WrapperExtendedBean w = (WrapperExtendedBean) oggetto;
+					if(w.isManageOriginalBean()){
+						oggetto = w.getOriginalBean();	
+					}
+					extendedBean = w.getExtendedBean();
+					extendedServlet = w.getExtendedServlet();
+				}
+				
+				
 				switch (operationType) {
 				case CostantiControlStation.PERFORM_OPERATION_CREATE:
 
@@ -1908,6 +1953,14 @@ public class ControlStationCore {
 						doSetDati = false;
 					}
 
+					
+					/***********************************************************
+					 * Extended *
+					 **********************************************************/
+					if(extendedBean!=null && extendedServlet!=null){
+						extendedServlet.performCreate(con, oggetto, extendedBean);
+					}
+					
 					break;
 
 				case CostantiControlStation.PERFORM_OPERATION_UPDATE:
@@ -2332,6 +2385,16 @@ public class ControlStationCore {
 						doSetDati = false;
 					}
 
+					
+					
+					/***********************************************************
+					 * Extended *
+					 **********************************************************/
+					if(extendedBean!=null && extendedServlet!=null){
+						extendedServlet.performUpdate(con, oggetto, extendedBean);
+					}
+					
+					
 					break;
 
 				case CostantiControlStation.PERFORM_OPERATION_DELETE:
@@ -2644,6 +2707,15 @@ public class ControlStationCore {
 						doSetDati = false;
 					}
 
+					
+					
+					/***********************************************************
+					 * Extended *
+					 **********************************************************/
+					if(extendedBean!=null && extendedServlet!=null){
+						extendedServlet.performDelete(con, oggetto, extendedBean);
+					}
+					
 					break;
 
 				default:
@@ -2807,7 +2879,7 @@ public class ControlStationCore {
 
 	}
 
-	public <Type> void performOperationMultiTypes(String superUser, boolean smista,int[] operationTypes,Type... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performOperationMultiTypes(String superUser, boolean smista,int[] operationTypes,Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		String nomeMetodo = "performOperationIbrido";
 		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performing operation on objects " + this.getClassNames(oggetti));
 		TipoOperazione[] tipoOperazione = new TipoOperazione[oggetti.length];
@@ -2846,7 +2918,7 @@ public class ControlStationCore {
 	 * Crea un nuovo oggetto nella pddConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
 	 */
-	public <Type> void performCreateOperation(String superUser, boolean smista, Type... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performCreateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		String nomeMetodo = "performCreateOperation";
 		String operationType = "CREATE";
 		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performing operation type [" + operationType + "] on objects " + this.getClassNames(oggetti));
@@ -2885,7 +2957,7 @@ public class ControlStationCore {
 	 * Aggiorna un oggetto nella pddConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
 	 */
-	public <Type> void performUpdateOperation(String superUser, boolean smista, Type... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performUpdateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		String nomeMetodo = "performUpdateOperation";
 		String operationType = "UPDATE";
 
@@ -2926,7 +2998,7 @@ public class ControlStationCore {
 	 * Cancella un oggetto nella pddConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
 	 */
-	public <Type> void performDeleteOperation(String superUser, boolean smista, Type... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
+	public void performDeleteOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		String nomeMetodo = "performDeleteOperation";
 		String operationType = "DELETE";
 
@@ -3143,13 +3215,24 @@ public class ControlStationCore {
 			ControlStationCore.log.info(msg);
 	}
 
-	public <Type> IDOperazione[] performAuditRequest(TipoOperazione[] operationTypes, String user, Type... obj) throws AuditDisabilitatoException{
+	public IDOperazione[] performAuditRequest(TipoOperazione[] operationTypes, String user, Object ... obj) throws AuditDisabilitatoException{
 
 		IDOperazione[] idOperazione = new IDOperazione[obj.length];
 		for (int i = 0; i < obj.length; i++) {
 			TipoOperazione tipoOperazione = operationTypes[i];
-			Type oggetto = obj[i];
+			Object oggetto = obj[i];
 
+			if(oggetto instanceof WrapperExtendedBean){
+				WrapperExtendedBean w = (WrapperExtendedBean) oggetto;
+				if(w.isManageOriginalBean()){
+					oggetto = w.getOriginalBean();	
+				}
+				// altrimenti viene gestito come IExtendedBean
+				else{
+					oggetto = w.getExtendedBean();
+				}
+			}
+			
 			String msg = null;
 			try{
 				msg = this.generaMsgAuditing(user, StatoOperazione.requesting, tipoOperazione, oggetto);
@@ -3294,11 +3377,11 @@ public class ControlStationCore {
 		}
 	}
 
-	public <Type> void performAuditComplete(IDOperazione[] idOperazione,TipoOperazione[] operationTypes,String user, Type... obj){
+	public void performAuditComplete(IDOperazione[] idOperazione,TipoOperazione[] operationTypes,String user, Object ... obj){
 
 		for (int i = 0; i < obj.length; i++) {
 			TipoOperazione tipoOperazione = operationTypes[i];
-			Type oggetto = obj[i];
+			Object oggetto = obj[i];
 
 			//loggo su file dell'interfaccia
 			String msg = null;
@@ -3589,6 +3672,13 @@ public class ControlStationCore {
 			msg+=":EliminazioneMessaggiBasatiSuFiltro<"+filtro.toString()+">";
 		}
 
+		// IExtendedBean
+		else if(oggetto instanceof IExtendedBean){
+			IExtendedBean w = (IExtendedBean) oggetto;
+			msg+=":"+w.getClass().getSimpleName();
+			msg+=":<"+w.getHumanId()+">";
+		}
+		
 		return msg;
 	}
 
@@ -3810,4 +3900,16 @@ public class ControlStationCore {
 		}
 	}
 
+	
+	public IExtendedFormServlet getExtendedServletConfigurazione(){
+		return this.pluginConfigurazione;
+	}
+	
+	public IExtendedListServlet getExtendedServletPortaDelegata(){
+		return this.pluginPortaDelegata;
+	}
+	
+	public IExtendedListServlet getExtendedServletPortaApplicativa(){
+		return this.pluginPortaApplicativa;
+	}
 }

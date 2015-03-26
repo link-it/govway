@@ -53,6 +53,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -1859,6 +1860,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO, this.session);
 
+			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaDelegata();
+			
 			String id = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			if(useIdSogg)
 				ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE,
@@ -1943,6 +1946,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			//}
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA); 
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_BR_RISPOSTA); 
+			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+				labelsList.add(extendedServletList.getListTitle());
+			}
 
 			String[] labels = labelsList.toArray(new String[labelsList.size()]);
 
@@ -2067,6 +2073,21 @@ public class PorteDelegateHelper extends ConsoleHelper {
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
 
+					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+						de = new DataElement();
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST,
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
+								);
+						if (contaListe) {
+							int numExtended = extendedServletList.sizeList(pd);
+							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+					}
+					
 					dati.addElement(e);
 				}
 			}

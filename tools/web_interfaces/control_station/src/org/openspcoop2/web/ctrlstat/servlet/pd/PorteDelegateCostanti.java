@@ -38,17 +38,23 @@ public class PorteDelegateCostanti {
 	/* OBJECT NAME */
 
 	public final static String OBJECT_NAME_PORTE_DELEGATE = "porteDelegate";
+	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY = "porteDelegateWS";
-	public final static String OBJECT_NAME_PORTE_DELEGATE_MTOM = "porteDelegateMTOM";
 	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY = ForwardParams.OTHER("");
-	public final static ForwardParams TIPO_OPERAZIONE_MTOM = ForwardParams.OTHER("");
 	public final static String OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = "porteDelegateWSRequest";
 	public final static String OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = "porteDelegateWSResponse";
-	public final static String OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST = "porteDelegateMTOMRequest";
-	public final static String OBJECT_NAME_PORTE_DELEGATE_MTOM_RESPONSE = "porteDelegateMTOMResponse";
+	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO = "porteDelegateServizioApplicativo";
+	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteDelegateCorrelazioneApplicativaRequest";
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteDelegateCorrelazioneApplicativaResponse";
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_MTOM = "porteDelegateMTOM";
+	public final static ForwardParams TIPO_OPERAZIONE_MTOM = ForwardParams.OTHER("");
+	public final static String OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST = "porteDelegateMTOMRequest";
+	public final static String OBJECT_NAME_PORTE_DELEGATE_MTOM_RESPONSE = "porteDelegateMTOMResponse";
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_EXTENDED = "porteDelegateExtended";
 
 
 	/* SERVLET NAME */
@@ -152,6 +158,20 @@ public class PorteDelegateCostanti {
 		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_MTOM_RESPONSE_DELETE);
 		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_MTOM_RESPONSE_LIST);
 	}
+	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_EXTENDED_ADD = OBJECT_NAME_PORTE_DELEGATE_EXTENDED+"Add.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_EXTENDED_CHANGE = OBJECT_NAME_PORTE_DELEGATE_EXTENDED+"Change.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_EXTENDED_DELETE = OBJECT_NAME_PORTE_DELEGATE_EXTENDED+"Del.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST = OBJECT_NAME_PORTE_DELEGATE_EXTENDED+"List.do";
+	public final static Vector<String> SERVLET_PORTE_DELEGATE_EXTENDED = new Vector<String>();
+	static{
+		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_EXTENDED_ADD);
+		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_EXTENDED_CHANGE);
+		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_EXTENDED_DELETE);
+		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST);
+	}
+	
+	
 
 	/* LABEL GENERALI */
 

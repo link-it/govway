@@ -977,7 +977,7 @@
             <forward name="porteDelegateCorrelazioneApplicativaResponseError" path="/jsplib/info.jsp"/>
         </action>
 
-<!--  Porte Delegate (MTOM) -->
+		<!--  Porte Delegate (MTOM) -->
 
         <action path="/porteDelegateMTOM" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateMTOM"
             scope="request" validate="true">
@@ -1039,6 +1039,33 @@
         	scope="request" validate="true">
             <forward name="porteDelegateMTOMResponseDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateMTOMResponseError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Delegate (Extended) -->
+
+        <action path="/porteDelegateExtendedAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateExtendedAdd" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateExtendedAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateExtendedAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateExtendedAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateExtendedList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateExtendedList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateExtendedList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateExtendedChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateExtendedChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateExtendedChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateExtendedChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateExtendedChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateExtendedDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateExtendedDel" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateExtendedDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateExtendedError" path="/jsplib/info.jsp"/>
         </action>
 
     
@@ -1239,10 +1266,8 @@
             <forward name="porteApplicativeProprietaProtocolloDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeProprietaProtocolloError" path="/jsplib/info.jsp"/>
         </action>
-
-    
-    
-    <!--  Porte Applicative (MTOM) -->
+  
+    	<!--  Porte Applicative (MTOM) -->
 
         <action path="/porteApplicativeMTOM" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeMTOM"
             scope="request" validate="true">
@@ -1305,7 +1330,33 @@
             <forward name="porteApplicativeMTOMResponseDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeMTOMResponseError" path="/jsplib/info.jsp"/>
         </action>
-    
+        
+        <!--  Porte Applicative (Extended) -->
+
+        <action path="/porteApplicativeExtendedAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeExtendedAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeExtendedAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeExtendedAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeExtendedAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeExtendedList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeExtendedList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeExtendedList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeExtendedChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeExtendedChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeExtendedChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeExtendedChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeExtendedChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeExtendedDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeExtendedDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeExtendedDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeExtendedError" path="/jsplib/info.jsp"/>
+        </action>   
     
     
     
@@ -1320,7 +1371,13 @@
             <forward name="configurazioneGeneraleCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="configurazioneGeneraleError" path="/jsplib/info.jsp"/>
         </action>
-    
+        <action path="/configurazioneGeneraleExtended" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneExtended" 
+     		scope="request" validate="true">
+            <forward name="configurazioneGeneraleExtendedForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleExtendedOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleExtendedCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleExtendedError" path="/jsplib/info.jsp"/>
+        </action>
     
     	<!--  Configurazione Diagnostici (Appender) -->
     

@@ -670,6 +670,22 @@ public class ConsoleProperties {
 	
 	
 	
+	/* ---- Plugins ------ */
+	
+	public String getPlugins_Configurazione() throws UtilsException{
+		return this.readProperty(false, "plugins.configurazione");
+	}
+	
+	public String getPlugins_PortaDelegata() throws UtilsException{
+		return this.readProperty(false, "plugins.portaDelegata");
+	}
+	
+	public String getPlugins_PortaApplicativa() throws UtilsException{
+		return this.readProperty(false, "plugins.portaApplicativa");
+	}
+	
+	
+	
 	/* ---- Gestione Visibilità utenti ------ */
 
 	public Boolean isVisibilitaOggettiGlobale() throws UtilsException{

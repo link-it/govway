@@ -56,6 +56,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
@@ -1265,6 +1266,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO , this.session);
 
+			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaApplicativa();
+			
 			String id = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 
 			if(useIdSogg)
@@ -1350,7 +1353,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 			if(this.core.isRegistroServiziLocale())
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
-
+			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+				listaLabel.add(extendedServletList.getListTitle());
+			}
+			
 			String[] labels = listaLabel.toArray(new String[listaLabel.size()]);
 			this.pd.setLabels(labels);
 
@@ -1532,6 +1538,20 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						e.addElement(de);
 					}
 
+					
+					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+						de = new DataElement();
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST,
+								pId,pIdNome,pIdPorta, pIdSogg
+								);
+						if (contaListe) {
+							int numExtended = extendedServletList.sizeList(this.pd);
+							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+					}
+					
 					dati.addElement(e);
 				}
 			}

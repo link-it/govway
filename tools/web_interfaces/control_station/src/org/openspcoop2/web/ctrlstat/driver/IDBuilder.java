@@ -52,6 +52,7 @@ import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 import org.openspcoop2.web.ctrlstat.dao.Ruolo;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
 import org.openspcoop2.web.lib.audit.dao.Operation;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -324,6 +325,19 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return id;
 				}
 			}
+			
+			
+			// IExtendedBean
+			else if(o instanceof IExtendedBean){
+				IExtendedBean w = (IExtendedBean) o;
+				if(this.prefix){
+					return "[ExtendedBean-"+w.getClass().getSimpleName()+"] "+ w.getHumanId();
+				}else{
+					return w.getHumanId();
+				}
+			}
+			
+			
 						
 		}catch(Exception e){
 			throw new IOException("Trasformazione non riuscita: "+e.getMessage(),e);
@@ -609,6 +623,12 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return null; // oggetto non modificabile nei dati identificativi
 			}
 			
+			
+			// IExtendedBean
+			else if(o instanceof IExtendedBean){
+				return null; // oggetto non modificabile nei dati identificativi
+			}
+			
 						
 		}catch(Exception e){
 			throw new IOException("Trasformazione non riuscita: "+e.getMessage(),e);
@@ -669,6 +689,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// Monitoraggio Applicativo
 			oggetti.add("EliminazioneMessaggiTramiteMonitoraggio");
 			
+			// IExtendedBean
+			oggetti.add("ExtendedBean");
+			
 		}
 		else{
 		
@@ -709,6 +732,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// Monitoraggio Applicativo
 			oggetti.add(FilterSearch.class.getName());
+			
+			// IExtendedBean
+			oggetti.add(IExtendedBean.class.getName());
 		}
 		
 		String[]tmp = new String[1];
@@ -749,6 +775,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 		}
 		else if(o instanceof FilterSearch){
 			return "EliminazioneMessaggiTramiteMonitoraggio";
+		}
+		else if(o instanceof IExtendedBean){
+			return "ExtendedBean-"+o.getClass().getSimpleName();
 		}
 		else{
 			return o.getClass().getSimpleName();

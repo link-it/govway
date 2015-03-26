@@ -22,6 +22,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -51,6 +52,10 @@ import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
+import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -58,6 +63,7 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -93,6 +99,8 @@ public final class ConfigurazioneGenerale extends Action {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
+			IExtendedFormServlet extendedServlet = confCore.getExtendedServletConfigurazione();
+			
 			User user = ServletUtils.getUserFromSession(session);
 
 			String inoltromin = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
@@ -117,6 +125,25 @@ public final class ConfigurazioneGenerale extends Action {
 			String confPers = confPersB ? "true" : "false";
 			Configurazione configurazione = confCore.getConfigurazioneGenerale();
 
+			IExtendedBean extendedBean = null;
+			DBManager dbManager = null;
+			Connection con = null;
+			try{
+				dbManager = DBManager.getInstance();
+				con = dbManager.getConnection();
+				extendedBean = extendedServlet.getExtendedBean(con, "SingleInstance");
+			}finally{
+				dbManager.releaseConnection(con);
+			}
+			
+			boolean extended = false;
+			boolean extendedToNewWindow = false;
+			if(extendedServlet!=null && extendedServlet.showExtendedInfoUpdate(request, session)){
+				extendedBean = extendedServlet.readHttpParameters(configurazione, extendedBean, request);
+				extended = true;
+				extendedToNewWindow = extendedServlet.extendedUpdateToNewWindow(request, session);
+			}
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 
@@ -131,8 +158,19 @@ public final class ConfigurazioneGenerale extends Action {
 			// Se idhid != null, modifico i dati della porta di dominio nel
 			// db
 			if (!ServletUtils.isEditModeInProgress(request)) {
+				
 				// Controlli sui campi immessi
 				boolean isOk = confHelper.configurazioneCheckData();
+				if (isOk) {
+					if(extended){
+						try{
+							extendedServlet.checkDati(TipoOperazione.CHANGE, confHelper, confCore, configurazione, extendedBean);
+						}catch(Exception e){
+							isOk = false;
+							pd.setMessage(e.getMessage());
+						}
+					}
+				}
 				if (!isOk) {
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();
@@ -145,6 +183,14 @@ public final class ConfigurazioneGenerale extends Action {
 							utilizzo, validman, gestman, registrazioneTracce, dump, xsd,
 							tipoValidazione, confPers, configurazione, dati);
 
+					if(extended){
+						if(extendedToNewWindow){
+							extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
+						}else{
+							extendedServlet.addToDati(dati, confHelper, confCore, configurazione, extendedBean);
+						}
+					}
+					
 					pd.setDati(dati);
 
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -255,13 +301,30 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.setValidazioneContenutiApplicativi(vca);
 				}
 				
-				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
+				
+				if(extended){
+					WrapperExtendedBean wrapperExtendedBean = new WrapperExtendedBean();
+					wrapperExtendedBean.setExtendedBean(extendedBean);
+					wrapperExtendedBean.setExtendedServlet(extendedServlet);
+					wrapperExtendedBean.setOriginalBean(newConfigurazione);
+					confCore.performUpdateOperation(userLogin, confHelper.smista(), wrapperExtendedBean);
+				}
+				else{
+					confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
+				}
 
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 						connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
+				if(extended){
+					if(extendedToNewWindow){
+						extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, newConfigurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
+					}else{
+						extendedServlet.addToDati(dati, confHelper, confCore, newConfigurazione, extendedBean);
+					}
+				}
 
 				pd.setDati(dati);
 
@@ -330,6 +393,13 @@ public final class ConfigurazioneGenerale extends Action {
 			dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 					connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
+			if(extended){
+				if(extendedToNewWindow){
+					extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
+				}else{
+					extendedServlet.addToDati(dati, confHelper, confCore, configurazione, extendedBean);
+				}
+			}
 
 			pd.setDati(dati);
 

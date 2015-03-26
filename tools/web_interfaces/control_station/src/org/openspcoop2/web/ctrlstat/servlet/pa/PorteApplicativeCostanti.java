@@ -38,19 +38,25 @@ public class PorteApplicativeCostanti {
 	/* OBJECT NAME */
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE = "porteApplicative";
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY = "porteApplicativeWS";
 	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY = ForwardParams.OTHER("");
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "porteApplicativeWSRequest";
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "porteApplicativeWSResponse";
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "porteApplicativeServizioApplicativo";
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteApplicativeCorrelazioneApplicativaRequest";
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteApplicativeCorrelazioneApplicativaResponse";
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO = "porteApplicativeProprietaProtocollo";
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MTOM = "porteApplicativeMTOM";
 	public final static ForwardParams TIPO_OPERAZIONE_MTOM = ForwardParams.OTHER("");
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MTOM_REQUEST = "porteApplicativeMTOMRequest";
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE = "porteApplicativeMTOMResponse";
+	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED = "porteApplicativeExtended";
 	
 	
 	/* SERVLET NAME */
@@ -164,6 +170,18 @@ public class PorteApplicativeCostanti {
 		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_CHANGE);
 		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_DELETE);
 		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_LIST);
+	}
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_ADD = OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"Add.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"Change.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"Del.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST = OBJECT_NAME_PORTE_APPLICATIVE_EXTENDED+"List.do";
+	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_EXTENDED = new Vector<String>();
+	static{
+		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_ADD);
+		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_CHANGE);
+		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_DELETE);
+		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST);
 	}
 	
 	

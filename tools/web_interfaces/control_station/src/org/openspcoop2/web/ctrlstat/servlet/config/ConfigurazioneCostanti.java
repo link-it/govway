@@ -41,6 +41,9 @@ public class ConfigurazioneCostanti {
 	public final static String OBJECT_NAME_CONFIGURAZIONE_GENERALE = "configurazioneGenerale";
 	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE_GENERALE = ForwardParams.OTHER("");
 	
+	public final static String OBJECT_NAME_CONFIGURAZIONE_GENERALE_EXTENDED = "configurazioneGeneraleExtended";
+	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE_GENERALE_EXTENDED = ForwardParams.OTHER("");
+	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER = "configurazioneDiagnosticaAppender";
 	public final static String OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES = "configurazioneDiagnosticaAppenderProperties";
 	
@@ -70,9 +73,11 @@ public class ConfigurazioneCostanti {
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_CONFIGURAZIONE_GENERALE = OBJECT_NAME_CONFIGURAZIONE_GENERALE+".do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED = OBJECT_NAME_CONFIGURAZIONE_GENERALE_EXTENDED+".do";
 	public final static Vector<String> SERVLET_CONFIGURAZIONE_GENERALE = new Vector<String>();
 	static{
 		SERVLET_CONFIGURAZIONE_GENERALE.add(SERVLET_NAME_CONFIGURAZIONE_GENERALE);
+		SERVLET_CONFIGURAZIONE_GENERALE.add(SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
 	}
 	
 	public final static String SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_ADD = OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER+"Add.do";
