@@ -39,8 +39,8 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
  * HttpServletConnectorInMessage
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10576 $, $Date: 2015-02-03 14:57:58 +0100 (Tue, 03 Feb 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ApiServletConnectorInMessage extends HttpServletConnectorInMessage {
 

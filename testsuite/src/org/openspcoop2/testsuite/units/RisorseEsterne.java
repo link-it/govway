@@ -50,8 +50,8 @@ import org.testng.annotations.Test;
  * Controlla che le risorse sia state rilasciate correttamente, e i log non possiedano keyword non trasformate
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10489 $, $Date: 2015-01-13 10:15:51 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RisorseEsterne {
 

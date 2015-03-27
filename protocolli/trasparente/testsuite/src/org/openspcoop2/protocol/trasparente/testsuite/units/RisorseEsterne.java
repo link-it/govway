@@ -32,8 +32,8 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
  * Controlla che le risorse sia state rilasciate correttamente, e i log non possiedano keyword non trasformate
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10646 $, $Date: 2015-02-17 17:26:58 +0100 (Tue, 17 Feb 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RisorseEsterne extends org.openspcoop2.testsuite.units.RisorseEsterne {
 

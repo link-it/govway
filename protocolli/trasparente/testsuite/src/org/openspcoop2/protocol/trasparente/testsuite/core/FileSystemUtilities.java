@@ -32,8 +32,8 @@ import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
  * Utilities per verifica log su file system
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10489 $, $Date: 2015-01-13 10:15:51 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class FileSystemUtilities {

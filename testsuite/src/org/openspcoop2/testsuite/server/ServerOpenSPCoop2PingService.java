@@ -40,8 +40,8 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
  * Server PingService
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10489 $, $Date: 2015-01-13 10:15:51 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 @SuppressWarnings("serial")

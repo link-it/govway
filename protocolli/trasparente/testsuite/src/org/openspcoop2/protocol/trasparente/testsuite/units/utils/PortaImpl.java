@@ -30,8 +30,8 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
  * Test sui profili di collaborazione implementati nella Porta di Dominio
  * 
  * @author Giovanni Bussu (bussu@link.it)
- * @author $Author: gbussu $
- * @version $Rev: 10489 $, $Date: 2015-01-13 10:15:51 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class PortaImpl {
 
