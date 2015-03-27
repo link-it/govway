@@ -52,5 +52,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.2_lib_stub"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.2_lib_jboss6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.2_lib_faces"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
