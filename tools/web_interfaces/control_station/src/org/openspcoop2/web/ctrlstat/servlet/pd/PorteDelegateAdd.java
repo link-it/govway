@@ -342,11 +342,6 @@ public final class PorteDelegateAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				Configurazione configGenerale = null;
-				if(porteDelegateCore.isSinglePdD()){
-					configGenerale = porteDelegateCore.getConfigurazioneGenerale();
-				}
-
 				if (nomePD == null) {
 					nomePD = "";
 				}
@@ -372,10 +367,7 @@ public final class PorteDelegateAdd extends Action {
 					gestBody =  PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_NONE;
 				}
 				if (gestManifest == null) {
-					if(configGenerale!=null && configGenerale.getAttachments()!=null && configGenerale.getAttachments().getGestioneManifest()!=null)
-						gestManifest = configGenerale.getAttachments().getGestioneManifest().toString();
-					else
-						gestManifest = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO;
+					gestManifest = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DEFAULT;
 				}
 				if (ricsim == null) {
 					ricsim =  PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_ABILITATO;
@@ -521,7 +513,8 @@ public final class PorteDelegateAdd extends Action {
 				portaDelegata.setScartaBody(StatoFunzionalita.toEnumConstant(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_ABILITATO));
 			else
 				portaDelegata.setScartaBody(StatoFunzionalita.toEnumConstant(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_DISABILITATO));
-			portaDelegata.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
+			if (gestManifest !=null && !gestManifest.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT))
+				portaDelegata.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
 			portaDelegata.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			portaDelegata.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
 			portaDelegata.setLocalForward(StatoFunzionalita.toEnumConstant(localForward));

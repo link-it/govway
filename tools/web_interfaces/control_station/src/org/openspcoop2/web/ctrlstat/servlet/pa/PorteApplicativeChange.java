@@ -731,7 +731,10 @@ public final class PorteApplicativeChange extends Action {
 				pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO));
 			else
 				pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-			pa.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
+			if (gestManifest!=null && gestManifest.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT))
+				pa.setGestioneManifest(null);
+			else
+				pa.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
 			pa.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			pa.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
 			if (idSoggettoVirtuale!=null) {

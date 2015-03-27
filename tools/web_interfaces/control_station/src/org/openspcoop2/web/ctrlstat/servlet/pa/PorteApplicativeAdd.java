@@ -303,11 +303,6 @@ public final class PorteApplicativeAdd extends Action {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-				Configurazione configGenerale = null;
-				if(porteApplicativeCore.isSinglePdD()){
-					configGenerale = porteApplicativeCore.getConfigurazioneGenerale();
-				}
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
 
@@ -335,12 +330,11 @@ public final class PorteApplicativeAdd extends Action {
 				if (applicaMTOM == null) {
 					applicaMTOM = "";
 				}
-				
+				if (stateless == null) {
+					stateless = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT;
+				}
 				if (gestManifest == null) {
-					if(configGenerale!=null && configGenerale.getAttachments()!=null && configGenerale.getAttachments().getGestioneManifest()!=null)
-						gestManifest = configGenerale.getAttachments().getGestioneManifest().toString();
-					else
-						gestManifest = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO;
+					gestManifest = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT;
 				}
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
@@ -410,7 +404,8 @@ public final class PorteApplicativeAdd extends Action {
 				pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO));
 			else
 				pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-			pa.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
+			if (gestManifest!=null && !gestManifest.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT))
+				pa.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
 			pa.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			pa.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
 			if ( (!soggvirt.equals("")) && (!soggvirt.equals("-")) ){

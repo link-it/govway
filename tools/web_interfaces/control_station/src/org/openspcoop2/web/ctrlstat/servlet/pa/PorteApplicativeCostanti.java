@@ -335,6 +335,7 @@ public class PorteApplicativeCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_SCARTA = "scarta";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT = "default";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
      

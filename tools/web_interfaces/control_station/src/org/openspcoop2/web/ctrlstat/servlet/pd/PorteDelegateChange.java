@@ -950,7 +950,10 @@ public final class PorteDelegateChange extends Action {
 				portaDelegata.setScartaBody(StatoFunzionalita.toEnumConstant(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_ABILITATO));
 			else
 				portaDelegata.setScartaBody(StatoFunzionalita.toEnumConstant(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_DISABILITATO));
-			portaDelegata.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
+			if (gestManifest!=null && gestManifest.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT))
+				portaDelegata.setGestioneManifest(null);
+			else
+				portaDelegata.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
 			portaDelegata.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			portaDelegata.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
 			portaDelegata.setLocalForward(StatoFunzionalita.toEnumConstant(localForward));

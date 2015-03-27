@@ -1,3 +1,11 @@
+2015-03-27  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+        Risolto Bug #314
+	GestioneManifest: visualizzazione errata durante la modifica di una PortaDelegata o PortaApplicativa
+	E' stata aggiunta la voce 'default' tra le opzioni possibili selezionabili sulla PD/PA durante la creazione o modifica,
+	allo scopo di indicare che viene utilizzata l'indicazione registrata nella configurazione generale.
+
 2015-03-23  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
