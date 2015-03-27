@@ -30,6 +30,13 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+/**
+ * PortaApplicativaNonAutenticato
+ * 
+ * @author Andreea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	/* TEST ONE WAY */

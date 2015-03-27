@@ -30,6 +30,13 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+/**
+ * PortaDelegataLocalForward
+ * 
+ * @author Andreea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class PortaDelegataLocalForward extends PortaImpl {
 	/* TEST ONE WAY LOCAL_FORWARD */
 	

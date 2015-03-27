@@ -33,6 +33,13 @@ import org.openspcoop2.testsuite.units.UnitsTestSuiteProperties;
 import org.testng.Assert;
 import org.testng.Reporter;
 
+/**
+ * CooperazioneTrasparenteBase
+ * 
+ * @author Andreea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class CooperazioneTrasparenteBase extends CooperazioneBase {
 
 	public CooperazioneTrasparenteBase(boolean soapWithAttachments, boolean portaDelegata,

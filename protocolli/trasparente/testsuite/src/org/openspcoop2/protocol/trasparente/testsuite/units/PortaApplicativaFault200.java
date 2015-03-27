@@ -30,6 +30,13 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+/**
+ * PortaApplicativaFault200
+ * 
+ * @author Andreea Poli (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class PortaApplicativaFault200 extends PortaImpl {
 	/* TEST ONE WAY FAULT.200 */
 	
