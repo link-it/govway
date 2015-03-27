@@ -27,7 +27,8 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.resources.InstanceProperties;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiUtilities;
+import org.openspcoop2.web.ctrlstat.costanti.TipoProperties;
 
 /**
 * BackwardCompatibilityInstanceProperties
@@ -39,8 +40,11 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 
 class RegistroServiziRemotoInstanceProperties extends InstanceProperties {
 
-	RegistroServiziRemotoInstanceProperties(Properties reader,Logger log,String confDir) throws Exception{
+	RegistroServiziRemotoInstanceProperties(Properties reader,Logger log,String confDir, String confPropertyName, String confLocalPathPrefix) throws Exception{
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,reader, log);
-		super.setLocalFileImplementation(CostantiControlStation.OPENSPCOOP2_REGISTRO_SERVIZI_REMOTO_PROPERTIES, CostantiControlStation.OPENSPCOOP2_REGISTRO_SERVIZI_REMOTO_LOCAL_PATH, confDir);
+		super.setLocalFileImplementation(
+				CostantiUtilities.get_PROPERTY_NAME(TipoProperties.REGISTRO, confPropertyName), 
+				CostantiUtilities.get_LOCAL_PATH(TipoProperties.REGISTRO, confLocalPathPrefix), 
+				confDir);
 	}
 }

@@ -66,7 +66,7 @@ public class ConsoleProperties {
 	 *
 	 * 
 	 */
-	public ConsoleProperties(String confDir,Logger log) throws Exception {
+	public ConsoleProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
 
 		if(log!=null)
 			this.log = log;
@@ -92,7 +92,7 @@ public class ConsoleProperties {
 		    }catch(Exception er){}
 		}
 
-		this.reader = new ConsoleInstanceProperties(propertiesReader, this.log, confDir);
+		this.reader = new ConsoleInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
 	}
 
 
@@ -101,10 +101,10 @@ public class ConsoleProperties {
 	 *
 	 * 
 	 */
-	public static boolean initialize(String confDir,Logger log){
+	public static boolean initialize(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log){
 
 		try {
-		    ConsoleProperties.consoleProperties = new ConsoleProperties(confDir,log);	
+		    ConsoleProperties.consoleProperties = new ConsoleProperties(confDir,confPropertyName,confLocalPathPrefix,log);	
 		    return true;
 		}
 		catch(Exception e) {

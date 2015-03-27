@@ -1,5 +1,23 @@
 2015-03-27  Andrea Poli <apoli@link.it>
 
+        * [PddConsole]
+	Aggiunta funzionalità #313
+	Configurazioni esterne per piu' pddConsole in deploy sullo stesso application server.
+	Sono state aggiunte le seguenti proprieta' nel file console.properties:
+	1) confLocalPathPrefix
+	Permette di indicare il prefisso utilizzato dalla console per cercare i files di configurazione esterna. 
+	Normalmente tali file possiedono i nomi console_local.properties, console_local.log4j.properties, 
+		console_local.datasource.properties, console_local.registroServiziRemoto.properties
+	Se viene configurata la proprieta 'confLocalPathPrefix', il suo valore viene utilizzato al posto del prefisso 'console'. 
+	2) confPropertyName
+	Permette in maniera simile alla configurazione precedente, di modificare la variabile java o di sistema 
+	utilizzata dalla console durante il processo di inizializzazione delle risorse. 
+	Normalmente le variabili cercate sono OPENSPCOOP2_CONSOLE_PROPERTIES, OPENSPCOOP2_CONSOLE_DATASOURCE_PROPERTIES,
+		OPENSPCOOP2_CONSOLE_REGISTRO_SERVIZI_REMOTO_PROPERTIES, OPENSPCOOP2_CONSOLE_LOG_PROPERTIES
+	Se viene configurata la proprieta 'confPropertyName', il suo valore viene utilizzato al posto del nome 'CONSOLE'.	
+
+2015-03-27  Andrea Poli <apoli@link.it>
+
 	* [PddConsole]
         Risolto Bug #314
 	GestioneManifest: visualizzazione errata durante la modifica di una PortaDelegata o PortaApplicativa

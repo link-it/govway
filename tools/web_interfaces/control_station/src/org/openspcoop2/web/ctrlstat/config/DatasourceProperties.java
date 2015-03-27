@@ -63,7 +63,7 @@ public class DatasourceProperties {
 	 *
 	 * 
 	 */
-	public DatasourceProperties(String confDir,Logger log) throws Exception {
+	public DatasourceProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
 
 		if(log!=null)
 			this.log = log;
@@ -89,7 +89,7 @@ public class DatasourceProperties {
 		    }catch(Exception er){}
 		}
 
-		this.reader = new DatasourceInstanceProperties(propertiesReader, this.log, confDir);
+		this.reader = new DatasourceInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
 	}
 
 
@@ -98,10 +98,10 @@ public class DatasourceProperties {
 	 *
 	 * 
 	 */
-	public static boolean initialize(String confDir,Logger log){
+	public static boolean initialize(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log){
 
 		try {
-		    DatasourceProperties.datasourceProperties = new DatasourceProperties(confDir,log);	
+		    DatasourceProperties.datasourceProperties = new DatasourceProperties(confDir,confPropertyName,confLocalPathPrefix,log);	
 		    return true;
 		}
 		catch(Exception e) {

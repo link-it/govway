@@ -31,6 +31,8 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiUtilities;
+import org.openspcoop2.web.ctrlstat.costanti.TipoProperties;
 
 /**
  * ControlStationLogger
@@ -41,7 +43,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
  */
 public class ControlStationLogger {
 
-	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException{
+	public static void initialize(Logger logConsole,String rootDirectory, String confPropertyName, String confLocalPathPrefix,Properties objectProperties) throws IOException{
 
 		// Originale
 		java.util.Properties loggerProperties = new java.util.Properties();
@@ -68,7 +70,10 @@ public class ControlStationLogger {
 
 		// File Local Implementation
 		java.util.Properties loggerPropertiesRidefinito =  
-				PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole, CostantiControlStation.OPENSPCOOP2_LOGGER_PROPERTIES, CostantiControlStation.OPENSPCOOP2_LOGGER_LOCAL_PATH, rootDirectory);
+				PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole,
+						CostantiUtilities.get_PROPERTY_NAME(TipoProperties.LOGGER, confPropertyName),
+						CostantiUtilities.get_LOCAL_PATH(TipoProperties.LOGGER, confLocalPathPrefix),
+						rootDirectory);
 		if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
 			Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
 			while (ridefinito.hasMoreElements()) {

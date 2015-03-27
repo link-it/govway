@@ -33,18 +33,24 @@ package org.openspcoop2.web.ctrlstat.costanti;
  * 
  */
 public class CostantiControlStation {
-
-    public final static String OPENSPCOOP2_CONSOLE_LOCAL_PATH = "console_local.properties";
-    public final static String OPENSPCOOP2_CONSOLE_PROPERTIES = "OPENSPCOOP2_CONSOLE_PROPERTIES";
-    
-    public final static String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "console_local.datasource.properties";
-    public final static String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_CONSOLE_DATASOURCE_PROPERTIES";
-    
-    public final static String OPENSPCOOP2_REGISTRO_SERVIZI_REMOTO_LOCAL_PATH = "console_local.registroServiziRemoto.properties";
-    public final static String OPENSPCOOP2_REGISTRO_SERVIZI_REMOTO_PROPERTIES = "OPENSPCOOP2_CONSOLE_REGISTRO_SERVIZI_REMOTO_PROPERTIES";
 	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "console_local.log4j.properties";
-    public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_CONSOLE_LOG_PROPERTIES";
+	public final static String DEFAULT_OPENSPCOOP2_PREFIX_LOCAL_PATH = "console";
+	public final static String DEFAULT_OPENSPCOOP2_PROPERTIES_NAME = "CONSOLE";
+	
+	public final static String OPENSPCOOP2_PREFIX_LOCAL_PATH = "PREFIXNAMETEMPLATE";
+	public final static String OPENSPCOOP2_PROPERTIES_NAME = "NAMETEMPLATE";
+	
+    public final static String _OPENSPCOOP2_CONSOLE_LOCAL_PATH = OPENSPCOOP2_PREFIX_LOCAL_PATH+"_local.properties";
+    public final static String _OPENSPCOOP2_CONSOLE_PROPERTIES = "OPENSPCOOP2_"+OPENSPCOOP2_PROPERTIES_NAME+"_PROPERTIES";
+    
+    public final static String _OPENSPCOOP2_DATASOURCE_LOCAL_PATH = OPENSPCOOP2_PREFIX_LOCAL_PATH+"_local.datasource.properties";
+    public final static String _OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_"+OPENSPCOOP2_PROPERTIES_NAME+"_DATASOURCE_PROPERTIES";
+    
+    public final static String _OPENSPCOOP2_REGISTRO_SERVIZI_REMOTO_LOCAL_PATH = OPENSPCOOP2_PREFIX_LOCAL_PATH+"_local.registroServiziRemoto.properties";
+    public final static String _OPENSPCOOP2_REGISTRO_SERVIZI_REMOTO_PROPERTIES = "OPENSPCOOP2_"+OPENSPCOOP2_PROPERTIES_NAME+"_REGISTRO_SERVIZI_REMOTO_PROPERTIES";
+	
+    public final static String _OPENSPCOOP2_LOGGER_LOCAL_PATH = OPENSPCOOP2_PREFIX_LOCAL_PATH+"_local.log4j.properties";
+    public final static String _OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_"+OPENSPCOOP2_PROPERTIES_NAME+"_LOG_PROPERTIES";
     
 	/** Logger */
 	public static final String DRIVER_DB_PDD_CONSOLE_LOGGER = "DRIVER_DB_PDD_CONSOLE";

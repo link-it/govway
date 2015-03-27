@@ -83,15 +83,28 @@ public class InitListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent sce) {
 		
 		String confDir = null;
+		String confPropertyName = null;
+		String confLocalPathPrefix = null;
 		try{
 			InputStream is = InitListener.class.getResourceAsStream("/console.properties");
 			try{
 				if(is!=null){
 					Properties p = new Properties();
 					p.load(is);
+					
 					confDir = p.getProperty("confDirectory");
 					if(confDir!=null){
 						confDir = confDir.trim();
+					}
+					
+					confPropertyName = p.getProperty("confPropertyName");
+					if(confPropertyName!=null){
+						confPropertyName = confPropertyName.trim();
+					}
+					
+					confLocalPathPrefix = p.getProperty("confLocalPathPrefix");
+					if(confLocalPathPrefix!=null){
+						confLocalPathPrefix = confLocalPathPrefix.trim();
 					}
 				}
 			}finally{
@@ -103,10 +116,9 @@ public class InitListener implements ServletContextListener {
 			}
 
 		}catch(Exception e){}
-		
-		
+				
 		try{
-			ControlStationLogger.initialize(InitListener.log, confDir, null);
+			ControlStationLogger.initialize(InitListener.log, confDir, confPropertyName, confLocalPathPrefix, null);
 			InitListener.log = ControlStationLogger.getPddConsoleCoreLogger();
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
@@ -117,17 +129,17 @@ public class InitListener implements ServletContextListener {
 		ConsoleProperties consoleProperties = null;
 		try{
 		
-			if(ConsoleProperties.initialize(confDir,InitListener.log)==false){
+			if(ConsoleProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)==false){
 				throw new Exception("ConsoleProperties not initialized");
 			}
 			consoleProperties = ConsoleProperties.getInstance();
 			
-			if(DatasourceProperties.initialize(confDir,InitListener.log)==false){
+			if(DatasourceProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)==false){
 				throw new Exception("DatasourceProperties not initialized");
 			}
 			
 			if(consoleProperties.isSinglePdD_RegistroServiziLocale()==false){
-				if(RegistroServiziRemotoProperties.initialize(confDir,InitListener.log)==false){
+				if(RegistroServiziRemotoProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)==false){
 					throw new Exception("RegistroServiziRemotoProperties not initialized");
 				}
 			}

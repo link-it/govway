@@ -64,7 +64,7 @@ public class RegistroServiziRemotoProperties {
 	 *
 	 * 
 	 */
-	public RegistroServiziRemotoProperties(String confDir,Logger log) throws Exception {
+	public RegistroServiziRemotoProperties(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log) throws Exception {
 
 		if(log!=null)
 			this.log = log;
@@ -90,7 +90,7 @@ public class RegistroServiziRemotoProperties {
 		    }catch(Exception er){}
 		}
 
-		this.reader = new RegistroServiziRemotoInstanceProperties(propertiesReader, this.log, confDir);
+		this.reader = new RegistroServiziRemotoInstanceProperties(propertiesReader, this.log, confDir,confPropertyName,confLocalPathPrefix);
 	}
 
 
@@ -99,10 +99,10 @@ public class RegistroServiziRemotoProperties {
 	 *
 	 * 
 	 */
-	public static boolean initialize(String confDir,Logger log){
+	public static boolean initialize(String confDir, String confPropertyName, String confLocalPathPrefix,Logger log){
 
 		try {
-		    RegistroServiziRemotoProperties.registroServiziRemotoProperties = new RegistroServiziRemotoProperties(confDir,log);	
+		    RegistroServiziRemotoProperties.registroServiziRemotoProperties = new RegistroServiziRemotoProperties(confDir,confPropertyName,confLocalPathPrefix,log);	
 		    return true;
 		}
 		catch(Exception e) {
