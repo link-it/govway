@@ -65,12 +65,6 @@
         <archive path="/op2_2.2.dev/lib/log/slf4j-jdk14-1.6.2.jar"/>
         <archive path="/op2_2.2.dev/lib/log/slf4j-api-1.6.2.jar"/>
         <archive path="/op2_2.2.dev/lib/log/log4j-1.2.16.jar"/>
-	<!-- faces -->
-        <archive path="/op2_2.2.dev/lib/faces/richfaces-api-3.3.4.Final.jar"/>
-        <archive path="/op2_2.2.dev/lib/faces/richfaces-impl-3.3.4.Final.jar"/>
-        <archive path="/op2_2.2.dev/lib/faces/richfaces-impl-jsf2-3.3.4.Final.jar"/>
-        <archive path="/op2_2.2.dev/lib/faces/richfaces-ui-3.3.4.Final.jar"/>
-	<archive path="/op2_2.2.dev/lib/faces/javax.faces-2.2.3.jar"/>
 	<!-- security -->
         <archive path="/op2_2.2.dev/lib/security/xmlsec-1.5.4.jar"/>
         <archive path="/op2_2.2.dev/lib/security/wss4j-1.6.10.jar"/>
@@ -142,6 +136,21 @@
 	<archive path="/op2_2.2.dev/lib/axiom/axiom-common-impl-1.2.13.jar"/>
 	<archive path="/op2_2.2.dev/lib/axiom/axiom-dom-1.2.13.jar"/>
 	<archive path="/op2_2.2.dev/lib/axiom/axiom-impl-1.2.13.jar"/>
+    </library>
+    <library name="openspcoop2_2.2_lib_faces" systemlibrary="false">
+        <archive path="/op2_2.2.dev/lib/faces/richfaces-api-3.3.4.Final.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces/richfaces-impl-3.3.4.Final.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces/richfaces-impl-jsf2-3.3.4.Final.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces/richfaces-ui-3.3.4.Final.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces/javax.faces-2.2.3.jar"/>
+    </library>
+    <library name="openspcoop2_2.2_lib_faces2" systemlibrary="false">
+        <archive path="/op2_2.2.dev/lib/faces2/all-themes-1.0.10.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces2/javax.servlet-api-3.0.1.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces2/jsf-api-2.2.9.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces2/jsf-impl-2.2.9.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces2/primefaces-5.1.jar"/>
+        <archive path="/op2_2.2.dev/lib/faces2/primefaces-extensions-3.0.0.jar"/>
     </library>
     <library name="openspcoop2_2.2_lib_jboss4" systemlibrary="false">
         <archive path="/op2_2.2.dev/lib/jbossas/jboss4/jbossall-client.jar"/>
