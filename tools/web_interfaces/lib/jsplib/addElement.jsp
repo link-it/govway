@@ -67,8 +67,10 @@ var path = '<%= request.getContextPath()%>';
 <style type="text/css">@import url(images/ui.core.css);</style>
 <style type="text/css">@import url(images/ui.theme.css);</style>
 <style type="text/css">@import url(images/ui.spinner.css);</style>
+<style type="text/css">@import url(images/ui.slider.css);</style>
 <script type="text/javascript" src="js/ui.core.js"></script>
 <script type="text/javascript" src="js/ui.spinner.min.js"></script>
+<script type="text/javascript" src="js/ui.slider.js"></script>
 <script>
 var nr = 0;
 function CheckDati() {
@@ -94,6 +96,8 @@ function CheckDati() {
                 }	
                 
                 $("input[name=versione]:not([type=hidden])").spinner({min:minvalue,max:999});
+
+				showSlider($("select[name^='percentuale']:not([type=hidden])"));
         });
 </script>
 

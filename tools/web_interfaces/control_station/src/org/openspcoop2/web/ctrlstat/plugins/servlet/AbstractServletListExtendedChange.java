@@ -128,7 +128,7 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 				
 				this.addToHiddenDati(dati,consoleHelper,request);
 				
-				extendedServlet.addToDati(dati, consoleHelper, consoleCore, object, extendedBean);
+				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
 				pd.setDati(dati);
 
@@ -170,7 +170,7 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 				
 				this.addToHiddenDati(dati,consoleHelper,request);
 				
-				extendedServlet.addToDati(dati, consoleHelper, consoleCore, object, extendedBean);
+				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
 				pd.setDati(dati);
 

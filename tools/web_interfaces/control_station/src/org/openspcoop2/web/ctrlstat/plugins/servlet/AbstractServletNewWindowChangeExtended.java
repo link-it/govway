@@ -139,7 +139,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					extendedServlet.addToDati(dati, consoleHelper, consoleCore, object, extendedBean);
+					extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 					
 					pd.setDati(dati);
 					
@@ -159,11 +159,13 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 				Vector<DataElement> dati = new Vector<DataElement>();
 
-				extendedServlet.addToDati(dati, consoleHelper, consoleCore, object, extendedBean);
+				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
 				pd.setDati(dati);
 				
 				pd.setMessage(extendedServlet.getTestoModificaEffettuata());
+				
+				pd.disableEditMode();
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -179,7 +181,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-			extendedServlet.addToDati(dati, consoleHelper, consoleCore, object, extendedBean);
+			extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 			
 			pd.setDati(dati);
 

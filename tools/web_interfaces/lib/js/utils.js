@@ -56,3 +56,41 @@
 	}
 	
  });
+
+function showSlider(select){ 
+        if(select.length > 0) {
+                 var td = select.closest('td').prev('td'); 
+                 setPercentuale(td,select[0].selectedIndex + 1 );
+                 var slider = $( "<div id='slider'></div>" ).insertAfter( select ).slider({
+                      min: 1, max: 100, range: "min", value: select[ 0 ].selectedIndex + 1,
+                      slide: function( event, ui ) {
+                                 var td = select.closest('td').prev('td');                                       
+                                 select[ 0 ].selectedIndex = ui.value - 1 ;
+                                 setPercentuale(td,select[0].selectedIndex + 1);
+                        },
+                      change: function( event, ui ) {
+                                return postBack(select[0].name);
+                        }
+                });
+                                
+                select.change(function() {
+                        slider.slider( "value", this.selectedIndex +1);
+                });
+
+                select.hide();
+        }
+}
+
+function setPercentuale(td,value){
+        var tdText = td.text();
+        var idxSx = tdText.indexOf('(');
+        var idxDx = tdText.indexOf(')');
+               
+         if(idxSx > -1 && idxDx > -1){
+                var base = tdText.substring(0,idxSx +1 );
+                var fine = tdText.substring(idxDx-1);
+                var newText = base + value + fine;
+                td.text(newText);
+        }
+}
+

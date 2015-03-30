@@ -18,7 +18,7 @@ public interface IExtendedFormServlet extends IExtendedCoreServlet {
 		
 	public String getFormTitle();
 	
-	public void addToDati(Vector<DataElement> dati,ConsoleHelper consoleHelper, ControlStationCore core, 
+	public void addToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	
 	// metodi utilizzati solo se extendedUpdateToNewWindow() == 'true'

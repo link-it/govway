@@ -20,7 +20,7 @@ public interface IExtendedListServlet extends IExtendedCoreServlet {
 	public String getFormItemTitle(IExtendedBean extendedBean);
 	public String getListTitle();
 	
-	public void addToDati(Vector<DataElement> dati,ConsoleHelper consoleHelper, ControlStationCore core, 
+	public void addToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	public void checkDati(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;

@@ -187,7 +187,7 @@ public final class ConfigurazioneGenerale extends Action {
 						if(extendedToNewWindow){
 							extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
 						}else{
-							extendedServlet.addToDati(dati, confHelper, confCore, configurazione, extendedBean);
+							extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, configurazione, extendedBean);
 						}
 					}
 					
@@ -322,7 +322,7 @@ public final class ConfigurazioneGenerale extends Action {
 					if(extendedToNewWindow){
 						extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, newConfigurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
 					}else{
-						extendedServlet.addToDati(dati, confHelper, confCore, newConfigurazione, extendedBean);
+						extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, newConfigurazione, extendedBean);
 					}
 				}
 
@@ -397,7 +397,7 @@ public final class ConfigurazioneGenerale extends Action {
 				if(extendedToNewWindow){
 					extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
 				}else{
-					extendedServlet.addToDati(dati, confHelper, confCore, configurazione, extendedBean);
+					extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, configurazione, extendedBean);
 				}
 			}
 
