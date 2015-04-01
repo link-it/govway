@@ -2372,13 +2372,13 @@ public class ArchiviHelper extends ConsoleHelper {
 				search = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_SEARCH);
 				search = search.trim();
 				if (search.equals("")) {
-					ricerca.setSearchString(idLista, ArchiviCostanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
+					ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
 				} else {
 					ricerca.setSearchString(idLista, search);
 				}
 			}
 			//NOTA: Eliminare il codice sotto se si vuole accendere la ricerca. Deve pero' essere usato poi il valore di search in un qualche filtro 
-			this.pd.setSearch(ArchiviCostanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
+			this.pd.setSearch(org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
 			this.pd.setSearchDescription(null);
 
 			this.pd.setIndex(offset);
@@ -3234,7 +3234,7 @@ public class ArchiviHelper extends ConsoleHelper {
 				search = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_SEARCH);
 				search = search.trim();
 				if (search.equals("")) {
-					ricerca.setSearchString(idLista, ArchiviCostanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
+					ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
 				} else {
 					ricerca.setSearchString(idLista, search);
 				}

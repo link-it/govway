@@ -1,6 +1,5 @@
 package org.openspcoop2.web.ctrlstat.plugins;
 
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +29,7 @@ public interface IExtendedListServlet extends IExtendedCoreServlet {
 	
 	public int sizeList(Object originalObject);
 
-	public List<IExtendedBean> extendedBeanList(Object originalObject, int limit, int offset, String search) throws ExtendedException;
+	public ExtendedList extendedBeanList(Object originalObject, int limit, int offset, String search) throws ExtendedException;
 	public String[] getColumnLabels() throws ExtendedException; 
 
 }

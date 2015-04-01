@@ -848,7 +848,7 @@ public class ConsoleHelper {
 				search = this.request.getParameter("search");
 				search = search.trim();
 				if (search.equals("")) {
-					ricerca.setSearchString(idLista, "undefined");
+					ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
 				} else {
 					ricerca.setSearchString(idLista, search);
 				}

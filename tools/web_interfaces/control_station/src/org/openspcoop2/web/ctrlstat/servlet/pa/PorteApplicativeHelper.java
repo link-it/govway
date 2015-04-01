@@ -1546,7 +1546,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 								pId,pIdNome,pIdPorta, pIdSogg
 								);
 						if (contaListe) {
-							int numExtended = extendedServletList.sizeList(this.pd);
+							int numExtended = extendedServletList.sizeList(pa);
 							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);

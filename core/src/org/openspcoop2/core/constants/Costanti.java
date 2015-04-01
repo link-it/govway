@@ -59,4 +59,6 @@ public class Costanti {
 	public static SimpleDateFormat newSimpleDateFormat(){
 		return new SimpleDateFormat(dateFormat); // SimpleDateFormat non e' thread-safe
 	}
+	
+	public final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = "undefined";
 }

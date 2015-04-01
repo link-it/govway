@@ -52,9 +52,9 @@ public class Search implements Serializable, ISearch {
 
 	private Integer PAGE_SIZE_DEFAULT = 20;
 	private Integer INDEX_DEFAULT = 0;
-	private String SEARCH_DEFAULT = "undefined";
+	private String SEARCH_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
 	private Integer NUM_ENTRIES_DEFAULT = 0;
-	private String FILTER_DEFAULT = "undefined";
+	private String FILTER_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
 
 	public Search() {
 		this.pageSize = new HashMap<Integer, Integer>();

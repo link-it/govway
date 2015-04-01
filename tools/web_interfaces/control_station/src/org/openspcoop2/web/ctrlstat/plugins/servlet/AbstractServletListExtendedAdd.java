@@ -36,6 +36,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedList;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -163,11 +164,11 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 			int idLista = this.getIdList();
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
-			String search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-			List<IExtendedBean> lista = extendedServlet.extendedBeanList(object, limit, offset, search);
-			ricerca.setNumEntries(idLista,lista.size());
+			String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+			ExtendedList extendedList = extendedServlet.extendedBeanList(object, limit, offset, search);
+			ricerca.setNumEntries(idLista,extendedList.getSize());
 
-			this.prepareList(consoleHelper, ricerca, object, extendedServlet, lista, ControlStationCore.getLog(), request);
+			this.prepareList(consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

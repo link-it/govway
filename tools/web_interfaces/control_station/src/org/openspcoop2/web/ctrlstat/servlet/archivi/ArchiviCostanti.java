@@ -108,18 +108,7 @@ public class ArchiviCostanti {
 	}
 	
 		
-	
-	/* SESSION */
-	
-	public final static String SESSION_ATTRIBUTE_PAGE_SIZE = "PageSize";
-	public final static String SESSION_ATTRIBUTE_INDEX_INIZIALE = "IndexIniziale";
-	public final static String SESSION_ATTRIBUTE_SEARCH_STRING = "SearchString";
-	
-	protected final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = "undefined";
-	public final static String SESSION_ATTRIBUTE_VALUE_INITIAL_PAGE_SIZE = "20";
-	public final static String SESSION_ATTRIBUTE_VALUE_INDEX_INIZIALE = "0";
-	
-	
+		
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_ARCHIVI_IMPORT = "Importa";

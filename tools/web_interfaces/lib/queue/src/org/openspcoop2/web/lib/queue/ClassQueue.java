@@ -607,8 +607,8 @@ public class ClassQueue {
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-		filtroSel = ("undefined".equals(ricerca.getFilter(idLista)) ? "*" : ricerca.getFilter(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		filtroSel = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getFilter(idLista)) ? "*" : ricerca.getFilter(idLista));
 
 		Vector<String> newUtenti = new Vector<String>();
 		if (filtroSel.equals("*")) {

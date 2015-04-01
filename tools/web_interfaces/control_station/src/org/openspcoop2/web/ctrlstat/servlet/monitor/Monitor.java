@@ -1684,7 +1684,7 @@ public final class Monitor extends Action {
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			// String search =
-			// ("undefined".equals(ricerca.getSearchString(idLista)) ? "" :
+			// (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" :
 			// ricerca.getSearchString(idLista));
 
 			pd.setIndex(offset);

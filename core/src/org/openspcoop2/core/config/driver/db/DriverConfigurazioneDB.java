@@ -3604,7 +3604,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -4539,7 +4539,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		String queryString;
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -5995,7 +5995,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
 		boolean error = false;
@@ -6138,7 +6138,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
 		boolean error = false;
@@ -6293,7 +6293,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));		
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));		
 
 
 		Connection con = null;
@@ -6433,7 +6433,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
 		boolean error = false;
@@ -6600,7 +6600,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		String queryString;
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -6742,7 +6742,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -6885,7 +6885,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -7028,7 +7028,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -7567,7 +7567,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -7737,7 +7737,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -7880,7 +7880,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -8022,7 +8022,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -8170,7 +8170,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -8316,7 +8316,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -8463,7 +8463,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -8739,7 +8739,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -9121,7 +9121,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -9256,7 +9256,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -9415,7 +9415,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		//search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		//search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -9721,7 +9721,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -9870,7 +9870,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -13102,7 +13102,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		ricerca.getSearchString(idLista);
 
 		Connection con = null;
@@ -13501,7 +13501,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		int limit = filters.getPageSize(idLista);
 		int offset = filters.getIndexIniziale(idLista);
-		String search = ("undefined".equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
+		String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
 
 		if (this.atomica) {
 			try {
@@ -13812,7 +13812,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		Long idProprietario = null;
 
 		int idLista = Liste.SERVIZIO_APPLICATIVO;
-		String search = ("undefined".equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
+		String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
 
 
 		if (this.atomica) {
@@ -14018,7 +14018,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		int idLista = Liste.SERVIZIO_APPLICATIVO;
 		int limit = filters.getPageSize(idLista);
 		int offset = filters.getIndexIniziale(idLista);
-		String search = ("undefined".equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
+		String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
 
 		ArrayList<TipologiaServizioApplicativo> lista = new ArrayList<TipologiaServizioApplicativo>();
 
@@ -14245,7 +14245,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		int idLista = Liste.SERVIZIO_APPLICATIVO;
 		int limit = filters.getPageSize(idLista);
 		int offset = filters.getIndexIniziale(idLista);
-		String search = ("undefined".equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
+		String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filters.getSearchString(idLista)) ? "" : filters.getSearchString(idLista));
 
 		ArrayList<IDServizioApplicativo> lista = new ArrayList<IDServizioApplicativo>();
 
@@ -15485,7 +15485,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -15640,7 +15640,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -15795,7 +15795,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;
@@ -15950,7 +15950,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 
 		Connection con = null;

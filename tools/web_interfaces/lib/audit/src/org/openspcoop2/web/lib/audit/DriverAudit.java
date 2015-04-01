@@ -184,7 +184,7 @@ public class DriverAudit {
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = ("undefined".equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
