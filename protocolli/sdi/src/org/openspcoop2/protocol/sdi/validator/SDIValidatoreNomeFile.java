@@ -253,20 +253,20 @@ public class SDIValidatoreNomeFile {
 			throw new ProtocolException("NomeFile Fattura ["+nomeFile+"] con struttura non corretto (extension non presente)");
 		}
 		if(isRicezione){
-			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_XML.equals(ext) && 
-					!SDICostanti.SDI_FATTURA_ESTENSIONE_P7M.equals(ext) ){
+			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_XML.equalsIgnoreCase(ext) && 
+					!SDICostanti.SDI_FATTURA_ESTENSIONE_P7M.equalsIgnoreCase(ext) ){
 				throw new ProtocolException("NomeFile Fattura ["+nomeFile+"] con struttura non corretto (extension=["+ext+"] non valida, attesa "+
-						SDICostanti.SDI_FATTURA_ESTENSIONE_XML+"/"+
+						SDICostanti.SDI_FATTURA_ESTENSIONE_XML+" o "+
 						SDICostanti.SDI_FATTURA_ESTENSIONE_P7M+")");
 			}
 		}
 		else{
-			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_XML.equals(ext) && 
-					!SDICostanti.SDI_FATTURA_ESTENSIONE_P7M.equals(ext) &&
-					!SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP.equals(ext)){
+			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_XML.equalsIgnoreCase(ext) && 
+					!SDICostanti.SDI_FATTURA_ESTENSIONE_P7M.equalsIgnoreCase(ext) &&
+					!SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP.equalsIgnoreCase(ext)){
 				throw new ProtocolException("NomeFile Fattura ["+nomeFile+"] con struttura non corretto (extension=["+ext+"] non valida, attesa "+
-						SDICostanti.SDI_FATTURA_ESTENSIONE_XML+"/"+
-						SDICostanti.SDI_FATTURA_ESTENSIONE_P7M+"/"+
+						SDICostanti.SDI_FATTURA_ESTENSIONE_XML+" o "+
+						SDICostanti.SDI_FATTURA_ESTENSIONE_P7M+" o "+
 						SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP+")");
 			}
 		}
@@ -275,15 +275,15 @@ public class SDIValidatoreNomeFile {
 	
 	public static String getNomeFileFatturaSenzaEstensione(String nomeFileFattura){
 		String nomeFileFatturaSenzaEstensione = new String(nomeFileFattura);
-		if(nomeFileFatturaSenzaEstensione.endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_XML) 
+		if(nomeFileFatturaSenzaEstensione.toLowerCase().endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_XML) 
 				&& nomeFileFatturaSenzaEstensione.length()>(SDICostanti.SDI_FATTURA_ESTENSIONE_XML.length()+1)){
 			nomeFileFatturaSenzaEstensione = nomeFileFatturaSenzaEstensione.substring(0,(nomeFileFatturaSenzaEstensione.length()-(SDICostanti.SDI_FATTURA_ESTENSIONE_XML.length()+1)));
 		}
-		else if(nomeFileFatturaSenzaEstensione.endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_P7M)
+		else if(nomeFileFatturaSenzaEstensione.toLowerCase().endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_P7M)
 			&& nomeFileFatturaSenzaEstensione.length()>(SDICostanti.SDI_FATTURA_ESTENSIONE_P7M.length()+1)){
 			nomeFileFatturaSenzaEstensione = nomeFileFatturaSenzaEstensione.substring(0,(nomeFileFatturaSenzaEstensione.length()-(SDICostanti.SDI_FATTURA_ESTENSIONE_P7M.length()+1)));
 		}
-		else if(nomeFileFatturaSenzaEstensione.endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP)
+		else if(nomeFileFatturaSenzaEstensione.toLowerCase().endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP)
 			&& nomeFileFatturaSenzaEstensione.length()>(SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP.length()+1)){
 			nomeFileFatturaSenzaEstensione = nomeFileFatturaSenzaEstensione.substring(0,(nomeFileFatturaSenzaEstensione.length()-(SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP.length()+1)));
 		}
@@ -436,13 +436,13 @@ public class SDIValidatoreNomeFile {
 			throw new ProtocolException("NomeFile ("+tipoMessaggio.name()+")["+nomeFile+"] con struttura non corretto (extension non presente)");
 		}
 		if(TipiMessaggi.AT.equals(tipoMessaggio)){
-			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP.equals(ext) ){
+			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP.equalsIgnoreCase(ext) ){
 				throw new ProtocolException("NomeFile ("+tipoMessaggio.name()+")["+nomeFile+"] con struttura non corretto (extension["+ext+"] non valida, attesa "+
 						SDICostanti.SDI_FATTURA_ESTENSIONE_ZIP+")");
 			}
 		}
 		else{
-			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_XML.equals(ext) ){
+			if(!SDICostanti.SDI_FATTURA_ESTENSIONE_XML.equalsIgnoreCase(ext) ){
 				throw new ProtocolException("NomeFile ("+tipoMessaggio.name()+")["+nomeFile+"] con struttura non corretto (extension["+ext+"] non valida, attesa "+
 						SDICostanti.SDI_FATTURA_ESTENSIONE_XML+")");
 			}

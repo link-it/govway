@@ -1,3 +1,10 @@
+2015-04-02  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto Bug #316
+	Corretto errore "Invalid byte 1 of 1-byte UTF-8 sequence"
+	L'errore si presentava quando non veniva riconosciuto correttamente il tipo P7M della fattura ricevuta.
+
 2015-03-27  Andrea Poli <apoli@link.it>
 
         * [PddConsole]

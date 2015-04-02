@@ -258,7 +258,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 		// nomeFile
 		try{
 			SDIValidatoreNomeFile.validaNomeFileFattura(nomeFile, true);
-			if(nomeFile.endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_P7M)){
+			if(nomeFile.toLowerCase().endsWith(SDICostanti.SDI_FATTURA_ESTENSIONE_P7M)){
 				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_P7M);
 			}
 			else{
@@ -436,18 +436,58 @@ public class SDIValidatoreServizioRicezioneFatture {
 				return;	
 			}
 			
-			// Se la fattura e' un P7M per poterla validare devo estrarne il contenuto.
 			// Il formato viene compreso durante la validazione sintattica
 			Object formato = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA);
-			if(formato!=null && ((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) ){
+			byte [] tmpFatturaP7M = null;
+			if(formato==null){
+				// La validazione sintattica non ha compreso il formato della fattura, per via di errori sulla nomenclatura del file.
+				// La validazione del nome file e' disabilitata se si arriva a questo punto.
+				// Si prova a comprendere il tipo di formato esaminando direttamente la fattura
+				
+				// provo a vedere se e' XML (XaDEs)
 				try{
-					org.bouncycastle.cms.CMSSignedData cmsSignedData = new org.bouncycastle.cms.CMSSignedData(new ByteArrayInputStream(fattura));
-					fattura = (byte[]) cmsSignedData.getSignedContent().getContent();
-				}catch(Throwable e){
-					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
-							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO, 
-									"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] decodifica p7m non riuscita: "+e.getMessage(),e));
-					return;	
+					if(it.gov.fatturapa.sdi.fatturapa.v1_0.utils.XMLUtils.isFattura(fattura)){
+						this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_XML);
+						formato = SDICostanti.SDI_TIPO_FATTURA_XML;
+					}
+				}catch(Throwable e){}
+				if(formato==null){
+					try{
+						if(it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XMLUtils.isFattura(fattura)){
+							this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_XML);
+							formato = SDICostanti.SDI_TIPO_FATTURA_XML;
+						}
+					}catch(Throwable e){}
+				}
+				
+				// provo a vedere se e' un P7M (CaDES)
+				if(formato==null){
+					try{
+						org.bouncycastle.cms.CMSSignedData cmsSignedData = new org.bouncycastle.cms.CMSSignedData(new ByteArrayInputStream(fattura));
+						tmpFatturaP7M = (byte[]) cmsSignedData.getSignedContent().getContent();
+						if(tmpFatturaP7M!=null){
+							this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_P7M);
+							formato = SDICostanti.SDI_TIPO_FATTURA_P7M;
+						}
+					}catch(Throwable e){}
+				}			
+			}
+			
+			// Se la fattura e' un P7M per poterla validare devo estrarne il contenuto.
+			if(((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) ){
+				if(tmpFatturaP7M==null){
+					try{
+						org.bouncycastle.cms.CMSSignedData cmsSignedData = new org.bouncycastle.cms.CMSSignedData(new ByteArrayInputStream(fattura));
+						fattura = (byte[]) cmsSignedData.getSignedContent().getContent();
+					}catch(Throwable e){
+						this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
+								validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO, 
+										"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] decodifica p7m non riuscita: "+e.getMessage(),e));
+						return;	
+					}
+				}
+				else{
+					fattura = tmpFatturaP7M;
 				}
 			}
 

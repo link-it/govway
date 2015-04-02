@@ -1261,7 +1261,7 @@ public class Busta implements java.io.Serializable {
 		if(this.sizeListaEccezioni()>0){
 			StringBuffer bf = new StringBuffer();
 			for(int i=0; i<this.sizeListaEccezioni(); i++){
-				if(LivelloRilevanza.ERROR.equals(this.getEccezione(i).getRilevanza()) == false){
+				if(LivelloRilevanza.isEccezioneLivelloGrave(this.getEccezione(i).getRilevanza()) == false){
 					if(i>0)
 						bf.append("\n");
 					bf.append(this.getEccezione(i).toString(protocolFactory));
@@ -1277,7 +1277,7 @@ public class Busta implements java.io.Serializable {
 		if(this.sizeListaEccezioni()>0){
 			StringBuffer bf = new StringBuffer();
 			for(int i=0; i<this.sizeListaEccezioni(); i++){
-				if(LivelloRilevanza.ERROR.equals(this.getEccezione(i).getRilevanza())){
+				if(LivelloRilevanza.isEccezioneLivelloGrave(this.getEccezione(i).getRilevanza())){
 					if(i>0)
 						bf.append("\n");
 					bf.append(this.getEccezione(i).toString(protocolFactory));
@@ -1291,7 +1291,7 @@ public class Busta implements java.io.Serializable {
 
 	public boolean containsEccezioniGravi(){
 		for(int i=0; i<this.sizeListaEccezioni(); i++){
-			if(LivelloRilevanza.ERROR.equals(this.getEccezione(i).getRilevanza())){
+			if(LivelloRilevanza.isEccezioneLivelloGrave(this.getEccezione(i).getRilevanza())){
 				return true;
 			}
 		}
@@ -1316,7 +1316,7 @@ public class Busta implements java.io.Serializable {
 		if(errors.size()>0){
 			StringBuffer bf = new StringBuffer();
 			for(int i=0; i<errors.size(); i++){
-				if(LivelloRilevanza.ERROR.equals(errors.get(i).getRilevanza()) == false){
+				if(LivelloRilevanza.isEccezioneLivelloGrave(errors.get(i).getRilevanza()) == false){
 					if(i>0)
 						bf.append("\n");
 					bf.append(errors.get(i).toString(protocolFactory));
@@ -1332,7 +1332,7 @@ public class Busta implements java.io.Serializable {
 		if(errors.size()>0){
 			StringBuffer bf = new StringBuffer();
 			for(int i=0; i<errors.size(); i++){
-				if(LivelloRilevanza.ERROR.equals(errors.get(i).getRilevanza())){
+				if(LivelloRilevanza.isEccezioneLivelloGrave(errors.get(i).getRilevanza())){
 					if(i>0)
 						bf.append("\n");
 					bf.append(errors.get(i).toString(protocolFactory));
@@ -1346,7 +1346,7 @@ public class Busta implements java.io.Serializable {
 
 	public static boolean containsEccezioniGravi(java.util.Vector<Eccezione> errors){
 		for(int i=0; i<errors.size(); i++){
-			if(LivelloRilevanza.ERROR.equals(errors.get(i).getRilevanza())){
+			if(LivelloRilevanza.isEccezioneLivelloGrave(errors.get(i).getRilevanza())){
 				return true;
 			}
 		}

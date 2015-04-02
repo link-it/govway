@@ -60,6 +60,16 @@ public enum LivelloRilevanza {
 		return this.livello;
 	}
 	
+	public static boolean isEccezioneLivelloGrave(LivelloRilevanza livello){
+		switch (livello) {
+		case ERROR:
+		case FATAL:
+			return true;
+		default:
+			return false;
+		}
+	}
+	
 	public static LivelloRilevanza toLivelloRilevanza(String metaValue){
 		if(DEBUG.livello.equals(metaValue))
 			return DEBUG;

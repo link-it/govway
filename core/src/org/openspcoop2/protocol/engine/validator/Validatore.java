@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
@@ -337,10 +338,10 @@ public class Validatore  {
 				}
 
 				// Se la lettura precedente (readBusta) ha riscontrato anomalie, ho gia' finito
-				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
-						|| 
-					( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
-					)
+				boolean ignoraEccezioniLivelloNonGravi = this.protocolFactory.createProtocolVersionManager(this.versioneProtocollo).isIgnoraEccezioniLivelloNonGrave();
+				int sizeErroriValidazione = countErrori(ignoraEccezioniLivelloNonGravi, this.erroriValidazione);
+				int sizeErroriProcessamento = countErrori(ignoraEccezioniLivelloNonGravi, this.erroriProcessamento);				
+				if( sizeErroriValidazione>0 || sizeErroriProcessamento>0 )
 					return true; // riscontrati errori durante la validazione sintattica.
 
 				
@@ -645,6 +646,24 @@ public class Validatore  {
 	}
 	public SecurityInfo getSecurityInfo() {
 		return this.securityInfo;
+	}
+	
+	
+	private int countErrori(boolean ignoraEccezioniNonGravi,List<Eccezione> list){
+		int size = 0;
+		if(list!=null){
+			for (Eccezione eccezione : list) {
+				if(eccezione.getRilevanza()!=null && ignoraEccezioniNonGravi){
+					if(LivelloRilevanza.isEccezioneLivelloGrave(eccezione.getRilevanza())){
+						size++;
+					}
+				}
+				else{
+					size++;
+				}
+			}
+		}
+		return size;
 	}
 }
 
