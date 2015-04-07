@@ -1,3 +1,14 @@
+2015-04-03  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+        Risolto Bug #316
+	Corretto errore "decodifica p7m non riuscita: Malformed content."
+	La fattura ricevuta non e' malformata e l'archivio e' corretto. Il formato del file rispecchia quanto indicato 
+	nella delibera CNIPA numero 45 del 9 Novembre 2009 all’articolo 21, comma 3.
+	In pratica la fattura P7M puo' essere ricevuta direttamente come rappresentazione binaria o codificata in base64.
+	L'attuale implementazione del protocollo supportava solo la possibilita' di ricevere la fattura con rappresentazione binaria. 
+	E' stata aggiunta la gestione della decodifica base64.
+
 2015-04-02  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]

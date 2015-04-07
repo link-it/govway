@@ -268,6 +268,7 @@ public class MsgDiagnostico implements Serializable{
 			Proprieta proprieta = new Proprieta();
 			proprieta.setNome(key);
 			proprieta.setValore(value);
+			this.removeProperty(key); // per evitare doppioni
 			this.messaggioDiagnostico.getProtocollo().addProprieta(proprieta);
 		}
     }

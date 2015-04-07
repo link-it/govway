@@ -40,6 +40,7 @@ import org.openspcoop2.message.mtom.MTOMUtilities;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFatture;
+import org.openspcoop2.protocol.sdi.utils.P7MInfo;
 import org.openspcoop2.protocol.sdi.utils.SDICompatibilitaNamespaceErrati;
 import org.openspcoop2.protocol.sdi.utils.SDIFatturaUtils;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -463,10 +464,11 @@ public class SDIValidatoreServizioRicezioneFatture {
 				// provo a vedere se e' un P7M (CaDES)
 				if(formato==null){
 					try{
-						org.bouncycastle.cms.CMSSignedData cmsSignedData = new org.bouncycastle.cms.CMSSignedData(new ByteArrayInputStream(fattura));
-						tmpFatturaP7M = (byte[]) cmsSignedData.getSignedContent().getContent();
+						P7MInfo infoP7M = new P7MInfo(fattura, this.sdiValidazioneSemantica.getProtocolFactory().getLogger());
+						tmpFatturaP7M = infoP7M.getXmlDecoded();
 						if(tmpFatturaP7M!=null){
 							this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, SDICostanti.SDI_TIPO_FATTURA_P7M);
+							this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_BASE64, infoP7M.isBase64Encoded()+"");
 							formato = SDICostanti.SDI_TIPO_FATTURA_P7M;
 						}
 					}catch(Throwable e){}
@@ -477,8 +479,9 @@ public class SDIValidatoreServizioRicezioneFatture {
 			if(((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) ){
 				if(tmpFatturaP7M==null){
 					try{
-						org.bouncycastle.cms.CMSSignedData cmsSignedData = new org.bouncycastle.cms.CMSSignedData(new ByteArrayInputStream(fattura));
-						fattura = (byte[]) cmsSignedData.getSignedContent().getContent();
+						P7MInfo infoP7M = new P7MInfo(fattura, this.sdiValidazioneSemantica.getProtocolFactory().getLogger());
+						fattura = infoP7M.getXmlDecoded();
+						this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_BASE64, infoP7M.isBase64Encoded()+"");
 					}catch(Throwable e){
 						this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
 								validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO, 

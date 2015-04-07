@@ -1099,6 +1099,7 @@ public class Busta implements java.io.Serializable {
 			Proprieta proprieta = new Proprieta();
 			proprieta.setNome(key);
 			proprieta.setValore(value);
+			this.removeProperty(key); // per evitare doppioni
 			this.busta.getProtocollo().addProprieta(proprieta);
 		}
 	}
