@@ -36,9 +36,12 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Utilities;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
+import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -99,6 +102,9 @@ public final class PorteDelegateDel extends Action {
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
+			IExtendedListServlet extendedServlet = porteDelegateCore.getExtendedServletPortaDelegata();
+			List<Object> listPerformOperations = new ArrayList<Object>();
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
@@ -107,8 +113,30 @@ public final class PorteDelegateDel extends Action {
 
 				// Elimino la porta delegata
 				PortaDelegata pde = porteDelegateCore.getPortaDelegata(Long.parseLong(idsToRemove.get(i)));
-				porteDelegateCore.performDeleteOperation(userLogin, porteDelegateHelper.smista(), pde);
+				
+				if(extendedServlet!=null){
+					List<IExtendedBean> listExt = null;
+					try{
+						listExt = extendedServlet.extendedBeanList(pde);
+					}catch(Exception e){
+						ControlStationCore.logError(e.getMessage(), e);
+					}
+					if(listExt!=null && listExt.size()>0){
+						for (IExtendedBean iExtendedBean : listExt) {
+							WrapperExtendedBean wrapper = new WrapperExtendedBean();
+							wrapper.setExtendedBean(iExtendedBean);
+							wrapper.setExtendedServlet(extendedServlet);
+							wrapper.setOriginalBean(pde);
+							wrapper.setManageOriginalBean(false);		
+							listPerformOperations.add(wrapper);
+						}
+					}
+				}
+				
+				listPerformOperations.add(pde);
 			}
+			
+			porteDelegateCore.performDeleteOperation(userLogin, porteDelegateHelper.smista(), listPerformOperations.toArray(new Object[1]));
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();

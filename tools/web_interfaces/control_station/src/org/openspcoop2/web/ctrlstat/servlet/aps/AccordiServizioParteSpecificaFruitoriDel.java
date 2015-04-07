@@ -43,6 +43,9 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
+import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -127,6 +130,8 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 			String superUser =  ServletUtils.getUserLoginFromSession(session);
 
+			IExtendedListServlet extendedServlet = porteDelegateCore.getExtendedServletPortaDelegata();
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
@@ -155,7 +160,31 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 				myidpd.setLocationPD(nomePD);
 				if (porteDelegateCore.existsPortaDelegata(myidpd)) {
 					PortaDelegata mypd = porteDelegateCore.getPortaDelegata(myidpd);
-					apsCore.performDeleteOperation(superUser, apsHelper.smista(), mypd);
+					
+					List<Object> listPerformOperations = new ArrayList<Object>();
+					
+					if(extendedServlet!=null){
+						List<IExtendedBean> listExt = null;
+						try{
+							listExt = extendedServlet.extendedBeanList(mypd);
+						}catch(Exception e){
+							ControlStationCore.logError(e.getMessage(), e);
+						}
+						if(listExt!=null && listExt.size()>0){
+							for (IExtendedBean iExtendedBean : listExt) {
+								WrapperExtendedBean wrapper = new WrapperExtendedBean();
+								wrapper.setExtendedBean(iExtendedBean);
+								wrapper.setExtendedServlet(extendedServlet);
+								wrapper.setOriginalBean(mypd);
+								wrapper.setManageOriginalBean(false);		
+								listPerformOperations.add(wrapper);
+							}
+						}
+					}
+					
+					listPerformOperations.add(mypd);
+					
+					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listPerformOperations.toArray(new Object[1]) );
 				}
 			}
 

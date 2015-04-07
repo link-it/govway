@@ -37,6 +37,9 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
+import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -98,6 +101,10 @@ public final class PorteApplicativeDel extends Action {
 			// }
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
+			IExtendedListServlet extendedServlet = porteApplicativeCore.getExtendedServletPortaApplicativa();
+			List<Object> listPerformOperations = new ArrayList<Object>();
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
@@ -107,8 +114,29 @@ public final class PorteApplicativeDel extends Action {
 				// Elimino la porta applicativa
 				PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idsToRemove.get(i)));
 			
-				porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), pa);
+				if(extendedServlet!=null){
+					List<IExtendedBean> listExt = null;
+					try{
+						listExt = extendedServlet.extendedBeanList(pa);
+					}catch(Exception e){
+						ControlStationCore.logError(e.getMessage(), e);
+					}
+					if(listExt!=null && listExt.size()>0){
+						for (IExtendedBean iExtendedBean : listExt) {
+							WrapperExtendedBean wrapper = new WrapperExtendedBean();
+							wrapper.setExtendedBean(iExtendedBean);
+							wrapper.setExtendedServlet(extendedServlet);
+							wrapper.setOriginalBean(pa);
+							wrapper.setManageOriginalBean(false);		
+							listPerformOperations.add(wrapper);
+						}
+					}
+				}
+				
+				listPerformOperations.add(pa);
 			}
+			
+			porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listPerformOperations.toArray(new Object[1]));
 
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();

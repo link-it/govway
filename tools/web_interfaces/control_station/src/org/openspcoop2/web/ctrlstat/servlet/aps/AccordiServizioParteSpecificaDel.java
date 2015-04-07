@@ -50,6 +50,9 @@ import org.openspcoop2.web.ctrlstat.core.ErrorsHandler;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
+import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -129,6 +132,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			String msg = "";
 			// int idConnettore = 0;
 
+			IExtendedListServlet extendedServlet = porteApplicativeCore.getExtendedServletPortaApplicativa();
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
@@ -277,6 +281,26 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 					} else {
 						List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
 						if(paGenerataAutomcaticamente!=null){
+							
+							if(extendedServlet!=null){
+								List<IExtendedBean> listExt = null;
+								try{
+									listExt = extendedServlet.extendedBeanList(paGenerataAutomcaticamente);
+								}catch(Exception e){
+									ControlStationCore.logError(e.getMessage(), e);
+								}
+								if(listExt!=null && listExt.size()>0){
+									for (IExtendedBean iExtendedBean : listExt) {
+										WrapperExtendedBean wrapper = new WrapperExtendedBean();
+										wrapper.setExtendedBean(iExtendedBean);
+										wrapper.setExtendedServlet(extendedServlet);
+										wrapper.setOriginalBean(paGenerataAutomcaticamente);
+										wrapper.setManageOriginalBean(false);		
+										listaOggettiDaEliminare.add(wrapper);
+									}
+								}
+							}
+							
 							listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 						}
 						listaOggettiDaEliminare.add(asps);
