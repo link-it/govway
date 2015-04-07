@@ -5,7 +5,7 @@
     </description>
 
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
           <classpath>
               <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
           </classpath>
@@ -16,7 +16,7 @@
 	<!-- NOTA: se uso import java-check va in out of memory -->
 	<property environment="env"/>
 	<var name="java_home" value="${env.JAVA_HOME}"/>
-	<echo message="Java home: ${java_home}"/>
+	<!-- <echo message="Java home: ${java_home}"/> La stampa la faccio direttamente dentro i metodi -->
 	<!-- <echo message="Java version: ${ant.java.version}"/> L'informazione viene errata, stampa 1.6 anche per java 1.7-->
 	<if>
 		<equals arg1="${java_home}" arg2="$${env.JAVA_HOME}"/>
@@ -53,12 +53,14 @@
 	 -->
 	<var name="classSourceVersion" value="1.6"/>
 	<var name="classTargetVersion" value="1.6"/>
+	<var name="warningMessage" value="notDefined"/>
 	<if>
 		<not>
 			<equals arg1="${ant.java.version}" arg2="1.6" />
 		</not>
 		<then>
-			<echo message="WARN: enable 1.6 compatibility (workaround for java 7 stricter verification)" />
+			<!-- <echo message="WARN: enable 1.6 compatibility (workaround for java 7 stricter verification)" /> La stampa la faccio direttamente dentro i metodi -->
+			<var name="warningMessage" value="WARN: enable 1.6 compatibility (workaround for java 7 stricter verification)"/>
 		</then>
 	</if>
 	
@@ -82,6 +84,16 @@
 	<!-- Compilazione della libreria di OpenSPCoop -->
 	<target name="compile_src_openspcoop2" depends="init_compile-build">
 
+		<echo message="Java home: ${java_home}"/>
+		<if>
+			<not>
+				<equals arg1="${warningMessage}" arg2="notDefined" />
+			</not>
+			<then>
+				<echo message="${warningMessage}" />
+			</then>
+		</if>
+		
 		<if>
 			<istrue value="${debug}" />
 			<then>
@@ -543,6 +555,16 @@ Last-Changed-Date:  ${svn.package.lastChangedDate}
 	<!-- Compilazione della libreria per gli schemi -->
 	<target name="build_jar_schema" depends="init_compile-build">
 
+		<echo message="Java home: ${java_home}"/>
+		<if>
+			<not>
+				<equals arg1="${warningMessage}" arg2="notDefined" />
+			</not>
+			<then>
+				<echo message="${warningMessage}" />
+			</then>
+		</if>
+		
 		<if>
 			<istrue value="${debug}" />
 			<then>
@@ -775,6 +797,16 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 	
 	<target name="jar_2_jar_openspcoop2">
 
+		<echo message="Java home: ${java_home}"/>
+		<if>
+			<not>
+				<equals arg1="${warningMessage}" arg2="notDefined" />
+			</not>
+			<then>
+				<echo message="${warningMessage}" />
+			</then>
+		</if>
+		
 		<!-- SVN Info -->
 		<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}]"/> -->
 		<if>

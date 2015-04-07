@@ -38,10 +38,21 @@
 		</delete>
 		
 		<!-- Ripristina jars nella jarsDir -->
-		<foreach list="${archiveFile_list.txt}" delimiter=" " param="fileName" target="ripristina_jar_file" inheritall="true"/>
-		
+		<!-- <foreach list="${archiveFile_list.txt}" delimiter=" " param="fileName" target="ripristina_jar_file" inheritall="true"/> -->
+		<for list="${archiveFile_list.txt}" param="fileName" delimiter=" ">
+			<sequential>
+				<propertyregex property="fileNameWithoutTXT"
+				              input="@{fileName}"
+				              regexp="^(.+)\.txt$"
+				              select="\1"
+				              casesensitive="false" override="true"/>
+				<echo message="FILE [@{fileName}]->[${fileNameWithoutTXT}]"/>
+				<copy file="${jarsDir}/${fileNameWithoutTXT}" todir="${archiveFileJarLocation}"/>
+			</sequential>
+		</for>
 	</target>
 	
+	<!--
 	<target name="ripristina_jar_file">
 		<propertyregex property="fileNameWithoutTXT"
 		              input="${fileName}"
@@ -51,6 +62,7 @@
 		<echo message="FILE [${fileName}]->[${fileNameWithoutTXT}]"/>
 		<copy file="${jarsDir}/${fileNameWithoutTXT}" todir="${archiveFileJarLocation}"/>
 	</target>
+	-->
 	
 	
 </project>

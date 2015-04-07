@@ -8,6 +8,7 @@
 	  <property name="as" value="jboss/tomcat" />
 
 	  <property name="ws_validazione_lib" value="${openspcoop2}/lib"/>
+	  <property name="required_lib" value="${ws_validazione_lib}" />
 
 	  <property name="appServer_url" value="http://127.0.0.1:8080/" />
       

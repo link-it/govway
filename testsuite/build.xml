@@ -21,6 +21,26 @@
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
+	
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
+			<var name="j2ee" value="false"/>
+		</then>
+	</if>
+	
+	<!-- Jar dipendenti dall'A.S. -->
 	<var name="commons_logging_jar" value="" />
 	<var name="javax_jms_jar" value="" />
 	<var name="xalan_jar" value="" />
@@ -31,14 +51,7 @@
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value=""/>
-	<runtarget target="check_as_version" />	
-	<if>
-		<matches string="${as}" pattern="tomcat.*"/>
-		<then>
-			<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
-			<var name="j2ee" value="false"/>
-		</then>
-	</if>
+	
 	<!-- commons_logging -->
 	<if>
 		<or>
@@ -145,7 +158,7 @@
 	
 	
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
 			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
 		</classpath>

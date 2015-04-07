@@ -25,7 +25,7 @@
 	<import file="${genericProject}/build.xml" />
 
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
 			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
 		</classpath>
@@ -33,7 +33,17 @@
 	
 	<!-- Indicazione se produrre la versione senza j2ee object: mdb e timer ejb -->
 	<var name="j2ee" value="true"/>
-	<runtarget target="check_as_version" />	
+	
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
 	<if>
 		<matches string="${as}" pattern="tomcat.*"/>
 		<then>

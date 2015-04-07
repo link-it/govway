@@ -19,9 +19,9 @@
 	</path>
 	
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
-			<pathelement location="${ws_validazione_lib}/ant/ant-contrib-1.0b3.jar"/>
+			<pathelement location="${ws_validazione_lib}/ant/ant-contrib-1.0b3.jar"/>	
 		</classpath>
 	</taskdef>
 	
@@ -33,12 +33,17 @@
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
-	<var name="log4j_jar" value="" />
-	<var name="log4j_properties" value=""/>
-	<var name="commons_logging_jar" value="" />
-	<var name="jaxp_ri_jar" value=""/>
-	<var name="jboss_deployment_structure" value="" />		
-	<runtarget target="check_as_version" />	
+	
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
 	<if>
 		<matches string="${as}" pattern="tomcat.*"/>
 		<then>
@@ -46,6 +51,14 @@
 			<var name="j2ee" value="false"/>
 		</then>
 	</if>
+	
+	<!-- Jar dipendenti dall'A.S. -->
+	<var name="log4j_jar" value="" />
+	<var name="log4j_properties" value=""/>
+	<var name="commons_logging_jar" value="" />
+	<var name="jaxp_ri_jar" value=""/>
+	<var name="jboss_deployment_structure" value="" />		
+
 	<!-- commons_logging -->
 	<if>
 		<or>

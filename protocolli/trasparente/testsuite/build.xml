@@ -9,7 +9,7 @@
 
 
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
 			<pathelement location="${openspcoop2_lib}/ant/ant-contrib-1.0b3.jar"/>
 		</classpath>
@@ -32,8 +32,18 @@
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true"/>
+	
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
 	<var name="jboss_jars" value="jbossas/${as}"/>
-	<runtarget target="check_as_version" />	
 	<if>
 		<matches string="${as}" pattern="tomcat.*"/>
 		<then>

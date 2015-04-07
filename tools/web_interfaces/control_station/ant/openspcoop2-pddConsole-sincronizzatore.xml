@@ -4,15 +4,23 @@
     </description>
 	
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
           <classpath>
               <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
           </classpath>
 	</taskdef>
 	
-	<!-- Indicazione sulla versione di jboss -->
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
 	<var name="jboss_jars" value="jbossas/${as}"/>
-	<runtarget target="check_as_version" />	
 	<if>
 		<matches string="${as}" pattern="tomcat.*"/>
 		<then>
@@ -21,7 +29,7 @@
 	</if>
 	
 	<path id="classpath_script">
-		<fileset dir="${openspcoop2_lib}/${jboss_jars}" >
+		<fileset dir="${required_lib_pddConsole}/${jboss_jars}" >
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement path="${required_lib_pddConsole}/jibx/jibx-run-1.2.3.jar" />

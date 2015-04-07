@@ -37,6 +37,13 @@
 		<pathconvert pathsep=" " property="archiveFile_list.jar" refid="archiveFile.jar">
 			<map from="${archiveFileJarLocation}/" to=""/>
 		</pathconvert>
+						
+		<!-- Creazione file vuoto jar txt -->
+		<!-- <foreach list="${archiveFile_list.jar}" delimiter=" " param="fileName" target="create_txt_jar_file" inheritall="true"/> -->
+		<touch>
+			<fileset dir="${archiveFileJarLocation}"/>
+			<mapper type="glob" from="*.jar" to="${archiveFileJarLocation}/*.jar.txt"/>
+		</touch>
 		
 		<!-- Move jars nella jarsDir -->
 		<move todir="${deploy_sw}/jars" overwrite="true" >
@@ -44,9 +51,6 @@
 				<include name="**/*.jar"/>
 			</fileset>
 		</move>
-		
-		<!-- Creazione file vuoto jar txt -->
-		<foreach list="${archiveFile_list.jar}" delimiter=" " param="fileName" target="create_txt_jar_file" inheritall="true"/>
 		
 		<!-- Ripristino archivio in formato compresso con txt al posto dei jar -->
 		<zip destfile="${archiveFile}">
@@ -58,9 +62,11 @@
 		
 	</target>
 	
+	<!--
 	<target name="create_txt_jar_file">
 		<touch file="${archiveFileJarLocation}/${fileName}.txt" />
 	</target>
+	-->
 	
 	
 </project>

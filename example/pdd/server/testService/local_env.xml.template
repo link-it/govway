@@ -7,5 +7,10 @@
 	
 	<!-- RootDir -->  
 	<property name="rootDir" location="../../../../" />
+	
+	<!-- Libraries -->
+	<property name="libs" location="${rootDir}/lib" />
+	<property name="required_lib" value="${libs}"/>
+	<property name="openspcoop2_libs" location="${rootDir}/core/dist" />
 	  
 </project>

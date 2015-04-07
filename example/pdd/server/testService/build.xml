@@ -8,11 +8,8 @@
 	<import file="local_env.xml" />
 	<import file="${rootDir}/ant/commons/as-check.xml" />
 	
-	<property name="libs" location="${rootDir}/lib" />
-	<property name="openspcoop2_libs" location="${rootDir}/core/dist" />
-
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
 			<pathelement location="${libs}/ant/ant-contrib-1.0b3.jar"/>
 		</classpath>
@@ -53,7 +50,17 @@
 		</javac>
 	</target>
 
-	<runtarget target="check_as_version" />		
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
+	
 	<!-- cxf -->
 	<var name="cxf_jar" value="cxf-2.7.4.jar"/>
 	<if>

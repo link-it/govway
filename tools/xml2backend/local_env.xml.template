@@ -73,6 +73,7 @@
 	<!-- OpenSPCoop Location and Library -->
 	<property name="openspcoop2" location="../../" />
 	<property name="openspcoop2_lib" location="${openspcoop2}/lib" />
+	<property name="required_lib" location="${openspcoop2_lib}" />
 	<property name="openspcoop2_dist" location="${openspcoop2}/core/dist" />
 
 	<!-- Specifica se inserire le informazioni di debug nelle classi -->

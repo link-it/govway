@@ -19,6 +19,18 @@
 	<property name="dist_openspcoop2Pools" location="dist" />
 	<property name="doc_openspcoop2Pools" location="doc" />
 
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
+	
+	<!-- Jar dipendenti dall'A.S. -->
 	<var name="openspcoop2_pool_driver_jar" value=""/>
 	<var name="log4j_jar" value="" />
 	<var name="log4j_properties" value=""/>
@@ -28,7 +40,7 @@
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
-	<runtarget target="check_as_version" />	
+
 	<!-- openspcoop2_pool_driver -->
 	<if>
 		<or>

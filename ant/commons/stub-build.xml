@@ -4,7 +4,7 @@
     </description>
 	
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
           <classpath>
               <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
           </classpath>
@@ -15,7 +15,7 @@
 	<!-- NOTA: se uso import java-check va in out of memory -->
 	<property environment="env"/>
 	<var name="java_home" value="${env.JAVA_HOME}"/>
-	<echo message="Java home: ${java_home}"/>
+	<!-- <echo message="Java home: ${java_home}"/> La stampa la faccio direttamente dentro i metodi -->
 	<!-- <echo message="Java version: ${ant.java.version}"/> L'informazione viene errata, stampa 1.6 anche per java 1.7-->
 	<if>
 		<equals arg1="${java_home}" arg2="$${env.JAVA_HOME}"/>
@@ -37,6 +37,8 @@
 	
 	<!-- compilazione degli stub per AXIS14-->
 	<target name="build_axis14">
+		
+		<echo message="Java home: ${java_home}"/>
 		
 		<!-- Generazioni java classes -->
 		<if>
@@ -123,6 +125,8 @@
 	
 	<!-- compilazione degli stub per CXF-->
 	<target name="build_cxf">
+		
+		<echo message="Java home: ${java_home}"/>
 		
 		<!-- Generazioni java classes -->
 		<if>
