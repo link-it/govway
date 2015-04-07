@@ -472,7 +472,15 @@ public class SDIValidatoreServizioRicezioneFatture {
 							formato = SDICostanti.SDI_TIPO_FATTURA_P7M;
 						}
 					}catch(Throwable e){}
-				}			
+				}
+				
+				if(formato==null){
+					// formato non riconosciuto, non posso continuare ulteriormente
+					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
+							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO, 
+									"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] decodifica non riuscita: formato non conosciuto"));
+					return;	
+				}
 			}
 			
 			// Se la fattura e' un P7M per poterla validare devo estrarne il contenuto.

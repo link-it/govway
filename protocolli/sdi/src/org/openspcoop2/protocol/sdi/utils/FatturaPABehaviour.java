@@ -20,6 +20,10 @@
  */
 package org.openspcoop2.protocol.sdi.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -35,6 +39,7 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
 import org.openspcoop2.pdd.core.behaviour.DefaultBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdi.SDIFactory;
 import org.openspcoop2.protocol.sdi.builder.SDIBustaBuilder;
 import org.openspcoop2.protocol.sdi.builder.SDIImbustamento;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
@@ -42,6 +47,7 @@ import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFatture;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
@@ -80,15 +86,34 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 				
 				OpenSPCoop2Message msg = gestoreMessaggioRichiesta.getMessage();
 				Object fatturaPAObject = msg.getContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA);
+				byte [] fatturaBytes = null;
 				if(fatturaPAObject==null){
-					throw new CoreException("FatturaPA behaviour è utilizzabile solo se l'opzione 'org.openspcoop2.protocol.sdi.parse.fattura.saveInContext' è abilitata");
+					//throw new CoreException("FatturaPA behaviour è utilizzabile solo se l'opzione 'org.openspcoop2.protocol.sdi.parse.fattura.saveInContext' è abilitata");
+					// gestisco con lo splitter
+					try{
+						SDIFactory sdiFactory = new SDIFactory();
+						sdiFactory.createBustaBuilder().sbustamento(null, msg, busta, true, new ProprietaManifestAttachments());
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						SoapUtils.sbustamentoMessaggio(msg,bout);
+						bout.flush();
+						bout.close();
+						fatturaBytes = bout.toByteArray();
+						
+						Object formato = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA);
+						if(formato!=null && ((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) ){
+							P7MInfo p7m = new P7MInfo(fatturaBytes, sdiFactory.getLogger());
+							fatturaBytes = p7m.getXmlDecoded();
+						}
+					}catch(Throwable e){
+						throw new CoreException("FatturaPA behaviour con l'opzione 'org.openspcoop2.protocol.sdi.parse.fattura.saveInContext' disabilitata. Lo sbustamento del messaggio non e' riuscito: "+e.getMessage(),e);	
+					}
 				}
 				
 				byte[]metadati = null;
 				if(sdiProperties.isBehaviourCreaProtocolloSDI()){
 					Object metadatiBytesObject = msg.getContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA_METADATI_BYTES);
 					if(metadatiBytesObject==null){
-						throw new CoreException("FatturaPA behaviour è utilizzabile solo se l'opzione 'org.openspcoop2.protocol.sdi.parse.fattura.saveInContext' è abilitata");
+						throw new CoreException("FatturaPA behaviour con opzione 'org.openspcoop2.protocol.sdi.behaviour.creaProtocolloSDI' è utilizzabile solo se l'opzione 'org.openspcoop2.protocol.sdi.parse.fattura.saveInContext' è abilitata");
 					}
 					metadati = (byte[]) metadatiBytesObject;
 				}
@@ -115,103 +140,95 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 
 				
 				// forwardTo
+				List<byte[]> listForwardToList = new ArrayList<byte[]>();
+				List<Object> listForwardToObjectList = new ArrayList<Object>();
 				
-				if(fatturaPAObject instanceof it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType){
-					it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType fattura = 
-							(it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType) fatturaPAObject;
-					for (int i = 0; i < fattura.sizeFatturaElettronicaBodyList(); i++) {
-						
-						it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType fatturaSingola = 
-								new it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType();
-						fatturaSingola.setVersione(fattura.getVersione());
-						fatturaSingola.setFatturaElettronicaHeader(fattura.getFatturaElettronicaHeader());
-						fatturaSingola.addFatturaElettronicaBody(fattura.getFatturaElettronicaBody(i));
-						
-						it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbSerializer serializer =
-								new it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbSerializer();
-						it.gov.fatturapa.sdi.fatturapa.v1_0.ObjectFactory of = new it.gov.fatturapa.sdi.fatturapa.v1_0.ObjectFactory();
-						byte[] xml = serializer.toByteArray(of.createFatturaElettronica(fatturaSingola));
-						
-						if(sdiProperties.isBehaviourCreaProtocolloSDI()){
-							xml = imbustamentoSDI(busta, xml, metadati);
-						}
-						
-						SoapUtilsBuildParameter params = new SoapUtilsBuildParameter(xml,true,
-								true,false,
-								openspcoop2Properties.isFileCacheEnable(), openspcoop2Properties.getAttachmentRepoDir(), openspcoop2Properties.getFileThreshold());
-						OpenSPCoop2Message msgForwardTo = SoapUtils.build(params,null);
-						
-						msgForwardTo.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA, fatturaSingola);
-						
-						BehaviourForwardTo forwardTo = new BehaviourForwardTo();
-						forwardTo.setMessage(msgForwardTo);
-						
-						if(!sdiProperties.isBehaviourCreaProtocolloSDI()){
-							BehaviourForwardToConfiguration config = new BehaviourForwardToConfiguration();
-							config.setSbustamentoInformazioniProtocollo(StatoFunzionalita.DISABILITATA);
-							config.setSbustamentoSoap(StatoFunzionalita.CONFIGURAZIONE_ORIGINALE);
-							forwardTo.setConfig(config);
-						}
-						
-						Busta bustaNewMessaggio = busta.clone();
-						int posizione = (i+1);
-						bustaNewMessaggio.setID("Fattura"+posizione+"_"+busta.getID());
-						bustaNewMessaggio.addProperty(SDICostanti.SDI_BUSTA_EXT_POSIZIONE_FATTURA_PA, posizione+"");
-						forwardTo.setDescription("PosizioneFattura:"+posizione);
-						forwardTo.setBusta(bustaNewMessaggio);
-						
-						behaviour.getForwardTo().add(forwardTo);
-					}
-				}
-				else if(fatturaPAObject instanceof it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType){
-					it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType fattura = 
-							(it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType) fatturaPAObject;
-					for (int i = 0; i < fattura.sizeFatturaElettronicaBodyList(); i++) {
-						
-						it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType fatturaSingola = 
-								new it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType();
-						fatturaSingola.setVersione(fattura.getVersione());
-						fatturaSingola.setFatturaElettronicaHeader(fattura.getFatturaElettronicaHeader());
-						fatturaSingola.addFatturaElettronicaBody(fattura.getFatturaElettronicaBody(i));
-						
-						it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer serializer =
-								new it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer();
-						it.gov.fatturapa.sdi.fatturapa.v1_1.ObjectFactory of = new it.gov.fatturapa.sdi.fatturapa.v1_1.ObjectFactory();
-						byte[] xml = serializer.toByteArray(of.createFatturaElettronica(fatturaSingola));
-						
-						if(sdiProperties.isBehaviourCreaProtocolloSDI()){
-							xml = imbustamentoSDI(busta, xml, metadati);
-						}
-						
-						SoapUtilsBuildParameter params = new SoapUtilsBuildParameter(xml,true,
-								true,false,
-								openspcoop2Properties.isFileCacheEnable(), openspcoop2Properties.getAttachmentRepoDir(), openspcoop2Properties.getFileThreshold());
-						OpenSPCoop2Message msgForwardTo = SoapUtils.build(params,null);
-						
-						msgForwardTo.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA, fatturaSingola);
-						
-						BehaviourForwardTo forwardTo = new BehaviourForwardTo();
-						forwardTo.setMessage(msgForwardTo);
-						
-						if(!sdiProperties.isBehaviourCreaProtocolloSDI()){
-							BehaviourForwardToConfiguration config = new BehaviourForwardToConfiguration();
-							config.setSbustamentoInformazioniProtocollo(StatoFunzionalita.DISABILITATA);
-							config.setSbustamentoSoap(StatoFunzionalita.CONFIGURAZIONE_ORIGINALE);
-							forwardTo.setConfig(config);
-						}
-						
-						Busta bustaNewMessaggio = busta.clone();
-						int posizione = (i+1);
-						bustaNewMessaggio.setID("Fattura"+posizione+"_"+busta.getID());
-						bustaNewMessaggio.addProperty(SDICostanti.SDI_BUSTA_EXT_POSIZIONE_FATTURA_PA, posizione+"");
-						forwardTo.setDescription("PosizioneFattura:"+posizione);
-						forwardTo.setBusta(bustaNewMessaggio);
-						
-						behaviour.getForwardTo().add(forwardTo);
-					}
+				if(fatturaPAObject==null){
+					
+					listForwardToList = SDILottoUtils.splitLotto(fatturaBytes);
+					
 				}
 				else{
-					throw new CoreException("Tipo ["+fatturaPAObject.getClass().getName()+"] non gestito");
+					if(fatturaPAObject instanceof it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType){
+						it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType fattura = 
+								(it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType) fatturaPAObject;
+						for (int i = 0; i < fattura.sizeFatturaElettronicaBodyList(); i++) {
+							
+							it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType fatturaSingola = 
+									new it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType();
+							fatturaSingola.setVersione(fattura.getVersione());
+							fatturaSingola.setFatturaElettronicaHeader(fattura.getFatturaElettronicaHeader());
+							fatturaSingola.addFatturaElettronicaBody(fattura.getFatturaElettronicaBody(i));
+							
+							it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbSerializer serializer =
+									new it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbSerializer();
+							it.gov.fatturapa.sdi.fatturapa.v1_0.ObjectFactory of = new it.gov.fatturapa.sdi.fatturapa.v1_0.ObjectFactory();
+							byte[] xml = serializer.toByteArray(of.createFatturaElettronica(fatturaSingola));
+							listForwardToList.add(xml);
+							listForwardToObjectList.add(fatturaSingola);
+						}
+					}
+					else if(fatturaPAObject instanceof it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType){
+						it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType fattura = 
+								(it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType) fatturaPAObject;
+						for (int i = 0; i < fattura.sizeFatturaElettronicaBodyList(); i++) {
+							
+							it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType fatturaSingola = 
+									new it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType();
+							fatturaSingola.setVersione(fattura.getVersione());
+							fatturaSingola.setFatturaElettronicaHeader(fattura.getFatturaElettronicaHeader());
+							fatturaSingola.addFatturaElettronicaBody(fattura.getFatturaElettronicaBody(i));
+							
+							it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer serializer =
+									new it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer();
+							it.gov.fatturapa.sdi.fatturapa.v1_1.ObjectFactory of = new it.gov.fatturapa.sdi.fatturapa.v1_1.ObjectFactory();
+							byte[] xml = serializer.toByteArray(of.createFatturaElettronica(fatturaSingola));
+							listForwardToList.add(xml);
+							listForwardToObjectList.add(fatturaSingola);
+							
+						}
+					}
+					else{
+						throw new CoreException("Tipo ["+fatturaPAObject.getClass().getName()+"] non gestito");
+					}
+				}
+				
+				for (int j = 0; j < listForwardToList.size(); j++) {
+					byte[] xml = listForwardToList.get(j);
+					
+					if(sdiProperties.isBehaviourCreaProtocolloSDI()){
+						xml = imbustamentoSDI(busta, xml, metadati);
+					}
+					
+					SoapUtilsBuildParameter params = new SoapUtilsBuildParameter(xml,true,
+							true,false,
+							openspcoop2Properties.isFileCacheEnable(), openspcoop2Properties.getAttachmentRepoDir(), openspcoop2Properties.getFileThreshold());
+					OpenSPCoop2Message msgForwardTo = SoapUtils.build(params,null);
+					
+					if(listForwardToObjectList!=null && (j<listForwardToObjectList.size())){
+						Object fatturaSingola = listForwardToObjectList.get(j);
+						msgForwardTo.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA, fatturaSingola);
+					}
+					
+					BehaviourForwardTo forwardTo = new BehaviourForwardTo();
+					forwardTo.setMessage(msgForwardTo);
+					
+					if(!sdiProperties.isBehaviourCreaProtocolloSDI()){
+						BehaviourForwardToConfiguration config = new BehaviourForwardToConfiguration();
+						config.setSbustamentoInformazioniProtocollo(StatoFunzionalita.DISABILITATA);
+						config.setSbustamentoSoap(StatoFunzionalita.CONFIGURAZIONE_ORIGINALE);
+						forwardTo.setConfig(config);
+					}
+					
+					Busta bustaNewMessaggio = busta.clone();
+					int posizione = (j+1);
+					bustaNewMessaggio.setID("Fattura"+posizione+"_"+busta.getID());
+					bustaNewMessaggio.addProperty(SDICostanti.SDI_BUSTA_EXT_POSIZIONE_FATTURA_PA, posizione+"");
+					forwardTo.setDescription("PosizioneFattura:"+posizione);
+					forwardTo.setBusta(bustaNewMessaggio);
+					
+					behaviour.getForwardTo().add(forwardTo);
+					
 				}
 				
 				return behaviour;

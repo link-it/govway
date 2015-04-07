@@ -889,7 +889,7 @@ public class SoapUtils {
 					}
 					
 					// se presente <?xml
-					offset = readOffsetXmlInstruction(byteMsg, i, param, offset);
+					offset = readOffsetXmlInstruction(byteMsg, i, param, offset, false);
 				}
 			}
 			
@@ -927,10 +927,20 @@ public class SoapUtils {
 		
 	}     
 	
-	private static int readOffsetXmlInstruction(byte[]byteMsg, int startFrom,SoapUtilsBuildParameter param, int offsetParam) throws Exception{
+	private static int readOffsetXmlInstruction(byte[]byteMsg, int startFrom,SoapUtilsBuildParameter param, int offsetParam, boolean cleanEmptyChar) throws Exception{
 		//System.out.println("START["+(startFrom)+"] OFFSET["+offsetParam+"]");
 		int offset = offsetParam;
 		int i = startFrom;
+		
+		// brucio spazi vuoti
+		if(cleanEmptyChar){
+			for( ; i<byteMsg.length; i++){
+				if(((char)byteMsg[i])=='<'){
+					break;
+				}
+			}
+		}
+		
 		String xml = "";
 		if(byteMsg.length>i+5){
 			xml = "" + ((char)byteMsg[i]) + ((char)byteMsg[i+1]) + ((char)byteMsg[i+2]) +((char)byteMsg[i+3]) + ((char)byteMsg[i+4]);
@@ -949,7 +959,7 @@ public class SoapUtils {
 					throw new Exception("Tag <?xml non permesso con la funzionalita di imbustamento SOAP");
 				}
 				//System.out.println("RIGIRO CON START["+(i+1)+"] OFFSET["+offset+"]");
-				return readOffsetXmlInstruction(byteMsg, (i+1), param, offset);
+				return readOffsetXmlInstruction(byteMsg, (i+1), param, offset, true);
 			}
 			else{
 				//System.out.println("FINE A["+offset+"]");
