@@ -34,10 +34,11 @@ public class Char2String extends XmlAdapter<String, Character> {
 
 
     @Override
-	public Character unmarshal(String value) {
-    	if(value==null){
+	public Character unmarshal(String valueParam) {
+    	if(valueParam==null){
     		return null;
     	}
+    	String value = valueParam.trim();
     	return new Character(value.charAt(0));
     }
 

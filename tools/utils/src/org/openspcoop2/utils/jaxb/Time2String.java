@@ -47,10 +47,11 @@ public class Time2String extends XmlAdapter<String, Date>
 	    return DatatypeConverter.printTime(cal);
 	}
 	@Override
-	public Date unmarshal(String s) throws Exception {
-		if(s==null){
+	public Date unmarshal(String sParam) throws Exception {
+		if(sParam==null){
 			return null;
 		}
+		String s = sParam.trim();
 		return DatatypeConverter.parseTime(s).getTime();
 	}
 }

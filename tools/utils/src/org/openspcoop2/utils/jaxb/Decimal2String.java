@@ -135,10 +135,11 @@ public class Decimal2String extends XmlAdapter<String, DecimalWrapper>
 	}
 	
 	@Override
-	public DecimalWrapper unmarshal(String s) throws Exception {
-		if(s==null){
+	public DecimalWrapper unmarshal(String sParam) throws Exception {
+		if(sParam==null){
 			return null;
 		}
+		String s = sParam.trim();
 		StringBuffer pattern = new StringBuffer();
 		DecimalWrapper dw = new DecimalWrapper();
 		if(s.contains(".")){

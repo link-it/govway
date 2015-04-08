@@ -35,10 +35,11 @@ public class DateTime2Calendar extends XmlAdapter<String, Calendar> {
 
 
     @Override
-	public Calendar unmarshal(String value) {
-		if(value==null){
+	public Calendar unmarshal(String valueParam) {
+		if(valueParam==null){
 			return null;
 		}
+		String value = valueParam.trim();
         return (javax.xml.bind.DatatypeConverter.parseDate(value));
     }
 
