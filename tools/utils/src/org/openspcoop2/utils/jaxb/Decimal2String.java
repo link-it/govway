@@ -21,6 +21,8 @@
 package org.openspcoop2.utils.jaxb;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -49,7 +51,10 @@ public class Decimal2String extends XmlAdapter<String, DecimalWrapper>
 				pattern.append("0");
 			}	
 		}
-		DecimalFormat df = new DecimalFormat(pattern.toString());
+		//DecimalFormat df = new DecimalFormat(pattern.toString());
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.US); // per avere la punteggiatura come separatore
+		DecimalFormat df = (DecimalFormat)nf;
+		
 		//System.out.println("MARSHALL -> ["+pattern.toString()+"] int["+v.getInteger()+"] dec["+v.getDecimal()+"] ["+df.format(v.getObject())+"]");
 		String value =  df.format(v.getObject());
 		
