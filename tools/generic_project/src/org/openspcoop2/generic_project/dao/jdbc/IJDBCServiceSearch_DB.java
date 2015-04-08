@@ -26,10 +26,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 /**
@@ -41,6 +43,10 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
  */
 public interface IJDBCServiceSearch_DB<T,SM> extends IJDBCExpressionConstructor<SM> {
 
+	public ISQLFieldConverter getFieldConverter();
+	
+	public IJDBCFetch getFetch();
+	
 	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, long tableId) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
 	
 	public boolean exists(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, long tableId) throws ServiceException,MultipleResultException,NotImplementedException, Exception;
