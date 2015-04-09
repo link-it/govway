@@ -22,9 +22,6 @@
 
 package org.openspcoop2.core.config.driver;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -54,19 +51,12 @@ public interface IBeanUtilities {
 	 * @param soggetto
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaSoggettoById")
 	public boolean verificaSoggetto(
-			@WebParam(name = "idSoggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto idSoggetto,
-			@WebParam(name = "soggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			Soggetto soggetto)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaSoggettoByIdCheck")
 	public boolean verificaSoggetto(
-			@WebParam(name = "idSoggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto idSoggetto,
-			@WebParam(name = "soggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			Soggetto soggetto,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -77,19 +67,12 @@ public interface IBeanUtilities {
 	 * @param soggetto
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaSoggettoByLocation")
 	public boolean verificaSoggetto(
-			@WebParam(name = "location", targetNamespace = "http://ws.management.openspcoop2.org")
 			String location,
-			@WebParam(name = "soggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			Soggetto soggetto)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaSoggettoByLocationCheck")
 	public boolean verificaSoggetto(
-			@WebParam(name = "location", targetNamespace = "http://ws.management.openspcoop2.org")
 			String location,
-			@WebParam(name = "soggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			Soggetto soggetto,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -99,15 +82,10 @@ public interface IBeanUtilities {
 	 * @param soggetto
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaRouter(
-			@WebParam(name = "soggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			Soggetto soggetto) throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaRouterCheck")
 	public boolean verificaRouter(
-			@WebParam(name = "soggetto", targetNamespace = "http://ws.management.openspcoop2.org")
 			Soggetto soggetto,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -118,19 +96,12 @@ public interface IBeanUtilities {
 	 * @param pd
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaPortaDelegata(
-			@WebParam(name = "idPD", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaDelegata idPD,
-			@WebParam(name = "pd", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaDelegata pd)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaPortaDelegataCheck")
 	public boolean verificaPortaDelegata(
-			@WebParam(name = "idPD", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaDelegata idPD,
-			@WebParam(name = "pd", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaDelegata pd,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 		
 	
@@ -144,19 +115,12 @@ public interface IBeanUtilities {
 	 * @param pa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaPortaApplicativa(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaPortaApplicativaCheck")
 	public boolean verificaPortaApplicativa(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -171,23 +135,14 @@ public interface IBeanUtilities {
 	 * @param pa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaPortaApplicativaPuntuale")
 	public boolean verificaPortaApplicativa(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "ricercaPuntuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean ricercaPuntuale,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaPortaApplicativaPuntualeCheck")
 	public boolean verificaPortaApplicativa(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "ricercaPuntuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean ricercaPuntuale,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -199,23 +154,14 @@ public interface IBeanUtilities {
 	 * @param pa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaPortaApplicativaByNome")
 	public boolean verificaPortaApplicativa(
-			@WebParam(name = "nomePorta", targetNamespace = "http://ws.management.openspcoop2.org")
 			String nomePorta, 
-			@WebParam(name = "soggettoProprietario", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto soggettoProprietario,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaPortaApplicativaByNomeCheck")
 	public boolean verificaPortaApplicativa(
-			@WebParam(name = "nomePorta", targetNamespace = "http://ws.management.openspcoop2.org")
 			String nomePorta, 
-			@WebParam(name = "soggettoProprietario", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto soggettoProprietario,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -227,23 +173,14 @@ public interface IBeanUtilities {
 	 * @param pa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaPortaApplicativaVirtuale(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "soggettoVirtuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto soggettoVirtuale,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaPortaApplicativaVirtualeCheck")
 	public boolean verificaPortaApplicativaVirtuale(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "soggettoVirtuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto soggettoVirtuale,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	/**
@@ -256,27 +193,16 @@ public interface IBeanUtilities {
 	 * @param pa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaPortaApplicativaVirtualePuntuale")
 	public boolean verificaPortaApplicativaVirtuale(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "soggettoVirtuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto soggettoVirtuale,
-			@WebParam(name = "ricercaPuntuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean ricercaPuntuale,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaPortaApplicativaVirtualePuntualeCheck")
 	public boolean verificaPortaApplicativaVirtuale(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "soggettoVirtuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDSoggetto soggettoVirtuale,
-			@WebParam(name = "ricercaPuntuale", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean ricercaPuntuale,
-			@WebParam(name = "pa", targetNamespace = "http://ws.management.openspcoop2.org")
 			PortaApplicativa pa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -288,23 +214,14 @@ public interface IBeanUtilities {
 	 * @param sa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaServizioApplicativoPD")
 	public boolean verificaServizioApplicativo(
-			@WebParam(name = "idPD", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaDelegata idPD,
-			@WebParam(name = "servizioApplicativo", targetNamespace = "http://ws.management.openspcoop2.org")
 			String servizioApplicativo,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaServizioApplicativoPDCheck")
 	public boolean verificaServizioApplicativo(
-			@WebParam(name = "idPD", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaDelegata idPD,
-			@WebParam(name = "servizioApplicativo", targetNamespace = "http://ws.management.openspcoop2.org")
 			String servizioApplicativo,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	
@@ -316,23 +233,14 @@ public interface IBeanUtilities {
 	 * @param sa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaServizioApplicativoPA")
 	public boolean verificaServizioApplicativo(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "servizioApplicativo", targetNamespace = "http://ws.management.openspcoop2.org")
 			String servizioApplicativo,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaServizioApplicativoPACheck")
 	public boolean verificaServizioApplicativo(
-			@WebParam(name = "idPA", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaApplicativa idPA,
-			@WebParam(name = "servizioApplicativo", targetNamespace = "http://ws.management.openspcoop2.org")
 			String servizioApplicativo,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	
@@ -343,27 +251,16 @@ public interface IBeanUtilities {
 	 * @param sa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaServizioApplicativoAutenticatoBasic")
 	public boolean verificaServizioApplicativoAutenticato(
-			@WebParam(name = "idPD", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaDelegata idPD,
-			@WebParam(name = "aUser", targetNamespace = "http://ws.management.openspcoop2.org")
 			String aUser,
-			@WebParam(name = "aPassword", targetNamespace = "http://ws.management.openspcoop2.org")
 			String aPassword,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaServizioApplicativoAutenticatoBasicCheck")
 	public boolean verificaServizioApplicativoAutenticato(
-			@WebParam(name = "idPD", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaDelegata idPD,
-			@WebParam(name = "aUser", targetNamespace = "http://ws.management.openspcoop2.org")
 			String aUser,
-			@WebParam(name = "aPassword", targetNamespace = "http://ws.management.openspcoop2.org")
 			String aPassword,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 	
 	
@@ -374,21 +271,13 @@ public interface IBeanUtilities {
 	 * @param sa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod(operationName="verificaServizioApplicativoAutenticatoSSL")
 	public boolean verificaServizioApplicativoAutenticato(
-			@WebParam(name = "idPD", targetNamespace = "http://ws.management.openspcoop2.org")
 			IDPortaDelegata idPD,
-			@WebParam(name = "aSubject", targetNamespace = "http://ws.management.openspcoop2.org")
 			String aSubject,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa) throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaServizioApplicativoAutenticatoSSLCheck")
 	public boolean verificaServizioApplicativoAutenticato(IDPortaDelegata idPD,
-			@WebParam(name = "aSubject", targetNamespace = "http://ws.management.openspcoop2.org")
 			String aSubject,
-			@WebParam(name = "sa", targetNamespace = "http://ws.management.openspcoop2.org")
 			ServizioApplicativo sa,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	
@@ -399,15 +288,10 @@ public interface IBeanUtilities {
 	 * @param rt
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaRoutingTable(
-			@WebParam(name = "rt", targetNamespace = "http://ws.management.openspcoop2.org")
 			RoutingTable rt) throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaRoutingTableCheck")
 	public boolean verificaRoutingTable(
-			@WebParam(name = "rt", targetNamespace = "http://ws.management.openspcoop2.org")
 			RoutingTable rt,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	
@@ -418,15 +302,10 @@ public interface IBeanUtilities {
 	 * @param ar
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaAccessoRegistro(
-			@WebParam(name = "ar", targetNamespace = "http://ws.management.openspcoop2.org")
 			AccessoRegistro ar) throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaAccessoRegistroCheck")
 	public boolean verificaAccessoRegistro(
-			@WebParam(name = "ar", targetNamespace = "http://ws.management.openspcoop2.org")
 			AccessoRegistro ar,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	
@@ -436,15 +315,10 @@ public interface IBeanUtilities {
 	 * @param gr
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaGestioneErroreComponenteCooperazione(
-			@WebParam(name = "gr", targetNamespace = "http://ws.management.openspcoop2.org")
 			GestioneErrore gr) throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaGestioneErroreComponenteCooperazioneCheck")
 	public boolean verificaGestioneErroreComponenteCooperazione(
-			@WebParam(name = "gr", targetNamespace = "http://ws.management.openspcoop2.org")
 			GestioneErrore gr,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	
@@ -454,15 +328,10 @@ public interface IBeanUtilities {
 	 * @param gr
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaGestioneErroreComponenteIntegrazione(
-			@WebParam(name = "gr", targetNamespace = "http://ws.management.openspcoop2.org")
 			GestioneErrore gr )throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaGestioneErroreComponenteIntegrazioneCheck")
 	public boolean verificaGestioneErroreComponenteIntegrazione(
-			@WebParam(name = "gr", targetNamespace = "http://ws.management.openspcoop2.org")
 			GestioneErrore gr,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	
@@ -472,14 +341,9 @@ public interface IBeanUtilities {
 	 * @param configurazione
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
-	@WebMethod
 	public boolean verificaConfigurazione(
-			@WebParam(name = "configurazione", targetNamespace = "http://ws.management.openspcoop2.org")
 			Configurazione configurazione)throws DriverConfigurazioneException;
-	@WebMethod(operationName="verificaConfigurazioneCheck")
 	public boolean verificaConfigurazione(
-			@WebParam(name = "configurazione", targetNamespace = "http://ws.management.openspcoop2.org")
 			Configurazione configurazione,
-			@WebParam(name = "checkID", targetNamespace = "http://ws.management.openspcoop2.org")
 			boolean checkID)throws DriverConfigurazioneException;
 }
