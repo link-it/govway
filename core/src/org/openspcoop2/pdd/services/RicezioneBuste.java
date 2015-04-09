@@ -118,6 +118,7 @@ import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoMessage;
 import org.openspcoop2.pdd.services.connector.ConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
@@ -1392,6 +1393,10 @@ public class RicezioneBuste {
 		
 		Busta bustaRichiesta = validatore.getBusta();
 		
+		// VM ProtocolInfo (se siamo arrivati da un canale VM)
+		if(pddContext!=null && bustaRichiesta!=null)
+			DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRichiesta);
+			
 		// Se non impostati, imposto i domini
 		org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(bustaRichiesta, propertiesReader.getIdentitaPortaDefault(protocollo), registroServiziReader, protocolFactory);
 		if(soggettoFruitore != null){
@@ -2885,6 +2890,8 @@ public class RicezioneBuste {
 			EsitoElaborazioneMessaggioTracciato esitoTraccia = null;
 			if( (erroriProcessamento.size()>0) || (erroriValidazione.size()>0) ){
 				
+				boolean foundErroriGravi = false;
+				
 				String dettaglioErrore = null;
 				StringBuffer eccBuffer = new StringBuffer();
 				for(int k = 0; k < erroriProcessamento.size() ; k++){
@@ -2893,6 +2900,18 @@ public class RicezioneBuste {
 						eccBuffer.append(" ");
 					eccBuffer.append(er.toString(protocolFactory));
 					eccBuffer.append(";");
+					
+					if(moduleManager.isIgnoraEccezioniLivelloNonGrave()){
+						if(er.getRilevanza()!=null){
+							if(LivelloRilevanza.isEccezioneLivelloGrave(er.getRilevanza())){
+								foundErroriGravi = true;
+							}
+						}else{
+							foundErroriGravi = true;
+						}
+					}else{
+						foundErroriGravi = true;
+					}
 				}
 				for(int k = 0; k < erroriValidazione.size() ; k++){
 					Eccezione er = erroriValidazione.get(k);
@@ -2900,6 +2919,18 @@ public class RicezioneBuste {
 						eccBuffer.append(" ");
 					eccBuffer.append(er.toString(protocolFactory));
 					eccBuffer.append(";");
+					
+					if(moduleManager.isIgnoraEccezioniLivelloNonGrave()){
+						if(er.getRilevanza()!=null){
+							if(LivelloRilevanza.isEccezioneLivelloGrave(er.getRilevanza())){
+								foundErroriGravi = true;
+							}
+						}else{
+							foundErroriGravi = true;
+						}
+					}else{
+						foundErroriGravi = true;
+					}
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, erroriProcessamento.size()+erroriValidazione.size()+"");
 				msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, eccBuffer.toString());
@@ -2908,8 +2939,14 @@ public class RicezioneBuste {
 				}else{
 					dettaglioErrore = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBusta.bustaNonCorretta");
 				}
-				esitoTraccia = 
+				if(foundErroriGravi){
+					esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(dettaglioErrore);
+				}
+				else{
+					esitoTraccia = 
+						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioRicevuto(dettaglioErrore);
+				}
 			}
 			else{
 				esitoTraccia = 

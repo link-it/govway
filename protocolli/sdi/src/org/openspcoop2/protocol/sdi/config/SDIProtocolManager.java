@@ -62,6 +62,11 @@ public class SDIProtocolManager extends BasicManager {
 	}
 	
 	@Override
+	public boolean isIgnoraEccezioniNonGravi(){
+		return true;
+	}
+	
+	@Override
 	public Map<String, String> buildIntegrationProperties(Busta busta,
 			boolean isRichiesta, TipoIntegrazione tipoIntegrazione)
 			throws ProtocolException {

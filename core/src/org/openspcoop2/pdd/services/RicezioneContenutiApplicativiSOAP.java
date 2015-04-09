@@ -52,6 +52,9 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.ConnectorOutMessage;
+import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
+import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
@@ -178,7 +181,12 @@ public class RicezioneContenutiApplicativiSOAP {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			pddContext = context.getPddContext();
 			
-			
+			if(req instanceof DirectVMConnectorInMessage){
+				DirectVMConnectorInMessage vm = (DirectVMConnectorInMessage) req;
+				if(vm.getDirectVMProtocolInfo()!=null){
+					vm.getDirectVMProtocolInfo().setInfo(pddContext);
+				}
+			}
 			
 			
 			/* ------------  PreInHandler ------------- */
@@ -480,6 +488,26 @@ public class RicezioneContenutiApplicativiSOAP {
 		if(context!=null && context.getIntegrazione()!=null){
 			erroreApplicativoBuilder.setServizioApplicativo(context.getIntegrazione().getServizioApplicativoFruitore());
 		}
+		if(res instanceof DirectVMConnectorOutMessage){
+			if(context!=null && context.getPddContext()!=null){
+				DirectVMConnectorOutMessage vm = (DirectVMConnectorOutMessage) res;
+				DirectVMProtocolInfo pInfo = new DirectVMProtocolInfo();
+				Object oIdTransazione = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+				if(oIdTransazione!=null){
+					pInfo.setIdTransazione((String)oIdTransazione);
+				}
+				if(context.getProtocol()!=null){
+					if(context.getProtocol().getIdRichiesta()!=null){
+						pInfo.setIdMessaggioRichiesta(context.getProtocol().getIdRichiesta());
+					}
+					if(context.getProtocol().getIdRisposta()!=null){
+						pInfo.setIdMessaggioRisposta(context.getProtocol().getIdRisposta());
+					}
+				}
+				vm.setDirectVMProtocolInfo(pInfo);
+			}
+		}
+		
 		OpenSPCoop2Message responseMessageError = null;
 		SOAPBody body = null;
 		Esito esito = null;

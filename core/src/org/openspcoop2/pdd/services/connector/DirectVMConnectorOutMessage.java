@@ -35,15 +35,22 @@ import org.openspcoop2.message.OpenSPCoop2Message;
  */
 public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 
+	private DirectVMProtocolInfo directVMProtocolInfo;
 	
 	public DirectVMConnectorOutMessage() throws ConnectorException{
 		try{
-			
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
 
+	public DirectVMProtocolInfo getDirectVMProtocolInfo() {
+		return this.directVMProtocolInfo;
+	}
+	public void setDirectVMProtocolInfo(DirectVMProtocolInfo directVMProtocolInfo) {
+		this.directVMProtocolInfo = directVMProtocolInfo;
+	}
+	
 	private OpenSPCoop2Message message;
 	public OpenSPCoop2Message getMessage() {
 		return this.message;

@@ -98,6 +98,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
+import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
@@ -369,6 +370,10 @@ public class InoltroBuste extends GenericLib{
 			return esito;
 		}
 		
+		
+		// VM ProtocolInfo (se siamo arrivati da un canale VM)
+		if(pddContext!=null && bustaRichiesta!=null)
+			DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRichiesta);
 		
 
 		/* ------------------ Inizializzo stato OpenSPCoop  --------------- */
@@ -2720,6 +2725,12 @@ public class InoltroBuste extends GenericLib{
 				bustaRisposta = validatore.getBusta();
 				idMessageResponse = bustaRisposta.getID();
 				
+				// Imposto eventuali informazioni DirectVM
+				if(bustaRisposta!=null && pddContext!=null){
+					DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRisposta);
+				}
+				
+				// Aggiunto risposta a pddContext
 				if(bustaRisposta!=null){
 					pddContext.addObject(CostantiPdD.BUSTA_RISPOSTA, bustaRisposta);
 				}

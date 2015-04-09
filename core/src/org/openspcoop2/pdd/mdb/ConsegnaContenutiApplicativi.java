@@ -98,6 +98,7 @@ import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
@@ -317,6 +318,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 		msgDiag.addKeyword(CostantiPdD.KEY_DESCRIZIONE_BEHAVIOUR, descrizioneBehaviour);
 		
+		// VM ProtocolInfo (se siamo arrivati da un canale VM)
+		// Per il caso di LocalForward (se si mettera il tracciamento)
+		if(pddContext!=null && bustaRichiesta!=null)
+			DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRichiesta);
+		
 		// Dati per GestoreEventi
 		String servizio = null;
 		String tipoServizio = null;
@@ -446,7 +452,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 		msgDiag.setDelegata(false);
 		msgDiag.setServizioApplicativo(servizioApplicativo);
-
 
 		// Calcolo Profilo di Collaborazione
 		msgDiag.mediumDebug("Calcolo profilo di collaborazione...");

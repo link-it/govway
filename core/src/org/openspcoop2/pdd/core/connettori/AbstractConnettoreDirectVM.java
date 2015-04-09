@@ -27,12 +27,14 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
+import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -229,6 +231,15 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	private boolean sendByVM(IProtocolFactory pFactory){
 		try{
 			
+			DirectVMProtocolInfo directVMProtocolInfo = new DirectVMProtocolInfo();
+			if(this.idMessaggio!=null){
+				directVMProtocolInfo.setIdMessaggioRichiesta(this.idMessaggio);
+			}
+			if(this.getPddContext()!=null){
+				Object o = this.getPddContext().getObject(Costanti.CLUSTER_ID);
+				directVMProtocolInfo.setIdTransazione(o!=null ? (String)o : null);
+			}
+			
 			DirectVMConnectorInMessage inMessage = new DirectVMConnectorInMessage(this.requestMsg, 
 					this.getIdModuloAsIDService(),
 					this.getIdModulo(), 
@@ -237,7 +248,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 					pFactory,
 					this.getFunction(), 
 					this.location, this.credenziali,
-					this.getFunctionParameters());
+					this.getFunctionParameters(),
+					directVMProtocolInfo);
 			
 			DirectVMConnectorOutMessage outMessage = new DirectVMConnectorOutMessage();
 			
@@ -255,6 +267,12 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			/* ------------  PostOutRequestHandler ------------- */
 			this.postOutRequest();
 			
+			
+			
+			// Imposto informazioni di attraversamento VM
+			if(outMessage.getDirectVMProtocolInfo()!=null){
+				outMessage.getDirectVMProtocolInfo().setInfo(this.getPddContext());
+			}
 			
 			
 			

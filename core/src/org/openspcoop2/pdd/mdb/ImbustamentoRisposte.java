@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
@@ -408,6 +409,10 @@ public class ImbustamentoRisposte extends GenericLib {
 			bustaRisposta.setServizioApplicativoErogatore(servizioApplicativoErogatore);			
 
 
+			/* -------------- Imposto eventuali informazioni DirectVM ------------------- */
+			DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRisposta);
+			
+			
 			/* ------------  Spedizione Risposta   ------------- */
 			msgDiag.mediumDebug("Spedizione busta di risposta al modulo in uscita (RicezioneBuste/InoltroRisposte)...");
 			msgResponse = 

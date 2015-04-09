@@ -1,3 +1,11 @@
+2015-04-09  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità #323
+	Correlazione di messaggi veicolati su protocolli differenti tramite connettori DirectVM.
+	Sono state aggiunte informazioni sugli identificativi di protocollo tra le informazioni tracciate, 
+	in modo da poter riconciliare le transazioni che prevedono una configurazione con connettore VM.
+
 2015-04-03  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]

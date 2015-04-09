@@ -475,7 +475,7 @@ public class TracciamentoTesto extends Action {
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_ESITO_ELABORAZIONE);
 			if(traccia.getEsitoElaborazioneMessaggioTracciato()!=null){
-				de.setValue(org.apache.commons.lang.StringEscapeUtils.escapeXml(traccia.getEsitoElaborazioneMessaggioTracciato().getEsito().toString()));
+				de.setValue(traccia.getEsitoElaborazioneMessaggioTracciato().getEsito().toString());
 			}else{
 				de.setValue("-");
 			}
@@ -483,7 +483,7 @@ public class TracciamentoTesto extends Action {
 			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_DETTAGLIO_ESITO_ELABORAZIONE);
-			de.setValue(this.getValue(traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio()));
+			de.setValue(org.apache.commons.lang.StringEscapeUtils.escapeXml(this.getValue(traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio())).replaceAll("\n", "<br/>"));
 			dati.add(de);
 			
 			de = new DataElement();
