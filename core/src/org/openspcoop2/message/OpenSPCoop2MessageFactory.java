@@ -270,12 +270,15 @@ public abstract class OpenSPCoop2MessageFactory {
 		}
 		catch(SOAPException soape){
 			System.err.println("SOAPException non gestibile" + soape);
+			soape.printStackTrace(System.err);
 		}
 		catch(IOException ioe){
 			System.err.println("IOException non gestibile" + ioe);
+			ioe.printStackTrace(System.err);
 		}
 		catch(ParseException ioe){
 			System.err.println("ParseException non gestibile" + ioe);
+			ioe.printStackTrace(System.err);
 		}
 		return null;
 		
@@ -319,19 +322,24 @@ public abstract class OpenSPCoop2MessageFactory {
 						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 				mhs.addHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_1);
 			}
-				
+			
+			//System.out.println("XML ["+versioneSoap+"] ["+xml+"]");
+			
 			byte[] xmlByte = xml.getBytes();
 			ByteArrayInputStream bais = new ByteArrayInputStream(xmlByte);
 			return _createMessage(mhs, bais, notifierInputStreamParams, false, null, null, xmlByte.length);
 		}
 		catch(SOAPException soape){
 			System.err.println("SOAPException non gestibile durante la creazione di un SOAPFault. " + soape);
+			soape.printStackTrace(System.err);
 		}
 		catch(IOException ioe){
 			System.err.println("IOException non gestibile durante la creazione di un SOAPFault. " + ioe);
+			ioe.printStackTrace(System.err);
 		}
 		catch(ParseException ioe){
 			System.err.println("ParseException non gestibile durante la creazione di un SOAPFault. " + ioe);
+			ioe.printStackTrace(System.err);
 		}
 		return null;
 	}

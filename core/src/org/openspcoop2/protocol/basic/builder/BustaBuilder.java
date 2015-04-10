@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -250,7 +251,7 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 	}
 	
 	
-	protected void addEccezioniInFault(OpenSPCoop2Message msg, Busta busta) throws ProtocolException{
+	protected void addEccezioniInFault(OpenSPCoop2Message msg, Busta busta, boolean ignoraEccezioniNonGravi) throws ProtocolException{
 		SOAPFault f = null;
 		try{
 			if(msg.getSOAPBody()!=null){
@@ -294,6 +295,8 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 			params.setTipoPorta(TipoPdD.APPLICATIVA);
 			
 			// Eccezione
+			// NOTA: il parametro 'ignoraEccezioniNonGravi' serve solo a filtrare.
+			//       il controllo che esista almeno una eccezione non grave e' fatto dove viene chiamato il metodo.
 			Eccezione ecc = null;
 			if(busta.sizeListaEccezioni()==1){
 				ecc = busta.getEccezione(0);
@@ -303,8 +306,10 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 				StringBuffer bfDescrizione = new StringBuffer();
 				for(int k=0; k<busta.sizeListaEccezioni();k++){
 					Eccezione eccLista = busta.getEccezione(k);
-					if(eccLista.getDescrizione(this.protocolFactory)!=null)
-						bfDescrizione.append("["+this.traduttore.toString(eccLista.getCodiceEccezione(),eccLista.getSubCodiceEccezione())+"] "+eccLista.getDescrizione(this.protocolFactory)+"\n");
+					if(eccLista.getRilevanza()==null || LivelloRilevanza.isEccezioneLivelloGrave(eccLista.getRilevanza())){
+						if(eccLista.getDescrizione(this.protocolFactory)!=null)
+							bfDescrizione.append("["+this.traduttore.toString(eccLista.getCodiceEccezione(),eccLista.getSubCodiceEccezione())+"] "+eccLista.getDescrizione(this.protocolFactory)+"\n");
+					}
 				}
 				if(bfDescrizione.length()>0)
 					ecc.setDescrizione(bfDescrizione.toString());

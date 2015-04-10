@@ -536,7 +536,7 @@ public final class Monitor extends Action {
 							msg += "<br>ID Applicativo: "+filter.getCorrelazioneApplicativa();
 						if (filter.getMessagePattern() != null && !"".equals(filter.getMessagePattern()))
 							msg += "<br>Contenuto Messaggio: "+filter.getMessagePattern();
-						if (filter.getSoglia() != 0)
+						if (filter.getSoglia() > 0)
 							msg += "<br>Messaggi piu' vecchi di (minuti): "+filter.getSoglia();
 						if (filter.getStato() != null && !"".equals(filter.getStato()))
 							msg += "<br>Stato: "+filter.getStato();

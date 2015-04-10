@@ -75,7 +75,15 @@ public class TrasparenteBustaBuilder extends BustaBuilder {
 				
 		if(!isRichiesta && busta.sizeListaEccezioni()>0 ){
 		
-			this.addEccezioniInFault(msg, busta);
+			boolean ignoraEccezioniNonGravi = this.protocolFactory.createProtocolManager().isIgnoraEccezioniNonGravi();
+			if(ignoraEccezioniNonGravi){
+				if(busta.containsEccezioniGravi() ){
+					this.addEccezioniInFault(msg, busta, ignoraEccezioniNonGravi);
+				}	
+			}
+			else{
+				this.addEccezioniInFault(msg, busta, ignoraEccezioniNonGravi);
+			}
 
 		}
 		
