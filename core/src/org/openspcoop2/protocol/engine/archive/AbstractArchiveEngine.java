@@ -404,6 +404,12 @@ public abstract class AbstractArchiveEngine {
 		Configurazione configurazione = this.driverConfigurazione.getConfigurazioneGenerale();
 		configurazione.setRoutingTable(this.driverConfigurazione.getRoutingTable());
 		configurazione.setAccessoRegistro(this.driverConfigurazione.getAccessoRegistro());
+		try{
+			configurazione.setAccessoConfigurazione(this.driverConfigurazione.getAccessoConfigurazione());
+		}catch(DriverConfigurazioneNotFound notFound){}
+		try{
+			configurazione.setAccessoDatiAutorizzazione(this.driverConfigurazione.getAccessoDatiAutorizzazione());
+		}catch(DriverConfigurazioneNotFound notFound){}
 		GestioneErrore gestioneErroreCooperazione = null;
 		GestioneErrore gestioneErroreIntegrazione = null;
 		try{

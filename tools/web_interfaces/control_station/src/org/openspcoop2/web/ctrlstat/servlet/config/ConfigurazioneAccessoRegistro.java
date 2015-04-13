@@ -35,7 +35,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroCache;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -75,11 +75,11 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			String statocache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
-			String dimensionecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE);
-			String algoritmocache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE);
-			String idlecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
-			String lifecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
+			String statocache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY);
+			String dimensionecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY);
+			String algoritmocache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY);
+			String idlecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY);
+			String lifecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
@@ -101,7 +101,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 			// Se statohid == null, visualizzo la pagina per la modifica dati
 			// In caso contrario, modifico i dati della porta di dominio nel db
 			if (ServletUtils.isEditModeInProgress(request)) {
-				AccessoRegistroCache arc = ar.getCache();
+				Cache arc = ar.getCache();
 				if (arc == null) {
 					if (statocache == null) {
 						statocache = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
@@ -156,7 +156,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 			// Modifico i dati del registro nel db
 			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
-				AccessoRegistroCache arcNew = new AccessoRegistroCache();
+				Cache arcNew = new Cache();
 				arcNew.setDimensione(dimensionecache);
 				arcNew.setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache));
 				arcNew.setItemIdleTime(idlecache);

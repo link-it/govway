@@ -38,7 +38,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="accesso-registro">
  * 		&lt;sequence>
- * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/config}accesso-registro-cache" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/config}cache" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="registro" type="{http://www.openspcoop2.org/core/config}accesso-registro-registro" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -78,11 +78,11 @@ public class AccessoRegistro extends org.openspcoop2.utils.beans.BaseBean implem
 		this.id=new Long(-1);
   }
 
-  public AccessoRegistroCache getCache() {
+  public Cache getCache() {
     return this.cache;
   }
 
-  public void setCache(AccessoRegistroCache cache) {
+  public void setCache(Cache cache) {
     this.cache = cache;
   }
 
@@ -118,7 +118,7 @@ public class AccessoRegistro extends org.openspcoop2.utils.beans.BaseBean implem
 
 
   @XmlElement(name="cache",required=false,nillable=false)
-  protected AccessoRegistroCache cache;
+  protected Cache cache;
 
   @XmlElement(name="registro",required=true,nillable=false)
   protected List<AccessoRegistroRegistro> registro = new ArrayList<AccessoRegistroRegistro>();

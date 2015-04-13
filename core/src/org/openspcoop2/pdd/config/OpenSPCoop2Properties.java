@@ -39,7 +39,6 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
-import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -48,7 +47,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenzialiIM;
-import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazioneBuste;
+import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.handlers.ExitHandler;
 import org.openspcoop2.pdd.core.handlers.InRequestHandler;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolHandler;
@@ -477,24 +476,6 @@ public class OpenSPCoop2Properties {
 				return false;
 			}
 
-			// Cache della configurazione
-			try{
-				if(this.isAbilitataCacheConfig()){
-					String algoritmo = this.getAlgoritmoCacheConfig();
-					if(algoritmo!=null &&
-							CostantiConfigurazione.CACHE_LRU.equals(algoritmo)==false && 
-							CostantiConfigurazione.CACHE_MRU.equals(algoritmo)==false){
-						this.log.error("Algoritmo utilizzato con la cache non conosciuto: "+algoritmo);
-						throw new Exception("Algoritmo Cache non conosciuto");
-					}
-					this.getDimensioneCacheConfig();
-					this.getItemIdleTimeCacheConfig();
-					this.getItemLifeSecondCacheConfig();
-				}
-			}catch(Exception e){
-				// Il motivo dell'errore viene loggato dentro i metodi
-				return false;
-			}
 			// (warning)
 			this.isConfigurazioneDinamica();
 
@@ -862,31 +843,13 @@ public class OpenSPCoop2Properties {
 						return false;
 					}
 					try{
-						IAutorizzazioneBuste auth = (IAutorizzazioneBuste) loaderOpenSPCoop.newInstance(tipoClass);
+						IAutorizzazionePortaApplicativa auth = (IAutorizzazionePortaApplicativa) loaderOpenSPCoop.newInstance(tipoClass);
 						auth.toString();
 					}catch(Exception e){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"]: "+e.getMessage());
 						return false;
 					}
 				}
-			}
-			// Cache per autorizzazione delle buste
-			try{
-				if(this.isAbilitataCacheAutorizzazioneBuste()){
-					String algoritmo = this.getAlgoritmoCacheAutorizzazioneBuste();
-					if(algoritmo!=null &&
-							CostantiConfigurazione.CACHE_LRU.equals(algoritmo)==false && 
-							CostantiConfigurazione.CACHE_MRU.equals(algoritmo)==false){
-						this.log.error("Algoritmo utilizzato con la cache (Autorizzazione Buste) non conosciuto: "+algoritmo);
-						throw new Exception("Algoritmo Cache (Autorizzazione Buste) non conosciuto");
-					}
-					this.getDimensioneCacheAutorizzazioneBuste();
-					this.getItemIdleTimeCacheAutorizzazioneBuste();
-					this.getItemLifeSecondCacheAutorizzazioneBuste();
-				}
-			}catch(Exception e){
-				// Il motivo dell'errore viene loggato dentro i metodi
-				return false;
 			}
 
 			// GestoreRepositoryBuste
@@ -2003,132 +1966,7 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.jndiContext_Configurazione;
 	}
 
-	/**
-	 * Restituisce l'indicazione se la cache e' abilitata
-	 *
-	 * @return Restituisce l'indicazione se la cache e' abilitata
-	 */
-	private static Boolean isAbilitataCacheConfig_value = null;
-	public boolean isAbilitataCacheConfig() {
-		if(OpenSPCoop2Properties.isAbilitataCacheConfig_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.cache.enable"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.isAbilitataCacheConfig_value = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.config.cache.enable' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isAbilitataCacheConfig_value = false;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.config.cache.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				OpenSPCoop2Properties.isAbilitataCacheConfig_value = false;
-			}
-		}
-
-		return OpenSPCoop2Properties.isAbilitataCacheConfig_value;
-	}
-
-	/**
-	 * Restituisce la dimensione della cache
-	 *
-	 * @return Restituisce la dimensione della cache
-	 */
-	private static Integer dimensioneCacheConfig_value = null;
-	public int getDimensioneCacheConfig() throws OpenSPCoop2ConfigurationException{	
-		if(OpenSPCoop2Properties.dimensioneCacheConfig_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.cache.dimensione"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.dimensioneCacheConfig_value = Integer.parseInt(value);
-				}else{
-					OpenSPCoop2Properties.dimensioneCacheConfig_value = -1;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.cache.dimensione': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.config.cache.dimensione'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.dimensioneCacheConfig_value;
-	}
-
-	/**
-	 * Restituisce l'algoritmo della cache
-	 *
-	 * @return Restituisce l'algoritmo della cache
-	 */
-	private static String algoritmoCacheConfig_value = null;
-	public String getAlgoritmoCacheConfig() throws OpenSPCoop2ConfigurationException{	
-		if(OpenSPCoop2Properties.algoritmoCacheConfig_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.cache.algoritmo"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.algoritmoCacheConfig_value = value;
-				}else{
-					OpenSPCoop2Properties.algoritmoCacheConfig_value = null;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.cache.algoritmo': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.config.cache.algoritmo'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.algoritmoCacheConfig_value;
-	}
-
-	/**
-	 * Restituisce la itemIdleTime della cache
-	 *
-	 * @return Restituisce la itemIdleTime della cache
-	 */
-	private static Integer itemIdleTimeCacheConfig_value = null;
-	public int getItemIdleTimeCacheConfig() throws OpenSPCoop2ConfigurationException{	
-		if(OpenSPCoop2Properties.itemIdleTimeCacheConfig_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.cache.itemIdleTime"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.itemIdleTimeCacheConfig_value = Integer.parseInt(value);
-				}else{
-					OpenSPCoop2Properties.itemIdleTimeCacheConfig_value = -1;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.cache.itemIdleTime': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.config.cache.itemIdleTime'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.itemIdleTimeCacheConfig_value;
-	}
-
-	/**
-	 * Restituisce la  itemLifeSecond della cache
-	 *
-	 * @return Restituisce la itemLifeSecond della cache
-	 */
-	private static Integer itemLifeSecondCacheConfig_value = null;
-	public int getItemLifeSecondCacheConfig() throws OpenSPCoop2ConfigurationException{
-		if(OpenSPCoop2Properties.itemLifeSecondCacheConfig_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.cache.itemLifeSecond"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.itemLifeSecondCacheConfig_value = Integer.parseInt(value);
-				}else{
-					OpenSPCoop2Properties.itemLifeSecondCacheConfig_value = -1;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.cache.itemLifeSecond': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.config.cache.itemLifeSecond'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.itemLifeSecondCacheConfig_value;
-	}
-
+	
 	private static AccessoConfigurazionePdD accessoConfigurazionePdD = null;
 	public AccessoConfigurazionePdD getAccessoConfigurazionePdD() throws OpenSPCoop2ConfigurationException{ 
 		if(OpenSPCoop2Properties.accessoConfigurazionePdD==null){
@@ -2153,21 +1991,7 @@ public class OpenSPCoop2Properties {
 				}
 				conf.setContext(this.getJNDIContext_Configurazione());
 				conf.setCondivisioneDatabasePddRegistro(this.isCondivisioneConfigurazioneRegistroDB());
-				conf.setUtilizzoCache(this.isAbilitataCacheConfig());
-				if(conf.getUtilizzoCache()){
-					String algoritmo = this.getAlgoritmoCacheConfig();
-					if(algoritmo!=null)
-						conf.setAlgoritmoCache(AlgoritmoCache.toEnumConstant(algoritmo));
-					int dimensione = this.getDimensioneCacheConfig();
-					if(dimensione!=-1)
-						conf.setDimensioneCache(dimensione);
-					int idle = this.getItemIdleTimeCacheConfig();
-					if(idle!=-1)
-						conf.setItemIdleTimeCache(idle);
-					int life = this.getItemLifeSecondCacheConfig();
-					if(life!=-1)
-						conf.setItemLifeTimeCache(life);
-				}
+				
 				OpenSPCoop2Properties.accessoConfigurazionePdD = conf;
 			}catch(java.lang.Exception e) {
 				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della modalita' di accesso alla configurazione della PdD OpenSPCoop",e);
@@ -4586,136 +4410,7 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.tipoAutorizzazioneBuste;
 	}
 
-	/* ************* CACHE AUTORIZZAZIONE BUSTE *******************/
-
-	/**
-	 * Restituisce l'indicazione se la cache e' abilitata
-	 *
-	 * @return Restituisce l'indicazione se la cache e' abilitata
-	 */
-	private static Boolean isAbilitataCacheAutorizzazioneBuste_value = null;
-	public boolean isAbilitataCacheAutorizzazioneBuste() {
-		if(OpenSPCoop2Properties.isAbilitataCacheAutorizzazioneBuste_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.cache.enable"); 
-
-				if (value != null){
-					value = value.trim();
-					OpenSPCoop2Properties.isAbilitataCacheAutorizzazioneBuste_value = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.enable' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isAbilitataCacheAutorizzazioneBuste_value = false;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				OpenSPCoop2Properties.isAbilitataCacheAutorizzazioneBuste_value = false;
-			}
-		}
-
-		return OpenSPCoop2Properties.isAbilitataCacheAutorizzazioneBuste_value;
-	}
-
-	/**
-	 * Restituisce la dimensione della cache
-	 *
-	 * @return Restituisce la dimensione della cache
-	 */
-	private static Integer dimensioneCacheAutorizzazioneBuste_value = null;
-	public int getDimensioneCacheAutorizzazioneBuste() throws OpenSPCoop2ConfigurationException{	
-		if(OpenSPCoop2Properties.dimensioneCacheAutorizzazioneBuste_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.cache.dimensione"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.dimensioneCacheAutorizzazioneBuste_value = Integer.parseInt(value);
-				}else{
-					OpenSPCoop2Properties.dimensioneCacheAutorizzazioneBuste_value = -1;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.dimensione': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.dimensione'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.dimensioneCacheAutorizzazioneBuste_value;
-	}
-
-	/**
-	 * Restituisce l'algoritmo della cache
-	 *
-	 * @return Restituisce l'algoritmo della cache
-	 */
-	private static String algoritmoCacheAutorizzazioneBuste_value = null;
-	public String getAlgoritmoCacheAutorizzazioneBuste() throws OpenSPCoop2ConfigurationException{	
-		if(OpenSPCoop2Properties.algoritmoCacheAutorizzazioneBuste_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.cache.algoritmo"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.algoritmoCacheAutorizzazioneBuste_value = value;
-				}else{
-					OpenSPCoop2Properties.algoritmoCacheAutorizzazioneBuste_value = null;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.algoritmo': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.algoritmo'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.algoritmoCacheAutorizzazioneBuste_value;
-	}
-
-	/**
-	 * Restituisce la itemIdleTime della cache
-	 *
-	 * @return Restituisce la itemIdleTime della cache
-	 */
-	private static Integer itemIdleTimeCacheAutorizzazioneBuste_value = null;
-	public int getItemIdleTimeCacheAutorizzazioneBuste() throws OpenSPCoop2ConfigurationException{	
-		if(OpenSPCoop2Properties.itemIdleTimeCacheAutorizzazioneBuste_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.cache.itemIdleTime"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.itemIdleTimeCacheAutorizzazioneBuste_value = Integer.parseInt(value);
-				}else{
-					OpenSPCoop2Properties.itemIdleTimeCacheAutorizzazioneBuste_value = -1;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.itemIdleTime': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.itemIdleTime'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.itemIdleTimeCacheAutorizzazioneBuste_value;
-	}
-
-	/**
-	 * Restituisce la  itemLifeSecond della cache
-	 *
-	 * @return Restituisce la itemLifeSecond della cache
-	 */
-	private static Integer itemLifeSecondCacheAutorizzazioneBuste_value = null;
-	public int getItemLifeSecondCacheAutorizzazioneBuste() throws OpenSPCoop2ConfigurationException{
-		if(OpenSPCoop2Properties.itemLifeSecondCacheAutorizzazioneBuste_value==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.autorizzazioneBuste.cache.itemLifeSecond"); 
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.itemLifeSecondCacheAutorizzazioneBuste_value = Integer.parseInt(value);
-				}else{
-					OpenSPCoop2Properties.itemLifeSecondCacheAutorizzazioneBuste_value = -1;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.itemLifeSecond': "+e.getMessage());
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.cache.itemLifeSecond'",e);
-			}
-		}
-
-		return OpenSPCoop2Properties.itemLifeSecondCacheAutorizzazioneBuste_value;
-	}
-
-
+	
 
 
 

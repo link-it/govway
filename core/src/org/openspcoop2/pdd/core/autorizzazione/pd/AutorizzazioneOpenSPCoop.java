@@ -21,42 +21,39 @@
 
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pd;
 
-import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.AbstractCore;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
-import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * Classe che implementa una autorizzazione OpenSPCoop.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 
-public class AutorizzazioneOpenSPCoop extends AbstractCore implements IAutorizzazione {
+public class AutorizzazioneOpenSPCoop extends AbstractCore implements IAutorizzazionePortaDelegata {
 
 
     @Override
-	public EsitoAutorizzazioneIntegrazione process(InfoConnettoreIngresso infoConnettoreIngresso,
- 		   String servizioApplicativo,IDPortaDelegata idPD,
-			   IDServizio servizio,PortaDelegata pd,IState state) throws AutorizzazioneException{
+	public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione) throws AutorizzazioneException{
 
     	EsitoAutorizzazioneIntegrazione esito = new EsitoAutorizzazioneIntegrazione();
     	
+    	String servizioApplicativo = datiInvocazione.getIdServizioApplicativo().getNome();
+    	
     	// Autorizzazzione servizio applicativo
     	try{
-    		if( ConfigurazionePdDManager.getInstance(state).autorizzazione(pd,servizioApplicativo) == false ){
+    		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
+    				autorizzazione(datiInvocazione.getPd(),servizioApplicativo) == false ){
     			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA.
     					getErrore404_AutorizzazioneFallita(servizioApplicativo));
     			esito.setServizioAutorizzato(false);

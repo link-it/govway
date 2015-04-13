@@ -21,16 +21,17 @@
 
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pd;
 
+import org.openspcoop2.pdd.core.autorizzazione.EsitoAutorizzazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 
 /**
  * Esito di un processo di autorizzazione.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 public class EsitoAutorizzazioneIntegrazione extends EsitoAutorizzazione {
 

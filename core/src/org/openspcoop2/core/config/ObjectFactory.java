@@ -207,13 +207,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AccessoRegistroCache }
-     */
-    public AccessoRegistroCache createAccessoRegistroCache() {
-        return new AccessoRegistroCache();
-    }
-
-    /**
      * Create an instance of {@link IdPortaApplicativa }
      */
     public IdPortaApplicativa createIdPortaApplicativa() {
@@ -354,6 +347,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AccessoConfigurazione }
+     */
+    public AccessoConfigurazione createAccessoConfigurazione() {
+        return new AccessoConfigurazione();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneGestioneErrore }
      */
     public ConfigurazioneGestioneErrore createConfigurazioneGestioneErrore() {
@@ -379,6 +379,13 @@ public class ObjectFactory {
      */
     public Connettore createConnettore() {
         return new Connettore();
+    }
+
+    /**
+     * Create an instance of {@link Cache }
+     */
+    public Cache createCache() {
+        return new Cache();
     }
 
     /**
@@ -442,6 +449,13 @@ public class ObjectFactory {
      */
     public RoutingTableDestinazione createRoutingTableDestinazione() {
         return new RoutingTableDestinazione();
+    }
+
+    /**
+     * Create an instance of {@link AccessoDatiAutorizzazione }
+     */
+    public AccessoDatiAutorizzazione createAccessoDatiAutorizzazione() {
+        return new AccessoDatiAutorizzazione();
     }
 
     /**

@@ -24,6 +24,8 @@ package org.openspcoop2.web.ctrlstat.driver;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -264,8 +266,6 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return "Configurazione";
 			}else if(o instanceof AccessoRegistro){
 				return "ConfigurazioneRegistroServizi";
-			}else if(o instanceof SystemProperties){
-				return "ProprietàDiSistema";
 			}else if(o instanceof AccessoRegistroRegistro){
 				AccessoRegistroRegistro registro = (AccessoRegistroRegistro) o;
 				String id = registro.getNome();
@@ -274,6 +274,12 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
+			}else if(o instanceof AccessoConfigurazione){
+				return "ConfigurazioneAccessoDati";
+			}else if(o instanceof AccessoDatiAutorizzazione){
+				return "ConfigurazioneAccessoDatiAutorizzazione";
+			}else if(o instanceof SystemProperties){
+				return "ProprietàDiSistema";
 			}
 			
 			
@@ -589,9 +595,13 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoRegistro){
 				return null; // oggetto non modificabile nei dati identificativi
-			}else if(o instanceof SystemProperties){
-				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoRegistroRegistro){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoConfigurazione){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiAutorizzazione){
+				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof SystemProperties){
 				return null; // oggetto non modificabile nei dati identificativi
 			}
 			
@@ -675,8 +685,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(GestioneErrore.class.getSimpleName());
 			oggetti.add("ConfigurazionePdD");
 			oggetti.add(AccessoRegistro.class.getSimpleName());
-			oggetti.add(SystemProperties.class.getSimpleName());
 			// non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getName());
+			oggetti.add(AccessoConfigurazione.class.getSimpleName());
+			oggetti.add(AccessoDatiAutorizzazione.class.getSimpleName());
+			oggetti.add(SystemProperties.class.getSimpleName());
 			
 			// Username
 			oggetti.add(User.class.getSimpleName());
@@ -720,6 +732,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(Configurazione.class.getName());
 			oggetti.add(AccessoRegistro.class.getName());
 			oggetti.add(AccessoRegistroRegistro.class.getName());
+			oggetti.add(AccessoConfigurazione.class.getName());
+			oggetti.add(AccessoDatiAutorizzazione.class.getName());
 			oggetti.add(SystemProperties.class.getName());
 			
 			// Username

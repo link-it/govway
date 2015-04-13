@@ -25,7 +25,7 @@ package org.openspcoop2.testsuite.gui.ctrlstat;
 import static org.testng.Assert.assertNotNull;
 
 import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroCache;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -62,7 +62,7 @@ public class ConfigurazioneRegistro {
 		Selenium selenium = seleniumClient.getSeleniumBrowser();
 		String webAppContext = seleniumClient.getCtrlstatContext();
 		
-		AccessoRegistroCache cache = accessoRegistro!=null ? accessoRegistro.getCache() : null;
+		Cache cache = accessoRegistro!=null ? accessoRegistro.getCache() : null;
 		
 		selenium.open("/"+webAppContext+"/registro.do");
 		

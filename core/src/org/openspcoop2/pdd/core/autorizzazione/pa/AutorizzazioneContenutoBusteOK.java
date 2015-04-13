@@ -20,33 +20,26 @@
  */
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pa;
 
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.AbstractCore;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 
 /**
  * Esempio di AutorizzazioneContenutoBusteOK
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 
-public class AutorizzazioneContenutoBusteOK extends AbstractCore implements IAutorizzazioneContenutoBuste {
+public class AutorizzazioneContenutoBusteOK extends AbstractCore implements IAutorizzazioneContenutoPortaApplicativa {
 
 	@Override
-	public EsitoAutorizzazioneCooperazione process(InfoConnettoreIngresso infoConnettoreIngresso,
-			String pdd,
-			String identitaServizioApplicativoFruitore,
-			String subjectServizioApplicativoFruitoreFromMessageSecurityHeader,
-			IDSoggetto soggettoFruitore, IDServizio servizio,RuoloBusta ruoloBusta, OpenSPCoop2Message msg) throws AutorizzazioneException {
+	public EsitoAutorizzazioneCooperazione process(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException {
 		
 		EsitoAutorizzazioneCooperazione esito = new EsitoAutorizzazioneCooperazione();
     	
@@ -54,7 +47,7 @@ public class AutorizzazioneContenutoBusteOK extends AbstractCore implements IAut
     	try{
     		
     		byte[] msgBytes = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap()).getAsByte(msg.getSOAPBody(), true);
-    		System.out.println("(TestOK) Messaggio ricevuto (Ruolo busta: "+ruoloBusta.toString()+"): "+new String(msgBytes));
+    		System.out.println("(TestOK) Messaggio ricevuto (Ruolo busta: "+datiInvocazione.getRuoloBusta().toString()+"): "+new String(msgBytes));
         	
     		esito.setServizioAutorizzato(true);
         	return esito;

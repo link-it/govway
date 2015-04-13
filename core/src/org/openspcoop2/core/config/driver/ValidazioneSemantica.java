@@ -30,9 +30,9 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroCache;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -49,6 +49,9 @@ import org.openspcoop2.core.config.IntegrationManager;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.config.MessageSecurity;
+import org.openspcoop2.core.config.MessageSecurityFlow;
+import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlow;
@@ -82,9 +85,6 @@ import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
-import org.openspcoop2.core.config.MessageSecurity;
-import org.openspcoop2.core.config.MessageSecurityFlow;
-import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
@@ -1891,40 +1891,11 @@ public class ValidazioneSemantica {
 					}
 				}
 
-				AccessoRegistroCache arc = ar.getCache();
+				Cache arc = ar.getCache();
 				if (arc != null) {
 					
-					// Dimensione
-					if(arc.getDimensione()!=null){
-						try{
-							Integer.parseInt(arc.getDimensione());
-						}catch(Exception e){
-							this.errori.add("Il valore associato alla dimensione della cache, anteposta ai registri dei servizi, dev'essere un numero intero");
-						}
-					}
+					validaCache(arc, "Registro dei Servizi");
 					
-					// XSD: algoritmo: lru, mru
-					AlgoritmoCache algoritmo = arc.getAlgoritmo();
-					if ((algoritmo != null) && !algoritmo.equals(CostantiConfigurazione.CACHE_LRU) && !algoritmo.equals(CostantiConfigurazione.CACHE_MRU))
-						this.errori.add("L'algoritmo dell'accesso alla cache, anteposta ai registri dei servizi, dev'essere "+CostantiConfigurazione.CACHE_LRU+" o "+CostantiConfigurazione.CACHE_MRU);
-					
-					// ItemIdleTime
-					if(arc.getItemIdleTime()!=null){
-						try{
-							Long.parseLong(arc.getItemIdleTime());
-						}catch(Exception e){
-							this.errori.add("Il valore associato all'item-idle-time, anteposta ai registri dei servizi, dev'essere un numero intero");
-						}
-					}
-					
-					// ItemLifeSecond
-					if(arc.getItemLifeSecond()!=null){
-						try{
-							Long.parseLong(arc.getItemLifeSecond());
-						}catch(Exception e){
-							this.errori.add("Il valore associato all'item-life-seconds, anteposta ai registri dei servizi, dev'essere un numero intero");
-						}
-					}
 				}
 			}
 		}
@@ -2081,6 +2052,21 @@ public class ValidazioneSemantica {
 			}
 		}
 
+		
+		// Validazione Accesso Configurazione
+		if(configurazione.getAccessoConfigurazione()!=null){
+			if(configurazione.getAccessoConfigurazione().getCache()!=null){
+				this.validaCache(configurazione.getAccessoConfigurazione().getCache(), "ConfigurazionePdD");
+			}
+		}
+		
+		// Validazione Dati Accesso Autorizzazione
+		if(configurazione.getAccessoDatiAutorizzazione()!=null){
+			if(configurazione.getAccessoDatiAutorizzazione().getCache()!=null){
+				this.validaCache(configurazione.getAccessoDatiAutorizzazione().getCache(), "DatiAutorizzazione");
+			}
+		}
+		
 		
 		// ValidazioneBuste
 		ValidazioneBuste vbe = configurazione.getValidazioneBuste();
@@ -2365,6 +2351,40 @@ public class ValidazioneSemantica {
 		
 	}
 
+	private void validaCache(Cache cache, String posizione){
+		// Dimensione
+		if(cache.getDimensione()!=null){
+			try{
+				Integer.parseInt(cache.getDimensione());
+			}catch(Exception e){
+				this.errori.add("Il valore associato alla dimensione della cache ["+posizione+"] dev'essere un numero intero");
+			}
+		}
+		
+		// XSD: algoritmo: lru, mru
+		AlgoritmoCache algoritmo = cache.getAlgoritmo();
+		if ((algoritmo != null) && !algoritmo.equals(CostantiConfigurazione.CACHE_LRU) && !algoritmo.equals(CostantiConfigurazione.CACHE_MRU))
+			this.errori.add("L'algoritmo dell'accesso alla cache ["+posizione+"] dev'essere "+CostantiConfigurazione.CACHE_LRU+" o "+CostantiConfigurazione.CACHE_MRU);
+		
+		// ItemIdleTime
+		if(cache.getItemIdleTime()!=null){
+			try{
+				Long.parseLong(cache.getItemIdleTime());
+			}catch(Exception e){
+				this.errori.add("Il valore associato all'item-idle-time della cache  ["+posizione+"] dev'essere un numero intero");
+			}
+		}
+		
+		// ItemLifeSecond
+		if(cache.getItemLifeSecond()!=null){
+			try{
+				Long.parseLong(cache.getItemLifeSecond());
+			}catch(Exception e){
+				this.errori.add("Il valore associato all'item-life-seconds della cache ["+posizione+"] dev'essere un numero intero");
+			}
+		}
+	}
+	
 	private void validaFiltriStatoServiziPdD(String tipologiaFiltri,List<TipoFiltroAbilitazioneServizi> lista){
 		if(lista!=null){
 			for (int j = 0; j < lista.size(); j++) {

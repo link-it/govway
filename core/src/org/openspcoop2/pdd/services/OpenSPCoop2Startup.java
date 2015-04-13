@@ -35,6 +35,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -53,6 +54,7 @@ import org.openspcoop2.pdd.config.SystemPropertiesManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -662,11 +664,61 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				SystemPropertiesManager spm = new SystemPropertiesManager(configurazionePdDReader,logCore);
 				spm.updateSystemProperties();
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante l'inizializzazione delle proprieta' di sistema utilizzate dalla PdD: "+e.getMessage());
-				logCore.error("Riscontrato errore durante l'inizializzazione delle proprieta' di sistema utilizzate dalla PdD: "+e.getMessage(),e);
+				msgDiag.logStartupError(e,"Inizializzazione proprieta' di sistema");
 				return;
 			}
 			
+			
+			
+			
+			
+			
+			/*----------- Inizializzazione Autorizzazione --------------*/
+			try{
+				AccessoDatiAutorizzazione datiAutorizzazione = configurazionePdDReader.getAccessoDatiAutorizzazione();
+				if(datiAutorizzazione!=null && datiAutorizzazione.getCache()!=null){
+					
+					int dimensioneCache = -1;
+					if(datiAutorizzazione.getCache().getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(datiAutorizzazione.getCache().getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso di ai dati di autorizzazione");
+						}
+					}
+					
+					String algoritmo = null;
+					if(datiAutorizzazione.getCache().getAlgoritmo()!=null){
+						algoritmo = datiAutorizzazione.getCache().getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(datiAutorizzazione.getCache().getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(datiAutorizzazione.getCache().getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso di ai dati di autorizzazione");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(datiAutorizzazione.getCache().getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(datiAutorizzazione.getCache().getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso di ai dati di autorizzazione");
+						}
+					}
+
+					GestoreAutorizzazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+				}
+				else{
+					GestoreAutorizzazione.initialize(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Autorizzazione");
+				return;
+			}
 			
 			
 			
@@ -687,6 +739,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Gestore Risorse JMX");
+				return;
 			}
 			
 			
@@ -1003,11 +1056,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - monitoraggio delle Risorse");
 				}
-				// MBean Autorizzazione Buste
+				// MBean Autorizzazione
 				try{
-					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanAutorizzazioneBuste();
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanAutorizzazione();
 				}catch(Exception e){
-					msgDiag.logStartupError(e,"RisorsaJMX - autorizzazione delle Buste");
+					msgDiag.logStartupError(e,"RisorsaJMX - dati di autorizzazione");
 				}
 				// MBean RepositoryMessaggi
 				try{
@@ -1066,12 +1119,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_config);
 			
-			org.openspcoop2.pdd.core.jmx.EngineAutorizzazioneBuste infoAutorizzazioneBuste = new org.openspcoop2.pdd.core.jmx.EngineAutorizzazioneBuste();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_autorizzazioneBuste = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE, infoAutorizzazioneBuste.isCacheAbilitata());
-			if(infoAutorizzazioneBuste.isCacheAbilitata()){
-				informazioniStatoPortaCache_autorizzazioneBuste.setStatoCache(infoAutorizzazioneBuste.printStatCache());
+			org.openspcoop2.pdd.core.jmx.EngineAutorizzazione infoAutorizzazioneDati = new org.openspcoop2.pdd.core.jmx.EngineAutorizzazione();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_autorizzazioneDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTORIZZAZIONE, infoAutorizzazioneDati.isCacheAbilitata());
+			if(infoAutorizzazioneDati.isCacheAbilitata()){
+				informazioniStatoPortaCache_autorizzazioneDati.setStatoCache(infoAutorizzazioneDati.printStatCache());
 			}
-			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autorizzazioneBuste);
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autorizzazioneDati);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());

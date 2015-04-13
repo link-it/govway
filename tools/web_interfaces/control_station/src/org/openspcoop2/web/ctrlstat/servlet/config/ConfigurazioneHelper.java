@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -118,6 +119,111 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
+	public void setDataElementCache(Vector<DataElement> dati, String intestazioneSezione,
+			String nomeParametroStatoCache, String statocache,
+			String nomeParametroDimensioneCache, String dimensionecache,
+			String nomeParametroAlgoritmoCache, String algoritmocache,
+			String nomeParametroIdleCache, String idlecache,
+			String nomeParametroLifeCache, String lifecache){
+		
+		User user = ServletUtils.getUserFromSession(this.session);
+		
+		boolean view = InterfaceType.AVANZATA.equals(user.getInterfaceType());
+		
+		if(view){
+			DataElement de = new DataElement();
+			de.setLabel(intestazioneSezione);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+
+		String[] tipoStatoCache = {
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
+		de.setName(nomeParametroStatoCache);
+		if(view){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoStatoCache);
+			de.setSelected(statocache);
+			de.setPostBack(true);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(statocache);
+		}
+		dati.addElement(de);
+
+		if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE);
+			de.setValue(dimensionecache);
+			if(view){
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(true);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(nomeParametroDimensioneCache);
+			de.setSize( getSize());
+			dati.addElement(de);
+
+			String[] tipoAlg = {
+					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU,
+					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU
+			};
+			String[] labelsAlg = {
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU
+			};
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE);
+			de.setName(nomeParametroAlgoritmoCache);
+			if(view){
+				de.setType(DataElementType.SELECT);
+				de.setLabels(labelsAlg);
+				de.setValues(tipoAlg);
+				de.setSelected(algoritmocache);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(algoritmocache);
+			}
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
+			de.setValue(idlecache);
+			if(view){
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(nomeParametroIdleCache);
+			de.setSize( getSize());
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
+			de.setValue(lifecache);
+			if(view){
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(true);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(nomeParametroLifeCache);
+			de.setSize( getSize());
+			dati.addElement(de);
+		}
+		
+	}
+	
 	public Vector<DataElement> addConfigurazioneRegistroToDati(String statocache,
 			String dimensionecache, String algoritmocache, String idlecache,
 			String lifecache, Vector<DataElement> dati) {
@@ -135,68 +241,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_REGISTRI);
 		dati.addElement(de);
 
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		this.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache,
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY,dimensionecache,
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY,algoritmocache,
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY,idlecache,
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY,lifecache);
 
-		String[] tipoStatoCache = {
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
-		de.setValues(tipoStatoCache);
-		de.setSelected(statocache);
-		//			de.setOnChange("CambiaStatoCache()");
-		de.setPostBack(true);
-		dati.addElement(de);
-
-		if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE);
-			de.setValue(dimensionecache);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE);
-			de.setSize( getSize());
-			dati.addElement(de);
-
-			String[] tipoAlg = {
-					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU,
-					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU
-			};
-			String[] labelsAlg = {
-					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU,
-					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU
-			};
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE);
-			de.setType(DataElementType.SELECT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE);
-			de.setLabels(labelsAlg);
-			de.setValues(tipoAlg);
-			de.setSelected(algoritmocache);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
-			de.setValue(idlecache);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
-			de.setSize( getSize());
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
-			de.setValue(lifecache);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
-			de.setSize( getSize());
-			dati.addElement(de);
+		User user = ServletUtils.getUserFromSession(this.session);
+		if(! InterfaceType.AVANZATA.equals(user.getInterfaceType())){
+			this.pd.disableEditMode();
 		}
-
+		
 		return dati;
 	}
 
@@ -1214,21 +1270,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 
-
+	
 	// Controlla i dati del pannello Configurazione -> Registro
 	public boolean registroCheckData() throws Exception {
 
 		try{
 
-			String statocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
-			String dimensionecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE);
-			String algoritmocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE);
-			String idlecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
-			String lifecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
+			String statocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY);
+			String dimensionecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY);
+			String algoritmocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY);
+			String idlecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY);
+			String lifecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY);
+
+			return checkDatiCache(CostantiPdD.JMX_REGISTRO_SERVIZI, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean checkDatiCache(String nomeCache, String statocache, String dimensionecache, String algoritmocache, String idlecache, String lifecache) throws Exception {
+
+		try{
 
 			// Campi obbligatori
 			if (statocache.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare lo Stato");
+				this.pd.setMessage("Dati incompleti. E' necessario indicare lo Stato in "+nomeCache);
 				return false;
 			}
 
@@ -1240,27 +1308,37 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-				this.pd.setMessage("Stato Cache dev'essere abilitato o disabilitato");
+				this.pd.setMessage("Stato Cache "+nomeCache+" dev'essere abilitato o disabilitato");
 				return false;
 			}
 			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && 
 					!algoritmocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU) && 
 					!algoritmocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU)) {
-				this.pd.setMessage("Algoritmo dev'essere LRU o MRU");
+				this.pd.setMessage("Algoritmo della Cache "+nomeCache+" dev'essere LRU o MRU");
 				return false;
 			}
 
 			// dimensionecache, idlecache e lifecache devono essere numerici
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !dimensionecache.equals("") && !RegularExpressionEngine.isMatch(dimensionecache,"^[0-9]+$")) {
-				this.pd.setMessage("Dimensione dev'essere numerico");
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && (dimensionecache==null || dimensionecache.equals("")) ) {
+				this.pd.setMessage("Deve essere indicato un valore per la Dimensione della Cache "+nomeCache);
 				return false;
 			}
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !dimensionecache.equals("") && !RegularExpressionEngine.isMatch(dimensionecache,"^[0-9]+$")) {
+				this.pd.setMessage("Dimensione della Cache "+nomeCache+" dev'essere numerico");
+				return false;
+			}
+			
 			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !idlecache.equals("") && !RegularExpressionEngine.isMatch(idlecache,"^[0-9]+$")) {
-				this.pd.setMessage("Idle time dev'essere numerico");
+				this.pd.setMessage("Idle time della Cache "+nomeCache+" dev'essere numerico");
+				return false;
+			}
+			
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && (lifecache==null || lifecache.equals("")) ) {
+				this.pd.setMessage("Deve essere indicato un valore per l'impostazione 'Life second' della Cache "+nomeCache);
 				return false;
 			}
 			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !lifecache.equals("") && !RegularExpressionEngine.isMatch(lifecache,"^[0-9]+$")) {
-				this.pd.setMessage("Life second dev'essere numerico");
+				this.pd.setMessage("Life second della Cache "+nomeCache+" dev'essere numerico");
 				return false;
 			}
 
@@ -1554,6 +1632,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 
+			if(this.configurazioneCheckDataCache()==false){
+				return false;
+			}
+			
+			if(this.datiAutorizzazioneCheckDataCache()==false){
+				return false;
+			}
+			
 			return true;
 
 		} catch (Exception e) {
@@ -1563,7 +1649,41 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 
+	public boolean configurazioneCheckDataCache() throws Exception {
 
+		try{
+
+			String statocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG);
+			String dimensionecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG);
+			String algoritmocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG);
+			String idlecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG);
+			String lifecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG);
+
+			return checkDatiCache(CostantiPdD.JMX_CONFIGURAZIONE_PDD, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean datiAutorizzazioneCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH);
+			String dimensionecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH);
+			String algoritmocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH);
+			String idlecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH);
+			String lifecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH);
+
+			return checkDatiCache(CostantiPdD.JMX_AUTORIZZAZIONE, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 
 
 
@@ -2845,402 +2965,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 		}
-
-		return dati;
-	}
-
-	public Vector<DataElement> addConfigurazioneErrorModeToDati( User user,
-			String inoltromin, String stato,
-			String controllo, String severita, String severita_log4j,
-			String integman, String nomeintegman, String profcoll,
-			String connessione, String utilizzo, String validman,
-			String gestman, String registrazioneTracce, String dump, String xsd,
-			String tipoValidazione, String confPers, Configurazione configurazione,
-			Vector<DataElement> dati) {
-		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-		DataElement de = new DataElement();
-
-		if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
-			de.setValue(inoltromin);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
-			de.setSize( getSize());
-			dati.addElement(de);
-		} else {
-
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
-			de.setValue(inoltromin);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
-			de.setRequired(true);
-			de.setSize(getSize());
-			dati.addElement(de);
-		}
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_BUSTE);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		String[] tipoStato = { 
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO);
-		de.setValues(tipoStato);
-		de.setSelected(stato);
-		dati.addElement(de);
-
-		String[] tipoControllo = { 
-				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_RIGIDO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_NORMALE
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO);
-		de.setValues(tipoControllo);
-		de.setSelected(controllo);
-		dati.addElement(de);
-
-		String[] tipoPF = { 
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
-		de.setValues(tipoPF);
-		de.setSelected(profcoll);
-		dati.addElement(de);
-
-		String[] tipoVM = { 
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALIDMAN);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
-		de.setValues(tipoVM);
-		de.setSelected(validman);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		//					String[] tipoMsg = { "off", "fatalOpenspcoop", "errorSpcoop", "errorOpenspcoop", "infoSpcoop", "infoOpenspcoop",
-		//							"debugLow", "debugMedium", "debugHigh", "all" };
-		String[] tipoMsg = { LogLevels.LIVELLO_OFF, LogLevels.LIVELLO_FATAL, LogLevels.LIVELLO_ERROR_PROTOCOL, LogLevels.LIVELLO_ERROR_INTEGRATION, 
-				LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
-				LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
-				LogLevels.LIVELLO_ALL};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
-		de.setValues(tipoMsg);
-		de.setSelected(severita);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		de.setValues(tipoMsg);
-		de.setSelected(severita_log4j);
-		dati.addElement(de);
-
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-			if (this.confCore.isMsgDiagnostici_showConfigurazioneCustomAppender()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_LIST);
-				if (contaListe) {
-					int totAppender = 0;
-					if (configurazione.getMessaggiDiagnostici() != null)
-						totAppender =
-						configurazione.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
-				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, null);
-				dati.addElement(de);
-			}
-			if (this.confCore.isMsgDiagnostici_showSorgentiDatiDatabase()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_LIST);
-				if (contaListe) {
-					int totDs = 0;
-					if (configurazione.getMessaggiDiagnostici() != null)
-						totDs =
-						configurazione.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
-				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-				dati.addElement(de);
-			}
-		}
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		String[] tipoBuste = { 
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setValues(tipoBuste);
-		de.setSelected(registrazioneTracce);
-		dati.addElement(de);
-
-		String[] tipoDump = {
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP);
-		de.setValues(tipoDump);
-		de.setSelected(dump);
-		dati.addElement(de);
-
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
-				if (contaListe) {
-					int totAppender = 0;
-					if (configurazione.getTracciamento() != null)
-						totAppender =
-						configurazione.getTracciamento().sizeOpenspcoopAppenderList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
-				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, null);
-				dati.addElement(de);
-			}
-			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
-				if (contaListe) {
-					int totDs = 0;
-					if (configurazione.getTracciamento() != null)
-						totDs =
-						configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
-				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-				dati.addElement(de);
-			}
-		}
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		int totEl = 3;
-		if (confPers.equals(Costanti.CHECK_BOX_ENABLED_TRUE))
-			totEl++;
-		String[] tipoIM = new String[totEl];
-		tipoIM[0] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL;
-		tipoIM[1] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC;
-		tipoIM[2] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC_SSL;
-		if (confPers.equals(Costanti.CHECK_BOX_ENABLED_TRUE))
-			tipoIM[3] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM;
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INTEGMAN);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INTEGMAN);
-		de.setValues(tipoIM);
-		de.setSelected(integman);
-		//					de.setOnChange("CambiaIntegMan('" +
-		//							InterfaceType.STANDARD.equals(user.getInterfaceType()) +
-		//							"')");
-		de.setPostBack(true);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN);
-		if (integman == null || !integman.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM))
-			de.setType(DataElementType.HIDDEN);
-		else
-			de.setType(DataElementType.TEXT_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN);
-		de.setValue(nomeintegman);
-		dati.addElement(de);
-
-		if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
-			de.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_REPLY);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTILIZZO);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTILIZZO);
-			de.setValue(CostantiConfigurazione.DISABILITATO.toString());
-			de.setSelected(utilizzo);
-			dati.addElement(de);
-		} else {
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			String[] tipoXsd = { 
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-					ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO,
-					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY 
-			};
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_XSD);
-			de.setType(DataElementType.SELECT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_XSD);
-			de.setValues(tipoXsd);
-			//						de.setOnChange("CambiaValidazione('" +
-			//							InterfaceType.STANDARD.equals(user.getInterfaceType()) +
-			//							"')");
-			de.setPostBack(true);
-			if (xsd == null) {
-				de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
-			} else {
-				de.setSelected(xsd);
-			}
-			dati.addElement(de);
-
-			if (ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(xsd) || 
-					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY .equals(xsd)) {
-				//String[] tipi_validazione = { "xsd", "wsdl", "openspcoop" };
-				String[] tipi_validazione = { 
-						ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD,
-						ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_WSDL
-				};
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
-				de.setType(DataElementType.SELECT);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
-				de.setValues(tipi_validazione);
-				if (tipoValidazione == null) {
-					de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD);
-				} else {
-					de.setSelected(tipoValidazione);
-				}
-				dati.addElement(de);
-			}
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RISPOSTE);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			String[] tipoConn = { 
-					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_NEW,
-					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_REPLY
-			};
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
-			de.setType(DataElementType.SELECT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
-			de.setValues(tipoConn);
-			de.setSelected(connessione);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			String[] tipoU = { 
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-					ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-			};
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTILIZZO);
-			de.setType(DataElementType.SELECT);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTILIZZO);
-			de.setValues(tipoU);
-			de.setSelected(utilizzo);
-			dati.addElement(de);
-		}
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		String[] tipoGM = { 
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTMAN);
-		de.setValues(tipoGM);
-		de.setSelected(gestman);
-		dati.addElement(de);
-
-
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI);
-		ServletUtils.setDataElementVisualizzaLabel(de);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROUTING);
-		ServletUtils.setDataElementVisualizzaLabel(de);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST);
-		ServletUtils.setDataElementVisualizzaLabel(de);
-		dati.addElement(de);
-
 
 		return dati;
 	}

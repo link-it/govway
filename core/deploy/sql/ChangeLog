@@ -1,3 +1,7 @@
+2015-04-09  Andrea Poli <apoli@link.it>
+
+	Aggiunte informazioni sulla cache per l'accesso alla configurazione e l'accesso ai dati di autorizzazione
+
 2015-03-02  Andrea Poli <apoli@link.it>
 
 	Aggiunta informazione sul nome della Porta, all'interno della registrazione di un servizio applicativo

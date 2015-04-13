@@ -38,6 +38,8 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="routing-table" type="{http://www.openspcoop2.org/core/config}routing-table" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-registro" type="{http://www.openspcoop2.org/core/config}accesso-registro" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="accesso-configurazione" type="{http://www.openspcoop2.org/core/config}accesso-configurazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="indirizzo-risposta" type="{http://www.openspcoop2.org/core/config}indirizzo-risposta" minOccurs="0" maxOccurs="1"/>
@@ -65,6 +67,8 @@ import java.io.Serializable;
   propOrder = {
   	"routingTable",
   	"accessoRegistro",
+  	"accessoConfigurazione",
+  	"accessoDatiAutorizzazione",
   	"validazioneBuste",
   	"validazioneContenutiApplicativi",
   	"indirizzoRisposta",
@@ -114,6 +118,22 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setAccessoRegistro(AccessoRegistro accessoRegistro) {
     this.accessoRegistro = accessoRegistro;
+  }
+
+  public AccessoConfigurazione getAccessoConfigurazione() {
+    return this.accessoConfigurazione;
+  }
+
+  public void setAccessoConfigurazione(AccessoConfigurazione accessoConfigurazione) {
+    this.accessoConfigurazione = accessoConfigurazione;
+  }
+
+  public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione() {
+    return this.accessoDatiAutorizzazione;
+  }
+
+  public void setAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) {
+    this.accessoDatiAutorizzazione = accessoDatiAutorizzazione;
   }
 
   public ValidazioneBuste getValidazioneBuste() {
@@ -236,6 +256,12 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="accesso-registro",required=true,nillable=false)
   protected AccessoRegistro accessoRegistro;
+
+  @XmlElement(name="accesso-configurazione",required=false,nillable=false)
+  protected AccessoConfigurazione accessoConfigurazione;
+
+  @XmlElement(name="accesso-dati-autorizzazione",required=false,nillable=false)
+  protected AccessoDatiAutorizzazione accessoDatiAutorizzazione;
 
   @XmlElement(name="validazione-buste",required=false,nillable=false)
   protected ValidazioneBuste validazioneBuste;

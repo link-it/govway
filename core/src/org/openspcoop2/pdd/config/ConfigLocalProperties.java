@@ -26,10 +26,12 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroCache;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
@@ -341,6 +343,79 @@ public class ConfigLocalProperties extends InstanceProperties {
 		}
 	}
 	
+	private boolean isStatoCacheDisabilitata(String prefix)throws Exception{
+		// **** Cache *****
+		String cacheAbilitata = this.getValue(prefix+".cache.enabled");
+		boolean cacheDisabilitata = false;
+		if(cacheAbilitata!=null){
+			if("false".equalsIgnoreCase(cacheAbilitata.trim())){
+				cacheDisabilitata = true;
+			}
+		}
+		return cacheDisabilitata;
+	}
+	
+	private Cache readDatiCache(String prefix, Cache cacheParam)throws Exception{
+		// **** Cache *****
+		Cache cache = cacheParam;
+		
+		if(this.isStatoCacheDisabilitata(prefix)==false){
+			String cacheDimensione = this.getValue(prefix+".cache.dimensione");
+			if(cacheDimensione!=null){
+				cacheDimensione = cacheDimensione.trim();
+				try{
+					Integer.parseInt(cacheDimensione);
+				}catch(Exception e){
+					throw new Exception("Valore impostato non corretto per "+prefix+".cache.dimensione");
+				}
+			}
+			String cacheAlgoritmo = this.getValue(prefix+".cache.algoritmo");
+			if(cacheAlgoritmo!=null){
+				cacheAlgoritmo = cacheAlgoritmo.trim();
+				if(!CostantiConfigurazione.CACHE_LRU.equals(cacheAlgoritmo) && !CostantiConfigurazione.CACHE_MRU.equals(cacheAlgoritmo)){
+					throw new Exception("Algoritmo impostato per la cache del "+prefix+" non corretto");
+				}
+			}
+			String cacheItemIdleTime = this.getValue(prefix+".cache.item-idle-time");
+			if(cacheItemIdleTime!=null){
+				cacheItemIdleTime = cacheItemIdleTime.trim();
+				try{
+					Integer.parseInt(cacheItemIdleTime);
+				}catch(Exception e){
+					throw new Exception("Valore impostato non corretto per "+prefix+".cache.item-idle-time");
+				}
+			}
+			String cacheItemLifeSecond = this.getValue(prefix+".cache.item-life-second");
+			if(cacheItemLifeSecond!=null){
+				cacheItemLifeSecond = cacheItemLifeSecond.trim();
+				try{
+					Integer.parseInt(cacheItemLifeSecond);
+				}catch(Exception e){
+					throw new Exception("Valore impostato non corretto per "+prefix+".cache.item-life-second");
+				}
+			}
+		
+			if(cacheDimensione!=null || cacheAlgoritmo!=null || cacheItemIdleTime!=null || cacheItemLifeSecond!=null){
+				if(cache==null){
+					cache = new Cache();
+				}
+				if(cacheDimensione!=null){
+					cache.setDimensione(cacheDimensione);
+				}
+				if(cacheAlgoritmo!=null){
+					cache.setAlgoritmo(AlgoritmoCache.toEnumConstant(cacheAlgoritmo));
+				}
+				if(cacheItemIdleTime!=null){
+					cache.setItemIdleTime(cacheItemIdleTime);
+				}
+				if(cacheItemLifeSecond!=null){
+					cache.setItemLifeSecond(cacheItemLifeSecond);
+				}
+			}
+		}
+		return cache;
+	}
+	
 	public AccessoRegistro updateAccessoRegistro(AccessoRegistro accessoRegistro)throws Exception{
 			
 		if(!this.configLocal)
@@ -349,70 +424,12 @@ public class ConfigLocalProperties extends InstanceProperties {
 		try{
 			
 			// **** Cache *****
-			String cacheAbilitata = this.getValue("registro.cache.enabled");
-			boolean cacheDisabilitata = false;
-			if(cacheAbilitata!=null){
-				if("false".equalsIgnoreCase(cacheAbilitata.trim())){
-					accessoRegistro.setCache(null);
-					cacheDisabilitata = true;
-				}
+			if(this.isStatoCacheDisabilitata("registro")){
+				accessoRegistro.setCache(null);
 			}
-				
-			if(cacheDisabilitata==false){
-				String cacheDimensione = this.getValue("registro.cache.dimensione");
-				if(cacheDimensione!=null){
-					cacheDimensione = cacheDimensione.trim();
-					try{
-						Integer.parseInt(cacheDimensione);
-					}catch(Exception e){
-						throw new Exception("Valore impostato non corretto per registro.cache.dimensione");
-					}
-				}
-				String cacheAlgoritmo = this.getValue("registro.cache.algoritmo");
-				if(cacheAlgoritmo!=null){
-					cacheAlgoritmo = cacheAlgoritmo.trim();
-					if(!CostantiConfigurazione.CACHE_LRU.equals(cacheAlgoritmo) && !CostantiConfigurazione.CACHE_MRU.equals(cacheAlgoritmo)){
-						throw new Exception("Algoritmo impostato per la cache del registro non corretto");
-					}
-				}
-				String cacheItemIdleTime = this.getValue("registro.cache.item-idle-time");
-				if(cacheItemIdleTime!=null){
-					cacheItemIdleTime = cacheItemIdleTime.trim();
-					try{
-						Integer.parseInt(cacheItemIdleTime);
-					}catch(Exception e){
-						throw new Exception("Valore impostato non corretto per registro.cache.item-idle-time");
-					}
-				}
-				String cacheItemLifeSecond = this.getValue("registro.cache.item-life-second");
-				if(cacheItemLifeSecond!=null){
-					cacheItemLifeSecond = cacheItemLifeSecond.trim();
-					try{
-						Integer.parseInt(cacheItemLifeSecond);
-					}catch(Exception e){
-						throw new Exception("Valore impostato non corretto per registro.cache.item-life-second");
-					}
-				}
-			
-				AccessoRegistroCache registroCache = accessoRegistro.getCache();
-				if(cacheDimensione!=null || cacheAlgoritmo!=null || cacheItemIdleTime!=null || cacheItemLifeSecond!=null){
-					if(registroCache==null){
-						registroCache = new AccessoRegistroCache();
-					}
-					if(cacheDimensione!=null){
-						registroCache.setDimensione(cacheDimensione);
-					}
-					if(cacheAlgoritmo!=null){
-						registroCache.setAlgoritmo(AlgoritmoCache.toEnumConstant(cacheAlgoritmo));
-					}
-					if(cacheItemIdleTime!=null){
-						registroCache.setItemIdleTime(cacheItemIdleTime);
-					}
-					if(cacheItemLifeSecond!=null){
-						registroCache.setItemLifeSecond(cacheItemLifeSecond);
-					}
-					accessoRegistro.setCache(registroCache);
-				}
+			else{
+				// aggiorno dati
+				accessoRegistro.setCache(this.readDatiCache("registro", accessoRegistro.getCache()));
 			}
 			
 			
@@ -527,6 +544,57 @@ public class ConfigLocalProperties extends InstanceProperties {
 		
 	}
 	
+	
+	
+	public AccessoConfigurazione updateAccessoConfigurazione(AccessoConfigurazione accessoConfigurazione)throws Exception{
+		
+		if(!this.configLocal)
+			return accessoConfigurazione;
+		
+		try{
+			
+			// **** Cache *****
+			if(this.isStatoCacheDisabilitata("config")){
+				accessoConfigurazione.setCache(null);
+			}
+			else{
+				// aggiorno dati
+				accessoConfigurazione.setCache(this.readDatiCache("config", accessoConfigurazione.getCache()));
+			}
+			
+			return accessoConfigurazione;
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura del file "+CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH+" (AccessoConfigurazione): "+e.getMessage(),e);
+			throw new Exception("Errore durante la lettura del file "+CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH+" (AccessoConfigurazione): "+e.getMessage(),e);
+		}
+		
+	}
+	
+	public AccessoDatiAutorizzazione updateAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiConfigurazione)throws Exception{
+		
+		if(!this.configLocal)
+			return accessoDatiConfigurazione;
+		
+		try{
+			
+			// **** Cache *****
+			if(this.isStatoCacheDisabilitata("autorizzazione")){
+				accessoDatiConfigurazione.setCache(null);
+			}
+			else{
+				// aggiorno dati
+				accessoDatiConfigurazione.setCache(this.readDatiCache("autorizzazione", accessoDatiConfigurazione.getCache()));
+			}
+			
+			return accessoDatiConfigurazione;
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura del file "+CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH+" (AccessoDatiAutorizzazione): "+e.getMessage(),e);
+			throw new Exception("Errore durante la lettura del file "+CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH+" (AccessoDatiAutorizzazione): "+e.getMessage(),e);
+		}
+		
+	}
 	
 	public GestioneErrore updateGestioneErroreCooperazione(GestioneErrore gestioneErrore)throws Exception{
 		

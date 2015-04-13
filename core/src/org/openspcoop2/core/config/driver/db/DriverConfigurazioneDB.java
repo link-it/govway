@@ -48,10 +48,12 @@ import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroCache;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
 import org.openspcoop2.core.config.Connettore;
@@ -3782,7 +3784,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		try {
 			AccessoRegistro car = new AccessoRegistro();
-			AccessoRegistroCache cache = null;
+			Cache cache = null;
 
 			// aggiungo i registri
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -3849,7 +3851,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			if (rs.next()) {
 				String tmpCache = rs.getString("statocache");
 				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
-					cache = new AccessoRegistroCache();
+					cache = new Cache();
 
 					String tmpDim = rs.getString("dimensionecache");
 					if (tmpDim != null && !tmpDim.equals(""))
@@ -4051,6 +4053,481 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
+	
+	
+	
+	@Override
+	public AccessoConfigurazione getAccessoConfigurazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			AccessoConfigurazione accessoConfigurazione = new AccessoConfigurazione();
+			Cache cache = null;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			this.log.debug("eseguo query : " + sqlQuery);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				String tmpCache = rs.getString("config_statocache");
+				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+					cache = new Cache();
+
+					String tmpDim = rs.getString("config_dimensionecache");
+					if (tmpDim != null && !tmpDim.equals(""))
+						cache.setDimensione(tmpDim);
+
+					String tmpAlg = rs.getString("config_algoritmocache");
+					if (tmpAlg.equalsIgnoreCase("LRU"))
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+					else
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+					String tmpIdle = rs.getString("config_idlecache");
+					String tmpLife = rs.getString("config_lifecache");
+
+					if (tmpIdle != null && !tmpIdle.equals(""))
+						cache.setItemIdleTime(tmpIdle);
+					if (tmpLife != null && !tmpLife.equals(""))
+						cache.setItemLifeSecond(tmpLife);
+
+					accessoConfigurazione.setCache(cache);
+
+				}
+				rs.close();
+				stm.close();
+			}
+
+			return accessoConfigurazione;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoConfigurazione] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoConfigurazione] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public void createAccessoConfigurazione(AccessoConfigurazione accessoConfigurazione) throws DriverConfigurazioneException {
+
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDAccessoConfigurazione type = 1");
+			DriverConfigurazioneDB_LIB.CRUDAccessoConfigurazione(1, accessoConfigurazione, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoConfigurazione] Errore durante la createAccessoConfigurazione : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public void updateAccessoConfigurazione(AccessoConfigurazione accessoConfigurazione) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDAccessoConfigurazione type = 2");
+			DriverConfigurazioneDB_LIB.CRUDAccessoConfigurazione(2, accessoConfigurazione, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoConfigurazione] Errore durante la updateAccessoConfigurazione : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public void deleteAccessoConfigurazione(AccessoConfigurazione accessoConfigurazione) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDAccessoConfigurazione type = 3");
+			DriverConfigurazioneDB_LIB.CRUDAccessoConfigurazione(3, accessoConfigurazione, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoConfigurazione] Errore durante la deleteAccessoConfigurazione : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	@Override
+	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			AccessoDatiAutorizzazione accessoDatiAutorizzazione = new AccessoDatiAutorizzazione();
+			Cache cache = null;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			this.log.debug("eseguo query : " + sqlQuery);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				String tmpCache = rs.getString("auth_statocache");
+				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+					cache = new Cache();
+
+					String tmpDim = rs.getString("auth_dimensionecache");
+					if (tmpDim != null && !tmpDim.equals(""))
+						cache.setDimensione(tmpDim);
+
+					String tmpAlg = rs.getString("auth_algoritmocache");
+					if (tmpAlg.equalsIgnoreCase("LRU"))
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+					else
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+					String tmpIdle = rs.getString("auth_idlecache");
+					String tmpLife = rs.getString("auth_lifecache");
+
+					if (tmpIdle != null && !tmpIdle.equals(""))
+						cache.setItemIdleTime(tmpIdle);
+					if (tmpLife != null && !tmpLife.equals(""))
+						cache.setItemLifeSecond(tmpLife);
+
+					accessoDatiAutorizzazione.setCache(cache);
+
+				}
+				rs.close();
+				stm.close();
+			}
+
+			return accessoDatiAutorizzazione;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutorizzazione] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutorizzazione] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public void createAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws DriverConfigurazioneException {
+
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDAccessoDatiAutorizzazione type = 1");
+			DriverConfigurazioneDB_LIB.CRUDAccessoDatiAutorizzazione(1, accessoDatiAutorizzazione, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoDatiAutorizzazione] Errore durante la createAccessoDatiAutorizzazione : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public void updateAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDAccessoDatiAutorizzazione type = 2");
+			DriverConfigurazioneDB_LIB.CRUDAccessoDatiAutorizzazione(2, accessoDatiAutorizzazione, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoDatiAutorizzazione] Errore durante la updateAccessoDatiAutorizzazione : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public void deleteAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDAccessoDatiAutorizzazione type = 3");
+			DriverConfigurazioneDB_LIB.CRUDAccessoDatiAutorizzazione(3, accessoDatiAutorizzazione, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoDatiAutorizzazione] Errore durante la deleteAccessoDatiAutorizzazione : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 
 	/**
 	 * Restituisce la gestione dell'errore di default definita nella Porta di Dominio per il componente di cooperazione
@@ -5289,6 +5766,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		// - AccessoRegistro
 		try{
 			config.setAccessoRegistro(getAccessoRegistro());
+		}catch (Exception e) {}
+		
+		// - AccessoConfigurazione
+		try{
+			config.setAccessoConfigurazione(getAccessoConfigurazione());
+		}catch (Exception e) {}
+		
+		// - AccessoDatiAutorizzazione
+		try{
+			config.setAccessoDatiAutorizzazione(getAccessoDatiAutorizzazione());
 		}catch (Exception e) {}
 
 		// - RoutingTable
@@ -14400,6 +14887,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		if(conf!=null){
 			try{
 				conf.setAccessoRegistro(this.getAccessoRegistro());
+			}catch(DriverConfigurazioneNotFound d){}
+			try{
+				conf.setAccessoConfigurazione(this.getAccessoConfigurazione());
+			}catch(DriverConfigurazioneNotFound d){}
+			try{
+				conf.setAccessoDatiAutorizzazione(this.getAccessoDatiAutorizzazione());
 			}catch(DriverConfigurazioneNotFound d){}
 			conf.setRoutingTable(this.getRoutingTable());
 			GestioneErrore compIntegrazione = null;

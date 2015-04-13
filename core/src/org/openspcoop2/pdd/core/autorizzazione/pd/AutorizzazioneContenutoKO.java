@@ -20,16 +20,13 @@
  */
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pd;
 
 
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.AbstractCore;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 
@@ -37,16 +34,14 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
  * Esempio di AutorizzazioneContenutoKO
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 
-public class AutorizzazioneContenutoKO extends AbstractCore implements IAutorizzazioneContenuto {
+public class AutorizzazioneContenutoKO extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
 
 	@Override
-	public EsitoAutorizzazioneIntegrazione process(InfoConnettoreIngresso infoConnettoreIngresso,
- 		   String servizioApplicativo,IDPortaDelegata idPD,
- 		   IDServizio servizio,PortaDelegata pd,OpenSPCoop2Message msg) throws AutorizzazioneException {
+	public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
 
 		EsitoAutorizzazioneIntegrazione esito = new EsitoAutorizzazioneIntegrazione();
     	
@@ -54,7 +49,12 @@ public class AutorizzazioneContenutoKO extends AbstractCore implements IAutorizz
     	try{
     		byte[] msgBytes = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap()).getAsByte(msg.getSOAPBody(), true);
     		System.out.println("(TestKO) Messaggio ricevuto: "+new String(msgBytes));
-        			
+        	
+    		String servizioApplicativo = null;
+    		if(datiInvocazione.getIdServizioApplicativo()!=null){
+    			servizioApplicativo = datiInvocazione.getIdServizioApplicativo().getNome();
+    		}
+    		
     		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA.getErrore428_AutorizzazioneContenutoFallita(servizioApplicativo));
     		esito.setServizioAutorizzato(false);
     		return esito;

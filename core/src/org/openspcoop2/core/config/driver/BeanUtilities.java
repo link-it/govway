@@ -22,6 +22,8 @@
 
 package org.openspcoop2.core.config.driver;
 
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -508,6 +510,64 @@ public abstract class BeanUtilities implements IDriverConfigurazioneGet {
 				return false;
 			else
 				return beanRegistro.equals(ar,checkID);
+		}
+	}
+	
+	/**
+	 * Controlla che il bean presente, sia uguale al bean passato come parametro
+	 * 
+	 * @param ac
+	 * @return true se il bean presente, sia uguale al bean passato come parametro
+	 */
+	@Override
+	public boolean verificaAccessoConfigurazione(AccessoConfigurazione ac)throws DriverConfigurazioneException {
+		return verificaAccessoConfigurazione(ac,true);
+	}
+	@Override
+	public boolean verificaAccessoConfigurazione(AccessoConfigurazione ac,boolean checkID)throws DriverConfigurazioneException{
+		AccessoConfigurazione bean = null;
+		try{
+			bean = this.getAccessoConfigurazione();
+		}catch(DriverConfigurazioneNotFound dNotFound){}
+		if(bean==null){
+			if(ac==null)
+				return true;
+			else
+				return false;
+		}else{
+			if(ac==null)
+				return false;
+			else
+				return bean.equals(ac,checkID);
+		}
+	}
+	
+	/**
+	 * Controlla che il bean presente, sia uguale al bean passato come parametro
+	 * 
+	 * @param ad
+	 * @return true se il bean presente, sia uguale al bean passato come parametro
+	 */
+	@Override
+	public boolean verificaAccessoDatiAutorizzazione(AccessoDatiAutorizzazione ad)throws DriverConfigurazioneException {
+		return verificaAccessoDatiAutorizzazione(ad,true);
+	}
+	@Override
+	public boolean verificaAccessoDatiAutorizzazione(AccessoDatiAutorizzazione ad,boolean checkID)throws DriverConfigurazioneException{
+		AccessoDatiAutorizzazione bean = null;
+		try{
+			bean = this.getAccessoDatiAutorizzazione();
+		}catch(DriverConfigurazioneNotFound dNotFound){}
+		if(bean==null){
+			if(ad==null)
+				return true;
+			else
+				return false;
+		}else{
+			if(ad==null)
+				return false;
+			else
+				return bean.equals(ad,checkID);
 		}
 	}
 	

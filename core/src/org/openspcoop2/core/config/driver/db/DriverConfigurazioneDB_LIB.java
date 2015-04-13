@@ -38,10 +38,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroCache;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -4389,7 +4391,7 @@ public class DriverConfigurazioneDB_LIB {
 
 		long idRegistro = 0;
 		int n = 0;
-		AccessoRegistroCache arc = registro.getCache();
+		Cache arc = registro.getCache();
 		String statoCache = "disabilitato";
 		String dimensionecache = null;
 		String algoritmocache = null;
@@ -4507,6 +4509,155 @@ public class DriverConfigurazioneDB_LIB {
 
 	}
 	
+	
+	
+	public static long CRUDAccessoConfigurazione(int type, AccessoConfigurazione accessoConfigurazione, Connection con) throws DriverConfigurazioneException {
+		if (accessoConfigurazione == null)
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoConfigurazione] Parametro accessoConfigurazione non può essere NULL");
+		PreparedStatement updateStmt = null;
+		String updateQuery = "";
+
+		int n = 0;
+		Cache cache = accessoConfigurazione.getCache();
+		String statoCache = "disabilitato";
+		String dimensionecache = null;
+		String algoritmocache = null;
+		String idlecache = null;
+		String lifecache = null;
+		if (cache != null) {
+			statoCache = "abilitato";
+			dimensionecache = cache.getDimensione();
+			if(cache.getAlgoritmo()!=null){
+				algoritmocache = cache.getAlgoritmo().toString();
+			}
+			idlecache = cache.getItemIdleTime();
+			lifecache = cache.getItemLifeSecond();
+		}
+
+		try {
+			switch (type) {
+			case CREATE:
+			case UPDATE:
+
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addUpdateTable(CostantiDB.CONFIGURAZIONE);
+				sqlQueryObject.addUpdateField("config_statocache", "?");
+				sqlQueryObject.addUpdateField("config_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("config_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("config_idlecache", "?");
+				sqlQueryObject.addUpdateField("config_lifecache", "?");
+				updateQuery = sqlQueryObject.createSQLUpdate();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				updateStmt.setString(1, statoCache);
+				updateStmt.setString(2, dimensionecache);
+				updateStmt.setString(3, algoritmocache);
+				updateStmt.setString(4, idlecache);
+				updateStmt.setString(5, lifecache);
+
+				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
+
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+
+				break;
+			case DELETE:
+				// non rimuovo nulla in quanto la tabella configurazione
+				// contiene solo una riga con i valori
+				// che vanno modificati con la update
+				break;
+			}
+
+			return n;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoConfigurazione] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoConfigurazione] Exception [" + se.getMessage() + "].",se);
+		} finally {
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+	
+	
+	
+	public static long CRUDAccessoDatiAutorizzazione(int type, AccessoDatiAutorizzazione accessoDatiAutorizzazione, Connection con) throws DriverConfigurazioneException {
+		if (accessoDatiAutorizzazione == null)
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoDatiAutorizzazione] Parametro accessoDatiAutorizzazione non può essere NULL");
+		PreparedStatement updateStmt = null;
+		String updateQuery = "";
+
+		int n = 0;
+		Cache cache = accessoDatiAutorizzazione.getCache();
+		String statoCache = "disabilitato";
+		String dimensionecache = null;
+		String algoritmocache = null;
+		String idlecache = null;
+		String lifecache = null;
+		if (cache != null) {
+			statoCache = "abilitato";
+			dimensionecache = cache.getDimensione();
+			if(cache.getAlgoritmo()!=null){
+				algoritmocache = cache.getAlgoritmo().toString();
+			}
+			idlecache = cache.getItemIdleTime();
+			lifecache = cache.getItemLifeSecond();
+		}
+
+		try {
+			switch (type) {
+			case CREATE:
+			case UPDATE:
+
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addUpdateTable(CostantiDB.CONFIGURAZIONE);
+				sqlQueryObject.addUpdateField("auth_statocache", "?");
+				sqlQueryObject.addUpdateField("auth_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("auth_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("auth_idlecache", "?");
+				sqlQueryObject.addUpdateField("auth_lifecache", "?");
+				updateQuery = sqlQueryObject.createSQLUpdate();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				updateStmt.setString(1, statoCache);
+				updateStmt.setString(2, dimensionecache);
+				updateStmt.setString(3, algoritmocache);
+				updateStmt.setString(4, idlecache);
+				updateStmt.setString(5, lifecache);
+
+				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + DBUtils.formatSQLString(updateQuery, statoCache, dimensionecache, algoritmocache, idlecache, lifecache));
+
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+
+				break;
+			case DELETE:
+				// non rimuovo nulla in quanto la tabella configurazione
+				// contiene solo una riga con i valori
+				// che vanno modificati con la update
+				break;
+			}
+
+			return n;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoDatiAutorizzazione] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDAccessoDatiAutorizzazione] Exception [" + se.getMessage() + "].",se);
+		} finally {
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
 	
 	
 	public static void CRUDServiziPdD(int type, StatoServiziPdd statoServiziPdD, Connection con) throws DriverConfigurazioneException {
@@ -4881,6 +5032,8 @@ public class DriverConfigurazioneDB_LIB {
 		Risposte risposte = config.getRisposte();
 		ValidazioneBuste validazioneBuste = config.getValidazioneBuste();
 		AccessoRegistro car = config.getAccessoRegistro();
+		AccessoConfigurazione aConfig = config.getAccessoConfigurazione();
+		AccessoDatiAutorizzazione aDatiAuth = config.getAccessoDatiAutorizzazione();
 		Attachments att = config.getAttachments();
 
 		String utilizzoIndTelematico = null;
@@ -4917,22 +5070,58 @@ public class DriverConfigurazioneDB_LIB {
 			gestioneManifest = DriverConfigurazioneDB_LIB.getValue(att.getGestioneManifest());
 		}
 
-		AccessoRegistroCache cache = null;
-		String dimensioneCache = null;
-		String algoritmoCache = null;
-		String idleCache = null;
-		String lifeCache = null;
-		String statoCache = null;
+		Cache registro_cache = null;
+		String registro_dimensioneCache = null;
+		String registro_algoritmoCache = null;
+		String registro_idleCache = null;
+		String registro_lifeCache = null;
+		String registro_statoCache = null;
 		if(car !=null){
-			cache = car.getCache();
+			registro_cache = car.getCache();
 
 		}
-		statoCache = (cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
-		if (statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
-			dimensioneCache = cache.getDimensione();
-			algoritmoCache = DriverConfigurazioneDB_LIB.getValue(cache.getAlgoritmo());
-			idleCache = cache.getItemIdleTime();
-			lifeCache = cache.getItemLifeSecond();
+		registro_statoCache = (registro_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (registro_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			registro_dimensioneCache = registro_cache.getDimensione();
+			registro_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(registro_cache.getAlgoritmo());
+			registro_idleCache = registro_cache.getItemIdleTime();
+			registro_lifeCache = registro_cache.getItemLifeSecond();
+		}
+		
+		Cache config_cache = null;
+		String config_dimensioneCache = null;
+		String config_algoritmoCache = null;
+		String config_idleCache = null;
+		String config_lifeCache = null;
+		String config_statoCache = null;
+		if(aConfig !=null){
+			config_cache = aConfig.getCache();
+
+		}
+		config_statoCache = (config_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (config_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			config_dimensioneCache = config_cache.getDimensione();
+			config_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(config_cache.getAlgoritmo());
+			config_idleCache = config_cache.getItemIdleTime();
+			config_lifeCache = config_cache.getItemLifeSecond();
+		}
+		
+		Cache auth_cache = null;
+		String auth_dimensioneCache = null;
+		String auth_algoritmoCache = null;
+		String auth_idleCache = null;
+		String auth_lifeCache = null;
+		String auth_statoCache = null;
+		if(aDatiAuth !=null){
+			auth_cache = aDatiAuth.getCache();
+
+		}
+		auth_statoCache = (auth_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (auth_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			auth_dimensioneCache = auth_cache.getDimensione();
+			auth_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(auth_cache.getAlgoritmo());
+			auth_idleCache = auth_cache.getItemIdleTime();
+			auth_lifeCache = auth_cache.getItemLifeSecond();
 		}
 
 		Tracciamento t = config.getTracciamento();
@@ -4977,11 +5166,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("msg_diag_severita", "?");
 				sqlQueryObject.addInsertField("msg_diag_severita_log4j", "?");
 				sqlQueryObject.addInsertField("auth_integration_manager", "?");
-				sqlQueryObject.addInsertField("statocache", "?");
-				sqlQueryObject.addInsertField("dimensionecache", "?");
-				sqlQueryObject.addInsertField("algoritmocache", "?");
-				sqlQueryObject.addInsertField("idlecache", "?");
-				sqlQueryObject.addInsertField("lifecache", "?");
 				sqlQueryObject.addInsertField("validazione_profilo", "?");
 				sqlQueryObject.addInsertField("mod_risposta", "?");
 				sqlQueryObject.addInsertField("indirizzo_telematico", "?");
@@ -4993,6 +5177,25 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
+				// registro cache
+				sqlQueryObject.addInsertField("statocache", "?");
+				sqlQueryObject.addInsertField("dimensionecache", "?");
+				sqlQueryObject.addInsertField("algoritmocache", "?");
+				sqlQueryObject.addInsertField("idlecache", "?");
+				sqlQueryObject.addInsertField("lifecache", "?");
+				// config cache
+				sqlQueryObject.addInsertField("config_statocache", "?");
+				sqlQueryObject.addInsertField("config_dimensionecache", "?");
+				sqlQueryObject.addInsertField("config_algoritmocache", "?");
+				sqlQueryObject.addInsertField("config_idlecache", "?");
+				sqlQueryObject.addInsertField("config_lifecache", "?");
+				// auth cache
+				sqlQueryObject.addInsertField("auth_statocache", "?");
+				sqlQueryObject.addInsertField("auth_dimensionecache", "?");
+				sqlQueryObject.addInsertField("auth_algoritmocache", "?");
+				sqlQueryObject.addInsertField("auth_idlecache", "?");
+				sqlQueryObject.addInsertField("auth_lifecache", "?");
+				
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
 
@@ -5004,11 +5207,6 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, msg_diag_severita);
 				updateStmt.setString(index++, msg_diag_severita_log4j);
 				updateStmt.setString(index++, autenticazione);
-				updateStmt.setString(index++, statoCache);
-				updateStmt.setString(index++, dimensioneCache);
-				updateStmt.setString(index++, algoritmoCache);
-				updateStmt.setString(index++, idleCache);
-				updateStmt.setString(index++, lifeCache);
 				updateStmt.setString(index++, val_profiloCollaborazione);
 				updateStmt.setString(index++, modRisposta);
 				updateStmt.setString(index++, utilizzoIndTelematico);
@@ -5020,6 +5218,24 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, validazione_contenuti_stato);
 				updateStmt.setString(index++, validazione_contenuti_tipo);
 				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
+				// registro cache
+				updateStmt.setString(index++, registro_statoCache);
+				updateStmt.setString(index++, registro_dimensioneCache);
+				updateStmt.setString(index++, registro_algoritmoCache);
+				updateStmt.setString(index++, registro_idleCache);
+				updateStmt.setString(index++, registro_lifeCache);
+				// config cache
+				updateStmt.setString(index++, config_statoCache);
+				updateStmt.setString(index++, config_dimensioneCache);
+				updateStmt.setString(index++, config_algoritmoCache);
+				updateStmt.setString(index++, config_idleCache);
+				updateStmt.setString(index++, config_lifeCache);
+				// auth cache
+				updateStmt.setString(index++, auth_statoCache);
+				updateStmt.setString(index++, auth_dimensioneCache);
+				updateStmt.setString(index++, auth_algoritmoCache);
+				updateStmt.setString(index++, auth_idleCache);
+				updateStmt.setString(index++, auth_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -5027,12 +5243,14 @@ public class DriverConfigurazioneDB_LIB {
 								val_stato, val_controllo, 
 								msg_diag_severita, msg_diag_severita_log4j, 
 								autenticazione, 
-								statoCache, dimensioneCache, algoritmoCache, idleCache, lifeCache,
 								val_profiloCollaborazione, 
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
 								val_manifest, tracciamentoBuste, dump,
-								validazione_contenuti_stato,validazione_contenuti_tipo,validazione_contenuti_acceptMtomMessage));
+								validazione_contenuti_stato,validazione_contenuti_tipo,validazione_contenuti_acceptMtomMessage,
+								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
+								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
+								auth_statoCache, auth_dimensioneCache, auth_algoritmoCache, auth_idleCache, auth_lifeCache));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -5252,11 +5470,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
 				sqlQueryObject.addUpdateField("msg_diag_severita_log4j", "?");
 				sqlQueryObject.addUpdateField("auth_integration_manager", "?");
-				sqlQueryObject.addUpdateField("statocache", "?");
-				sqlQueryObject.addUpdateField("dimensionecache", "?");
-				sqlQueryObject.addUpdateField("algoritmocache", "?");
-				sqlQueryObject.addUpdateField("idlecache", "?");
-				sqlQueryObject.addUpdateField("lifecache", "?");
 				sqlQueryObject.addUpdateField("validazione_profilo", "?");
 				sqlQueryObject.addUpdateField("mod_risposta", "?");
 				sqlQueryObject.addUpdateField("indirizzo_telematico", "?");
@@ -5268,9 +5481,28 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");
+				// registro cache
+				sqlQueryObject.addUpdateField("statocache", "?");
+				sqlQueryObject.addUpdateField("dimensionecache", "?");
+				sqlQueryObject.addUpdateField("algoritmocache", "?");
+				sqlQueryObject.addUpdateField("idlecache", "?");
+				sqlQueryObject.addUpdateField("lifecache", "?");
+				// config cache
+				sqlQueryObject.addUpdateField("config_statocache", "?");
+				sqlQueryObject.addUpdateField("config_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("config_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("config_idlecache", "?");
+				sqlQueryObject.addUpdateField("config_lifecache", "?");
+				// auth cache
+				sqlQueryObject.addUpdateField("auth_statocache", "?");
+				sqlQueryObject.addUpdateField("auth_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("auth_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("auth_idlecache", "?");
+				sqlQueryObject.addUpdateField("auth_lifecache", "?");
+
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
-
+				
 				index = 1;
 				
 				updateStmt.setString(index++, cadenza_inoltro);
@@ -5279,11 +5511,6 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, msg_diag_severita);
 				updateStmt.setString(index++, msg_diag_severita_log4j);
 				updateStmt.setString(index++, autenticazione);
-				updateStmt.setString(index++, statoCache);
-				updateStmt.setString(index++, dimensioneCache);
-				updateStmt.setString(index++, algoritmoCache);
-				updateStmt.setString(index++, idleCache);
-				updateStmt.setString(index++, lifeCache);
 				updateStmt.setString(index++, val_profiloCollaborazione);
 				updateStmt.setString(index++, modRisposta);
 				updateStmt.setString(index++, utilizzoIndTelematico);
@@ -5295,6 +5522,24 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, validazione_contenuti_stato);
 				updateStmt.setString(index++, validazione_contenuti_tipo);
 				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
+				// registro cache
+				updateStmt.setString(index++, registro_statoCache);
+				updateStmt.setString(index++, registro_dimensioneCache);
+				updateStmt.setString(index++, registro_algoritmoCache);
+				updateStmt.setString(index++, registro_idleCache);
+				updateStmt.setString(index++, registro_lifeCache);
+				// config cache
+				updateStmt.setString(index++, config_statoCache);
+				updateStmt.setString(index++, config_dimensioneCache);
+				updateStmt.setString(index++, config_algoritmoCache);
+				updateStmt.setString(index++, config_idleCache);
+				updateStmt.setString(index++, config_lifeCache);
+				// auth cache
+				updateStmt.setString(index++, auth_statoCache);
+				updateStmt.setString(index++, auth_dimensioneCache);
+				updateStmt.setString(index++, auth_algoritmoCache);
+				updateStmt.setString(index++, auth_idleCache);
+				updateStmt.setString(index++, auth_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -5302,13 +5547,15 @@ public class DriverConfigurazioneDB_LIB {
 								val_stato, val_controllo, 
 								msg_diag_severita, msg_diag_severita_log4j, 
 								autenticazione, 
-								statoCache, dimensioneCache, algoritmoCache, idleCache, lifeCache, 
 								val_profiloCollaborazione, 
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
 								val_manifest, 
 								tracciamentoBuste, dump,
-								validazione_contenuti_stato,validazione_contenuti_tipo));
+								validazione_contenuti_stato,validazione_contenuti_tipo,
+								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
+								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
+								auth_statoCache, auth_dimensioneCache, auth_algoritmoCache, auth_idleCache, auth_lifeCache));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();

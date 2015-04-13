@@ -39,7 +39,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
+import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Connettore;
@@ -139,6 +141,17 @@ public class ConfigurazionePdDReader {
 
 
 	/* --------------- Cache --------------------*/
+	public static boolean isCacheAbilitata() throws DriverConfigurazioneException{
+		try{
+			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
+			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
+				return configurazionePdDReader.configurazionePdD.isCacheAbilitata();
+			}
+			return false;
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("IsCacheAbilitata, recupero informazione della cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+		}
+	}
 	public static void resetCache() throws DriverConfigurazioneException{
 		try{
 			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
@@ -3286,6 +3299,84 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.accessoRegistroServizi;
 	}
 
+	/**
+	 * Restituisce le informazioni necessarie alla porta di dominio per accedere alla configurazione
+	 *
+	 * @return informazioni
+	 * 
+	 */
+	private static AccessoConfigurazione accessoConfigurazione = null;
+	private static Boolean accessoConfigurazioneLetto = false;
+	protected AccessoConfigurazione getAccessoConfigurazione(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoConfigurazioneLetto==false){
+			AccessoConfigurazione tmp = null;
+			try{
+				tmp = this.configurazionePdD.getAccessoConfigurazione(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getAccessoConfigurazione (not found): "+e.getMessage());
+			}catch(Exception e){
+				this.log.error("getAccessoConfigurazione",e);
+			}
+
+			ConfigurazionePdDReader.accessoConfigurazione = tmp;
+			ConfigurazionePdDReader.accessoConfigurazioneLetto = true;
+		}
+
+		/*
+		if(ConfigurazionePdDReader.accessoConfigurazione.getCache()==null){
+			System.out.println("ACCESSO_CONFIG CACHE DISABILITATA");
+		}else{
+			System.out.println("ACCESSO_CONFIG CACHE ABILITATA");
+			System.out.println("ACCESSO_CONFIG CACHE ALGORITMO: "+ConfigurazionePdDReader.accessoConfigurazione.getCache().getAlgoritmo());
+			System.out.println("ACCESSO_CONFIG CACHE DIMENSIONE: "+ConfigurazionePdDReader.accessoConfigurazione.getCache().getDimensione());
+			System.out.println("ACCESSO_CONFIG CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoConfigurazione.getCache().getItemIdleTime());
+			System.out.println("ACCESSO_CONFIG CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoConfigurazione.getCache().getItemLifeSecond());
+		}
+		*/
+		
+		return ConfigurazionePdDReader.accessoConfigurazione;
+	}
+	
+	/**
+	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati di autorizzazione
+	 *
+	 * @return informazioni
+	 * 
+	 */
+	private static AccessoDatiAutorizzazione accessoDatiAutorizzazione = null;
+	private static Boolean accessoDatiAutorizzazioneLetto = false;
+	protected AccessoDatiAutorizzazione getAccessoDatiAutorizzazione(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiAutorizzazioneLetto==false){
+			AccessoDatiAutorizzazione tmp = null;
+			try{
+				tmp = this.configurazionePdD.getAccessoDatiAutorizzazione(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getAccessoDatiAutorizzazione (not found): "+e.getMessage());
+			}catch(Exception e){
+				this.log.error("getAccessoDatiAutorizzazione",e);
+			}
+
+			ConfigurazionePdDReader.accessoDatiAutorizzazione = tmp;
+			ConfigurazionePdDReader.accessoDatiAutorizzazioneLetto = true;
+		}
+
+		/*
+		if(ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache()==null){
+			System.out.println("ACCESSO_DATI_AUTH CACHE DISABILITATA");
+		}else{
+			System.out.println("ACCESSO_DATI_AUTH CACHE ABILITATA");
+			System.out.println("ACCESSO_DATI_AUTH CACHE ALGORITMO: "+ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache().getAlgoritmo());
+			System.out.println("ACCESSO_DATI_AUTH CACHE DIMENSIONE: "+ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache().getDimensione());
+			System.out.println("ACCESSO_DATI_AUTH CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache().getItemIdleTime());
+			System.out.println("ACCESSO_DATI_AUTH CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache().getItemLifeSecond());
+		}
+		*/
+		
+		return ConfigurazionePdDReader.accessoDatiAutorizzazione;
+	}
+	
 	/**
 	 * Restituisce il tipo di validazione richiesta alla porta di dominio.
 	 * Se un valore non viene impostato, il tipo ritornato sara' 'attivo'.

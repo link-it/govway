@@ -26,7 +26,7 @@ import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
-import org.openspcoop2.core.config.AccessoRegistroCache;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.Configurazione;
@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDefault;
@@ -71,6 +72,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.AccessoRegistro;
+import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.Attachments;
@@ -406,63 +408,63 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
-	 Object: accesso-registro-cache
+	 Object: cache
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
-	 * @return Object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Cache}
+	 * @return Object type {@link org.openspcoop2.core.config.Cache}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public AccessoRegistroCache readAccessoRegistroCache(String fileName) throws DeserializerException {
-		return (AccessoRegistroCache) this.xmlToObj(fileName, AccessoRegistroCache.class);
+	public Cache readCache(String fileName) throws DeserializerException {
+		return (Cache) this.xmlToObj(fileName, Cache.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
-	 * @return Object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Cache}
+	 * @return Object type {@link org.openspcoop2.core.config.Cache}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public AccessoRegistroCache readAccessoRegistroCache(File file) throws DeserializerException {
-		return (AccessoRegistroCache) this.xmlToObj(file, AccessoRegistroCache.class);
+	public Cache readCache(File file) throws DeserializerException {
+		return (Cache) this.xmlToObj(file, Cache.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
-	 * @return Object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Cache}
+	 * @return Object type {@link org.openspcoop2.core.config.Cache}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public AccessoRegistroCache readAccessoRegistroCache(InputStream in) throws DeserializerException {
-		return (AccessoRegistroCache) this.xmlToObj(in, AccessoRegistroCache.class);
+	public Cache readCache(InputStream in) throws DeserializerException {
+		return (Cache) this.xmlToObj(in, Cache.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
-	 * @return Object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Cache}
+	 * @return Object type {@link org.openspcoop2.core.config.Cache}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public AccessoRegistroCache readAccessoRegistroCache(byte[] in) throws DeserializerException {
-		return (AccessoRegistroCache) this.xmlToObj(in, AccessoRegistroCache.class);
+	public Cache readCache(byte[] in) throws DeserializerException {
+		return (Cache) this.xmlToObj(in, Cache.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
-	 * @return Object type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Cache}
+	 * @return Object type {@link org.openspcoop2.core.config.Cache}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public AccessoRegistroCache readAccessoRegistroCacheFromString(String in) throws DeserializerException {
-		return (AccessoRegistroCache) this.xmlToObj(in.getBytes(), AccessoRegistroCache.class);
+	public Cache readCacheFromString(String in) throws DeserializerException {
+		return (Cache) this.xmlToObj(in.getBytes(), Cache.class);
 	}	
 	
 	
@@ -1597,6 +1599,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public MessaggiDiagnostici readMessaggiDiagnosticiFromString(String in) throws DeserializerException {
 		return (MessaggiDiagnostici) this.xmlToObj(in.getBytes(), MessaggiDiagnostici.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-autorizzazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAutorizzazione readAccessoDatiAutorizzazione(String fileName) throws DeserializerException {
+		return (AccessoDatiAutorizzazione) this.xmlToObj(fileName, AccessoDatiAutorizzazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAutorizzazione readAccessoDatiAutorizzazione(File file) throws DeserializerException {
+		return (AccessoDatiAutorizzazione) this.xmlToObj(file, AccessoDatiAutorizzazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAutorizzazione readAccessoDatiAutorizzazione(InputStream in) throws DeserializerException {
+		return (AccessoDatiAutorizzazione) this.xmlToObj(in, AccessoDatiAutorizzazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAutorizzazione readAccessoDatiAutorizzazione(byte[] in) throws DeserializerException {
+		return (AccessoDatiAutorizzazione) this.xmlToObj(in, AccessoDatiAutorizzazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiAutorizzazione readAccessoDatiAutorizzazioneFromString(String in) throws DeserializerException {
+		return (AccessoDatiAutorizzazione) this.xmlToObj(in.getBytes(), AccessoDatiAutorizzazione.class);
 	}	
 	
 	
@@ -3235,6 +3300,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public AccessoRegistro readAccessoRegistroFromString(String in) throws DeserializerException {
 		return (AccessoRegistro) this.xmlToObj(in.getBytes(), AccessoRegistro.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoConfigurazione readAccessoConfigurazione(String fileName) throws DeserializerException {
+		return (AccessoConfigurazione) this.xmlToObj(fileName, AccessoConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoConfigurazione readAccessoConfigurazione(File file) throws DeserializerException {
+		return (AccessoConfigurazione) this.xmlToObj(file, AccessoConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoConfigurazione readAccessoConfigurazione(InputStream in) throws DeserializerException {
+		return (AccessoConfigurazione) this.xmlToObj(in, AccessoConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoConfigurazione readAccessoConfigurazione(byte[] in) throws DeserializerException {
+		return (AccessoConfigurazione) this.xmlToObj(in, AccessoConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoConfigurazione readAccessoConfigurazioneFromString(String in) throws DeserializerException {
+		return (AccessoConfigurazione) this.xmlToObj(in.getBytes(), AccessoConfigurazione.class);
 	}	
 	
 	

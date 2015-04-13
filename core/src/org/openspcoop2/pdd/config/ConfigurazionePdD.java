@@ -32,7 +32,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -96,6 +98,8 @@ public class ConfigurazionePdD  {
 	private static GestioneErrore gestioneErroreComponenteIntegrazione = null;
 	private static RoutingTable routingTable = null;
 	private static AccessoRegistro accessoRegistro = null;
+	private static AccessoConfigurazione accessoConfigurazione = null;
+	private static AccessoDatiAutorizzazione accessoDatiAutorizzazione = null;
 	/** ConfigurazioneDinamica */
 	private boolean configurazioneDinamica = false;
 	
@@ -108,6 +112,9 @@ public class ConfigurazionePdD  {
 	
 	
 	/* --------------- Cache --------------------*/
+	public boolean isCacheAbilitata(){
+		return this.cache!=null;
+	}
 	public void resetCache() throws DriverConfigurazioneException{
 		if(this.cache!=null){
 			try{
@@ -144,23 +151,23 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("Cache gia' abilitata");
 		else{
 			try{
-				AccessoConfigurazionePdD accessoConfigurazione = new AccessoConfigurazionePdD();
+				org.openspcoop2.core.config.Cache configurazioneCache = new org.openspcoop2.core.config.Cache();
 				if(dimensioneCache!=null){
-					accessoConfigurazione.setDimensioneCache(dimensioneCache.intValue());
+					configurazioneCache.setDimensione(dimensioneCache+"");
 				}
 				if(algoritmoCacheLRU!=null){
 					if(algoritmoCacheLRU)
-						accessoConfigurazione.setAlgoritmoCache(CostantiConfigurazione.CACHE_LRU);
+						configurazioneCache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
 					else
-						accessoConfigurazione.setAlgoritmoCache(CostantiConfigurazione.CACHE_MRU);
+						configurazioneCache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
 				}
 				if(itemIdleTime!=null){
-					accessoConfigurazione.setItemIdleTimeCache(itemIdleTime.intValue());
+					configurazioneCache.setItemIdleTime(itemIdleTime+"");
 				}
 				if(itemLifeSecond!=null){
-					accessoConfigurazione.setItemLifeTimeCache(itemLifeSecond.intValue());
+					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheConfigurazione(accessoConfigurazione, null);
+				initCacheConfigurazione(configurazioneCache, null);
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -267,8 +274,12 @@ public class ConfigurazionePdD  {
 
 
 			// Inizializzazione della Cache
-			if(accessoConfigurazione.getUtilizzoCache()){
-				initCacheConfigurazione(accessoConfigurazione,alogConsole);
+			AccessoConfigurazione accessoDatiConfigurazione = null;
+			try{
+				accessoDatiConfigurazione = this.driverConfigurazionePdD.getAccessoConfigurazione();
+			}catch(DriverConfigurazioneNotFound notFound){}
+			if(accessoDatiConfigurazione!=null && accessoDatiConfigurazione.getCache()!=null){
+				initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole);
 			}
 			
 			// Inizializzazione ConfigLocalProperties
@@ -283,30 +294,32 @@ public class ConfigurazionePdD  {
 		}
 	}
 	
-	private void initCacheConfigurazione(AccessoConfigurazionePdD accessoConfigurazione,Logger alogConsole)throws Exception{
+	private void initCacheConfigurazione(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole)throws Exception{
 		this.cache = new Cache(CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
 		
 		String msg = null;
-		if( (accessoConfigurazione.getDimensioneCache()!=null) ||
-				(accessoConfigurazione.getAlgoritmoCache() != null) ){
+		if( (configurazioneCache.getDimensione()!=null) ||
+				(configurazioneCache.getAlgoritmo() != null) ){
 	     
-			if( accessoConfigurazione.getDimensioneCache()!=null ){
+			if( configurazioneCache.getDimensione()!=null ){
+				int dimensione = -1;
 				try{
-					msg = "Dimensione della cache (ConfigurazionePdD) impostata al valore: "+accessoConfigurazione.getDimensioneCache().intValue();
+					dimensione = Integer.parseInt(configurazioneCache.getDimensione());
+					msg = "Dimensione della cache (ConfigurazionePdD) impostata al valore: "+dimensione;
 					this.log.info(msg);
 					if(alogConsole!=null)
 						alogConsole.info(msg);
-					this.cache.setCacheSize(accessoConfigurazione.getDimensioneCache().intValue());
+					this.cache.setCacheSize(dimensione);
 				}catch(Exception error){
 					throw new DriverConfigurazioneException("Parametro errato per la dimensione della cache (ConfigurazionePdD): "+error.getMessage());
 				}
 			}
-			if( accessoConfigurazione.getAlgoritmoCache() != null ){
-				msg = "Algoritmo di cache (ConfigurazionePdD) impostato al valore: "+accessoConfigurazione.getAlgoritmoCache();
+			if( configurazioneCache.getAlgoritmo() != null ){
+				msg = "Algoritmo di cache (ConfigurazionePdD) impostato al valore: "+configurazioneCache.getAlgoritmo();
 				this.log.info(msg);
 				if(alogConsole!=null)
 					alogConsole.info(msg);
-				if(CostantiConfigurazione.CACHE_MRU.equals(accessoConfigurazione.getAlgoritmoCache()))
+				if(CostantiConfigurazione.CACHE_MRU.equals(configurazioneCache.getAlgoritmo()))
 					this.cache.setCacheAlgoritm(CacheAlgorithm.MRU);
 				else
 					this.cache.setCacheAlgoritm(CacheAlgorithm.LRU);
@@ -314,27 +327,31 @@ public class ConfigurazionePdD  {
 			
 		}
 		
-		if( (accessoConfigurazione.getItemIdleTimeCache() != null) ||
-				(accessoConfigurazione.getItemLifeTimeCache() != null) ){
+		if( (configurazioneCache.getItemIdleTime() != null) ||
+				(configurazioneCache.getItemLifeSecond() != null) ){
 
-			if( accessoConfigurazione.getItemIdleTimeCache() != null  ){
+			if( configurazioneCache.getItemIdleTime() != null  ){
+				int itemIdleTime = -1;
 				try{
-					msg = "Attributo 'IdleTime' (ConfigurazionePdD) impostato al valore: "+accessoConfigurazione.getItemIdleTimeCache().intValue();
+					itemIdleTime = Integer.parseInt(configurazioneCache.getItemIdleTime());
+					msg = "Attributo 'IdleTime' (ConfigurazionePdD) impostato al valore: "+itemIdleTime;
 					this.log.info(msg);
 					if(alogConsole!=null)
 						alogConsole.info(msg);
-					this.cache.setItemIdleTime(accessoConfigurazione.getItemIdleTimeCache().intValue());
+					this.cache.setItemIdleTime(itemIdleTime);
 				}catch(Exception error){
 					throw new DriverConfigurazioneException("Parametro errato per l'attributo 'IdleTime' (ConfigurazionePdD): "+error.getMessage());
 				}
 			}
-			if( accessoConfigurazione.getItemLifeTimeCache() != null  ){
+			if( configurazioneCache.getItemLifeSecond() != null  ){
+				int itemLifeSecond = -1;
 				try{
-					msg = "Attributo 'MaxLifeSecond' (ConfigurazionePdD) impostato al valore: "+accessoConfigurazione.getItemLifeTimeCache().intValue();
+					itemLifeSecond = Integer.parseInt(configurazioneCache.getItemLifeSecond());
+					msg = "Attributo 'MaxLifeSecond' (ConfigurazionePdD) impostato al valore: "+itemLifeSecond;
 					this.log.info(msg);
 					if(alogConsole!=null)
 						alogConsole.info(msg);
-					this.cache.setItemLifeTime(accessoConfigurazione.getItemLifeTimeCache().intValue());
+					this.cache.setItemLifeTime(itemLifeSecond);
 				}catch(Exception error){
 					throw new DriverConfigurazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (ConfigurazionePdD): "+error.getMessage());
 				}
@@ -529,6 +546,12 @@ public class ConfigurazionePdD  {
 				}
 				else if("getAccessoRegistro".equals(methodName)){
 					obj = this.configLocalProperties.updateAccessoRegistro((AccessoRegistro)obj);
+				}
+				else if("getAccessoConfigurazione".equals(methodName)){
+					obj = this.configLocalProperties.updateAccessoConfigurazione((AccessoConfigurazione)obj);
+				}
+				else if("getAccessoDatiAutorizzazione".equals(methodName)){
+					obj = this.configLocalProperties.updateAccessoDatiAutorizzazione((AccessoDatiAutorizzazione)obj);
 				}
 				else if("getGestioneErroreComponenteCooperazione".equals(methodName)){
 					obj = this.configLocalProperties.updateGestioneErroreCooperazione((GestioneErrore)obj);
@@ -1650,6 +1673,98 @@ public class ConfigurazionePdD  {
 		}
 		else{
 			throw new DriverConfigurazioneNotFound("[getAccessoRegistro] Configurazione di accesso ai registri non trovata");
+		}
+	} 
+	
+	public AccessoConfigurazione getAccessoConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Se e' attiva una configurazione statica, la utilizzo.
+		if(this.configurazioneDinamica==false){
+			if(ConfigurazionePdD.accessoConfigurazione!=null)
+				return ConfigurazionePdD.accessoConfigurazione;
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getAccessoConfigurazione";
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((AccessoConfigurazione) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		AccessoConfigurazione object = null;
+		if(this.cache!=null){
+			object = (AccessoConfigurazione) this.getObjectCache(key,"getAccessoConfigurazione",connectionPdD);
+		}else{
+			object = (AccessoConfigurazione) this.getObject("getAccessoConfigurazione",connectionPdD);
+		}
+		
+		if(object!=null){
+			// Se e' attiva una configurazione statica, la utilizzo.
+			if(this.configurazioneDinamica==false){
+				ConfigurazionePdD.accessoConfigurazione = object;
+			}
+			return object;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getAccessoConfigurazione] Configurazione di accesso alla configurazione non trovata");
+		}
+	} 
+	
+	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Se e' attiva una configurazione statica, la utilizzo.
+		if(this.configurazioneDinamica==false){
+			if(ConfigurazionePdD.accessoDatiAutorizzazione!=null)
+				return ConfigurazionePdD.accessoDatiAutorizzazione;
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getAccessoDatiAutorizzazione";
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((AccessoDatiAutorizzazione) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		AccessoDatiAutorizzazione object = null;
+		if(this.cache!=null){
+			object = (AccessoDatiAutorizzazione) this.getObjectCache(key,"getAccessoDatiAutorizzazione",connectionPdD);
+		}else{
+			object = (AccessoDatiAutorizzazione) this.getObject("getAccessoDatiAutorizzazione",connectionPdD);
+		}
+		
+		if(object!=null){
+			// Se e' attiva una configurazione statica, la utilizzo.
+			if(this.configurazioneDinamica==false){
+				ConfigurazionePdD.accessoDatiAutorizzazione = object;
+			}
+			return object;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutorizzazione] Configurazione di accesso ai dati di autorizzazione non trovata");
 		}
 	} 
 

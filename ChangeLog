@@ -1,3 +1,14 @@
+2015-04-13  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità #324
+	Spostati i parametri delle cache 'configurazione' e 'autorizzazione' 
+	dal file di proprieta' openspcoop2.properties alla configurazione, 
+	in modo da poter agire sui parametri direttamente da pddConsole, 
+	cosi' come avviene per la cache di accesso ai dati del registro.
+	All'interno della cache contenente i dati di autorizzazione vengono 
+	inoltre adesso collezionati anche i risultati di autorizzazione sulla PortaDelegata
+
 2015-04-09  Andrea Poli <apoli@link.it>
 
 	* [Pdd]

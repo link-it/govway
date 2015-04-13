@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.core.config.model;
 
-import org.openspcoop2.core.config.AccessoRegistroCache;
+import org.openspcoop2.core.config.Cache;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -29,33 +29,33 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model AccessoRegistroCache 
+ * Model Cache 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AccessoRegistroCacheModel extends AbstractModel<AccessoRegistroCache> {
+public class CacheModel extends AbstractModel<Cache> {
 
-	public AccessoRegistroCacheModel(){
+	public CacheModel(){
 	
 		super();
 	
-		this.DIMENSIONE = new Field("dimensione",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
-		this.ALGORITMO = new Field("algoritmo",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
-		this.ITEM_IDLE_TIME = new Field("item-idle-time",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
-		this.ITEM_LIFE_SECOND = new Field("item-life-second",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
+		this.DIMENSIONE = new Field("dimensione",java.lang.String.class,"cache",Cache.class);
+		this.ALGORITMO = new Field("algoritmo",java.lang.String.class,"cache",Cache.class);
+		this.ITEM_IDLE_TIME = new Field("item-idle-time",java.lang.String.class,"cache",Cache.class);
+		this.ITEM_LIFE_SECOND = new Field("item-life-second",java.lang.String.class,"cache",Cache.class);
 	
 	}
 	
-	public AccessoRegistroCacheModel(IField father){
+	public CacheModel(IField father){
 	
 		super(father);
 	
-		this.DIMENSIONE = new ComplexField(father,"dimensione",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
-		this.ALGORITMO = new ComplexField(father,"algoritmo",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
-		this.ITEM_IDLE_TIME = new ComplexField(father,"item-idle-time",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
-		this.ITEM_LIFE_SECOND = new ComplexField(father,"item-life-second",java.lang.String.class,"accesso-registro-cache",AccessoRegistroCache.class);
+		this.DIMENSIONE = new ComplexField(father,"dimensione",java.lang.String.class,"cache",Cache.class);
+		this.ALGORITMO = new ComplexField(father,"algoritmo",java.lang.String.class,"cache",Cache.class);
+		this.ITEM_IDLE_TIME = new ComplexField(father,"item-idle-time",java.lang.String.class,"cache",Cache.class);
+		this.ITEM_LIFE_SECOND = new ComplexField(father,"item-life-second",java.lang.String.class,"cache",Cache.class);
 	
 	}
 	
@@ -71,8 +71,8 @@ public class AccessoRegistroCacheModel extends AbstractModel<AccessoRegistroCach
 	 
 
 	@Override
-	public Class<AccessoRegistroCache> getModeledClass(){
-		return AccessoRegistroCache.class;
+	public Class<Cache> getModeledClass(){
+		return Cache.class;
 	}
 	
 	@Override

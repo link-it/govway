@@ -345,6 +345,8 @@
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="routing-table" type="routing-table"/>
 			<xsd:element maxOccurs="1" minOccurs="1" name="accesso-registro" type="accesso-registro"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-configurazione" type="accesso-configurazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="indirizzo-risposta" type="indirizzo-risposta"/>
@@ -398,15 +400,9 @@
 	<!-- Informazioni di accesso al registro servizi -->
 	<xsd:complexType name="accesso-registro">
 		<xsd:sequence>
-			<xsd:element name="cache" type="accesso-registro-cache" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="registro" type="accesso-registro-registro" maxOccurs="unbounded" minOccurs="1"/>
 		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="accesso-registro-cache">
-		<xsd:attribute name="dimensione" type="xsd:string"/>
-		<xsd:attribute name="algoritmo" type="AlgoritmoCache" default="lru"/>
-		<xsd:attribute name="item-idle-time" type="xsd:string"/>
-		<xsd:attribute name="item-life-second" type="xsd:string"/>
 	</xsd:complexType>
 	<xsd:complexType name="accesso-registro-registro">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -414,6 +410,26 @@
 		<xsd:attribute name="location" type="xsd:string" use="required"/>
 		<xsd:attribute name="user" type="xsd:string"/>
 		<xsd:attribute name="password" type="xsd:string"/>
+	</xsd:complexType>
+	<xsd:complexType name="cache">
+		<xsd:attribute name="dimensione" type="xsd:string"/>
+		<xsd:attribute name="algoritmo" type="AlgoritmoCache" default="lru"/>
+		<xsd:attribute name="item-idle-time" type="xsd:string"/>
+		<xsd:attribute name="item-life-second" type="xsd:string"/>
+	</xsd:complexType>
+	
+	<!-- Informazioni di accesso alla configurazione -->
+	<xsd:complexType name="accesso-configurazione">
+		<xsd:sequence>
+			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Informazioni per l'autorizzazione -->
+	<xsd:complexType name="accesso-dati-autorizzazione">
+		<xsd:sequence>
+			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
 	</xsd:complexType>
 
 	<!-- Validazione Buste -->

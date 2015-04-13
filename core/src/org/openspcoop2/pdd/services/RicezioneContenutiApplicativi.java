@@ -50,6 +50,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
@@ -86,9 +87,10 @@ import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.autenticazione.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.autenticazione.IAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenziali;
-import org.openspcoop2.pdd.core.autorizzazione.EsitoAutorizzazioneIntegrazione;
-import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazione;
-import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazioneContenuto;
+import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
+import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazioneIntegrazione;
+import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -1578,6 +1580,7 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Autorizzazione del servizio applicativo...");
 		String tipoAutorizzazione = identificazione.getTipoAutorizzazione();
 		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione);
+		DatiInvocazionePortaDelegata datiInvocazione = null;
 		if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione) == false) {
 			ErroreIntegrazione errore = null;
 			Exception eAutorizzazione = null;
@@ -1587,32 +1590,25 @@ public class RicezioneContenutiApplicativi {
 //									tipoAutorizzazione, className,propertiesReader, logCore);
 //				IAutorizzazione auth = RicezioneContenutiApplicativi.gestoriAutorizzazione.get(tipoAutorizzazione);
 				
-				// Inizializzo IGestoreAutorizzazione new Type
-				String classType = null;
-				IAutorizzazione auth = null;
-				try {
-					classType = className.getAutorizzazione(tipoAutorizzazione);
-					auth = ((IAutorizzazione) loader.newInstance(classType));
-					AbstractCore.init(auth, pddContext, protocolFactory);
-				} catch (Exception e) {
-					throw new Exception(
-							"Riscontrato errore durante il caricamento della classe ["+ classType
-									+ "] da utilizzare per la gestione dell'autorizzazione di tipo ["+ tipoAutorizzazione + "]: " + e.getMessage());
+				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+				idServizioApplicativo.setNome(servizioApplicativo);
+				idServizioApplicativo.setIdSoggettoProprietario(idPD.getSoggettoFruitore());
+				
+				datiInvocazione = new DatiInvocazionePortaDelegata();
+				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+				datiInvocazione.setIdServizio(richiestaDelegata.getIdServizio());
+				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setIdPD(idPD);
+				datiInvocazione.setPd(pd);
+				datiInvocazione.setIdServizioApplicativo(idServizioApplicativo);
+				
+				EsitoAutorizzazioneIntegrazione esito = 
+						GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory); 
+				if (esito.isServizioAutorizzato() == false) {
+					errore = esito.getErroreIntegrazione();
+					eAutorizzazione = esito.getEccezioneProcessamento();
 				}
 				
-				if (auth != null) {
-					// Controllo Autorizzazione
-					EsitoAutorizzazioneIntegrazione esito = auth.process(inRequestContext.getConnettore(),servizioApplicativo, idPD, 
-							richiestaDelegata.getIdServizio(),pd, openspcoopstate.getStatoRichiesta());
-					if (esito.isServizioAutorizzato() == false) {
-						errore = esito.getErroreIntegrazione();
-						eAutorizzazione = esito.getEccezioneProcessamento();
-					}
-				} else {
-					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento("gestore ["
-									+ tipoAutorizzazione + "] non inizializzato",CodiceErroreIntegrazione.CODICE_504_AUTORIZZAZIONE);
-				}
 			} catch (Exception e) {
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento("processo di autorizzazione ["
@@ -2153,10 +2149,10 @@ public class RicezioneContenutiApplicativi {
 				
 				// Inizializzo IGestoreAutorizzazione new Type
 				String classType = null;
-				IAutorizzazioneContenuto auth = null;
+				IAutorizzazioneContenutoPortaDelegata auth = null;
 				try {
 					classType = className.getAutorizzazioneContenuto(tipoAutorizzazioneContenuto);
-					auth = ((IAutorizzazioneContenuto) loader.newInstance(classType));
+					auth = ((IAutorizzazioneContenutoPortaDelegata) loader.newInstance(classType));
 					AbstractCore.init(auth, pddContext, protocolFactory);
 				} catch (Exception e) {
 					throw new Exception(
@@ -2166,8 +2162,7 @@ public class RicezioneContenutiApplicativi {
 				
 				if (auth != null) {
 					// Controllo Autorizzazione
-					EsitoAutorizzazioneIntegrazione esito = auth.process(inRequestContext.getConnettore(),servizioApplicativo, idPD, 
-							richiestaDelegata.getIdServizio(),pd,requestMessage);
+					EsitoAutorizzazioneIntegrazione esito = auth.process(datiInvocazione,requestMessage);
 					if (esito.isServizioAutorizzato() == false) {
 						errore = esito.getErroreIntegrazione();
 						eAutorizzazione = esito.getEccezioneProcessamento();

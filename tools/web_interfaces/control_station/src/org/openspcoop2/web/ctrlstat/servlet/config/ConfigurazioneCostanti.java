@@ -277,7 +277,11 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS = "Manifest attachments";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
-	public final static String LABEL_CONFIGURAZIONE_CACHE = "Cache";
+	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache";
+	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_CONFIG = "Cache (Configurazione della Porta)";
+	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTH = "Cache (Dati di Autorizzazione)";
 	
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
@@ -324,11 +328,23 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE = "tipo_validazione";
 	public final static String PARAMETRO_CONFIGURAZIONE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
 
-	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE = "statocache";
-	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE = "dimensionecache";
-	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE = "algoritmocache";
-	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "idlecache";
-	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "lifecache";
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY = "statocacheRegistry";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY = "dimensionecacheRegistry";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY = "algoritmocacheRegistry";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY = "idlecacheRegistry";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY = "lifecacheRegistry";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG = "statocacheConfig";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG = "dimensionecacheConfig";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG = "algoritmocacheConfig";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG = "idlecacheConfig";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG = "lifecacheConfig";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH = "statocacheAuth";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH = "dimensionecacheAuth";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH = "algoritmocacheAuth";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH = "idlecacheAuth";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH = "lifecacheAuth";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
@@ -383,8 +399,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE = "Dimensione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE = "Algoritmo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "Idle time";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Life second";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "Item Life Time (Secondi)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Item Idle Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "LRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "MRU";
 	

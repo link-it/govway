@@ -41,7 +41,7 @@ public class AccessoRegistroModel extends AbstractModel<AccessoRegistro> {
 	
 		super();
 	
-		this.CACHE = new org.openspcoop2.core.config.model.AccessoRegistroCacheModel(new Field("cache",org.openspcoop2.core.config.AccessoRegistroCache.class,"accesso-registro",AccessoRegistro.class));
+		this.CACHE = new org.openspcoop2.core.config.model.CacheModel(new Field("cache",org.openspcoop2.core.config.Cache.class,"accesso-registro",AccessoRegistro.class));
 		this.REGISTRO = new org.openspcoop2.core.config.model.AccessoRegistroRegistroModel(new Field("registro",org.openspcoop2.core.config.AccessoRegistroRegistro.class,"accesso-registro",AccessoRegistro.class));
 	
 	}
@@ -50,14 +50,14 @@ public class AccessoRegistroModel extends AbstractModel<AccessoRegistro> {
 	
 		super(father);
 	
-		this.CACHE = new org.openspcoop2.core.config.model.AccessoRegistroCacheModel(new ComplexField(father,"cache",org.openspcoop2.core.config.AccessoRegistroCache.class,"accesso-registro",AccessoRegistro.class));
+		this.CACHE = new org.openspcoop2.core.config.model.CacheModel(new ComplexField(father,"cache",org.openspcoop2.core.config.Cache.class,"accesso-registro",AccessoRegistro.class));
 		this.REGISTRO = new org.openspcoop2.core.config.model.AccessoRegistroRegistroModel(new ComplexField(father,"registro",org.openspcoop2.core.config.AccessoRegistroRegistro.class,"accesso-registro",AccessoRegistro.class));
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.config.model.AccessoRegistroCacheModel CACHE = null;
+	public org.openspcoop2.core.config.model.CacheModel CACHE = null;
 	 
 	public org.openspcoop2.core.config.model.AccessoRegistroRegistroModel REGISTRO = null;
 	 

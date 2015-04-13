@@ -31,7 +31,6 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.config.AccessoRegistro;
-import org.openspcoop2.core.config.AccessoRegistroCache;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
@@ -148,7 +147,7 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziException("Cache gia' abilitata");
 		else{
 			try{
-				AccessoRegistroCache configurazioneCache = new AccessoRegistroCache();
+				org.openspcoop2.core.config.Cache configurazioneCache = new org.openspcoop2.core.config.Cache();
 				if(dimensioneCache!=null)
 					configurazioneCache.setDimensione(dimensioneCache+"");
 				if(algoritmoCacheLRU!=null){
@@ -396,7 +395,7 @@ public class RegistroServizi  {
 
 
 
-	private void initCacheRegistriServizi(AccessoRegistroCache configurazioneCache,Logger alogConsole) throws Exception{
+	private void initCacheRegistriServizi(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole) throws Exception{
 		this.cache = new Cache(CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
 
 		if( (configurazioneCache.getDimensione()!=null) ||

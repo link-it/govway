@@ -20,32 +20,27 @@
  */
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pd;
 
 
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.AbstractCore;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
 /**
  * Esempio di AutorizzazioneContenutoOK
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 
-public class AutorizzazioneContenutoOK extends AbstractCore implements IAutorizzazioneContenuto {
+public class AutorizzazioneContenutoOK extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
 
 	@Override
-	public EsitoAutorizzazioneIntegrazione process(InfoConnettoreIngresso infoConnettoreIngresso,
- 		   String servizioApplicativo,IDPortaDelegata idPD,
-		   IDServizio servizio,PortaDelegata pd,OpenSPCoop2Message msg) throws AutorizzazioneException {
+	public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
 
 		EsitoAutorizzazioneIntegrazione esito = new EsitoAutorizzazioneIntegrazione();
     	

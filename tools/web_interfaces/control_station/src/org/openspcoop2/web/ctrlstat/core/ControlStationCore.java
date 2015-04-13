@@ -42,6 +42,8 @@ import javax.naming.InitialContext;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -1810,6 +1812,20 @@ public class ControlStationCore {
 
 						doSetDati = false;
 					}
+					// ConfigurazioneAccessoConfigurazione
+					if (oggetto instanceof AccessoConfigurazione) {
+						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
+						driver.getDriverConfigurazioneDB().createAccessoConfigurazione(accesso);
+
+						doSetDati = false;
+					}
+					// ConfigurazioneAccessoDatiAutorizzazione
+					if (oggetto instanceof AccessoDatiAutorizzazione) {
+						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
+						driver.getDriverConfigurazioneDB().createAccessoDatiAutorizzazione(accesso);
+
+						doSetDati = false;
+					}
 					// ConfigurazioneSystemProperty
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
@@ -2221,6 +2237,18 @@ public class ControlStationCore {
 						driver.getDriverConfigurazioneDB().updateAccessoRegistro(carr);
 						doSetDati = false;
 					}
+					// ConfigurazioneAccessoConfigurazione
+					if (oggetto instanceof AccessoConfigurazione) {
+						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
+						driver.getDriverConfigurazioneDB().updateAccessoConfigurazione(accesso);
+						doSetDati = false;
+					}
+					// ConfigurazioneAccessoDatiAutorizzazione
+					if (oggetto instanceof AccessoDatiAutorizzazione) {
+						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
+						driver.getDriverConfigurazioneDB().updateAccessoDatiAutorizzazione(accesso);
+						doSetDati = false;
+					}
 					// SystemProperties
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
@@ -2561,6 +2589,18 @@ public class ControlStationCore {
 					if (oggetto instanceof AccessoRegistroRegistro) {
 						AccessoRegistroRegistro carr = (AccessoRegistroRegistro) oggetto;
 						driver.getDriverConfigurazioneDB().deleteAccessoRegistro(carr);
+						doSetDati = false;
+					}
+					// ConfigurazioneAccessoConfigurazione
+					if (oggetto instanceof AccessoConfigurazione) {
+						AccessoConfigurazione accesso = (AccessoConfigurazione) oggetto;
+						driver.getDriverConfigurazioneDB().deleteAccessoConfigurazione(accesso);
+						doSetDati = false;
+					}
+					// ConfigurazioneAccessoDatiAutorizzazione
+					if (oggetto instanceof AccessoDatiAutorizzazione) {
+						AccessoDatiAutorizzazione accesso = (AccessoDatiAutorizzazione) oggetto;
+						driver.getDriverConfigurazioneDB().deleteAccessoDatiAutorizzazione(accesso);
 						doSetDati = false;
 					}
 					// SystemProperties

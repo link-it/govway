@@ -40,7 +40,7 @@ import javax.management.ReflectionException;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazioneBuste;
+import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
 
@@ -48,15 +48,11 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  * Implementazione JMX per la gestione dell'autorizzazione
  *   
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10687 $, $Date: 2015-03-02 18:06:26 +0100 (Mon, 02 Mar 2015) $
  */
-public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport implements DynamicMBean {
+public class EngineAutorizzazione extends NotificationBroadcasterSupport implements DynamicMBean {
 
-	/** Nomi proprieta' */
-	public final static String TIPO_AUTORIZZAZIONE_BUSTE = "tipoAutorizzazioneBuste";
-
-	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
 	
@@ -66,9 +62,6 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		
 		if( (attributeName==null) || (attributeName.equals("")) )
 			throw new IllegalArgumentException("Il nome dell'attributo e' nullo o vuoto");
-		
-		if(attributeName.equals(EngineAutorizzazioneBuste.TIPO_AUTORIZZAZIONE_BUSTE))
-			return GestoreAutorizzazioneBuste.getTipoAutorizzazioneBuste();
 		
 		if(attributeName.equals(JMXUtils.CACHE_ATTRIBUTE_ABILITATA))
 			return this.cacheAbilitata;
@@ -229,22 +222,9 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 	@Override
 	public MBeanInfo getMBeanInfo(){
 		
-		// Per determinare se l'attributo e' leggibile/scrivibile
-		final boolean READABLE = true;
-		final boolean WRITABLE = true;
-		
-		// Per determinare se l'attributo e' ricavabile nella forma booleana isAttribute()
-		final boolean IS_GETTER = true;
-		
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Risorsa per la configurazione dell'autorizzazione intrapresa della Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione();
-
-		// MetaData per l'attributo tipoAutorizzazioneBuste
-		MBeanAttributeInfo tipoAutorizzazioneBusteVAR 
-			= new MBeanAttributeInfo(EngineAutorizzazioneBuste.TIPO_AUTORIZZAZIONE_BUSTE,String.class.getName(),
-						"Tipo di autorizzazione delle buste intrapresa dalla Porta di Dominio",
-							READABLE,!WRITABLE,!IS_GETTER);
+		String description = "Configurazione dei dati di autorizzazione ai servizi esposti sulla Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione();
 		
 		// MetaData per l'attributo abilitaCache
 		MBeanAttributeInfo cacheAbilitataVAR = JMXUtils.MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA;
@@ -271,7 +251,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
 		// Lista attributi
-		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[]{tipoAutorizzazioneBusteVAR,cacheAbilitataVAR};
+		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[]{cacheAbilitataVAR};
 		
 		// Lista Costruttori
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
@@ -286,11 +266,11 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 	private Logger log;
 	
 	/* Costruttore */
-	public EngineAutorizzazioneBuste(){
+	public EngineAutorizzazione(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				
 		// Configurazione
-		this.cacheAbilitata = GestoreAutorizzazioneBuste.isCacheAbilitata();
+		this.cacheAbilitata = GestoreAutorizzazione.isCacheAbilitata();
 			
 	}
 	
@@ -303,7 +283,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		try{
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
-			GestoreAutorizzazioneBuste.resetCache();
+			GestoreAutorizzazione.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
@@ -315,7 +295,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		try{
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
-			return GestoreAutorizzazioneBuste.printStatsCache("\n");
+			return GestoreAutorizzazione.printStatsCache("\n");
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -324,7 +304,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 	
 	public String abilitaCache(){
 		try{
-			GestoreAutorizzazioneBuste.abilitaCache();
+			GestoreAutorizzazione.abilitaCache();
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
 		}catch(Throwable e){
@@ -335,7 +315,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 
 	public String abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond){
 		try{
-			GestoreAutorizzazioneBuste.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
+			GestoreAutorizzazione.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
 			this.cacheAbilitata = true;
 			return JMXUtils.MSG_ABILITAZIONE_CACHE_EFFETTUATA;
 		}catch(Throwable e){
@@ -346,7 +326,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 	
 	public void disabilitaCache() throws JMException{
 		try{
-			GestoreAutorizzazioneBuste.disabilitaCache();
+			GestoreAutorizzazione.disabilitaCache();
 			this.cacheAbilitata = false;
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
@@ -367,7 +347,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		try{
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
-			return GestoreAutorizzazioneBuste.listKeysCache("\n");
+			return GestoreAutorizzazione.listKeysCache("\n");
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -378,7 +358,7 @@ public class EngineAutorizzazioneBuste extends NotificationBroadcasterSupport im
 		try{
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
-			return GestoreAutorizzazioneBuste.getObjectCache(key);
+			return GestoreAutorizzazione.getObjectCache(key);
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

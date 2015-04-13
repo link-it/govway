@@ -228,8 +228,8 @@ public class CostantiPdD {
     public static final String JMX_REGISTRO_SERVIZI = "AccessoRegistroServizi";
     /** MBean per il Monitoraggio delle Risorse */
     public static final String JMX_MONITORAGGIO_RISORSE = "MonitoraggioRisorse";
-    /** MBean per l'Autorizzazione Buste */
-    public static final String JMX_AUTORIZZAZIONE_BUSTE = "AutorizzazioneBuste";
+    /** MBean per l'Autorizzazione */
+    public static final String JMX_AUTORIZZAZIONE = "DatiAutorizzazione";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */

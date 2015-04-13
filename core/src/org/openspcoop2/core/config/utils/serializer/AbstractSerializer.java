@@ -28,7 +28,7 @@ import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
-import org.openspcoop2.core.config.AccessoRegistroCache;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.Configurazione;
@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDefault;
@@ -73,6 +74,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.AccessoRegistro;
+import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.Attachments;
@@ -652,118 +654,118 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: accesso-registro-cache
+	 Object: cache
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to file system in <var>fileName</var> the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>accessoRegistroCache</var>
-	 * @param accessoRegistroCache Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>cache</var>
+	 * @param cache Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,AccessoRegistroCache accessoRegistroCache) throws SerializerException {
-		this.objToXml(fileName, AccessoRegistroCache.class, accessoRegistroCache, false);
+	public void write(String fileName,Cache cache) throws SerializerException {
+		this.objToXml(fileName, Cache.class, cache, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to file system in <var>fileName</var> the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>accessoRegistroCache</var>
-	 * @param accessoRegistroCache Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>cache</var>
+	 * @param cache Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,AccessoRegistroCache accessoRegistroCache,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, AccessoRegistroCache.class, accessoRegistroCache, prettyPrint);
+	public void write(String fileName,Cache cache,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Cache.class, cache, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to file system in <var>file</var> the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param file Xml file to serialize the object <var>accessoRegistroCache</var>
-	 * @param accessoRegistroCache Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>cache</var>
+	 * @param cache Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,AccessoRegistroCache accessoRegistroCache) throws SerializerException {
-		this.objToXml(file, AccessoRegistroCache.class, accessoRegistroCache, false);
+	public void write(File file,Cache cache) throws SerializerException {
+		this.objToXml(file, Cache.class, cache, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to file system in <var>file</var> the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param file Xml file to serialize the object <var>accessoRegistroCache</var>
-	 * @param accessoRegistroCache Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>cache</var>
+	 * @param cache Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,AccessoRegistroCache accessoRegistroCache,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, AccessoRegistroCache.class, accessoRegistroCache, prettyPrint);
+	public void write(File file,Cache cache,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Cache.class, cache, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to output stream <var>out</var> the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param out OutputStream to serialize the object <var>accessoRegistroCache</var>
-	 * @param accessoRegistroCache Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>cache</var>
+	 * @param cache Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,AccessoRegistroCache accessoRegistroCache) throws SerializerException {
-		this.objToXml(out, AccessoRegistroCache.class, accessoRegistroCache, false);
+	public void write(OutputStream out,Cache cache) throws SerializerException {
+		this.objToXml(out, Cache.class, cache, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to output stream <var>out</var> the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param out OutputStream to serialize the object <var>accessoRegistroCache</var>
-	 * @param accessoRegistroCache Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>cache</var>
+	 * @param cache Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,AccessoRegistroCache accessoRegistroCache,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, AccessoRegistroCache.class, accessoRegistroCache, prettyPrint);
+	public void write(OutputStream out,Cache cache,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Cache.class, cache, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to byte array the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param accessoRegistroCache Object to be serialized
+	 * @param cache Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(AccessoRegistroCache accessoRegistroCache) throws SerializerException {
-		return this.objToXml(AccessoRegistroCache.class, accessoRegistroCache, false).toByteArray();
+	public byte[] toByteArray(Cache cache) throws SerializerException {
+		return this.objToXml(Cache.class, cache, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to byte array the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param accessoRegistroCache Object to be serialized
+	 * @param cache Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(AccessoRegistroCache accessoRegistroCache,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(AccessoRegistroCache.class, accessoRegistroCache, prettyPrint).toByteArray();
+	public byte[] toByteArray(Cache cache,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Cache.class, cache, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to String the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param accessoRegistroCache Object to be serialized
+	 * @param cache Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(AccessoRegistroCache accessoRegistroCache) throws SerializerException {
-		return this.objToXml(AccessoRegistroCache.class, accessoRegistroCache, false).toString();
+	public String toString(Cache cache) throws SerializerException {
+		return this.objToXml(Cache.class, cache, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>accessoRegistroCache</var> of type {@link org.openspcoop2.core.config.AccessoRegistroCache}
+	 * Serialize to String the object <var>cache</var> of type {@link org.openspcoop2.core.config.Cache}
 	 * 
-	 * @param accessoRegistroCache Object to be serialized
+	 * @param cache Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(AccessoRegistroCache accessoRegistroCache,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(AccessoRegistroCache.class, accessoRegistroCache, prettyPrint).toString();
+	public String toString(Cache cache,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Cache.class, cache, prettyPrint).toString();
 	}
 	
 	
@@ -2888,6 +2890,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(MessaggiDiagnostici messaggiDiagnostici,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(MessaggiDiagnostici.class, messaggiDiagnostici, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-autorizzazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoDatiAutorizzazione</var>
+	 * @param accessoDatiAutorizzazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws SerializerException {
+		this.objToXml(fileName, AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoDatiAutorizzazione</var>
+	 * @param accessoDatiAutorizzazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoDatiAutorizzazione accessoDatiAutorizzazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoDatiAutorizzazione</var>
+	 * @param accessoDatiAutorizzazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws SerializerException {
+		this.objToXml(file, AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoDatiAutorizzazione</var>
+	 * @param accessoDatiAutorizzazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoDatiAutorizzazione accessoDatiAutorizzazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoDatiAutorizzazione</var>
+	 * @param accessoDatiAutorizzazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws SerializerException {
+		this.objToXml(out, AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoDatiAutorizzazione</var>
+	 * @param accessoDatiAutorizzazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoDatiAutorizzazione accessoDatiAutorizzazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param accessoDatiAutorizzazione Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws SerializerException {
+		return this.objToXml(AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param accessoDatiAutorizzazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoDatiAutorizzazione accessoDatiAutorizzazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param accessoDatiAutorizzazione Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws SerializerException {
+		return this.objToXml(AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>accessoDatiAutorizzazione</var> of type {@link org.openspcoop2.core.config.AccessoDatiAutorizzazione}
+	 * 
+	 * @param accessoDatiAutorizzazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoDatiAutorizzazione accessoDatiAutorizzazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoDatiAutorizzazione.class, accessoDatiAutorizzazione, prettyPrint).toString();
 	}
 	
 	
@@ -5956,6 +6076,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(AccessoRegistro accessoRegistro,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(AccessoRegistro.class, accessoRegistro, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoConfigurazione</var>
+	 * @param accessoConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoConfigurazione accessoConfigurazione) throws SerializerException {
+		this.objToXml(fileName, AccessoConfigurazione.class, accessoConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoConfigurazione</var>
+	 * @param accessoConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoConfigurazione accessoConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, AccessoConfigurazione.class, accessoConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoConfigurazione</var>
+	 * @param accessoConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoConfigurazione accessoConfigurazione) throws SerializerException {
+		this.objToXml(file, AccessoConfigurazione.class, accessoConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoConfigurazione</var>
+	 * @param accessoConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoConfigurazione accessoConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, AccessoConfigurazione.class, accessoConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoConfigurazione</var>
+	 * @param accessoConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoConfigurazione accessoConfigurazione) throws SerializerException {
+		this.objToXml(out, AccessoConfigurazione.class, accessoConfigurazione, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoConfigurazione</var>
+	 * @param accessoConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoConfigurazione accessoConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, AccessoConfigurazione.class, accessoConfigurazione, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param accessoConfigurazione Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoConfigurazione accessoConfigurazione) throws SerializerException {
+		return this.objToXml(AccessoConfigurazione.class, accessoConfigurazione, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param accessoConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoConfigurazione accessoConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoConfigurazione.class, accessoConfigurazione, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param accessoConfigurazione Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoConfigurazione accessoConfigurazione) throws SerializerException {
+		return this.objToXml(AccessoConfigurazione.class, accessoConfigurazione, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>accessoConfigurazione</var> of type {@link org.openspcoop2.core.config.AccessoConfigurazione}
+	 * 
+	 * @param accessoConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoConfigurazione accessoConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoConfigurazione.class, accessoConfigurazione, prettyPrint).toString();
 	}
 	
 	

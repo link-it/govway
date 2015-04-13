@@ -32,6 +32,8 @@ import javax.xml.soap.SOAPEnvelope;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -545,6 +547,14 @@ public class ConfigurazionePdDManager {
 	
 	public AccessoRegistro getAccessoRegistroServizi(){
 		return this.configurazionePdDReader.getAccessoRegistroServizi(this.getConnection());
+	}
+	
+	public AccessoConfigurazione getAccessoConfigurazione(){
+		return this.configurazionePdDReader.getAccessoConfigurazione(this.getConnection());
+	}
+	
+	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione(){
+		return this.configurazionePdDReader.getAccessoDatiAutorizzazione(this.getConnection());
 	}
 	
 	public StatoFunzionalitaConWarning getTipoValidazione(String implementazionePdDSoggetto){

@@ -39,6 +39,8 @@ import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -1815,6 +1817,41 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			throw new DriverConfigurazioneNotFound("[getAccessoRegistro] Informazioni di accesso al RegistroServizi non trovate");
 		
 		return this.openspcoop.getConfigurazione().getAccessoRegistro();
+	}
+	
+	/**
+	 * Restituisce l'accesso alla configurazione definito nella Porta di Dominio 
+	 *
+	 * @return AccessoConfigurazione
+	 * 
+	 */
+	@Override
+	public AccessoConfigurazione getAccessoConfigurazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		refreshConfigurazioneXML();
+
+		if(this.openspcoop.getConfigurazione().getAccessoConfigurazione()==null)
+			throw new DriverConfigurazioneNotFound("[getAccessoConfigurazione] Informazioni di accesso alla configurazione non trovate");
+		
+		return this.openspcoop.getConfigurazione().getAccessoConfigurazione();
+	}
+	
+	/**
+	 * Restituisce l'accesso ai dati di autorizzazione definiti nella Porta di Dominio 
+	 *
+	 * @return AccessoDatiAutorizzazione
+	 * 
+	 */
+	@Override
+	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		refreshConfigurazioneXML();
+
+		if(this.openspcoop.getConfigurazione().getAccessoDatiAutorizzazione()==null)
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutorizzazione] Informazioni di accesso ai dati di autorizzazione non trovate");
+		
+		return this.openspcoop.getConfigurazione().getAccessoDatiAutorizzazione();
+		
 	}
 
 	

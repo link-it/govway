@@ -50,6 +50,8 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 		
 	private Exception eccezioneProcessamento;
 	
+	private boolean noCache = false;
+		
 	/**
 	 * Ritorna l'indicazione se il servizio e' autorizzato
 	 * 
@@ -89,6 +91,14 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 		else{
 			return "NON_AUTORIZZATO";
 		}
+	}
+	
+	public boolean isNoCache() {
+		return this.noCache;
+	}
+
+	public void setNoCache(boolean noCache) {
+		this.noCache = noCache;
 	}
 	
 	@Override

@@ -367,7 +367,11 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		this.openspcoopProperties = org.openspcoop2.pdd.config.OpenSPCoop2Properties.getInstance();
 				
 		// Configurazione
-		this.cacheAbilitata = this.openspcoopProperties.isAbilitataCacheConfig();
+		try{
+			this.cacheAbilitata = ConfigurazionePdDReader.isCacheAbilitata();
+		}catch(Exception e){
+			this.log.error("Errore durante la comprensione dello stato della cache");
+		}
 				
 		// Messaggi diagnostici
 		this.msgDiagnosticiLivelloSeverita = LogLevels.toOpenSPCoop2(this.configReader.getSeverita_msgDiagnostici());

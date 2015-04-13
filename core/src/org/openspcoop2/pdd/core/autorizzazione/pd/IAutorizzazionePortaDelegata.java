@@ -21,40 +21,30 @@
 
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pd;
 
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.ICore;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 
 /**
  * Interfaccia che definisce un processo di autorizzazione per servizi applicativi che invocano richieste delegate.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 
-public interface IAutorizzazioneContenuto extends ICore {
+public interface IAutorizzazionePortaDelegata extends ICore {
 
 
     /**
      * Avvia il processo di autorizzazione.
      *
-     * @param infoConnettoreIngresso infoConnettoreIngresso della Porta Delegata invocata
-     * @param servizioApplicativo Servizio Applicativo che richiede il processo
-     * @param idPD IDPortaDelegata
-     * @param servizio Servizio invocato
-     * @param msg Messaggio Applicativo
+     * @param datiInvocazione Dati di invocazione
      * @return Esito dell'autorizzazione.
      * 
      */
-    public EsitoAutorizzazioneIntegrazione process(InfoConnettoreIngresso infoConnettoreIngresso,
-    		   String servizioApplicativo,IDPortaDelegata idPD,
-			   IDServizio servizio,PortaDelegata pd,OpenSPCoop2Message msg) throws AutorizzazioneException;
+    public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione) throws AutorizzazioneException;
     
  
 }

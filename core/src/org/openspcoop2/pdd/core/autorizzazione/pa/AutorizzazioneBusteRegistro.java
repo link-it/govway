@@ -21,50 +21,38 @@
 
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pa;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziServizioNotFound;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.protocol.registry.EsitoAutorizzazioneRegistro;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
-import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * Interfaccia che definisce un processo di autorizzazione per i soggetti.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 
-public class AutorizzazioneBusteRegistro extends AbstractCore implements IAutorizzazioneBuste {
+public class AutorizzazioneBusteRegistro extends AbstractCore implements IAutorizzazionePortaApplicativa {
 
-	/**
-     * Avvia il processo di autorizzazione.
-     *
-     * @param credenzialiPdDMittente Credenziali della Porta di Dominio
-    * @param identitaServizioApplicativoFruitore identita del Servizio Applicativo che richiede il processo
-     * @param subjectServizioApplicativoFruitoreFromMessageSecurityHeader Subject del Servizio Applicativo fruitore portato nell'header di MessageSecurity
-     * @param soggetto Soggetto con cui viene mappato il servizio applicativo
-     * @param servizio Servizio invocato
-     * @return Esito dell'autorizzazione.
-     * 
-     */
+
     @Override
-	public EsitoAutorizzazioneCooperazione process(InfoConnettoreIngresso infoConnettoreIngresso,Credenziali credenzialiPdDMittente,String identitaServizioApplicativoFruitore,String subjectServizioApplicativoFruitoreFromMessageSecurityHeader,
-    		IDSoggetto soggetto,IDServizio servizio,IState state){
+	public EsitoAutorizzazioneCooperazione process(DatiInvocazionePortaApplicativa datiInvocazione){
     	
     	EsitoAutorizzazioneCooperazione esito = new EsitoAutorizzazioneCooperazione();
     	
     	try{
-    		RegistroServiziManager reg = RegistroServiziManager.getInstance(state);
+    		RegistroServiziManager reg = RegistroServiziManager.getInstance(datiInvocazione.getState());
     		
+    		Credenziali credenzialiPdDMittente = datiInvocazione.getCredenzialiPdDMittente();
     		String pdd = null;
     		if(credenzialiPdDMittente!=null){
     			if(credenzialiPdDMittente.getSubject()!=null){
@@ -72,9 +60,17 @@ public class AutorizzazioneBusteRegistro extends AbstractCore implements IAutori
     			}
     		}
     		
-    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, soggetto, servizio);
+    		String identitaServizioApplicativoFruitore = null;
+    		if(datiInvocazione.getIdentitaServizioApplicativoFruitore()!=null){
+    			identitaServizioApplicativoFruitore = datiInvocazione.getIdentitaServizioApplicativoFruitore().getNome();
+    		}
+    		
+    		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
+    		IDServizio idServizio = datiInvocazione.getIdServizio();
+    		
+    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
     		if(esitoAutorizzazione.isServizioAutorizzato()==false){
-    			String errore = "Il soggetto "+soggetto.getTipo()+"/"+soggetto.getNome() +" non e' autorizzato ad invocare il servizio "+servizio.getTipoServizio()+"/"+servizio.getServizio()+" erogato da "+servizio.getSoggettoErogatore().getTipo()+"/"+servizio.getSoggettoErogatore().getNome();
+    			String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome();
     			if(esitoAutorizzazione.getDetails()!=null){
     				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
     			}

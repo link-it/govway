@@ -25,6 +25,8 @@ package org.openspcoop2.core.config.driver;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -306,6 +308,32 @@ public interface IBeanUtilities {
 			AccessoRegistro ar) throws DriverConfigurazioneException;
 	public boolean verificaAccessoRegistro(
 			AccessoRegistro ar,
+			boolean checkID) throws DriverConfigurazioneException;
+	
+	
+	/**
+	 * Controlla che il bean, sia uguale al bean passato come parametro
+	 * 
+	 * @param ac
+	 * @return true se il bean, sia uguale al bean passato come parametro
+	 */
+	public boolean verificaAccessoConfigurazione(
+			AccessoConfigurazione ac) throws DriverConfigurazioneException;
+	public boolean verificaAccessoConfigurazione(
+			AccessoConfigurazione ac,
+			boolean checkID) throws DriverConfigurazioneException;
+	
+	
+	/**
+	 * Controlla che il bean, sia uguale al bean passato come parametro
+	 * 
+	 * @param ad
+	 * @return true se il bean, sia uguale al bean passato come parametro
+	 */
+	public boolean verificaAccessoDatiAutorizzazione(
+			AccessoDatiAutorizzazione ad) throws DriverConfigurazioneException;
+	public boolean verificaAccessoDatiAutorizzazione(
+			AccessoDatiAutorizzazione ad,
 			boolean checkID) throws DriverConfigurazioneException;
 	
 	

@@ -30,12 +30,12 @@ import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import java.io.Serializable;
 
 
-/** <p>Java class for accesso-registro-cache complex type.
+/** <p>Java class for cache complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accesso-registro-cache">
+ * &lt;complexType name="cache">
  * 		&lt;attribute name="dimensione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="algoritmo" type="{http://www.openspcoop2.org/core/config}AlgoritmoCache" use="optional" default="lru"/>
  * 		&lt;attribute name="item-idle-time" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -50,12 +50,12 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "accesso-registro-cache")
+@XmlType(name = "cache")
 
-@XmlRootElement(name = "accesso-registro-cache")
+@XmlRootElement(name = "cache")
 
-public class AccessoRegistroCache extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public AccessoRegistroCache() {
+public class Cache extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public Cache() {
   }
 
   public Long getId() {

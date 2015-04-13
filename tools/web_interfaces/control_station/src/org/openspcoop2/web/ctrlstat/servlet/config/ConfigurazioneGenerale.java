@@ -35,7 +35,10 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.Attachments;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
@@ -45,6 +48,7 @@ import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -121,6 +125,18 @@ public final class ConfigurazioneGenerale extends Action {
 			String tipoValidazione = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
 			String applicaMTOM = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_APPLICA_MTOM);
 
+			String statocache_config = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG);
+			String dimensionecache_config = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG);
+			String algoritmocache_config = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG);
+			String idlecache_config = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG);
+			String lifecache_config = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG);
+			
+			String statocache_auth = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH);
+			String dimensionecache_auth = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH);
+			String algoritmocache_auth = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH);
+			String idlecache_auth = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH);
+			String lifecache_auth = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH);
+			
 			Boolean confPersB = ServletUtils.getConfigurazioniPersonalizzateFromSession(session); 
 			String confPers = confPersB ? "true" : "false";
 			Configurazione configurazione = confCore.getConfigurazioneGenerale();
@@ -177,12 +193,23 @@ public final class ConfigurazioneGenerale extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					dati =	confHelper.addConfigurazioneErrorModeToDati(user, 
-							inoltromin, stato, controllo, severita, severita_log4j,
-							integman, nomeintegman, profcoll, connessione,
-							utilizzo, validman, gestman, registrazioneTracce, dump, xsd,
-							tipoValidazione, confPers, configurazione, dati);
+					dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
+							connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG,dimensionecache_config,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG,algoritmocache_config,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG,idlecache_config,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG,lifecache_config);
+					
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTH,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH,statocache_auth,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH,dimensionecache_auth,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH,algoritmocache_auth,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH,idlecache_auth,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH,lifecache_auth);
+					
 					if(extended){
 						if(extendedToNewWindow){
 							extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
@@ -301,6 +328,33 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.setValidazioneContenutiApplicativi(vca);
 				}
 				
+				if(newConfigurazione.getAccessoConfigurazione()==null){
+					newConfigurazione.setAccessoConfigurazione(new AccessoConfigurazione());
+				}
+				if(statocache_config.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)){
+					newConfigurazione.getAccessoConfigurazione().setCache(new Cache());
+					newConfigurazione.getAccessoConfigurazione().getCache().setDimensione(dimensionecache_config);
+					newConfigurazione.getAccessoConfigurazione().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_config));
+					newConfigurazione.getAccessoConfigurazione().getCache().setItemIdleTime(idlecache_config);
+					newConfigurazione.getAccessoConfigurazione().getCache().setItemLifeSecond(lifecache_config);
+				}
+				else{
+					newConfigurazione.getAccessoConfigurazione().setCache(null);
+				}
+				
+				if(newConfigurazione.getAccessoDatiAutorizzazione()==null){
+					newConfigurazione.setAccessoDatiAutorizzazione(new AccessoDatiAutorizzazione());
+				}
+				if(statocache_auth.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)){
+					newConfigurazione.getAccessoDatiAutorizzazione().setCache(new Cache());
+					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setDimensione(dimensionecache_auth);
+					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_auth));
+					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setItemIdleTime(idlecache_auth);
+					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setItemLifeSecond(lifecache_auth);
+				}
+				else{
+					newConfigurazione.getAccessoDatiAutorizzazione().setCache(null);
+				}
 				
 				if(extended){
 					WrapperExtendedBean wrapperExtendedBean = new WrapperExtendedBean();
@@ -318,6 +372,20 @@ public final class ConfigurazioneGenerale extends Action {
 				dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 						connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG,dimensionecache_config,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG,algoritmocache_config,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG,idlecache_config,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG,lifecache_config);
+				
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTH,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH,statocache_auth,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH,dimensionecache_auth,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH,algoritmocache_auth,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH,idlecache_auth,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH,lifecache_auth);
+				
 				if(extended){
 					if(extendedToNewWindow){
 						extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, newConfigurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
@@ -383,6 +451,31 @@ public final class ConfigurazioneGenerale extends Action {
 						}
 					}
 				}
+				if(configurazione.getAccessoConfigurazione()!=null && configurazione.getAccessoConfigurazione().getCache()!=null){
+					statocache_config = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					dimensionecache_config = configurazione.getAccessoConfigurazione().getCache().getDimensione();
+					if(configurazione.getAccessoConfigurazione().getCache().getAlgoritmo()!=null){
+						algoritmocache_config = configurazione.getAccessoConfigurazione().getCache().getAlgoritmo().getValue();
+					}
+					idlecache_config = configurazione.getAccessoConfigurazione().getCache().getItemIdleTime();
+					lifecache_config = configurazione.getAccessoConfigurazione().getCache().getItemLifeSecond();
+				}
+				else{
+					statocache_config = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
+				if(configurazione.getAccessoDatiAutorizzazione()!=null && configurazione.getAccessoDatiAutorizzazione().getCache()!=null){
+					statocache_auth = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					dimensionecache_auth = configurazione.getAccessoDatiAutorizzazione().getCache().getDimensione();
+					if(configurazione.getAccessoDatiAutorizzazione().getCache().getAlgoritmo()!=null){
+						algoritmocache_auth = configurazione.getAccessoDatiAutorizzazione().getCache().getAlgoritmo().getValue();
+					}
+					idlecache_auth = configurazione.getAccessoDatiAutorizzazione().getCache().getItemIdleTime();
+					lifecache_auth = configurazione.getAccessoDatiAutorizzazione().getCache().getItemLifeSecond();
+				}
+				else{
+					statocache_auth = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
+				
 			}
 
 			// preparo i campi
@@ -393,6 +486,20 @@ public final class ConfigurazioneGenerale extends Action {
 			dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 					connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
+			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONFIG,dimensionecache_config,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG,algoritmocache_config,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG,idlecache_config,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG,lifecache_config);
+			
+			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTH,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH,statocache_auth,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH,dimensionecache_auth,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH,algoritmocache_auth,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH,idlecache_auth,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH,lifecache_auth);
+			
 			if(extended){
 				if(extendedToNewWindow){
 					extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);

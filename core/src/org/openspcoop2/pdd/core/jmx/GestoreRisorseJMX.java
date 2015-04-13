@@ -123,16 +123,16 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 	}
 	
 	/**
-	 * Registrazione del MBean per l'autorizzazione delle Buste
+	 * Registrazione del MBean per l'autorizzazione
 	 * 
 	 * @throws RisorseJMXException
 	 */
-	public void registerMBeanAutorizzazioneBuste()throws RisorseJMXException{
+	public void registerMBeanAutorizzazione()throws RisorseJMXException{
 		try{
-			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineAutorizzazioneBuste.class, CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE);
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineAutorizzazione.class, CostantiPdD.JMX_AUTORIZZAZIONE);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX AutorizzazioneBuste: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX AutorizzazioneBuste: "+e.getMessage(),e);
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Autorizzazione: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Autorizzazione: "+e.getMessage(),e);
 		}	
 		
 	}
@@ -226,8 +226,8 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 	public Object getAttributeMBeanAccessoRegistroServizi(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_REGISTRO_SERVIZI, nomeAttributo);
 	}
-	public Object getAttributeMBeanAutorizzazioneBuste(String nomeAttributo)throws RisorseJMXException{
-		return this.getAttribute(CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE, nomeAttributo);
+	public Object getAttributeMBeanAutorizzazione(String nomeAttributo)throws RisorseJMXException{
+		return this.getAttribute(CostantiPdD.JMX_AUTORIZZAZIONE, nomeAttributo);
 	}
 	public Object getAttributeMBeanMonitoraggioRisorse(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_MONITORAGGIO_RISORSE, nomeAttributo);
@@ -266,11 +266,11 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRi
 		return invoke(CostantiPdD.JMX_REGISTRO_SERVIZI, nomeMetodo, null, null);
 	}
 	
-	public Object invokeMethodMBeanAutorizzazioneBuste(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
-		return invoke(CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE, nomeMetodo, params, signature);
+	public Object invokeMethodMBeanAutorizzazione(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_AUTORIZZAZIONE, nomeMetodo, params, signature);
 	}
-	public Object invokeMethodMBeanAutorizzazioneBuste(String nomeMetodo)throws RisorseJMXException{
-		return invoke(CostantiPdD.JMX_AUTORIZZAZIONE_BUSTE, nomeMetodo, null, null);
+	public Object invokeMethodMBeanAutorizzazione(String nomeMetodo)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_AUTORIZZAZIONE, nomeMetodo, null, null);
 	}
 	
 	public Object invokeMethodMBeanMonitoraggioRisorse(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{

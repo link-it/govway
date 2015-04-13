@@ -43,6 +43,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	
 		this.ROUTING_TABLE = new org.openspcoop2.core.config.model.RoutingTableModel(new Field("routing-table",org.openspcoop2.core.config.RoutingTable.class,"configurazione",Configurazione.class));
 		this.ACCESSO_REGISTRO = new org.openspcoop2.core.config.model.AccessoRegistroModel(new Field("accesso-registro",org.openspcoop2.core.config.AccessoRegistro.class,"configurazione",Configurazione.class));
+		this.ACCESSO_CONFIGURAZIONE = new org.openspcoop2.core.config.model.AccessoConfigurazioneModel(new Field("accesso-configurazione",org.openspcoop2.core.config.AccessoConfigurazione.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new Field("accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new Field("validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
 		this.INDIRIZZO_RISPOSTA = new org.openspcoop2.core.config.model.IndirizzoRispostaModel(new Field("indirizzo-risposta",org.openspcoop2.core.config.IndirizzoRisposta.class,"configurazione",Configurazione.class));
@@ -64,6 +66,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	
 		this.ROUTING_TABLE = new org.openspcoop2.core.config.model.RoutingTableModel(new ComplexField(father,"routing-table",org.openspcoop2.core.config.RoutingTable.class,"configurazione",Configurazione.class));
 		this.ACCESSO_REGISTRO = new org.openspcoop2.core.config.model.AccessoRegistroModel(new ComplexField(father,"accesso-registro",org.openspcoop2.core.config.AccessoRegistro.class,"configurazione",Configurazione.class));
+		this.ACCESSO_CONFIGURAZIONE = new org.openspcoop2.core.config.model.AccessoConfigurazioneModel(new ComplexField(father,"accesso-configurazione",org.openspcoop2.core.config.AccessoConfigurazione.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new ComplexField(father,"accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new ComplexField(father,"validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
 		this.INDIRIZZO_RISPOSTA = new org.openspcoop2.core.config.model.IndirizzoRispostaModel(new ComplexField(father,"indirizzo-risposta",org.openspcoop2.core.config.IndirizzoRisposta.class,"configurazione",Configurazione.class));
@@ -84,6 +88,10 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.RoutingTableModel ROUTING_TABLE = null;
 	 
 	public org.openspcoop2.core.config.model.AccessoRegistroModel ACCESSO_REGISTRO = null;
+	 
+	public org.openspcoop2.core.config.model.AccessoConfigurazioneModel ACCESSO_CONFIGURAZIONE = null;
+	 
+	public org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel ACCESSO_DATI_AUTORIZZAZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.ValidazioneBusteModel VALIDAZIONE_BUSTE = null;
 	 

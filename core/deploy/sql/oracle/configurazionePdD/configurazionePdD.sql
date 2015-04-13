@@ -96,6 +96,18 @@ CREATE TABLE configurazione
 	algoritmocache VARCHAR(255),
 	idlecache VARCHAR(255),
 	lifecache VARCHAR(255),
+	-- Cache per l'accesso alla configurazione
+	config_statocache VARCHAR(255),
+	config_dimensionecache VARCHAR(255),
+	config_algoritmocache VARCHAR(255),
+	config_idlecache VARCHAR(255),
+	config_lifecache VARCHAR(255),
+	-- Cache per l'accesso ai dati di autorizzazione
+	auth_statocache VARCHAR(255),
+	auth_dimensionecache VARCHAR(255),
+	auth_algoritmocache VARCHAR(255),
+	auth_idlecache VARCHAR(255),
+	auth_lifecache VARCHAR(255),
 	-- connessione su cui vengono inviate le risposte
 	-- reply: connessione esistente (es. http reply)
 	-- new: nuova connessione

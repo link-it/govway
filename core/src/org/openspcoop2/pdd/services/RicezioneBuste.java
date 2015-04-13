@@ -52,6 +52,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -79,9 +80,10 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.autenticazione.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenziali;
-import org.openspcoop2.pdd.core.autorizzazione.EsitoAutorizzazioneCooperazione;
-import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazioneBuste;
-import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazioneContenutoBuste;
+import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
+import org.openspcoop2.pdd.core.autorizzazione.pa.EsitoAutorizzazioneCooperazione;
+import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazioneContenutoPortaApplicativa;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -262,17 +264,6 @@ public class RicezioneBuste {
 		}catch(Exception e){
 			throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
 					"] da utilizzare per la ricezione dall'infrastruttura: "+e.getMessage());
-		}
-
-		// Inizializzo autorizzazione buste
-		if(propertiesReader.isAbilitataCacheAutorizzazioneBuste()){
-			GestoreAutorizzazioneBuste.initialize(propertiesReader.getTipoAutorizzazioneBuste(), 
-					propertiesReader.getDimensioneCacheAutorizzazioneBuste(),
-					propertiesReader.getAlgoritmoCacheAutorizzazioneBuste(),
-					propertiesReader.getItemIdleTimeCacheAutorizzazioneBuste(),
-					propertiesReader.getItemLifeSecondCacheAutorizzazioneBuste(),logCore);
-		}else{
-			GestoreAutorizzazioneBuste.initialize(propertiesReader.getTipoAutorizzazioneBuste(), logCore);
 		}
 
 		// Inizializzo IGestoreIntegrazionePA list
@@ -1752,7 +1743,8 @@ public class RicezioneBuste {
 		/* -------- Lettura Porta Applicativa 
 		 * (Il vero controllo sull'esistenza della Porta Applicativa viene effettuato in Sbustamento, poiche' dipende dal profilo) ------------- */
 		// per profili asincroni
-		PortaDelegata pd = null; 
+		PortaDelegata pd = null;
+		IDPortaDelegata idPD = null;
 		String servizioApplicativoErogatoreAsincronoSimmetricoRisposta = null;
 		if(functionAsRouter==false){
 			msgDiag.mediumDebug("Lettura porta applicativa/delegata...");
@@ -1779,7 +1771,7 @@ public class RicezioneBuste {
 							integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getCollaborazione());
 						}
 						servizioApplicativoErogatoreAsincronoSimmetricoRisposta = integrazione.getServizioApplicativo();
-						IDPortaDelegata idPD = new IDPortaDelegata();
+						idPD = new IDPortaDelegata();
 						idPD.setLocationPD(integrazione.getLocationPD());
 						idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
 						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
@@ -1816,7 +1808,7 @@ public class RicezioneBuste {
 								// LineeGuida (Collaborazione)
 								integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getCollaborazione());
 							}
-							IDPortaDelegata idPD = new IDPortaDelegata();
+							idPD = new IDPortaDelegata();
 							idPD.setLocationPD(integrazione.getLocationPD());
 							idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
 							pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
@@ -3055,9 +3047,16 @@ public class RicezioneBuste {
 			break;
 		}
 		
-		String tipoAutorizzazione = GestoreAutorizzazioneBuste.getTipoAutorizzazioneBuste();
-		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione);
-		if(GestoreAutorizzazioneBuste.isAttivoAutorizzazioneBuste() &&
+		DatiInvocazionePortaApplicativa datiInvocazione = null;
+		
+		// NOTA: TODO: la porta applicativa non c'e' sempre, ad esempio non c'e' per il profilo asincrono simmetrico per la risposta.
+		// In questi casi c'e' invece la porta delegata. Aggiungere un campo ad hoc sulla porta delegata???
+		// Inoltre gestire i casi in cui la busta arrivata e' di servizio (es. riscontri) e quindi non corrisponde ne ad una porta delegata ne ad una porta applicativa
+		
+		String tipoAutorizzazione_TODO_SpostareSuPortaApplicativa = propertiesReader.getTipoAutorizzazioneBuste();
+		boolean isAttivoAutorizzazioneBuste_TODO_SpostareSuPortaApplicativa = !CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione_TODO_SpostareSuPortaApplicativa);
+		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione_TODO_SpostareSuPortaApplicativa);
+		if(isAttivoAutorizzazioneBuste_TODO_SpostareSuPortaApplicativa &&
 				isMessaggioErroreProtocollo==false &&
 				bustaDiServizio==false &&
 				eccezioniValidazioni==false){	
@@ -3107,11 +3106,27 @@ public class RicezioneBuste {
 					msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, "");
 				msgDiag.logPersonalizzato("autorizzazioneBusteInCorso");
 				
-				EsitoAutorizzazioneCooperazione esito = GestoreAutorizzazioneBuste.verificaAutorizzazioneBuste(inRequestContext.getConnettore(),credenziali, 
-						servizioApplicativoFruitore,subjectMessageSecurity, 
-						soggettoMittentePerAutorizzazione, idServizioPerAutorizzazione,
-						openspcoopstate.getStatoRichiesta(),
-						pddContext,protocolFactory);
+				IDServizioApplicativo identitaServizioApplicativoFruitore = new IDServizioApplicativo();
+				identitaServizioApplicativoFruitore.setNome(servizioApplicativoFruitore);
+				identitaServizioApplicativoFruitore.setIdSoggettoProprietario(soggettoMittentePerAutorizzazione);
+				
+				datiInvocazione = new DatiInvocazionePortaApplicativa();
+				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+				datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
+				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setCredenzialiPdDMittente(credenziali);
+				datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
+				datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
+				datiInvocazione.setIdPA(idPAbyNome);
+				datiInvocazione.setPa(pa);
+				datiInvocazione.setIdPD(idPD);
+				datiInvocazione.setPd(pd);
+				datiInvocazione.setIdSoggettoFruitore(soggettoMittentePerAutorizzazione);
+				datiInvocazione.setRuoloBusta(ruoloBustaRicevuta);
+				
+				EsitoAutorizzazioneCooperazione esito = 
+						GestoreAutorizzazione.verificaAutorizzazionePortaApplicativa(tipoAutorizzazione_TODO_SpostareSuPortaApplicativa, 
+								datiInvocazione, pddContext, protocolFactory);
 				if(esito.isServizioAutorizzato()==false){
 					try{
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esito.getErroreCooperazione().getDescrizione(protocolFactory));
@@ -3440,10 +3455,10 @@ public class RicezioneBuste {
 //					IAutorizzazioneContenutoBuste auth = RicezioneBuste.gestoriAutorizzazioneContenutoBuste.get(tipoAutorizzazionePerContenuto);
 					
 					String classType = null;
-					IAutorizzazioneContenutoBuste auth = null;
+					IAutorizzazioneContenutoPortaApplicativa auth = null;
 					try {
 						classType = className.getAutorizzazioneContenutoBuste(tipoAutorizzazionePerContenuto);
-						auth = (IAutorizzazioneContenutoBuste) loader.newInstance(classType);
+						auth = (IAutorizzazioneContenutoPortaApplicativa) loader.newInstance(classType);
 						AbstractCore.init(auth, pddContext, protocolFactory);
 					} catch (Exception e) {
 						throw new Exception(
@@ -3488,8 +3503,7 @@ public class RicezioneBuste {
 						msgDiag.logPersonalizzato("autorizzazioneBusteInCorso");
 						
 						// Controllo Autorizzazione
-						EsitoAutorizzazioneCooperazione esito = auth.process(inRequestContext.getConnettore(),identitaMittente, servizioApplicativoFruitore,subjectMessageSecurity, 
-								soggettoMittentePerAutorizzazione, idServizioPerAutorizzazione, ruoloBustaRicevuta, requestMessage);
+						EsitoAutorizzazioneCooperazione esito = auth.process(datiInvocazione, requestMessage);
 						
 						if(esito.isServizioAutorizzato()==false){
 							try{
