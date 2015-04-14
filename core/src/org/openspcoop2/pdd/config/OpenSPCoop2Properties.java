@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.IExtendedInfo;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -1520,6 +1521,57 @@ public class OpenSPCoop2Properties {
 				} 
 			}
 			
+			// ExtendedInfo (Configurazione)
+			String extendedInfoConfigurazione = null;
+			try{
+				extendedInfoConfigurazione = this.getExtendedInfoConfigurazione();
+			}catch(Exception e){
+				return false; // log registrato nel metodo
+			}
+			if(extendedInfoConfigurazione!=null){
+				try{
+					IExtendedInfo test = (IExtendedInfo) loaderOpenSPCoop.newInstance(extendedInfoConfigurazione);
+					test.toString();
+				}catch(Exception e){
+					this.log.error("La classe ["+extendedInfoConfigurazione+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.configurazione', non esiste: "+e.getMessage());
+					return false;
+				} 
+			}
+			
+			// ExtendedInfo (PortaDelegata)
+			String extendedInfoPortaDelegata = null;
+			try{
+				extendedInfoPortaDelegata = this.getExtendedInfoPortaDelegata();
+			}catch(Exception e){
+				return false; // log registrato nel metodo
+			}
+			if(extendedInfoPortaDelegata!=null){
+				try{
+					IExtendedInfo test = (IExtendedInfo) loaderOpenSPCoop.newInstance(extendedInfoPortaDelegata);
+					test.toString();
+				}catch(Exception e){
+					this.log.error("La classe ["+extendedInfoPortaDelegata+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.portaDelegata', non esiste: "+e.getMessage());
+					return false;
+				} 
+			}
+			
+			// ExtendedInfo (PortaApplicativa)
+			String extendedInfoPortaApplicativa = null;
+			try{
+				extendedInfoPortaApplicativa = this.getExtendedInfoPortaApplicativa();
+			}catch(Exception e){
+				return false; // log registrato nel metodo
+			}
+			if(extendedInfoPortaApplicativa!=null){
+				try{
+					IExtendedInfo test = (IExtendedInfo) loaderOpenSPCoop.newInstance(extendedInfoPortaApplicativa);
+					test.toString();
+				}catch(Exception e){
+					this.log.error("La classe ["+extendedInfoPortaApplicativa+"], indicata nella proprieta' 'org.openspcoop2.pdd.config.extendedInfo.portaApplicativa', non esiste: "+e.getMessage());
+					return false;
+				} 
+			}
+			
 			return true;
 
 		}catch(java.lang.Exception e) {
@@ -1527,7 +1579,6 @@ public class OpenSPCoop2Properties {
 			return false;
 		}
 	}
-
 
 
 
@@ -9466,6 +9517,70 @@ public class OpenSPCoop2Properties {
 			} 
 		}
 		return OpenSPCoop2Properties.notifierInputStreamCallback;
+	}
+	
+	
+	
+	
+	
+	
+	/* ------------- ExtendedInfo ---------------------*/
+	
+	private static String extendedInfoConfigurazione = null;		
+	private static Boolean extendedInfoConfigurazioneRead = null;		
+	public String getExtendedInfoConfigurazione() throws Exception{
+		if(OpenSPCoop2Properties.extendedInfoConfigurazioneRead==null){
+			String pName = "org.openspcoop2.pdd.config.extendedInfo.configurazione";
+			try{ 
+				OpenSPCoop2Properties.extendedInfoConfigurazione = this.reader.getValue(pName);
+				if(OpenSPCoop2Properties.extendedInfoConfigurazione!=null){
+					OpenSPCoop2Properties.extendedInfoConfigurazione = OpenSPCoop2Properties.extendedInfoConfigurazione.trim();
+					OpenSPCoop2Properties.extendedInfoConfigurazioneRead = true;
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage());
+				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage());
+			} 
+		}
+		return OpenSPCoop2Properties.extendedInfoConfigurazione;
+	}
+	
+	private static String extendedInfoPortaDelegata = null;		
+	private static Boolean extendedInfoPortaDelegataRead = null;		
+	public String getExtendedInfoPortaDelegata() throws Exception{
+		if(OpenSPCoop2Properties.extendedInfoPortaDelegataRead==null){
+			String pName = "org.openspcoop2.pdd.config.extendedInfo.portaDelegata";
+			try{ 
+				OpenSPCoop2Properties.extendedInfoPortaDelegata = this.reader.getValue(pName);
+				if(OpenSPCoop2Properties.extendedInfoPortaDelegata!=null){
+					OpenSPCoop2Properties.extendedInfoPortaDelegata = OpenSPCoop2Properties.extendedInfoPortaDelegata.trim();
+					OpenSPCoop2Properties.extendedInfoPortaDelegataRead = true;
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage());
+				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage());
+			} 
+		}
+		return OpenSPCoop2Properties.extendedInfoPortaDelegata;
+	}
+	
+	private static String extendedInfoPortaApplicativa = null;		
+	private static Boolean extendedInfoPortaApplicativaRead = null;		
+	public String getExtendedInfoPortaApplicativa() throws Exception{
+		if(OpenSPCoop2Properties.extendedInfoPortaApplicativaRead==null){
+			String pName = "org.openspcoop2.pdd.config.extendedInfo.portaApplicativa";
+			try{ 
+				OpenSPCoop2Properties.extendedInfoPortaApplicativa = this.reader.getValue(pName);
+				if(OpenSPCoop2Properties.extendedInfoPortaApplicativa!=null){
+					OpenSPCoop2Properties.extendedInfoPortaApplicativa = OpenSPCoop2Properties.extendedInfoPortaApplicativa.trim();
+					OpenSPCoop2Properties.extendedInfoPortaApplicativaRead = true;
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage());
+				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage());
+			} 
+		}
+		return OpenSPCoop2Properties.extendedInfoPortaApplicativa;
 	}
 }
 

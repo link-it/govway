@@ -104,6 +104,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 		this.id=new Long(-1);
   }
 
+  public Object getExtendedInfo() {
+    return this.extendedInfo;
+  }
+
+  public void setExtendedInfo(Object extendedInfo) {
+    this.extendedInfo=extendedInfo;
+  }
+
   public RoutingTable getRoutingTable() {
     return this.routingTable;
   }
@@ -250,6 +258,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 	  return org.openspcoop2.core.config.Configurazione.modelStaticInstance;
   }
 
+
+  @XmlTransient
+  private Object extendedInfo;
 
   @XmlElement(name="routing-table",required=false,nillable=false)
   protected RoutingTable routingTable;

@@ -1781,7 +1781,13 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
+		
+		if(pd == null || pd.sizeExtendedInfoList()<=0)
+            return null;
 
+		return pd.getExtendedInfoList();
+	}
 
 
 
@@ -2412,6 +2418,13 @@ public class ConfigurazionePdDReader {
 			return pa.getAutorizzazioneContenuto();
 	}
 	
+	protected List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
+	
+		if(pa == null || pa.sizeExtendedInfoList()<=0)
+            return null;
+
+		return pa.getExtendedInfoList();
+	}
 	
 
 
@@ -4653,5 +4666,33 @@ public class ConfigurazionePdDReader {
 	}
 	
 	
+	
+	
+	
+	private static Object getExtendedInfoConfigurazione = null;
+	protected Object getExtendedInfoConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException{
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.getExtendedInfoConfigurazione==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("getExtendedInfoConfigurazione (not found): "+e.getMessage());
+				}
+//				}catch(Exception e){
+//					this.log.error("getExtendedInfoConfigurazione",e);
+//				}
+				return configurazione.getExtendedInfo();
+
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura delle informazioni extra della configurazione: "+e.getMessage(),e);
+				throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra della configurazione: "+e.getMessage(),e);
+			}
+		}
+
+		return ConfigurazionePdDReader.getExtendedInfoConfigurazione;
+
+	}
 	
 }

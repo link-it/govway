@@ -156,6 +156,30 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.oldTipoSoggettoProprietarioForUpdate=oldTipoSoggettoProprietarioForUpdate;
   }
 
+  public void addExtendedInfo(Object extendedInfo) {
+    this.extendedInfo.add(extendedInfo);
+  }
+
+  public Object getExtendedInfo(int index) {
+    return this.extendedInfo.get( index );
+  }
+
+  public Object removeExtendedInfo(int index) {
+    return this.extendedInfo.remove( index );
+  }
+
+  public List<Object> getExtendedInfoList() {
+    return this.extendedInfo;
+  }
+
+  public void setExtendedInfoList(List<Object> extendedInfo) {
+    this.extendedInfo=extendedInfo;
+  }
+
+  public int sizeExtendedInfoList() {
+    return this.extendedInfo.size();
+  }
+
   public PortaDelegataSoggettoErogatore getSoggettoErogatore() {
     return this.soggettoErogatore;
   }
@@ -523,6 +547,36 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @javax.xml.bind.annotation.XmlTransient
   protected String oldTipoSoggettoProprietarioForUpdate;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected List<Object> extendedInfo = new ArrayList<Object>();
+
+  /**
+   * @deprecated Use method getExtendedInfoList
+   * @return List<Object>
+  */
+  @Deprecated
+  public List<Object> getExtendedInfo() {
+  	return this.extendedInfo;
+  }
+
+  /**
+   * @deprecated Use method setExtendedInfoList
+   * @param extendedInfo List<Object>
+  */
+  @Deprecated
+  public void setExtendedInfo(List<Object> extendedInfo) {
+  	this.extendedInfo=extendedInfo;
+  }
+
+  /**
+   * @deprecated Use method sizeExtendedInfoList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeExtendedInfo() {
+  	return this.extendedInfo.size();
+  }
 
   @XmlElement(name="soggetto-erogatore",required=true,nillable=false)
   protected PortaDelegataSoggettoErogatore soggettoErogatore;

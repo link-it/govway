@@ -189,6 +189,16 @@ public class RicezioneContenutiApplicativiSOAP {
 			}
 			
 			
+			
+			
+			/* ------------  PostOutResponseContext ------------- */
+			postOutResponseContext = new PostOutResponseContext(logCore,protocolFactory);
+			postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
+			postOutResponseContext.setPddContext(pddContext);
+			
+			
+			
+			
 			/* ------------  PreInHandler ------------- */
 			
 			// build context
@@ -214,18 +224,7 @@ public class RicezioneContenutiApplicativiSOAP {
 			context.setNotifierInputStreamParams(notifierInputStreamParams);
 			
 			
-			
-			
-			
-			
-			/* ------------  PostOutResponseContext ------------- */
-			postOutResponseContext = new PostOutResponseContext(logCore,protocolFactory);
-			postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
-			postOutResponseContext.setPddContext(pddContext);
-			
-			
-			
-			
+				
 			
 			
 			/* ------------ Controllo ContentType -------------------- */
@@ -361,12 +360,10 @@ public class RicezioneContenutiApplicativiSOAP {
 				protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
 				
 				proprietaErroreAppl = openSPCoopProperties.getProprietaGestioneErrorePD(protocolFactory.createProtocolManager());
-				proprietaErroreAppl.setDominio(openSPCoopProperties.getIdentificativoPortaDefault(protocol));
+				proprietaErroreAppl.setDominio(openSPCoopProperties.getIdentificativoPortaDefault(protocolFactory.getProtocol()));
 				proprietaErroreAppl.setIdModulo(idModulo);
 				
-				erroreApplicativoBuilder = new ErroreApplicativoBuilder(logCore, protocolFactory, 
-						openSPCoopProperties.getIdentitaPortaDefault(protocol), null, null, idModulo, 
-						proprietaErroreAppl, versioneSoap, TipoPdD.DELEGATA, null);
+				erroreApplicativoBuilder = this.newErroreApplicativoBuilder(req, logCore, protocolFactory, openSPCoopProperties, idModulo, proprietaErroreAppl);
 				
 				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,openSPCoopProperties.getIdentitaPortaDefault(protocol));
 				context.setTipoPorta(TipoPdD.DELEGATA);
@@ -402,7 +399,12 @@ public class RicezioneContenutiApplicativiSOAP {
 			//System.out.println(e.getMessage());
 			logCore.error("ErroreGenerale",e);
 			msgDiag.logErroreGenerico(e, "Generale(richiesta)");
-						
+			
+			// Verifico se e' stato instanziato l'erroreApplicativoBuilder (es. eccezione lanciata da PreInRequestHandler non fa inizializzare l'oggetto)
+			if(erroreApplicativoBuilder==null){
+				erroreApplicativoBuilder = newErroreApplicativoBuilder(req, logCore, protocolFactory, openSPCoopProperties, idModulo, proprietaErroreAppl);
+			}
+			
 			// Genero risposta con errore
 			String msgErrore = e.getMessage();
 			if(msgErrore==null){
@@ -722,6 +724,7 @@ public class RicezioneContenutiApplicativiSOAP {
 		
 		if(postOutResponseContext!=null){
 			try{
+				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);
@@ -814,4 +817,24 @@ public class RicezioneContenutiApplicativiSOAP {
 	}
 	
 
+	
+	private ErroreApplicativoBuilder newErroreApplicativoBuilder(ConnectorInMessage req,Logger logCore,
+			IProtocolFactory protocolFactory, OpenSPCoop2Properties openSPCoopProperties,
+			String idModulo, ProprietaErroreApplicativo proprietaErroreAppl) throws ConnectorException{
+		try{
+			SOAPVersion versioneSoap = SOAPVersion.SOAP11;
+			try{
+				String contentTypeReq = req.getContentType();
+				versioneSoap = ServletUtils.getVersioneSoap(logCore,contentTypeReq);
+			}catch(Exception e){
+				//ignore}
+			}
+			return new ErroreApplicativoBuilder(logCore, protocolFactory, 
+					openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()), null, null, idModulo, 
+					proprietaErroreAppl, versioneSoap, TipoPdD.DELEGATA, null);
+		}catch(Throwable ep){
+			throw new ConnectorException(ep.getMessage(),ep);
+		}
+	}
+	
 }

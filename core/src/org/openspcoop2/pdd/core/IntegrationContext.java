@@ -24,6 +24,9 @@ package org.openspcoop2.pdd.core;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaDelegata;
+
 /**
  * IntegrationContext
  *
@@ -56,6 +59,15 @@ public class IntegrationContext {
 	 */
 	private String tipoAutorizzazione;
 	
+	/**
+	 * Identificativo della Porta Applicativa
+	 */
+	private IDPortaApplicativaByNome idPA;
+	
+	/**
+	 * Identificativo della Porta Delegata
+	 */
+	private IDPortaDelegata idPD;
 	
 	public String getTipoAutorizzazione() {
 		return this.tipoAutorizzazione;
@@ -107,5 +119,18 @@ public class IntegrationContext {
 	}
 	public void setGestioneStateless(Boolean gestioneStateless) {
 		this.gestioneStateless = gestioneStateless;
+	}
+	
+	public IDPortaApplicativaByNome getIdPA() {
+		return this.idPA;
+	}
+	public void setIdPA(IDPortaApplicativaByNome idPA) {
+		this.idPA = idPA;
+	}
+	public IDPortaDelegata getIdPD() {
+		return this.idPD;
+	}
+	public void setIdPD(IDPortaDelegata idPD) {
+		this.idPD = idPD;
 	}
 }

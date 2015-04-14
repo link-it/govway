@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.message.MailcapActivationReader;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
@@ -263,7 +264,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					Loader.initialize();
 				}
 			}catch(Exception e){
-				this.logError("Loader non istanziato: "+e.getMessage());
+				this.logError("Loader non istanziato: "+e.getMessage(),e);
 				return;
 			}
 
@@ -297,7 +298,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				try{
 					Loader.update(propertiesReader.getClassLoader());
 				}catch(Exception e){
-					this.logError("Loader non aggiornato: "+e.getMessage());
+					this.logError("Loader non aggiornato: "+e.getMessage(),e);
 					return;
 				}	
 			}
@@ -347,7 +348,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				OpenSPCoop2Properties.updatePddPropertiesReader(PddProperties.getInstance());
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante l'assegnamento del pddPropertiesReader a OpenSPCoopPropertiesReader: "+e.getMessage());
+				this.logError("Riscontrato errore durante l'assegnamento del pddPropertiesReader a OpenSPCoopPropertiesReader: "+e.getMessage(),e);
 				return;
 			}
 
@@ -470,7 +471,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				String tipoClass = classNameReader.getDateManager(propertiesReader.getTipoDateManager());
 				DateManager.initializeDataManager(tipoClass, propertiesReader.getDateManagerProperties(),logCore);
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante l'inizializzazione del DataManager: "+e.getMessage());
+				this.logError("Riscontrato errore durante l'inizializzazione del DataManager: "+e.getMessage(),e);
 				return;
 			}
 
@@ -578,7 +579,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 								
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante l'inizializzazione del generatore di identificatori unici: "+e.getMessage());
+				this.logError("Riscontrato errore durante l'inizializzazione del generatore di identificatori unici: "+e.getMessage(),e);
 				return;
 			}
 
@@ -594,12 +595,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ---------  Inizializzazione Configurazione di OpenSPCoop --------------------- */
 
+			// Inizializza extended info
+			try{
+				ExtendedInfoManager.initialize(loader, propertiesReader.getExtendedInfoConfigurazione(), 
+						propertiesReader.getExtendedInfoPortaDelegata(), propertiesReader.getExtendedInfoPortaApplicativa());
+			}catch(Exception e){
+				this.logError("Riscontrato errore durante l'inizializzazione del componente ExtendedInfoManager: "+e.getMessage(),e);
+				return;
+			}
 			// Inizializza il file ConfigReader che gestisce la configurazione di OpenSPCoop
 			AccessoConfigurazionePdD accessoConfigurazione = null;
 			try{
 				accessoConfigurazione = propertiesReader.getAccessoConfigurazionePdD();
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante la lettura della modalita' di accesso alla configurazione di OpenSPCoop: "+e.getMessage());
+				this.logError("Riscontrato errore durante la lettura della modalita' di accesso alla configurazione di OpenSPCoop: "+e.getMessage(),e);
 				return;
 			}
 			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,propertiesReader.getJNDIName_DataSource());
@@ -1256,7 +1265,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							jndi.lookup(nomeJNDI);
 							gestoreBusteNonRiscontrate = true;
 						}catch(Exception e){
-							this.logError("Search EJB gestore riscontri non trovato: "+e.getMessage());
+							this.logError("Search EJB gestore riscontri non trovato: "+e.getMessage(),e);
 							try{
 								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}
@@ -1274,7 +1283,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							jndi.lookup(nomeJNDI);
 							gestoreMessaggi = true;
 						}catch(Exception e){
-							this.logError("Search EJB gestore messaggi non trovato: "+e.getMessage());
+							this.logError("Search EJB gestore messaggi non trovato: "+e.getMessage(),e);
 							try{
 								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}
@@ -1292,7 +1301,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							jndi.lookup(nomeJNDI);
 							gestorePuliziaMessaggiAnomali = true;
 						}catch(Exception e){
-							this.logError("Search EJB pulizia messaggi anomali non trovato: "+e.getMessage());
+							this.logError("Search EJB pulizia messaggi anomali non trovato: "+e.getMessage(),e);
 							try{
 								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}
@@ -1311,7 +1320,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							jndi.lookup(nomeJNDI);
 							gestoreRepository = true;
 						}catch(Exception e){
-							this.logError("Search EJB gestore repository non trovato: "+e.getMessage());
+							this.logError("Search EJB gestore repository non trovato: "+e.getMessage(),e);
 							try{
 								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}

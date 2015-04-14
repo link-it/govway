@@ -318,6 +318,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.isLocalForwardMode(pd);
 	}
 	
+	public List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getExtendedInfo(pd);
+	}
+	
 	
 	
 	/* ********  PORTE APPLICATIVE  (Interfaccia) ******** */
@@ -415,6 +419,10 @@ public class ConfigurazionePdDManager {
 	
 	public String getAutorizzazioneContenuto(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getAutorizzazioneContenuto(pa);
+	}
+	
+	public List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getExtendedInfo(pa);
 	}
 	
 	
@@ -685,4 +693,7 @@ public class ConfigurazionePdDManager {
 		this.configurazionePdDReader.updateSystemPropertiesPdD(systemProperties);
 	}
 	
+	public Object getExtendedInfoConfigurazione() throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getExtendedInfoConfigurazione(this.getConnection());
+	}
 }

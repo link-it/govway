@@ -188,6 +188,15 @@ public class RicezioneBusteSOAP  {
 			
 			
 			
+			
+			
+			/* ------------  PostOutResponseContext ------------- */
+			postOutResponseContext = new PostOutResponseContext(logCore, protocolFactory);
+			postOutResponseContext.setTipoPorta(TipoPdD.APPLICATIVA);
+			postOutResponseContext.setPddContext(pddContext);
+			
+			
+			
 					
 			/* ------------  PreInHandler ------------- */
 			
@@ -202,7 +211,7 @@ public class RicezioneBusteSOAP  {
 			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, res);
 			preInRequestContext.setTransportContext(transportContext);	
 			preInRequestContext.setLogCore(logCore);
-			
+						
 			// invocazione handler
 			GestoreHandlers.preInRequest(preInRequestContext, msgDiag, logCore);
 			
@@ -216,10 +225,7 @@ public class RicezioneBusteSOAP  {
 			
 			
 			
-			/* ------------  PostOutResponseContext ------------- */
-			postOutResponseContext = new PostOutResponseContext(logCore, protocolFactory);
-			postOutResponseContext.setTipoPorta(TipoPdD.APPLICATIVA);
-			postOutResponseContext.setPddContext(pddContext);
+
 			
 			
 			
@@ -722,6 +728,7 @@ public class RicezioneBusteSOAP  {
 		
 		if(postOutResponseContext!=null){
 			try{
+				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);

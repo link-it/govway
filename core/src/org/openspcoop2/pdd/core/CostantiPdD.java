@@ -98,6 +98,9 @@ public class CostantiPdD {
     /** Costante che indica il separatore nella location */
     public final static String TRACCIAMENTO_SEPARATOR_LOCATION = ":";
     
+    /** Dati di integresso del messaggio */
+    public final static String DATA_INGRESSO_MESSAGGIO_RICHIESTA = "CONTEXT_DATA_INGRESSO_MESSAGGIO_RICHIESTA";
+    
     /** Variabile che indica un servizio applicativo anonimo */
     public final static String SERVIZIO_APPLICATIVO_ANONIMO = "Anonimo";
         

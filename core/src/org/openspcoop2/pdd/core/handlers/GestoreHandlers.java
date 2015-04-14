@@ -462,7 +462,7 @@ public class GestoreHandlers  {
 	}
 	
 	
-	public static void preInRequest(PreInRequestContext context,MsgDiagnostico msgDiag,Logger log){
+	public static void preInRequest(PreInRequestContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
 		if(GestoreHandlers.initialize==false){
 			GestoreHandlers.initialize(msgDiag,log);
@@ -473,9 +473,10 @@ public class GestoreHandlers  {
 				try{
 					GestoreHandlers.preInRequestHandlers[i].invoke(context);
 				}catch(Exception e){
-					// Gli handler di tipo preInRequest non dovrebbero sollevare una eccezione.
-					// Eventualmento loggo l'errore
-					msgDiag.logErroreGenerico(e,"PreInRequestHandler["+GestoreHandlers.tipiPreInRequestHandlers[i]+"]");
+					// Sollevo l'eccezione
+					HandlerException ex = new HandlerException(e.getMessage(),e);
+					ex.setIdentitaHandler("PreInRequestHandler["+GestoreHandlers.tipiPreInRequestHandlers[i]+"]");
+					throw ex;
 				}
 			}
 		}

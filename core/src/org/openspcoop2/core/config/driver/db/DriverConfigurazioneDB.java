@@ -123,6 +123,7 @@ import org.openspcoop2.core.config.driver.BeanUtilities;
 import org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
@@ -130,6 +131,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneSearch;
+import org.openspcoop2.core.config.driver.IExtendedInfo;
 import org.openspcoop2.core.config.driver.TipologiaServizioApplicativo;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -1412,7 +1414,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				rs.close();
 				stm.close();
 			}
-
+			
 		} catch (SQLException se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] SqlException: " + se.getMessage(),se);
 		} catch (DriverConfigurazioneNotFound de) {
@@ -1446,6 +1448,41 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			throw new DriverConfigurazioneNotFound("Nessuna PortaDelegata trovata.");
 		}
 
+		
+		// *** Aggiungo extInfo ***
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+		
+		this.log.debug("operazione this.atomica [ExtendedInfo] = " + this.atomica);
+		try {
+			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
+			if(extInfoConfigurazioneDriver!=null){
+				List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pd);
+				if(listExtInfo!=null && listExtInfo.size()>0){
+					for (Object object : listExtInfo) {
+						pd.addExtendedInfo(object);
+					}
+				}
+			}
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db [ExtendedInfo]...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
 		return pd;
 	}
 
@@ -1994,11 +2031,52 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 
+		PortaApplicativa pa = null;
 		if (trovato) {
-			return this.getPortaApplicativa(idPortaApplicativa);
+			pa = this.getPortaApplicativa(idPortaApplicativa);
 		} else {
 			throw new DriverConfigurazioneNotFound("Porta Applicativa non esistente");
 		}
+		
+		
+		
+		// *** Aggiungo extInfo ***
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+		
+		this.log.debug("operazione this.atomica [ExtendedInfo] = " + this.atomica);
+		try {
+			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
+			if(extInfoConfigurazioneDriver!=null){
+				List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pa);
+				if(listExtInfo!=null && listExtInfo.size()>0){
+					for (Object object : listExtInfo) {
+						pa.addExtendedInfo(object);
+					}
+				}
+			}
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db [ExtendedInfo]...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		
+		
+		return pa;
 	}
 
 	@Override
@@ -5708,6 +5786,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				validazioneBuste.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(val_stato));
 				config.setValidazioneBuste(validazioneBuste);
 
+				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
+				if(extInfoConfigurazioneDriver!=null){
+					config.setExtendedInfo(extInfoConfigurazioneDriver.getExtendedInfo(con, config, ""));
+				}
+				
 			} else {
 				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getConfigurazioneGenerale] Configurazione non presente.");
 			}

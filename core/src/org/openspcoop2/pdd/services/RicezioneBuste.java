@@ -1881,6 +1881,13 @@ public class RicezioneBuste {
 			// E' l'erogatore della risposta asincrona!
 			this.msgContext.getIntegrazione().addServizioApplicativoErogatore(servizioApplicativoErogatoreAsincronoSimmetricoRisposta);
 		}
+		// Aggiungo identificativo porta applicativa/delegata
+		if(idPAbyNome!=null){
+			this.msgContext.getIntegrazione().setIdPA(idPAbyNome);
+		}
+		else if(idPD!=null){
+			this.msgContext.getIntegrazione().setIdPD(idPD);
+		}
 		msgDiag.highDebug("Lettura porta applicativa/delegata terminato impostazione context");
 
 
