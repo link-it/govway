@@ -1,3 +1,10 @@
+2015-04-15  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #325
+	Risolto l'errore che si verificata selezionando il servizio applicativo visualizzato
+	nella lista di un fruitore di un Accordo Servizio Parte Specifica.
+
 2015-04-13  Andrea Poli <apoli@link.it>
 
 	* [Pdd]

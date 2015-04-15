@@ -60,6 +60,7 @@ import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.AbstractServletNewWindowChangeExtended;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -103,7 +104,7 @@ public final class ConfigurazioneGenerale extends Action {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
-			IExtendedFormServlet extendedServlet = confCore.getExtendedServletConfigurazione();
+			List<IExtendedFormServlet> extendedServletList = confCore.getExtendedServletConfigurazione();
 			
 			User user = ServletUtils.getUserFromSession(session);
 
@@ -141,24 +142,36 @@ public final class ConfigurazioneGenerale extends Action {
 			String confPers = confPersB ? "true" : "false";
 			Configurazione configurazione = confCore.getConfigurazioneGenerale();
 
-			IExtendedBean extendedBean = null;
-			DBManager dbManager = null;
-			Connection con = null;
-			try{
-				dbManager = DBManager.getInstance();
-				con = dbManager.getConnection();
-				extendedBean = extendedServlet.getExtendedBean(con, "SingleInstance");
-			}finally{
-				dbManager.releaseConnection(con);
+			List<ExtendedInfo> extendedBeanList = new ArrayList<ExtendedInfo>();
+			if(extendedServletList!=null && extendedServletList.size()>0){
+				for (IExtendedFormServlet extendedServlet : extendedServletList) {
+					
+					ExtendedInfo ei = new ExtendedInfo();
+					ei.extendedServlet = extendedServlet;
+					DBManager dbManager = null;
+					Connection con = null;
+					try{
+						dbManager = DBManager.getInstance();
+						con = dbManager.getConnection();
+						ei.extendedBean = extendedServlet.getExtendedBean(con, "SingleInstance");
+					}finally{
+						dbManager.releaseConnection(con);
+					}
+					
+					ei.extended = false;
+					ei.extendedToNewWindow = false;
+					if(extendedServlet!=null && extendedServlet.showExtendedInfoUpdate(request, session)){
+						ei.extendedBean = extendedServlet.readHttpParameters(configurazione, ei.extendedBean, request);
+						ei.extended = true;
+						ei.extendedToNewWindow = extendedServlet.extendedUpdateToNewWindow(request, session);
+					}
+					
+					extendedBeanList.add(ei);
+					
+				}
 			}
 			
-			boolean extended = false;
-			boolean extendedToNewWindow = false;
-			if(extendedServlet!=null && extendedServlet.showExtendedInfoUpdate(request, session)){
-				extendedBean = extendedServlet.readHttpParameters(configurazione, extendedBean, request);
-				extended = true;
-				extendedToNewWindow = extendedServlet.extendedUpdateToNewWindow(request, session);
-			}
+			
 			
 			// Preparo il menu
 			confHelper.makeMenu();
@@ -178,12 +191,16 @@ public final class ConfigurazioneGenerale extends Action {
 				// Controlli sui campi immessi
 				boolean isOk = confHelper.configurazioneCheckData();
 				if (isOk) {
-					if(extended){
-						try{
-							extendedServlet.checkDati(TipoOperazione.CHANGE, confHelper, confCore, configurazione, extendedBean);
-						}catch(Exception e){
-							isOk = false;
-							pd.setMessage(e.getMessage());
+					if(extendedBeanList!=null && extendedBeanList.size()>0){
+						for (ExtendedInfo ei : extendedBeanList) {
+							if(ei.extended && !ei.extendedToNewWindow){
+								try{
+									ei.extendedServlet.checkDati(TipoOperazione.CHANGE, confHelper, confCore, configurazione, ei.extendedBean);
+								}catch(Exception e){
+									isOk = false;
+									pd.setMessage(e.getMessage());
+								}
+							}
 						}
 					}
 				}
@@ -210,11 +227,16 @@ public final class ConfigurazioneGenerale extends Action {
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH,idlecache_auth,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH,lifecache_auth);
 					
-					if(extended){
-						if(extendedToNewWindow){
-							extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
-						}else{
-							extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, configurazione, extendedBean);
+					if(extendedBeanList!=null && extendedBeanList.size()>0){
+						for (ExtendedInfo ei : extendedBeanList) {
+							if(ei.extended){
+								if(ei.extendedToNewWindow){
+									AbstractServletNewWindowChangeExtended.addToDatiNewWindow(ei.extendedServlet, 
+											dati, confHelper, confCore, configurazione, ei.extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
+								}else{
+									ei.extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, configurazione, ei.extendedBean);
+								}
+							}
 						}
 					}
 					
@@ -356,15 +378,18 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getAccessoDatiAutorizzazione().setCache(null);
 				}
 				
-				if(extended){
-					WrapperExtendedBean wrapperExtendedBean = new WrapperExtendedBean();
-					wrapperExtendedBean.setExtendedBean(extendedBean);
-					wrapperExtendedBean.setExtendedServlet(extendedServlet);
-					wrapperExtendedBean.setOriginalBean(newConfigurazione);
-					confCore.performUpdateOperation(userLogin, confHelper.smista(), wrapperExtendedBean);
-				}
-				else{
-					confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
+				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
+				if(extendedBeanList!=null && extendedBeanList.size()>0){
+					for (ExtendedInfo ei : extendedBeanList) {
+						if(ei.extended && !ei.extendedToNewWindow){
+							WrapperExtendedBean wrapperExtendedBean = new WrapperExtendedBean();
+							wrapperExtendedBean.setExtendedBean(ei.extendedBean);
+							wrapperExtendedBean.setExtendedServlet(ei.extendedServlet);
+							wrapperExtendedBean.setOriginalBean(newConfigurazione);
+							wrapperExtendedBean.setManageOriginalBean(false);
+							confCore.performUpdateOperation(userLogin, confHelper.smista(), wrapperExtendedBean);
+						}
+					}
 				}
 
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -386,11 +411,16 @@ public final class ConfigurazioneGenerale extends Action {
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH,idlecache_auth,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH,lifecache_auth);
 				
-				if(extended){
-					if(extendedToNewWindow){
-						extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, newConfigurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
-					}else{
-						extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, newConfigurazione, extendedBean);
+				if(extendedBeanList!=null && extendedBeanList.size()>0){
+					for (ExtendedInfo ei : extendedBeanList) {
+						if(ei.extended){
+							if(ei.extendedToNewWindow){
+								AbstractServletNewWindowChangeExtended.addToDatiNewWindow(ei.extendedServlet, 
+										dati, confHelper, confCore, newConfigurazione, ei.extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
+							}else{
+								ei.extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, newConfigurazione, ei.extendedBean);
+							}
+						}
 					}
 				}
 
@@ -500,11 +530,16 @@ public final class ConfigurazioneGenerale extends Action {
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH,idlecache_auth,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH,lifecache_auth);
 			
-			if(extended){
-				if(extendedToNewWindow){
-					extendedServlet.addToDatiNewWindow(dati, confHelper, confCore, configurazione, extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
-				}else{
-					extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, configurazione, extendedBean);
+			if(extendedBeanList!=null && extendedBeanList.size()>0){
+				for (ExtendedInfo ei : extendedBeanList) {
+					if(ei.extended){
+						if(ei.extendedToNewWindow){
+							AbstractServletNewWindowChangeExtended.addToDatiNewWindow(ei.extendedServlet, 
+									dati, confHelper, confCore, configurazione, ei.extendedBean, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
+						}else{
+							ei.extendedServlet.addToDati(dati, TipoOperazione.CHANGE, confHelper, confCore, configurazione, ei.extendedBean);
+						}
+					}
 				}
 			}
 
@@ -527,4 +562,14 @@ public final class ConfigurazioneGenerale extends Action {
 	}
 
 
+}
+
+
+class ExtendedInfo{
+	
+	IExtendedBean extendedBean = null;
+	boolean extended = false;
+	boolean extendedToNewWindow = false;
+	IExtendedFormServlet extendedServlet = null;
+	
 }

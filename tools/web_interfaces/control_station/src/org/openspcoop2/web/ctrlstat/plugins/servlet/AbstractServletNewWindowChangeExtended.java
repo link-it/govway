@@ -36,12 +36,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -65,7 +67,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 	
 	protected abstract ControlStationCore getConsoleCore() throws Exception;
 	
-	protected abstract IExtendedFormServlet getExtendedServlet(ControlStationCore core) throws Exception;
+	protected abstract IExtendedFormServlet getExtendedServlet(ControlStationCore core, String uniqueID) throws Exception;
 	
 	protected abstract List<Parameter> getTitle(Object object, HttpServletRequest request, HttpSession session) throws Exception;
 	
@@ -95,7 +97,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedFormServlet extendedServlet = this.getExtendedServlet(consoleCore);
+			IExtendedFormServlet extendedServlet = this.getExtendedServlet(consoleCore,request.getParameter(ID_UNIQUE_FORM));
 			
 			// Preparo il menu
 			consoleHelper.makeMenu();
@@ -139,6 +141,12 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+					DataElement de = new DataElement();
+					de.setValue(extendedServlet.getUniqueID());
+					de.setType(DataElementType.HIDDEN);
+					de.setName(ID_UNIQUE_FORM);
+					dati.addElement(de);
+					
 					extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 					
 					pd.setDati(dati);
@@ -155,10 +163,17 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 				wrapperExtendedBean.setExtendedBean(extendedBean);
 				wrapperExtendedBean.setExtendedServlet(extendedServlet);
 				wrapperExtendedBean.setOriginalBean(object);
+				wrapperExtendedBean.setManageOriginalBean(false);
 				consoleCore.performUpdateOperation(userLogin, consoleHelper.smista(), wrapperExtendedBean);
 
 				Vector<DataElement> dati = new Vector<DataElement>();
 
+				DataElement de = new DataElement();
+				de.setValue(extendedServlet.getUniqueID());
+				de.setType(DataElementType.HIDDEN);
+				de.setName(ID_UNIQUE_FORM);
+				dati.addElement(de);
+				
 				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
 				pd.setDati(dati);
@@ -181,6 +196,12 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
+			DataElement de = new DataElement();
+			de.setValue(extendedServlet.getUniqueID());
+			de.setType(DataElementType.HIDDEN);
+			de.setName(ID_UNIQUE_FORM);
+			dati.addElement(de);
+			
 			extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 			
 			pd.setDati(dati);
@@ -199,4 +220,27 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 	}
 
 
+	public static void addToDatiNewWindow(IExtendedFormServlet extendedServlet,Vector<DataElement> dati, ConsoleHelper consoleHelper,
+			ControlStationCore core, Object originalObject, IExtendedBean extendedBean, String servletName) throws ExtendedException{
+		
+		DataElement de = new DataElement();
+		de.setValue(extendedServlet.getUniqueID());
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ID_UNIQUE_FORM);
+		dati.addElement(de);
+		
+		String servletNameWithId = new String(servletName);
+		if(servletNameWithId.contains("?")){
+			servletNameWithId = servletNameWithId + "&";
+		}
+		else{
+			servletNameWithId = servletNameWithId + "?";
+		}
+		servletNameWithId = servletNameWithId + ID_UNIQUE_FORM + "=" + extendedServlet.getUniqueID();
+		
+		extendedServlet.addToDatiNewWindow(dati, consoleHelper, core, originalObject, extendedBean, servletNameWithId);
+		
+	}
+	
+	private static final String ID_UNIQUE_FORM = "ExtendedFormUniqueId";
 }

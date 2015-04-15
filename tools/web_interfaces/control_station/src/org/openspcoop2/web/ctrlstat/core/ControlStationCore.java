@@ -554,13 +554,17 @@ public class ControlStationCore {
 	}
 	
 	/** Opzioni per Plugins */
-	private IExtendedFormServlet pluginConfigurazione;
+	private List<IExtendedFormServlet> pluginConfigurazione;
 	private IExtendedListServlet pluginPortaDelegata;
 	private IExtendedListServlet pluginPortaApplicativa;
-	private IExtendedFormServlet newIExtendedFormServlet(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private List<IExtendedFormServlet> newIExtendedFormServlet(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		if(className!=null){
-			Class<?> c = Class.forName(className);
-			return (IExtendedFormServlet) c.newInstance();
+			List<IExtendedFormServlet> list = new ArrayList<IExtendedFormServlet>();
+			for (int i = 0; i < className.length; i++) {
+				Class<?> c = Class.forName(className[i]);
+				list.add( (IExtendedFormServlet) c.newInstance() );
+			}
+			return list;
 		}
 		return null;
 	}
@@ -3941,7 +3945,7 @@ public class ControlStationCore {
 	}
 
 	
-	public IExtendedFormServlet getExtendedServletConfigurazione(){
+	public List<IExtendedFormServlet> getExtendedServletConfigurazione(){
 		return this.pluginConfigurazione;
 	}
 	

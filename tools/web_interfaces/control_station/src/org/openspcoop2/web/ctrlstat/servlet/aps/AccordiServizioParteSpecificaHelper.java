@@ -2635,6 +2635,9 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 	public void prepareServiziServizioApplicativoList(List<ServizioApplicativo> lista, ISearch ricerca)
 			throws Exception {
 		try {
+			
+			ServletUtils.setObjectIntoSession(this.session, true, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO);
+			
 			String idServizio = this.request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			int idServizioInt = Integer.parseInt(idServizio);
 			String idSoggFruitoreDelServizio = this.request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
@@ -2750,7 +2753,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					DataElement de = new DataElement();
 					de.setUrl(
 							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId() + ""));
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId() + ""),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggFru.getId() + ""));
 					de.setValue(sa.getNome());
 					de.setIdToRemove(sa.getNome());
 					e.addElement(de);

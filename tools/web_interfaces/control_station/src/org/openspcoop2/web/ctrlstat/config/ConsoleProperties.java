@@ -672,8 +672,16 @@ public class ConsoleProperties {
 	
 	/* ---- Plugins ------ */
 	
-	public String getPlugins_Configurazione() throws UtilsException{
-		return this.readProperty(false, "plugins.configurazione");
+	public String[] getPlugins_Configurazione() throws UtilsException{
+		String p = this.readProperty(false, "plugins.configurazione");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+			}
+			return tmp;
+		}
+		return null;
 	}
 	
 	public String getPlugins_PortaDelegata() throws UtilsException{

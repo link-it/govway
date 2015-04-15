@@ -30,4 +30,6 @@ public interface IExtendedFormServlet extends IExtendedCoreServlet {
 	
 	public String getTestoModificaEffettuata();
 	
+	public String getUniqueID();
+	
 }

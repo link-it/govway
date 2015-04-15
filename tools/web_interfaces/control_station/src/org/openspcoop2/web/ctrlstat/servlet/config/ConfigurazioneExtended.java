@@ -58,8 +58,14 @@ public final class ConfigurazioneExtended extends AbstractServletNewWindowChange
 	}
 
 	@Override
-	protected IExtendedFormServlet getExtendedServlet(ControlStationCore core) throws Exception{
-		return core.getExtendedServletConfigurazione();
+	protected IExtendedFormServlet getExtendedServlet(ControlStationCore core, String uniqueId) throws Exception{
+		List<IExtendedFormServlet> list = core.getExtendedServletConfigurazione();
+		for (IExtendedFormServlet iExtendedFormServlet : list) {
+			if(uniqueId.equals(iExtendedFormServlet.getUniqueID())){
+				return iExtendedFormServlet;
+			}
+		}
+		return null;
 	}
 	
 	@Override
