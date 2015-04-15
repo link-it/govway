@@ -428,6 +428,8 @@ public final class ConfigurazioneGenerale extends Action {
 
 				pd.setMessage("Configurazione Generale modificata con successo");
 
+				pd.disableEditMode();
+				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping,
