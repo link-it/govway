@@ -30,6 +30,7 @@ import java.util.Map;
 
 import javax.wsdl.BindingOperation;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -92,25 +93,34 @@ public class BasicArchive implements IArchive {
 	 */
 	@Override
 	public void setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune) throws ProtocolException{
+		_setProtocolInfo(accordoServizioParteComune, this.protocolFactory.getLogger());
+	}
+	public void setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune,Logger log) throws ProtocolException{
+		_setProtocolInfo(accordoServizioParteComune, log);
+	}
+	private void _setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune,Logger log) throws ProtocolException{
+		
+		// NOTA non usare in questo metodo e nel metodo _setProtocolInfo il protocolFactory e dipendenze su di uno specifico protocollo.
+		//      Viene usato dal meccanismo di import per definire la struttura di un accordo in base al wsdl, indipendentemente dallo specifico protocollo
+		
 		if(accordoServizioParteComune.sizePortTypeList()>0){
 			throw new ProtocolException("Protocol Info already exists");
 		}
 		
 		byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
 		if(wsdlConcettuale!=null){
-			setProtocolInfo(wsdlConcettuale, accordoServizioParteComune, "Concettuale");
+			_setProtocolInfo(wsdlConcettuale, accordoServizioParteComune, "Concettuale", log);
 		}
 		else{
 			if(accordoServizioParteComune.getByteWsdlLogicoErogatore()!=null){
-				setProtocolInfo(accordoServizioParteComune.getByteWsdlLogicoErogatore(), accordoServizioParteComune, "LogicoErogatore");
+				_setProtocolInfo(accordoServizioParteComune.getByteWsdlLogicoErogatore(), accordoServizioParteComune, "LogicoErogatore", log);
 			}
 			if(accordoServizioParteComune.getByteWsdlLogicoFruitore()!=null){
-				setProtocolInfo(accordoServizioParteComune.getByteWsdlLogicoFruitore(), accordoServizioParteComune, "LogicoFruitore");
+				_setProtocolInfo(accordoServizioParteComune.getByteWsdlLogicoFruitore(), accordoServizioParteComune, "LogicoFruitore", log);
 			}
 		}
-
 	}
-	private void setProtocolInfo(byte [] wsdlBytes,AccordoServizioParteComune accordoServizioParteComune,String tipo) throws ProtocolException{
+	private void _setProtocolInfo(byte [] wsdlBytes,AccordoServizioParteComune accordoServizioParteComune,String tipo,Logger log) throws ProtocolException{
 		
 		try{
 		
@@ -173,7 +183,7 @@ public class BasicArchive implements IArchive {
 					
 					// SoapBinding
 					if(bindingWSDL!=null){
-						AccordoServizioWrapperUtilities.setPortTypeSoapBindingStyle(bindingWSDL, this.getProtocolFactory().getLogger(), ptOpenSPCoop);
+						AccordoServizioWrapperUtilities.setPortTypeSoapBindingStyle(bindingWSDL, log, ptOpenSPCoop);
 					}
 					
 					// itero sulle operation
@@ -200,10 +210,10 @@ public class BasicArchive implements IArchive {
 						opOpenSPCoop.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);
 						
 						// Prendo la definizione del messaggio di input
-						AccordoServizioWrapperUtilities.addMessageInputOperation(opWSDL, this.getProtocolFactory().getLogger(), opOpenSPCoop);
+						AccordoServizioWrapperUtilities.addMessageInputOperation(opWSDL, log, opOpenSPCoop);
 						
 						// Prendo la definizione del messaggio di output
-						AccordoServizioWrapperUtilities.addMessageOutputOperation(opWSDL, this.getProtocolFactory().getLogger(), opOpenSPCoop);
+						AccordoServizioWrapperUtilities.addMessageOutputOperation(opWSDL, log, opOpenSPCoop);
 						
 						// profilo di collaborazione (non basta guardare l'output, poiche' puo' avere poi un message vuoto e quindi equivale a non avere l'output)
 						//if(opWSDL.getOutput()!=null){
@@ -225,20 +235,20 @@ public class BasicArchive implements IArchive {
 								
 									// SoapBinding Operation
 									AccordoServizioWrapperUtilities.
-										setOperationSoapBindingInformation(bindingOperationWSDL, this.getProtocolFactory().getLogger(), 
+										setOperationSoapBindingInformation(bindingOperationWSDL, log, 
 												opOpenSPCoop, ptOpenSPCoop);
 									
 									// Raccolgo Message-Input
 									if(opOpenSPCoop.getMessageInput()!=null){
 										AccordoServizioWrapperUtilities.
-											setMessageInputSoapBindingInformation(bindingOperationWSDL, this.getProtocolFactory().getLogger(), 
+											setMessageInputSoapBindingInformation(bindingOperationWSDL, log, 
 													opOpenSPCoop, ptOpenSPCoop);
 									}
 									
 									// Raccolgo Message-Output
 									if(opOpenSPCoop.getMessageOutput()!=null){
 										AccordoServizioWrapperUtilities.
-											setMessageOutputSoapBindingInformation(bindingOperationWSDL, this.getProtocolFactory().getLogger(), 
+											setMessageOutputSoapBindingInformation(bindingOperationWSDL, log, 
 													opOpenSPCoop, ptOpenSPCoop);
 									}
 									

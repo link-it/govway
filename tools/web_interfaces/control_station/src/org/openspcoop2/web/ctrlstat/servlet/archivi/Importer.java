@@ -186,6 +186,7 @@ public final class Importer extends Action {
 			
 			// import types
 			String protocolloEffettivo = importModesMap.get(this.importMode);
+			//System.out.println("PROTOCOLLO EFFETTIVO: "+protocolloEffettivo);
 			List<ArchiveModeType> importTypes = null;
 			if(this.importMode!=null){
 				importTypes = importerUtils.getImportModeTypes(archiveMode, protocolloEffettivo);
@@ -503,7 +504,7 @@ public final class Importer extends Action {
 					}
 					
 					archiviHelper.addImportInformationMissingToDati(dati, importerUtils, ff, 
-							this.protocollo, this.importMode, this.importType, this.validazioneDocumenti, this.updateEnabled,
+							this.protocollo, this.importMode, protocolloEffettivo, this.importType, this.validazioneDocumenti, this.updateEnabled,
 							importInformationMissingCollection, importInformationMissingException, 
 							this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo,this.importInformationMissing_portTypes,
 							protocolliForModes,readedDatiConnettori,

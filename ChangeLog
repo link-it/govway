@@ -1,3 +1,12 @@
+2015-04-16  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+        Risolto Bug #326
+	1. FiltroDuplicati (obbligatorio LineeGuidaBustaEGov_V11) non veniva abilitato nelle azioni importate tramite package Cnipa APC.
+	2. Per gli archivi CNIPA che non possedevano il mapping delle informazioni eGov ('ProfiloDiCollaborazione.wscp')
+	l'interfaccia non permetteva di passare alla modalita' di configurazione manuale della sezione 'Acquisizione informazioni di protocollo'.
+	La console andava in errore al momento della selezione di tale modalita'.
+
 2015-04-15  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]

@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
+import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -444,6 +445,7 @@ public class XMLUtils  {
 			}else{
 				pt = new PortType();
 				pt.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+				pt.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
 				if(TipiProfiliCollaborazione.OneWay.toString().equals(profiloCollaborazione))
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
 				else if(TipiProfiliCollaborazione.Sincrono.toString().equals(profiloCollaborazione))
@@ -459,6 +461,7 @@ public class XMLUtils  {
 			Operation azione = new Operation();
 			azione.setNome(nomeAzione);
 			azione.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+			azione.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
 			if(TipiProfiliCollaborazione.OneWay.toString().equals(profiloCollaborazione))
 				azione.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
 			else if(TipiProfiliCollaborazione.Sincrono.toString().equals(profiloCollaborazione))
@@ -489,6 +492,7 @@ public class XMLUtils  {
 				}else{
 					ptCorrelato = new PortType();
 					ptCorrelato.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+					ptCorrelato.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
 					if(TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(profiloCollaborazione))
 						ptCorrelato.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
 					else if(TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(profiloCollaborazione))
@@ -498,6 +502,7 @@ public class XMLUtils  {
 				Operation azioneCorrelata = new Operation();
 				azioneCorrelata.setNome(nomeAzioneCorrelata);
 				azioneCorrelata.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+				azioneCorrelata.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
 				if(TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(profiloCollaborazione))
 					azioneCorrelata.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
 				else if(TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(profiloCollaborazione))

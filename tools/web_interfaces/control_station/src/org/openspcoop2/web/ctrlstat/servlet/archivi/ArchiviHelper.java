@@ -84,6 +84,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazio
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -748,6 +749,7 @@ public class ArchiviHelper extends ConsoleHelper {
 				ptOpenSPCoop.setNome(serviziTmpInput);
 				ptOpenSPCoop.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_SINCRONO));
 				ptOpenSPCoop.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+				ptOpenSPCoop.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);		
 				
 				// Azioni
 				int contatoreAzione = 1;
@@ -758,6 +760,7 @@ public class ArchiviHelper extends ConsoleHelper {
 					Operation operationOpenSPCoop = new Operation();
 					operationOpenSPCoop.setNome(azioniTmpInput);
 					operationOpenSPCoop.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+					operationOpenSPCoop.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);
 					
 					// profiloCollaborazione
 					String profiliCollaborazioneTmpInput = this.request.getParameter(servizioParam+
@@ -1091,7 +1094,7 @@ public class ArchiviHelper extends ConsoleHelper {
 	}
 	
 	public void addImportInformationMissingToDati(Vector<DataElement> dati,ImporterUtils importerUtils, FormFile ff,
-			String protocollo,String inputMode,String inputType,boolean validazioneDocumenti,boolean updateEnabled,
+			String protocolloSelect,String inputMode,String protocolloEffettivo,String inputType,boolean validazioneDocumenti,boolean updateEnabled,
 			ImportInformationMissingCollection importInformationMissingCollection,
 			ImportInformationMissingException importInformationMissingException,
 			String modalitaAcquisizioneInformazioniProtocollo,List<PortType> portTypesOpenSPCoop,
@@ -1133,7 +1136,7 @@ public class ArchiviHelper extends ConsoleHelper {
 		// hidden fields
 		
 		DataElement de = new DataElement();
-		de.setValue(protocollo);
+		de.setValue(protocolloSelect);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		de.setSize(this.getSize());
@@ -1428,12 +1431,25 @@ public class ArchiviHelper extends ConsoleHelper {
 			if(modalitaAcquisizioneInformazioniProtocollo!=null && 
 					ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PROTOCOLLO_MANCANTI_RICONOSCIMENTO_USER_INPUT.equals(modalitaAcquisizioneInformazioniProtocollo)){
 			
-				// read WSDL Base sfruttando il BasicArchive
-				BasicArchive basicArchive = new BasicArchive(null);
 				Object object = importInformationMissingException.getObject();
 				AccordoServizioParteComune aspc = (AccordoServizioParteComune) object;
-				basicArchive.setProtocolInfo(aspc);
 				
+				// Provo a comprendere il protocollo associato all'accordo di servizio parte comune se e' definito il soggetto referente
+				// Serve per visualizzare i profili di collaborazione supportati
+				String protocolloAccordo = null;
+				if(aspc.getSoggettoReferente()!=null && aspc.getSoggettoReferente().getTipo()!=null){
+					protocolloAccordo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(aspc.getSoggettoReferente().getTipo());
+				}
+				
+				// Impostazione protocollo
+				if(protocolloAccordo==null){
+					protocolloAccordo = protocolloEffettivo; // uso l'impostazione associata al tipo in package scelto.
+				}
+				
+				// read WSDL Base sfruttando il BasicArchive (non serve il protocollo)
+				BasicArchive basicArchive = new BasicArchive(null);
+				basicArchive.setProtocolInfo(aspc,ControlStationCore.getLog());
+								
 				if(aspc.sizePortTypeList()>0){
 					
 					// port types
@@ -1524,7 +1540,7 @@ public class ArchiviHelper extends ConsoleHelper {
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_PROFILO+contatoreAzione);
 							de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_PROFILO);
 							de.setType(DataElementType.SELECT);
-							de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocollo));
+							de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocolloAccordo));
 							de.setSelected(profiloCollaborazione);
 							if(this.archiviCore.isShowCorrelazioneAsincronaInAccordi()){
 								de.setPostBack(true);
@@ -1626,6 +1642,17 @@ public class ArchiviHelper extends ConsoleHelper {
 			InterfaceType originalInterfaceType = null;
 			User userSession = null;
 			try{
+				
+				// Impostazione protocollo
+				String protocollo = importInformationMissingException.getMissingInfoSoggetto_protocollo();
+				if(protocollo==null){
+					//protocollo = protocolloEffettivo; // uso l'impostazione associata al tipo in package scelto.
+					// NOTA: non devo impostare il protocollo. Serve solo per visualizzare l'info "Sbustamento Info Protocollo 'xxx'"
+					// Se viene passato null non viene visualizzata la stringa 'xxx'.
+					// Meglio cosi che fornire il tipo associato al package, che puo' non essere corretto nel casi di archivio openspcoop
+					// che contiene diversi protocolli (e nella select list dei protocolli non e' stato scelto alcun protocollo)
+				}
+				
 				userSession = ServletUtils.getUserFromSession(this.session);
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
