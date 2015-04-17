@@ -16464,9 +16464,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 				AccordoCooperazionePartecipanti partecipanti = ac.getElencoPartecipanti();
 				if(partecipanti.sizeSoggettoPartecipanteList()>=2){
 					for(int i=0; i<partecipanti.sizeSoggettoPartecipanteList(); i++){
-						if(partecipanti.getSoggettoPartecipante(i).getIdSoggetto()>0){
+						IdSoggetto idSoggettoPartecipante = partecipanti.getSoggettoPartecipante(i);
+						if(idSoggettoPartecipante.getIdSoggetto()!=null && idSoggettoPartecipante.getIdSoggetto()>0){
 							try{
 								Soggetto s = this.getSoggetto(partecipanti.getSoggettoPartecipante(i).getIdSoggetto());
+								if(s.getPrivato()!=null && s.getPrivato()){
+									erroreValidazione.addErroreValidazione("soggetto partecipante ["+s.getTipo()+"/"+s.getNome()+"] con visibilita' privata, in un accordo di cooperazione con visibilita' pubblica");
+								}
+							}catch(DriverRegistroServiziNotFound dNot){}
+						}
+						else if(idSoggettoPartecipante.getTipo()!=null && idSoggettoPartecipante.getNome()!=null){
+							try{
+								Soggetto s = this.getSoggetto(new IDSoggetto(idSoggettoPartecipante.getTipo(), idSoggettoPartecipante.getNome()));
 								if(s.getPrivato()!=null && s.getPrivato()){
 									erroreValidazione.addErroreValidazione("soggetto partecipante ["+s.getTipo()+"/"+s.getNome()+"] con visibilita' privata, in un accordo di cooperazione con visibilita' pubblica");
 								}
