@@ -197,7 +197,11 @@ public class ConnectorUtils {
 			function = protocolContext.getFunction();
 			parameters = protocolContext.getFunctionParameters();
 		}catch(Exception e){
-			logCore.error(e.getMessage(),e);
+			if(logCore==null){
+				Logger.getLogger(ConnectorUtils.class).error(e.getMessage(),e);
+			}else{
+				logCore.error(e.getMessage(),e);
+			}
 			String context = req.getContextPath();
 			if(htmlMessage){
 				context = StringEscapeUtils.escapeHtml( context );
@@ -298,7 +302,11 @@ public class ConnectorUtils {
 					risposta.append("<i>"+enabledProtocols+"</i><br/>\n");
 				}
 			}catch(Exception e){
-				logCore.error(e.getMessage(),e);
+				if(logCore==null){
+					Logger.getLogger(ConnectorUtils.class).error(e.getMessage(),e);
+				}else{
+					logCore.error(e.getMessage(),e);
+				}
 				risposta.append("<i>ERROR: No protocol installed</i><br/>\n");
 			}
 			

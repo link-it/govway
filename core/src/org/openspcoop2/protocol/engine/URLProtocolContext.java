@@ -176,7 +176,8 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 				}
 			}
 			
-			logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
+			if(logCore!=null)
+				logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
 			
 			this.webContext = req.getContextPath();
 			this.requestURI = req.getRequestURI();
