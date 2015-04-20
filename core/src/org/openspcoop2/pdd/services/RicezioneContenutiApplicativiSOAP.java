@@ -391,7 +391,9 @@ public class RicezioneContenutiApplicativiSOAP {
 				context.setIdModulo(idModulo);
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 				pddContext = context.getPddContext();
-				postOutResponseContext.setPddContext(pddContext);
+				if(postOutResponseContext!=null){
+					postOutResponseContext.setPddContext(pddContext);
+				}
 				msgDiag.setPddContext(pddContext, protocolFactory);
 			}
 			

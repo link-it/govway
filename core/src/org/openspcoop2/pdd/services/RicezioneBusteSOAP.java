@@ -395,7 +395,9 @@ public class RicezioneBusteSOAP  {
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 				pddContext = context.getPddContext();
 				msgDiag.setPddContext(pddContext,protocolFactory);
-				postOutResponseContext.setPddContext(pddContext);
+				if(postOutResponseContext!=null){
+					postOutResponseContext.setPddContext(pddContext);
+				}
 			}
 
 			boolean saxParseException = Utilities.existsInnerException(e, "org.xml.sax.SAXParseException");

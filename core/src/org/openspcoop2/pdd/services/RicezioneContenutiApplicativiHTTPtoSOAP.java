@@ -397,7 +397,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 				pddContext = context.getPddContext();
 				msgDiag.setPddContext(pddContext,protocolFactory);
-				postOutResponseContext.setPddContext(pddContext);
+				if(postOutResponseContext!=null){
+					postOutResponseContext.setPddContext(pddContext);
+				}
 			}
 			
 			// La risposta dovra' essere un msg di errore applicativo (non SOAPFault)
