@@ -1,3 +1,15 @@
+2015-04-20  Andrea Poli <apoli@link.it>
+
+	Tabella connettori_properties, aggiunto vincolo di univocita' sul nome.
+	+ -- unique constraints
+	+	CONSTRAINT unique_connettori_properties_1 UNIQUE (nome_connettore),
+
+	Modificato nome dell'indice
+	-CREATE INDEX INDEX_CONNETTORI_PROP ON connettori_properties (nome_connettore);
+	+CREATE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
+
+	Non e' stata creata una patch per questa modifica.
+
 2015-04-09  Andrea Poli <apoli@link.it>
 
 	Aggiunte informazioni sulla cache per l'accesso alla configurazione e l'accesso ai dati di autorizzazione

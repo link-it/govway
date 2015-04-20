@@ -67,11 +67,13 @@ CREATE TABLE connettori_properties
 	path VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_connettori_properties_1 UNIQUE (nome_connettore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_connettori_properties PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX INDEX_CONNETTORI_PROP ON connettori_properties (nome_connettore);
+CREATE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
 
 

@@ -269,9 +269,9 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="connettori_properties">
-                        <linkit:sql-table-index name="INDEX_CONNETTORI_PROP">
-                            <linkit:sql-table-index-field name="nome_connettore"/>
-                        </linkit:sql-table-index>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="nome_connettore"/>
+                        </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

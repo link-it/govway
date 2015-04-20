@@ -97,12 +97,12 @@ CREATE TABLE connettori_properties
 	path VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_connettori_properties_1 UNIQUE (nome_connettore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_connettori_properties PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX INDEX_CONNETTORI_PROP ON connettori_properties (nome_connettore);
 CREATE TRIGGER trg_connettori_properties
 BEFORE
 insert on connettori_properties

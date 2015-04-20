@@ -67,11 +67,13 @@ CREATE TABLE connettori_properties
 	path VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT unique_connettori_properties_1 UNIQUE (nome_connettore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_connettori_properties PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_CONNETTORI_PROP ON connettori_properties (nome_connettore);
+CREATE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
 
 
