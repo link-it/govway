@@ -560,6 +560,9 @@ public class MsgDiagnostico {
 		return getLivello(this.prefixMsgPersonalizzati, keyLivelloPersonalizzato);
 	}
 	public int getLivello(String prefix,String keyLivelloPersonalizzato){
+		if(this.msgDiagPropertiesReader==null){
+			return -1;
+		}
 		Integer livello = this.msgDiagPropertiesReader.getLivello(prefix,keyLivelloPersonalizzato);
 		if(livello!=null){
 			return livello;
@@ -572,6 +575,9 @@ public class MsgDiagnostico {
 		return getCodice(this.prefixMsgPersonalizzati, keyCodicePersonalizzato);
 	}
 	public String getCodice(String prefix,String keyCodicePersonalizzato){
+		if(this.msgDiagPropertiesReader==null){
+			return "PropertiesReader dei Messaggi Diagnostici non inizializzato";
+		}
 		return this.msgDiagPropertiesReader.getCodice(prefix,keyCodicePersonalizzato);
 	}
 	
@@ -588,6 +594,9 @@ public class MsgDiagnostico {
 		return this.getMessaggio(prefix, keyMsgPersonalizzato, true);
 	}
 	private String getMessaggio(String prefix,String keyMsgPersonalizzato,boolean replaceKeywords){
+		if(this.msgDiagPropertiesReader==null){
+			return "PropertiesReader dei Messaggi Diagnostici non inizializzato";
+		}
 		String msgTmp = this.msgDiagPropertiesReader.getMessaggio(prefix,keyMsgPersonalizzato);
 		if(msgTmp==null){
 			msgTmp = "Messaggio diagnostico ["+prefix+keyMsgPersonalizzato+"] non definito nella configurazione della porta di dominio??";
