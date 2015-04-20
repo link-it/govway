@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.RicezioneBusteSOAP;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -83,7 +82,7 @@ public class RicezioneBusteSOAPConnector extends HttpServlet {
 		try{
 			httpIn = new HttpServletConnectorInMessage(req, ID_SERVICE, ID_MODULO);
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
+			ConnectorUtils.getErrorLog().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 		
@@ -96,14 +95,14 @@ public class RicezioneBusteSOAPConnector extends HttpServlet {
 		try{
 			httpOut = new HttpServletConnectorOutMessage(protocolFactory,res);
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
+			ConnectorUtils.getErrorLog().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 			
 		try{
 			soapConnector.process(httpIn, httpOut);
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("SoapConnector.process error: "+e.getMessage(),e);
+			ConnectorUtils.getErrorLog().error("SoapConnector.process error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 		
@@ -168,7 +167,7 @@ public class RicezioneBusteSOAPConnector extends HttpServlet {
 						
 						ConnectorUtils.generateErrorMessage(ID_SERVICE,method,req,res, "Generazione WSDL non riuscita", false, true);
 						
-						OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Generazione WSDL PA non riuscita",e);	
+						ConnectorUtils.getErrorLog().error("Generazione WSDL PA non riuscita",e);	
 					}finally{
 						try{
 							res.getOutputStream().flush();

@@ -48,6 +48,14 @@ import org.openspcoop2.utils.resources.MapReader;
  */
 public class ConnectorUtils {
 
+	public static Logger getErrorLog(){
+		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		if(log == null){
+			log = Logger.getLogger(ConnectorUtils.class);
+		}
+		return log;
+	}
+	
 	public static String getMessageHttpMethodNotSupported(MethodType method){
 		return ConnectorCostanti.MESSAGE_METHOD_HTTP_NOT_SUPPORTED.replace(ConnectorCostanti.KEYWORD_METHOD_HTTP, method.name());
 	}

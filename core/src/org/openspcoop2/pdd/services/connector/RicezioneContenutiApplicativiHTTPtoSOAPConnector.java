@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiHTTPtoSOAP;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -68,7 +67,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector extends HttpServle
 		try{
 			httpIn = new HttpServletConnectorInMessage(req, ID_SERVICE, ID_MODULO);
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
+			ConnectorUtils.getErrorLog().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 		
@@ -81,14 +80,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector extends HttpServle
 		try{
 			httpOut = new HttpServletConnectorOutMessage(protocolFactory, res);
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
+			ConnectorUtils.getErrorLog().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 			
 		try{
 			httpToSoapConnector.process(httpIn, httpOut);
 		}catch(Exception e){
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("SoapConnector.process error: "+e.getMessage(),e);
+			ConnectorUtils.getErrorLog().error("SoapConnector.process error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 		
