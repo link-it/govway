@@ -767,6 +767,11 @@ public class MsgDiagnostico {
 	}
 	public void logPersonalizzato(String messaggio, int livelloLog, String codiceDiagnostico) {
 
+		if(this.msgDiagPropertiesReader==null){
+			logError("MsgDiagnostico.logPersonalizzato [Risorsa non inizializzata], messaggio originale: "+messaggio);
+			return;
+		}
+		
 		if(messaggio==null){
 			logError("MsgDiagnostico.logPersonalizzato error, messaggio non definito.");
 			return;
