@@ -7726,15 +7726,17 @@ public class OpenSPCoop2Properties {
 	 * @added Fabio Tronci (tronci@link.it) 06/06/08 
 	 */
 	private static String cluster_id = null;
-	public String getClusterId() {
+	public String getClusterId(boolean required) {
 		if(OpenSPCoop2Properties.cluster_id==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id");
-				if(name==null)
+				if(name==null && required)
 					throw new Exception("non definita");
-				name = name.trim();
-				OpenSPCoop2Properties.cluster_id = name;
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.cluster_id = name;
+				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id': "+e.getMessage());
 				OpenSPCoop2Properties.cluster_id = null;

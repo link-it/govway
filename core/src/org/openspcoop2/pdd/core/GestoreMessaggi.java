@@ -841,7 +841,7 @@ public class GestoreMessaggi  {
 			GestoreMessaggi.initPddContextSerializer(this.log,this.propertiesReader);
 		}
 
-		GestoreMessaggi.cluster_id = this.propertiesReader.getClusterId();
+		GestoreMessaggi.cluster_id = this.propertiesReader.getClusterId(false);
 
 		this.pddContext = pddContext;
 		try{

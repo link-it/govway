@@ -70,7 +70,7 @@ public class ModuloAlternativoProducer implements IProducer {
 			initLogger();
 			initDBManager();
 			this.attesa_producer = this.propertiesReader.getAttesaProducer();
-			this.cluster_id = this.oSPCpropertiesReader.getClusterId();
+			this.cluster_id = this.oSPCpropertiesReader.getClusterId(true);
 		}catch (Exception e) {
 			this.log.error(this.ID_MODULO+ " Errore in fase di inizializzazione " + e);
 		}
