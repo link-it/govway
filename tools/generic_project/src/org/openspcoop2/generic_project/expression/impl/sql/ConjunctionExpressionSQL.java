@@ -47,7 +47,7 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 		this.sqlFieldConverter = sqlFieldConverter;
 	}
 
-	public String toSql_engine(SQLMode mode,List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
+	public String toSql_engine(SQLMode mode,ISQLQueryObject sqlQueryObject, List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
 		StringBuffer bf = new StringBuffer();
 		if(isNot()){
 			bf.append("( NOT ");
@@ -63,16 +63,41 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 					bf.append(" OR ");
 			}
 			if(exp instanceof ISQLExpression){
-				switch (mode) {
-				case STANDARD:
-					bf.append(((ISQLExpression)exp).toSql());
-					break;
-				case PREPARED_STATEMENT:
-					bf.append(((ISQLExpression)exp).toSqlPreparedStatement(oggettiPreparedStatement));
-					break;
-				case JPA:
-					bf.append(((ISQLExpression)exp).toSqlJPA(oggettiJPA));
-					break;
+				if(sqlQueryObject!=null){
+					ISQLQueryObject sqlQ = null;
+					try{
+						sqlQ = sqlQueryObject.newSQLQueryObject();
+					
+						switch (mode) {
+						case STANDARD:
+							((ISQLExpression)exp).toSql(sqlQ);
+							bf.append(sqlQ.createSQLConditions());
+							break;
+						case PREPARED_STATEMENT:
+							((ISQLExpression)exp).toSqlPreparedStatement(sqlQ,oggettiPreparedStatement);
+							bf.append(sqlQ.createSQLConditions());
+							break;
+						case JPA:
+							((ISQLExpression)exp).toSqlJPA(sqlQ,oggettiJPA);
+							bf.append(sqlQ.createSQLConditions());
+							break;
+						}
+					}catch(Exception e){
+						throw new ExpressionException("Expression["+index+"] (type:"+exp.getClass().getName()+")  sqlQueryObject error: "+e.getMessage(),e);
+					}
+				}
+				else{
+					switch (mode) {
+					case STANDARD:
+						bf.append(((ISQLExpression)exp).toSql());
+						break;
+					case PREPARED_STATEMENT:
+						bf.append(((ISQLExpression)exp).toSqlPreparedStatement(oggettiPreparedStatement));
+						break;
+					case JPA:
+						bf.append(((ISQLExpression)exp).toSqlJPA(oggettiJPA));
+						break;
+					}
 				}
 			}else{
 				throw new ExpressionException("Expression["+index+"] (type:"+exp.getClass().getName()+") is not as cast with "+ISQLExpression.class.getName());
@@ -88,7 +113,7 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 	
 	public void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
 		try{
-			String s = toSql_engine(mode, oggettiPreparedStatement, oggettiJPA);
+			String s = toSql_engine(mode, sqlQueryObject, oggettiPreparedStatement, oggettiJPA);
 			s = s.substring(1,s.length()-2);
 			sqlQueryObject.addWhereCondition(s);
 		}catch(Exception e){
@@ -98,19 +123,19 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 	
 	@Override
 	public String toSql() throws ExpressionException {
-		return toSql_engine(SQLMode.STANDARD, null, null);
+		return toSql_engine(SQLMode.STANDARD, null, null, null);
 	}
 
 	@Override
 	public String toSqlPreparedStatement(List<Object> oggetti)
 			throws ExpressionException {
-		return toSql_engine(SQLMode.PREPARED_STATEMENT, oggetti, null);
+		return toSql_engine(SQLMode.PREPARED_STATEMENT, null, oggetti, null);
 	}
 
 	@Override
 	public String toSqlJPA(Hashtable<String, Object> oggetti)
 			throws ExpressionException {
-		return toSql_engine(SQLMode.JPA, null, oggetti);
+		return toSql_engine(SQLMode.JPA, null, null, oggetti);
 	}
 	
 	@Override

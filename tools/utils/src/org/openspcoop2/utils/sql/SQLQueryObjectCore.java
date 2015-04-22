@@ -158,8 +158,12 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 					}
 					if(!exists){
 						String orderField = normalizeField(order);
-						if(this.isFieldNameForFunction(orderField)==false){
-							throw new SQLQueryObjectException("La colonna "+order+" utilizzata nella condizione di ORDER BY deve apparire anche in una condizione di GROUP BY");
+						try{
+							if(this.isFieldNameForFunction(orderField)==false){
+								throw new SQLQueryObjectException("La colonna "+order+" utilizzata nella condizione di ORDER BY deve apparire anche in una condizione di GROUP BY");
+							}
+						}catch(SQLQueryObjectException sqlObject){
+							throw new SQLQueryObjectException("La colonna "+order+" utilizzata nella condizione di ORDER BY deve apparire anche in una condizione di GROUP BY",sqlObject);
 						}
 					}
 				}
@@ -833,7 +837,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			throw new SQLQueryObjectException("Nessun field impostato");
 		}
 		if(this.fieldNameIsFunction.containsKey(fieldName)==false){
-			throw new SQLQueryObjectException("Field non presente (se durante la definizione del field e' stato usato un 'alias' utilizzarlo come parametro di questo metodo)");
+			throw new SQLQueryObjectException("Field ["+fieldName+"] non presente (se durante la definizione del field e' stato usato un 'alias' utilizzarlo come parametro di questo metodo)");
 		}
 		return this.fieldNameIsFunction.get(fieldName);
 	}

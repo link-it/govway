@@ -82,7 +82,7 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  */
 public class ClientTest {
 
-	private static String tipoDatabase = "postgresql";
+	private static String tipoDatabase = "oracle";
 	
 	/**
 	 * @param args
@@ -92,8 +92,8 @@ public class ClientTest {
 		
 		/* TEST Funzionalita' non dipendenti dal tipo di gestione del SQL */
 		
-//		typeFormatter();
-//		
+		typeFormatter();
+		
 		
 		
 		/* TEST Funzionalita' dipendenti dal tipo di gestione del SQL */
@@ -117,14 +117,37 @@ public class ClientTest {
 			
 			ClientTest.testAuthor();
 			
-//			ClientTest.testBook();
+			ClientTest.testBook();
 			
-//			ClientTest.testFruitore(testType);
+			ClientTest.testFruitore(testType);
 		}
 		
 	}
 
 	private static TestType mode = TestType.TO_STRING; 
+	
+	private static void cleanManuallyFieldAdd(IExpression expr){
+		if(expr instanceof ExpressionSQL){
+			List<Object> list = ((ExpressionSQL)expr).getFieldsManuallyAdd();
+			List<Object> newList = new ArrayList<Object>();
+			for (Object object : list) {
+				newList.add(object);
+			}
+			while (newList.size()>0){
+				((ExpressionSQL)expr).removeFieldManuallyAdd(newList.remove(0));
+			}
+		}
+		else if(expr instanceof PaginatedExpressionSQL){
+			List<Object> list = ((PaginatedExpressionSQL)expr).getFieldsManuallyAdd();
+			List<Object> newList = new ArrayList<Object>();
+			for (Object object : list) {
+				newList.add(object);
+			}
+			while (newList.size()>0){
+				((PaginatedExpressionSQL)expr).removeFieldManuallyAdd(newList.remove(0));
+			}
+		}
+	}
 	
 	public static ExpressionImpl newExpressionImplForAuthor() throws ExpressionException{
 		return ClientTest.newExpressionImpl(new AuthorSQLFieldConverter());
@@ -148,6 +171,7 @@ public class ClientTest {
 //					expr.limit(-1);
 //					expr.offset(-1);
 //				}catch(Exception e){}
+				cleanManuallyFieldAdd(expr);
 				return new ExpressionImpl((ExpressionImpl)expr);
 			}
 		case SQL_STANDARD:
@@ -157,6 +181,7 @@ public class ClientTest {
 				return new ExpressionSQL(sqlFieldConverter);
 			else{
 				if(expr instanceof IPaginatedExpression){
+					cleanManuallyFieldAdd(expr);
 					return new ExpressionSQL((PaginatedExpressionSQL)expr);		
 				}else{
 					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 	
@@ -169,6 +194,7 @@ public class ClientTest {
 				return new JDBCExpression(sqlFieldConverter);
 			else{
 				if(expr instanceof IPaginatedExpression){
+					cleanManuallyFieldAdd(expr);
 					return new JDBCExpression((JDBCPaginatedExpression)expr);		
 				}else{
 					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 	
@@ -181,6 +207,7 @@ public class ClientTest {
 				return new JPAExpression(sqlFieldConverter);
 			else{
 				if(expr instanceof IPaginatedExpression){
+					cleanManuallyFieldAdd(expr);
 					return new JPAExpression((JPAPaginatedExpression)expr);		
 				}else{
 					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 		
@@ -207,29 +234,37 @@ public class ClientTest {
 		case TO_STRING:
 			if(expr==null)
 				return new PaginatedExpressionImpl();
-			else
+			else{
+				cleanManuallyFieldAdd(expr);
 				return new  PaginatedExpressionImpl((ExpressionImpl)expr);
+			}
 		case SQL_STANDARD:
 		case SQL_STANDARD_QUERY_OBJECT:
 		case SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION:
 			if(expr==null)
 				return new PaginatedExpressionSQL(sqlFieldConverter);
-			else
+			else{
+				cleanManuallyFieldAdd(expr);
 				return new PaginatedExpressionSQL((ExpressionSQL)expr);
+			}
 		case PREPARED_STATEMENT:
 		case PREPARED_STATEMENT_QUERY_OBJECT:
 		case PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION:
 			if(expr==null)
 				return new JDBCPaginatedExpression(sqlFieldConverter);
-			else
+			else{
+				cleanManuallyFieldAdd(expr);
 				return new JDBCPaginatedExpression((JDBCExpression)expr);
+			}
 		case JPA:
 		case JPA_QUERY_OBJECT:
 		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
 			if(expr==null)
 				return new JPAPaginatedExpression(sqlFieldConverter);
-			else
+			else{
+				cleanManuallyFieldAdd(expr);
 				return new JPAPaginatedExpression((JPAExpression)expr);
+			}
 		}
 		throw new ExpressionException("Not implemented");
 	}
@@ -475,61 +510,61 @@ public class ClientTest {
 		author.setFirstBookReleaseDate(Calendar.getInstance());
 		author.setLastBookReleaseDate(new Timestamp(System.currentTimeMillis()));
 		
-//		ClientTest.constructorExpression(author);
-//		
-//		ClientTest.empty(author);
-//		
-//		ClientTest.mixed(author);
-//		
-//		ClientTest.equals(author);
-//		
-//		ClientTest.notEquals(author);
-//		
-//		ClientTest.greaterEquals(author);
-//		
-//		ClientTest.greaterThan(author);
-//		
-//		ClientTest.lessEquals(author);
-//		
-//		ClientTest.lessThan(author);
-//		
-//		ClientTest.isNull(author);
-//		
-//		ClientTest.isNotNull(author);
-//		
-//		ClientTest.isEmpty(author);
-//		
-//		ClientTest.isNotEmpty(author);
-//		
-//		ClientTest.between(author);
+		ClientTest.constructorExpression(author);
+		
+		ClientTest.empty(author);
+		
+		ClientTest.mixed(author);
+		
+		ClientTest.equals(author);
+		
+		ClientTest.notEquals(author);
+		
+		ClientTest.greaterEquals(author);
+		
+		ClientTest.greaterThan(author);
+		
+		ClientTest.lessEquals(author);
+		
+		ClientTest.lessThan(author);
+		
+		ClientTest.isNull(author);
+		
+		ClientTest.isNotNull(author);
+		
+		ClientTest.isEmpty(author);
+		
+		ClientTest.isNotEmpty(author);
+		
+		ClientTest.between(author);
 		
 		ClientTest.like(author);
 		
 		ClientTest.ilike(author);
 		
-//		ClientTest.in(author);
-//		
-//		ClientTest.and(author);
-//		
-//		ClientTest.or(author);
-//		
-//		ClientTest.not(author);
-//		
-//		ClientTest.order(author);
-//		
-//		switch (ClientTest.mode) {
-//		case SQL_STANDARD_QUERY_OBJECT:
-//		case PREPARED_STATEMENT_QUERY_OBJECT:
-//		case JPA_QUERY_OBJECT:
-//		case SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION:
-//		case PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION:
-//		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
-//			ClientTest.limit(author,false);
-//			break;
-//		default:
-//			ClientTest.limit(author, true);
-//			break;
-//		}
+		ClientTest.in(author);
+		
+		ClientTest.and(author);
+		
+		ClientTest.or(author);
+		
+		ClientTest.not(author);
+		
+		ClientTest.order(author);
+		
+		switch (ClientTest.mode) {
+		case SQL_STANDARD_QUERY_OBJECT:
+		case PREPARED_STATEMENT_QUERY_OBJECT:
+		case JPA_QUERY_OBJECT:
+		case SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION:
+		case PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION:
+		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
+			ClientTest.limit(author,false);
+			break;
+		default:
+			ClientTest.limit(author, true);
+			break;
+		}
 		
 	}
 	
@@ -566,15 +601,30 @@ public class ClientTest {
 		System.out.println("\n **************** constructorExpression ************************* ");
 		
 		IExpression expr = ClientTest.newExpressionImplForAuthor();
-		expr = expr.or().equals(Author.model().NAME, "Jack").sortOrder(SortOrder.ASC).addOrder(Author.model().DATE_OF_BIRTH).addGroupBy(Author.model().NAME);
+		expr = expr.and().equals(Author.model().NAME, "Jack").
+				isNotNull(Author.model().DATE_OF_BIRTH).
+				sortOrder(SortOrder.ASC).
+				addOrder(Author.model().DATE_OF_BIRTH).addOrder(Author.model().NAME).
+				addGroupBy(Author.model().DATE_OF_BIRTH).addGroupBy(Author.model().NAME);
 		System.out.println("- test 1 IExpression: "+ClientTest.toString(expr));
+		
+		IPaginatedExpression pagExpr = ClientTest.newPaginatedExpressionImplForAuthor();
+		pagExpr = (IPaginatedExpression) pagExpr.and().equals(Author.model().NAME, "Jack").
+				isNotNull(Author.model().DATE_OF_BIRTH).
+				sortOrder(SortOrder.ASC).
+				addOrder(Author.model().DATE_OF_BIRTH).addOrder(Author.model().NAME).
+				addGroupBy(Author.model().DATE_OF_BIRTH).addGroupBy(Author.model().NAME);
+		pagExpr.limit(10).offset(2);
+		System.out.println("- test 1b IExpression: "+ClientTest.toString(pagExpr));
 		
 		IPaginatedExpression paginatedTransformed = ClientTest.newPaginatedExpressionImpl(expr);
 		paginatedTransformed.limit(10).offset(2);
 		System.out.println("- test 1 trasformato in IPaginatedExpression: "+ClientTest.toString(paginatedTransformed));
 		
 		IPaginatedExpression paginatedExpr = ClientTest.newPaginatedExpressionImplForAuthor();
-		paginatedExpr = (IPaginatedExpression) paginatedExpr.or().equals(Author.model().NAME, "Jack").sortOrder(SortOrder.ASC).addOrder(Author.model().DATE_OF_BIRTH).addGroupBy(Author.model().NAME);
+		paginatedExpr = (IPaginatedExpression) paginatedExpr.or().equals(Author.model().NAME, "Jack").sortOrder(SortOrder.ASC).
+				addOrder(Author.model().DATE_OF_BIRTH).addOrder(Author.model().NAME).
+				addGroupBy(Author.model().DATE_OF_BIRTH).addGroupBy(Author.model().NAME);
 		paginatedExpr.limit(20).offset(3);
 		System.out.println("- test 2 IPaginatedExpression: "+ClientTest.toString(paginatedExpr));
 		
@@ -1435,6 +1485,7 @@ public class ClientTest {
 		groupByExpr.addOrder(Book.model().ENUM_STRING);
 		groupByExpr.addGroupBy(Book.model().AUTHOR);
 		groupByExpr.addGroupBy(Book.model().TITLE);
+		groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 		if(paginated){
 			((IPaginatedExpression)groupByExpr).limit(10).offset(2);
 		}
@@ -1455,6 +1506,7 @@ public class ClientTest {
 		groupByExpr.addGroupBy(Book.model().AUTHOR);
 		groupByExpr.addGroupBy(Book.model().TITLE);
 		groupByExpr.addGroupBy(Book.model().VERSION.NUMBER);
+		groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 		if(paginated){
 			((IPaginatedExpression)groupByExpr).limit(10).offset(2);
 		}
@@ -1476,6 +1528,7 @@ public class ClientTest {
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			FunctionField ffSum = new FunctionField(Book.model().VERSION.NUMBER,Function.SUM,"sumNumber");
 			if(paginated){
 				((IPaginatedExpression)groupByExpr).limit(10).offset(2);
@@ -1495,6 +1548,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffSUMDate = new FunctionField(Book.model().VERSION.DATE,Function.SUM,"sumDate");
 			if(paginated){
@@ -1518,6 +1572,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffAvg = new FunctionField(Book.model().VERSION.NUMBER,Function.AVG,"avgNumber");
 			if(paginated){
@@ -1538,6 +1593,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffAVGDate = new FunctionField(Book.model().VERSION.DATE,Function.AVG,"avgDate");
 			if(paginated){
@@ -1560,6 +1616,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffMax = new FunctionField(Book.model().VERSION.NUMBER,Function.MAX,"maxNumber");
 			if(paginated){
@@ -1580,6 +1637,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffMAXDate = new FunctionField(Book.model().VERSION.DATE,Function.MAX,"maxDate");
 			if(paginated){
@@ -1602,6 +1660,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffMin = new FunctionField(Book.model().VERSION.NUMBER,Function.MIN,"minNumber");
 			if(paginated){
@@ -1622,6 +1681,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffMINDate = new FunctionField(Book.model().VERSION.DATE,Function.MIN,"minDate");
 			if(paginated){
@@ -1644,6 +1704,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			
 			if(paginated){
@@ -1688,6 +1749,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffMinFunctionValue = new FunctionField("ValoreCustom",String.class,Function.MIN,"minCustom");
 			if(paginated){
@@ -1710,6 +1772,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffMinIFieldsWithOperator = new FunctionField(Function.MIN,"minCustom","-",Book.model().TITLE,Book.model().AUTHOR);
 			if(paginated){
@@ -1734,6 +1797,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffCustom = new FunctionField(Book.model().VERSION.NUMBER,"CUSTOM_FUNCTION(",")","custom");
 			if(paginated){
@@ -1756,6 +1820,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffCustomFunctionValue = new FunctionField("ValoreCustom",String.class,"CUSTOM_FUNCTION(",")","custom");
 			if(paginated){
@@ -1778,6 +1843,7 @@ public class ClientTest {
 			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
 			groupByExpr.sortOrder(SortOrder.ASC);
 			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			groupByExpr.addGroupBy(Book.model().AUTHOR);
 			FunctionField ffCustomWithOperator = new FunctionField("CUSTOM_FUNCTION(",")","custom","-",Book.model().TITLE,Book.model().AUTHOR);
 			if(paginated){
@@ -2121,6 +2187,11 @@ public class ClientTest {
 		expr = ClientTest.newExpressionImplForAuthor().like(Author.model().NAME,"Dell'Asilo_peresempio%piu'complesso"); // test per escape
 		System.out.println("- test 6 (escape complesso): "+ClientTest.toString(expr));
 		
+		expr = ClientTest.newExpressionImplForAuthor().
+				like(Author.model().NAME,"Dell'Asilo_peresempio%piu'complesso"); // test per escape
+		expr.and().equals(Author.model().NAME,"Altro");
+		System.out.println("- test 7 (escape complesso con and): "+ClientTest.toString(expr));
+		
 	}
 	
 	public static void ilike(Author author) throws ExpressionNotImplementedException, ExpressionException{
@@ -2145,6 +2216,11 @@ public class ClientTest {
 		
 		expr = ClientTest.newExpressionImplForAuthor().ilike(Author.model().NAME,"Dell'Asilo_peresempio%piu'complesso"); // test per escape
 		System.out.println("- test 6 (escape complesso): "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().
+				ilike(Author.model().NAME,"Dell'Asilo_peresempio%piu'complesso"); // test per escape
+		expr.and().equals(Author.model().NAME,"Altro");
+		System.out.println("- test 7 (escape complesso con and): "+ClientTest.toString(expr));
 		
 	}
 	

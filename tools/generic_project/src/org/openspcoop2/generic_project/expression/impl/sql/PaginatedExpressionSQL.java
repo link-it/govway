@@ -91,6 +91,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 		super(expression);
 		this.sqlFieldConverter = expression.getSqlFieldConverter();
 		this.fieldsManuallyAdd = expression.getFieldsManuallyAdd();
+		//this.checkFieldManuallyAdd = expression.checkFieldManuallyAdd;
 		if(this.sqlFieldConverter!=null){
 			this.databaseType = this.sqlFieldConverter.getDatabaseType();
 		}
