@@ -119,6 +119,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.TransportResponseContext;
 import org.w3c.dom.Node;
@@ -1643,8 +1644,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			try {
 				msgDiag.mediumDebug("Aggiornamento del messaggio");
 				// NOTA la versione SOAP capirla da consegnaMessage, la risposta puo' essere null
+				NotifierInputStreamParams nParams = null;
+				if(invokerNonSupportato==false){
+					nParams = connectorSender.getNotifierInputStreamParamsResponse();
+				}
 				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(consegnaMessage.getVersioneSoap(), responseMessage, 
-						bustaRichiesta, connectorSender.getNotifierInputStreamParamsResponse(),
+						bustaRichiesta, nParams,
 						consegnaMessage.getTransportRequestContext(),transportResponseContext);
 			} catch (Exception e) {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Aggiornamento messaggio fallito, "+e.getMessage() );

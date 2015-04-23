@@ -726,16 +726,29 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 			
 			SOAPElement eccezioneDetailApplicativo = msg.cleanXSITypes(erroreApplicativo);
 			
-			QName nameDetail = new QName("detail");
+			QName nameDetail = null;
+			if(msg.getVersioneSoap()!=null && SOAPVersion.SOAP12.equals(msg.getVersioneSoap())){
+				nameDetail = new QName(org.openspcoop2.message.Costanti.SOAP12_ENVELOPE_NAMESPACE,"Detail");
+			}
+			else{
+				nameDetail = new QName("detail");
+			}
 			SOAPElement detailsFaultOriginale = null;
 			Iterator<?> itDetailsOriginali = faultOriginale.getChildElements(nameDetail);
 			if(itDetailsOriginali!=null && itDetailsOriginali.hasNext()){
 				detailsFaultOriginale = (SOAPElement) itDetailsOriginali.next();
 			}
 					
-			String faultActor = faultOriginale.getFaultActor();
+			String faultActor = faultOriginale.getFaultActor(); // in soap1.2 e' il role
 			Name faultCode = faultOriginale.getFaultCodeAsName();
+			Iterator<?> faultSubCode = null;
+			String faultNode = null;
+			if(msg.getVersioneSoap()!=null && SOAPVersion.SOAP12.equals(msg.getVersioneSoap())){
+				faultSubCode = faultOriginale.getFaultSubcodes();
+				faultNode = faultOriginale.getFaultNode();
+			}
 			String faultString = faultOriginale.getFaultString();
+			
 			
 			msg.getSOAPBody().removeChild(msg.getSOAPBody().getFault());
 			
@@ -746,6 +759,15 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 				faultPulito.setFaultActor(faultActor);
 			if(faultCode!=null)
 				faultPulito.setFaultCode(faultCode);
+			if(faultSubCode!=null){
+				while (faultSubCode.hasNext()) {
+					QName faultSubCodeQname = (QName) faultSubCode.next();
+					faultPulito.appendFaultSubcode(faultSubCodeQname);
+				}
+			}
+			if(faultNode!=null){
+				faultPulito.setFaultNode(faultNode);
+			}
 			if(faultString!=null)
 				faultPulito.setFaultString(faultString);
 			Detail detailFaultPulito = faultPulito.addDetail();

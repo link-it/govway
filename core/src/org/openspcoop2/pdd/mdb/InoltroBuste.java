@@ -135,6 +135,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.TransportResponseContext;
 
@@ -1872,8 +1873,12 @@ public class InoltroBuste extends GenericLib{
 			try {
 				msgDiag.mediumDebug("Aggiornamento del messaggio");
 				// NOTA la versione SOAP capirla da requestMessage, la risposta puo' essere null
+				NotifierInputStreamParams nParams = null;
+				if(invokerNonSupportato==false){
+					nParams = connectorSender.getNotifierInputStreamParamsResponse();
+				}
 				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(requestMessage.getVersioneSoap(), responseMessage, 
-						bustaRichiesta, connectorSender.getNotifierInputStreamParamsResponse(),
+						bustaRichiesta, nParams,
 						requestMessage.getTransportRequestContext(),transportResponseContext);
 			} catch (Exception e) {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Aggiornamento messaggio fallito, "+e.getMessage() );
