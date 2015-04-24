@@ -1,3 +1,9 @@
+2015-04-24  Andrea Poli <apoli@link.it>
+
+	Aggiunte colonna 'ora_registrazione' alle tabelle 'ID_MESSAGGIO_RELATIVO', 'ID_MESSAGGIO_PRG' e 'ID_MESSAGGIO_RELATIVO_PRG'
+        che permettono la gestione dei progressivi interni agli identificativi dei protocolli.
+	La colonna puo' essere utilizzate per attivita' di storicizzazione dell'informazione.
+
 2015-04-20  Andrea Poli <apoli@link.it>
 
 	Tabella connettori_properties, aggiunto vincolo di univocita' sul nome.
