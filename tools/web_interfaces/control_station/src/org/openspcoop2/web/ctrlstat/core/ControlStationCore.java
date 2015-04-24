@@ -1293,7 +1293,7 @@ public class ControlStationCore {
 	private synchronized void initDriverTracciamento(String nomeDs, boolean forceChange) throws Exception {
 		if (this.driverTracciamento == null || forceChange) {
 			try {
-				if (nomeDs == null || nomeDs.equals("")) {
+				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals("-")) {
 					if(this.tracce_sameDBWebUI){
 						this.driverTracciamento = new DriverTracciamento(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log);
 					}
@@ -1345,7 +1345,7 @@ public class ControlStationCore {
 	private synchronized void initDriverMSGDiagnostici(String nomeDs, boolean forceChange) throws Exception {
 		if (this.driverMSGDiagnostici == null || forceChange) {
 			try {
-				if (nomeDs == null || nomeDs.equals("")) {
+				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals("-")) {
 					if(this.msgDiagnostici_sameDBWebUI){
 						this.driverMSGDiagnostici = new DriverMsgDiagnostici(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log); 
 					}

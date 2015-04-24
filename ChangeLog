@@ -1,5 +1,12 @@
 2015-04-24  Andrea Poli <apoli@link.it>
 
+	 * [PddConsole]
+        Risolto Bug #331
+	La visualizzazione del dettaglio del diagnostico non veniva presentata correttamente dalla Console
+	se il testo del messaggio diagnostico conteneva del codice html
+
+2015-04-24  Andrea Poli <apoli@link.it>
+
 	* [PddConsole]
         Risolto Bug #328
 	- Risolto problema in cui veniva ignorato il filtro per ID Messaggio durante 

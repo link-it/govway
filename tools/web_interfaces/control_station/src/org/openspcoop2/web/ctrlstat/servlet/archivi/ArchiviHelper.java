@@ -2840,7 +2840,11 @@ public class ArchiviHelper extends ConsoleHelper {
 
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_MESSAGGIO);
-		de.setValue(msgDiag.getMessaggio());
+		if(msgDiag.getMessaggio()!=null && !"".equals(msgDiag.getMessaggio())){
+			de.setValue(org.apache.commons.lang.StringEscapeUtils.escapeXml(msgDiag.getMessaggio()));
+		}else{
+			de.setValue(msgDiag.getMessaggio());
+		}
 		de.setType(DataElementType.TEXT);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_MESSAGGIO);
 		dati.addElement(de);

@@ -767,6 +767,7 @@
         <action path="/diagnosticaTesto" type="org.openspcoop2.web.ctrlstat.servlet.archivi.DiagnosticaTesto" 
         	scope="request" validate="true">
             <forward name="diagnosticaTesto" path="/jsplib/addElement.jsp"/>
+            <forward name="diagnosticaTestoError" path="/jsplib/info.jsp"/>
             <forward name="diagnosticaError" path="/jsplib/info.jsp"/>
         </action>
 
@@ -789,6 +790,7 @@
         <action path="/tracciamentoTesto" type="org.openspcoop2.web.ctrlstat.servlet.archivi.TracciamentoTesto" 
         	scope="request" validate="true">
             <forward name="tracciamentoTesto" path="/jsplib/addElement.jsp"/>
+            <forward name="tracciamentoTestoError" path="/jsplib/info.jsp"/>
             <forward name="tracciamentoError" path="/jsplib/info.jsp"/>
         </action>
         
