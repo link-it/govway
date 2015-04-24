@@ -62,7 +62,7 @@ if (search == null)
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
 <link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
-<script type="text/javascript" src="images/webapps.js"></script>
+<script type="text/javascript" src="js/webapps.js"></script>
 
 
 <SCRIPT>

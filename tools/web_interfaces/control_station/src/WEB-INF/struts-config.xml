@@ -1760,6 +1760,7 @@
             scope="request" validate="true">
             <forward name="auditingForm" path="/jsplib/addElement.jsp"/>
             <forward name="auditingOk" path="/jsplib/listElement.jsp"/>
+            <forward name="auditingCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="auditingError" path="/jsplib/info.jsp"/>
         </action>
         <action path="/auditingDel" type="org.openspcoop2.web.ctrlstat.servlet.audit.AuditingDel"

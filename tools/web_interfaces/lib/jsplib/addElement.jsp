@@ -46,7 +46,7 @@ PageData pd = (PageData) session.getAttribute(pdString);
 <title><%= gd.getTitle() %></title>
 <link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<script type="text/javascript" src="images/webapps.js"></script>
+<script type="text/javascript" src="js/webapps.js"></script>
 <!-- JQuery lib-->
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 <!--Funzioni di utilita -->

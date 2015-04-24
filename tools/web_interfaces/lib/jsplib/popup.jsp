@@ -44,7 +44,7 @@ PageData pd = (PageData) session.getAttribute(pdString);
 <html>
 <head>
 <link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
-<script type="text/javascript" src="images/webapps.js"></script>
+<script type="text/javascript" src="js/webapps.js"></script>
 
 <script LANGUAGE = JavaScript1.2>
 function exit() {

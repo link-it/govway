@@ -2214,6 +2214,9 @@ public class ArchiviHelper extends ConsoleHelper {
 			// String servizio = this.request.getParameter("servizio");
 			String nomeDs = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
 
+			String correlazioneApplicativa = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
+			String idMessaggio = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
+			
 			/*
 			 * // Campi obbligatori if (datainizio.equals("") ||
 			 * datafine.equals("")) { String tmpElenco = ""; if
@@ -2240,6 +2243,14 @@ public class ArchiviHelper extends ConsoleHelper {
 			}
 
 			// Controlli sulle date
+			if ( (datainizio == null || "".equals(datainizio)) 
+					&&
+					(correlazioneApplicativa == null || "".equals(correlazioneApplicativa)) 
+					&&
+					(idMessaggio == null || "".equals(idMessaggio)) ) {
+				this.pd.setMessage("Deve essere indicato almeno uno dei seguenti criteri di ricerca: Intervallo Iniziale, ID Messaggio, ID Applicativo");
+				return false;
+			}
 			if (!"".equals(datainizio)) {
 				boolean dataInOk = true;
 				if (datainizio.length() != 10) {
@@ -3059,6 +3070,9 @@ public class ArchiviHelper extends ConsoleHelper {
 			String datainizio = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
 			String datafine = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
 			String nomeDs = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
+			
+			String correlazioneApplicativa = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
+			String idMessaggio = this.request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
 
 			// Campi obbligatori
 			/*
@@ -3106,6 +3120,14 @@ public class ArchiviHelper extends ConsoleHelper {
 			}
 
 			// Controlli sulle date
+			if ( (datainizio == null || "".equals(datainizio)) 
+					&&
+					(correlazioneApplicativa == null || "".equals(correlazioneApplicativa)) 
+					&&
+					(idMessaggio == null || "".equals(idMessaggio)) ) {
+				this.pd.setMessage("Deve essere indicato almeno uno dei seguenti criteri di ricerca: Intervallo Iniziale, ID Messaggio, ID Applicativo");
+				return false;
+			}
 			if (datainizio != null && !"".equals(datainizio)) {
 				boolean dataInOk = true;
 				if (datainizio.length() != 10) {

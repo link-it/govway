@@ -678,8 +678,8 @@ public class AuditHelper {
 			String datafine = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
 			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
 			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			//String id = request.getParameter("id");
-			//String oldid = request.getParameter("oldid");
+			String id = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
+			String oldid = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
 			//String utente = request.getParameter("utente");
 			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
 			//String contoggetto = request.getParameter("contoggetto");
@@ -729,6 +729,15 @@ public class AuditHelper {
 				return msg;
 			}
 
+			if ( (datainizio == null || "".equals(datainizio)) 
+					&&
+					(id == null || "".equals(id)) 
+					&&
+					(oldid == null || "".equals(oldid)) ) {
+				String msg = "Deve essere indicato almeno uno dei seguenti criteri di ricerca: Intervallo Iniziale, Identificativo, Id precedente alla modifica";
+				return msg;
+			}
+			
 			// Controlli sulle date
 			if (datainizio != null && !"".equals(datainizio)) {
 				boolean dataInOk = true;

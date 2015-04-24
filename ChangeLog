@@ -1,3 +1,16 @@
+2015-04-24  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+        Risolto Bug #328
+	- Risolto problema in cui veniva ignorato il filtro per ID Messaggio durante 
+	  l'esportazione xml dei messaggi diagnostici e delle tracce.
+	- Durante la ricerca dei diagnostici e delle tracce e' adesso obbligatorio selezionare almeno uno 
+	  dei seguenti criteri di ricerca: Intervallo Iniziale, ID Messaggio, ID Applicativo.
+	- Durante la visualizzazione dell'auditing e' adesso obbligatorio selezionare almeno uno 
+          dei seguenti criteri di ricerca: Intervallo Iniziale, Identificativo, Id precedente alla modifica
+	- Eliminato auto-focus per quanto concerne la selezione della data durante la ricerca 
+	  dei diagnostici, delle tracce e dell'auditing
+
 2015-04-23  Andrea Poli <apoli@link.it>
 
 	* [Pdd]

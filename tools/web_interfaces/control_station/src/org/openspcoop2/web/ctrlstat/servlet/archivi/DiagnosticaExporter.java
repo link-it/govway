@@ -209,6 +209,7 @@ public class DiagnosticaExporter extends HttpServlet {
 		if (protocollo == null || "".equals(protocollo))
 			protocollo = null;
 		String search = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_SEARCH);
+		String idMessaggio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
 
 		/*
 		 * String params = "&severita="+severita +"&idfunzione="+idfunzione
@@ -304,7 +305,11 @@ public class DiagnosticaExporter extends HttpServlet {
 
 		// CorrelazioneApplicativa
 		filter.setCorrelazioneApplicativa(correlazioneApplicativa);
-			
+		
+		// Id Messaggio
+		if(idMessaggio!=null && !"".equals(idMessaggio))
+			filter.setIdBustaRichiesta(idMessaggio);
+		
 		// protocollo
 		if(protocollo!=null && !"".equals(protocollo) && !"-".equals(protocollo)){
 			filter.setProtocollo(protocollo);

@@ -9,8 +9,10 @@ function white(str) {
 function focusText(form) {
   for (var i=0; i<form.elements.length; i++) {
     if ((form.elements[i].type == "text") || (form.elements[i].type == "password")) {
-      form.elements[i].focus();
-      break;
+	if(form.elements[i].name != "datainizio" && form.elements[i].name != "datafine"){
+	      form.elements[i].focus();
+	      break;
+	}
     }
   }
 }

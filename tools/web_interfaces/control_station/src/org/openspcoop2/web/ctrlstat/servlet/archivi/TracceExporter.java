@@ -199,6 +199,7 @@ public class TracceExporter extends HttpServlet {
 		String nome_azione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
 		String correlazioneApplicativa = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
 		String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+		String idMessaggio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
 
 		if (tipo_destinatario == null || "".equals(tipo_destinatario) || "-".equals(tipo_destinatario))
 			tipo_destinatario = null;
@@ -218,6 +219,8 @@ public class TracceExporter extends HttpServlet {
 			correlazioneApplicativa = null;
 		if (protocollo == null || "".equals(protocollo) || "-".equals(protocollo))
 			protocollo = null;
+		if (idMessaggio == null || "".equals(idMessaggio.trim()))
+			idMessaggio = null;
 
 		// Conversione Data
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd"); // SimpleDateFormat non e' thread-safe
@@ -348,6 +351,10 @@ public class TracceExporter extends HttpServlet {
 			filtro.setIdCorrelazioneApplicativaOrMatch(true);
 		}
 		
+		// Id Messaggio
+		if(idMessaggio!=null && !"".equals(idMessaggio))
+			filtro.setIdBusta(idMessaggio);
+		
 		if (protocollo != null){
 			filtro.setProtocollo(protocollo);
 		}
@@ -370,9 +377,9 @@ public class TracceExporter extends HttpServlet {
 			
 			for (Traccia traccia : listTracce) {
 				
-				String idMessaggio = traccia.getBusta().getID();
+				String idBusta = traccia.getBusta().getID();
 				String idPorta = traccia.getIdSoggetto().getCodicePorta();
-				String key = idMessaggio + "_" + idPorta;
+				String key = idBusta + "_" + idPorta;
 				ArrayList<Traccia> lista;
 				if (tracce.containsKey(key)) {
 					lista = tracce.remove(key);

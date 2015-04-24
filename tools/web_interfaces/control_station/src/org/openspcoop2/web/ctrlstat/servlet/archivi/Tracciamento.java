@@ -170,33 +170,34 @@ public final class Tracciamento extends Action {
 							ArchiviCostanti.TIPO_OPERAZIONE_TRACCIAMENTO);
 					
 				}
-	
-				// Controlli sui campi immessi
-				boolean isOk = archiviHelper.tracciamentoCheckData();
-				if (!isOk) {
-					
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
-							new Parameter(ArchiviCostanti.LABEL_TRACCIAMENTO,null));
-					
-					// preparo i campi
-					Vector<Object> dati = new Vector<Object>();
-					
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-					
-					archiviHelper.addTracciamentoToDati(dati, datasourceList, nomeDs, 
-							datainizio, datafine, protocolli, profcoll, tipiLabel, tipiServiziLabel, "0");
-	
-					pd.setDati(dati);
-	
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-					
-					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_TRACCIAMENTO, 
-							ArchiviCostanti.TIPO_OPERAZIONE_TRACCIAMENTO);
-				}
 				
 			}
+	
+			// Controlli sui campi immessi
+			boolean isOk = archiviHelper.tracciamentoCheckData();
+			if (!isOk) {
+				
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, 
+						new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
+						new Parameter(ArchiviCostanti.LABEL_TRACCIAMENTO,null));
+				
+				// preparo i campi
+				Vector<Object> dati = new Vector<Object>();
+				
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				
+				archiviHelper.addTracciamentoToDati(dati, datasourceList, nomeDs, 
+						datainizio, datafine, protocolli, profcoll, tipiLabel, tipiServiziLabel, "0");
+
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_TRACCIAMENTO, 
+						ArchiviCostanti.TIPO_OPERAZIONE_TRACCIAMENTO);
+			}
+				
 
 			// ritorno pagina a lista
 			boolean forceChange = false;

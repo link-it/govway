@@ -172,32 +172,32 @@ public final class Diagnostica extends Action {
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_DIAGNOSTICA, 
 							ArchiviCostanti.TIPO_OPERAZIONE_DIAGNOSTICA);
 				}
-	
-				// Controlli sui campi immessi
-				boolean isOk = archiviHelper.diagnosticaCheckData();
-				if (!isOk) {
-					
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
-							new Parameter(ArchiviCostanti.LABEL_DIAGNOSTICA,null));
-	
-					// preparo i campi
-					Vector<DataElement> dati = new Vector<DataElement>();
-	
-					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-					
-					archiviHelper.addDiagnosticaToDati(dati, datasourceList,nomeDs,
-							datainizio,datafine,severita,idfunzione,protocolli,tipiLabel,tipiServiziLabel,"0");
-					
-					pd.setDati(dati);
-	
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-					
-					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_DIAGNOSTICA, 
-							ArchiviCostanti.TIPO_OPERAZIONE_DIAGNOSTICA);
-				}
 				
+			}
+			
+			// Controlli sui campi immessi
+			boolean isOk = archiviHelper.diagnosticaCheckData();
+			if (!isOk) {
+				
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, 
+						new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
+						new Parameter(ArchiviCostanti.LABEL_DIAGNOSTICA,null));
+
+				// preparo i campi
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				
+				archiviHelper.addDiagnosticaToDati(dati, datasourceList,nomeDs,
+						datainizio,datafine,severita,idfunzione,protocolli,tipiLabel,tipiServiziLabel,"0");
+				
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_DIAGNOSTICA, 
+						ArchiviCostanti.TIPO_OPERAZIONE_DIAGNOSTICA);
 			}
 
 			// ritorno pagina a lista
