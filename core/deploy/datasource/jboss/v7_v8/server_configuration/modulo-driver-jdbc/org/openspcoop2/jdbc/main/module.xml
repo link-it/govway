@@ -4,5 +4,9 @@
   </resources>
   <dependencies>
     <module name="javax.api"/>
+    <!-- 
+      In caso di errore: java.lang.NoClassDefFoundError: javax/transaction/...
+      <module name="javax.transaction.api"/>
+    -->
   </dependencies>
 </module>

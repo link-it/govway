@@ -1,6 +1,14 @@
+2015-04-27  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+        Risolto Bug #333
+	Errore impostando i permessi degli utenti su pddConsole remota (Installazione con registro servizi non locale)
+	Scelto un utente a cui avremmo voluto assegnare tutti gli oggetti appartenenti all'utente 'amministratore',
+	la console andava in errore.
+
 2015-04-24  Andrea Poli <apoli@link.it>
 
-	 * [PddConsole]
+	* [PddConsole]
         Risolto Bug #331
 	La visualizzazione del dettaglio del diagnostico non veniva presentata correttamente dalla Console
 	se il testo del messaggio diagnostico conteneva del codice html

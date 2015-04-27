@@ -415,81 +415,95 @@ public final class UtentiChange extends Action {
 				List<Object> oggetti = new ArrayList<Object>();
 				List<Integer> tipoModifica = new ArrayList<Integer>();
 				if (singleSuServizi != null && !singleSuServizi.equals("")) {
-					// Recupero le pdd dell'utente
-					List<PdDControlStation> pdsLista = pddCore.pddList(nomesu, new Search());
-					Iterator<PdDControlStation> itPds = pdsLista.iterator();
-					while (itPds.hasNext()) {
-						PdDControlStation pds = itPds.next();
-						pds.setSuperUser(singleSuServizi);
-						oggetti.add(pds);
-						tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
+					if(soggettiCore.isRegistroServiziLocale()){
+						// Recupero le pdd dell'utente
+						List<PdDControlStation> pdsLista = pddCore.pddList(nomesu, new Search());
+						Iterator<PdDControlStation> itPds = pdsLista.iterator();
+						while (itPds.hasNext()) {
+							PdDControlStation pds = itPds.next();
+							pds.setSuperUser(singleSuServizi);
+							oggetti.add(pds);
+							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
+						}
+						// Recupero gli accordi servizio dell'utente
+						List<AccordoServizioParteComune> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search());
+						Iterator<AccordoServizioParteComune> itAs = asLista.iterator();
+						while (itAs.hasNext()) {
+							AccordoServizioParteComune as = itAs.next();
+							as.setSuperUser(singleSuServizi);
+							oggetti.add(as);
+							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
+						}
+						// Recupero i soggetti dell'utente
+						List<Soggetto> soggLista = soggettiCore.soggettiRegistroList(nomesu, new Search());
+						Iterator<Soggetto> itSs = soggLista.iterator();
+						while (itSs.hasNext()) {					
+							Soggetto sogg = itSs.next();
+							sogg.setSuperUser(singleSuServizi);
+							org.openspcoop2.core.config.Soggetto soggConf = soggettiCore.getSoggetto(new IDSoggetto(sogg.getTipo(),sogg.getNome()));
+							soggConf.setSuperUser(singleSuServizi);
+							SoggettoCtrlStat soggControlStation = new SoggettoCtrlStat(sogg,soggConf);
+							oggetti.add(soggControlStation);
+							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
+						}
 					}
-					// Recupero gli accordi servizio dell'utente
-					List<AccordoServizioParteComune> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search());
-					Iterator<AccordoServizioParteComune> itAs = asLista.iterator();
-					while (itAs.hasNext()) {
-						AccordoServizioParteComune as = itAs.next();
-						as.setSuperUser(singleSuServizi);
-						oggetti.add(as);
-						tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-					}
-					// Recupero i soggetti dell'utente
-					List<Soggetto> soggLista = soggettiCore.soggettiRegistroList(nomesu, new Search());
-					Iterator<Soggetto> itSs = soggLista.iterator();
-					while (itSs.hasNext()) {					
-						Soggetto sogg = itSs.next();
-						sogg.setSuperUser(singleSuServizi);
-						org.openspcoop2.core.config.Soggetto soggConf = soggettiCore.getSoggetto(new IDSoggetto(sogg.getTipo(),sogg.getNome()));
-						soggConf.setSuperUser(singleSuServizi);
-						SoggettoCtrlStat soggControlStation = new SoggettoCtrlStat(sogg,soggConf);
-						oggetti.add(soggControlStation);
-						tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-					}
-				}
-
-				if ((singleSuAccordiCooperazione != null && !singleSuAccordiCooperazione.equals("")) || checkOggettiAccordi) {
-					// Recupero gli accordi di cooperazione dell'utente
-					List<AccordoCooperazione> acLista = acCore.accordiCooperazioneList(nomesu, new Search());
-					Iterator<AccordoCooperazione> itAc = acLista.iterator();
-					while (itAc.hasNext()) {
-						AccordoCooperazione ac = itAc.next();
-						ac.setSuperUser(singleSuAccordiCooperazione);
-						oggetti.add(ac);
-						tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-					}
-					// Recupero gli accordi servizio composto dell'utente
-					List<AccordoServizioParteComune> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search());
-					Iterator<AccordoServizioParteComune> itAs = asLista.iterator();
-					while (itAs.hasNext()) {
-						AccordoServizioParteComune as = itAs.next();
-						as.setSuperUser(singleSuAccordiCooperazione);
-						oggetti.add(as);
-						tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-					}
-
-
-					//check oggetti presenti
-
-					if(checkOggettiAccordi){
-						if(oggetti.size() > 0){
-							Vector<DataElement> dati = new Vector<DataElement>();
-
-							dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-							pd.disableEditMode();
-
-							pd.setDati(dati);
-
-							// Preparo il menu
-							pd.setMessage("Non è possibile eliminare il permesso 'Accordi Cooperazione', poichè non esistono altri utenti con tale permesso");
-
-							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
-							return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
+					else{
+						// Recupero i soggetti dell'utente
+						List<org.openspcoop2.core.config.Soggetto> soggLista = soggettiCore.soggettiList(nomesu, new Search());
+						Iterator<org.openspcoop2.core.config.Soggetto> itSs = soggLista.iterator();
+						while (itSs.hasNext()) {					
+							org.openspcoop2.core.config.Soggetto sogg = itSs.next();
+							sogg.setSuperUser(singleSuServizi);
+							oggetti.add(sogg);
+							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
 						}
 					}
 				}
 
+				if(soggettiCore.isRegistroServiziLocale()){
+					if ((singleSuAccordiCooperazione != null && !singleSuAccordiCooperazione.equals("")) || checkOggettiAccordi) {
+						// Recupero gli accordi di cooperazione dell'utente
+						List<AccordoCooperazione> acLista = acCore.accordiCooperazioneList(nomesu, new Search());
+						Iterator<AccordoCooperazione> itAc = acLista.iterator();
+						while (itAc.hasNext()) {
+							AccordoCooperazione ac = itAc.next();
+							ac.setSuperUser(singleSuAccordiCooperazione);
+							oggetti.add(ac);
+							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
+						}
+						// Recupero gli accordi servizio composto dell'utente
+						List<AccordoServizioParteComune> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search());
+						Iterator<AccordoServizioParteComune> itAs = asLista.iterator();
+						while (itAs.hasNext()) {
+							AccordoServizioParteComune as = itAs.next();
+							as.setSuperUser(singleSuAccordiCooperazione);
+							oggetti.add(as);
+							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
+						}
+	
+	
+						//check oggetti presenti
+	
+						if(checkOggettiAccordi){
+							if(oggetti.size() > 0){
+								Vector<DataElement> dati = new Vector<DataElement>();
+	
+								dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+	
+								pd.disableEditMode();
+	
+								pd.setDati(dati);
+	
+								// Preparo il menu
+								pd.setMessage("Non è possibile eliminare il permesso 'Accordi Cooperazione', poichè non esistono altri utenti con tale permesso");
+	
+								ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+	
+								return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
+							}
+						}
+					}
+				}
 
 
 
