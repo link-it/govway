@@ -37,8 +37,8 @@ import org.w3c.dom.NodeList;
  * SDIUtils
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10842 $, $Date: 2015-04-03 16:30:54 +0200 (Fri, 03 Apr 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class SDILottoUtils {
 	
