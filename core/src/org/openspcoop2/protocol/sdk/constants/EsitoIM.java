@@ -104,6 +104,18 @@ public enum EsitoIM implements Serializable {
 		}else if(EsitoIM.ERRORE_GENERICO.toString().equals(val)){
 			res = EsitoIM.ERRORE_GENERICO;
 		} 
+		else if(EsitoIM.AUTENTICAZIONE_FALLITA.toString().equals(val)){
+			res = EsitoIM.AUTENTICAZIONE_FALLITA;
+		} 
+		else if(EsitoIM.AUTORIZZAZIONE_FALLITA.toString().equals(val)){
+			res = EsitoIM.AUTORIZZAZIONE_FALLITA;
+		} 
+		else if(EsitoIM.MESSAGGI_NON_PRESENTI.toString().equals(val)){
+			res = EsitoIM.MESSAGGI_NON_PRESENTI;
+		} 
+		else if(EsitoIM.MESSAGGIO_NON_TROVATO.toString().equals(val)){
+			res = EsitoIM.MESSAGGIO_NON_TROVATO;
+		} 
 		return res;
 	}
 
