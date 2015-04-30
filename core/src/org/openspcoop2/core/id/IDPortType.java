@@ -94,6 +94,12 @@ public class IDPortType implements Serializable {
 		return true;
 	}
 	
+	// Utile per usare l'oggetto in hashtable come chiave
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+	
 	@Override
 	public IDPortType clone(){
 		IDPortType idPT = new IDPortType();

@@ -1612,6 +1612,7 @@ public class InoltroBuste extends GenericLib{
 					outRequestContext.setTipoPorta(TipoPdD.ROUTER);
 				else
 					outRequestContext.setTipoPorta(TipoPdD.DELEGATA);
+				outRequestContext.setIdModulo(this.idModulo);
 								
 				// Invocazione handler
 				GestoreHandlers.outRequest(outRequestContext, msgDiag, this.log);

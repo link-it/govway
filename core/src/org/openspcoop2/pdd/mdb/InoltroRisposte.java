@@ -791,6 +791,7 @@ public class InoltroRisposte extends GenericLib{
 				outResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				outResponseContext.setPddContext(pddContext);
 				outResponseContext.setTipoPorta(tipoPorta);
+				outResponseContext.setIdModulo(this.idModulo);
 				
 				// Invocazione Handler
 				try{

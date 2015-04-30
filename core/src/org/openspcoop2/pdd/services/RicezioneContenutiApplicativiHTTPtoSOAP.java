@@ -199,6 +199,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			postOutResponseContext = new PostOutResponseContext(logCore,protocolFactory);
 			postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
 			postOutResponseContext.setPddContext(pddContext);
+			postOutResponseContext.setIdModulo(idModulo);
 			
 			
 			
@@ -211,6 +212,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				preInRequestContext.getPddContext().addAll(pddContextFromServlet, true);
 			}
 			preInRequestContext.setTipoPorta(TipoPdD.DELEGATA);
+			preInRequestContext.setIdModulo(idModulo);
+			preInRequestContext.setProtocolFactory(protocolFactory);
 			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
 			transportContext.put(PreInRequestContext.SERVLET_REQUEST, req);
 			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, res);
@@ -719,6 +722,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				postOutResponseContext.setIntegrazione(context.getIntegrazione());
 				if(context.getTipoPorta()!=null)
 					postOutResponseContext.setTipoPorta(context.getTipoPorta());	
+				postOutResponseContext.setIdModulo(idModulo);
 				
 				if(inputBody!=null){
 					postOutResponseContext.setInputRequestMessageSize(new Long(inputBody.length));

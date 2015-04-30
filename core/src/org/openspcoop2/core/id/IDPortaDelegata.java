@@ -124,6 +124,12 @@ public class IDPortaDelegata implements java.io.Serializable{
 		return true;
 	}
 	
+	// Utile per usare l'oggetto in hashtable come chiave
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+	
 	@Override
 	public IDPortaDelegata clone(){
 		IDPortaDelegata idPD = new IDPortaDelegata();

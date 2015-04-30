@@ -95,6 +95,12 @@ public class IDServizioApplicativo {
 		return true;
 	}
 	
+	// Utile per usare l'oggetto in hashtable come chiave
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+	
 	@Override
 	public IDServizioApplicativo clone(){
 		IDServizioApplicativo idSA = new IDServizioApplicativo();

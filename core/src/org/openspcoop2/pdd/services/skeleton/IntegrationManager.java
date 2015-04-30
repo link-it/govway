@@ -1492,6 +1492,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	private IntegrationManagerMessage invocaPortaDelegata_engine(String tipoOperazione, String portaDelegata, IntegrationManagerMessage msg,
 			String idInvocazionePerRiferimento) throws IntegrationManagerException {
 
+		String idModulo = RicezioneContenutiApplicativi.ID_MODULO+IntegrationManager.ID_MODULO;
+		
 		// Timestamp
 		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
 		
@@ -1550,12 +1552,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		try{
 
 			
-			
 			/* ------------  PreInHandler ------------- */
 			
 			// build context
 			PreInRequestContext preInRequestContext = new PreInRequestContext(pddContext);
 			preInRequestContext.setTipoPorta(TipoPdD.DELEGATA);
+			preInRequestContext.setIdModulo(idModulo);
+			preInRequestContext.setProtocolFactory(protocolFactory);
 			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
 			transportContext.put(PreInRequestContext.SERVLET_REQUEST, getHttpServletRequest());
 			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, getHttpServletResponse());
@@ -1786,7 +1789,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			//	Contesto di Richiesta
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setCredenziali(credenziali);
-			context.setIdModulo(RicezioneContenutiApplicativi.ID_MODULO+IntegrationManager.ID_MODULO);
+			context.setIdModulo(idModulo);
 			context.setGestioneRisposta(true); // siamo in un webServices, la risposta deve essere aspettata
 			context.setInvocazionePDPerRiferimento(idInvocazionePerRiferimento!=null);
 			context.setIdInvocazionePDPerRiferimento(idInvocazionePerRiferimento);
@@ -1998,6 +2001,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}else{
 					postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
 				}
+				postOutResponseContext.setIdModulo(idModulo);
 								
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"postOutResponse, preparazione contesto");

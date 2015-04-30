@@ -79,6 +79,12 @@ public class IDAccordoCooperazioneWithSoggetto extends IDAccordoCooperazione imp
 		return (this.toString().equals(id.toString()));
 	}
 	
+	// Utile per usare l'oggetto in hashtable come chiave
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+	
 	@Override
 	public IDAccordoCooperazioneWithSoggetto clone(){
 		IDAccordoCooperazione idAccordo = new IDAccordoCooperazione();

@@ -1408,6 +1408,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				outRequestContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				outRequestContext.setPddContext(pddContext);
 				outRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
+				outRequestContext.setIdModulo(this.idModulo);
 
 				// Invocazione handler
 				GestoreHandlers.outRequest(outRequestContext, msgDiag, this.log);

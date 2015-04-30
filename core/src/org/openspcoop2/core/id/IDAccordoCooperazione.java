@@ -87,6 +87,12 @@ public class IDAccordoCooperazione implements java.io.Serializable {
 		return (this.toString().equals(id.toString()));
 	}
 	
+	// Utile per usare l'oggetto in hashtable come chiave
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+	
 	@Override
 	public IDAccordoCooperazione clone(){
 		IDAccordoCooperazione idAccordo = new IDAccordoCooperazione();

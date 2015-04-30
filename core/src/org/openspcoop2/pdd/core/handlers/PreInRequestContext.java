@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
 /**
@@ -48,11 +49,17 @@ public class PreInRequestContext {
 	/** Tipo porta di dominio */
 	private TipoPdD tipoPorta;
 	
+	/** IDModulo */
+	private String idModulo;
+	
 	/** Logger */
 	private Logger logCore;
 
 	/** PdDContext */
 	private PdDContext pddContext = null;
+	
+	/** ProtocolFactory */
+	private IProtocolFactory protocolFactory;
 	
 	/** NotifierInputStreamParameter */
 	private NotifierInputStreamParams notifierInputStreamParams;
@@ -99,4 +106,19 @@ public class PreInRequestContext {
 		this.notifierInputStreamParams = notifierInputStreamParams;
 	}
 
+	public String getIdModulo() {
+		return this.idModulo;
+	}
+
+	public void setIdModulo(String idModulo) {
+		this.idModulo = idModulo;
+	}
+	
+	public IProtocolFactory getProtocolFactory() {
+		return this.protocolFactory;
+	}
+
+	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+		this.protocolFactory = protocolFactory;
+	}
 }

@@ -49,6 +49,9 @@ public abstract class BaseContext {
 	/** Tipo porta di dominio */
 	private TipoPdD tipoPorta;
 	
+	/** IDModulo */
+	private String idModulo;
+	
 	/** PdDContext */
 	private PdDContext pddContext;
 	
@@ -106,4 +109,11 @@ public abstract class BaseContext {
 		this.protocolFactory = protocolFactory;
 	}
 	
+	public String getIdModulo() {
+		return this.idModulo;
+	}
+
+	public void setIdModulo(String idModulo) {
+		this.idModulo = idModulo;
+	}
 }

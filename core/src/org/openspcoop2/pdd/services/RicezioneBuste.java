@@ -461,6 +461,7 @@ public class RicezioneBuste {
 		InRequestContext inRequestContext = new InRequestContext(logCore,protocolFactory);
 		// TipoPorta
 		inRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
+		inRequestContext.setIdModulo(this.msgContext.getIdModulo());
 		// Informazioni connettore ingresso
 		InfoConnettoreIngresso connettore = new InfoConnettoreIngresso();
 		connettore.setCredenziali(this.msgContext.getCredenziali());
@@ -512,6 +513,7 @@ public class RicezioneBuste {
 		OutResponseContext outResponseContext = new OutResponseContext(logCore,protocolFactory);
 		// TipoPorta
 		outResponseContext.setTipoPorta(this.msgContext.getTipoPorta());
+		outResponseContext.setIdModulo(this.msgContext.getIdModulo());
 		// DataUscitaMessaggio
 		outResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 		// PddContext

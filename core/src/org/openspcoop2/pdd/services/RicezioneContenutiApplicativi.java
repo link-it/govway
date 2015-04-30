@@ -452,6 +452,7 @@ public class RicezioneContenutiApplicativi {
 		InRequestContext inRequestContext = new InRequestContext(logCore,protocolFactory);
 		// TipoPorta
 		inRequestContext.setTipoPorta(TipoPdD.DELEGATA);
+		inRequestContext.setIdModulo(this.msgContext.getIdModulo());
 		// Informazioni connettore ingresso
 		InfoConnettoreIngresso connettore = new InfoConnettoreIngresso();
 		connettore.setCredenziali(this.msgContext.getCredenziali());
@@ -502,6 +503,7 @@ public class RicezioneContenutiApplicativi {
 		OutResponseContext outResponseContext = new OutResponseContext(logCore,protocolFactory);
 		// TipoPorta
 		outResponseContext.setTipoPorta(this.msgContext.getTipoPorta());
+		outResponseContext.setIdModulo(this.msgContext.getIdModulo());
 		// DataUscitaMessaggio
 		outResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 		// PddContext
@@ -891,6 +893,7 @@ public class RicezioneContenutiApplicativi {
 		IDPortaDelegata idPD = new IDPortaDelegata();
 		idPD.setLocationPD(identificazione.getNomePDIndivituata());
 		idPD.setSoggettoFruitore(soggettoFruitore);
+		this.msgContext.getIntegrazione().setIdPD(idPD);
 		// altri contesti
 		msgDiag.setDominio(identitaPdD); // imposto anche il dominio nel msgDiag
 		msgDiag.setFruitore(soggettoFruitore);

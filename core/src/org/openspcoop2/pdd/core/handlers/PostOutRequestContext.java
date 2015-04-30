@@ -46,6 +46,7 @@ public class PostOutRequestContext extends OutRequestContext {
 		this.setDataElaborazioneMessaggio(outRequestContext.getDataElaborazioneMessaggio());
 		this.setMessaggio(outRequestContext.getMessaggio());
 		this.setTipoPorta(outRequestContext.getTipoPorta());
+		this.setIdModulo(outRequestContext.getIdModulo());
 		this.setPddContext(outRequestContext.getPddContext());
 
 	}

@@ -47,6 +47,7 @@ public class InRequestProtocolContext extends InRequestContext {
 		super.setMessaggio(inRequestContext.getMessaggio());
 		super.setPddContext(inRequestContext.getPddContext());
 		super.setTipoPorta(inRequestContext.getTipoPorta());
+		super.setIdModulo(inRequestContext.getIdModulo());
 	}
 	
 	/** Informazioni protocollo */

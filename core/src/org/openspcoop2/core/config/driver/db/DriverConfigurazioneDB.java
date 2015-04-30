@@ -1448,41 +1448,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			throw new DriverConfigurazioneNotFound("Nessuna PortaDelegata trovata.");
 		}
 
-		
-		// *** Aggiungo extInfo ***
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
-
-			}
-		} else
-			con = this.globalConnection;
-		
-		this.log.debug("operazione this.atomica [ExtendedInfo] = " + this.atomica);
-		try {
-			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
-			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
-			if(extInfoConfigurazioneDriver!=null){
-				List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pd);
-				if(listExtInfo!=null && listExtInfo.size()>0){
-					for (Object object : listExtInfo) {
-						pd.addExtendedInfo(object);
-					}
-				}
-			}
-		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db [ExtendedInfo]...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-		
 		return pd;
 	}
 
@@ -2037,44 +2002,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		} else {
 			throw new DriverConfigurazioneNotFound("Porta Applicativa non esistente");
 		}
-		
-		
-		
-		// *** Aggiungo extInfo ***
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] SQLException accedendo al datasource :" + e.getMessage(),e);
-
-			}
-		} else
-			con = this.globalConnection;
-		
-		this.log.debug("operazione this.atomica [ExtendedInfo] = " + this.atomica);
-		try {
-			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
-			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
-			if(extInfoConfigurazioneDriver!=null){
-				List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pa);
-				if(listExtInfo!=null && listExtInfo.size()>0){
-					for (Object object : listExtInfo) {
-						pa.addExtendedInfo(object);
-					}
-				}
-			}
-		} finally {
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db [ExtendedInfo]...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-		
-		
 		
 		return pa;
 	}
@@ -11306,6 +11233,23 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				rs.close();
 				stm.close();
+				
+				
+				// *** Aggiungo extInfo ***
+				
+				this.log.debug("ExtendedInfo ... ");
+				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
+				if(extInfoConfigurazioneDriver!=null){
+					List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pa);
+					if(listExtInfo!=null && listExtInfo.size()>0){
+						for (Object object : listExtInfo) {
+							pa.addExtendedInfo(object);
+						}
+					}
+				}
+
+				
 				return pa;
 			} else {
 				throw new DriverConfigurazioneNotFound("Porta Applicativa non esistente");
@@ -11858,6 +11802,23 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				rs.close();
 				stm.close();
+				
+				
+				
+				// *** Aggiungo extInfo ***
+				
+				this.log.debug("ExtendedInfo ...");
+				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
+				if(extInfoConfigurazioneDriver!=null){
+					List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pd);
+					if(listExtInfo!=null && listExtInfo.size()>0){
+						for (Object object : listExtInfo) {
+							pd.addExtendedInfo(object);
+						}
+					}
+				}
+				
 			} else {
 				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getPortaDelegata] Nessuna PortaDelegata trovata.");
 			}
