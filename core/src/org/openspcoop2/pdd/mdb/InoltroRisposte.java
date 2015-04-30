@@ -798,7 +798,10 @@ public class InoltroRisposte extends GenericLib{
 					GestoreHandlers.outResponse(outResponseContext, msgDiag, this.log);
 				}catch(Exception e){
 					if(e instanceof HandlerException){
-						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+						HandlerException he = (HandlerException) e;
+						if(he.isEmettiDiagnostico()){
+							msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+						}
 						ejbUtils.rollbackMessage(((HandlerException)e).getIdentitaHandler()+" error: "+e.getMessage(), esito);
 					}else{
 						msgDiag.logErroreGenerico(e, "OutResponseHandler");

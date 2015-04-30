@@ -213,7 +213,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     			GestoreHandlers.postOutRequest(this.postOutRequestContext, this.msgDiagnostico, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
     		}catch(Exception e){
 				if(e instanceof HandlerException){
-					this.msgDiagnostico.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						this.msgDiagnostico.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
+					else{
+						OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(e.getMessage(),e);
+					}
 				}else{
 					this.msgDiagnostico.logErroreGenerico(e, "PostOutRequestHandler");
 				}
@@ -241,7 +247,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     			GestoreHandlers.preInResponse(this.preInResponseContext, this.msgDiagnostico, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
     		}catch(Exception e){
 				if(e instanceof HandlerException){
-					this.msgDiagnostico.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						this.msgDiagnostico.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
+					else{
+						OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(e.getMessage(),e);
+					}
 				}else{
 					this.msgDiagnostico.logErroreGenerico(e, "PreInResponseHandler");
 				}

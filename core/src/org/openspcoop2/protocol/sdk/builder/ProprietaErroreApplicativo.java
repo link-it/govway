@@ -232,7 +232,14 @@ public class ProprietaErroreApplicativo implements java.io.Serializable {
     
     	CodiceErroreIntegrazione code = errore.getCodiceErrore();
     	if(this.faultAsGenericCode){
-    		if( code.getCodice() >= 450 && code.getCodice() != 516 && code.getCodice() != 517 && code.getCodice() != 518 ) {
+    		if( code.getCodice() >= 450 && 
+    				code.getCodice() != CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE.getCodice() &&
+    				code.getCodice() != CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA.getCodice() && 
+    				code.getCodice() != CodiceErroreIntegrazione.CODICE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT.getCodice() && 
+					code.getCodice() != CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST.getCodice() &&  
+    				code.getCodice() != CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE.getCodice() &&  
+    				code.getCodice() != CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST.getCodice()  
+    				) {
     			return CostantiProtocollo.SISTEMA_NON_DISPONIBILE;
     	    }
     	}

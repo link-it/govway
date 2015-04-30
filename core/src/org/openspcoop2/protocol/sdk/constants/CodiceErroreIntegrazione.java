@@ -150,7 +150,9 @@ public enum CodiceErroreIntegrazione implements CodiceErrore{
     /** String che contiene un codice di errore OpenSPCoop: Errore, Configurazione LocalForward errore durante il processamento del messaggio di risposta, 556*/
     CODICE_556_LOCAL_FORWARD_PROCESS_RESPONSE_ERROR(556),
     /** String che contiene un codice di errore OpenSPCoop: Errore, Gestione MTOM errore durante il processamento del messaggio, 557*/
-    CODICE_557_MTOM_PROCESSOR_ERROR(556),
+    CODICE_557_MTOM_PROCESSOR_ERROR(557),
+    /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento durante l'invocazione dell'handler di inoltro richiesta con info di protocollo, 558*/
+    CODICE_558_HANDLER_IN_PROTOCOL_REQUEST(558),
     
 
     /* ******** MESSAGGI E CODICI 4XX  ******** */
@@ -380,6 +382,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore{
 				case 555: return CODICE_555_LOCAL_FORWARD_PROCESS_REQUEST_ERROR;
 				case 556: return CODICE_556_LOCAL_FORWARD_PROCESS_RESPONSE_ERROR;
 				case 557: return CODICE_557_MTOM_PROCESSOR_ERROR;
+				case 558: return CODICE_558_HANDLER_IN_PROTOCOL_REQUEST;
 			default:
 				return CODICE_500_ERRORE_INTERNO;
 			}

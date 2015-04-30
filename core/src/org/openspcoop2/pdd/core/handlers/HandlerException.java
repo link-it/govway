@@ -34,6 +34,22 @@ package org.openspcoop2.pdd.core.handlers;
 
 public class HandlerException extends Exception {
 
+	private boolean setErrorMessageInFault=false;
+	public boolean isSetErrorMessageInFault() {
+		return this.setErrorMessageInFault;
+	}
+	public void setSetErrorMessageInFault(boolean setErrorMessageInFault) {
+		this.setErrorMessageInFault = setErrorMessageInFault;
+	}
+	
+	private boolean emettiDiagnostico=true;
+	public boolean isEmettiDiagnostico() {
+		return this.emettiDiagnostico;
+	}
+	public void setEmettiDiagnostico(boolean emettiDiagnostico) {
+		this.emettiDiagnostico = emettiDiagnostico;
+	}
+
 	private String identitaHandler = null;
 	public String getIdentitaHandler() {
 		return this.identitaHandler;

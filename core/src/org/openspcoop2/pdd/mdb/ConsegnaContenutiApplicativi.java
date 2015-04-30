@@ -1429,18 +1429,30 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						msgErrore = e.getMessage();
 					}
 				}
+				ErroreIntegrazione erroreIntegrazione = null;
 				if(e instanceof HandlerException){
-					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
 					msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
+					if(existsModuloInAttesaRispostaApplicativa && he.isSetErrorMessageInFault()) {
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(he.getMessage(),CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
+					}
 				}else{
 					msgDiag.logErroreGenerico(e, "OutRequestHandler");
 					msgErrore = "OutRequestHandler error: "+msgErrore;
 				}
 				if(existsModuloInAttesaRispostaApplicativa) {
 					
+					if(erroreIntegrazione==null){
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
+					}
+					
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST),
+							erroreIntegrazione,
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
 					
 					esito.setEsitoInvocazione(true); 
@@ -1725,18 +1737,30 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							msgErrore = e.getMessage();
 						}
 					}
+					ErroreIntegrazione erroreIntegrazione = null;
 					if(e instanceof HandlerException){
-						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+						HandlerException he = (HandlerException) e;
+						if(he.isEmettiDiagnostico()){
+							msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+						}
 						msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
+						if(existsModuloInAttesaRispostaApplicativa && he.isSetErrorMessageInFault()) {
+							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(he.getMessage(),CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
+						}
 					}else{
 						msgDiag.logErroreGenerico(e, "InResponseHandler");
 						msgErrore = "InResponseHandler error: "+msgErrore;
 					}
 					if(existsModuloInAttesaRispostaApplicativa) {
 						
+						if(erroreIntegrazione==null){
+							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
+						}
+						
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE),
+								erroreIntegrazione,
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
 						
 						esito.setEsitoInvocazione(true); 

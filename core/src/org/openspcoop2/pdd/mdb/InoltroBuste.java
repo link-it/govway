@@ -1633,25 +1633,39 @@ public class InoltroBuste extends GenericLib{
 						msgErrore = e.getMessage();
 					}
 				}
+				ErroreIntegrazione erroreIntegrazione = null;
 				if(e instanceof HandlerException){
-					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
 					msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
+					if((functionAsRouter || sendRispostaApplicativa) && he.isSetErrorMessageInFault()) {
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(he.getMessage(),CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
+					}
 				}else{
 					msgDiag.logErroreGenerico(e, "OutRequestHandler");
 					msgErrore = "OutRequestHandler error: "+msgErrore;
 				}
 				if(functionAsRouter){
+					if(erroreIntegrazione==null){
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
+					}
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
-							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST),
+							erroreIntegrazione,
 							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
 					esito.setEsitoInvocazione(true);
 				}else{
 					if(sendRispostaApplicativa){
+						if(erroreIntegrazione==null){
+							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
+						}
 						OpenSPCoop2Message responseMessageError = 
-							this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST),e);
+							this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,e);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
 						esito.setEsitoInvocazione(true);
@@ -1975,25 +1989,39 @@ public class InoltroBuste extends GenericLib{
 							msgErrore = e.getMessage();
 						}
 					}
+					ErroreIntegrazione erroreIntegrazione = null;
 					if(e instanceof HandlerException){
-						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+						HandlerException he = (HandlerException) e;
+						if(he.isEmettiDiagnostico()){
+							msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+						}
 						msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
+						if((functionAsRouter || sendRispostaApplicativa) && he.isSetErrorMessageInFault()) {
+							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
+						}
 					}else{
 						msgDiag.logErroreGenerico(e, "InResponseHandler");
 						msgErrore = "InResponseHandler error: "+msgErrore;
 					}
 					if(functionAsRouter){
+						if(erroreIntegrazione==null){
+							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
+						}
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
-								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE),
+								erroreIntegrazione,
 								idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
 						esito.setEsitoInvocazione(true);
 					}else{
 						if(sendRispostaApplicativa){
+							if(erroreIntegrazione==null){
+								erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
+							}
 							OpenSPCoop2Message responseMessageError = 
-								this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE),e);
+								this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,e);
 							ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
 							esito.setEsitoInvocazione(true);

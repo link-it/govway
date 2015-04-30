@@ -524,12 +524,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			imRequestContext = buildIMRequestContext(dataRichiestaOperazione, tipoOperazione, pddContext,logCore,protocolFactory);
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		} catch(Exception e) {
+			ErroreIntegrazione erroreIntegrazione = null;
 			if(e instanceof HandlerException){
-				msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				HandlerException he = (HandlerException) e;
+				if(he.isEmettiDiagnostico()){
+					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				}
+				if(he.isSetErrorMessageInFault()){
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
+				}
 			} else {
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			} 
-			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			if(erroreIntegrazione==null){
+				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
 		}
 
 		
@@ -628,7 +638,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				GestoreHandlers.integrationManagerResponse(imResponseContext, msgDiag, logCore);
 			}catch(Exception e){
 				if(e instanceof HandlerException){
-					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
 				}else{
 					msgDiag.logErroreGenerico(e, "IntegrationManagerResponseHandler");
 				}
@@ -790,12 +803,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			imRequestContext.setIdMessaggio(idMessaggio);
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		}catch(Exception e){
+			ErroreIntegrazione erroreIntegrazione = null;
 			if(e instanceof HandlerException){
-				msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				HandlerException he = (HandlerException) e;
+				if(he.isEmettiDiagnostico()){
+					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				}
+				if(he.isSetErrorMessageInFault()){
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
+				}
 			}else{
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			}
-			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			if(erroreIntegrazione==null){
+				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
 		}
 		
 		
@@ -1003,7 +1026,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				GestoreHandlers.integrationManagerResponse(imResponseContext, msgDiag, logCore);
 			}catch(Exception e){
 				if(e instanceof HandlerException){
-					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
 				}else{
 					msgDiag.logErroreGenerico(e, "IntegrationManagerResponseHandler");
 				}
@@ -1115,12 +1141,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			imRequestContext.setIdMessaggio(idMessaggio);
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		}catch(Exception e){
+			ErroreIntegrazione erroreIntegrazione = null;
 			if(e instanceof HandlerException){
-				msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				HandlerException he = (HandlerException) e;
+				if(he.isEmettiDiagnostico()){
+					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				}
+				if(he.isSetErrorMessageInFault()){
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
+				}
 			}else{
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			}
-			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			if(erroreIntegrazione==null){
+				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
 		}
 		
 		
@@ -1224,7 +1260,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				GestoreHandlers.integrationManagerResponse(imResponseContext, msgDiag, logCore);
 			}catch(Exception e){
 				if(e instanceof HandlerException){
-					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
 				}else{
 					msgDiag.logErroreGenerico(e, "IntegrationManagerResponseHandler");
 				}
@@ -1329,12 +1368,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			imRequestContext = buildIMRequestContext(dataRichiestaOperazione, tipoOperazione, pddContext,logCore,protocolFactory);
 			GestoreHandlers.integrationManagerRequest(imRequestContext, msgDiag, logCore);
 		}catch(Exception e){
+			ErroreIntegrazione erroreIntegrazione = null;
 			if(e instanceof HandlerException){
-				msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				HandlerException he = (HandlerException) e;
+				if(he.isEmettiDiagnostico()){
+					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+				}
+				if(he.isSetErrorMessageInFault()){
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
+				}
 			}else{
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			}
-			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			if(erroreIntegrazione==null){
+				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
+			}
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
 		}
 		
 		
@@ -1447,7 +1496,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				GestoreHandlers.integrationManagerResponse(imResponseContext, msgDiag, logCore);
 			}catch(Exception e){
 				if(e instanceof HandlerException){
-					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					HandlerException he = (HandlerException) e;
+					if(he.isEmettiDiagnostico()){
+						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
+					}
 				}else{
 					msgDiag.logErroreGenerico(e, "IntegrationManagerResponseHandler");
 				}

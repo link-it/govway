@@ -594,8 +594,21 @@ public class RicezioneContenutiApplicativi {
 	}
 	
 	private void setSOAPFault(Logger logCore, MsgDiagnostico msgDiag, Exception e, String posizione){
-		if(msgDiag!=null)
-			msgDiag.logErroreGenerico(e, posizione);
+		
+		HandlerException he = null;
+		if(e!=null && (e instanceof HandlerException)){
+			he = (HandlerException) e;
+		}
+		
+		if(msgDiag!=null){
+			if(he!=null){
+				if(he.isEmettiDiagnostico()){
+					msgDiag.logErroreGenerico(e, posizione);
+				}
+			}else{
+				msgDiag.logErroreGenerico(e, posizione);
+			}
+		}
 		else
 			logCore.error(posizione+": "+e.getMessage(),e);
 		if (this.msgContext.isGestioneRisposta()) {
@@ -1984,19 +1997,29 @@ public class RicezioneContenutiApplicativi {
 			inRequestProtocolContext.setProtocollo(this.msgContext.getProtocol());
 			inRequestProtocolContext.setIntegrazione(this.msgContext.getIntegrazione());
 			GestoreHandlers.inRequestProtocol(inRequestProtocolContext, msgDiag, logCore);
-		}catch(Exception e){			
+		}catch(Exception e){		
+			ErroreIntegrazione erroreIntegrazione = null;
 			if(e instanceof HandlerException){
 				HandlerException he = (HandlerException) e;
-				msgDiag.logErroreGenerico(e,he.getIdentitaHandler());
+				if(he.isEmettiDiagnostico()){
+					msgDiag.logErroreGenerico(e,he.getIdentitaHandler());
+				}
 				logCore.error("Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
+				if(this.msgContext.isGestioneRisposta() && he.isSetErrorMessageInFault()){
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
+				}
 			}else{
 				msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
 				logCore.error("Gestione InRequestProtocolHandler non riuscita: "	+ e);
 			}
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
-				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+				if(erroreIntegrazione==null){
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
+				}
+				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(erroreIntegrazione,e)));
 			}
 			return;
 		}

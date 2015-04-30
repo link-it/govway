@@ -474,7 +474,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.preInRequestHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("PreInRequestHandler["+GestoreHandlers.tipiPreInRequestHandlers[i]+"]");
 					throw ex;
 				}
@@ -504,7 +509,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.inRequestHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("InRequestHandler["+GestoreHandlers.tipiInRequestHandlers[i]+"]");
 					throw ex;
 				}
@@ -534,7 +544,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.inRequestProtocolHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("inRequestProtocolHandlers["+GestoreHandlers.tipiInRequestProtocolHandlers[i]+"]");
 					throw ex;
 				}
@@ -564,7 +579,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.outRequestHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("OutRequestHandler["+GestoreHandlers.tipiOutRequestHandlers[i]+"]");
 					throw ex;
 				}
@@ -594,7 +614,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.postOutRequestHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("PostOutRequestHandler["+GestoreHandlers.tipiPostOutRequestHandlers[i]+"]");
 					throw ex;
 				}
@@ -624,7 +649,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.preInResponseHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("PreInResponseHandler["+GestoreHandlers.tipiPreInResponseHandlers[i]+"]");
 					throw ex;
 				}
@@ -654,7 +684,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.inResponseHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("InResponseHandler["+GestoreHandlers.tipiInResponseHandlers[i]+"]");
 					throw ex;
 				}
@@ -684,7 +719,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.outResponseHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("OutResponseHandler["+GestoreHandlers.tipiOutResponseHandlers[i]+"]");
 					throw ex;
 				}
@@ -745,7 +785,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.integrationManagerRequestHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("IntegrationManagerRequestHandler["+GestoreHandlers.tipiIntegrationManagerRequestHandlers[i]+"]");
 					throw ex;
 				}
@@ -776,7 +821,12 @@ public class GestoreHandlers  {
 					GestoreHandlers.integrationManagerResponseHandlers[i].invoke(context);
 				}catch(Exception e){
 					// Sollevo l'eccezione
-					HandlerException ex = new HandlerException(e.getMessage(),e);
+					HandlerException ex = null;
+					if(e instanceof HandlerException){
+						ex = (HandlerException) e;
+					}else{
+						ex = new HandlerException(e.getMessage(),e);
+					}
 					ex.setIdentitaHandler("IntegrationManagerResponseHandler["+GestoreHandlers.tipiIntegrationManagerResponseHandlers[i]+"]");
 					throw ex;
 				}

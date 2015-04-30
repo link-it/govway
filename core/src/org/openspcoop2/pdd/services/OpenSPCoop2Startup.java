@@ -1164,7 +1164,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				initContext.setPddContext(OpenSPCoop2Startup.this.pddContext);
 				GestoreHandlers.init(initContext, msgDiag,OpenSPCoop2Startup.log); // per avere gli init stampati su server log
 			}catch(HandlerException e){
-				msgDiag.logStartupError(e,e.getIdentitaHandler());
+				if(e.isEmettiDiagnostico()){
+					msgDiag.logStartupError(e,e.getIdentitaHandler());
+				}
+				else{
+					logCore.error(e.getMessage(),e);
+				}
 				return;
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"InitHandler");
