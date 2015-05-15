@@ -1,3 +1,10 @@
+2015-05-15  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+	Risolto Bug #339
+	Sistemata la breadcrumb nella schermata che presenta la lista dei soggetti associati all porta di
+	dominio.
+
 2015-05-15  Andrea Poli <apoli@link.it>
 
 	* [Pdd]

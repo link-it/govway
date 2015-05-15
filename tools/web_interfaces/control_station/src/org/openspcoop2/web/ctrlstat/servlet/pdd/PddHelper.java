@@ -724,7 +724,8 @@ public class PddHelper extends ConsoleHelper {
 			
 			// setto la barra del titolo
 			String t2URL = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
-			if (singlePdD.equals("false")){
+			boolean sPdD = singlePdD != null ? singlePdD.booleanValue() : false;
+			if (sPdD == false){
 				t2URL = PddCostanti.SERVLET_NAME_PDD_LIST;
 			}
 			String t3Label = "Soggetti associati alla Porta di Dominio " + nomePdd;
