@@ -831,12 +831,30 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				}
 			}catch(DriverRegistroServiziNotFound dNot){}
 		}
-		if(soggettoErogatoreLocalForward!=null && soggettoErogatoreLocalForward.getPortaDominio()!=null){
-			try{
-				if(this.pddCore.getPdDControlStation(soggettoErogatoreLocalForward.getPortaDominio()).getTipo().equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_ESTERNO)){
-					localForwardShow = false;
+		if(soggettoErogatoreLocalForward!=null){
+			if(this.pddCore.isRegistroServiziLocale()){
+				if(soggettoErogatoreLocalForward.getPortaDominio()!=null){
+					try{
+						if(this.pddCore.getPdDControlStation(soggettoErogatoreLocalForward.getPortaDominio()).getTipo().equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_ESTERNO)){
+							localForwardShow = false;
+						}
+					}catch(DriverControlStationNotFound dNot){}
 				}
-			}catch(DriverControlStationNotFound dNot){}
+			}
+			else{
+				// se il soggetto erogatore non e' locale non puo' esistere il localForward.
+				// Comunque sia lo devo far vedere lo stesso poiche' magari e' una configurazione errata indicata nella console centrale.
+//				if(soggettoErogatoreLocalForward.getTipo()!=null && soggettoErogatoreLocalForward.getNome()!=null){
+//					try{
+//						IDSoggetto idSoggetto = new IDSoggetto(soggettoErogatoreLocalForward.getTipo(), soggettoErogatoreLocalForward.getNome());
+//						if(!this.soggettiCore.existsSoggetto(idSoggetto)){
+//							localForwardShow = false; 
+//						}
+//					}catch(Exception dNot){
+//						this.log.error(dNot.getMessage(), dNot);
+//					}
+//				}
+			}
 		}			
 		String[] tipoLocalForward = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_ABILITATO,
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_DISABILITATO };

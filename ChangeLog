@@ -1,3 +1,11 @@
+2015-05-15  Andrea Poli <apoli@link.it>
+
+        * [Pdd]
+        Risolto Bug #345
+	Corretto problema '[DriverControlStationDB::pddList(String nomePdd)] Exception: ORA-00942: table or view does not exist' 
+	in PddConsole configurata in modalita onlyConfig.
+	Il problema si verificava quando si entrava in modifica su di una porta delegata.
+
 2015-05-15  Giuliano Pintori <pintori@link.it>
 
         * [PddConsole]
