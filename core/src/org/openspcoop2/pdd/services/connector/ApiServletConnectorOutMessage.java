@@ -29,6 +29,7 @@ import org.openspcoop2.core.api.utils.Sbustamento;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
 import org.w3c.dom.Node;
@@ -43,8 +44,9 @@ import org.w3c.dom.NodeList;
  */
 public class ApiServletConnectorOutMessage extends HttpServletConnectorOutMessage {
 
-	public ApiServletConnectorOutMessage(IProtocolFactory protocolFactory, HttpServletResponse res) throws ConnectorException{
-		super(protocolFactory,res);
+	public ApiServletConnectorOutMessage(IProtocolFactory protocolFactory, HttpServletResponse res,
+			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
+		super(protocolFactory,res,idModuloAsIDService,idModulo);
 	}
 
 	private int status = -1;

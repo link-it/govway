@@ -40,11 +40,16 @@ import org.apache.log4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.HttpUtilities;
+import org.openspcoop2.utils.resources.RFC2047Encoding;
+import org.openspcoop2.utils.resources.RFC2047Utilities;
 
 /**
  * Classe utilizzata per effettuare consegne di messaggi Soap, attraverso
@@ -87,6 +92,13 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 	/** Connessione */
 	private SOAPConnection connection = null;
 	
+	/** Identificativo Modulo */
+	private String idModulo = null;
+	
+	/** OpenSPCoopProperties */
+	private OpenSPCoop2Properties openspcoopProperties = null;
+	
+	
 	
 	/* ********  METODI  ******** */
 
@@ -101,6 +113,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 	public boolean send(ConnettoreMsg request){
 
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		
 		if(request==null){
 			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
@@ -124,6 +137,9 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 		this.propertiesUrlBased = request.getPropertiesUrlBased();
 		this.credenziali = request.getCredenziali();
 
+		// Identificativo modulo
+		this.idModulo = request.getIdModulo();
+		
 		// analisi messaggio da spedire
 		if(this.requestMsg==null){
 			this.errore = "Messaggio da consegnare is Null (Msg)";
@@ -244,6 +260,20 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					// Header di trasporto
 					if(this.debug)
 						this.log.debug("["+this.idMessaggio+"] impostazione header di trasporto...");
+					boolean encodingRFC2047 = false;
+					Charset charsetRFC2047 = null;
+					RFC2047Encoding encodingAlgorithmRFC2047 = null;
+					if(this.idModulo!=null){
+						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+							encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+							charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+							encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+						}else{
+							encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
+							charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
+							encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
+						}
+					}
 					if(this.propertiesTrasporto != null){
 						Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
 						while( enumSPC.hasMoreElements() ) {
@@ -252,7 +282,20 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 								String value = (String) this.propertiesTrasporto.get(key);
 								if(this.debug)
 									this.log.debug("["+this.idMessaggio+"] set proprieta' ["+key+"]=["+value+"]...");
-								this.requestMsg.getMimeHeaders().addHeader(key,value);
+								
+								if(encodingRFC2047){
+									if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
+										String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
+										//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+										this.requestMsg.getMimeHeaders().addHeader(key,encoded);
+									}
+									else{
+										this.requestMsg.getMimeHeaders().addHeader(key,value);
+									}
+								}
+								else{
+									this.requestMsg.getMimeHeaders().addHeader(key,value);
+								}
 							}
 						}
 					}

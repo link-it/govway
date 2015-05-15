@@ -55,6 +55,10 @@ import javax.net.ssl.TrustManagerFactory;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.log4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.api.constants.CostantiApi;
+import org.openspcoop2.core.api.constants.MethodType;
+import org.openspcoop2.core.api.utils.Imbustamento;
+import org.openspcoop2.core.api.utils.Sbustamento;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.MailcapActivationReader;
@@ -62,10 +66,6 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.core.api.constants.CostantiApi;
-import org.openspcoop2.core.api.constants.MethodType;
-import org.openspcoop2.core.api.utils.Imbustamento;
-import org.openspcoop2.core.api.utils.Sbustamento;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -76,8 +76,11 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.resources.RFC2047Encoding;
+import org.openspcoop2.utils.resources.RFC2047Utilities;
 
 
 
@@ -643,6 +646,20 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
 				this.log.debug("["+this.idMessaggio+"] impostazione header di trasporto...");
+			boolean encodingRFC2047 = false;
+			Charset charsetRFC2047 = null;
+			RFC2047Encoding encodingAlgorithmRFC2047 = null;
+			if(this.idModulo!=null){
+				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+				}else{
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
+				}
+			}
 			if(this.sbustamentoApi){
 				if(this.debug)
 					this.log.debug("["+this.idMessaggio+"] aggiunta header di trasporto api...");
@@ -663,7 +680,20 @@ public class ConnettoreHTTP extends ConnettoreBase {
 					String value = (String) this.propertiesTrasporto.get(key);
 					if(this.debug)
 						this.log.debug("["+this.idMessaggio+"] set proprieta' ["+key+"]=["+value+"]...");
-					this.httpConn.setRequestProperty(key,value);
+					
+					if(encodingRFC2047){
+						if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
+							String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
+							//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+							this.httpConn.setRequestProperty(key,encoded);
+						}
+						else{
+							this.httpConn.setRequestProperty(key,value);
+						}
+					}
+					else{
+						this.httpConn.setRequestProperty(key,value);
+					}
 				}
 			}
 			

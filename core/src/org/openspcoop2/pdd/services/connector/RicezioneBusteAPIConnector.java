@@ -70,7 +70,7 @@ public class RicezioneBusteAPIConnector extends HttpServlet {
 		
 		ApiServletConnectorOutMessage apiOut = null;
 		try{
-			apiOut = new ApiServletConnectorOutMessage(protocolFactory,resp);
+			apiOut = new ApiServletConnectorOutMessage(protocolFactory,resp, ID_SERVICE, ID_MODULO);
 		}catch(Exception e){
 			ConnectorUtils.getErrorLog().error("ApiServletConnectorOutMessage init error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);

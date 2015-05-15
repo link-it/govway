@@ -25,7 +25,12 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.resources.RFC2047Encoding;
+import org.openspcoop2.utils.resources.RFC2047Utilities;
 
 /**
  * HttpServletConnectorOutMessage
@@ -39,13 +44,20 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	protected HttpServletResponse res;
 	protected OutputStream out;
 	protected IProtocolFactory protocolFactory;
+	protected String idModulo;
+	protected IDService idModuloAsIDService;
+	protected OpenSPCoop2Properties openspcoopProperties;
 	
 	
-	public HttpServletConnectorOutMessage(IProtocolFactory protocolFactory, HttpServletResponse res) throws ConnectorException{
+	public HttpServletConnectorOutMessage(IProtocolFactory protocolFactory, HttpServletResponse res,
+			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
 			this.res = res;
 			this.out = this.res.getOutputStream();
 			this.protocolFactory = protocolFactory;
+			this.idModuloAsIDService = idModuloAsIDService;
+			this.idModulo = idModulo;
+			this.openspcoopProperties =  OpenSPCoop2Properties.getInstance();
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -75,8 +87,45 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	
 	@Override
 	public void setHeader(String key,String value) throws ConnectorException{
-		try{
-			this.res.setHeader(key,value);
+		try{		
+			boolean encodingRFC2047 = false;
+			Charset charsetRFC2047 = null;
+			RFC2047Encoding encodingAlgorithmRFC2047 = null;
+			if(this.idModuloAsIDService!=null){
+				switch (this.idModuloAsIDService) {
+				case PORTA_DELEGATA_SOAP:
+				case PORTA_DELEGATA_INTEGRATION_MANAGER:
+				case PORTA_DELEGATA_XML_TO_SOAP:
+				case PORTA_DELEGATA_API:
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
+					break;
+				case PORTA_APPLICATIVA_SOAP:
+				case PORTA_APPLICATIVA_API:
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_ricezioneBuste();
+					break;
+				default:
+					break;
+				}
+			}
+			
+			if(encodingRFC2047){
+				if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
+					String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
+					//System.out.println("@@@@ RESPONSE CODIFICA ["+value+"] in ["+encoded+"]");
+					this.res.setHeader(key,encoded);
+				}
+				else{
+					this.res.setHeader(key,value);
+				}
+			}
+			else{
+				this.res.setHeader(key,value);
+			}	
+			
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}

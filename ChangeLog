@@ -1,7 +1,35 @@
+2015-05-15  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug #341
+	Come indicato nella specifica HTTP 1.1 (RFC 7230) i valori degli headers devono essere codificati tramite 
+	MIME encoding definito nella specifica RFC 2047 se contengono dei caratteri che non appartengono al charset ISO-8859-1.
+	Sono state aggiunte delle opzioni al file openspcoop2.properties per permettere di abilitare la codifica RFC 2047 
+	se si rientra nel caso descritto dalla specifica RFC 7230.
+	Le opzioni permettono anche di indicare quale sia il charset che permette di individuare se abilitare o meno l'encoding RFC 2047,
+	in modo da adottare un charset US_ASCII piu' restrittivo dell'ISO-8859-1, charset consigliato dalla specifica HTTP 1.1
+	Le proprieta' sono le seguenti:
+	- Servizio di ricezione contenuti applicativi (PortaDelegata)
+	org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled=true
+	org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset=US-ASCII
+	org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding=Q
+	- Servizio di ricezione buste (PortaApplicativa)
+	org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled=true
+	org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset=US-ASCII
+	org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding=Q
+	- Moduli inoltro buste
+	org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled=true
+	org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset=US-ASCII
+	org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding=Q
+	- Moduli consegna contenuto applicativo
+	org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled=true
+	org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset=US-ASCII
+	org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding=Q
+
 2015-05-14  Andrea Poli <apoli@link.it>
 
 	* [Utils]
-	Aggiunta funzionalità #342
+	Risolto Bug #342
 	Realizzata classe di utility org.openspcoop2.utils.resources.RFC2047Utilities che 
 	permette di gestire l'encoding e il decoding tramite RFC 2047.
 	Nella classe sono stati aggiunti metodi che permettono di comprendere se tutti i caratteri 

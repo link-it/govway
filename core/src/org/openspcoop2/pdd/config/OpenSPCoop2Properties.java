@@ -105,7 +105,9 @@ import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.resources.RFC2047Encoding;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 /**
@@ -7324,6 +7326,294 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.httpXPdDDetails;
 	}
 	
+	
+	private static Boolean isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = null;
+	public boolean isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = true;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi;
+	}
+	
+	private static Charset getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = null;
+	public Charset getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = Charset.toEnumConstant(name);
+					if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = Charset.US_ASCII;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = Charset.US_ASCII;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi;
+	}
+	
+	private static RFC2047Encoding getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = null;
+	public RFC2047Encoding getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = RFC2047Encoding.valueOf(name);
+					if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = RFC2047Encoding.Q;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi = RFC2047Encoding.Q;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi;
+	}
+	
+	private static Boolean isEnabledEncodingRFC2047HeaderValue_ricezioneBuste = null;
+	public boolean isEnabledEncodingRFC2047HeaderValue_ricezioneBuste() {	
+		if(OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste = true;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste;
+	}
+	
+	private static Charset getCharsetEncodingRFC2047HeaderValue_ricezioneBuste = null;
+	public Charset getCharsetEncodingRFC2047HeaderValue_ricezioneBuste() {	
+		if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste = Charset.toEnumConstant(name);
+					if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste = Charset.US_ASCII;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste = Charset.US_ASCII;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste;
+	}
+	
+	private static RFC2047Encoding getEncodingRFC2047HeaderValue_ricezioneBuste = null;
+	public RFC2047Encoding getEncodingRFC2047HeaderValue_ricezioneBuste() {	
+		if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneBuste = RFC2047Encoding.valueOf(name);
+					if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneBuste==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneBuste = RFC2047Encoding.Q;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneBuste = RFC2047Encoding.Q;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_ricezioneBuste;
+	}
+	
+	private static Boolean isEnabledEncodingRFC2047HeaderValue_inoltroBuste = null;
+	public boolean isEnabledEncodingRFC2047HeaderValue_inoltroBuste() {	
+		if(OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste = true;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste;
+	}
+	
+	private static Charset getCharsetEncodingRFC2047HeaderValue_inoltroBuste = null;
+	public Charset getCharsetEncodingRFC2047HeaderValue_inoltroBuste() {	
+		if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste = Charset.toEnumConstant(name);
+					if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste = Charset.US_ASCII;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste = Charset.US_ASCII;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste;
+	}
+	
+	private static RFC2047Encoding getEncodingRFC2047HeaderValue_inoltroBuste = null;
+	public RFC2047Encoding getEncodingRFC2047HeaderValue_inoltroBuste() {	
+		if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_inoltroBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_inoltroBuste = RFC2047Encoding.valueOf(name);
+					if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_inoltroBuste==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_inoltroBuste = RFC2047Encoding.Q;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_inoltroBuste = RFC2047Encoding.Q;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_inoltroBuste;
+	}
+	
+	private static Boolean isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = null;
+	public boolean isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = true;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi;
+	}
+	
+	private static Charset getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = null;
+	public Charset getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = Charset.toEnumConstant(name);
+					if(OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = Charset.US_ASCII;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = Charset.US_ASCII;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi;
+	}
+	
+	private static RFC2047Encoding getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = null;
+	public RFC2047Encoding getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = RFC2047Encoding.valueOf(name);
+					if(OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi==null){
+						throw new Exception("Valore fornito non valido: "+name);
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = RFC2047Encoding.Q;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi = RFC2047Encoding.Q;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi;
+	}
 	
 	
 
