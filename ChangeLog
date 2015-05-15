@@ -3,7 +3,7 @@
 	* [Utils]
 	Aggiunta funzionalità #342
 	Realizzata classe di utility org.openspcoop2.utils.resources.RFC2047Utilities che 
-	permette di gestire l'encoding e il decoding tramite RFC 2046.
+	permette di gestire l'encoding e il decoding tramite RFC 2047.
 	Nella classe sono stati aggiunti metodi che permettono di comprendere se tutti i caratteri 
 	di una stringa sono contenuti in un determinato charset.
 

@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.CharEncoding;
-import org.openspcoop2.generic_project.beans.IEnumeration;
 
 /**
 * CharsetEncoding
@@ -34,7 +33,7 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public enum Charset implements IEnumeration , Serializable , Cloneable {
+public enum Charset implements Serializable , Cloneable {
 
 	ISO_8859_1 (CharEncoding.ISO_8859_1),
 	UTF_8 (CharEncoding.UTF_8),
@@ -46,7 +45,6 @@ public enum Charset implements IEnumeration , Serializable , Cloneable {
 	
 	/** Value */
 	private String value;
-	@Override
 	public String getValue()
 	{
 		return this.value;
@@ -153,7 +151,7 @@ public enum Charset implements IEnumeration , Serializable , Cloneable {
 		return res;
 	}
 	
-	public static IEnumeration toEnumConstantFromString(String value){
+	public static Charset toEnumConstantFromString(String value){
 		Charset res = null;
 		if(Charset.ISO_8859_1.toString().equals(value)){
 			res = Charset.ISO_8859_1;
