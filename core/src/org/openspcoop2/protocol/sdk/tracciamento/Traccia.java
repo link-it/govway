@@ -351,32 +351,32 @@ public class Traccia  implements java.io.Serializable {
 
 
     // properties
-    public void addProperty(String key,String value){
-    	if(Costanti.CLUSTER_ID.equals(key)){
-    		if(this.traccia.getBusta()==null){
-    			this.traccia.setBusta(new org.openspcoop2.core.tracciamento.Busta());
-    		}
-    		if(this.traccia.getBusta().getProtocollo()==null){
-    			this.traccia.getBusta().setProtocollo(new Protocollo());
-    		}
-    		if(this.traccia.getBusta().getProtocollo().getProprietaList()==null){
-    			this.traccia.getBusta().getProtocollo().setProprietaList(new ArrayList<Proprieta>());
-    		}
-    		boolean exists = false;
-    		for (int i = 0; i < this.traccia.getBusta().getProtocollo().sizeProprietaList(); i++) {
-				Proprieta p = this.traccia.getBusta().getProtocollo().getProprieta(i);
-				if(Costanti.CLUSTER_ID.equals(p.getNome())){
-					exists = true;
-					break;
-				}
+    public void addPropertyInBusta(String key,String value){
+    	if(this.traccia.getBusta()==null){
+			this.traccia.setBusta(new org.openspcoop2.core.tracciamento.Busta());
+		}
+		if(this.traccia.getBusta().getProtocollo()==null){
+			this.traccia.getBusta().setProtocollo(new Protocollo());
+		}
+		if(this.traccia.getBusta().getProtocollo().getProprietaList()==null){
+			this.traccia.getBusta().getProtocollo().setProprietaList(new ArrayList<Proprieta>());
+		}
+		boolean exists = false;
+		for (int i = 0; i < this.traccia.getBusta().getProtocollo().sizeProprietaList(); i++) {
+			Proprieta p = this.traccia.getBusta().getProtocollo().getProprieta(i);
+			if(key.equals(p.getNome())){
+				exists = true;
+				break;
 			}
-    		if(!exists){
-	    		Proprieta proprieta = new Proprieta();
-	    		proprieta.setNome(key);
-	    		proprieta.setValore(value);
-	    		this.traccia.getBusta().getProtocollo().addProprieta(proprieta);
-    		}
-    	}
+		}
+		if(!exists){
+    		Proprieta proprieta = new Proprieta();
+    		proprieta.setNome(key);
+    		proprieta.setValore(value);
+    		this.traccia.getBusta().getProtocollo().addProprieta(proprieta);
+		}
+    }
+    public void addProperty(String key,String value){
     	this.properties.put(key,value);
     }  
     public int sizeProperties(){
