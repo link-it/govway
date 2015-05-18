@@ -62,20 +62,24 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 	}
 
 	@Override
-	public Esito getEsito(OpenSPCoop2Message message) throws ProtocolException {
-		return getEsito(message,null);
+	public Esito getEsito(OpenSPCoop2Message message,boolean erroreUtilizzoConnettore) throws ProtocolException {
+		return getEsito(message,null,erroreUtilizzoConnettore);
 	}
 
 	@Override
 	public Esito getEsito(OpenSPCoop2Message message,
-			ProprietaErroreApplicativo erroreApplicativo)
+			ProprietaErroreApplicativo erroreApplicativo,
+			boolean erroreUtilizzoConnettore)
 			throws ProtocolException {
 		try{
 			SOAPBody body = message.getSOAPBody();
 			
 			ITraduttore trasl = this.factory.createTraduttore();
 			
-			if(body==null){
+			if(erroreUtilizzoConnettore){
+				return Esito.ERRORE_INVOCAZIONE;
+			}
+			else if(body==null){
 				return Esito.OK; // oneway
 			}
 			else{

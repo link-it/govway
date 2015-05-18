@@ -29,7 +29,9 @@ import java.util.Hashtable;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -512,6 +514,14 @@ public class RicezioneBusteSOAP  {
 			}
 		}
 		
+		boolean erroreUtilizzoConnettore = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(Costanti.ERRORE_UTILIZZO_CONNETTORE);
+			if(o!=null && (o instanceof Boolean)){
+				erroreUtilizzoConnettore = (Boolean) o;
+			}
+		}
+		
 		OpenSPCoop2Message responseMessageError = null;
 		SOAPBody body = null;
 		Esito esito = null;
@@ -556,7 +566,7 @@ public class RicezioneBusteSOAP  {
 
 				// http status
 				body = responseMessage.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessage, proprietaErroreAppl);
+				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessage, proprietaErroreAppl,erroreUtilizzoConnettore);
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500;
 					descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
@@ -614,7 +624,7 @@ public class RicezioneBusteSOAP  {
 				
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				body = responseMessageError.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessageError, proprietaErroreAppl);
+				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessageError, proprietaErroreAppl, false);
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500;
 					res.setStatus(500);
@@ -745,8 +755,25 @@ public class RicezioneBusteSOAP  {
 				postOutResponseContext.setIdModulo(idModulo);
 				
 				if(requestMessage!=null){
-					postOutResponseContext.setInputRequestMessageSize(requestMessage.getIncomingMessageContentLength());
-					postOutResponseContext.setOutputRequestMessageSize(requestMessage.getOutgoingMessageContentLength());
+					long incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
+					long outgoingRequestMessageContentLenght = requestMessage.getOutgoingMessageContentLength();
+					if(incomingRequestMessageContentLength<0){
+						int cl = req.getContentLength();
+						if(cl>0){
+							//System.out.println("HTTP");
+							incomingRequestMessageContentLength = cl + 0l;
+						}
+						else{
+							//System.out.println("FLUSH");
+							// forzo la lettura del messaggio per impostare la dimensione della richiesta
+							try{
+								requestMessage.writeTo(new NullOutputStream(), true);
+							}catch(Exception eFlush){}
+							incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
+						}
+					}
+					postOutResponseContext.setInputRequestMessageSize(incomingRequestMessageContentLength);
+					postOutResponseContext.setOutputRequestMessageSize(outgoingRequestMessageContentLenght);
 				}else{
 					postOutResponseContext.setInputRequestMessageSize(req.getContentLength()+0l);
 				}

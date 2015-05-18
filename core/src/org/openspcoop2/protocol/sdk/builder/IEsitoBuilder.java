@@ -42,8 +42,8 @@ public interface IEsitoBuilder {
 		
 	public IProtocolFactory getProtocolFactory();
 	
-	public Esito getEsito(OpenSPCoop2Message message) throws ProtocolException;
+	public Esito getEsito(OpenSPCoop2Message message,boolean erroreUtilizzoConnettore) throws ProtocolException;
 		
-	public Esito getEsito(OpenSPCoop2Message message,ProprietaErroreApplicativo erroreApplicativo) throws ProtocolException;
+	public Esito getEsito(OpenSPCoop2Message message,ProprietaErroreApplicativo erroreApplicativo,boolean erroreUtilizzoConnettore) throws ProtocolException;
 
 }

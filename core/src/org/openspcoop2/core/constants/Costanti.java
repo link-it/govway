@@ -48,12 +48,14 @@ public class Costanti {
 	public final static String SOAP_VERSION = "SOAP_VERSION";
 	public final static String STATELESS = "STATELESS";
 	public final static String DATA_PRESA_IN_CARICO = "DATA_PRESA_IN_CARICO";
+	public final static String ERRORE_UTILIZZO_CONNETTORE = "ERRORE_UTILIZZO_CONNETTORE";
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.CLUSTER_ID,Costanti.PROTOCOLLO,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,
 			Costanti.ID_MESSAGGIO,Costanti.ID_FRUITORE,Costanti.ID_SERVIZIO,
 			Costanti.HEADER_TRASPORTO,Costanti.TIPO_OPERAZIONE_IM,
-			Costanti.STATELESS,Costanti.DATA_PRESA_IN_CARICO};
+			Costanti.STATELESS,Costanti.DATA_PRESA_IN_CARICO,
+			Costanti.ERRORE_UTILIZZO_CONNETTORE};
     
 	public final static String dateFormat = "yyyy-MM-dd_HH:mm:ss.SSS"; 
 	public static SimpleDateFormat newSimpleDateFormat(){

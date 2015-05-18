@@ -1548,6 +1548,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				errorConsegna = !connectorSender.send(connettoreMsg);
+				
+				// nota per lo stato si intende un esito di errore connettore quando è proprio il connettore a restituire errore.
+				// se invece il connettore esce "bene" e restituisce poi un codice http e/o una risposta, si rientra nei casi sottostanti
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE, errorConsegna);
+				
 				ejbUtils.setRicezioneMsgRisposta(DateManager.getTimestamp());
 				motivoErroreConsegna = connectorSender.getErrore();
 				eccezioneProcessamentoConnettore = connectorSender.getEccezioneProcessamento();

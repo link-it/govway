@@ -1886,7 +1886,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			//	IntepretazioneRisposta
 			if(msgResponse!=null){
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(msgResponse, context.getProprietaErroreAppl());			
+				esito = protocolFactory.createEsitoBuilder().getEsito(msgResponse, context.getProprietaErroreAppl(), false);			
 				
 				if(msgResponse.getSOAPBody().hasFault()){
 

@@ -45,6 +45,7 @@ public enum EsitoIM implements Serializable {
 	AUTORIZZAZIONE_FALLITA ("7"),
 	MESSAGGI_NON_PRESENTI ("8"),
 	MESSAGGIO_NON_TROVATO ("9");
+	// Codice 10 utilizzato in Esito per ERRORE_INVOCAZIONE
 	 
 	private final String valore;
 

@@ -40,7 +40,12 @@ public enum Esito implements Serializable{
 	ERRORE_APPLICATIVO ("2"),
 	ERRORE_GENERICO ("3"),
 	ERRORE_PROCESSAMENTO_PDD_4XX ("4"),
-	ERRORE_PROCESSAMENTO_PDD_5XX ("5");
+	ERRORE_PROCESSAMENTO_PDD_5XX ("5"),
+//	Codice 6 utilizzato in EsitoIM per AUTENTICAZIONE_FALLITA ("6"),
+//	Codice 7 utilizzato in EsitoIM per AUTORIZZAZIONE_FALLITA ("7"),
+//	Codice 8 utilizzato in EsitoIM per MESSAGGI_NON_PRESENTI ("8"),
+//	Codice 9 utilizzato in EsitoIM per MESSAGGIO_NON_TROVATO ("9");
+	ERRORE_INVOCAZIONE ("10");
 
 	private final String valore;
 
@@ -107,6 +112,8 @@ public enum Esito implements Serializable{
 			res = Esito.ERRORE_PROCESSAMENTO_PDD_4XX;
 		}  else if(Esito.ERRORE_PROCESSAMENTO_PDD_5XX.toString().equals(val)){
 			res = Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+		} else if(Esito.ERRORE_INVOCAZIONE.toString().equals(val)){
+			res = Esito.ERRORE_INVOCAZIONE;
 		} 
 		return res;
 	}

@@ -494,6 +494,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			}
 		}
 		
+		boolean erroreUtilizzoConnettore = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE);
+			if(o!=null && (o instanceof Boolean)){
+				erroreUtilizzoConnettore = (Boolean) o;
+			}
+		}
+		
 		SOAPBody body = null;
 		Esito esito = null;
 		String descrizioneSoapFault = "";
@@ -516,7 +524,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				String contentTypeRisposta = null;
 				byte[] risposta = null;
 				body = responseMessage.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessage, context.getProprietaErroreAppl());
+				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessage, context.getProprietaErroreAppl(),erroreUtilizzoConnettore);
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500; // cmq e' un errore come l'errore applicativo
 					String msgError = SoapUtils.toString(body.getFault(), false);
