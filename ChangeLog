@@ -1,3 +1,13 @@
+2015-05-19  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+        Risolto Bug #347
+	Risolto problema di importazione degli archivi in formato 'openspcoop' che si presentava
+	a seconda del criterio di ordinamento utilizzato dal compressore zip durante la creazione dell'archivio.
+	Il problema si verificava poichè il metodo standard java.util.zip.ZipFile.entries() 
+	attraversa le entries presenti nello zip nello stesso ordine in cui sono state salvate.
+	E' stato aggiunto un pre-ordinamento in modo da navigare lo zip nell'ordine atteso (lessicografico crescente). 
+
 2015-05-15  Andrea Poli <apoli@link.it>
 
         * [Pdd]

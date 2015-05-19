@@ -26,7 +26,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -43,6 +48,36 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  */
 public class ZipUtilities {
 
+	public static void main(String[] args) throws Exception {
+		
+		// L'Enumeration ritornato dal metodo standard java.util.zip.ZipFile.entries() 
+		// attraversa le entries presenti nello zip nello stesso ordine in cui sono state salvate.
+		
+		ZipFile zipFile = new ZipFile("esempio.zip");
+		
+		System.out.println("=============================================");
+		@SuppressWarnings("unchecked")
+		Enumeration<ZipEntry> en = (Enumeration<ZipEntry>) zipFile.entries();
+		while (en.hasMoreElements()) {
+			ZipEntry zipEntry = (ZipEntry) en.nextElement();
+			System.out.println("- "+zipEntry.getName());
+		}
+		
+		System.out.println("\n\n\n============= ASC ================================");
+		Iterator<ZipEntry> it = ZipUtilities.entries(zipFile, true);
+		while (it.hasNext()) {
+			ZipEntry zipEntry = (ZipEntry) it.next();
+			System.out.println("- "+zipEntry.getName());
+		}
+		
+		System.out.println("\n\n\n============= DESC ================================");
+		it = ZipUtilities.entries(zipFile, false);
+		while (it.hasNext()) {
+			ZipEntry zipEntry = (ZipEntry) it.next();
+			System.out.println("- "+zipEntry.getName());
+		}
+	}
+	
 	public static String getRootDir(String entry) throws UtilsException{
 		try{
 			String rootDir = null;
@@ -168,6 +203,35 @@ public class ZipUtilities {
 		}catch(Exception e){
 			throw new UtilsException("Unzip non riuscito: "+e.getMessage(),e);
 		}
+	}
+	
+	public static Iterator<ZipEntry> entries(ZipFile zip,boolean ascOrder){
+		
+		// L'Enumeration ritornato dal metodo standard java.util.zip.ZipFile.entries() 
+		// attraversa le entries presenti nello zip nello stesso ordine in cui sono state salvate.
+		
+		List<String> entryNames = new ArrayList<String>();
+		Hashtable<String, ZipEntry> map = new Hashtable<String, ZipEntry>();
+		Enumeration<?> e = zip.entries();
+		while(e.hasMoreElements()) {
+			ZipEntry zipEntry = (ZipEntry)e.nextElement();
+			String entryName = zipEntry.getName();
+			entryNames.add(entryName);
+			map.put(entryName, zipEntry);
+		}
+		
+		if(ascOrder){
+			java.util.Collections.sort(entryNames);
+		}
+		else{
+			java.util.Collections.sort(entryNames,Collections.reverseOrder());
+		}
+		
+		List<ZipEntry> zipEntries = new ArrayList<ZipEntry>();
+		for (String entry : entryNames) {
+			zipEntries.add(map.remove(entry));
+		}
+		return zipEntries.iterator();
 	}
 	
 }

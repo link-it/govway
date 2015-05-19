@@ -994,32 +994,141 @@ public class ImporterInformationMissingSetter {
 		// PorteDelegate
 		for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
 			PortaDelegata pd = archive.getPorteDelegate().get(i).getPortaDelegata();
+			
 			pd.setNome(replaceSoggettoProprietario(pd.getNome(), 
 					pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-			if(pd.getSoggettoErogatore()!=null){
+			if(pd.getSoggettoErogatore()!=null && 
+					pd.getSoggettoErogatore().getNome()!=null && 
+					!"".equals(pd.getSoggettoErogatore().getNome()) ){
 				pd.setNome(replaceSoggettoErogatore(pd.getNome(), 
 						pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
 			}
-			if(pd.getServizio()!=null){
+			if(pd.getServizio()!=null && 
+					pd.getServizio().getNome()!=null && 
+					!"".equals(pd.getServizio().getNome()) ){
 				pd.setNome(replaceServizio(pd.getNome(), 
 						pd.getServizio().getTipo(), pd.getServizio().getNome()));
 			}
-			if(pd.getAzione()!=null){
+			if(pd.getAzione()!=null && 
+					pd.getAzione().getNome()!=null &&
+					!"".equals(pd.getAzione().getNome()) ){
 				pd.setNome(replaceAzione(pd.getNome(), 
 						pd.getAzione().getNome()));
 			}
+			
+			if(pd.getLocation()!=null && !"".equals(pd.getLocation())){
+				pd.setLocation(replaceSoggettoProprietario(pd.getLocation(), 
+						pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+				if(pd.getSoggettoErogatore()!=null && 
+						pd.getSoggettoErogatore().getNome()!=null && 
+						!"".equals(pd.getSoggettoErogatore().getNome()) ){
+					pd.setLocation(replaceSoggettoErogatore(pd.getLocation(), 
+							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+				}
+				if(pd.getServizio()!=null && 
+						pd.getServizio().getNome()!=null && 
+						!"".equals(pd.getServizio().getNome()) ){
+					pd.setLocation(replaceServizio(pd.getLocation(), 
+							pd.getServizio().getTipo(), pd.getServizio().getNome()));
+				}
+				if(pd.getAzione()!=null && 
+						pd.getAzione().getNome()!=null &&
+						!"".equals(pd.getAzione().getNome()) ){
+					pd.setLocation(replaceAzione(pd.getLocation(), 
+							pd.getAzione().getNome()));
+				}
+			}
+			
+			if(pd.getSoggettoErogatore()!=null){
+				if(pd.getSoggettoErogatore().getPattern()!=null &&
+						!"".equals(pd.getSoggettoErogatore().getPattern())){
+					pd.getSoggettoErogatore().setPattern(replaceSoggettoProprietario(pd.getSoggettoErogatore().getPattern(), 
+							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+					// se ho il pattern configurato, non c'è il nome del soggetto erogatore
+//					pd.getSoggettoErogatore().setPattern(replaceSoggettoErogatore(pd.getSoggettoErogatore().getPattern(), 
+//							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+					// se ho il pattern configurato, non c'è il nome del soggetto erogatore
+					if(pd.getServizio()!=null && 
+							pd.getServizio().getNome()!=null && 
+							!"".equals(pd.getServizio().getNome()) ){
+						pd.getSoggettoErogatore().setPattern(replaceServizio(pd.getSoggettoErogatore().getPattern(), 
+								pd.getServizio().getTipo(), pd.getServizio().getNome()));
+					}
+					if(pd.getAzione()!=null && 
+							pd.getAzione().getNome()!=null &&
+							!"".equals(pd.getAzione().getNome()) ){
+						pd.getSoggettoErogatore().setPattern(replaceAzione(pd.getSoggettoErogatore().getPattern(), 
+								pd.getAzione().getNome()));
+					}			
+				}
+			}
+			
+			if(pd.getServizio()!=null){
+				if(pd.getServizio().getPattern()!=null &&
+						!"".equals(pd.getServizio().getPattern())){
+					pd.getServizio().setPattern(replaceSoggettoProprietario(pd.getServizio().getPattern(), 
+							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+					if(pd.getSoggettoErogatore()!=null && 
+							pd.getSoggettoErogatore().getNome()!=null && 
+							!"".equals(pd.getSoggettoErogatore().getNome()) ){
+						pd.getServizio().setPattern(replaceSoggettoErogatore(pd.getServizio().getPattern(), 
+								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+					}
+					// se ho il pattern configurato, non c'è il nome del servizio
+//					pd.getServizio().setPattern(replaceServizio(pd.getServizio().getPattern(), 
+//							pd.getServizio().getTipo(), pd.getServizio().getNome()));
+					// se ho il pattern configurato, non c'è il nome del servizio
+					if(pd.getAzione()!=null && 
+							pd.getAzione().getNome()!=null &&
+							!"".equals(pd.getAzione().getNome()) ){
+						pd.getServizio().setPattern(replaceAzione(pd.getServizio().getPattern(), 
+								pd.getAzione().getNome()));
+					}			
+				}
+			}
+			
+			if(pd.getAzione()!=null){
+				if(pd.getAzione().getPattern()!=null &&
+						!"".equals(pd.getAzione().getPattern())){
+					pd.getAzione().setPattern(replaceSoggettoProprietario(pd.getAzione().getPattern(), 
+							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+					if(pd.getSoggettoErogatore()!=null && 
+							pd.getSoggettoErogatore().getNome()!=null && 
+							!"".equals(pd.getSoggettoErogatore().getNome()) ){
+						pd.getAzione().setPattern(replaceSoggettoErogatore(pd.getAzione().getPattern(), 
+								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+					}
+					if(pd.getServizio()!=null && 
+							pd.getServizio().getNome()!=null && 
+							!"".equals(pd.getServizio().getNome()) ){
+						pd.getAzione().setPattern(replaceServizio(pd.getAzione().getPattern(), 
+								pd.getServizio().getTipo(), pd.getServizio().getNome()));
+					}
+					// se ho il pattern configurato, non c'è il nome dell'azione
+//					pd.getAzione().setPattern(replaceAzione(pd.getAzione().getPattern(), 
+//							pd.getAzione().getNome()));
+					// se ho il pattern configurato, non c'è il nome dell'azione
+				}
+			}
+			
 			for (int j = 0; j < pd.sizeServizioApplicativoList(); j++) {
 				pd.getServizioApplicativo(j).setNome(replaceSoggettoProprietario(pd.getServizioApplicativo(j).getNome(), 
 					pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-				if(pd.getSoggettoErogatore()!=null){
+				if(pd.getSoggettoErogatore()!=null && 
+						pd.getSoggettoErogatore().getNome()!=null && 
+						!"".equals(pd.getSoggettoErogatore().getNome()) ){
 					pd.getServizioApplicativo(j).setNome(replaceSoggettoErogatore(pd.getServizioApplicativo(j).getNome(), 
 							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
 				}
-				if(pd.getServizio()!=null){
+				if(pd.getServizio()!=null && 
+						pd.getServizio().getNome()!=null && 
+						!"".equals(pd.getServizio().getNome()) ){
 					pd.getServizioApplicativo(j).setNome(replaceServizio(pd.getServizioApplicativo(j).getNome(), 
 							pd.getServizio().getTipo(), pd.getServizio().getNome()));
 				}
-				if(pd.getAzione()!=null){
+				if(pd.getAzione()!=null && 
+						pd.getAzione().getNome()!=null && 
+						!"".equals(pd.getAzione().getNome()) ){
 					pd.getServizioApplicativo(j).setNome(replaceAzione(pd.getServizioApplicativo(j).getNome(), 
 							pd.getAzione().getNome()));
 				}
@@ -1031,22 +1140,30 @@ public class ImporterInformationMissingSetter {
 			PortaApplicativa pa = archive.getPorteApplicative().get(i).getPortaApplicativa();
 			pa.setNome(replaceSoggettoProprietario(pa.getNome(), 
 					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-			if(pa.getServizio()!=null){
+			if(pa.getServizio()!=null && 
+					pa.getServizio().getNome()!=null && 
+					!"".equals(pa.getServizio().getNome()) ){
 				pa.setNome(replaceServizio(pa.getNome(), 
 						pa.getServizio().getTipo(), pa.getServizio().getNome()));
 			}
-			if(pa.getAzione()!=null){
+			if(pa.getAzione()!=null && 
+					pa.getAzione().getNome()!=null && 
+					!"".equals(pa.getAzione().getNome()) ){
 				pa.setNome(replaceAzione(pa.getNome(), 
 						pa.getAzione().getNome()));
 			}
 			for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
 				pa.getServizioApplicativo(j).setNome(replaceSoggettoProprietario(pa.getServizioApplicativo(j).getNome(), 
 					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-				if(pa.getServizio()!=null){
+				if(pa.getServizio()!=null && 
+						pa.getServizio().getNome()!=null && 
+						!"".equals(pa.getServizio().getNome()) ){
 					pa.getServizioApplicativo(j).setNome(replaceServizio(pa.getServizioApplicativo(j).getNome(), 
 							pa.getServizio().getTipo(), pa.getServizio().getNome()));
 				}
-				if(pa.getAzione()!=null){
+				if(pa.getAzione()!=null && 
+						pa.getAzione().getNome()!=null && 
+						!"".equals(pa.getAzione().getNome()) ){
 					pa.getServizioApplicativo(j).setNome(replaceAzione(pa.getServizioApplicativo(j).getNome(), 
 							pa.getAzione().getNome()));
 				}

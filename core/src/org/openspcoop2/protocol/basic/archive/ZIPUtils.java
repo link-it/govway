@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -268,9 +268,9 @@ public class ZIPUtils  {
 			
 			String rootDir = null;
 			
-			Enumeration<?> e = zip.entries();
-			while(e.hasMoreElements()) {
-				ZipEntry zipEntry = (ZipEntry)e.nextElement();
+			Iterator<ZipEntry> it = ZipUtilities.entries(zip, true);
+			while (it.hasNext()) {
+				ZipEntry zipEntry = (ZipEntry) it.next();
 				String entryName = ZipUtilities.operativeSystemConversion(zipEntry.getName());
 				
 				//System.out.println("FILE NAME:  "+entryName);
