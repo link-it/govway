@@ -942,6 +942,8 @@ public class ArchiviHelper extends ConsoleHelper {
 			String user = null;
 			String password = null;
 			
+			String connettoreDebug = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
 			// http
 			String url = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
@@ -990,7 +992,7 @@ public class ArchiviHelper extends ConsoleHelper {
 				connis = new Connettore();
 			}
 			String oldConnT = TipiConnettore.DISABILITATO.getNome();
-			connettoriHelper.fillConnettore(connis, endpointtype, oldConnT, tipoconn, url,
+			connettoriHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nomeCodaJMS, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia,
@@ -1029,6 +1031,8 @@ public class ArchiviHelper extends ConsoleHelper {
 			//String autenticazioneHttp = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
 			String password = null;
+			
+			String connettoreDebug = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
 			// http
 			String url = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -1075,7 +1079,7 @@ public class ArchiviHelper extends ConsoleHelper {
 			
 			org.openspcoop2.core.registry.Connettore connettore = new org.openspcoop2.core.registry.Connettore();
 			String oldConnT = TipiConnettore.DISABILITATO.getNome();
-			connettoriHelper.fillConnettore(connettore, endpointtype, oldConnT, tipoconn, url,
+			connettoriHelper.fillConnettore(connettore, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nomeCodaJMS, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia,
@@ -1822,6 +1826,8 @@ public class ArchiviHelper extends ConsoleHelper {
 			String user = null;
 			String password = null;
 			
+			String connettoreDebug = null;
+			
 			// http
 			String url = null;
 			
@@ -1862,6 +1868,8 @@ public class ArchiviHelper extends ConsoleHelper {
 				}
 				tipoconn = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 				autenticazioneHttp = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+				
+				connettoreDebug = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 				
 				// http
 				url = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -1912,7 +1920,7 @@ public class ArchiviHelper extends ConsoleHelper {
 				endpointtype = TipiConnettore.DISABILITATO.toString();
 			}
 			
-			dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
+			dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 					url, nomeCodaJMS,
 					tipo, user, password, initcont, urlpgk, provurl,
 					connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,

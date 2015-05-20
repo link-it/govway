@@ -423,7 +423,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement> addEndPointToDati(Vector<DataElement> dati,
+	public Vector<DataElement> addEndPointToDati(Vector<DataElement> dati,String connettoreDebug,
 			String endpointtype, String autenticazioneHttp, String prefix, String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -436,7 +436,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7,
 			boolean showSectionTitle) {
-		return addEndPointToDati(dati, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
+		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
 				objectName,tipoOperazione, httpsurl, httpstipologia, httpshostverify,
 				httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
@@ -786,7 +786,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addEndPointToDati(Vector<DataElement> dati,
+	public Vector<DataElement> addEndPointToDati(Vector<DataElement> dati,String connettoreDebug,
 			String endpointtype, String autenticazioneHttp,String prefix, String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -875,6 +875,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 			dati.addElement(de);
 			
+			
 			de = new DataElement();
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			if (endpointtype.equals(TipiConnettore.HTTP.toString())) {
@@ -889,6 +890,28 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 			dati.addElement(de);
 
+			
+			de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+//			if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
+//				de.setType(DataElementType.CHECKBOX);
+//				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+//					de.setSelected(true);
+//				}
+//			}
+//			else{
+			de.setType(DataElementType.HIDDEN);
+			//}
+			if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+				de.setValue("true");
+			}
+			else{
+				de.setValue("false");
+			}
+			dati.addElement(de);
+			
+			
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 			String tmpUrl = url;
@@ -950,7 +973,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setPostBack(true);
 				dati.addElement(de);
-			}
+			}	
 			
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
 				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
@@ -996,6 +1019,42 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setPostBack(true);
 			dati.addElement(de);
 
+			
+			de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
+			if (endpointtype == null || !endpointtype.equals(TipiConnettore.CUSTOM.toString()))
+				de.setType(DataElementType.HIDDEN);
+			else{
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(true);
+			}
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
+			de.setValue(tipoconn);
+			dati.addElement(de);
+			
+			
+			
+			de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
+				de.setType(DataElementType.CHECKBOX);
+				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+					de.setSelected(true);
+				}
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+				de.setValue("true");
+			}
+			else{
+				de.setValue("false");
+			}
+			dati.addElement(de);	
+			
+			
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 			String tmpUrl = url;
@@ -1048,24 +1107,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				dati.addElement(de);		
 				//}
 			}
+				
 			
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
 				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
 						servletChiamante,true,endpointtype,true,false, prefix);
 			}
 			
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
-			if (endpointtype == null || !endpointtype.equals(TipiConnettore.CUSTOM.toString()))
-				de.setType(DataElementType.HIDDEN);
-			else{
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
-			de.setValue(tipoconn);
-			dati.addElement(de);
-
 			if (endpointtype != null && endpointtype.equals(TipiConnettore.CUSTOM.toString()) &&
 					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD) &&
 					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD)) {
@@ -1688,6 +1736,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 
 	public void fillConnettore(org.openspcoop2.core.registry.Connettore connettore,
+			String connettoreDebug,
 			String tipoConnettore, String oldtipo, String tipoconn, String http_url, String jms_nome,
 			String jms_tipo, String user, String pwd,
 			String jms_nf_initial, String jms_nf_urlPkg, String jms_np_url,
@@ -1700,7 +1749,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey)
 					throws Exception {
 		try {
-
+			
 			// azzero proprieta esistenti precedentemente
 			// (se il connettore è custom lo faccio solo se prima
 			// non era custom)
@@ -1708,6 +1757,19 @@ public class ConnettoriHelper extends ConsoleHelper {
 					!tipoConnettore.equals(oldtipo)) {
 				while(connettore.sizePropertyList()>0)
 					connettore.removeProperty(0);
+			}
+			
+			if(ServletUtils.isCheckBoxEnabled(connettoreDebug)){
+				Property p = new Property();
+				p.setNome(CostantiDB.CONNETTORE_DEBUG);
+				p.setValore("true");
+				connettore.addProperty(p);
+			}
+			else{
+				Property p = new Property();
+				p.setNome(CostantiDB.CONNETTORE_DEBUG);
+				p.setValore("false");
+				connettore.addProperty(p);
 			}
 
 			org.openspcoop2.core.registry.Property prop = null;
@@ -1774,6 +1836,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 
 	public void fillConnettore(org.openspcoop2.core.config.Connettore connettore,
+			String connettoreDebug,
 			String tipoConnettore, String oldtipo, String tipoconn, String http_url, String jms_nome,
 			String jms_tipo, String jms_user, String jms_pwd,
 			String jms_nf_initial, String jms_nf_urlPkg, String jms_np_url,
@@ -1786,7 +1849,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey)
 					throws Exception {
 		try {
-
+			
 			// azzero proprieta esistenti precedentemente
 			// (se il connettore è custom lo faccio solo se prima
 			// non era custom)
@@ -1796,6 +1859,19 @@ public class ConnettoriHelper extends ConsoleHelper {
 					connettore.removeProperty(0);
 			}
 
+			if(ServletUtils.isCheckBoxEnabled(connettoreDebug)){
+				org.openspcoop2.core.config.Property p = new org.openspcoop2.core.config.Property();
+				p.setNome(CostantiDB.CONNETTORE_DEBUG);
+				p.setValore("true");
+				connettore.addProperty(p);
+			}
+			else{
+				org.openspcoop2.core.config.Property p = new org.openspcoop2.core.config.Property();
+				p.setNome(CostantiDB.CONNETTORE_DEBUG);
+				p.setValore("false");
+				connettore.addProperty(p);
+			}
+			
 			org.openspcoop2.core.config.Property prop = null;
 
 			if (tipoConnettore.equals(TipiConnettore.CUSTOM.toString()))

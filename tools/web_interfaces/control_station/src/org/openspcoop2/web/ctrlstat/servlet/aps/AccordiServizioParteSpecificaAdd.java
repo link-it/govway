@@ -97,6 +97,7 @@ import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 public final class AccordiServizioParteSpecificaAdd extends Action {
 
 
+	private String connettoreDebug;
 	private String   nomeservizio, tiposervizio, provider, accordo,
 	servcorr, endpointtype, endpointtype_check, endpointtype_ssl, tipoconn, url, nome, tipo, user, password, initcont,
 	urlpgk, provurl, connfact, sendas, wsdlimpler, wsdlimplfru,
@@ -154,6 +155,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.endpointtype = connettoriHelper.readEndPointType();
 			this.tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			
+			this.connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
 			// http
 			this.url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -720,7 +723,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto);
 
-				dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null,
+				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 						"", "",
 						tipoJms, "", "", "", "", "", "", tipoSendas,
 						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
@@ -783,7 +786,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.statoPackage,this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto);
 
-				dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null,
+				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 						this.url, this.nome, this.tipo, this.user,
 						this.password, this.initcont, this.urlpgk,
 						this.provurl, this.connfact, this.sendas,
@@ -844,7 +847,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			else
 				connettore.setTipo(this.endpointtype);
 
-			connettoriHelper.fillConnettore(connettore, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+			connettoriHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
 					this.nome, this.tipo, this.user, this.password,
 					this.initcont, this.urlpgk, this.url, this.connfact,
 					this.sendas, this.httpsurl, this.httpstipologia,
@@ -904,7 +907,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.statoPackage,this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
 							this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto);
 
-					dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null,
+					dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
@@ -1062,6 +1065,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP+"\"") != -1) {
 					line = dis.readLine();
 					this.autenticazioneHttp = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG+"\"") != -1) {
+					line = dis.readLine();
+					this.connettoreDebug = dis.readLine();
 				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_URL+"\"") != -1) {
 					line = dis.readLine();

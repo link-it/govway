@@ -1,5 +1,13 @@
 2015-05-20  Andrea Poli <apoli@link.it>
 
+	* [PddConsole]
+	Aggiunta funzionalità #349
+	Le maschere di configurazione di un connettore (in modalità avanzata) contengono adesso anche la possibilità di indicare
+	se il connettore deve agire in 'debug mode' (log delle azioni intraprese nella category log4j dedicata creata in #348)
+	E' stata inoltre migliorata la maschera di gestione del connettore JMS
+
+2015-05-20  Andrea Poli <apoli@link.it>
+
 	* [Pdd]
 	Aggiunta funzionalità #348
 	Modificato il logging effettuato dai connettori in modo che venga utilizzata una category log4j dedicata (openspcoop2.connettori)

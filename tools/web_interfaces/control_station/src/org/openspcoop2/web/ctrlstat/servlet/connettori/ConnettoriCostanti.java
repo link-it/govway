@@ -60,6 +60,9 @@ public class ConnettoriCostanti {
 	public final static String LABEL_CONNETTORE_AUTENTICAZIONE = "Autenticazione Https";
 	public final static String LABEL_CONNETTORE_AUTENTICAZIONE_SERVER = "Autenticazione Https Server";
 	public final static String LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT = "Autenticazione Https Client";
+	public final static String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CODA = "Dati Configurazione Coda";
+	public final static String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONNESIONE = "Dati Configurazione Connessione";
+	public final static String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI = "Contesto JNDI";
 
 	/* PARAMETRI */
 
@@ -72,6 +75,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS = "endpointtype_https";
 	public final static String PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK = "endpointtype_ckb";
 	public final static String PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "tipoconn";
+	public final static String PARAMETRO_CONNETTORE_DEBUG = "connettore_debug";
 	public final static String PARAMETRO_CONNETTORE_URL = "url";
 	public final static String PARAMETRO_CONNETTORE_PROVIDER = "provider";
 	public final static String PARAMETRO_CONNETTORE_PROFILO = "profilo";
@@ -125,6 +129,7 @@ public class ConnettoriCostanti {
 
 	public final static String LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "Tipo connettore personalizzato";
+	public final static String LABEL_PARAMETRO_CONNETTORE_DEBUG = "Debug";
 	public final static String LABEL_PARAMETRO_CONNETTORE_URL = "Endpoint";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROFILO =  "Versione Protocollo";
 	

@@ -150,7 +150,13 @@ public class ConnettoreJMSUtils {
 			String stato,
 			ControlStationCore core,int pageSize){
 		
+		
 		DataElement de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CODA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 		de.setValue(nome);
 		if(!core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
@@ -163,7 +169,6 @@ public class ConnettoreJMSUtils {
 		de.setSize(pageSize);
 		dati.addElement(de);
 
-
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
 		de.setType(DataElementType.SELECT);
@@ -172,9 +177,35 @@ public class ConnettoreJMSUtils {
 
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+		de.setType(DataElementType.SELECT);
+		de.setValues(ConnettoriCostanti.TIPO_SEND_AS);
+		de.setSelected(sendas);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+		dati.addElement(de);
 
 		//if ( !objectName.equals(ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI) ) {
 
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONNESIONE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+		de.setValue(connfact);
+		if(!core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);	
+		}else{
+			de.setType(DataElementType.TEXT);
+		}
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+		de.setSize(pageSize);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME);
 		de.setValue(user);
@@ -192,6 +223,11 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 		//}
 
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX);
 		de.setValue(initcont);
@@ -217,26 +253,6 @@ public class ConnettoreJMSUtils {
 		de.setSize(pageSize);
 		dati.addElement(de);
 
-		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
-		de.setValue(connfact);
-		if(!core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);	
-		}else{
-			de.setType(DataElementType.TEXT);
-		}
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
-		de.setSize(pageSize);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
-		de.setType(DataElementType.SELECT);
-		de.setValues(ConnettoriCostanti.TIPO_SEND_AS);
-		de.setSelected(sendas);
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
-		dati.addElement(de);
 	}
 	
 	

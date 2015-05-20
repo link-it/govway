@@ -431,6 +431,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.visualizzaListaCompletaConnettori");
 	}
 	
+	public Boolean isMenuVisualizzaOpzioneDebugConnettore() throws UtilsException{
+		return this.readBooleanProperty(true, "menu.visualizzaOpzioneDebugConnettore");
+	}
+	
 	public Boolean isMenuAccordiVisualizzaCorrelazioneAsincrona() throws UtilsException{
 		return this.readBooleanProperty(true, "menu.accordi.visualizzaCorrelazioneAsincrona");
 	}

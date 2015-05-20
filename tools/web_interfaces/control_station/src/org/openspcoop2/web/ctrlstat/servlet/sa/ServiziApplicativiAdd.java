@@ -181,6 +181,8 @@ public final class ServiziApplicativiAdd extends Action {
 			String user = null;
 			String password = null;
 			
+			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
 			// http
 			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
@@ -375,7 +377,7 @@ public final class ServiziApplicativiAdd extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						tipoconn);
+						tipoconn, connettoreDebug);
 
 				pd.setDati(dati);
 
@@ -423,7 +425,7 @@ public final class ServiziApplicativiAdd extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						tipoconn);
+						tipoconn, connettoreDebug);
 
 				pd.setDati(dati);
 
@@ -572,7 +574,7 @@ public final class ServiziApplicativiAdd extends Action {
 					String oldConnT = connis.getTipo();
 					if ( (connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 						oldConnT = TipiConnettore.CUSTOM.toString();
-					connettoriHelper.fillConnettore(connis, endpointtype, oldConnT, tipoconn, url,
+					connettoriHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 							nomeCodaJMS, tipo, user, password,
 							initcont, urlpgk, provurl, connfact,
 							sendas, httpsurl, httpstipologia,

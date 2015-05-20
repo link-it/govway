@@ -351,6 +351,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			//			
 			// Map<String,String> properties =
 			// connettore.getProperties();
+			String connettoreDebug = null;
 			String endpointtype = null;
 			String tipoconn = null;
 			String autenticazioneHttp = null;
@@ -393,6 +394,18 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				user = props.get(CostantiDB.CONNETTORE_USER);
 				password = props.get(CostantiDB.CONNETTORE_PWD);
 				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				
+				if(connettoreDebug==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
+					if(v!=null){
+						if("true".equals(v)){
+							connettoreDebug = Costanti.CHECK_BOX_ENABLED;
+						}
+						else{
+							connettoreDebug = Costanti.CHECK_BOX_DISABLED;
+						}
+					}
+				}
 				
 				// http
 				if (url == null) {
@@ -475,7 +488,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					nome_aps, versione, versioniProtocollo,this.validazioneDocumenti,
 					null,null,null,protocollo,true);
 
-			dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, null, 
+			dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,
 					this.tipo, user, password, initcont, urlpgk, provurl,
 					connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE, httpsurl, httpstipologia,

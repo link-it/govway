@@ -135,6 +135,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String user = null;
 			String password = null;
 			
+			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
 			// http
 			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
@@ -510,6 +512,19 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						} else
 							endpointtype = connettore.getTipo();
 					}
+					
+					if(connettoreDebug==null && props!=null){
+						String v = props.get(CostantiDB.CONNETTORE_DEBUG);
+						if(v!=null){
+							if("true".equals(v)){
+								connettoreDebug = Costanti.CHECK_BOX_ENABLED;
+							}
+							else{
+								connettoreDebug = Costanti.CHECK_BOX_DISABLED;
+							}
+						}
+					}
+					
 					if (url == null) {
 						url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 					}
@@ -592,7 +607,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto);
 
-					dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp,  null,
+					dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  null,
 							url,nome, tipo, user, password, initcont, urlpgk,
 							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE,
 							httpsurl, httpstipologia, httpshostverify,
@@ -662,7 +677,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						statoPackage,oldStatoPackage,nome_aps,versione,versioniProtocollo,validazioneDocumenti,
 						null,null,null,protocollo,generaPACheckSoggetto);
 
-				dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, null, 
+				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, null, 
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -793,7 +808,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					newConnettore.addProperty(servizio.getConnettore().getProperty(i));
 				}
 			}
-			connettoriHelper.fillConnettore(newConnettore, endpointtype, oldConnT,
+			connettoriHelper.fillConnettore(newConnettore, connettoreDebug, endpointtype, oldConnT,
 					tipoconn, url, nome,
 					tipo, user, password, initcont, urlpgk, provurl,
 					connfact, sendas, httpsurl, httpstipologia,
@@ -867,7 +882,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,nome_aps,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto);
 
-					dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, null, 
+					dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url,
 							nome, tipo, user, password, initcont, urlpgk,
 							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE, httpsurl,

@@ -119,6 +119,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String user = null;
 			String password = null;
 			
+			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
 			// http
 			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
@@ -213,6 +215,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Risposta asincrona di " + nomeservizioApplicativo);
 				}
 				
+				
 				// Prendo i dati dal db solo se non sono stati passati
 				if (sbustamento == null) {
 					if(ra.getSbustamentoSoap()!=null)
@@ -265,6 +268,22 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						endpointtype = connra.getTipo();
 				}
 				
+				Map<String, String> props = null;
+				if(ra!=null && ra.getConnettore()!=null)
+					props = ra.getConnettore().getProperties();
+				
+				if(connettoreDebug==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
+					if(v!=null){
+						if("true".equals(v)){
+							connettoreDebug = Costanti.CHECK_BOX_ENABLED;
+						}
+						else{
+							connettoreDebug = Costanti.CHECK_BOX_DISABLED;
+						}
+					}
+				}
+				
 				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				for (int i = 0; i < connra.sizePropertyList(); i++) {
@@ -311,7 +330,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					}
 				}
 
-				Map<String, String> props = connra.getProperties();
 				if (httpsurl == null) {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 					httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
@@ -369,7 +387,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
 				
-				dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, null,
+				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -421,7 +439,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
 				
-				dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, null,
+				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, "", "", initcont, urlpgk, provurl, connfact,
 						sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -503,7 +521,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String oldConnT = connra.getTipo();
 			if ((connra.getCustom()!=null && connra.getCustom()) && !connra.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
-			connettoriHelper.fillConnettore(connra, endpointtype, oldConnT, tipoconn, url,
+			connettoriHelper.fillConnettore(connra, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia,

@@ -100,6 +100,7 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
  */
 public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
+	private String connettoreDebug;
 	private String    id, provider, endpointtype, endpointtype_check, endpointtype_ssl, tipoconn, url, nome, tipo, user,
 	password, initcont, urlpgk, provurl, connfact, sendas, wsdlimpler,
 	wsdlimplfru, profilo,clientAuth,
@@ -150,6 +151,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.endpointtype = connettoriHelper.readEndPointType();
 			this.tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			
+			this.connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
 			// http
 			this.url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -481,7 +484,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-						dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null, 
+						dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
 								"", "",
 								tipoJms, "", "", "", "", "", "", tipoSendas,
 								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
@@ -552,7 +555,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						,null,null,null,null,null,null);
 
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-					dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null,
+					dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
@@ -596,7 +599,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			Connettore connettore = new Connettore();
 			connettore.setNome("CNT_SF_" + tipoFruitore + "/" + nomeFruitore + "_" + tipoErogatore + "/" + nomeErogatore + "_" + tiposervizio + "/" + nomeservizio);
 
-			connettoriHelper.fillConnettore(connettore, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+			connettoriHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
 					this.nome, this.tipo, this.user, this.password,
 					this.initcont, this.urlpgk, this.provurl, this.connfact,
 					this.sendas, this.httpsurl, this.httpstipologia,
@@ -675,7 +678,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							,null,null,null,null,null,null);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-						dati = connettoriHelper.addEndPointToDati(dati, this.endpointtype, this.autenticazioneHttp, null,
+						dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 								this.url, this.nome, this.tipo, this.user,
 								this.password, this.initcont, this.urlpgk,
 								this.provurl, this.connfact, this.sendas,
@@ -873,6 +876,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO+"\"") != -1) {
 					line = dis.readLine();
 					this.correlato = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG+"\"") != -1) {
+					line = dis.readLine();
+					this.connettoreDebug = dis.readLine();
 				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_URL+"\"") != -1) {
 					line = dis.readLine();

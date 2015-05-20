@@ -203,7 +203,8 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String tipoconn) throws Exception {
+			String tipoconn,
+			String connettoreDebug) throws Exception {
 
 		if(ruoloFruitore==null){
 			ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
@@ -690,7 +691,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 					
 				}
 				
-				dati = this.connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
+				dati = this.connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 						url, nomeCodaJMS,
 						tipo, userRichiesta, passwordRichiesta, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,

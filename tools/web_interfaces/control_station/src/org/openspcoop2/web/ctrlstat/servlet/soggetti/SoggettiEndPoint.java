@@ -94,6 +94,8 @@ public final class SoggettiEndPoint extends Action {
 			String user = null;
 			String password = null;
 			
+			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
 			// http
 			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
@@ -169,10 +171,23 @@ public final class SoggettiEndPoint extends Action {
 						endpointtype = c.getTipo();
 				}
 				Map<String, String> props = c.getProperties();
-
+				
+				if(connettoreDebug==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
+					if(v!=null){
+						if("true".equals(v)){
+							connettoreDebug = Costanti.CHECK_BOX_ENABLED;
+						}
+						else{
+							connettoreDebug = Costanti.CHECK_BOX_DISABLED;
+						}
+					}
+				}
+				
 				if (url == null) {
 					url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 				}
+				
 				if (nome == null) {
 					nome = props.get(CostantiDB.CONNETTORE_JMS_NOME);
 					tipo = props.get(CostantiDB.CONNETTORE_JMS_TIPO);
@@ -245,7 +260,7 @@ public final class SoggettiEndPoint extends Action {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				dati.addElement(de);
 
-				dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, null,
+				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl, 
 						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -283,7 +298,7 @@ public final class SoggettiEndPoint extends Action {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				dati.addElement(de);
 
-				dati = connettoriHelper.addEndPointToDati(dati, endpointtype, autenticazioneHttp, null,
+				dati = connettoriHelper.addEndPointToDati(dati,  connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -305,7 +320,7 @@ public final class SoggettiEndPoint extends Action {
 			String oldConnT = c.getTipo();
 			if ((c.getCustom()!=null && c.getCustom()) && !c.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
-			connettoriHelper.fillConnettore(c, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
+			connettoriHelper.fillConnettore(c, connettoreDebug, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
 					httpsurl, httpstipologia, httpshostverify, httpspath,
 					httpstipo, httpspwd, httpsalgoritmo, httpsstato,

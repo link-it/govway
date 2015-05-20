@@ -363,6 +363,7 @@ public class ControlStationCore {
 	private boolean showVersioneAccordoServizioParteSpecifica = false;
 	private boolean showFlagPrivato = false;
 	private boolean showAllConnettori = false;
+	private boolean showDebugOptionConnettore = true;
 	private boolean showPulsanteAggiungiMenu = false;
 	private boolean showPulsanteAggiungiElenchi = false;
 	private boolean showPulsantiImportExport = false;
@@ -402,6 +403,9 @@ public class ControlStationCore {
 	}
 	public boolean isShowAllConnettori() {
 		return this.showAllConnettori;
+	}
+	public boolean isShowDebugOptionConnettore() {
+		return this.showDebugOptionConnettore;
 	}
 	public boolean isShowPulsanteAggiungiMenu() {
 		return this.showPulsanteAggiungiMenu;
@@ -928,6 +932,7 @@ public class ControlStationCore {
 		this.showVersioneAccordoServizioParteSpecifica = core.showVersioneAccordoServizioParteSpecifica;
 		this.showFlagPrivato = core.showFlagPrivato;
 		this.showAllConnettori = core.showAllConnettori;
+		this.showDebugOptionConnettore = core.showDebugOptionConnettore;
 		this.showPulsanteAggiungiMenu = core.showPulsanteAggiungiMenu;
 		this.showPulsanteAggiungiElenchi = core.showPulsanteAggiungiElenchi;
 		this.showPulsantiImportExport = core.showPulsantiImportExport;
@@ -1123,6 +1128,7 @@ public class ControlStationCore {
 			this.showPulsanteAggiungiMenu = consoleProperties.isMenuVisualizzazioneLinkAggiungi();
 			this.showFlagPrivato = consoleProperties.isMenuVisualizzaFlagPrivato();
 			this.showAllConnettori = consoleProperties.isMenuVisualizzaListaCompletaConnettori();
+			this.showDebugOptionConnettore = consoleProperties.isMenuVisualizzaOpzioneDebugConnettore();
 			this.showCorrelazioneAsincronaInAccordi = consoleProperties.isMenuAccordiVisualizzaCorrelazioneAsincrona();
 			this.showAccordiInformazioniProtocollo = consoleProperties.isMenuAccordiVisualizzazioneGestioneInformazioniProtocollo();
 			this.showWsdlDefinitorioAccordoServizioParteComune = consoleProperties.isMenuAccordiServizioParteComuneVisualizzazioneWSDLDefinitorio();

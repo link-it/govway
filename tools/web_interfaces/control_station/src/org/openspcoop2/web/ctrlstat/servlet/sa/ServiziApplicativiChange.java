@@ -175,6 +175,8 @@ public final class ServiziApplicativiChange extends Action {
 			String user = null;
 			String password = null;
 			
+			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
 			// http
 			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
@@ -419,6 +421,22 @@ public final class ServiziApplicativiChange extends Action {
 					endpointtype=TipiConnettore.DISABILITATO.toString();
 				}
 
+				Map<String, String> props = null;
+				if(connis!=null)
+					props = connis.getProperties();
+				
+				if(connettoreDebug==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
+					if(v!=null){
+						if("true".equals(v)){
+							connettoreDebug = Costanti.CHECK_BOX_ENABLED;
+						}
+						else{
+							connettoreDebug = Costanti.CHECK_BOX_DISABLED;
+						}
+					}
+				}
+				
 				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
@@ -465,7 +483,6 @@ public final class ServiziApplicativiChange extends Action {
 					}
 				}
 
-				Map<String, String> props = connis.getProperties();
 				if (httpsurl == null) {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 					httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
@@ -535,7 +552,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						tipoconn);
+						tipoconn, connettoreDebug);
 
 				pd.setDati(dati);
 
@@ -591,7 +608,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						tipoconn);
+						tipoconn, connettoreDebug);
 
 				pd.setDati(dati);
 
@@ -765,7 +782,7 @@ public final class ServiziApplicativiChange extends Action {
 				String oldConnT = connis.getTipo();
 				if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 					oldConnT = TipiConnettore.CUSTOM.toString();
-				connettoriHelper.fillConnettore(connis, endpointtype, oldConnT, tipoconn, url,
+				connettoriHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 						nomeCodaJMS, tipo, user, password,
 						initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia,
