@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.pdd.services.RicezioneBuste;
 import org.openspcoop2.pdd.services.RicezioneBusteSOAP;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -68,13 +69,13 @@ public class ConnettoreRicezioneBusteDirectVM extends AbstractConnettoreDirectVM
 	@Override
 	public boolean validate(ConnettoreMsg request) {
 		
-		if(request.getConnectorProperties().get("pa")==null){
+		if(request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PA)==null){
 			// La PA in alcuni protocolli puo' non essere fornita
-//			this.errore = "Proprieta' 'pa' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+//			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_DIRECT_VM_PA+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 //			return false;
 		}
 		else{
-			this.pa = request.getConnectorProperties().get("pa").trim();
+			this.pa = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PA).trim();
 		}
 		
 		return true;

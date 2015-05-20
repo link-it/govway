@@ -39,13 +39,14 @@ public class Costanti {
 	public final static String TRANSFER_ENCODING = "Transfer-Encoding";
 	public final static String TRANSFER_ENCODING_CHUNCKED_VALUE = "chunked";
 	
-	public final static String SOAP_ACTION = "SOAPAction";
+	public final static String SOAP_ACTION = SOAPVersion.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION;
 	
 	public final static String CONTENT_TYPE_SOAP_1_1 = "text/xml";
 	public final static String CONTENT_TYPE_SOAP_1_2 = "application/soap+xml";
 	public final static String CONTENT_TYPE_APPLICATION_OCTET_STREAM = "application/octet-stream";
 	public final static String CONTENT_TYPE_ZIP = "application/zip";
 	public final static String CONTENT_TYPE_APPLICATION_XOP_XML = "application/xop+xml";
+	public final static String CONTENT_TYPE_HTML = "text/html";
 	
 	public final static String CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP = "application/openspcoop2";
 	

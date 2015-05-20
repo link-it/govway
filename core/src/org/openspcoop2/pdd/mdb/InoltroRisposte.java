@@ -35,6 +35,8 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
@@ -376,10 +378,10 @@ public class InoltroRisposte extends GenericLib{
 				if(configurazionePdDManager.isUtilizzoIndirizzoTelematico() && busta.getIndirizzoDestinatario()!=null){
 					msgDiag.logPersonalizzato("routingTable.utilizzoIndirizzoTelematico");
 					Property locationIndTel = new Property();
-					locationIndTel.setNome("location");
+					locationIndTel.setNome(CostantiConnettori.CONNETTORE_LOCATION);
 					locationIndTel.setValore(busta.getIndirizzoDestinatario());
 					connettore = new Connettore();
-					connettore.setTipo("http");
+					connettore.setTipo(TipiConnettore.HTTP.getNome());
 					connettore.addProperty(locationIndTel);
 				}else{
 					msgDiag.logPersonalizzato("routingTable.esaminaInCorso");
@@ -917,11 +919,11 @@ public class InoltroRisposte extends GenericLib{
 				java.util.Hashtable<String,String> propCon = new java.util.Hashtable<String,String>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
-			if(connettoreMsg.getConnectorProperties().get("connection-timeout")==null){
-				connettoreMsg.getConnectorProperties().put("connection-timeout",""+this.propertiesReader.getConnectionTimeout_inoltroBuste());
+			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
+				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,""+this.propertiesReader.getConnectionTimeout_inoltroBuste());
 			}
-			if(connettoreMsg.getConnectorProperties().get("read-connection-timeout")==null){
-				connettoreMsg.getConnectorProperties().put("read-connection-timeout",""+this.propertiesReader.getReadConnectionTimeout_inoltroBuste());
+			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
+				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT,""+this.propertiesReader.getReadConnectionTimeout_inoltroBuste());
 			}
 			
 			// User-Agent e X-* header

@@ -99,6 +99,8 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopResources = null;
 	/**  Logger log4j utilizzato per la configurazione di sistema */
 	protected static Logger loggerOpenSPCoopConfigurazioneSistema = null;
+	/**  Logger log4j utilizzato per i connettori */
+	protected static Logger loggerOpenSPCoopConnettori = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
 	protected static Vector<IMsgDiagnosticoOpenSPCoopAppender> loggerMsgDiagnosticoOpenSPCoopAppender = new Vector<IMsgDiagnosticoOpenSPCoopAppender>(); 
 	protected static Vector<String> tipoMsgDiagnosticoOpenSPCoopAppender = new Vector<String>();
@@ -342,6 +344,11 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema = Logger.getLogger("openspcoop2.configurazioneSistema");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema==null)
 				throw new Exception("Logger openspcoop2.configurazioneSistema non trovato");
+			
+			// CONNETTORI LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopConnettori = Logger.getLogger("openspcoop2.connettori");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopConnettori==null)
+				throw new Exception("Logger openspcoop2.connettori non trovato");
 			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
@@ -682,6 +689,10 @@ public class OpenSPCoop2Logger {
 
 	public static Logger getLoggerOpenSPCoopConfigurazioneSistema() {
 		return OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema;
+	}
+	
+	public static Logger getLoggerOpenSPCoopConnettori() {
+		return OpenSPCoop2Logger.loggerOpenSPCoopConnettori;
 	}
 	
 	public static Vector<IMsgDiagnosticoOpenSPCoopAppender> getLoggerMsgDiagnosticoOpenSPCoopAppender() {

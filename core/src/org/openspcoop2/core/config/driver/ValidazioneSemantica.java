@@ -104,6 +104,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.utils.Utilities;
@@ -1500,7 +1501,7 @@ public class ValidazioneSemantica {
 						this.errori.add("Il connettore "+nomeConn+" del "+identificativoElementoInternoSoggetto+" (Soggetto:"+idSoggetto+") è di tipo jms, ma non ha un tipo coda/topic definito");
 					}
 				}else{
-					if (!jmsTipo.equals("queue") && !jmsTipo.equals("topic")){
+					if (!jmsTipo.equals(CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE) && !jmsTipo.equals(CostantiConnettori.CONNETTORE_JMS_TIPO_TOPIC)){
 						if(identificativoElementoInternoSoggetto==null){
 							this.errori.add("Il connettore "+nomeConn+", definito nella radice del soggetto["+idSoggetto+"], è di tipo jms, ma non ha un tipo coda/topic valido (valori assumibili sono topic/queue)");
 						}else{
@@ -1522,7 +1523,7 @@ public class ValidazioneSemantica {
 						this.errori.add("Il connettore "+nomeConn+" del "+identificativoElementoInternoSoggetto+" (Soggetto:"+idSoggetto+") è di tipo jms, ma non ha un tipo di messaggio (sendAs) definito");
 					}
 				}else{
-					if (!jmsSendAs.equals("TextMessage") && !jmsSendAs.equals("BytesMessage")){
+					if (!jmsSendAs.equals(CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE) && !jmsSendAs.equals(CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE)){
 						if(identificativoElementoInternoSoggetto==null){
 							this.errori.add("Il connettore "+nomeConn+", definito nella radice del soggetto["+idSoggetto+"], è di tipo jms, ma non ha un tipo di messaggio (sendAs) (valori assumibili sono TextMessage/BytesMessage)");
 						}else{

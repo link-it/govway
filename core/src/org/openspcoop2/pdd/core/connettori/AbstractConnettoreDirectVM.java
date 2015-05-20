@@ -26,11 +26,10 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
@@ -53,7 +52,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
+	private ConnettoreLogger logger = null;
 
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
@@ -92,26 +91,40 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		
 		if(request==null){
 			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
 			return false;
 		}
-
-		// Raccolta parametri
+		
+		// Raccolta parametri per costruttore logger
+		this.properties = request.getConnectorProperties();
+		// analsi i parametri specifici per il connettore
+		if(this.properties == null)
+			this.errore = "Proprieta' del connettore non definite";
+		if(this.properties.size() == 0)
+			this.errore = "Proprieta' del connettore non definite";
+		// - Busta
+		this.busta = request.getBusta();
+		if(this.busta!=null)
+			this.idMessaggio=this.busta.getID();
+		// - Debug mode
+		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
+				this.debug = true;
+		}
+	
+		// Logger
+		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
+				
+		// Raccolta altri parametri
 		try{
 			this.requestMsg =  request.getRequestMessage();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.log.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
 			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
 			return false;
 		}
-		this.properties = request.getConnectorProperties();
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
 		this.propertiesTrasporto = request.getPropertiesTrasporto();
 		this.propertiesUrlBased = request.getPropertiesUrlBased();
 		this.credenziali = request.getCredenziali();
@@ -120,18 +133,6 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		if(this.requestMsg==null){
 			this.errore = "Messaggio da consegnare is Null (Msg)";
 			return false;
-		}
-
-		// analsi i parametri specifici per il connettore
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.size() == 0)
-			this.errore = "Proprieta' del connettore non definite";
-
-		// Debug mode
-		if(this.properties.get("debug")!=null){
-			if("true".equalsIgnoreCase(this.properties.get("debug").trim()))
-				this.debug = true;
 		}
 		
 		// Context per invocazioni handler
@@ -149,9 +150,9 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 				
 		// credenziali
 		if(this.credenziali==null){
-			String user = this.properties.get("user");
-			String password = this.properties.get("password");
-			String subject = this.properties.get("subject");
+			String user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
+			String password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
+			String subject = this.properties.get(CostantiConnettori.CONNETTORE_SUBJECT);
 			if(user!=null || password!=null || subject!=null){
 				this.credenziali = new Credenziali();
 				this.credenziali.setUsername(user);
@@ -166,7 +167,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			// location
 			try{
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] creazione URL...");
+					this.logger.debug("Creazione URL...");
 				this.buildLocation(this.properties,true);
 			}catch(Exception e){
 				this.errore = e.getMessage();
@@ -184,12 +185,12 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	private IProtocolFactory buildProtocolFactoryForForwardMessage(Hashtable<String, String> properties) throws Exception{
 		// protocol
 		IProtocolFactory pFactory = this.getProtocolFactory();
-		String protocol = properties.get("protocol");
+		String protocol = properties.get(CostantiConnettori.CONNETTORE_DIRECT_VM_PROTOCOL);
 		if(protocol!=null){
 			try{
 				pFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			}catch(Exception e){
-				throw new Exception("Proprieta' 'protocol' fornita contiene un tipo di protocollo ["+protocol+"] non valido: "+e.getMessage());
+				throw new Exception("Proprieta' '"+CostantiConnettori.CONNETTORE_DIRECT_VM_PROTOCOL+"' fornita contiene un tipo di protocollo ["+protocol+"] non valido: "+e.getMessage());
 			}
 		}
 		return pFactory;
@@ -202,7 +203,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		
 		// context
 		String webContext = "openspcoop2";
-		String context = properties.get("context");
+		String context = properties.get(CostantiConnettori.CONNETTORE_DIRECT_VM_CONTEXT);
 		if(context!=null){
 			webContext = context;
 		}
@@ -291,7 +292,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			return true;
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.log.error("Errore avvenuto durante la consegna SOAP: "+e.getMessage());
+			this.logger.error("Errore avvenuto durante la consegna SOAP: "+e.getMessage());
 			this.errore = "Errore avvenuto durante la consegna SOAP: "+e.getMessage();
 			return false;
 		}	

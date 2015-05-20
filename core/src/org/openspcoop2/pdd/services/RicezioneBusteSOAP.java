@@ -321,7 +321,7 @@ public class RicezioneBusteSOAP  {
 						ServletUtils.checkSoapActionQuotedString(soapAction, versioneSoap);
 					}
 					context.setSoapAction(soapAction);
-					requestMessage.setProperty("SOAPAction", soapAction);
+					requestMessage.setProperty(org.openspcoop2.message.Costanti.SOAP_ACTION, soapAction);
 					requestMessage.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION, soapAction);
 				}
 				

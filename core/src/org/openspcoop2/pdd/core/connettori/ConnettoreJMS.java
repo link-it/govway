@@ -40,11 +40,11 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.resources.Loader;
 
@@ -60,19 +60,12 @@ import org.openspcoop2.utils.resources.Loader;
 
 public class ConnettoreJMS extends ConnettoreBase {
 
-	private static final String QUEUE = "queue";
-	private static final String TOPIC = "topic";
-	private static final String TEXT_MESSAGE = "TextMessage";
-	private static final String BYTES_MESSAGE = "BytesMessage";
-	private static final String LOCATIONS_CACHE_ABILITATA = "abilitata";
-	private static final String LOCATIONS_CACHE_DISABILITATA = "disabilitata";
-
 
 	/** Cache per le locations */
 	private static Hashtable<String,Destination> locations = new Hashtable<String,Destination>();
 
 	/** Logger utilizzato per debug. */
-	private org.apache.log4j.Logger log = null;
+	private ConnettoreLogger logger = null;
 
 
 
@@ -121,6 +114,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
+		this.loader = Loader.getInstance();
+		
 		if(request==null){
 			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
 			return false;
@@ -129,25 +124,37 @@ public class ConnettoreJMS extends ConnettoreBase {
 		// Context per invocazioni handler
 		this.outRequestContext = request.getOutRequestContext();
 		this.msgDiagnostico = request.getMsgDiagnostico();
+				
+		// Raccolta parametri per costruttore logger
+		this.properties = request.getConnectorProperties();
+		if(this.properties == null)
+			this.errore = "Proprieta' del connettore non definite";
+		if(this.properties.size() == 0)
+			this.errore = "Proprieta' del connettore non definite";
+		// - Busta
+		this.busta = request.getBusta();
+		if(this.busta!=null)
+			this.idMessaggio=this.busta.getID();
+		// - Debug mode
+		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
+				this.debug = true;
+		}
+	
+		// Logger
+		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
 		
-		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		this.loader = Loader.getInstance();
-		
-		// Raccolta parametri
+		// Raccolta altri parametri
 		try{
 			this.requestMsg =  request.getRequestMessage();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.log.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
 			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
 			return false;
 		}
-		this.properties = request.getConnectorProperties();
 		this.sbustamentoSoap = request.isSbustamentoSOAP();
 		this.propertiesTrasporto = request.getPropertiesTrasporto();
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
 
 		//this.tipoAutenticazione = request.getAutenticazione();
 		this.credenziali = request.getCredenziali();
@@ -158,76 +165,69 @@ public class ConnettoreJMS extends ConnettoreBase {
 			return false;
 		}
 
-		// analsi i parametri specifici per il connettore
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.size() == 0)
-			this.errore = "Proprieta' del connettore non definite";
-
 		// tipoConnetore
 		this.tipoConnettore = request.getTipoConnettore();
 
 		// location
-		if(this.properties.get("location")==null){
-			this.errore = "Proprieta' 'location' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
 		}
 
 
 		// tipo
-		if(this.properties.get("tipo")==null){
-			this.errore = "Proprieta' 'tipo' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+		if(this.properties.get(CostantiConnettori.CONNETTORE_JMS_TIPO)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_JMS_TIPO+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
 		}
-		if( (this.properties.get("tipo").equalsIgnoreCase(ConnettoreJMS.QUEUE) == false) && 
-				(this.properties.get("tipo").equalsIgnoreCase(ConnettoreJMS.TOPIC) == false)){
-			this.errore = "Proprieta' 'tipo' non correttamente fornita per il connettore ["+request.getTipoConnettore()+"] \n(Valori possibili sono 'queue' o 'topic')";
+		if( (this.properties.get(CostantiConnettori.CONNETTORE_JMS_TIPO).equalsIgnoreCase(CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE) == false) && 
+				(this.properties.get(CostantiConnettori.CONNETTORE_JMS_TIPO).equalsIgnoreCase(CostantiConnettori.CONNETTORE_JMS_TIPO_TOPIC) == false)){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_JMS_TIPO+"' non correttamente fornita per il connettore ["+
+				request.getTipoConnettore()+"] \n(Valori possibili sono '"+CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE+"' o '"+CostantiConnettori.CONNETTORE_JMS_TIPO_TOPIC+"')";
 			return false;
 		}
 
 		// locations cache
-		if(this.properties.get("locations-cache")!=null){
-			if( (this.properties.get("locations-cache").equalsIgnoreCase(ConnettoreJMS.LOCATIONS_CACHE_ABILITATA) == false) && 
-					(this.properties.get("locations-cache").equalsIgnoreCase(ConnettoreJMS.LOCATIONS_CACHE_DISABILITATA) == false)){
-				this.errore = "Proprieta' 'locations-cache' non correttamente fornita per il connettore ["+request.getTipoConnettore()+"] \n(Valori possibili sono 'abilitata' o 'disabilitata')";
+		if(this.properties.get(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE)!=null){
+			if( (this.properties.get(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE).equalsIgnoreCase(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE_ABILITATA) == false) && 
+					(this.properties.get(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE).equalsIgnoreCase(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE_DISABILITATA) == false)){
+				this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE
+						+"' non correttamente fornita per il connettore ["+request.getTipoConnettore()+"] \n(Valori possibili sono '"+
+						CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE_ABILITATA+"' o '"+CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE_DISABILITATA+"')";
 				return false;
 			}
 		}
 
 
 		// connection-factory
-		if(this.properties.get("connection-factory")==null){
-			this.errore = "Proprieta' 'connection-factory' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+		if(this.properties.get(CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY+
+					"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
 		}
 
 		// send-as
-		if(this.properties.get("send-as")==null){
-			this.errore = "Proprieta' 'send-as' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+		if(this.properties.get(CostantiConnettori.CONNETTORE_JMS_SEND_AS)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_JMS_SEND_AS+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
 		}
-		if( (this.properties.get("send-as").equalsIgnoreCase(ConnettoreJMS.TEXT_MESSAGE) == false) && 
-				(this.properties.get("send-as").equalsIgnoreCase(ConnettoreJMS.BYTES_MESSAGE) == false)){
-			this.errore = "Proprieta' 'send-as' non correttamente fornita per il connettore ["+request.getTipoConnettore()+"] \n(Valori possibili sono 'TextMessage' o 'BytesMessage')";
+		if( (this.properties.get(CostantiConnettori.CONNETTORE_JMS_SEND_AS).equalsIgnoreCase(CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE) == false) && 
+				(this.properties.get(CostantiConnettori.CONNETTORE_JMS_SEND_AS).equalsIgnoreCase(CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE) == false)){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_JMS_SEND_AS+"' non correttamente fornita per il connettore ["+request.getTipoConnettore()+
+					"] \n(Valori possibili sono '"+CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE+"' o '"+CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE+"')";
 			return false;
 		}
 
 		// acknowledgeModeSessione
-		if(this.properties.get("acknowledgeMode")!=null){
-			if(CostantiConfigurazione.AUTO_ACKNOWLEDGE.equals(this.properties.get("acknowledgeMode")))
+		if(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)!=null){
+			if(CostantiConfigurazione.AUTO_ACKNOWLEDGE.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)))
 				this.acknowledgeModeSessione = javax.jms.Session.AUTO_ACKNOWLEDGE;
-			else if(CostantiConfigurazione.CLIENT_ACKNOWLEDGE.equals(this.properties.get("acknowledgeMode")))
+			else if(CostantiConfigurazione.CLIENT_ACKNOWLEDGE.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)))
 				this.acknowledgeModeSessione = javax.jms.Session.CLIENT_ACKNOWLEDGE;
-			else if(CostantiConfigurazione.DUPS_OK_ACKNOWLEDGE.equals(this.properties.get("acknowledgeMode")))
+			else if(CostantiConfigurazione.DUPS_OK_ACKNOWLEDGE.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_ACKNOWLEDGE_MODE)))
 				this.acknowledgeModeSessione = javax.jms.Session.DUPS_OK_ACKNOWLEDGE;
 			else
-				this.log.error("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
-		}
-
-		// Debug mode
-		if(this.properties.get("debug")!=null){
-			if("true".equalsIgnoreCase(this.properties.get("debug").trim()))
-				this.debug = true;
+				this.logger.error("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
 		}
 
 		return sendJMS();
@@ -265,7 +265,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 			/* ----- Trasformazione del messaggio in byte ----- */
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] trasformazione del messaggio in byte...");
+				this.logger.debug("Trasformazione del messaggio in byte...");
 			byte [] consegna = null;
 			if(this.sbustamentoSoap){
 				// richiesto sbustamento
@@ -284,15 +284,15 @@ public class ConnettoreJMS extends ConnettoreBase {
 			if(this.debug){
 				try{
 					String contentTypeRichiesta = this.requestMsg.getContentType();
-					this.log.debug("["+this.idMessaggio+"] Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+new String(consegna));
+					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+new String(consegna),false);
 				}catch(Exception e){
-					this.log.error("["+this.idMessaggio+"] DebugMode, log del messaggio inviato non riuscito",e);
+					this.logger.error("DebugMode, log del messaggio inviato non riuscito",e);
 				}
 			}
 
 			/* ------ Raccolta credenziali ------ */
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] raccolta credenziali...");
+				this.logger.debug("Raccolta credenziali...");
 			String user = null;
 			String password = null;
 			if(this.credenziali!=null){
@@ -301,14 +301,14 @@ public class ConnettoreJMS extends ConnettoreBase {
 				password = this.credenziali.getPassword();
 			}else{
 				//log.info("propertiesa");
-				user = this.properties.get("user");
-				password = this.properties.get("password");
+				user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
+				password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
 			}
 
 
 			/* ------ Creazione contesto  ed eventuale pool-local-context ------- */
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] creazione jndi context ed eventuale pool-local-context...");
+				this.logger.debug("Creazione jndi context ed eventuale pool-local-context...");
 			java.util.Properties propertiesJMS = new java.util.Properties();
 			java.util.Properties propertiesLocalPool = new java.util.Properties();
 			if(user!=null && password!=null){
@@ -325,48 +325,48 @@ public class ConnettoreJMS extends ConnettoreBase {
 			while( enumCTX.hasMoreElements() ) {
 				String key = (String) enumCTX.nextElement();
 				String value = this.properties.get(key);
-				if(key.startsWith("context-")){
-					key = key.substring("context-".length());
+				if(key.startsWith(CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX)){
+					key = key.substring(CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX.length());
 					propertiesJMS.put(key,value);
-				}else if(key.startsWith("pool-")){
-					key = key.substring("pool-".length());
+				}else if(key.startsWith(CostantiConnettori.CONNETTORE_JMS_POOL_PREFIX)){
+					key = key.substring(CostantiConnettori.CONNETTORE_JMS_POOL_PREFIX.length());
 					propertiesLocalPool.put(key,value);
-				}else if(key.startsWith("lookupDestination-")){
-					key = key.substring("lookupDestination-".length());
-					if(key.indexOf("#Azione")!=-1 || value.indexOf("#Azione")!=-1){
+				}else if(key.startsWith(CostantiConnettori.CONNETTORE_JMS_LOOKUP_DESTINATION_PREFIX)){
+					key = key.substring(CostantiConnettori.CONNETTORE_JMS_LOOKUP_DESTINATION_PREFIX.length());
+					if(key.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE)!=-1 || value.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE)!=-1){
 						if(this.busta == null || this.busta.getAzione()== null){
-							throw new Exception("Proprieta' 'location' definita dinamicamente (#Azione), ma busta e Azione non definita per questo Connettore["+this.tipoConnettore+"]");
+							throw new Exception("Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' definita dinamicamente ("+CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE+"), ma busta e Azione non definita per questo Connettore["+this.tipoConnettore+"]");
 						}
 					}
-					if(key.indexOf("#Servizio")!=-1 || value.indexOf("#Servizio")!=-1){
+					if(key.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_NOME_SERVIZIO)!=-1 || value.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_NOME_SERVIZIO)!=-1){
 						if(this.busta == null || this.busta.getServizio()== null){
-							throw new Exception("Proprieta' 'location' definita dinamicamente (#Servizio), ma busta e Servizio non definito per questo Connettore["+this.tipoConnettore+"]");
+							throw new Exception("Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' definita dinamicamente ("+CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_NOME_SERVIZIO+"), ma busta e Servizio non definito per questo Connettore["+this.tipoConnettore+"]");
 						}
 					}
-					if(key.indexOf("#TipoServizio")!=-1 || value.indexOf("#TipoServizio")!=-1){
+					if(key.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO)!=-1 || value.indexOf(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO)!=-1){
 						if(this.busta == null || this.busta.getTipoServizio()== null){
-							throw new Exception("Proprieta' 'location' definita dinamicamente (#TipoServizio), ma busta e TipoServizio non definito per questo Connettore["+this.tipoConnettore+"]");
+							throw new Exception("Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' definita dinamicamente ("+CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO+"), ma busta e TipoServizio non definito per questo Connettore["+this.tipoConnettore+"]");
 						}
 					}
 					if(this.busta.getAzione()!=null)
-						key = key.replace("#Azione",this.busta.getAzione());
+						key = key.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE,this.busta.getAzione());
 					if(this.busta.getServizio()!=null)
-						key = key.replace("#Servizio",this.busta.getServizio());
+						key = key.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_NOME_SERVIZIO,this.busta.getServizio());
 					if(this.busta.getTipoServizio()!=null)
-						key = key.replace("#TipoServizio",this.busta.getTipoServizio());
+						key = key.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO,this.busta.getTipoServizio());
 					if(this.busta.getAzione()!=null)
-						value = value.replace("#Azione",this.busta.getAzione());
+						value = value.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE,this.busta.getAzione());
 					if(this.busta.getServizio()!=null)
-						value = value.replace("#Servizio",this.busta.getServizio());
+						value = value.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_NOME_SERVIZIO,this.busta.getServizio());
 					if(this.busta.getTipoServizio()!=null)
-						value = value.replace("#TipoServizio",this.busta.getTipoServizio());
+						value = value.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO,this.busta.getTipoServizio());
 					propertiesJMS.put(key,value);
 				}
 			}
 
 			// Overwrite da file properties.
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] creazione jndi context ed eventuale pool-local-context, Overwrite da file properties...");
+				this.logger.debug("Creazione jndi context ed eventuale pool-local-context, Overwrite da file properties...");
 			ConnettoreJMSProperties overwriteProperties = ConnettoreJMSProperties.getInstance();
 			if (overwriteProperties!=null){
 				Hashtable<String,IDServizio> idServizi = overwriteProperties.getIDServizi_Pubblicazione();
@@ -413,7 +413,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 			// Impostazione Contesto
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione contesto...");
+				this.logger.debug("Impostazione contesto...");
 			ctxJMS = new InitialContext(propertiesJMS);
 			if(propertiesLocalPool.size() > 0){
 				ctxLocalPool = new InitialContext(propertiesLocalPool);
@@ -422,36 +422,36 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 			/* ------ Ottengo Risorsa sorgente (ConnectionFactory/OpenSPCoopQueueManager) -------- */
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] lookup connection factory...");
-			String connectionFactory = this.properties.get("connection-factory");
+				this.logger.debug("Lookup connection factory...");
+			String connectionFactory = this.properties.get(CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY);
 			if(connectionFactory!=null)
 				connectionFactory = connectionFactory.trim();
 			if(ctxLocalPool!=null){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] lookup connection factory da ctxLocalPool...");
+					this.logger.debug("Lookup connection factory da ctxLocalPool...");
 				qcf = (ConnectionFactory) ctxLocalPool.lookup( connectionFactory );
 			}
 			else{
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] lookup connection factory da ctxJMS...");
+					this.logger.debug("Lookup connection factory da ctxJMS...");
 				qcf = (ConnectionFactory) ctxJMS.lookup( connectionFactory );
 			}
 
 
 			/* --------- Ottengo Coda/Topic --------- */
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] lookup coda/topic...");
+				this.logger.debug("Lookup coda/topic...");
 			// Costruzione location
-			this.location = this.properties.get("location");
+			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
 
 			boolean findDestinationInCache = false;
 			// cerco nella cache
-			if(ConnettoreJMS.LOCATIONS_CACHE_ABILITATA.equals(this.properties.get("locations-cache")) ){
+			if(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE_ABILITATA.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE)) ){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] lookup coda/topic in cache ["+(ConnettoreJMS.locations.containsKey(this.location)==true)+"]...");
+					this.logger.debug("Lookup coda/topic in cache ["+(ConnettoreJMS.locations.containsKey(this.location)==true)+"]...");
 				if(ConnettoreJMS.locations.containsKey(this.location)==true){
 					//System.out.println("PRELEVO DALLA CACHE");
-					if(ConnettoreJMS.QUEUE.equalsIgnoreCase(this.properties.get("tipo"))){
+					if(CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE.equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_JMS_TIPO))){
 						// Lookup Coda
 						queueDestination = (Queue) ConnettoreJMS.locations.get(this.location);
 					}else{
@@ -460,36 +460,36 @@ public class ConnettoreJMS extends ConnettoreBase {
 					}
 					findDestinationInCache = true;
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] lookup coda/topic in cache effettuata con successo...");
+						this.logger.debug("Lookup coda/topic in cache effettuata con successo...");
 				}
 			}
 			// lookup location nel JNDI
 			if(findDestinationInCache == false){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] lookup coda/topic (non e' presente in cache, o cache non abilitata)...");
+					this.logger.debug("Lookup coda/topic (non e' presente in cache, o cache non abilitata)...");
 				//System.out.println("PRELEVO NORMALE");
-				if(ConnettoreJMS.QUEUE.equalsIgnoreCase(this.properties.get("tipo"))){
+				if(CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE.equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_JMS_TIPO))){
 					// Lookup Coda
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] lookup coda...");
+						this.logger.debug("Lookup coda...");
 					queueDestination = (Queue) ctxJMS.lookup( this.location );
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] lookup coda effettuata...");
+						this.logger.info("Lookup coda ["+this.location+"] effettuata...",false);
 				}else{
 					// Lookup Topic
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] lookup topic...");
+						this.logger.debug("Lookup topic...");
 					topicDestination = (Topic) ctxJMS.lookup( this.location );
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] lookup topic effettuato...");
+						this.logger.info("Lookup topic ["+this.location+"] effettuato...",false);
 				}
 			}
 			// aggiungo in cache se non c'era e se la cache e' attiva
-			if( (findDestinationInCache == false) &&  ConnettoreJMS.LOCATIONS_CACHE_ABILITATA.equals(this.properties.get("locations-cache")) ){
+			if( (findDestinationInCache == false) &&  CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE_ABILITATA.equals(this.properties.get(CostantiConnettori.CONNETTORE_JMS_LOCATIONS_CACHE)) ){
 				//System.out.println("AGGIUNGO IN CACHE");
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] aggiunto coda/topic in cache...");
-				if(ConnettoreJMS.QUEUE.equalsIgnoreCase(this.properties.get("tipo")))
+					this.logger.debug("Aggiunto coda/topic in cache...");
+				if(CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE.equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_JMS_TIPO)))
 					putDestination(this.location,queueDestination);
 				else
 					putDestination(this.location,topicDestination);
@@ -501,33 +501,33 @@ public class ConnettoreJMS extends ConnettoreBase {
 			// ConnectionFactory
 			if( user!=null && password!=null  ){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] create connection (user:"+user+" password:"+password+")...");
+					this.logger.info("Create connection (user:"+user+" password:"+password+")...",false);
 				qc = qcf.createConnection(user,password);
 			}
 			else{
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] create connection...");
+					this.logger.info("Create connection...",false);
 				qc = qcf.createConnection();
 			}
 			if(qc==null)
 				throw new Exception("Connessione JMS non ritornata (is null) dalla ConnectionFactory["+connectionFactory+"]");
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] create sessione ["+this.acknowledgeModeSessione+"]...");
+				this.logger.info("Create sessione ["+this.acknowledgeModeSessione+"]...",false);
 			qs = qc.createSession(false, this.acknowledgeModeSessione);
 			if(qs==null)
 				throw new Exception("Sessione JMS non ritornata (is null) dalla Connessione creata con la ConnectionFactory["+connectionFactory+"]");
 
 
 			/* ---------- Crezione Sender ------------*/
-			if(ConnettoreJMS.QUEUE.equalsIgnoreCase(this.properties.get("tipo"))){
+			if(CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE.equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_JMS_TIPO))){
 				// Queue
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] create queue producer...");
+					this.logger.info("Create queue producer...",false);
 				sender = qs.createProducer(queueDestination);
 			}else{
 				// Topic
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] create topic producer...");
+					this.logger.info("Create topic producer...",false);
 				sender = qs.createProducer(topicDestination);
 			}
 			if(sender==null)
@@ -536,14 +536,14 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 			/* ---------- Creazione messaggio ----------- */
 			javax.jms.Message messageJMS = null;
-			if( ConnettoreJMS.BYTES_MESSAGE.equalsIgnoreCase( this.properties.get("send-as")  ) ){
+			if( CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE.equalsIgnoreCase( this.properties.get(CostantiConnettori.CONNETTORE_JMS_SEND_AS)  ) ){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] create BytesMessage...");
+					this.logger.info("Create BytesMessage...",false);
 				messageJMS = qs.createBytesMessage();
 				((BytesMessage)messageJMS).writeBytes(consegna);
 			}else{
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] create TextMessage...");
+					this.logger.info("Create TextMessage...",false);
 				messageJMS =  qs.createTextMessage(new String(consegna));
 			}
 			if(messageJMS==null)
@@ -554,7 +554,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 			/* ---------- Impostazione Proprieta del trasporto ----------- */
 			if(this.propertiesTrasporto != null){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] set proprieta' jms...");
+					this.logger.debug("Set proprieta' jms...");
 				Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
 				while( enumSPC.hasMoreElements() ) {
 					String key = (String) enumSPC.nextElement();
@@ -563,7 +563,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 					key = key.replace("X-", "");
 					key = key.replaceAll("-", "");
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] set proprieta' ["+key+"]=["+value+"]...");
+						this.logger.info("Set proprieta' ["+key+"]=["+value+"]...",false);
 					messageJMS.setStringProperty(key,value);
 				}
 			}
@@ -571,17 +571,17 @@ public class ConnettoreJMS extends ConnettoreBase {
 			/* ---------- Impostazione Proprieta' Dinamiche ------------- */
 			if(overwriteProperties!=null){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] set proprieta' dinamiche...");
+					this.logger.debug("Set proprieta' dinamiche...");
 				String[]classiJMSSetProprieties = overwriteProperties.getClassNameSetPropertiesJMS();
 				if(classiJMSSetProprieties!=null){
 					for(int i=0;i<classiJMSSetProprieties.length;i++){
 						if(this.debug)
-							this.log.debug("["+this.idMessaggio+"] set proprieta' dinamiche con classe["+classiJMSSetProprieties[i]+"]...");
+							this.logger.debug("Set proprieta' dinamiche con classe["+classiJMSSetProprieties[i]+"]...");
 						try{
 							IConnettoreJMSSetProperties setProperties = (IConnettoreJMSSetProperties) this.loader.newInstance(classiJMSSetProprieties[i]);
 							setProperties.setProperties(this.requestMsg,messageJMS);
 						}catch(Exception e){
-							this.log.error("Setting delle proprieta' JMS tramite classe ["+classiJMSSetProprieties[i]+"] non riuscita",e);
+							this.logger.error("Setting delle proprieta' JMS tramite classe ["+classiJMSSetProprieties[i]+"] non riuscita",e);
 						}
 					}
 				}
@@ -590,30 +590,30 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 			/* ---------- Pubblicazione ----------- */
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] send message...");
+				this.logger.debug("Send message...");
 			sender.send(messageJMS); 
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] send message effettuata...");
+				this.logger.info("Send message effettuata",false);
 
 
 
 
 			/* ---------- Rilascio Risorse ----------- */
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] sender.close ...");
+				this.logger.debug("Sender.close ...");
 			sender.close();
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] session.close ...");
+				this.logger.debug("Session.close ...");
 			qs.close();  
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] connection.close ...");
+				this.logger.debug("Connection.close ...");
 			qc.close();
 
 			// codice di consegna per forza uguale a OK
 			this.codice = 200;
 
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] connettore jms ha pubblicato con successo");
+				this.logger.debug("Connettore jms ha pubblicato con successo");
 			
 			
 			
@@ -645,7 +645,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 			return true;
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.log.error("Errore avvenuto durante la consegna JMS",e);
+			this.logger.error("Errore avvenuto durante la consegna JMS",e);
 			this.errore = "Errore avvenuto durante la consegna JMS: "+e.getMessage();
 			try{
 				// Rilascio Risorse
@@ -687,7 +687,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 		try{
 			ConnettoreJMS.locations.put(key,destination);
 		}catch(Exception e){
-			this.log.error("ERROR INSERT CODA IN CACHE: "+e.getMessage(),e);
+			this.logger.error("ERROR INSERT CODA IN CACHE: "+e.getMessage(),e);
 			//possibile inserimento della stessa coda....
 		}
 	}

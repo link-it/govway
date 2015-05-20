@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
@@ -319,7 +320,7 @@ public class RicezioneContenutiApplicativiSOAP {
 						ServletUtils.checkSoapActionQuotedString(soapAction,versioneSoap);
 					}
 					context.setSoapAction(soapAction);
-					requestMessage.setProperty("SOAPAction", soapAction);
+					requestMessage.setProperty(Costanti.SOAP_ACTION, soapAction);
 					requestMessage.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION, soapAction);
 				}
 				

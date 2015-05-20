@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
@@ -1441,7 +1442,7 @@ public class ValidazioneSemantica {
 						this.errori.add("Il connettore "+nomeConn+" del "+oggetto+" "+tipoEnomeOggetto+" è di tipo jms, ma non ha un tipo coda/topic definito");
 					}
 				}else{
-					if (!jmsTipo.equals("queue") && !jmsTipo.equals("topic")){
+					if (!jmsTipo.equals(CostantiConnettori.CONNETTORE_JMS_TIPO_QUEUE) && !jmsTipo.equals(CostantiConnettori.CONNETTORE_JMS_TIPO_TOPIC)){
 						if(oggetto==null){
 							this.errori.add("Il connettore "+nomeConn+", definito nella radice del registro, è di tipo jms, ma non ha un tipo coda/topic valido (valori assumibili sono topic/queue)");
 						}else{
@@ -1463,7 +1464,7 @@ public class ValidazioneSemantica {
 						this.errori.add("Il connettore "+nomeConn+" del "+oggetto+" "+tipoEnomeOggetto+" è di tipo jms, ma non ha un tipo di messaggio (sendAs) definito");
 					}
 				}else{
-					if (!jmsSendAs.equals("TextMessage") && !jmsSendAs.equals("BytesMessage")){
+					if (!jmsSendAs.equals(CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE) && !jmsSendAs.equals(CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE)){
 						if(oggetto==null){
 							this.errori.add("Il connettore "+nomeConn+", definito nella radice del registro, è di tipo jms, ma non ha un tipo di messaggio (sendAs) (valori assumibili sono TextMessage/BytesMessage)");
 						}else{

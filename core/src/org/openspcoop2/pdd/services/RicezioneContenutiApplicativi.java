@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -1935,8 +1936,8 @@ public class RicezioneContenutiApplicativi {
 					connettoreFruitore = registroServiziReader.getConnettore(soggettoFruitore, nomeRegistroForSearch);
 				}catch(org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound dNotFound){}
 				if(connettoreFruitore!=null && !CostantiConfigurazione.DISABILITATO.equals(connettoreFruitore.getTipo())){
-					if(connettoreFruitore.getProperties()!=null && connettoreFruitore.getProperties().containsKey("location")){
-						indirizzoFruitore = connettoreFruitore.getProperties().get("location");
+					if(connettoreFruitore.getProperties()!=null && connettoreFruitore.getProperties().containsKey(CostantiConnettori.CONNETTORE_LOCATION)){
+						indirizzoFruitore = connettoreFruitore.getProperties().get(CostantiConnettori.CONNETTORE_LOCATION);
 					}
 				}
 				msgDiag.mediumDebug("Indirizzo Risposta del soggetto fruitore ["+ soggettoFruitore+ "]: " + indirizzoFruitore);
@@ -1946,8 +1947,8 @@ public class RicezioneContenutiApplicativi {
 					connettoreErogatore = registroServiziReader.getConnettore(idServizio.getSoggettoErogatore(), nomeRegistroForSearch);
 				}catch(org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound dNotFound){}
 				if(connettoreErogatore!=null && !CostantiConfigurazione.DISABILITATO.equals(connettoreErogatore.getTipo())){
-					if(connettoreErogatore.getProperties()!=null && connettoreErogatore.getProperties().containsKey("location")){
-						indirizzoErogatore = connettoreErogatore.getProperties().get("location");
+					if(connettoreErogatore.getProperties()!=null && connettoreErogatore.getProperties().containsKey(CostantiConnettori.CONNETTORE_LOCATION)){
+						indirizzoErogatore = connettoreErogatore.getProperties().get(CostantiConnettori.CONNETTORE_LOCATION);
 					}
 				}
 				msgDiag.mediumDebug("Indirizzo Risposta del soggetto erogatore ["+ idServizio.getSoggettoErogatore()+ "]: " + indirizzoErogatore);

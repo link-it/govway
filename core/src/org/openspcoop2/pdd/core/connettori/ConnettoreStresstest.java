@@ -28,8 +28,8 @@ import java.sql.Connection;
 import java.util.Random;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -37,7 +37,6 @@ import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
@@ -64,7 +63,7 @@ import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 public class ConnettoreStresstest extends ConnettoreBase {
 
 	/** Logger utilizzato per debug. */
-	private Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+	private ConnettoreLogger logger = null;
 
 	public final static String TIPO = "stresstest";
 	
@@ -79,15 +78,28 @@ public class ConnettoreStresstest extends ConnettoreBase {
 	private static final String SOAP_ENVELOPE_RISPOSTA_END = 
 		"<soapenv:Body><prova>test</prova></soapenv:Body></soapenv:Envelope>";
 
+	
+	/** Proprieta' del connettore */
+	private java.util.Hashtable<String,String> properties;
+	
+	/** Busta */
+	private Busta busta;
+	
+	/** Indicazione se siamo in modalita' debug */
+	private boolean debug = false;
+
+	/** Identificativo */
+	private String idMessaggio;
+	
 
     private Resource resource = null;
     private DBManager dbManager = null;
-    private OpenSPCoop2Properties properties = null;
+    private OpenSPCoop2Properties openspcoopProperties = null;
 	
     public ConnettoreStresstest(){
     	super();
     	this.dbManager = DBManager.getInstance();
-    	this.properties = OpenSPCoop2Properties.getInstance();
+    	this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
     }
     
 	
@@ -103,6 +115,31 @@ public class ConnettoreStresstest extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
+		if(request==null){
+			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
+			return false;
+		}
+		
+		// Raccolta parametri per costruttore logger
+		this.properties = request.getConnectorProperties();
+		if(this.properties == null)
+			this.errore = "Proprieta' del connettore non definite";
+//		if(this.properties.size() == 0)
+//			this.errore = "Proprieta' del connettore non definite";
+		// - Busta
+		this.busta = request.getBusta();
+		if(this.busta!=null)
+			this.idMessaggio=this.busta.getID();
+		// - Debug mode
+		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
+				this.debug = true;
+		}
+	
+		// Logger
+		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
+				
+		// Raccolta altri parametri
 		
 		// Context per invocazioni handler
 		this.outRequestContext = request.getOutRequestContext();
@@ -146,8 +183,8 @@ public class ConnettoreStresstest extends ConnettoreBase {
 //					String key = (String) enValues.nextElement();
 //					System.out.println("KEY["+key+"]=["+request.getConnectorProperties().get(key)+"]");
 //				}
-				Object max = request.getConnectorProperties().get("sleepMax");
-				Object min = request.getConnectorProperties().get("sleepMin");
+				Object max = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_STRESS_TEST_SLEEP_MAX);
+				Object min = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_STRESS_TEST_SLEEP_MIN);
 				if(max!=null){
 					int maxSleep = Integer.parseInt((String)max);
 					int minSleep = 0;
@@ -159,7 +196,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					if(sleep>1000){
 						int count = sleep/1000;
 						int resto = sleep%1000;
-						this.log.info("sleep "+sleep+"ms ...");
+						this.logger.info("sleep "+sleep+"ms ...",false);
 						for (int i = 0; i < count; i++) {
 							try{
 								Thread.sleep(1000);
@@ -168,13 +205,13 @@ public class ConnettoreStresstest extends ConnettoreBase {
 						try{
 							Thread.sleep(resto);
 						}catch(Exception e){}
-						this.log.info("sleep "+sleep+"ms terminated");
+						this.logger.info("sleep "+sleep+"ms terminated", false);
 					}else{
-						this.log.info("sleep "+sleep+"ms ...");
+						this.logger.info("sleep "+sleep+"ms ...", false);
 						try{
 							Thread.sleep(sleep);
 						}catch(Exception e){}
-						this.log.info("sleep "+sleep+"ms terminated");
+						this.logger.info("sleep "+sleep+"ms terminated", false);
 					}
 				}
 			}
@@ -199,7 +236,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
     		if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(request.getBusta().getProfiloDiCollaborazione())){
     			// se non devo generare un riscontro, non e' prevista una risposta
     			if ( ! (request.getBusta().isConfermaRicezione() &&
-    					this.properties.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD))){
+    					this.openspcoopProperties.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD))){
     				return true; // non devo generare alcuna risposta
     			}
     		}
@@ -216,12 +253,12 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.log.error("Riscontrato errore durante l'echo del msg soap",e);
+			this.logger.error("Riscontrato errore durante l'echo del msg soap",e);
 			this.errore = "Riscontrato errore durante l'echo del msg soap:" +e.getMessage();
 			return false;
 		}finally{
 			// release database
-			this.dbManager.releaseResource(this.properties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol()),"ConnettoreStresstest", this.resource);
+			this.dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol()),"ConnettoreStresstest", this.resource);
 		}
 		
 		return true;
@@ -255,7 +292,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
     	
 		Busta bustaRichiesta = request.getBusta();
 		
-		StatefulMessage state = new StatefulMessage(null, this.log);
+		StatefulMessage state = new StatefulMessage(null, this.logger.getLogger());
     	
 		Object id = this.getPddContext().getObject(Costanti.CLUSTER_ID);
 		String idTransazione = null;
@@ -288,7 +325,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 				
 				if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
 						bustaRichiesta.isConfermaRicezione() &&
-						this.properties.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD)){
+						this.openspcoopProperties.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD)){
 					
 						protocolHeader.append("<eGov_IT:ProfiloCollaborazione>"+traduttore.toString(bustaRichiesta.getProfiloDiCollaborazione())+"</eGov_IT:ProfiloCollaborazione>");
 						// Attendono riscontro
@@ -305,7 +342,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					// salvo messaggio sul database asincrono/repositoryEGov
 					// get database
 					try{
-						this.resource = this.dbManager.getResource(this.properties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol()),"ConnettoreStresstest",idTransazione);
+						this.resource = this.dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol()),"ConnettoreStresstest",idTransazione);
 					}catch(Exception e){
 						throw new Exception("Risorsa non ottenibile",e);
 					}
@@ -330,7 +367,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(state,this.getProtocolFactory());
 					profiloCollaborazione.asincronoSimmetrico_registraRichiestaRicevuta(bustaRichiesta.getID(),bustaRichiesta.getCollaborazione(),
 							bustaRichiesta.getTipoServizioCorrelato(),bustaRichiesta.getServizioCorrelato(),true,
-							this.properties.getRepositoryIntervalloScadenzaMessaggi());
+							this.openspcoopProperties.getRepositoryIntervalloScadenzaMessaggi());
 				
 					// commit
 					try{
@@ -340,7 +377,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 						connectionDB.commit();
 						connectionDB.setAutoCommit(true);
 					}catch (Exception e) {	
-						this.log.error("Riscontrato errore durante la gestione transazione del DB per la richiesta: "+e.getMessage());
+						this.logger.error("Riscontrato errore durante la gestione transazione del DB per la richiesta: "+e.getMessage());
 						// Rollback quanto effettuato (se l'errore e' avvenuto sul commit, o prima nell'execute delle PreparedStatement)
 						try{
 							connectionDB.rollback();
@@ -381,8 +418,8 @@ public class ConnettoreStresstest extends ConnettoreBase {
 				idBustaRisposta = 
 					imbustatore.buildID(state,new IDSoggetto(bustaRichiesta.getTipoDestinatario(), bustaRichiesta.getDestinatario(), dominio), 
 							null, 
-							this.properties.getGestioneSerializableDB_AttesaAttiva(),
-							this.properties.getGestioneSerializableDB_CheckInterval(),
+							this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
+							this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
 							Boolean.FALSE);
 			}catch(Exception e){
 				// rilancio

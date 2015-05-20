@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiHTTPtoSOAP;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
@@ -69,12 +70,12 @@ public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends A
 	@Override
 	public boolean validate(ConnettoreMsg request) {
 		
-		if(request.getConnectorProperties().get("pd")==null){
-			this.errore = "Proprieta' 'pd' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+		if(request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PD)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_DIRECT_VM_PD+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
 		}
 		else{
-			this.pd = request.getConnectorProperties().get("pd").trim();
+			this.pd = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PD).trim();
 		}
 		
 		return true;

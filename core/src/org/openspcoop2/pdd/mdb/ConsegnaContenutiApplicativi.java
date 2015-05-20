@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
@@ -1300,11 +1301,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				java.util.Hashtable<String,String> propCon = new java.util.Hashtable<String,String>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
-			if(connettoreMsg.getConnectorProperties().get("connection-timeout")==null){
-				connettoreMsg.getConnectorProperties().put("connection-timeout",""+this.propertiesReader.getConnectionTimeout_consegnaContenutiApplicativi());
+			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
+				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,""+this.propertiesReader.getConnectionTimeout_consegnaContenutiApplicativi());
 			}
-			if(connettoreMsg.getConnectorProperties().get("read-connection-timeout")==null){
-				connettoreMsg.getConnectorProperties().put("read-connection-timeout",""+this.propertiesReader.getReadConnectionTimeout_consegnaContenutiApplicativi());
+			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)==null){
+				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT,""+this.propertiesReader.getReadConnectionTimeout_consegnaContenutiApplicativi());
 			}
 
 			// behaviourForwardToConfiguration

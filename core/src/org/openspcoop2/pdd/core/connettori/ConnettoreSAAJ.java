@@ -36,14 +36,14 @@ import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.log4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.api.constants.MethodType;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.resources.Charset;
@@ -64,7 +64,7 @@ import org.openspcoop2.utils.resources.RFC2047Utilities;
 public class ConnettoreSAAJ extends ConnettoreBase {
 
 	/** Logger utilizzato per debug. */
-	private Logger log = null;
+	private ConnettoreLogger logger = null;
 
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
@@ -112,7 +112,6 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		
 		if(request==null){
@@ -120,19 +119,34 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			return false;
 		}
 
-		// Raccolta parametri
+		// Raccolta parametri per costruttore logger
+		this.properties = request.getConnectorProperties();
+		if(this.properties == null)
+			this.errore = "Proprieta' del connettore non definite";
+		if(this.properties.size() == 0)
+			this.errore = "Proprieta' del connettore non definite";
+		// - Busta
+		this.busta = request.getBusta();
+		if(this.busta!=null)
+			this.idMessaggio=this.busta.getID();
+		// - Debug mode
+		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
+				this.debug = true;
+		}
+	
+		// Logger
+		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
+				
+		// Raccolta altri parametri
 		try{
 			this.requestMsg =  request.getRequestMessage();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.log.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
 			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
 			return false;
 		}
-		this.properties = request.getConnectorProperties();
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
 		this.propertiesTrasporto = request.getPropertiesTrasporto();
 		this.propertiesUrlBased = request.getPropertiesUrlBased();
 		this.credenziali = request.getCredenziali();
@@ -147,22 +161,10 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 		}
 
 		// analsi i parametri specifici per il connettore
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.size() == 0)
-			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.get("location")==null){
-			this.errore = "Proprieta' 'location' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
 		}
-
-		// Debug mode
-		if(this.properties.get("debug")!=null){
-			if("true".equalsIgnoreCase(this.properties.get("debug").trim()))
-				this.debug = true;
-		}
-		
-		
 
 		// Context per invocazioni handler
 		this.outRequestContext = request.getOutRequestContext();
@@ -184,40 +186,40 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 		try{
 			// Impostazione timeout
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione timeout...");
+				this.logger.debug("Impostazione timeout...");
 			int connectionTimeout = -1;
 			int readConnectionTimeout = -1;
-			if(this.properties.get("connection-timeout")!=null){
+			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
 				try{
-					connectionTimeout = Integer.parseInt(this.properties.get("connection-timeout"));
+					connectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
 				}catch(Exception e){
-					this.log.error("Parametro connection-timeout errato",e);
+					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT+"' errato",e);
 				}
 			}
 			if(connectionTimeout==-1){
 				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 			}
-			if(this.properties.get("read-connection-timeout")!=null){
+			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
 				try{
-					readConnectionTimeout = Integer.parseInt(this.properties.get("read-connection-timeout"));
+					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
 				}catch(Exception e){
-					this.log.error("Parametro read-connection-timeout errato",e);
+					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+"' errato",e);
 				}
 			}
 			if(readConnectionTimeout==-1){
 				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 			}
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]...");
+				this.logger.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]...",false);
 			
 			// check validita URL
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] check validita URL...");
-			this.location = this.properties.get("location");
+				this.logger.debug("Check validita URL...");
+			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
 			URL urlTest = new URL( this.location );
 			URLConnection connectionTest = urlTest.openConnection();
 			HttpURLConnection httpConnTest = (HttpURLConnection) connectionTest;
-			httpConnTest.setRequestMethod( "POST" );
+			httpConnTest.setRequestMethod( MethodType.POST.name() );
 			httpConnTest.setConnectTimeout(connectionTimeout);
 			httpConnTest.setReadTimeout(readConnectionTimeout);
 			httpConnTest.setDoOutput(true);
@@ -227,26 +229,26 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 
 			// impostazione property
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] prefixOptimization...");
+				this.logger.debug("PrefixOptimization...");
 			String prefixOptimization = "true";
 			if(this.properties.get("prefix-optimization")!=null){
 				if("false".equalsIgnoreCase(this.properties.get("prefix-optimization")) )
 					prefixOptimization = "false";
-				this.log.info("Prefix Optimization = '"+prefixOptimization+"'");
+				this.logger.info("Prefix Optimization = '"+prefixOptimization+"'",false);
 				
 				//AxisProperties.setProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,prefixOptimization);  		
 			}
 
 			// Consegna
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] creazione connessione...");	
+				this.logger.debug("Creazione connessione...");	
 			SOAPConnectionFactory soapConnFactory = OpenSPCoop2MessageFactory.getMessageFactory().getSOAPConnectionFactory();
 			SOAPConnection connection = soapConnFactory.createConnection();
 							    
 			
 			// Creazione URL
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] creazione URL...");
+				this.logger.debug("Creazione URL...");
 			// Impostazione Proprieta urlBased
 			if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
 				this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, this.location);
@@ -259,7 +261,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 												
 					// Header di trasporto
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] impostazione header di trasporto...");
+						this.logger.debug("Impostazione header di trasporto...");
 					boolean encodingRFC2047 = false;
 					Charset charsetRFC2047 = null;
 					RFC2047Encoding encodingAlgorithmRFC2047 = null;
@@ -281,12 +283,14 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 							if(CostantiPdD.HEADER_HTTP_USER_AGENT.equalsIgnoreCase(key)==false){
 								String value = (String) this.propertiesTrasporto.get(key);
 								if(this.debug)
-									this.log.debug("["+this.idMessaggio+"] set proprieta' ["+key+"]=["+value+"]...");
+									this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
 								
 								if(encodingRFC2047){
 									if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
 										String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
 										//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+										if(this.debug)
+											this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
 										this.requestMsg.getMimeHeaders().addHeader(key,encoded);
 									}
 									else{
@@ -302,34 +306,34 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					
 					// Authentication BASIC
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] impostazione autenticazione...");
+						this.logger.debug("Impostazione autenticazione...");
 					String user = null;
 					String password = null;
 					if(this.credenziali!=null){
 						user = this.credenziali.getUsername();
 						password = this.credenziali.getPassword();
 					}else{
-						user = this.properties.get("user");
-						password = this.properties.get("password");
+						user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
+						password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
 					}
 					if(user!=null && password!=null){
 						String authentication = user + ":" + password;
-						authentication = "Basic " + 
+						authentication = CostantiConnettori.HEADER_HTTP_AUTHORIZATION_PREFIX_BASIC + 
 						Base64.encode(authentication.getBytes());
-						this.requestMsg.getMimeHeaders().addHeader("Authorization",authentication);
+						this.requestMsg.getMimeHeaders().addHeader(CostantiConnettori.HEADER_HTTP_AUTHORIZATION,authentication);
 						if(this.debug)
-							this.log.debug("["+this.idMessaggio+"] impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]...");
+							this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
 					}
 				}
 				
 				// Impostazione timeout
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] set timeout...");
+					this.logger.debug("Set timeout...");
 				//TODO: connection.setTimeout(readConnectionTimeout);
 				
 				// Send
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] send...");
+					this.logger.debug("Send...");
 				
 				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(connection.call((SOAPMessage) this.requestMsg,urlConnection));
 				
@@ -343,7 +347,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 
 			// check consistenza risposta
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] check consistenza...");
+				this.logger.debug("Check consistenza...");
 			if(this.responseMsg!=null){
 				if(this.responseMsg.getSOAPBody()!=null){
 					if(this.responseMsg.getSOAPBody().hasFault() ){
@@ -385,7 +389,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			}
 			
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] gestione invio/risposta http effettuata con successo");
+				this.logger.info("Gestione invio/risposta http effettuata con successo",false);
 			
 			
 			
@@ -414,7 +418,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			return true;
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.log.error("Errore avvenuto durante la consegna SOAP: "+e.getMessage());
+			this.logger.error("Errore avvenuto durante la consegna SOAP: "+e.getMessage());
 			this.errore = "Errore avvenuto durante la consegna SOAP: "+e.getMessage();
 			return false;
 		}
@@ -429,8 +433,8 @@ public class ConnettoreSAAJ extends ConnettoreBase {
     	try{
     	
 	    	if(this.connection!=null){
-				if(this.debug && this.log!=null)
-					this.log.debug("["+this.idMessaggio+"] connection.close ...");
+				if(this.debug && this.logger!=null)
+					this.logger.debug("Connection.close ...");
 				this.connection.close();
 	    	}
 	    	

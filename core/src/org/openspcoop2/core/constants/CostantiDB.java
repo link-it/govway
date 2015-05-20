@@ -312,37 +312,38 @@ public final class CostantiDB {
      */
 
     //tipi connettori
-    public static final String CONNETTORE_TIPO_HTTP = "http";
-    public static final String CONNETTORE_TIPO_HTTPS = "https";
-    public static final String CONNETTORE_TIPO_JMS = "jms";
-    public static final String CONNETTORE_TIPO_DISABILITATO = "disabilitato";
-    public static final String CONNETTORE_DEBUG = "debug";
-
-    public static final String CONNETTORE_HTTP_LOCATION = "location";
-
-    public static final String CONNETTORE_JMS_NOME = "location"; //il nome del connettore sarebbe la proprieta location
-    public static final String CONNETTORE_JMS_TIPO = "tipo";
-    public static final String CONNETTORE_USER = "user";
-    public static final String CONNETTORE_PWD = "password";
-    public static final String CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL="context-java.naming.factory.initial";
-    public static final String CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG="context-java.naming.factory.url.pkgs";
-    public static final String CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL="context-java.naming.provider.url";
-    public static final String CONNETTORE_JMS_CONNECTION_FACTORY="connection-factory";
-    public static final String CONNETTORE_JMS_SEND_AS="send-as";
+    public static final String CONNETTORE_TIPO_HTTP = TipiConnettore.HTTP.getNome();
+    public static final String CONNETTORE_TIPO_HTTPS = TipiConnettore.HTTPS.getNome();
+    public static final String CONNETTORE_TIPO_JMS = TipiConnettore.JMS.getNome();
+    public static final String CONNETTORE_TIPO_DISABILITATO = TipiConnettore.DISABILITATO.getNome();
     
-    public static final String CONNETTORE_HTTPS_LOCATION = "location";
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_LOCATION = "trustStoreLocation";
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = "trustStorePassword";
-    public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = "trustManagementAlgorithm";
-    public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = "trustStoreType";
-    public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = "keyStoreLocation";
-    public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "keyStorePassword";
-    public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = "keyManagementAlgorithm";
-    public static final String CONNETTORE_HTTPS_KEY_STORE_TYPE = "keyStoreType";
-    public static final String CONNETTORE_HTTPS_KEY_PASSWORD = "keyPassword";
-    public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = "hostnameVerifier";
-    public static final String CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER = "classNameHostnameVerifier";
-    public static final String CONNETTORE_HTTPS_SSL_TYPE = "sslType";
+    public static final String CONNETTORE_DEBUG = CostantiConnettori.CONNETTORE_DEBUG;
+
+    public static final String CONNETTORE_HTTP_LOCATION = CostantiConnettori.CONNETTORE_LOCATION;
+
+    public static final String CONNETTORE_JMS_NOME = CostantiConnettori.CONNETTORE_LOCATION; //il nome del connettore sarebbe la proprieta location
+    public static final String CONNETTORE_JMS_TIPO = CostantiConnettori.CONNETTORE_JMS_TIPO;
+    public static final String CONNETTORE_USER = CostantiConnettori.CONNETTORE_USERNAME;
+    public static final String CONNETTORE_PWD = CostantiConnettori.CONNETTORE_PASSWORD;
+    public static final String CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL=CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX+"java.naming.factory.initial";
+    public static final String CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG=CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX+"java.naming.factory.url.pkgs";
+    public static final String CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL=CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX+"java.naming.provider.url";
+    public static final String CONNETTORE_JMS_CONNECTION_FACTORY=CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY;
+    public static final String CONNETTORE_JMS_SEND_AS=CostantiConnettori.CONNETTORE_JMS_SEND_AS;
+    
+    public static final String CONNETTORE_HTTPS_LOCATION = CostantiConnettori.CONNETTORE_LOCATION;
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_LOCATION = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION;
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD;
+    public static final String CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM;
+    public static final String CONNETTORE_HTTPS_TRUST_STORE_TYPE = CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE;
+    public static final String CONNETTORE_HTTPS_KEY_STORE_LOCATION = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION;
+    public static final String CONNETTORE_HTTPS_KEY_STORE_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD;
+    public static final String CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM;
+    public static final String CONNETTORE_HTTPS_KEY_STORE_TYPE = CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE;
+    public static final String CONNETTORE_HTTPS_KEY_PASSWORD = CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD;
+    public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER;
+    public static final String CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER = CostantiConnettori.CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER;
+    public static final String CONNETTORE_HTTPS_SSL_TYPE = CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE;
 	
     public static final String COMPONENTE_SERVIZIO_PD = "pd";
     public static final String COMPONENTE_SERVIZIO_PA = "pa";

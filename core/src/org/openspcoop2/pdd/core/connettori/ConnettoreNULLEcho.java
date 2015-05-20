@@ -30,7 +30,7 @@ import java.util.Vector;
 
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -38,7 +38,6 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.builder.Sbustamento;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
@@ -74,12 +73,25 @@ import org.openspcoop2.utils.date.DateManager;
 public class ConnettoreNULLEcho extends ConnettoreBase {
 
 	/** Logger utilizzato per debug. */
-	private Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+	private ConnettoreLogger logger = null;
 	
 	public final static String LOCATION = "openspcoop2://echo";
     
+	/** Proprieta' del connettore */
+	private java.util.Hashtable<String,String> properties;
+	
 	/** Proprieta' urlBased che deve gestire il connettore */
 	private java.util.Properties propertiesUrlBased;
+	
+	/** Busta */
+	private Busta busta;
+	
+	/** Indicazione se siamo in modalita' debug */
+	private boolean debug = false;
+
+	/** Identificativo */
+	private String idMessaggio;
+	
 	
 
 
@@ -95,6 +107,32 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
+		if(request==null){
+			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
+			return false;
+		}
+		
+		// Raccolta parametri per costruttore logger
+		this.properties = request.getConnectorProperties();
+		if(this.properties == null)
+			this.errore = "Proprieta' del connettore non definite";
+//		if(this.properties.size() == 0)
+//			this.errore = "Proprieta' del connettore non definite";
+		// - Busta
+		this.busta = request.getBusta();
+		if(this.busta!=null)
+			this.idMessaggio=this.busta.getID();
+		// - Debug mode
+		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
+				this.debug = true;
+		}
+	
+		// Logger
+		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
+				
+		// Raccolta altri parametri
+		
 		// Context per invocazioni handler
 		this.outRequestContext = request.getOutRequestContext();
 		this.msgDiagnostico = request.getMsgDiagnostico();
@@ -105,7 +143,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 		Resource resource = null;
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		
-		StatefulMessage state = new StatefulMessage(null, this.log);
+		StatefulMessage state = new StatefulMessage(null, this.logger.getLogger());
 		
 		ValidazioneSintattica validatoreSintattico = null;
 		Validatore validatoreProtocollo = null;
@@ -264,7 +302,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 							connectionDB.commit();
 							connectionDB.setAutoCommit(true);
 						}catch (Exception e) {	
-							this.log.error("Riscontrato errore durante la gestione transazione del DB per la richiesta: "+e.getMessage());
+							this.logger.error("Riscontrato errore durante la gestione transazione del DB per la richiesta: "+e.getMessage());
 							// Rollback quanto effettuato (se l'errore e' avvenuto sul commit, o prima nell'execute delle PreparedStatement)
 							try{
 								connectionDB.rollback();
@@ -325,7 +363,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.log.error("Riscontrato errore durante l'echo del msg soap",e);
+			this.logger.error("Riscontrato errore durante l'echo del msg soap",e);
 			this.errore = "Riscontrato errore durante l'echo del msg soap:" +e.getMessage();
 			return false;
 		}finally{

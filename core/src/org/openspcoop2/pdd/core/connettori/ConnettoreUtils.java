@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -82,18 +83,18 @@ public class ConnettoreUtils {
 			location = c.getLocation();
 		}
 		else{
-			if(connettoreMsg.getConnectorProperties().get("location")!=null){
-				location = connettoreMsg.getConnectorProperties().get("location");
+			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_LOCATION)!=null){
+				location = connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_LOCATION);
 			}
 		}
 		
 		if(location !=null && (location.equals("")==false) ){
-			location = location.replace("#TipoServizio",busta.getTipoServizio());
-			location = location.replace("#Servizio",busta.getServizio());
+			location = location.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO,busta.getTipoServizio());
+			location = location.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_NOME_SERVIZIO,busta.getServizio());
 			if(busta.getAzione()!=null){
-				location = location.replace("#Azione",busta.getAzione());
+				location = location.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE,busta.getAzione());
 			}
-			connettoreMsg.getConnectorProperties().put("location",location);
+			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION,location);
 		}
 		
 		return location;

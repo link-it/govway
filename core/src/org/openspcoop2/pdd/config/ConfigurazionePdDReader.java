@@ -77,6 +77,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -947,7 +948,7 @@ public class ConfigurazionePdDReader {
 			// search location property
 			for (int i = 0; i < connettore.sizePropertyList(); i++) {
 				Property cp = connettore.getProperty(i);
-				if(cp.getNome().equalsIgnoreCase("location")){
+				if(cp.getNome().equalsIgnoreCase(CostantiConnettori.CONNETTORE_LOCATION)){
 					String originale = cp.getValore();
 					cp.setValore(urlPrefixRewriter(funzione,originale, urlPrefix.trim()));
 					break;

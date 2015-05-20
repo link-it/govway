@@ -1,3 +1,10 @@
+2015-05-20  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità #348
+	Modificato il logging effettuato dai connettori in modo che venga utilizzata una category log4j dedicata (openspcoop2.connettori)
+	per le emissioni dei log quando il connettore e' in debug mode. 
+
 2015-05-19  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]

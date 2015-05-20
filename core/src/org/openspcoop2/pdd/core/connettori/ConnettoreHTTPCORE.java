@@ -49,8 +49,8 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.MailcapActivationReader;
@@ -60,7 +60,6 @@ import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.services.ServletUtils;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -68,7 +67,10 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.HttpUtilities;
+import org.openspcoop2.utils.resources.RFC2047Encoding;
+import org.openspcoop2.utils.resources.RFC2047Utilities;
 
 /**
  * Connettore che utilizza la libreria httpcore
@@ -83,7 +85,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 	private static boolean USE_POOL = true;
 	
 	/** Logger */
-	private Logger log = null;
+	private ConnettoreLogger logger = null;
+	
 	/** Msg di richiesta */
 	private OpenSPCoop2Message requestMsg;
 	/** Proprieta' del connettore */
@@ -184,46 +187,49 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request) {
 		
-		/** Log */
-		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		
 		if(request==null){
 			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
 			return false;
 		}
-
-		// Raccolta parametri
-		try{
-			this.requestMsg =  request.getRequestMessage();
-		}catch(Exception e){
-			this.eccezioneProcessamento = e;
-			this.log.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
-			return false;
-		}
-		this.properties = request.getConnectorProperties();
-		this.sbustamentoSoap = request.isSbustamentoSOAP();
-		this.propertiesTrasporto = request.getPropertiesTrasporto();
-		this.propertiesUrlBased = request.getPropertiesUrlBased();
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
 		
-		// analsi i parametri specifici per il connettore
+		// Raccolta parametri per costruttore logger
+		this.properties = request.getConnectorProperties();
 		if(this.properties == null)
 			this.errore = "Proprieta' del connettore non definite";
 		if(this.properties.size() == 0)
 			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.get("location")==null){
-			this.errore = "Proprieta' 'location' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+		// - Busta
+		this.busta = request.getBusta();
+		if(this.busta!=null)
+			this.idMessaggio=this.busta.getID();
+		// - Debug mode
+		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
+				this.debug = true;
+		}
+
+		// Logger
+		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
+				
+		// Raccolta altri parametri
+		try{
+			this.requestMsg =  request.getRequestMessage();
+		}catch(Exception e){
+			this.eccezioneProcessamento = e;
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
 			return false;
 		}
+		this.sbustamentoSoap = request.isSbustamentoSOAP();
+		this.propertiesTrasporto = request.getPropertiesTrasporto();
+		this.propertiesUrlBased = request.getPropertiesUrlBased();
 		
-		// Debug mode
-		if(this.properties.get("debug")!=null){
-			if("true".equalsIgnoreCase(this.properties.get("debug").trim()))
-				this.debug = true;
+		// analsi i parametri specifici per il connettore
+		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+			return false;
 		}
 		
 		// Identificativo modulo
@@ -237,8 +243,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 			// Creazione URL
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] creazione URL...");
-			this.location = this.properties.get("location");
+				this.logger.debug("Creazione URL...");
+			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
 			
 			// Impostazione Proprieta urlBased
 			if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
@@ -246,13 +252,13 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			}
 
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] creazione URL ["+this.location+"]...");
+				this.logger.debug("Creazione URL ["+this.location+"]...");
 			URL url = new URL( this.location );	
 			
 			
 			// Creazione Connessione
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] creazione connessione alla URL ["+this.location+"]...");
+				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
 			if(ConnettoreHTTPCORE.USE_POOL){
 				this.httpClient = ConnettoreHTTPCORE.getHttpClientFromPool();
 			}
@@ -309,7 +315,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			// Impostazione Content-Type della Spedizione su HTTP
 	        
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione content type...");
+				this.logger.debug("Impostazione content type...");
 			String contentTypeRichiesta = null;
 			if(this.sbustamentoSoap && this.requestMsg.countAttachments()>0 && SoapUtils.isTunnelOpenSPCoopSoap(this.requestMsg.getSOAPBody())){
 				contentTypeRichiesta = SoapUtils.getContentTypeTunnelOpenSPCoopSoap(this.requestMsg.getSOAPBody());
@@ -320,7 +326,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
                                 throw new Exception("Content-Type del messaggio da spedire non definito");
 			}
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione http content type ["+contentTypeRichiesta+"]...");
+				this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
 			httppost.setHeader(Costanti.CONTENT_TYPE, contentTypeRichiesta);
 			
 			
@@ -330,11 +336,11 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			// Preparazione messaggio da spedire
 			// Spedizione byte
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] spedizione byte...");
+				this.logger.debug("Spedizione byte...");
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			if(this.sbustamentoSoap){
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] Sbustamento...");
+					this.logger.debug("Sbustamento...");
 				SoapUtils.sbustamentoMessaggio(this.requestMsg,out);
 			}else{
 				this.requestMsg.writeTo(out, true);
@@ -342,7 +348,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			out.flush();
 			out.close();
 			if(this.debug){
-				this.log.debug("["+this.idMessaggio+"] Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString());
+				this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
 			}
 			HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
 			httppost.setEntity(httpEntity);
@@ -351,7 +357,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 			// Impostazione transfer-length
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione transfer-length...");
+				this.logger.debug("Impostazione transfer-length...");
 			boolean transferEncodingChunked = false;
 			TransferLengthModes tlm = null;
 			int chunkLength = -1;
@@ -369,37 +375,37 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 				//this.httpConn.setChunkedStreamingMode(chunkLength);
 			}
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione transfer-length effettuata (chunkLength:"+chunkLength+"): "+tlm);
+				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+chunkLength+"): "+tlm,false);
 			
 			
 			
 			// Impostazione timeout
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione timeout...");
+				this.logger.debug("Impostazione timeout...");
 			int connectionTimeout = -1;
 			int readConnectionTimeout = -1;
-			if(this.properties.get("connection-timeout")!=null){
+			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
 				try{
-					connectionTimeout = Integer.parseInt(this.properties.get("connection-timeout"));
+					connectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
 				}catch(Exception e){
-					this.log.error("Parametro connection-timeout errato",e);
+					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT+"' errato",e);
 				}
 			}
 			if(connectionTimeout==-1){
 				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 			}
-			if(this.properties.get("read-connection-timeout")!=null){
+			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
 				try{
-					readConnectionTimeout = Integer.parseInt(this.properties.get("read-connection-timeout"));
+					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
 				}catch(Exception e){
-					this.log.error("Parametro read-connection-timeout errato",e);
+					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+"' errato",e);
 				}
 			}
 			if(readConnectionTimeout==-1){
 				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 			}
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]...");
+				this.logger.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]",false);
 			this.httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
 			this.httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, readConnectionTimeout);
 			//this.httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_LINGER, 0);
@@ -506,16 +512,16 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 			// Aggiunga del SoapAction Header in caso di richiesta SOAP
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione soap action...");
+				this.logger.debug("Impostazione soap action...");
 			String soapAction = null;
 			if(this.sbustamentoSoap == false){
-				soapAction = (String) this.requestMsg.getProperty("SOAPAction");
+				soapAction = (String) this.requestMsg.getProperty(Costanti.SOAP_ACTION);
 				if(soapAction==null)
 					soapAction="\"OpenSPCoop\"";
 				httppost.setHeader(Costanti.SOAP_ACTION, soapAction);
 				// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
 				if(this.debug){
-					this.log.debug("["+this.idMessaggio+"] SOAP Action inviata ["+soapAction+"]");
+					this.logger.info("SOAP Action inviata ["+soapAction+"]",false);
 				}
 			}
 			
@@ -524,38 +530,68 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 			// Authentication BASIC
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione autenticazione...");
+				this.logger.debug("Impostazione autenticazione...");
 			String user = null;
 			String password = null;
 			if(this.credenziali!=null){
 				user = this.credenziali.getUsername();
 				password = this.credenziali.getPassword();
 			}else{
-				user = this.properties.get("user");
-				password = this.properties.get("password");
+				user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
+				password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
 			}
 			if(user!=null && password!=null){
 				String authentication = user + ":" + password;
-				authentication = "Basic " + 
+				authentication = CostantiConnettori.HEADER_HTTP_AUTHORIZATION_PREFIX_BASIC + 
 				Base64.encode(authentication.getBytes());
-				httppost.setHeader("Authorization",authentication);
+				httppost.setHeader(CostantiConnettori.HEADER_HTTP_AUTHORIZATION,authentication);
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]...");
+					this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
 			}
 
 			
 			
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] impostazione header di trasporto...");
+				this.logger.debug("Impostazione header di trasporto...");
+			boolean encodingRFC2047 = false;
+			Charset charsetRFC2047 = null;
+			RFC2047Encoding encodingAlgorithmRFC2047 = null;
+			if(this.idModulo!=null){
+				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+				}else{
+					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
+					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
+					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
+				}
+			}
 			if(this.propertiesTrasporto != null){
 				Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
 				while( enumSPC.hasMoreElements() ) {
 					String key = (String) enumSPC.nextElement();
 					String value = (String) this.propertiesTrasporto.get(key);
 					if(this.debug)
-						this.log.debug("["+this.idMessaggio+"] set proprieta' ["+key+"]=["+value+"]...");
+						this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
 					httppost.setHeader(key,value);
+					
+					if(encodingRFC2047){
+						if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
+							String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
+							//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+							if(this.debug)
+								this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
+							httppost.setHeader(key,encoded);
+						}
+						else{
+							httppost.setHeader(key,value);
+						}
+					}
+					else{
+						httppost.setHeader(key,value);
+					}
 				}
 			}
 			
@@ -564,7 +600,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 			// Spedizione byte
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] spedizione byte...");
+				this.logger.debug("Spedizione byte...");
 			// Eseguo la richiesta e prendo la risposta
 			HttpResponse postResponse = this.httpClient.execute(httppost);
 			this.httpEntityResponse = postResponse.getEntity();
@@ -572,13 +608,13 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 			
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] Analisi risposta...");
+				this.logger.debug("Analisi risposta...");
 			Header [] hdrRisposta = postResponse.getAllHeaders();
 			if(hdrRisposta!=null){
 				for (int i = 0; i < hdrRisposta.length; i++) {
 					if(hdrRisposta[i].getName()==null){
 						// Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
-						this.propertiesTrasportoRisposta.put("ReturnCode", hdrRisposta[i].getValue());
+						this.propertiesTrasportoRisposta.put(CostantiConnettori.HEADER_HTTP_RETURN_CODE, hdrRisposta[i].getValue());
 					}
 					else{
 						this.propertiesTrasportoRisposta.put(hdrRisposta[i].getName(), hdrRisposta[i].getValue());
@@ -647,7 +683,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 
 			// Ricezione Risposta
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] Analisi risposta input stream e risultato http...");
+				this.logger.debug("Analisi risposta input stream e risultato http...");
 			int resultHTTPOperation = postResponse.getStatusLine().getStatusCode();
 			String resultHTTPMessage = postResponse.getStatusLine().getReasonPhrase();
 			if(resultHTTPOperation<300)
@@ -698,7 +734,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			/*
 			 * Se il messaggio e' un html di errore me ne esco 
 			 */			
-			if(resultHTTPOperation>=400 && tipoRisposta!=null && tipoRisposta.contains("text/html")){
+			if(resultHTTPOperation>=400 && tipoRisposta!=null && tipoRisposta.contains(Costanti.CONTENT_TYPE_HTML)){
 				tipoLetturaRisposta = "("+resultHTTPOperation+") " + resultHTTPMessage ;
 				this.codice = resultHTTPOperation;
 				this.errore = tipoLetturaRisposta;
@@ -712,9 +748,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 				IProtocolConfiguration protocolConfiguration = this.getProtocolFactory().createProtocolConfiguration();
 				if(tipoRisposta!=null){
 					try{
-						soapVersionRisposta = ServletUtils.getVersioneSoap(this.log,tipoRisposta);
+						soapVersionRisposta = ServletUtils.getVersioneSoap(this.logger.getLogger(),tipoRisposta);
 					}catch(Exception e){
-						this.log.error("SOAPVersion response unknown: "+e.getMessage(),e);
+						this.logger.error("SOAPVersion response unknown: "+e.getMessage(),e);
 						//soapVersionUnknown = e;
 					}
 				}
@@ -752,7 +788,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 					if(checkContentType){
 						throw new Exception(msgErrore);
 					}else{
-						this.log.warn(msgErrore+"; viene utilizzato forzatamente il tipo: "+SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments());
+						this.logger.warn(msgErrore+"; viene utilizzato forzatamente il tipo: "+SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments());
 						tipoRisposta = SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments();
 					}
 				}
@@ -770,14 +806,14 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 						this.isResponse.close();
 						bout.flush();
 						bout.close();
-						this.log.debug("["+this.idMessaggio+"] Messaggio ricevuto (ContentType:"+tipoRisposta+") :\n"+bout.toString());
+						this.logger.info("Messaggio ricevuto (ContentType:"+tipoRisposta+") :\n"+bout.toString(),false);
 						// Creo nuovo inputStream
 						this.isResponse = new ByteArrayInputStream(bout.toByteArray());
 					}
 					
 					if(this.sbustamentoSoap==false){
 						if(this.debug)
-							this.log.debug("["+this.idMessaggio+"] Ricostruzione normale...");
+							this.logger.debug("Ricostruzione normale...");
 						
 						// Ricostruzione messaggio soap: secondo parametro a false, indica che il messaggio e' gia un SOAPMessage
 						tipoLetturaRisposta = "Costruzione messaggio SOAP";
@@ -813,7 +849,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 									if(result2XX){
 										this.eccezioneProcessamento = e;
 										this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
-										this.log.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
+										this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
 										return false;
 									}
 								}
@@ -835,7 +871,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 						
 							if(imbustamentoConAttachment){
 								if(this.debug)
-									this.log.debug("["+this.idMessaggio+"] Imbustamento con attachments...");
+									this.logger.debug("Imbustamento con attachments...");
 								
 								// Imbustamento per Tunnel OpenSPCoop
 								tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+mimeTypeAttachment;
@@ -854,7 +890,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 								if(tipoRisposta!=null && tipoRisposta.contains("multipart/related")){
 									
 									if(this.debug)
-										this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio multipart/related...");
+										this.logger.debug("Imbustamento messaggio multipart/related...");
 									
 									// Imbustamento di un messaggio multipart/related
 									tipoLetturaRisposta = "Imbustamento messaggio multipart/related in un SOAP WithAttachments";
@@ -870,7 +906,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 								}else{
 									
 									if(this.debug)
-										this.log.debug("["+this.idMessaggio+"] Imbustamento messaggio...");
+										this.logger.debug("Imbustamento messaggio...");
 									// Imbustamento di un messaggio normale: secondo parametro a true, indica che il messaggio deve essere imbustato in un msg SOAP
 									tipoLetturaRisposta = "Imbustamento messaggio xml in un messaggio SOAP";
 									this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(cis,notifierInputStreamParams,true,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
@@ -907,7 +943,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 							if(result2XX){
 								this.eccezioneProcessamento = e;
 								this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
-								this.log.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
+								this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
 								return false;
 							}
 						}
@@ -915,7 +951,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 				}catch(Exception e){
 					this.eccezioneProcessamento = e;
 					this.errore = "Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+"): " + e.getMessage();
-					this.log.error("Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+")",e);
+					this.logger.error("Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+")",e);
 					return false;
 				}
 
@@ -923,7 +959,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 
 				// save Msg
 				if(this.debug)
-					this.log.debug("["+this.idMessaggio+"] save messaggio...");
+					this.logger.debug("Save messaggio...");
 				try{
 					if(this.responseMsg!=null){
 						// save changes.
@@ -935,7 +971,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 				}catch(Exception e){
 					this.eccezioneProcessamento = e;
 					this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage();
-					this.log.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage());
+					this.logger.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage());
 					return false;
 				}
 
@@ -945,14 +981,14 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			this.codice = resultHTTPOperation;
 
 			if(this.debug)
-				this.log.debug("["+this.idMessaggio+"] gestione invio/risposta http effettuata con successo");
+				this.logger.info("Gestione invio/risposta http effettuata con successo",false);
 			
 			return true;			
 			
 			
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.log.error("["+this.idMessaggio+"] Errore avvenuto durante la consegna HTTP: "+e.getMessage(),e);
+			this.logger.error("Errore avvenuto durante la consegna HTTP: "+e.getMessage(),e);
 			this.errore = "Errore avvenuto durante la consegna HTTPNIO: "+e.getMessage();
 			return false;
 		} 
@@ -966,8 +1002,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			// Gestione finale della connessione    		
     		//System.out.println("CHECK CLOSE STREAM...");
 	    	if(this.isResponse!=null){
-	    		if(this.debug && this.log!=null)
-	    			this.log.debug("["+this.idMessaggio+"] chiusura socket...");
+	    		if(this.debug && this.logger!=null)
+	    			this.logger.debug("Chiusura socket...");
 	    		//System.out.println("CLOSE STREAM...");
 				this.isResponse.close();
 				//System.out.println("CLOSE STREAM");
@@ -979,8 +1015,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			// Gestione finale della connessione
     		//System.out.println("CHECK ENTITY...");
 	    	if(this.httpEntityResponse!=null){
-	    		if(this.debug && this.log!=null)
-	    			this.log.debug("["+this.idMessaggio+"] chiusura httpEntityResponse...");
+	    		if(this.debug && this.logger!=null)
+	    			this.logger.debug("Chiusura httpEntityResponse...");
 	    		//System.out.println("CLOSE ENTITY...");
 	    		EntityUtils.consume(this.httpEntityResponse);
 	    		//System.out.println("CLOSE ENTITY");

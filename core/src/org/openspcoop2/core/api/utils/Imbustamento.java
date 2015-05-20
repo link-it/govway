@@ -39,6 +39,7 @@ import org.openspcoop2.core.api.UrlParameters;
 import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.api.constants.MessageType;
 import org.openspcoop2.core.api.constants.MethodType;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.MailcapActivationReader;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -115,7 +116,7 @@ public class Imbustamento {
 			while (enumHeader.hasMoreElements()) {
 				String key = (String) enumHeader.nextElement();
 				if(isRichiesta==false){
-					if("ReturnCode".equalsIgnoreCase(key)){
+					if(CostantiConnettori.HEADER_HTTP_RETURN_CODE.equalsIgnoreCase(key)){
 						continue;
 					}
 				}

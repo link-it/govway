@@ -361,7 +361,7 @@ public class SoapMessage implements java.io.Serializable {
 			
 			try{
 				if(soapAction!=null)
-					msg.setProperty("SOAPAction",soapAction);
+					msg.setProperty(org.openspcoop2.message.Costanti.SOAP_ACTION,soapAction);
 			}catch(Exception e){
 				String errorMsg = "SOAP_MESSAGE, set (soapAction): "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
 				this.log.error(errorMsg);
@@ -463,7 +463,7 @@ public class SoapMessage implements java.io.Serializable {
 						try{
 							String soapAction = rs.getString("SOAP_ACTION");
 							if(soapAction!=null)
-								msg.setProperty("SOAPAction",soapAction);
+								msg.setProperty(org.openspcoop2.message.Costanti.SOAP_ACTION,soapAction);
 						}catch(Exception e){
 							throw new UtilsException(e.getMessage(),e);
 						}
