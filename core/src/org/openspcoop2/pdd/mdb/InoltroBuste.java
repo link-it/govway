@@ -49,6 +49,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -330,6 +331,8 @@ public class InoltroBuste extends GenericLib{
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE);
 		msgDiag.addKeywords(bustaRichiesta, true);
 		msgDiag.mediumDebug("Profilo di gestione ["+InoltroBuste.ID_MODULO+"] della busta: "+profiloGestione);
+		
+		IDPortaDelegata idPD = richiestaDelegata.getIdPortaDelegata();
 		
 		Integrazione integrazione = new Integrazione();
 		integrazione.setIdModuloInAttesa(richiestaDelegata.getIdModuloInAttesa());
@@ -1604,6 +1607,7 @@ public class InoltroBuste extends GenericLib{
 				integrationContext.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
 				integrationContext.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				integrationContext.setGestioneStateless(portaDiTipoStateless);
+				integrationContext.setIdPD(idPD);
 				outRequestContext.setIntegrazione(integrationContext);
 				
 				// Altre informazioni
