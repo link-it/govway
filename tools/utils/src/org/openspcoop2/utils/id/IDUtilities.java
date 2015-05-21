@@ -20,6 +20,9 @@
  */
 package org.openspcoop2.utils.id;
 
+import java.util.Hashtable;
+import java.util.Random;
+
 /**
  * Identity
  *
@@ -38,4 +41,32 @@ public class IDUtilities {
 		return IDUtilities.uniqueSerialNumber;
 	}
 	
+	private static final char[] symbols;
+	static {
+	    StringBuilder tmp = new StringBuilder();
+	    for (char ch = '0'; ch <= '9'; ++ch)
+	      tmp.append(ch);
+	    for (char ch = 'a'; ch <= 'z'; ++ch)
+	      tmp.append(ch);
+	    symbols = tmp.toString().toCharArray();
+	}   
+	private static final Random random = new Random();
+	private static final Hashtable<String, char[]> mapRandom = new Hashtable<String, char[]>();
+	private static synchronized char[] getBufferForRandom(int length){
+		String key = length+"";
+		if(mapRandom.containsKey(key)){
+			return mapRandom.get(key);
+		}
+		else{
+			char[] buf = new char[length];
+			mapRandom.put(key, buf);
+			return buf;
+		}
+	}
+	public static String generateAlphaNumericRandomString(int length) {
+		char[] buf = getBufferForRandom(length);
+		for (int idx = 0; idx < buf.length; ++idx) 
+			buf[idx] = symbols[random.nextInt(symbols.length)];
+		return new String(buf);
+	}
 }
