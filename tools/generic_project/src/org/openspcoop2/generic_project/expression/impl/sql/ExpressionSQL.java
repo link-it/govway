@@ -403,7 +403,7 @@ public class ExpressionSQL extends ExpressionImpl {
 			
 			if(fields!=null){
 				for (IField iField : fields) {
-					String tableName = sqlFieldConverter.toTable(iField);
+					String tableName = getTableName(iField,sqlFieldConverter);
 					if(tables.contains(tableName)==false){
 						tables.add(tableName);
 					}
@@ -415,7 +415,7 @@ public class ExpressionSQL extends ExpressionImpl {
 					IField field = null;
 					if(iField instanceof IField){
 						field = (IField) iField;
-						String tableName = sqlFieldConverter.toTable(field);
+						String tableName = getTableName(field,sqlFieldConverter);
 						if(tables.contains(tableName)==false){
 							tables.add(tableName);
 						}
@@ -423,7 +423,7 @@ public class ExpressionSQL extends ExpressionImpl {
 					else if(iField instanceof FunctionField){
 						List<IField> fieldsFF = ((FunctionField) iField).getFields();
 						for (IField iFieldFF : fieldsFF) {
-							String tableName = sqlFieldConverter.toTable(iFieldFF);
+							String tableName = getTableName(iFieldFF,sqlFieldConverter);
 							if(tables.contains(tableName)==false){
 								tables.add(tableName);
 							}
@@ -437,7 +437,7 @@ public class ExpressionSQL extends ExpressionImpl {
 			
 			if(orderByFields!=null){
 				for (IField iField : orderByFields) {
-					String tableName = sqlFieldConverter.toTable(iField);
+					String tableName = getTableName(iField,sqlFieldConverter);
 					if(tables.contains(tableName)==false){
 						tables.add(tableName);
 					}
@@ -446,7 +446,7 @@ public class ExpressionSQL extends ExpressionImpl {
 			
 			if(groupByFields!=null){
 				for (IField iField : groupByFields) {
-					String tableName = sqlFieldConverter.toTable(iField);
+					String tableName = getTableName(iField,sqlFieldConverter);
 					if(tables.contains(tableName)==false){
 						tables.add(tableName);
 					}
@@ -462,11 +462,35 @@ public class ExpressionSQL extends ExpressionImpl {
 					// la tabella "" puo' essere usato come workaround per le funzioni es. unixTimestamp in CustomField
 					continue;
 				}
-				sqlQueryObject.addFromTable(tableName);
+				if(tableName.contains(_PREFIX_ALIASFIELD)){
+					String originalTableName = tableName.split(_PREFIX_ALIASFIELD)[0];
+					String aliasTable = tableName.split(_PREFIX_ALIASFIELD)[1];
+					sqlQueryObject.addFromTable(originalTableName, aliasTable);
+				}
+				else{
+					sqlQueryObject.addFromTable(tableName);
+				}
 			}
 		}catch(Exception e){
 			throw new ExpressionException(e.getMessage(),e);
 		}
+	}
+	private static final String _PREFIX_ALIASFIELD = "_______ALIASFIELD_______";
+	private static String getTableName(IField iField,ISQLFieldConverter sqlFieldConverter) throws ExpressionException{
+		String tableName = null;
+		if(iField instanceof AliasField){
+			AliasField af = (AliasField) iField;
+			if(af.getAlias().contains(".")){
+				String originaleTableName = sqlFieldConverter.toTable(iField);
+				tableName = originaleTableName+_PREFIX_ALIASFIELD+ af.getAlias().split("\\.")[0];
+			}else{
+				tableName = sqlFieldConverter.toTable(iField);
+			}
+		}else{
+			tableName = sqlFieldConverter.toTable(iField);
+		}
+		//System.out.println("ADD ["+tableName+"]");
+		return tableName;
 	}
 		
 	protected static void addField_engine(ISQLQueryObject sqlQueryObject, ISQLFieldConverter sqlFieldConverter, Object field, String aliasField, boolean appendTablePrefix)throws ExpressionException{

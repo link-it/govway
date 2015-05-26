@@ -36,6 +36,7 @@ import org.openspcoop2.generic_project.exception.ExpressionException;
  */
 public abstract class AbstractSQLFieldConverter implements ISQLFieldConverter {
 
+	
 	@Override
 	public String toColumn(IField field,boolean returnAlias,boolean appendTablePrefix) throws ExpressionException {
 		
@@ -79,12 +80,13 @@ public abstract class AbstractSQLFieldConverter implements ISQLFieldConverter {
 		
 		else if(field instanceof AliasField){
 			AliasField af = (AliasField) field;
-			if(returnAlias){
-				return af.getAlias();
-			}
-			else{
-				return this.toColumn(af.getField(), returnAlias, appendTablePrefix); 
-			}
+//			if(returnAlias){
+//				return af.getAlias();
+//			}
+//			else{
+//				return this.toColumn(af.getField(), returnAlias, appendTablePrefix); 
+//			}
+			return af.getAlias(); // un alias deve usare sempre l'alias
 		}
 		
 		else{

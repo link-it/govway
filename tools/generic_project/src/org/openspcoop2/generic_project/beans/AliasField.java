@@ -71,6 +71,25 @@ public class AliasField extends ComplexField {
 		return this.field;
 	}
 	
+	// Ridefinisco l'equals, altrimenti nei Converter, gli if che precendono la chiamata al metodo AbstractSQLFieldConverter.toColumn
+	// vengono soddisfatti, e quindi non viene usato l'alias
+	@Override
+	public boolean equals(Object o){
+		boolean superEquals = super.equals(o);
+		if(superEquals){
+			if(o instanceof AliasField){
+				AliasField af = (AliasField) o;
+				return af.getAlias().equals(this.alias);
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			return false;
+		}
+	}
+	
 	@Override
 	public String toString(){
 		return toString(0);
