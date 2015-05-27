@@ -228,7 +228,8 @@ public class ConfigurazionePdD  {
 	 *
 	 * @param accessoConfigurazione Informazioni per accedere alla configurazione della PdD OpenSPCoop.
 	 */
-	public ConfigurazionePdD(AccessoConfigurazionePdD accessoConfigurazione,Logger alog,Logger alogConsole,Properties localProperties, String jndiNameDatasourcePdD)throws DriverConfigurazioneException{
+	public ConfigurazionePdD(AccessoConfigurazionePdD accessoConfigurazione,Logger alog,Logger alogConsole,Properties localProperties, 
+			String jndiNameDatasourcePdD, boolean forceDisableCache)throws DriverConfigurazioneException{
 
 		try{ 
 			// Inizializzo OpenSPCoopProperties
@@ -279,7 +280,9 @@ public class ConfigurazionePdD  {
 				accessoDatiConfigurazione = this.driverConfigurazionePdD.getAccessoConfigurazione();
 			}catch(DriverConfigurazioneNotFound notFound){}
 			if(accessoDatiConfigurazione!=null && accessoDatiConfigurazione.getCache()!=null){
-				initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole);
+				if(forceDisableCache==false){
+					initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole);
+				}
 			}
 			
 			// Inizializzazione ConfigLocalProperties

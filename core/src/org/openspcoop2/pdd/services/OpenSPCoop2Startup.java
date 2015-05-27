@@ -611,7 +611,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				this.logError("Riscontrato errore durante la lettura della modalita' di accesso alla configurazione di OpenSPCoop: "+e.getMessage(),e);
 				return;
 			}
-			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,propertiesReader.getJNDIName_DataSource());
+			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,
+					propertiesReader.getJNDIName_DataSource(), false);
 			if(isInitializeConfig == false){
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;

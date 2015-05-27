@@ -248,10 +248,11 @@ public class ConfigurazionePdDReader {
 	 * @param accessoConfigurazione Informazioni per accedere alla configurazione della PdD OpenSPCoop.
 	 * @return true se l'inizializzazione ha successo, false altrimenti.
 	 */
-	public static boolean initialize(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, String jndiNameDatasourcePdD){
+	public static boolean initialize(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
+			String jndiNameDatasourcePdD, boolean forceDisableCache){
 
 		try {
-			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD);	
+			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache);	
 			return ConfigurazionePdDReader.initialize;
 		}
 		catch(Exception e) {
@@ -298,13 +299,14 @@ public class ConfigurazionePdDReader {
 	 *
 	 * @param accessoConfigurazione Informazioni per accedere alla configurazione della PdD OpenSPCoop.
 	 */
-	public ConfigurazionePdDReader(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, String jndiNameDatasourcePdD)throws DriverConfigurazioneException{
+	public ConfigurazionePdDReader(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
+			String jndiNameDatasourcePdD, boolean forceDisableCache)throws DriverConfigurazioneException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
 			else
 				this.log = Logger.getLogger(ConfigurazionePdDReader.class);
-			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD);
+			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache);
 
 			// OpenSPCoop Properties
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
