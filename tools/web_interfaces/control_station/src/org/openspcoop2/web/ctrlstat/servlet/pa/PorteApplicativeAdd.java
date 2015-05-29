@@ -23,6 +23,8 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -177,7 +179,11 @@ public final class PorteApplicativeAdd extends Action {
 						if (!idSoggetto.equals(tipoNomeSoggettoProprietario)){ // non aggiungo il soggetto proprietario della porta applicativa
 							if(identitaSoggetti.contains(idSoggetto)==false){
 								identitaSoggetti.add(idSoggetto);
-								listSoggetti.add(list.get(i).getSoggettoErogatore());
+								IDSoggetto soggettoErogatore = list.get(i).getSoggettoErogatore();
+								String protocolloSoggettoErogatore = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoErogatore.getTipo());
+								if(protocolloSoggettoErogatore.equals(protocollo)){
+									listSoggetti.add(soggettoErogatore);
+								}
 							}
 						}
 					}
@@ -187,10 +193,15 @@ public final class PorteApplicativeAdd extends Action {
 				soggettiListLabel = new String[totEl];
 				soggettiList[0] = "-";
 				soggettiListLabel[0] = "-";
-				int i = 1;
+				List<String> listSoggettiOrdered = new ArrayList<String>();
 				for (IDSoggetto idSoggetto : listSoggetti) {
-					soggettiList[i] = idSoggetto.getTipo() + "/" + idSoggetto.getNome();
-					soggettiListLabel[i] = idSoggetto.getTipo() + "/" + idSoggetto.getNome();
+					listSoggettiOrdered.add(idSoggetto.getTipo() + "/" + idSoggetto.getNome());
+				}
+				Collections.sort(listSoggettiOrdered);
+				int i = 1;
+				for (String idSOrdered : listSoggettiOrdered) {
+					soggettiList[i] = idSOrdered;
+					soggettiListLabel[i] = idSOrdered;
 					i++;
 				}
 			}
@@ -219,8 +230,22 @@ public final class PorteApplicativeAdd extends Action {
 			if (list1.size() > 0) {
 				serviziList = new String[list1.size()];
 				serviziListLabel = new String[list1.size()];
-				int i = 0;
+				
+				List<String> tmp = new ArrayList<String>();
+				List<IDServizio> ordered = new ArrayList<IDServizio>();
+				Hashtable<String, IDServizio> map = new Hashtable<String, IDServizio>();
 				for (IDServizio servizioInLista : list1) {
+					String key = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + servizioInLista.getTipoServizio() + "/" + servizioInLista.getServizio();
+					tmp.add(key);
+					map.put(key, servizioInLista);
+				}
+				Collections.sort(tmp);
+				for (String idSOrdered : tmp) {
+					ordered.add(map.get(idSOrdered));
+				}
+				
+				int i = 0;
+				for (IDServizio servizioInLista : ordered) {
 					if (servizio == null)
 						servizio = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + servizioInLista.getTipoServizio() + "/" + servizioInLista.getServizio();
 					serviziList[i] = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + servizioInLista.getTipoServizio() + "/" + servizioInLista.getServizio();
@@ -229,21 +254,55 @@ public final class PorteApplicativeAdd extends Action {
 				}
 			}
 
-			// Prendo le azioni associate al servizio
-			String[] azioniList = null;
-			try {
-				if (servizio != null) {
+			IDServizio idServizio = null;
+			AccordoServizioParteSpecifica servS = null;
+			if (servizio != null) {
+				boolean servizioPresenteInLista  = false;
+				if(serviziList!=null && serviziList.length>0){
+					for (int i = 0; i < serviziList.length; i++) {
+						if(serviziList[i].equals(servizio)){
+							servizioPresenteInLista = true;
+							break;
+						}
+					}
+				}
+				if(servizioPresenteInLista){
 					String [] tmp = servizio.split(" ");
-					IDServizio idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
+					idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
 							tmp[1].split("/")[0],tmp[1].split("/")[1]);
-					AccordoServizioParteSpecifica servS = null;
 					try{
 						servS = apsCore.getServizio(idServizio);
 					}catch(DriverRegistroServiziNotFound dNotFound){
 					}
-					if(servS==null){
-						throw new Exception("Servizio ["+idServizio.toString()+"] non riscontrato");
+				}
+				if(servS==null){
+					
+					// è cambiato il soggetto erogatore. non è più valido il servizio
+					servizio = null;
+					idServizio = null;
+					if(serviziList!=null && serviziList.length>0){
+						servizio = serviziList[0];
+						String []tmp = servizio.split(" ");
+						idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
+								tmp[1].split("/")[0],tmp[1].split("/")[1]);
+						try{
+							servS = apsCore.getServizio(idServizio);
+						}catch(DriverRegistroServiziNotFound dNotFound){
+						}
+						if(servS==null){
+							servizio = null;
+							idServizio = null;
+						}
 					}
+				}
+			}
+			
+			
+			
+			// Prendo le azioni associate al servizio
+			String[] azioniList = null;
+			try {
+				if (servS != null) {
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
 					AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
 
@@ -262,22 +321,32 @@ public final class PorteApplicativeAdd extends Action {
 						if(pt.sizeAzioneList()>0){
 							azioniList = new String[pt.sizeAzioneList()+1];
 							azioniList[0] = "-";
+							List<String> azioni = new ArrayList<String>();
 							for (int i = 0; i < pt.sizeAzioneList(); i++) {
 								if (azione == null) {
 									azione = "-";
 								}
-								azioniList[i+1] = "" + pt.getAzione(i).getNome();
+								azioni.add(pt.getAzione(i).getNome());
+							}
+							Collections.sort(azioni);
+							for (int i = 0; i < azioni.size(); i++) {
+								azioniList[i+1] = "" + azioni.get(i);
 							}
 						}
 					}else{
 						if(as.sizeAzioneList()>0){
 							azioniList = new String[as.sizeAzioneList()+1];
 							azioniList[0] = "-";
+							List<String> azioni = new ArrayList<String>();
 							for (int i = 0; i < as.sizeAzioneList(); i++) {
 								if (azione == null) {
 									azione = "-";
 								}
-								azioniList[i+1] = "" + as.getAzione(i).getNome();
+								azioni.add("" + as.getAzione(i).getNome());
+							}
+							Collections.sort(azioni);
+							for (int i = 0; i < azioni.size(); i++) {
+								azioniList[i+1] = "" + azioni.get(i);
 							}
 						}
 					}				
@@ -419,7 +488,7 @@ public final class PorteApplicativeAdd extends Action {
 
 			if (servizio!=null) {
 				String [] tmp = servizio.split(" ");
-				IDServizio idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
+				idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
 						tmp[1].split("/")[0],tmp[1].split("/")[1]);
 				String nomeServizio = idServizio.getServizio();
 				String tipoServizio = idServizio.getTipoServizio();

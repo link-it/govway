@@ -23,6 +23,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -216,15 +217,14 @@ public final class PorteDelegateAdd extends Action {
 				if (list!=null && list.size() > 0) {
 
 					List<String> soggettiListTmp = new ArrayList<String>();
-					List<String> soggettiListLabelTmp = new ArrayList<String>();
 					for (IDSoggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
 							soggettiListTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
-							soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
 						}
 					}
+					Collections.sort(soggettiListTmp);
 					soggettiList = soggettiListTmp.toArray(new String[1]);
-					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
+					soggettiListLabel = soggettiList;
 				}
 			}
 
@@ -244,40 +244,59 @@ public final class PorteDelegateAdd extends Action {
 					}catch(DriverRegistroServiziNotFound dNotFound){}
 					if(list!=null && list.size()>0){
 						List<String> serviziListTmp = new ArrayList<String>();
-						List<String> serviziListLabelTmp = new ArrayList<String>();
 
 						for (IDServizio idServizio : list) {
 							if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipoServizio())){
 								serviziListTmp.add(idServizio.getTipoServizio() + "/" + idServizio.getServizio());
-								serviziListLabelTmp.add(idServizio.getTipoServizio() + "/" + idServizio.getServizio());
 							}
 						}
 
+						Collections.sort(serviziListTmp);
 						serviziList = serviziListTmp.toArray(new String[1]);
-						serviziListLabel =serviziListLabelTmp.toArray(new String[1]);
+						serviziListLabel = serviziList;
 					}
 				}
 			}
 
+			
+			IDSoggetto idSoggetto = null;
+			IDServizio idServizio = null;
+			AccordoServizioParteSpecifica servS = null;
+			if (	(servid != null && !"".equals(servid) && servid.contains("/"))
+					&& 
+					(soggid != null && !"".equals(soggid) && soggid.contains("/"))
+					) {
+				idSoggetto = new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]);
+				idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
+				try{
+					servS = apsCore.getServizio(idServizio);
+				}catch(DriverRegistroServiziNotFound dNotFound){
+				}
+				if(servS==null){
+					// è cambiato il soggetto erogatore. non è più valido il servizio
+					servid = null;
+					idServizio = null;
+					if(serviziList!=null && serviziList.length>0){
+						servid = serviziList[0];
+						idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
+						try{
+							servS = apsCore.getServizio(idServizio);
+						}catch(DriverRegistroServiziNotFound dNotFound){
+						}
+						if(servS==null){
+							servid = null;
+							idServizio = null;
+						}
+					}
+				}
+			}
+			
 			// Se modeaz = register-input, prendo la lista delle azioni
 			// associate a servid e la metto in un array
 			String[] azioniList = null;
 			String[] azioniListLabel = null;
 			if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				if (	(servid != null && !"".equals(servid) && servid.contains("/"))
-						&& 
-						(soggid != null && !"".equals(soggid) && soggid.contains("/"))
-						) {
-					IDSoggetto idSoggetto = new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]);
-					IDServizio idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
-					AccordoServizioParteSpecifica servS = null;
-					try{
-						servS = apsCore.getServizio(idServizio);
-					}catch(DriverRegistroServiziNotFound dNotFound){
-					}
-					if(servS==null){
-						throw new Exception("Servizio ["+idServizio.toString()+"] non riscontrato");
-					}
+				if (servS!=null ) {
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
 					AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
 
@@ -296,24 +315,34 @@ public final class PorteDelegateAdd extends Action {
 						if(pt.sizeAzioneList()>0){
 							azioniList = new String[pt.sizeAzioneList()];
 							azioniListLabel = new String[pt.sizeAzioneList()];
+							List<String> azioni = new ArrayList<String>();
 							for (int i = 0; i < pt.sizeAzioneList(); i++) {
 								if (azid == null) {
 									azid = pt.getAzione(i).getNome();
 								}
-								azioniList[i] = "" + pt.getAzione(i).getNome();
-								azioniListLabel[i] = pt.getAzione(i).getNome();
+								azioni.add("" + pt.getAzione(i).getNome());
+							}
+							Collections.sort(azioni);
+							for (int i = 0; i < azioni.size(); i++) {
+								azioniList[i] = "" + azioni.get(i);
+								azioniListLabel[i] = azioniList[i];
 							}
 						}
 					}else{
 						if(as.sizeAzioneList()>0){
 							azioniList = new String[as.sizeAzioneList()];
 							azioniListLabel = new String[as.sizeAzioneList()];
+							List<String> azioni = new ArrayList<String>();
 							for (int i = 0; i < as.sizeAzioneList(); i++) {
 								if (azid == null) {
 									azid = as.getAzione(i).getNome();
 								}
-								azioniList[i] = "" + as.getAzione(i).getNome();
-								azioniListLabel[i] = as.getAzione(i).getNome();
+								azioni.add(as.getAzione(i).getNome());
+							}
+							Collections.sort(azioni);
+							for (int i = 0; i < azioni.size(); i++) {
+								azioniList[i] = "" + azioni.get(i);
+								azioniListLabel[i] = azioniList[i];
 							}
 						}
 					}				
@@ -538,7 +567,7 @@ public final class PorteDelegateAdd extends Action {
 
 			PortaDelegataServizio pdServizio = new PortaDelegataServizio();
 			AccordoServizioParteSpecifica asps = null;
-			IDServizio idServizio = null;
+			idServizio = null;
 			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				idServizio = new IDServizio(idSoggettoErogatore, tiposervizio, servizio);
 				try{

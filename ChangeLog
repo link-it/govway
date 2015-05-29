@@ -1,3 +1,10 @@
+2015-05-29  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug #355
+	Le informazioni presenti nelle liste Erogatori/Servizi/Azioni presenti all'interno delle form
+	di add/edit delle porte delegate/applicative vengono adesso correttamente ordinate.
+
 2015-05-20  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
