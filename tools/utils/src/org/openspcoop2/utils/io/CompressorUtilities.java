@@ -53,26 +53,26 @@ public class CompressorUtilities {
 		byte[]testB = test.getBytes();
 		
 		System.out.println("\n\n=== DEFLATER ===");
-		byte [] compress = compress(testB, Type.DEFLATER);
+		byte [] compress = compress(testB, CompressorType.DEFLATER);
 		System.out.println("Compresso, dimensione: "+compress.length);
 		System.out.println("Compresso, in stringa: "+new String(compress));
-		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, Type.DEFLATER)));
+		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, CompressorType.DEFLATER)));
 		
 		System.out.println("\n\n=== GZIP ===");
-		compress = compress(testB, Type.GZIP);
+		compress = compress(testB, CompressorType.GZIP);
 		System.out.println("Compresso, dimensione: "+compress.length);
 		System.out.println("Compresso, in stringa: "+new String(compress));
-		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, Type.GZIP)));
+		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, CompressorType.GZIP)));
 		
 		System.out.println("\n\n=== ZIP ===");
-		compress = compress(testB, Type.ZIP);
+		compress = compress(testB, CompressorType.ZIP);
 		System.out.println("Compresso, dimensione: "+compress.length);
 		System.out.println("Compresso, in stringa: "+new String(compress));
-		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, Type.ZIP)));
+		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, CompressorType.ZIP)));
 		
 	}
 	
-    public static byte[] compress(byte[] content, Type type) throws UtilsException {
+    public static byte[] compress(byte[] content, CompressorType type) throws UtilsException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             OutputStream out = null;
@@ -102,7 +102,7 @@ public class CompressorUtilities {
         }
     }
 
-    public static byte [] decompress(byte[] bytes, Type type) throws UtilsException {
+    public static byte [] decompress(byte[] bytes, CompressorType type) throws UtilsException {
         InputStream in = null;
         ByteArrayInputStream bin = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -145,8 +145,4 @@ public class CompressorUtilities {
 	
 }
 
-enum Type {
-	
-	DEFLATER, GZIP, ZIP
-	
-}
+
