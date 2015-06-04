@@ -117,6 +117,11 @@ public interface IDriverTracciamento {
 	
 	
 
+	
+	
+	/* ******* RISORSE INTERNE ********** */
+	
+	public void close() throws DriverTracciamentoException;
 }
 
 

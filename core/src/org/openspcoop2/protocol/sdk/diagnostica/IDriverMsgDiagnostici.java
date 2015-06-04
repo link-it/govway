@@ -26,6 +26,7 @@ package org.openspcoop2.protocol.sdk.diagnostica;
 import java.util.List;
 
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 
 /**
  * Interfaccia di ricerca dei messaggi diagnostici
@@ -113,6 +114,11 @@ public interface IDriverMsgDiagnostici {
 	public int deleteInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnostici filter) throws DriverMsgDiagnosticiException;
 	
 	
+	
+	
+	/* ******* RISORSE INTERNE ********** */
+	
+	public void close() throws DriverMsgDiagnosticiException;
 }
 
 

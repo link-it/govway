@@ -110,6 +110,17 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			throw new DriverMsgDiagnosticiException(e.getMessage(),e);
 		}	
 	}
+	
+	public DriverMsgDiagnostici(String urlJDBC,String driverJDBC,
+			String username,String password, String tipoDatabase, Logger log) throws DriverMsgDiagnosticiException {
+		try{
+			this.basicProtocolFactory = new BasicProtocolFactory(log);
+			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici) this.basicProtocolFactory.createDriverMSGDiagnostici();
+			this.driverBase.init(urlJDBC,driverJDBC,username,password,tipoDatabase,log);
+		}catch(Exception e){
+			throw new DriverMsgDiagnosticiException(e.getMessage(),e);
+		}	
+	}
 
 
 	/* *********** ACCESSI TRAMITE RICERCHE (DIAGNOSTICI) ******* */
@@ -195,7 +206,17 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	public int deleteInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnostici filter) throws DriverMsgDiagnosticiException{
 		return this.driverBase.deleteInfoCorrelazioniMessaggiDiagnostici(filter);
 	}
-
+	
+	
+	
+	
+	
+	/* ******* RISORSE INTERNE ********** */
+	
+	@Override
+	public void close() throws DriverMsgDiagnosticiException {
+		this.driverBase.close();
+	}	
 	
 	
 	

@@ -119,6 +119,21 @@ public class DriverTracciamento implements IDriverTracciamento {
 		}
 	}
 	
+	public DriverTracciamento(String urlJDBC,String driverJDBC,
+			String username,String password, 
+			String tipoDatabase, Logger log) throws DriverTracciamentoException {
+		try{
+			this.basicProtocolFactory = new BasicProtocolFactory(log);
+			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.DriverTracciamento) this.basicProtocolFactory.createDriverTracciamento();
+			ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
+			this.driverBase.init(pRegistrati,urlJDBC, driverJDBC,
+					username, password,
+					tipoDatabase,log);
+		}catch(Exception e){
+			throw new DriverTracciamentoException(e.getMessage(),e);
+		}
+	}
+	
 
 	
 	
@@ -206,6 +221,18 @@ public class DriverTracciamento implements IDriverTracciamento {
 	} 
 	
 
+	
+	
+	
+	
+	
+	
+	/* ******* RISORSE INTERNE ********** */
+	
+	@Override
+	public void close() throws DriverTracciamentoException {
+		this.driverBase.close();
+	}
 }
 
 

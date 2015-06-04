@@ -24,6 +24,7 @@
 package org.openspcoop2.protocol.basic.diagnostica;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -75,6 +76,8 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	String tipoDatabase = null;
 	
 	Connection con = null;
+	boolean connectionOpenViaJDBCInCostructor = false;
+	
 	/** Logger utilizzato per info. */
 	private Logger log = null;
 
@@ -207,6 +210,47 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 		// connection
 		this.con = connection;
 		
+		// ISQLQueryObject
+		try {
+			this.log.info("Inizializzo ISQLQueryObject...");
+			if (TipiDatabase.isAMember(tipoDatabase)) {
+				this.tipoDatabase = tipoDatabase;				
+			} else {
+				throw new Exception("Tipo database non gestito");
+			}
+			this.log.info("Inizializzo ISQLQueryObject terminata.");
+
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject...",e);
+		}
+	}
+	
+	public void init(String urlJDBC,String driverJDBC,
+			String username,String password, String tipoDatabase, Logger log) throws DriverMsgDiagnosticiException {
+		// Logger
+		try {
+			this.log = log;
+		} catch (Exception e) {
+			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger...",e);
+		}
+
+		// connection
+		try {
+			Class.forName(driverJDBC);
+			
+			if(username!=null){
+				this.con = DriverManager.getConnection(urlJDBC,username,password);
+			}else{
+				this.con = DriverManager.getConnection(urlJDBC);
+			}
+			this.connectionOpenViaJDBCInCostructor = true;
+			
+		} catch (Exception e) {
+			this.log.error("Errore durante l'inizializzazione della connessione...",e);
+			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione della connessione...",e);
+		}
+				
 		// ISQLQueryObject
 		try {
 			this.log.info("Inizializzo ISQLQueryObject...");
@@ -1275,6 +1319,24 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 		}
 	}
 	
+	
+	
+	
+	
+	/* ******* RISORSE INTERNE ********** */
+	
+	@Override
+	public void close() throws DriverMsgDiagnosticiException {
+		try{
+			if(this.connectionOpenViaJDBCInCostructor){
+				if(this.con!=null && this.con.isClosed()==false){
+					this.con.close();
+				}
+			}
+		}catch(Exception e){
+			throw new DriverMsgDiagnosticiException(e.getMessage(),e);
+		}
+	}	
 	
 	
 	

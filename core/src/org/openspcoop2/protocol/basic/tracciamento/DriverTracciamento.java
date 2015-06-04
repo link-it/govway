@@ -24,6 +24,7 @@
 package org.openspcoop2.protocol.basic.tracciamento;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -74,6 +75,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 	 * Connessione
 	 */
 	Connection connection = null;
+	boolean connectionOpenViaJDBCInCostructor = false;
 	/**
 	 * SQLQueryObject
 	 */
@@ -211,6 +213,52 @@ public class DriverTracciamento implements IDriverTracciamento {
 
 		// connection
 		this.connection = connection;
+		
+		// ISQLQueryObject
+		try {
+			this.log.info("Inizializzo ISQLQueryObject...");
+			if (TipiDatabase.isAMember(tipoDatabase)) {
+				this.tipoDatabase = tipoDatabase;				
+			} else {
+				throw new Exception("Tipo database non gestito");
+			}
+			this.log.info("Inizializzo ISQLQueryObject terminata.");
+
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject...",e);
+		}
+
+	}
+	
+	public void init(ProtocolliRegistrati protocolliRegistrati,String urlJDBC,String driverJDBC,
+			String username,String password, 
+			String tipoDatabase, Logger log) throws DriverTracciamentoException {
+		
+		this.protocolliRegistrati = protocolliRegistrati;
+		
+		// Logger
+		try {
+			this.log = log;
+		} catch (Exception e) {
+			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger...",e);
+		}
+
+		// connection
+		try {
+			Class.forName(driverJDBC);
+			
+			if(username!=null){
+				this.connection = DriverManager.getConnection(urlJDBC,username,password);
+			}else{
+				this.connection = DriverManager.getConnection(urlJDBC);
+			}
+			this.connectionOpenViaJDBCInCostructor = true;
+			
+		} catch (Exception e) {
+			this.log.error("Errore durante l'inizializzazione della connessione...",e);
+			throw new DriverTracciamentoException("Errore durante l'inizializzazione della connessione...",e);
+		}
 		
 		// ISQLQueryObject
 		try {
@@ -637,6 +685,24 @@ public class DriverTracciamento implements IDriverTracciamento {
 	
 	
 	
+	/* ******* RISORSE INTERNE ********** */
+	
+	@Override
+	public void close() throws DriverTracciamentoException {
+		try{
+			if(this.connectionOpenViaJDBCInCostructor){
+				if(this.connection!=null && this.connection.isClosed()==false){
+					this.connection.close();
+				}
+			}
+		}catch(Exception e){
+			throw new DriverTracciamentoException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -685,6 +751,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 	public String getTipoDatabase() {
 		return this.tipoDatabase;
 	}
+
 	
 }
 
