@@ -57,7 +57,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.XMLUtils;
-import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSHostNameVerifierDisabled;
+import org.openspcoop2.utils.resources.SSLHostNameVerifierDisabled;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.testsuite.axis14.Axis14DynamicNamespaceContextFactory;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
@@ -346,7 +346,7 @@ public class ClientHttpGenerico extends ClientCore{
 					}
 				}else{
 					this.log.debug("HostNamve verifier disabled");
-					ConnettoreHTTPSHostNameVerifierDisabled disabilitato = new ConnettoreHTTPSHostNameVerifierDisabled(this.log);
+					SSLHostNameVerifierDisabled disabilitato = new SSLHostNameVerifierDisabled(this.log);
 					httpsConn.setHostnameVerifier(disabilitato);
 				}
 			}
