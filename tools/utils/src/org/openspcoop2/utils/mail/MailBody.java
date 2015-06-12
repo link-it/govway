@@ -19,35 +19,40 @@
  *
  */
 
+package org.openspcoop2.utils.mail;
 
-package org.openspcoop2.pdd.core.connettori;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Classe utilizzata per non effettuare l'host name verifier
- *
+ * MailBody
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPSHostNameVerifierDisabled implements HostnameVerifier {
+public class MailBody {
 
-	Logger log = null;
+	private String contentType = null;
+	private String message;
+	private List<MailAttach> attachments = new ArrayList<MailAttach>();
 	
-	public ConnettoreHTTPSHostNameVerifierDisabled(Logger log){
-		this.log = log;
+	public String getContentType() {
+		return this.contentType;
 	}
-	
-	@Override
-	public boolean verify(String hostname, SSLSession session) {
-		this.log.warn("Warning: URL Host: " + hostname + " vs. "
-                + session.getPeerHost()+". Hostname verifier disabled"); 
-		return true;
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
-
+	public String getMessage() {
+		return this.message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public List<MailAttach> getAttachments() {
+		return this.attachments;
+	}
+	public void setAttachments(List<MailAttach> attachments) {
+		this.attachments = attachments;
+	}
 }

@@ -28,6 +28,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.utils.resources.SSLConfig;
 
 /**
  * Classe utilizzata per interprare le proprieta' https
@@ -37,39 +38,8 @@ import org.openspcoop2.core.constants.CostantiConnettori;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPSProperties  {
+public class ConnettoreHTTPSProperties extends SSLConfig  {
 
-	// AUTENTICAZIONE SERVER:
-	// Path del trustStore che contiene il certificato del server.
-	private String trustStoreLocation;
-	// Password del trustStore che contiene il certificato del server.
-	private String trustStorePassword;
-	// the standard name of the requested trust management algorithm
-	private String trustManagementAlgorithm;
-	// tipo del truststore
-	private String trustStoreType;
-	
-	// AUTENTICAZIONE CLIENT:
-	// Path del keyStore che contiene il certificato del client e la chiave privata del client.
-	private String keyStoreLocation;
-	// Password del keyStore che contiene il certificato del client
-	private String keyStorePassword;
-	// Password della chiave privata
-	private String keyPassword;
-	// the standard name of the requested key management algorithm
-	private String keyManagementAlgorithm;
-	// tipo del keystore
-	private String keyStoreType;
-
-	// HostName verifier
-	private boolean hostnameVerifier = true;
-	// Eventuale classe da utilizzare per effettuare hostnameVerifier al posto di quella di default
-	private String classNameHostnameVerifier;
-
-	// TipologiaSSL
-	private String sslType= null;
-	
-	
 	public static ConnettoreHTTPSProperties readProperties(java.util.Hashtable<String,String> properties) throws Exception{
 		ConnettoreHTTPSProperties propertiesHTTPS = new ConnettoreHTTPSProperties();
 		
@@ -160,99 +130,4 @@ public class ConnettoreHTTPSProperties  {
 	}
 	
 	
-	public String getTrustStoreLocation() {
-		return this.trustStoreLocation;
-	}
-
-	public void setTrustStoreLocation(String trustStoreLocation) {
-		this.trustStoreLocation = trustStoreLocation;
-	}
-
-	public String getTrustStorePassword() {
-		return this.trustStorePassword;
-	}
-
-	public void setTrustStorePassword(String trustStorePassword) {
-		this.trustStorePassword = trustStorePassword;
-	}
-
-	public String getTrustManagementAlgorithm() {
-		return this.trustManagementAlgorithm;
-	}
-
-	public void setTrustManagementAlgorithm(String trustManagementAlgorithm) {
-		this.trustManagementAlgorithm = trustManagementAlgorithm;
-	}
-
-	public String getTrustStoreType() {
-		return this.trustStoreType;
-	}
-
-	public void setTrustStoreType(String trustStoreType) {
-		this.trustStoreType = trustStoreType;
-	}
-
-	public String getKeyStoreLocation() {
-		return this.keyStoreLocation;
-	}
-
-	public void setKeyStoreLocation(String keyStoreLocation) {
-		this.keyStoreLocation = keyStoreLocation;
-	}
-
-	public String getKeyStorePassword() {
-		return this.keyStorePassword;
-	}
-
-	public void setKeyStorePassword(String keyStorePassword) {
-		this.keyStorePassword = keyStorePassword;
-	}
-
-	public String getKeyPassword() {
-		return this.keyPassword;
-	}
-
-	public void setKeyPassword(String keyPassword) {
-		this.keyPassword = keyPassword;
-	}
-
-	public String getKeyManagementAlgorithm() {
-		return this.keyManagementAlgorithm;
-	}
-
-	public void setKeyManagementAlgorithm(String keyManagementAlgorithm) {
-		this.keyManagementAlgorithm = keyManagementAlgorithm;
-	}
-
-	public String getKeyStoreType() {
-		return this.keyStoreType;
-	}
-
-	public void setKeyStoreType(String keyStoreType) {
-		this.keyStoreType = keyStoreType;
-	}
-
-	public boolean isHostnameVerifier() {
-		return this.hostnameVerifier;
-	}
-
-	public void setHostnameVerifier(boolean hostnameVerifier) {
-		this.hostnameVerifier = hostnameVerifier;
-	}
-
-	public String getClassNameHostnameVerifier() {
-		return this.classNameHostnameVerifier;
-	}
-
-	public void setClassNameHostnameVerifier(String classNameHostnameVerifier) {
-		this.classNameHostnameVerifier = classNameHostnameVerifier;
-	}
-
-	public String getSslType() {
-		return this.sslType;
-	}
-
-	public void setSslType(String sslType) {
-		this.sslType = sslType;
-	}
 }

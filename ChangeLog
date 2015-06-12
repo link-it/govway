@@ -1,3 +1,13 @@
+2015-06-12  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità #357
+	Aggiunto package 'org.openspcoop2.utils.mail' che fornisce utilities per spedire mail.
+	L'utility fornisce una interfaccia comune che permette di indicare quale engine di posta utilizzare.
+	Attualmente la scelta è tra:
+	- apache commons.net
+	- apache commons.mail	
+
 2015-05-29  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]

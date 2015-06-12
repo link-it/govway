@@ -26,7 +26,6 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
@@ -37,7 +36,6 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.KeyStore;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -46,11 +44,7 @@ import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.soap.encoding.soapenc.Base64;
@@ -80,6 +74,7 @@ import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.RFC2047Encoding;
 import org.openspcoop2.utils.resources.RFC2047Utilities;
+import org.openspcoop2.utils.resources.SSLUtilities;
 
 
 
@@ -384,8 +379,6 @@ public class ConnettoreHTTP extends ConnettoreBase {
 	 */
 	private boolean sendHTTP(ConnettoreMsg request){
 		
-		FileInputStream finKeyStore = null;
-		FileInputStream finTrustStore = null;
 		Sbustamento sbustamentoAPIengine = null;
 		Imbustamento imbustamentoAPIengine = null;
 		try{
@@ -400,43 +393,11 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			SSLContext sslContext = null;
 			if(this.https){
 				
+				StringBuffer bfSSLConfig = new StringBuffer();
+				sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
+				
 				if(this.debug)
-					this.logger.info("Creo contesto SSL...",false);
-				KeyManager[] km = null;
-				TrustManager[] tm = null;
-				
-				// Autenticazione CLIENT
-				if(this.sslContextProperties.getKeyStoreLocation()!=null){
-					if(this.debug)
-						this.logger.debug("Gestione keystore...");
-					KeyStore keystore = KeyStore.getInstance(this.sslContextProperties.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-					finKeyStore = new FileInputStream(this.sslContextProperties.getKeyStoreLocation());
-					keystore.load(finKeyStore, this.sslContextProperties.getKeyStorePassword().toCharArray());
-					KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(this.sslContextProperties.getKeyManagementAlgorithm());
-					keyManagerFactory.init(keystore, this.sslContextProperties.getKeyPassword().toCharArray());
-					km = keyManagerFactory.getKeyManagers();
-					if(this.debug)
-						this.logger.info("Gestione keystore effettuata",false);
-				}
-				
-				
-				// Autenticazione SERVER
-				if(this.sslContextProperties.getTrustStoreLocation()!=null){
-					if(this.debug)
-						this.logger.debug("Gestione truststore...");
-					KeyStore truststore = KeyStore.getInstance(this.sslContextProperties.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-					finTrustStore = new FileInputStream(this.sslContextProperties.getTrustStoreLocation());
-					truststore.load(finTrustStore, this.sslContextProperties.getTrustStorePassword().toCharArray());
-					TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(this.sslContextProperties.getTrustManagementAlgorithm());
-					trustManagerFactory.init(truststore);
-					tm = trustManagerFactory.getTrustManagers();
-					if(this.debug)
-						this.logger.info("Gestione truststore effettuata",false);
-				}
-				
-				// Creo contesto SSL
-				sslContext = SSLContext.getInstance(this.sslContextProperties.getSslType());
-				sslContext.init(km, tm, null);				
+					this.logger.info(bfSSLConfig.toString(),false);					
 			}
 			
 
@@ -489,21 +450,13 @@ public class ConnettoreHTTP extends ConnettoreBase {
 				HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
 				httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
 				
-				if(this.sslContextProperties.isHostnameVerifier()){
-					if(this.sslContextProperties.getClassNameHostnameVerifier()!=null){
-						if(this.debug)
-							this.logger.debug("HostNamve verifier enabled ["+this.sslContextProperties.getClassNameHostnameVerifier()+"]");
-						HostnameVerifier verifica = (HostnameVerifier) this.loader.newInstance(this.sslContextProperties.getClassNameHostnameVerifier());
-						httpsConn.setHostnameVerifier(verifica);
-					}else{
-						if(this.debug)
-							this.logger.debug("HostName verifier enabled");
-					}
-				}else{
-					if(this.debug)
-						this.logger.debug("HostName verifier disabled");
-					ConnettoreHTTPSHostNameVerifierDisabled disabilitato = new ConnettoreHTTPSHostNameVerifierDisabled(this.logger.getLogger());
-					httpsConn.setHostnameVerifier(disabilitato);
+				StringBuffer bfLog = new StringBuffer();
+				HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(this.sslContextProperties, bfLog, 
+						this.logger.getLogger(), this.loader);
+				if(this.debug)
+					this.logger.debug(bfLog.toString());
+				if(hostnameVerifier!=null){
+					httpsConn.setHostnameVerifier(hostnameVerifier);
 				}
 			}
 
@@ -1250,18 +1203,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			this.errore = "Errore avvenuto durante la consegna HTTP: "+e.getMessage();
 			this.logger.error("Errore avvenuto durante la consegna HTTP: "+e.getMessage(),e);
 			return false;
-		} finally{
-			try{
-				if(finKeyStore!=null){
-					finKeyStore.close();
-				}
-			}catch(Exception e){}
-			try{
-				if(finTrustStore!=null){
-					finTrustStore.close();
-				}
-			}catch(Exception e){}
-		}
+		} 
 	}
 	
     /**
