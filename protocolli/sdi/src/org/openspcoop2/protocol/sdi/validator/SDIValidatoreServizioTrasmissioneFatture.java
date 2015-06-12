@@ -536,7 +536,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// IdentificativoSdI
-		// quello della fattura
+		if(xmlObject.getIdentificativoSdI()!=null){
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+		}
 		
 		// NomeFile
 		if(xmlObject.getNomeFile()!=null){
@@ -627,7 +629,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// IdentificativoSdI
-		// quello della fattura
+		if(xmlObject.getIdentificativoSdI()!=null){
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+		}
 				
 		// NomeFile
 		if(xmlObject.getNomeFile()!=null){
@@ -709,7 +713,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// IdentificativoSdI
-		// quello della fattura
+		if(xmlObject.getIdentificativoSdI()!=null){
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+		}
 				
 		// NomeFile
 		if(xmlObject.getNomeFile()!=null){
@@ -796,7 +802,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// IdentificativoSdI
-		// quello della fattura
+		if(xmlObject.getIdentificativoSdI()!=null){
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+		}
 				
 		// NomeFile
 		if(xmlObject.getNomeFile()!=null){
@@ -864,7 +872,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// IdentificativoSdI
-		// quello della fattura
+		if(xmlObject.getIdentificativoSdI()!=null){
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+		}
 		
 		// RiferimentoFattura
 		if(xmlObject.getRiferimentoFattura()!=null){
@@ -1030,7 +1040,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}
 			
 			// IdentificativoSdI
-			// quello della fattura
+			if(xmlObject.getIdentificativoSdI()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+			}
 			
 			// NomeFile
 			if(xmlObject.getNomeFile()!=null){

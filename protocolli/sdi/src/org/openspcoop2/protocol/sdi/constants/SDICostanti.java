@@ -65,6 +65,7 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA = "FormatoArchivioInvioFattura";
     public final static String SDI_BUSTA_EXT_FORMATO_ARCHIVIO_BASE64 = "FormatoArchivioBase64";
     public final static String SDI_BUSTA_EXT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
+    public final static String SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA = "IdentificativoSdIFattura";
     public final static String SDI_BUSTA_EXT_NOME_FILE = "NomeFile";
     public final static String SDI_BUSTA_EXT_NOME_FILE_METADATI = "NomeFileMetadati";
     public final static String SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA = "NomeFileInternoNotifica";
