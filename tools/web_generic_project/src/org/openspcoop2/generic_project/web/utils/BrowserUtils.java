@@ -40,8 +40,8 @@ public class BrowserUtils {
 	 * 
 	 * Decodifica il browser e la versione a partire dalla stringa dello UserAgent
 	 * 
-	 * @param userAgent
-	 * @return
+	 * @param userAgent il contenuto dell'header 'User-Agent' da analizzare
+	 * @return la coppia di valori <BrowserName,Versione>
 	 */
 	public static  String[] getBrowserInfo(String userAgent) {
 		String info[] = null;
@@ -94,8 +94,8 @@ public class BrowserUtils {
 	 * 
 	 * Decodifica il browser e la versione a partire dalla stringa dello UserAgent
 	 * 
-	 * @param userAgent
-	 * @return
+	 * @param request HttpServletRequest da analizzare.
+	 * @return la coppia di valori <BrowserName,Versione>
 	 */
 	public static  String[] getBrowserInfo(HttpServletRequest request) {
 		

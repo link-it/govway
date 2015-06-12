@@ -42,5 +42,6 @@ public interface ICrudDAO<T,K> {
 	public void delete(T obj) throws ServiceException;
 	public T findById(K key) throws ServiceException;
 	public List<T> findAll() throws ServiceException;
-
+	public boolean exists(T obj) throws ServiceException;
+	
 }

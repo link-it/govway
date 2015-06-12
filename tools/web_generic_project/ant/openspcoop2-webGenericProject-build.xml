@@ -1,6 +1,6 @@
 <project name="openspcoop2-compile-webGenericProject">
     <description>
-        Produzione dei jar relativi al package org.openspcoop2.generic_project
+        Produzione dei jar relativi al package org.openspcoop2.generic_project.web
     </description>
 
 	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
@@ -32,15 +32,21 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.business" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.core" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.dao" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.datamodel" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.factory" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.filter" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.form" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.input" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.input.factory" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.iservice" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.listener" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.logging" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.mbean" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.search" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.search.field" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.search.presentation" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.output" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.output.factory" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.service" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.taglib.functions" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.table" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.table.factory" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.web.utils" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_webGenericProject}/"/>

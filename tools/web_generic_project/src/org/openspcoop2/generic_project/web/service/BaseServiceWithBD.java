@@ -23,7 +23,7 @@ package org.openspcoop2.generic_project.web.service;
 import java.lang.reflect.ParameterizedType;
 
 import org.openspcoop2.generic_project.web.business.BaseBD;
-import org.openspcoop2.generic_project.web.form.BaseSearchForm;
+import org.openspcoop2.generic_project.web.form.SearchForm;
 
 
 /**
@@ -39,7 +39,7 @@ import org.openspcoop2.generic_project.web.form.BaseSearchForm;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class BaseServiceWithBD<S extends BaseSearchForm, BD extends BaseBD<?, ?>> { 
+public class BaseServiceWithBD<S extends SearchForm, BD extends BaseBD<?, ?>> { 
 
 	protected BD business;
 	

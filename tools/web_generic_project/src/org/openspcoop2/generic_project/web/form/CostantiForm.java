@@ -41,6 +41,7 @@ public class CostantiForm {
 	
 	
 	public static final String DEFAULT_FORM_ID = "form";
+	public static final String DEFAULT_SEARCH_FORM_ID = "formSearch";
 	public static final String NON_SELEZIONATO = "--";
 	public static final String ALL = "*";
 	

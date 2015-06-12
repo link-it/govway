@@ -18,33 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.web.business;
+package org.openspcoop2.generic_project.web.table.factory;
 
-import java.util.List;
+import java.io.Serializable;
 
+import org.openspcoop2.generic_project.web.table.PagedDataTable;
+import org.openspcoop2.generic_project.web.table.Table;
+import org.openspcoop2.generic_project.web.factory.FactoryException;
+import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 
-
-/**
- * BaseBD Definisce i metodi da implementare per agganciare il livello dao/ejb.
+/***
  * 
- * @param <T> Tipo Oggetto 
- * @param <K> Tipo chiave primaria Oggetto
+ * Interfaccia base che definisce la factory delle tabelle
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ *
  */
-public abstract class BaseBD<T,K> {
+public interface TableFactory extends Serializable{
 
-	public BaseBD() {
-	}
+	public <V> Table<V> createTable() throws FactoryException;
 
-	public abstract <S extends SearchForm> int count(S form)throws Exception;
-
-	public abstract <S extends SearchForm> List<T> findAll(S form, Integer start, Integer limit)throws Exception;
-
-	public abstract void store(T dto) throws Exception;
-
-	public abstract T findById(K key) throws Exception;
+	public <V,FormType extends Form,SearchFormType extends SearchForm> PagedDataTable<V, FormType, SearchFormType> createPagedDataTable() throws FactoryException;
 }

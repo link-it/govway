@@ -18,33 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.web.business;
+package org.openspcoop2.generic_project.web.output;
 
-import java.util.List;
-
-import org.openspcoop2.generic_project.web.form.SearchForm;
-
-
-/**
- * BaseBD Definisce i metodi da implementare per agganciare il livello dao/ejb.
+/***
  * 
- * @param <T> Tipo Oggetto 
- * @param <K> Tipo chiave primaria Oggetto
+ * Interfaccia che descrive un elemento di output di tipo Immagine/Icona.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ *
  */
-public abstract class BaseBD<T,K> {
+public interface Image extends OutputField<String>{
+	
+	// Path del file immagine da utilizzare
+	public String getImage();
+	public void setImage(String image);
 
-	public BaseBD() {
-	}
+	// Title per l'immagine
+	public String getTitle();
+	public void setTitle(String title);
 
-	public abstract <S extends SearchForm> int count(S form)throws Exception;
+	// Testo alternativo per l'immagine
+	public String getAlt();
+	public void setAlt(String alt);
 
-	public abstract <S extends SearchForm> List<T> findAll(S form, Integer start, Integer limit)throws Exception;
-
-	public abstract void store(T dto) throws Exception;
-
-	public abstract T findById(K key) throws Exception;
 }

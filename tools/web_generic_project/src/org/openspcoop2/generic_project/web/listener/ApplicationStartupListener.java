@@ -216,7 +216,7 @@ public abstract class ApplicationStartupListener  implements ServletContextListe
 //									+ getLoggerProperties());
 				}
 
-//				ConsoleStartupListener.log.debug("PddMonitor Console avviata correttamente.");
+//				ConsoleStartupListener.log.debug("Console avviata correttamente.");
 	}
 	
 	
@@ -225,10 +225,10 @@ public abstract class ApplicationStartupListener  implements ServletContextListe
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 //		if(ConsoleStartupListener.log!=null)
-//			ConsoleStartupListener.log.info("Undeploy pddMonitor Console in corso...");
+//			ConsoleStartupListener.log.info("Undeploy Console in corso...");
 
 //		if(ConsoleStartupListener.log!=null)
-//			ConsoleStartupListener.log.info("Undeploy pddMonitor Console effettuato.");
+//			ConsoleStartupListener.log.info("Undeploy Console effettuato.");
 		
 	}
 }

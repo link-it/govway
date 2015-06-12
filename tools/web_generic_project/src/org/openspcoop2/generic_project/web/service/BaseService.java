@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.service;
 
-import org.openspcoop2.generic_project.web.form.BaseForm;
+import org.openspcoop2.generic_project.web.form.Form;
 
 
 /**
@@ -34,7 +34,7 @@ import org.openspcoop2.generic_project.web.form.BaseForm;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BaseService <F extends BaseForm> { 
+public class BaseService <F extends Form> { 
 
 	protected F form;
 	

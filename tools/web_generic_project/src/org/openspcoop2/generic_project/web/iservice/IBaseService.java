@@ -20,8 +20,11 @@
  */
 package org.openspcoop2.generic_project.web.iservice;
 
+import java.util.List;
+
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.web.dao.IService;
-import org.openspcoop2.generic_project.web.form.BaseForm;
+import org.openspcoop2.generic_project.web.form.Form;
 
 
 /**
@@ -30,15 +33,17 @@ import org.openspcoop2.generic_project.web.form.BaseForm;
  * 
  * @param <T> tipo dell'oggetto
  * @param <K> tipo della chiave dell'oggetto
- * @param <F form.
+ * @param <F> form.
  * 
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IBaseService<T, K, F extends BaseForm> extends IService<T, K> {
+public interface IBaseService<T, K, F extends Form> extends IService<T, K> {
 
 	public void setForm(F form);
 
 	public F getForm();
+	
+	public List<T> findAll(F form) throws ServiceException;
 }

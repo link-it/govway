@@ -26,10 +26,8 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.ResourceBundle;
-
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.FacesContext;
 
 
 /***
@@ -41,55 +39,31 @@ import javax.faces.context.FacesContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Utils {
+public abstract class Utils {
 
+	protected abstract ClassLoader getCurrentClassLoader(Object defaultObject);
 
-	protected static ClassLoader getCurrentClassLoader(Object defaultObject){
-
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-		if(loader == null){
-			loader = defaultObject.getClass().getClassLoader();
-		}
-
-		return loader;
-	}
-
-	public static Locale getLocale() {
-		Locale locale = null;
-
-		try{
-			FacesContext currentInstance = FacesContext.getCurrentInstance();
-			if(currentInstance != null){
-				UIViewRoot viewRoot = currentInstance.getViewRoot();
-				if(viewRoot != null)
-					locale = viewRoot.getLocale();
-			}
-		}catch(Exception e){}
-
-		if(locale == null){
-			locale = Locale.ITALY;
-		}
-
-		return locale;
-	}
+	protected abstract Locale getLocale();
 	
-	public static String getMessageFromResourceBundle(String key) {
+//	public abstract WebGenericProjectFactory getWebGenericProjectFactory () throws FactoryException;
+//	public abstract WebGenericProjectFactory getWebGenericProjectFactory (Logger log) throws FactoryException;
+
+	public   String getMessageFromResourceBundle(String key) {
 		Locale locale = getLocale();
 		return getMessageFromResourceBundle("messages", key, null, locale);
 	}
 
-	public static String getMessageWithParamsFromResourceBundle(String key, Object ... params) {
+	public   String getMessageWithParamsFromResourceBundle(String key, Object ... params) {
 		Locale locale = getLocale();
 		return getMessageFromResourceBundle("messages", key, params, locale);
 	}
 
 
-	public static String getMessageFromResourceBundle(String key,Locale locale){
+	public   String getMessageFromResourceBundle(String key,Locale locale){
 		return getMessageFromResourceBundle("messages", key, null, locale);
 	}
 
-	public static String getMessageFromResourceBundle(String key, String bundleName){
+	public   String getMessageFromResourceBundle(String key, String bundleName){
 		Locale locale = getLocale();
 
 		if(bundleName == null)
@@ -98,7 +72,7 @@ public class Utils {
 		return getMessageFromResourceBundle(bundleName, key, null, locale);
 	}
 
-	public static String getMessageFromResourceBundle(String key, String bundleName, Locale locale){
+	public   String getMessageFromResourceBundle(String key, String bundleName, Locale locale){
 		if(locale == null){
 			locale = getLocale();
 		}
@@ -109,22 +83,26 @@ public class Utils {
 		return getMessageFromResourceBundle(bundleName, key, null, locale);
 	}
 
-	public static String getMessageFromCommonsResourceBundle(String key) {
+	public   String getMessageFromCommonsResourceBundle(String key) {
 		Locale locale = getLocale();
 		return getMessageFromResourceBundle("commonsMessages", key, null, locale);
 	}
 
 
-	public static String getMessageWithParamsFromCommonsResourceBundle(String key, Object ... params) {
+	public   String getMessageWithParamsFromCommonsResourceBundle(String key, Object ... params) {
 		Locale locale = getLocale();
 		return getMessageFromResourceBundle("commonsMessages", key, params, locale);
 	}
 
-	public static String getMessageFromCommonsResourceBundle(String key,Locale locale){
+	public   String getMessageWithParamsFromCommonsResourceBundle(String key, Locale locale, Object [] params) {
+		return getMessageFromResourceBundle("commonsMessages", key, params, locale);
+	}
+
+	public   String getMessageFromCommonsResourceBundle(String key,Locale locale){
 		return getMessageFromResourceBundle("commonsMessages", key, null, locale);
 	}
 
-	public static String getMessageFromResourceBundle(
+	public   String getMessageFromResourceBundle(
 			String bundleName, 
 			String key, 
 			Object params[], 
@@ -167,5 +145,32 @@ public class Utils {
 				}
 			}
 		}
+	}
+	
+	public static String getProperty(Properties reader, String name,boolean required) throws Exception{
+		String tmp = null;
+
+		tmp = reader.getProperty(name);
+
+		if(tmp==null){
+			if(required){
+				throw new Exception("Property ["+name+"] not found");
+			}
+		}
+		if(tmp!=null){
+			return tmp.trim();
+		}else{
+			return null;
+		}
+	}
+
+	public static Boolean getBooleanProperty(Properties reader,String name,boolean required) throws Exception{
+		String propAsString = getProperty(reader,name, required);
+
+		if(propAsString != null){
+			Boolean b = new Boolean(propAsString.equalsIgnoreCase("true"));
+			return b;
+		}
+		return null;
 	}
 }

@@ -18,33 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.web.business;
+package org.openspcoop2.generic_project.web.input;
 
-import java.util.List;
-
-import org.openspcoop2.generic_project.web.form.SearchForm;
-
-
-/**
- * BaseBD Definisce i metodi da implementare per agganciare il livello dao/ejb.
+/***
  * 
- * @param <T> Tipo Oggetto 
- * @param <K> Tipo chiave primaria Oggetto
+ * Interfaccia che descrive un elemento di input di tipo CheckBox singola.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ *
  */
-public abstract class BaseBD<T,K> {
+public interface BooleanCheckBox extends FormField<Boolean>{ 
 
-	public BaseBD() {
-	}
-
-	public abstract <S extends SearchForm> int count(S form)throws Exception;
-
-	public abstract <S extends SearchForm> List<T> findAll(S form, Integer start, Integer limit)throws Exception;
-
-	public abstract void store(T dto) throws Exception;
-
-	public abstract T findById(K key) throws Exception;
 }

@@ -18,33 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.web.business;
+package org.openspcoop2.generic_project.web.mbean;
 
-import java.util.List;
+import java.io.Serializable;
 
+import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 
-
-/**
- * BaseBD Definisce i metodi da implementare per agganciare il livello dao/ejb.
+/***
  * 
- * @param <T> Tipo Oggetto 
- * @param <K> Tipo chiave primaria Oggetto
+ * Interfaccia che descrive le funzionalita' di base di un Bean di una pagina Web.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ *
  */
-public abstract class BaseBD<T,K> {
+public interface ManagedBean<FormType extends Form,SearchFormType extends SearchForm> extends Serializable {
 
-	public BaseBD() {
-	}
+	// Getter/Setter per il form 
+	public FormType getForm();
+	public void setForm(FormType form);
 
-	public abstract <S extends SearchForm> int count(S form)throws Exception;
-
-	public abstract <S extends SearchForm> List<T> findAll(S form, Integer start, Integer limit)throws Exception;
-
-	public abstract void store(T dto) throws Exception;
-
-	public abstract T findById(K key) throws Exception;
+	// Getter/Setter per il form di ricerca
+	public SearchFormType getSearch();
+	public void setSearch(SearchFormType search);
+	
 }
