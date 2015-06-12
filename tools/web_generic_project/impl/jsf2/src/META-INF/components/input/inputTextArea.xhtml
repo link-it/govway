@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+
+	<c:if test="#{empty required}">
+		<c:set var="required" value="#{field.required}" />
+	</c:if>
+	<c:if test="#{empty disabled}">
+		<c:set var="disabled" value="#{field.disabled}" />
+	</c:if>
+
+	<c:set var="counterID" value="input_counter_#{field.name}" />
+
+	<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
+		<p:inputTextarea id="input_#{field.name}" value="#{field.value}"
+			style="#{field.style}" disabled="#{field.disabled}"
+			rows="#{field.rows}" cols="#{field.columns}"
+			counter="#{field.showCounter ? counterID : ''}"
+			maxlength="#{field.maxlength}"
+			counterTemplate="#{commonsMsg['inputTextArea.remaining.chars']}"
+			autoResize="#{field.autoResize}" />
+		<h:outputText id="input_counter_#{field.name}"
+			rendered="#{field.showCounter}" />
+	</op2web:prop>
+
+</ui:composition>

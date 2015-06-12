@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<c:set var="id" value="#{fieldDescriptor.name}" />
+
+	<c:set var="type" value="#{fieldDescriptor._value_type}" />
+
+	<c:if test="#{type == 'text'}">
+		<op2web:textColumn fieldValue="#{fieldValue}"
+			fieldDescriptor="#{fieldDescriptor}" />
+	</c:if>
+
+	<c:if test="#{type == 'date'}">
+		<op2web:dateColumn fieldValue="#{fieldValue}"
+			fieldDescriptor="#{fieldDescriptor}" />
+	</c:if>
+	
+	<c:if test="#{type == 'icon'}">
+		<op2web:iconColumn fieldValue="#{fieldValue}"
+			fieldDescriptor="#{fieldDescriptor}" />
+	</c:if>
+	
+	<c:if test="#{type == 'valuta'}">
+		<op2web:valutaColumn fieldValue="#{fieldValue}"
+			fieldDescriptor="#{fieldDescriptor}" />
+	</c:if>
+	
+	<c:if test="#{type == 'number'}">
+		<op2web:numberColumn fieldValue="#{fieldValue}"
+			fieldDescriptor="#{fieldDescriptor}" />
+	</c:if>
+
+</ui:composition>

@@ -1,0 +1,209 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+
+	<c:if test="#{empty width}">
+		<c:set var="width" value="100%" />
+	</c:if>
+
+	<c:if test="#{empty rowsToDisplay}">
+		<c:set var="rowsToDisplay" value="25" />
+	</c:if>
+	<c:if test="#{empty showSelectAll}">
+		<c:set var="showSelectAll" value="true" />
+	</c:if>
+	<c:if test="#{empty enableDelete}">
+		<c:set var="enableDelete" value="true" />
+	</c:if>
+	<c:if test="#{empty isList}">
+		<c:set var="isList" value="false" />
+	</c:if>
+
+	<c:if test="#{empty lazy}">
+		<c:set var="lazy" value="true" />
+	</c:if>
+
+	<c:set var="rowsPerPageTemplate" value="25" />
+	<c:set var="currentPageReportTemplate" value="#{headerText}" />
+	<c:set var="paginatorTemplate" value="{CurrentPageReport}" />
+
+	<c:if test="#{empty paginator}">
+		<c:set var="paginator" value="true" />
+	</c:if>
+	
+	<c:if test="#{isList == true}">
+		<c:set var="paginator" value="false" />
+	</c:if>
+
+	<c:if test="#{empty paginatorPosition}">
+		<c:set var="paginatorPosition" value="top" />
+	</c:if>
+
+	<c:if test="#{paginator == true}">
+		<c:set var="currentPageReportTemplate"
+			value="#{headerText}: Record {startRecord}-{endRecord} su {totalRecords}" />
+		<c:set var="paginatorTemplate"
+			value="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" />
+	</c:if>
+
+	<c:if test="#{empty customRowClasses}">
+		<c:set var="customRowClasses" value="even,odd" />
+	</c:if>
+
+	<p:panel id="#{id}">
+
+		<script type="text/javascript">
+				 jQuery(document).ready(function() {
+					//checkBrowser();
+				 });
+	
+				 function showConfirm(containerId,name){
+					var n = jQuery("div [id$='"+containerId+"'] input:checkbox[name$='"+containerId+"_tbl_checkbox']:checked").length;
+					if(n>0){
+						PF(name).show();
+					}
+					return false;
+				 };
+
+				 function checkSelection(containerId){
+					 var n = jQuery("div [id$='"+containerId+"_tbl'] input:checkbox[name$='"+containerId+"_tbl_checkbox']:checked").length;
+						if(n==0){
+							PF("#{id}_checkSelection").show();
+							return false;
+						}else{
+							return true;
+						}
+				 };
+
+			</script>
+
+		<p:dataTable id="#{id}_tbl" value="#{value}" 
+			selection="#{mBean.selection}" styleClass="dataTable" lazy="#{lazy}"
+			paginator="#{paginator}" var="item" rows="#{rowsToDisplay}"
+			rowKey="#{item.id.value}" rowStyleClass="#{customRowClasses}"
+			rowsPerPageTemplate="#{rowsPerPageTemplate}"
+			currentPageReportTemplate="#{currentPageReportTemplate}"
+			paginatorTemplate="#{paginatorTemplate}"
+			paginatorPosition="#{paginatorPosition}"
+			>
+
+			<c:if test="#{paginator == false and not empty headerText}">
+				<f:facet name="header">
+					<h:outputText value="#{headerText}"
+						rendered="#{not empty headerText}" />
+				</f:facet>
+			</c:if>
+
+			<p:column selectionMode="#{mBean.selectionMode}"
+				styleClass="selectionColumn" id="ckbClmn"
+				rendered="#{showSelectAll and not empty mBean}">
+			</p:column>
+
+			<ui:insert />
+
+<!-- 			<c:if -->
+<!-- 				test="#{(paginator == true and hideBottomPaginator == true) or showSelectAll == true or enableDelete == true}"> -->
+				<f:facet name="footer">
+					<h:panelGroup layout="block" styleClass="noborder">
+						<p:panel rendered="#{showSelectAll}" id="#{id}_selectionInfoCtr"
+							styleClass="selectionInfoCtr">
+							<div class="selectionInfoItems">
+								<h:outputText id="#{id}_selectedInfoLbl" style="display:none;"
+									value="" styleClass="selectionInfoItem" />
+								<h:outputLink style="display:none;" id="#{id}_selectAllLink"
+									styleClass="selectionInfoItem"
+									value="Seleziona tutti gli elementi"
+									onclick="#{id}_selectAllListener('#{id}',true); return false;" />
+								<h:outputLink style="display:none;" id="#{id}_undoSelectAllLink"
+									styleClass="selectionInfoItem" value="Annulla selezione"
+									onclick="#{id}_selectAllListener('#{id}',false); return false;" />
+							</div>
+						</p:panel>
+
+						<h:panelGroup layout="block" styleClass="buttonrow">
+							<div class="buttonrowlista">
+								<c:if test="#{empty customDelete or customDelete==false}">
+									<p:remoteCommand id="#{id}_deleteSelected"
+										name="#{id}_deleteSelected" action="#{mBean.delete}"
+										update="@([id$=#{id}])" />
+								</c:if>
+								<c:if
+									test="#{not empty customDelete and customDelete==true and enableDelete}">
+									<ui:insert name="customDelete" />
+								</c:if>
+
+								<p:commandButton id="#{id}_deleteBtn" type="button"
+									icon="ui-icon-trash"
+									value="#{commonsMsg['pagedDataTable.component.removeSelected']}"
+									onclick="showConfirm('#{id}','#{id}_deleteConfirmation'); return false"
+									rendered="#{enableDelete and showSelectAll}" />
+
+								<ui:insert name="buttons" />
+							</div>
+						</h:panelGroup>
+					</h:panelGroup>
+				</f:facet>
+<!-- 			</c:if> -->
+		</p:dataTable>
+	</p:panel>
+
+	<p:dialog id="#{id}_deleteConfirmation" width="300" height="150"
+		widgetVar="#{id}_deleteConfirmation" modal="true">
+		<f:facet name="header">
+			<h:outputText
+				value="#{commonsMsg['pagedDataTable.component.confermaRimozione.title']}" />
+		</f:facet>
+		<h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:graphicImage value="/images/001_11.png" />
+				<h:outputText
+					value="#{commonsMsg['pagedDataTable.component.confermaRimozione.label']}"
+					style="font-weight: bold;" />
+			</h:panelGrid>
+			<h:panelGroup>
+				<p:spacer height="20" />
+				<div class="buttonrow">
+					<input id="#{id}_confermaRimozioneBtn" type="button"
+						value="#{commonsMsg['pagedDataTable.component.confermaRimozione.ok']}"
+						class="icon-ok"
+						onclick="PF('#{id}_deleteConfirmation').hide();#{id}_deleteSelected();return false" />
+					<input id="#{id}_annullaRimozioneBtn" type="button"
+						value="#{commonsMsg['pagedDataTable.component.confermaRimozione.ko']}"
+						class="negative icon-delete"
+						onclick="PF('#{id}_deleteConfirmation').hide();return false" />
+
+				</div>
+			</h:panelGroup>
+		</h:panelGrid>
+	</p:dialog>
+
+	<p:dialog id="#{id}_checkSelection" width="300" height="150"
+		widgetVar="#{id}_checkSelection" modal="true">
+		<f:facet name="header">
+			<h:outputText
+				value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.title']}" />
+		</f:facet>
+		<h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:graphicImage value="/images/001_11.png" />
+				<h:outputText
+					value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.label']}"
+					style="font-weight: bold;" />
+			</h:panelGrid>
+			<h:panelGroup>
+				<p:spacer height="20" />
+				<div class="buttonrow">
+					<input type="button"
+						value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.close']}"
+						onclick="PF('#{id}_checkSelection').hide();return false" />
+				</div>
+			</h:panelGroup>
+		</h:panelGrid>
+	</p:dialog>
+
+</ui:component>

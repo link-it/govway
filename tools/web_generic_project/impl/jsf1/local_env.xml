@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="WebGenericProjectImplJsf1_LocalEnv" basedir=".">
+
+	<!-- Librerie necessarie al progetto -->
+	<property name="openspcoop2" location="../../../.." />
+	<property name="required_lib" value="${openspcoop2}/lib/" />
+
+	<!-- Build-Options -->
+	<property name="buildAsRelease" value="false"/>
+	<property name="buildOpenSPCoop2WebGenericProjectImplJsf1" value="true"/>
+	<property name="buildAPI" value="true"/>
+	<property name="buildDependencies" value="true"/>
+	
+	<!-- Dipendenze di compilazione -->
+	<property name="genericProject" location="${openspcoop2}/tools/generic_project"/>
+	<property name="src_genericProject" location="${genericProject}/src"/>
+	<property name="utils" location="${openspcoop2}/tools/utils"/>
+	<property name="src_utils" location="${utils}/src"/>
+	<property name="webGenericProject" location="${openspcoop2}/tools/web_generic_project"/>
+	<property name="src_webGenericProject" location="${webGenericProject}/src"/>
+	
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+</project>
+
+

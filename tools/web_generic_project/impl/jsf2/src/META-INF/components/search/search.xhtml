@@ -1,0 +1,31 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf">
+	<a4j:loadScript src="resource://jquery.js" />
+	
+	<c:if test="#{empty fieldsToUpdate}">
+		<c:set var="fieldsToUpdate" value="mainct,menuct" />
+	</c:if>	
+	
+	<op2web:form formBean="#{mBean.search}">
+				
+		<ui:insert />
+		 
+		<ui:define name="buttons">
+			<a4j:commandButton id="filtraButton"
+				value="#{msg['commons.button.filtra']}" styleClass="icon-refresh"
+				reRender="#{fieldsToUpdate}" status="mainStatus" action="#{mBean.filtra}">
+			</a4j:commandButton>
+
+			<a4j:commandButton id="pulisciButton"
+				value="#{msg['commons.button.reset']}" reRender="#{fieldsToUpdate}"
+				status="mainStatus" styleClass="icon-delete" action="#{mBean.reset}">
+			</a4j:commandButton>
+		</ui:define>
+	</op2web:form>
+</ui:component>

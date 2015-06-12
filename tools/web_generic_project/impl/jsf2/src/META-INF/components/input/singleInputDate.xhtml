@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2">
+
+	<c:if test="#{empty required}">
+		<c:set var="required" value="#{field.required}" />
+	</c:if>
+	<c:if test="#{empty disabled}">
+		<c:set var="disabled" value="#{field.disabled}" />
+	</c:if>
+
+	<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
+		<p:calendar id="input_#{field.name}" value="#{field.value}"  disabled="#{disabled}"
+		 style="#{field.style}"  navigator="#{field.navigator}" showOn="#{field.showOn}" pattern="#{field.pattern}"
+				 readonlyInput="#{field.readonlyInput}" mode="#{field.mode}" /> 
+	</op2web:prop>
+
+</ui:composition>

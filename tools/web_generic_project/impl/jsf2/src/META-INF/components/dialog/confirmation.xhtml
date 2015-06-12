@@ -1,0 +1,48 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+	<script type="text/javascript">
+//<![CDATA[
+	 function showConfirm(containerId,name){
+			var n = jQuery("div [id$='"+containerId+"'] input:checkbox:checked").length;
+			if(n>0){
+				PF(name).show();
+			}
+			return false;
+		 };
+//]]>
+</script>
+
+	<p:commandButton id="#{confirmId}_confirmBtn" icon="ui-icon-closethick"
+		value="#{label}"
+		onclick="showConfirm('#{confirmId}','#{confirmId}confirmation');return false;" />
+
+	<p:remoteCommand id="#{confirmId}_deleteFunction"
+		name="#{confirmId}_deleteFunction" action="#{mBean.delete}"
+		update="@([id$=#{fieldsToupdate}])" />
+
+	<p:dialog id="#{confirmId}confirmation" width="300" height="150"
+		widgetVar="#{confirmId}confirmation" modal="true">
+		<f:facet name="header">
+			<h:outputText value="Conferma Operazione" />
+		</f:facet>
+		<h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:graphicImage value="/images/warn.png" alt="Warning" />
+				<h:outputText value="#{confirmMsg}" style="FONT-SIZE: large;" />
+			</h:panelGrid>
+			<h:panelGroup>
+				<p:spacer height="20" />
+				<input type="button" value="#{commonsMsg['commons.button.invia']}"
+					onclick="PF('#{confirmId}confirmation').hide();#{confirmId}_deleteFunction();return false" />
+				<input type="button" value="#{commonsMsg['commons.button.annulla']}"
+					onclick="PF('#{confirmId}confirmation').hide();return false" />
+			</h:panelGroup>
+		</h:panelGrid>
+		</p:modalPanel>
+</ui:component>

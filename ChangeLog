@@ -1,5 +1,18 @@
 2015-06-12  Giuliano Pintori <pintori@link.it>
 
+        * [WebGenericProject]
+	Aggiunta funzionalità #362
+	Sviluppata un implementazione JSF1 per la libreria.
+	L'implementazione mette a disposizione un insieme di oggetti base per
+	la creazione di un'applicazione web con framework JSF 1.2 insieme al
+	framework grafico Richfaces versione 3.3.4.
+	Sono stati implementati tutti i componenti di input, output e table
+	descritti dalle API.
+	Aggiunti i componenti base per gestire i ManagedBean e i DataModel per
+	l'accesso ai dati.
+
+2015-06-12  Giuliano Pintori <pintori@link.it>
+
 	* [WebGenericProject]
 	Aggiunta funzionalità #361
 	Creata la parte API della libreria che definisce le interfacce dei componenti

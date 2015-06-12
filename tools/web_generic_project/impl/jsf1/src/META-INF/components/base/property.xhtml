@@ -1,0 +1,23 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                 xmlns:h="http://java.sun.com/jsf/html"
+                 xmlns:f="http://java.sun.com/jsf/core"
+                 xmlns:c="http://java.sun.com/jstl/core"
+                 xmlns:a4j="http://richfaces.org/a4j">
+    <a4j:outputPanel rendered="#{not empty rendered ? rendered : true}" layout="block">
+    	<div class="prop">
+			<label class="#{not empty styleClass ? styleClass : ''}">
+				<h:outputText value="#{label}" />
+				<c:if test="#{required}">
+					<em>*</em>
+				</c:if>
+			</label>
+			<ui:insert/>
+			<c:if test="#{not empty note}">
+				<p class="note">
+					<h:outputText value="#{note}" />
+				</p>
+			</c:if>
+		</div>
+    </a4j:outputPanel>
+</ui:composition>

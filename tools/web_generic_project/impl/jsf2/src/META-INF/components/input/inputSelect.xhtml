@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+
+	<c:if test="#{empty required}">
+		<c:set var="required" value="false" />
+	</c:if>
+
+	<op2web:prop label="#{field.label}"
+		required="#{field.required == 'true'}"
+		rendered="#{field.rendered == 'true'}">
+
+
+		<c:if
+			test="#{field.autoComplete == 'true' and !empty field.fieldsToUpdate}">
+				<p:autoComplete id="input_#{field.name}Combo" value="#{field.value}"
+					style="#{field.style}" var="selectItem"
+					itemLabel="#{selectItem.label}" forceSelection="true"
+					itemValue="#{selectItem.value}" converter="selectItemConverter"
+					completeMethod="#{field.fieldAutoComplete}">
+					<p:ajax event="itemSelect" listener="#{field.fieldSelected}" 
+						update="#{field.fieldsToUpdate}" />
+				</p:autoComplete>
+		</c:if>
+
+		<c:if
+			test="#{field.autoComplete == 'true' and empty field.fieldsToUpdate}">
+				<p:autoComplete id="input_#{field.name}Combo" value="#{field.value}"
+					style="#{field.style}" var="selectItem"
+					itemLabel="#{selectItem.label}" forceSelection="true"
+					itemValue="#{selectItem.value}" converter="selectItemConverter"
+					completeMethod="#{field.fieldAutoComplete}">
+				</p:autoComplete>
+		</c:if>
+
+
+		<c:if
+			test="#{field.autoComplete == 'false' and empty field.fieldsToUpdate}">
+			<p:selectOneMenu id="input_#{field.name}Combo" style="#{field.style}"
+				value="#{field.value}" converter="selectItemConverter"
+				editable="#{field.enableManualInput}" required="#{field.required}"
+				requiredMessage="#{field.requiredMessage}">
+				<f:selectItems value="#{field.elencoSelectItems}" />
+			</p:selectOneMenu>
+		</c:if>
+
+		<c:if
+			test="#{field.autoComplete == 'false' and !empty field.fieldsToUpdate}">
+			<p:selectOneMenu id="input_#{field.name}Combo" style="#{field.style}"
+				value="#{field.value}" converter="selectItemConverter"
+				editable="#{field.enableManualInput}" required="#{field.required}"
+				requiredMessage="#{field.requiredMessage}">
+				<f:selectItems value="#{field.elencoSelectItems}" />
+				<p:ajax listener="#{field.fieldSelected}" partialSubmit="true"
+					update="#{field.fieldsToUpdate}"   />
+			</p:selectOneMenu>
+		</c:if>
+
+	</op2web:prop>
+</ui:composition>

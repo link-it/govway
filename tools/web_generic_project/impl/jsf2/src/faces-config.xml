@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+    version="2.2">
+
+
+	<application>
+		<locale-config>
+			<default-locale>it</default-locale>
+			<supported-locale>it</supported-locale>
+			<supported-locale>en</supported-locale>
+			<supported-locale>de</supported-locale>
+		</locale-config>
+		<message-bundle>commonsMessages_it</message-bundle>
+		<resource-bundle>
+			<base-name>commonsMessages</base-name>
+			<var>commonsMsg</var>
+		</resource-bundle>
+	</application>
+	
+	
+</faces-config>

@@ -1,0 +1,25 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<c:set var="id" value="#{group.idGroup}" />
+	
+		<c:set var="insideGroup" value="true" />
+
+	<h:panelGrid id="panelGroupOut_#{id}" styleClass="#{group.styleClass}"
+		columnClasses="#{group.columnClasses}" 
+		rendered="#{group.rendered}" columns="#{group.columns}">
+
+		<c:forEach items="#{group.fields}" var="field">
+			<c:if test="#{field.rendered}">
+				<op2web:output field="#{field}" insideGroup="#{insideGroup}" />
+			</c:if>
+		</c:forEach>
+	</h:panelGrid>
+
+</ui:composition>
