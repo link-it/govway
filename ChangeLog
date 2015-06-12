@@ -1,5 +1,13 @@
 2015-06-12  Andrea Poli <apoli@link.it>
 
+	* [InstallerVersioneBinaria]
+	Risolto Bug #359
+	In fase di esecuzione dell'installer non veniva effettuata una corretta validazione del nome del soggetto.
+	Ad esempio era possibile iserire un nome di soggetto conetenente degli spazi.
+	E' stata aggiunta la stessa validazione presente nella pddConsole.
+
+2015-06-12  Andrea Poli <apoli@link.it>
+
 	* [Utils]
 	Aggiunta funzionalità #357
 	Aggiunto package 'org.openspcoop2.utils.mail' che fornisce utilities per spedire mail.

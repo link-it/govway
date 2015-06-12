@@ -109,7 +109,7 @@
         <hidden property="antinstaller_tiposoggetto_spcoop" value="SPC"/>
         <hidden property="antinstaller_tiposoggetto_sdi" value="SDI"/>
         <hidden property="antinstaller_tiposoggetto_trasparente" value="PROXY"/>
-        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto della PdD" regex=".+"/>
+        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto della PdD" regex="^[0-9A-Za-z]+$"/>
         
         <!--
         <comment displayText=""/>
