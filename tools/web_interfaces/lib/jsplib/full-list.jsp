@@ -42,7 +42,7 @@ GeneralData gd = (GeneralData) session.getValue(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 %>
 
-<form name=form method=get onSubmit='return false;'>
+<form name='form' method='get' onSubmit='return false;' id="form">
 
 <%
 Hashtable hidden = pd.getHidden();
@@ -195,17 +195,17 @@ for (int i = 0; i < v.size(); i++) {
         if (!de.getTarget().equals("")) {
           //url+target
           if(showTip){
-        	  %><a class=<%= stile %> title="<%= tip %>" target=<%= de.getTarget() %> href=<%= de.getUrl() %>><%= res %></a><%
+        	  %><a class="<%= stile %>" title="<%= tip %>" target="<%= de.getTarget() %>" href="<%= de.getUrl() %>"><%= res %></a><%
           }else{
-        	  %><a class=<%= stile %> target=<%= de.getTarget() %> href=<%= de.getUrl() %>><%= res %></a><%  
+        	  %><a class="<%= stile %>" target="<%= de.getTarget() %>" href="<%= de.getUrl() %>"><%= res %></a><%  
           }
           
         } else {
 	  		//url only
 	  		if(showTip){
-	  			%><a class=<%= stile %> title="<%= tip %>" href=<%= de.getUrl() %>><%= res %></a><%
+	  			%><a class="<%= stile %>" title="<%= tip %>" href="<%= de.getUrl() %>"><%= res %></a><%
 	  		}else{
-	  			%><a class=<%= stile %> href=<%= de.getUrl() %>><%= res %></a><%
+	  			%><a class="<%= stile %>" href="<%= de.getUrl() %>"><%= res %></a><%
 	  		}
 	  		
 	}
@@ -284,7 +284,7 @@ for (int i = 0; i < v.size(); i++) {
   if (pd.getSelect()) {
     %>
     <td class=<%= stile %>><div align=center>
-    <input id=<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %> type=checkbox name=selectcheckbox value=<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>>
+    <input id='_<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' type=checkbox name=selectcheckbox value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>'/>
     </div></td><%
   }
   %></tr><%
@@ -441,4 +441,5 @@ if (areaBottoni != null) {
 </tr>
 </table>
 <br>
+</td>
 </form>

@@ -26,12 +26,13 @@
 	//Controllo su pddAdd
 	var what = $("form").attr("action");
 
-	if(what.indexOf("/pddChange.do") != -1)
-	{
+	if(typeof what === "string")
+		if(what.indexOf("/pddChange.do") != -1)
+		{
 		//chiamo la funzione di check sul form
 		//in base al tipo di tipo selezionato disabilita determinati campi del form
 		changePdDType();
-	}
+		}
 
 	if($("[name=selectcheckbox]").length>0){
 		if($("#rem_btn").length==1){

@@ -1,3 +1,17 @@
+2015-06-15  Giuliano Pintori <pintori@link.it>
+
+        * [PddConsole]
+        Risolto Bug #364
+	Nelle schermate della jsplib "full-list.jsp", quando vengono generate le entries degli elenchi 
+	con annesse checkbox per la selezione degli elementi da eliminare, 
+	si generano delle checkbox fatte in questa maniera: <input type="checkbox" value="valore" name="selectcheckbox" id="valore">.
+	Quando valore=='action' (come nel caso di WS Security) si verifica un errore durante l'esecuzione degli script JQuery (nella versione attuale 1.3.2) 
+	al caricamento della pagina: 
+	durante l'esecuzione dell'istruzione $("form").attr("action") invece della action del form, viene restituito l'elemento di input checkbox.
+	Il problema e' stato risolto modificando la generazione dell'attributo id delle checkbox: 
+	<input type="checkbox" value="valore" name="selectcheckbox" id=_"valore"> 
+	e controllando il tipo restituito dall'istruzione $("form").attr("action"). 
+
 2015-06-12  Giuliano Pintori <pintori@link.it>
 
         * [WebGenericProject]
