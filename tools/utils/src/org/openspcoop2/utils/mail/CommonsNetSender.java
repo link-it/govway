@@ -133,8 +133,19 @@ public class CommonsNetSender extends Sender {
 			Writer writer = client.sendMessageData();
 			if(writer!=null){
 				
+				if(debug){
+					this.log.debug("Send ...");
+				}
+				
 				// HEADER
+				if(debug){
+					this.log.debug("Subject ["+mail.getSubject()+"] ...");
+				}
 				SimpleSMTPHeader header = new SimpleSMTPHeader(mail.getFrom(), mail.getTo(), mail.getSubject());
+				
+				if(debug){
+					this.log.debug("Body ("+mail.getBody().getContentType()+") ["+mail.getBody().getMessage()+"] ...");
+				}
 				
 				TimeZone tz = TimeZone.getTimeZone( "GMT" );
 				Date now = new Date();
@@ -209,6 +220,10 @@ public class CommonsNetSender extends Sender {
 				
 			} else {
 				throw new Exception("Failure to send the email "+ client.getReply() + client.getReplyString());
+			}
+			
+			if(debug){
+				this.log.debug("Send finished");
 			}
 			
 		} catch (Exception e) {
