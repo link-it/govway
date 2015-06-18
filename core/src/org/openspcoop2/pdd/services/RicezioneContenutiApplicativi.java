@@ -1586,6 +1586,25 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		
+		
+		/*
+		  * --------- Dati di identificazione ----------
+		 */
+		
+		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+		idServizioApplicativo.setNome(servizioApplicativo);
+		idServizioApplicativo.setIdSoggettoProprietario(idPD.getSoggettoFruitore());
+		
+		DatiInvocazionePortaDelegata datiInvocazione = new DatiInvocazionePortaDelegata();
+		datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+		datiInvocazione.setIdServizio(richiestaDelegata.getIdServizio());
+		datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+		datiInvocazione.setIdPD(idPD);
+		datiInvocazione.setPd(pd);		
+		datiInvocazione.setIdServizioApplicativo(idServizioApplicativo);
+		
+		
+		
 
 		
 		
@@ -1597,7 +1616,6 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Autorizzazione del servizio applicativo...");
 		String tipoAutorizzazione = identificazione.getTipoAutorizzazione();
 		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione);
-		DatiInvocazionePortaDelegata datiInvocazione = null;
 		if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione) == false) {
 			ErroreIntegrazione errore = null;
 			Exception eAutorizzazione = null;
@@ -1606,19 +1624,7 @@ public class RicezioneContenutiApplicativi {
 //					RicezioneContenutiApplicativi.aggiornaListaGestoreAutorizzazione(
 //									tipoAutorizzazione, className,propertiesReader, logCore);
 //				IAutorizzazione auth = RicezioneContenutiApplicativi.gestoriAutorizzazione.get(tipoAutorizzazione);
-				
-				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-				idServizioApplicativo.setNome(servizioApplicativo);
-				idServizioApplicativo.setIdSoggettoProprietario(idPD.getSoggettoFruitore());
-				
-				datiInvocazione = new DatiInvocazionePortaDelegata();
-				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
-				datiInvocazione.setIdServizio(richiestaDelegata.getIdServizio());
-				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
-				datiInvocazione.setIdPD(idPD);
-				datiInvocazione.setPd(pd);
-				datiInvocazione.setIdServizioApplicativo(idServizioApplicativo);
-				
+												
 				EsitoAutorizzazioneIntegrazione esito = 
 						GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory); 
 				if (esito.isServizioAutorizzato() == false) {
