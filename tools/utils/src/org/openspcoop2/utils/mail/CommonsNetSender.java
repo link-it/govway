@@ -95,19 +95,34 @@ public class CommonsNetSender extends Sender {
 			}
 
 			if(mail.getUsername()!=null){
+				if(debug){
+					this.log.debug("Authenticating ["+mail.getUsername()+"] ...");
+				}
 				esito =  client.auth(AuthenticatingSMTPClient.AUTH_METHOD.LOGIN, mail.getUsername(), mail.getPassword());
 				checkReply(client, esito, "Authentication failed");
+				if(debug){
+					this.log.debug("Authenticating ["+mail.getUsername()+"] ok");
+				}
 			}
 
+			if(debug){
+				this.log.debug("Set sender ["+mail.getFrom()+"] ...");
+			}
 			esito = client.setSender(mail.getFrom());
 			checkReply(client, esito, "Set sender["+mail.getFrom()+"] failed");
 			
+			if(debug){
+				this.log.debug("Set to ["+mail.getTo()+"] ...");
+			}
 			esito = client.addRecipient(mail.getTo());
 			checkReply(client, esito, "Set to["+mail.getTo()+"] failed");
 			
 			List<String> ccList = mail.getCc();
 			if(ccList!=null && ccList.size()>0){
 				for (String cc : ccList) {
+					if(debug){
+						this.log.debug("Add cc ["+cc+"] ...");
+					}
 					esito = client.addRecipient(cc);
 					checkReply(client, esito, "Set cc["+cc+"] failed");
 				}
