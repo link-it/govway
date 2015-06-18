@@ -5937,8 +5937,14 @@ public class RicezioneBuste {
 				break;
 			}
 
-			msgDiag.mediumDebug("Busta di risposta con profilo ["+bustaRichiesta.getProfiloDiCollaborazione()+"] non gestibile, si attende il completamento" +
-			" della gestione della richiesta");
+			if(bustaRichiesta.getProfiloDiCollaborazione()!=null){
+				msgDiag.mediumDebug("Busta di risposta con profilo ["+bustaRichiesta.getProfiloDiCollaborazione().getEngineValue()+"] non gestibile, si attende il completamento" +
+						" della gestione della richiesta");
+			}
+			else{
+				msgDiag.mediumDebug("Busta di risposta con profilo null?? non gestibile, si attende il completamento" +
+						" della gestione della richiesta");
+			}
 
 			try{
 				Thread.sleep(checkInterval);
@@ -6032,8 +6038,13 @@ public class RicezioneBuste {
 				break;
 			}
 
-			msgDiag.mediumDebug("Busta di risposta con profilo ["+bustaRichiesta.getProfiloDiCollaborazione()+"] non gestibile, si attende il completamento" +
-			" della gestione della ricevuta alla richiesta");
+			if(bustaRichiesta.getProfiloDiCollaborazione()!=null)
+				msgDiag.mediumDebug("Busta di risposta con profilo ["+bustaRichiesta.getProfiloDiCollaborazione().getEngineValue()+"] non gestibile, si attende il completamento" +
+				" della gestione della ricevuta alla richiesta");
+			else{
+				msgDiag.mediumDebug("Busta di risposta con profilo null??? non gestibile, si attende il completamento" +
+						" della gestione della ricevuta alla richiesta");
+			}
 
 			try{
 				Thread.sleep(checkInterval);
