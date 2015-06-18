@@ -2019,7 +2019,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			/* ------------  PostOutResponseHandler ------------- */
 			PostOutResponseContext postOutResponseContext = new PostOutResponseContext(logCore, protocolFactory);
 			try{
-				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
+				pddContext.addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
 				postOutResponseContext.setPddContext(pddContext);
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);
