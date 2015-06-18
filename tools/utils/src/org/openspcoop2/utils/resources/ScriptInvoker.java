@@ -21,6 +21,9 @@
 
 package org.openspcoop2.utils.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -57,15 +60,15 @@ public class ScriptInvoker {
 			java.lang.Runtime runtime = java.lang.Runtime.getRuntime();
 	
 			// Invoco lo script
-			StringBuffer scriptTmp = new StringBuffer(this.script);
+			List<String> script = new ArrayList<String>();
+			script.add(this.script);
 			if(parameters!=null){
 				for (int i = 0; i < parameters.length; i++) {
-					scriptTmp.append(" ");
-					scriptTmp.append(parameters[i]);
+					script.add(parameters[i]);
 				}
 			}
 			
-			java.lang.Process processStatus = runtime.exec(scriptTmp.toString());
+			java.lang.Process processStatus = runtime.exec(script.toArray(new String[1]));
 			java.io.BufferedInputStream berror = new java.io.BufferedInputStream(processStatus.getErrorStream());
 			java.io.BufferedInputStream bin = new java.io.BufferedInputStream(processStatus.getInputStream());
 
