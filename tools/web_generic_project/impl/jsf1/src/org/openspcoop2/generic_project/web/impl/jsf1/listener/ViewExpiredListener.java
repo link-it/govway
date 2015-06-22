@@ -39,6 +39,8 @@ import org.apache.log4j.Logger;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class ViewExpiredListener  implements PhaseListener {

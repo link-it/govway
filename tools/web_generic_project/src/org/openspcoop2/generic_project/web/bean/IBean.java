@@ -31,6 +31,8 @@ import org.openspcoop2.generic_project.web.output.OutputField;
  * Interfaccia base per i Bean che verranno mostrati sull'interfaccia grafica.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface IBean<DTOType,KeyType> {

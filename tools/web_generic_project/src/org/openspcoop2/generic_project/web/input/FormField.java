@@ -32,6 +32,8 @@ import org.openspcoop2.generic_project.web.form.Form;
  * Interfaccia che descrive un elemento di input di tipo Generico.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface FormField<T> extends Serializable{

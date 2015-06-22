@@ -28,6 +28,8 @@ import javax.faces.model.SelectItem;
  * Implementazione di un elemento di input di tipo Choice.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public abstract class ChoiceFormField<T> extends BaseFormField<T>{  

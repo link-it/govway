@@ -27,6 +27,8 @@ import org.openspcoop2.generic_project.web.input.TextArea;
  * Implementazione di un elemento di input di tipo TextArea.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class TextAreaImpl extends TextImpl implements TextArea{

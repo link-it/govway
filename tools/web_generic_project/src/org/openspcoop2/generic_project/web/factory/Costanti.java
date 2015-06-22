@@ -25,6 +25,8 @@ package org.openspcoop2.generic_project.web.factory;
  * Classe di costanti per la factory.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class Costanti {

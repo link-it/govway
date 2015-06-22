@@ -24,6 +24,8 @@ package org.openspcoop2.generic_project.web.impl.jsf2;
  * Costanti per la factory JSF2.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class CostantiJsf2Impl {

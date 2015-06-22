@@ -25,6 +25,8 @@ package org.openspcoop2.generic_project.web.input;
  * Interfaccia che descrive un elemento htmlOption che serve negli elementi di input di tipo Choice.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface HtmlOption{

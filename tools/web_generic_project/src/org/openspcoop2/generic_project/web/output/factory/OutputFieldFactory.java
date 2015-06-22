@@ -34,6 +34,8 @@ import org.openspcoop2.generic_project.web.output.Text;
  * Interfaccia base che definisce la factory degli elementi di output.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface OutputFieldFactory  extends Serializable{

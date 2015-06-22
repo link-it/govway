@@ -33,6 +33,8 @@ import org.openspcoop2.generic_project.web.form.SearchForm;
  * Interfaccia base che definisce la factory delle tabelle
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface TableFactory extends Serializable{

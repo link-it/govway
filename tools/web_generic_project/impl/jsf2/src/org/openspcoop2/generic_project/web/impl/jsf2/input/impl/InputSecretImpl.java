@@ -27,6 +27,8 @@ import org.openspcoop2.generic_project.web.input.InputSecret;
  * Implementazione di un elemento di input di tipo Input Secret.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class InputSecretImpl extends TextImpl implements InputSecret{

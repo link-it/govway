@@ -54,6 +54,8 @@ import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
  * Implementazione della factory per gli elementi di input.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class Jsf2InputFieldFactoryImpl implements InputFieldFactory{

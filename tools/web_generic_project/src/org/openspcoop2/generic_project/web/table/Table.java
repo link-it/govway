@@ -27,6 +27,8 @@ import java.io.Serializable;
  * Interfaccia base che definisce una tabella
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  * @param <V> Oggetto che contiene i dati da visualizzare nella tabella.
  */

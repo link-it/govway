@@ -28,6 +28,8 @@ import java.util.List;
  * Interfaccia che descrive un elemento di output di tipo Group, un contenitore per gruppi di elementi.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface OutputGroup extends Serializable {

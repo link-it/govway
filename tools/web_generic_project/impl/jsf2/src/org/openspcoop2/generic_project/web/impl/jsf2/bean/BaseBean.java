@@ -35,6 +35,8 @@ import org.openspcoop2.generic_project.web.output.OutputField;
  * Classe Base per i bean dell'interfaccia grafica.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$ 
  *
  *	@param <DTOType> Tipo di dato da visualizzare.
  *	@param <KeyType> Tipo della chiave del dato da visualizzare.

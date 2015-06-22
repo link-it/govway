@@ -27,6 +27,8 @@ import org.openspcoop2.generic_project.web.output.OutputType;
  * Implementazione di un elemento di output di tipo Button.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class ButtonImpl extends ImageImpl implements Button{

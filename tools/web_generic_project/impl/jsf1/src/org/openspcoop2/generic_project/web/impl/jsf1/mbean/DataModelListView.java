@@ -35,6 +35,8 @@ import org.openspcoop2.generic_project.web.table.PagedDataTable;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public abstract class DataModelListView<BeanType extends IBean<DTOType,KeyType>, KeyType, SearchFormType extends SearchForm, FormType extends Form,

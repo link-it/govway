@@ -27,6 +27,8 @@ import org.openspcoop2.generic_project.web.form.SearchForm;
  * Implementazione base per un oggetto Search Form.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public abstract class BaseSearchForm extends BaseForm implements SearchForm {

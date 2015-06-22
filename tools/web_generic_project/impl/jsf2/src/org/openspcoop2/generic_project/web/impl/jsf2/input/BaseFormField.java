@@ -40,6 +40,8 @@ import org.openspcoop2.generic_project.web.input.FormField;
  * Implementazione di un elemento di input di tipo generico.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public abstract class BaseFormField<T> implements FormField<T>{ 

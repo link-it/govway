@@ -32,6 +32,8 @@ import org.openspcoop2.generic_project.web.table.factory.TableFactory;
  * Descrive le interfacce dei tipi di factory disponibili.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface WebGenericProjectFactory extends Serializable{

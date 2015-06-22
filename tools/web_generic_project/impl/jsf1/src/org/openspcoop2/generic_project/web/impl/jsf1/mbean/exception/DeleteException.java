@@ -28,6 +28,8 @@ import org.openspcoop2.generic_project.web.impl.jsf1.exception.BaseException;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class DeleteException extends BaseException{

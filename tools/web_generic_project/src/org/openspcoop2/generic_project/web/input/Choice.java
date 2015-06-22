@@ -27,6 +27,8 @@ import java.util.List;
  * Interfaccia che descrive un elemento di input di tipo Choice.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface Choice<T,OptionType extends HtmlOption> extends FormField<T> { 

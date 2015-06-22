@@ -28,6 +28,8 @@ import org.openspcoop2.generic_project.web.output.OutputType;
  * Implementazione di un elemento di output di tipo Image/Icon.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class ImageImpl extends TextImpl implements Image {

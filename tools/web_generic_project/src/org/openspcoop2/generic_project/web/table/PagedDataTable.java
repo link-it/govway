@@ -30,6 +30,8 @@ import org.openspcoop2.generic_project.web.mbean.ManagedBean;
  * Interfaccia base che definisce una tabella paginata.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  * @param <V> Oggetto che contiene i dati da visualizzare nella tabella.
  * @param <FormType> Tipo del form.

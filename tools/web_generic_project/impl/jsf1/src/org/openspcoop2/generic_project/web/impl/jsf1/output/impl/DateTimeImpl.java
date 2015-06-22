@@ -30,6 +30,8 @@ import org.openspcoop2.generic_project.web.output.OutputType;
  * Implementazione di un elemento di output di tipo DateTime.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class DateTimeImpl extends BaseOutputField<Date> implements DateTime{

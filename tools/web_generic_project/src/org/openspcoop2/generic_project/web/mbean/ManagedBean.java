@@ -30,6 +30,8 @@ import org.openspcoop2.generic_project.web.form.SearchForm;
  * Interfaccia che descrive le funzionalita' di base di un Bean di una pagina Web.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface ManagedBean<FormType extends Form,SearchFormType extends SearchForm> extends Serializable {

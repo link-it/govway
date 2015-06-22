@@ -34,6 +34,8 @@ import org.openspcoop2.generic_project.web.table.factory.TableFactory;
  * Implementazione della factory JSF2.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class FactoryJsf2Impl implements WebGenericProjectFactory{

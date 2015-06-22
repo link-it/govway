@@ -42,6 +42,8 @@ import org.openspcoop2.generic_project.web.output.factory.OutputFieldFactory;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class Jsf1OutputFieldFactoryImpl implements OutputFieldFactory{

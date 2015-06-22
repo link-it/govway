@@ -25,6 +25,8 @@ package org.openspcoop2.generic_project.web.input;
  * Interfaccia che descrive un elemento di input di tipo Single Choice.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface SingleChoice<OptionType extends HtmlOption> extends Choice<OptionType,OptionType>  {

@@ -27,6 +27,8 @@ import java.util.List;
  * Interfaccia che descrive un elemento di input di tipo MultipleChoice.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface MultipleChoice<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType> {

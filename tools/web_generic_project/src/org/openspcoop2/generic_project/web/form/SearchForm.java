@@ -25,6 +25,8 @@ package org.openspcoop2.generic_project.web.form;
  * Estende il form base aggiungendo i metodi necessari per la gestione di un form di ricerca 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface SearchForm extends Form {

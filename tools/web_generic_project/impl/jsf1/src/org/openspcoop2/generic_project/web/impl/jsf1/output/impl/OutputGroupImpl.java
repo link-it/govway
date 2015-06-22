@@ -32,6 +32,8 @@ import org.openspcoop2.generic_project.web.output.OutputGroup;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class OutputGroupImpl implements OutputGroup{

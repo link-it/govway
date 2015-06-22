@@ -32,6 +32,8 @@ import org.primefaces.model.DualListModel;
  * Converter per l'input PickList.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 //@FacesConverter("pickListConverter" )

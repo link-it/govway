@@ -28,6 +28,8 @@ import org.openspcoop2.generic_project.web.output.Text;
  * Implementazione di un elemento di output di tipo Text.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class TextImpl extends BaseOutputField<String> implements Text{

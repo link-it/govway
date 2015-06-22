@@ -33,6 +33,8 @@ import org.openspcoop2.generic_project.web.input.MultipleChoice;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class MultipleChoiceImpl extends ChoiceFormField<List<SelectItem>> implements MultipleChoice<SelectItem>{

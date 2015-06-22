@@ -40,6 +40,8 @@ import org.ajax4jsf.model.SerializableDataModel;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  * @param <T> Tipo del bean.
  * @param <U> Tipo della chiave del bean.

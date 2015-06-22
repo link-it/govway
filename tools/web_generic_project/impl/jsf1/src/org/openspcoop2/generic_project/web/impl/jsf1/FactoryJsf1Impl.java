@@ -37,6 +37,8 @@ import org.openspcoop2.generic_project.web.table.factory.TableFactory;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class FactoryJsf1Impl implements WebGenericProjectFactory{

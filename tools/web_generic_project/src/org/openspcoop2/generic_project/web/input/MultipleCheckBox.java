@@ -27,6 +27,8 @@ import java.util.List;
  * Interfaccia che descrive un elemento di input di tipo CheckBox Multiplo.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface MultipleCheckBox<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType> {

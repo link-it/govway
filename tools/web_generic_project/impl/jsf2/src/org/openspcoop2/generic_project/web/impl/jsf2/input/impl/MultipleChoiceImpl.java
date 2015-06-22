@@ -31,6 +31,8 @@ import org.openspcoop2.generic_project.web.input.MultipleChoice;
  * Implementazione di un elemento di input di tipo MultipleChoice.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class MultipleChoiceImpl extends ChoiceFormField<List<SelectItem>> implements MultipleChoice<SelectItem>{

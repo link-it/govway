@@ -26,6 +26,8 @@ package org.openspcoop2.generic_project.web.impl.jsf1;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class CostantiJsf1Impl {

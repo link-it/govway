@@ -25,6 +25,8 @@ package org.openspcoop2.generic_project.web.form;
  * Interfaccia base per la definizione degli action listener degli elementi.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface ActionListener {

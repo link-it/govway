@@ -21,7 +21,7 @@
 package org.openspcoop2.generic_project.web.input;
 
 import java.io.Serializable;
-
+import org.openspcoop2.generic_project.beans.IEnumeration;
 
 /**
  * FieldType Enum che elenca i tipi di input disponibili.
@@ -29,15 +29,6 @@ import java.io.Serializable;
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
- */
-import org.openspcoop2.generic_project.beans.IEnumeration;
-
-/***
- * 
- * Enum dei tipi di elementi di input disponibili.
- * 
- * @author Pintori Giuliano (pintori@link.it)
- *
  */
 public enum FieldType implements IEnumeration , Serializable , Cloneable{
 

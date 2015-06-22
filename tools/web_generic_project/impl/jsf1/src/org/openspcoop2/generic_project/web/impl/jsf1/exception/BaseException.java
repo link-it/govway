@@ -27,6 +27,8 @@ import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
  * Classe Base che definisce delle eccezioni con dei messaggi userfriendly.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class BaseException extends Exception {

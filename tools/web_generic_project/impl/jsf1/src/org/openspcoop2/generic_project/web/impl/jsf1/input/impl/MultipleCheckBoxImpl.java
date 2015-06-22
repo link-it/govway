@@ -31,6 +31,8 @@ import org.openspcoop2.generic_project.web.input.MultipleCheckBox;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class MultipleCheckBoxImpl extends MultipleChoiceImpl implements MultipleCheckBox<SelectItem>{

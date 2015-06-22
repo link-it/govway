@@ -27,6 +27,8 @@ import org.apache.log4j.Logger;
  * Fornisce una funzionalita'base di supporto al Logging con Log4j.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class LoggerManager {

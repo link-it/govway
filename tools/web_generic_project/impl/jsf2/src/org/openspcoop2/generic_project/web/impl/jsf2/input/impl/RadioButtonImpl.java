@@ -28,6 +28,8 @@ import org.openspcoop2.generic_project.web.input.RadioButton;
  * Implementazione di un elemento di input di tipo Radio Button.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class RadioButtonImpl extends SingleChoiceImpl implements RadioButton<SelectItem> {

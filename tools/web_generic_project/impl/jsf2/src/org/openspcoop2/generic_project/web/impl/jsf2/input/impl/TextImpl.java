@@ -29,6 +29,8 @@ import org.openspcoop2.generic_project.web.input.Text;
  * Implementazione di un elemento di input di tipo Text.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class TextImpl extends BaseFormField<String> implements Text{

@@ -27,6 +27,8 @@ import java.io.Serializable;
  * Interfaccia che descrive un elemento di output generico.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface OutputField<T> extends Serializable{

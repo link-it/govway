@@ -42,6 +42,8 @@ import org.openspcoop2.generic_project.web.input.TextArea;
  * Interfaccia base che definisce la factory degli elementi di input.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface InputFieldFactory extends Serializable {

@@ -28,6 +28,8 @@ import org.openspcoop2.generic_project.web.output.OutputType;
  * Implementazione di un elemento di output generico.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public abstract class BaseOutputField<T> implements OutputField<T> {

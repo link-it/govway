@@ -31,6 +31,8 @@ import org.openspcoop2.generic_project.web.input.Text;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class TextImpl extends BaseFormField<String> implements Text{

@@ -30,6 +30,8 @@ import javax.faces.model.SelectItem;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  * @param <T> tipo del valore da utilizzare.
  */

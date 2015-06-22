@@ -37,6 +37,8 @@ import org.openspcoop2.utils.resources.MapReader;
  *  Manager per gestire le implementazioni della libreria utilizzabili nelle webapp.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class WebGenericProjectFactoryManager {

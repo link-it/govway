@@ -30,6 +30,8 @@ import org.openspcoop2.generic_project.web.input.SelectList;
  * Implementazione di un elemento di input di tipo Select List.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class SelectListImpl extends SingleChoiceImpl implements SelectList<SelectItem>{

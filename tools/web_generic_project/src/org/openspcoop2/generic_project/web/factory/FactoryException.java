@@ -25,6 +25,8 @@ package org.openspcoop2.generic_project.web.factory;
  * Eccezione lanciata in caso di errore durante l'utilizzo della factory.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class FactoryException extends Exception {

@@ -25,6 +25,8 @@ package org.openspcoop2.generic_project.web.output;
  * Interfaccia che descrive un elemento di output di tipo Immagine/Icona.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface Image extends OutputField<String>{

@@ -31,6 +31,8 @@ import org.primefaces.model.LazyDataModel;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$ 
  *
  * @param <T> Tipo degli oggetti da visualizzare
  * @param <K> Tipo delle chiavi

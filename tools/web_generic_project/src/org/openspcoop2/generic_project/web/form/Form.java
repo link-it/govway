@@ -32,6 +32,8 @@ import org.openspcoop2.generic_project.web.mbean.ManagedBean;
  * Definisce l'interfaccia che descrive le funzionalita' base di un Form.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface Form {

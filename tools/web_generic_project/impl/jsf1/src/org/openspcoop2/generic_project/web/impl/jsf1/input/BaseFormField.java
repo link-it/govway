@@ -42,6 +42,8 @@ import org.openspcoop2.generic_project.web.input.FormField;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  * @param <T> Tipo dell'elemento di input.
  */

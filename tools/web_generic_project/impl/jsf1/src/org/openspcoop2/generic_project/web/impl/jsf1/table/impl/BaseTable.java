@@ -28,6 +28,8 @@ import org.openspcoop2.generic_project.web.table.Table;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  * @param <V> Lista dei valori da visualizzare.
  */

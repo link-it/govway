@@ -29,6 +29,8 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
  * Enum dei tipi di elementi di output disponibili.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public enum OutputType implements IEnumeration , Serializable , Cloneable{

@@ -39,6 +39,8 @@ import org.openspcoop2.generic_project.web.mbean.ManagedBean;
  * Implementazione base per un oggetto Form.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public abstract class BaseForm implements Form {

@@ -27,6 +27,8 @@ import java.util.Date;
  * Interfaccia che descrive un elemento di output di tipo Date.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface DateTime extends OutputField<Date>{

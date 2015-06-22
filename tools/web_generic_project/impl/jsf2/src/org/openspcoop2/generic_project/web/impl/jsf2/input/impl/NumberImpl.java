@@ -27,6 +27,8 @@ import org.openspcoop2.generic_project.web.input.FieldType;
  * Implementazione di un elemento di input di tipo Number.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public class NumberImpl extends BaseFormField<Number> implements org.openspcoop2.generic_project.web.input.InputNumber { 

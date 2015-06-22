@@ -36,6 +36,8 @@ import org.richfaces.component.html.HtmlListShuttle;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class SuggestionSelectItemConverter extends InputTextSelectItemConverter {
