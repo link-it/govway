@@ -35,8 +35,8 @@ import org.primefaces.model.SortOrder;
  * @param <K> Tipo della chiave dell'oggetto
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public interface IService<T,K> extends IPaginatedList<T, K>{
 

@@ -4,8 +4,8 @@ package org.openspcoop2.core.constants;
  * CostantiConnettori
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10512 $, $Date: 2015-01-19 15:11:51 +0100 (Mon, 19 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class CostantiConnettori {
 

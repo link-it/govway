@@ -39,8 +39,8 @@ import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
 * LoginPhaseListener controlla se le pagine richieste dall'utente sono visualizzabili anche senza autenticazione. 
 * 
 * @author Pintori Giuliano (pintori@link.it)
-* @author $Author: mergefairy $
-* @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+* @author $Author$
+* @version $Rev$, $Date$
 */
 public class LoginPhaseListener implements PhaseListener {
 

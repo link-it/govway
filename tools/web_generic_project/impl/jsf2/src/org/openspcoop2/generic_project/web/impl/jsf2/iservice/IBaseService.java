@@ -33,8 +33,8 @@ import org.openspcoop2.generic_project.web.impl.jsf2.dao.IService;
  * @param <F form.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 10370 $, $Date: 2014-11-26 11:49:07 +0100 (Wed, 26 Nov 2014) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public interface IBaseService<T, K, F extends Form> extends IService<T, K> {
 

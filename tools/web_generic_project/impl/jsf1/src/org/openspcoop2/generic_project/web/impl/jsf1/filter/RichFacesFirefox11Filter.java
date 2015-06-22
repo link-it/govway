@@ -38,8 +38,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 * RichFacesFirefox11Filter Filtro per le risorse JSF in firefox
 * 
 * @author Pintori Giuliano (pintori@link.it)
-* @author $Author: mergefairy $
-* @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+* @author $Author$
+* @version $Rev$, $Date$
  *
  */
 public class RichFacesFirefox11Filter implements Filter {

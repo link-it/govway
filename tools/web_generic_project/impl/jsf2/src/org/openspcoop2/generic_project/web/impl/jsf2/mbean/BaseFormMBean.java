@@ -45,8 +45,8 @@ import org.openspcoop2.generic_project.web.impl.jsf2.iservice.IBaseService;
  * @param <F> tipo del form.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class BaseFormMBean<T,K,F extends Form> {
 

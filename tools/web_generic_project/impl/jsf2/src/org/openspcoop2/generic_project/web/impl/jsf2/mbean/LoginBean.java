@@ -43,8 +43,8 @@ import org.openspcoop2.generic_project.web.impl.jsf2.utils.Utils;
  * Gestisce l'autenticazione base con username e password.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: pintori $
- * @version $Rev: 10597 $, $Date: 2015-02-10 12:11:55 +0100 (Tue, 10 Feb 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class LoginBean{
 

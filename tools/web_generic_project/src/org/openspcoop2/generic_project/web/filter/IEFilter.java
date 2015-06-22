@@ -38,8 +38,8 @@ import org.openspcoop2.generic_project.web.utils.BrowserUtils;
 * IEFilter Filtro JSF che fissa la visualizzazione dell'applicazione in modalita IE-8 Compatibile, per i browser con versione >=8
 * 
 * @author Pintori Giuliano (pintori@link.it)
-* @author $Author: mergefairy $
-* @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+* @author $Author$
+* @version $Rev$, $Date$
  *
  */
 public class IEFilter implements Filter {

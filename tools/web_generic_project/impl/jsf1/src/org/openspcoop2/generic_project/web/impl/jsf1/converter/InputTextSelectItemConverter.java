@@ -33,8 +33,8 @@ import org.richfaces.component.html.HtmlInputText;
  * InputTextSelectItemConverter converter per gli elementi di tipo input text con value di tipo complesso SelectItem
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class InputTextSelectItemConverter implements Converter {
 

@@ -54,8 +54,8 @@ import org.openspcoop2.generic_project.web.impl.jsf2.utils.Utils;
  * @param <S> form di ricerca.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * @param <D>
  */
 public class BaseMBean<T,K,S extends SearchForm, D> {

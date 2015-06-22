@@ -48,8 +48,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  * Implementazione JMX per la gestione dell'autorizzazione
  *   
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10687 $, $Date: 2015-03-02 18:06:26 +0100 (Mon, 02 Mar 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class EngineAutorizzazione extends NotificationBroadcasterSupport implements DynamicMBean {
 

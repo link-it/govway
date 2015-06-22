@@ -57,8 +57,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
  * @author Sandra Giangrandi (sandra@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10536 $, $Date: 2015-01-26 17:28:27 +0100 (Mon, 26 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public abstract class AbstractServletNewWindowChangeExtended extends Action {
