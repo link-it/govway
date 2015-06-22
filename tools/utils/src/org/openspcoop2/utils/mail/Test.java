@@ -1,3 +1,24 @@
+/*
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2015 Link.it srl (http://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.openspcoop2.utils.mail;
 
 import java.io.File;
@@ -6,27 +27,34 @@ import java.io.FileInputStream;
 import org.apache.log4j.Logger;
 import org.openspcoop2.utils.resources.SSLConfig;
 
+/**
+ * Test
+ *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class Test {
 
 
 	public static void main(String[] args) throws Exception {
 		
 		// Server parameter
-		String serverHost = "smtp.link.it";
+		String serverHost = "server.smtp.it";
 		int serverPort = 465;
-		String username = "poli";
-		String password = "p0l1.@ndr3@";
+		String username = "username";
+		String password = "password";
 		SSLConfig sslConfig = new SSLConfig();
 		sslConfig.setSslType("TLS");
 		sslConfig.setTrustStoreType("JKS");
-		sslConfig.setTrustStoreLocation("/home/poli/prova.jks.new");
+		sslConfig.setTrustStoreLocation("keystore.jks");
 		sslConfig.setTrustStorePassword("keyserver");
 		sslConfig.setTrustManagementAlgorithm("PKIX");
 		
 		// Address
-		String from = "apoli@link.it";
-		String to = "manca@link.it";
-		String cc = "poli@link.it";
+		String from = "from@prova.org";
+		String to = "to@prova.org";
+		String cc = "cc@prova.org";
 		
 		// Mail
 		String subject = "TEST";
@@ -82,7 +110,7 @@ public class Test {
 		MailAttach simpleAttach = new MailTextAttach("Simple.txt", "Hello World");
 		mail.getBody().getAttachments().add(simpleAttach);
 		
-		File file = new File("/opt/local/SVN_GOV4J/gov4j/openspcoop2/branches/2.2/2.2.dev/protocolli/sdi/example/config/ricezione/spcoop/FatturaPA.zip");
+		File file = new File("PROVA.zip");
 		MailAttach binAttach = new MailBinaryAttach(file.getName(), new FileInputStream(file));
 		mail.getBody().getAttachments().add(binAttach);
 		
