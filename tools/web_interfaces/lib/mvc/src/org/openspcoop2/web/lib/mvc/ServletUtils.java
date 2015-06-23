@@ -24,7 +24,9 @@ package org.openspcoop2.web.lib.mvc;
 import java.util.List;
 import java.util.Vector;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -44,7 +46,7 @@ public class ServletUtils {
 
 
 	/* ------ STRUTS -FORWARD -ERROR */
-	
+
 	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpSession session, GeneralData gd, ActionMapping mapping,
 			String objectName,ForwardParams forwardType){
 		if(e!=null)
@@ -56,9 +58,9 @@ public class ServletUtils {
 		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 		return ServletUtils.getStrutsForwardGeneralError(mapping, objectName, forwardType);
 	}
-	
-	
-	
+
+
+
 	/* ------ STRUTS - FORWARD ---- */
 
 	private static String getStrutsForwardName(String objectName,ForwardParams forwardParams){
@@ -141,7 +143,7 @@ public class ServletUtils {
 	public static DataElement getDataElementForEditModeFinished(){
 		return Costanti.DATA_ELEMENT_HIDDENT_EDIT_MODE_END;
 	}
-	
+
 	public static Parameter getParameterForEditModeFinished(){
 		return Costanti.PARAMETER_EDIT_MODE_END;
 	}
@@ -165,12 +167,12 @@ public class ServletUtils {
 	}
 
 
-	
-	
-	
-	
+
+
+
+
 	/* ------ POST BACK ---- */
-	
+
 	public static String getPostBackElementName(HttpServletRequest request){
 		return request.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 	}
@@ -261,7 +263,7 @@ public class ServletUtils {
 			de.setValue(Costanti.LABEL_VISUALIZZA+ " "+customLabel );
 		}
 	}
-	
+
 	public static void setDataElementCustomLabel(DataElement de, String customLabel){
 		setDataElementCustomLabel(de, customLabel,null,null);
 	}
@@ -305,24 +307,24 @@ public class ServletUtils {
 		setGeneralAndPageDataIntoSession(session, gd, pd, false);
 	}
 	public static void setGeneralAndPageDataIntoSession(HttpSession session,GeneralData gd,PageData pd,boolean readOnlyDisabled){
-		
-//		if(readOnlyDisabled==false){
-//			/*
-//			CON UN UNICO INTERVENTO SI OTTIENE IL READ ONLY
-//			
-//			IN PRATICA RECUPERO L'UTENZA DALLA SESSIONE
-//			SE POSSIEDE IL PERMESSO READ-ONLY ('R' indica che tutte le maschere visualizzate tramite gli altri permessi sono in read-only mode)
-//			DEVE POI ESSERE GESTITA NEL FILTRO DI AUTORIZZAZIONE IL CONTROLLO CHE UN UNTENTE IN READ ONLY NON RICHIEDA UNA ELIMINAZIONE, UNA ADD O UNA MODIFICA
-//			*/ 
-//			pd.disableEditMode();
-//			pd.setAddButton(false);
-//			pd.setRemoveButton(false);
-//			pd.setSelect(false);
-//			pd.setAreaBottoni(null);
-//			pd.setBottoni(null);
-//			pd.setInserisciBottoni(false);
-//		}
-//		
+
+		//		if(readOnlyDisabled==false){
+		//			/*
+		//			CON UN UNICO INTERVENTO SI OTTIENE IL READ ONLY
+		//			
+		//			IN PRATICA RECUPERO L'UTENZA DALLA SESSIONE
+		//			SE POSSIEDE IL PERMESSO READ-ONLY ('R' indica che tutte le maschere visualizzate tramite gli altri permessi sono in read-only mode)
+		//			DEVE POI ESSERE GESTITA NEL FILTRO DI AUTORIZZAZIONE IL CONTROLLO CHE UN UNTENTE IN READ ONLY NON RICHIEDA UNA ELIMINAZIONE, UNA ADD O UNA MODIFICA
+		//			*/ 
+		//			pd.disableEditMode();
+		//			pd.setAddButton(false);
+		//			pd.setRemoveButton(false);
+		//			pd.setSelect(false);
+		//			pd.setAreaBottoni(null);
+		//			pd.setBottoni(null);
+		//			pd.setInserisciBottoni(false);
+		//		}
+		//		
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA, gd);
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_PAGE_DATA, pd);
 	}
@@ -392,29 +394,29 @@ public class ServletUtils {
 			HttpSession session) {
 		return(Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE);
 	}
-	
+
 	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session) {
-		 Object obj = session.getAttribute(attributeName);
-		
-		 if(obj == null)
-			 return null;
-		
-		 return(Boolean) obj;
+		Object obj = session.getAttribute(attributeName);
+
+		if(obj == null)
+			return null;
+
+		return(Boolean) obj;
 	}
-	
+
 	public static void setObjectIntoSession(HttpSession session,Object obj, String objectName){
 		session.setAttribute(objectName,obj);
 	}
-	
+
 	public static <T> T getObjectFromSession(HttpSession session,Class<T> objectClass, String objectName){
-		 Object obj = session.getAttribute(objectName);
-			
-		 if(obj == null)
-			 return null;
-		
-		 return objectClass.cast(obj);
+		Object obj = session.getAttribute(objectName);
+
+		if(obj == null)
+			return null;
+
+		return objectClass.cast(obj);
 	}
-		
+
 	public static String getParametersAsString(boolean createFirstParameter, Parameter ... parameter ) {
 		StringBuilder sb = new StringBuilder();
 		if(parameter!=null && parameter.length>0){
@@ -422,7 +424,7 @@ public class ServletUtils {
 				sb.append("?");
 			else 
 				sb.append("&");
-				
+
 			for (int i = 0; i < parameter.length; i++) {
 				if(i>0){
 					sb.append("&");
@@ -430,8 +432,29 @@ public class ServletUtils {
 				sb.append(parameter[i].toString());
 			}
 		}
-		
+
 		return sb.toString();
 	}
-	
+
+	public static void removeCookieFromResponse(String cookieName, HttpServletRequest request, HttpServletResponse response){
+		Cookie[] cookies = request.getCookies();
+
+		if(cookies != null){
+			for(int i = 0; i< cookies.length ; ++i){
+				
+				if(cookies[i].getName().equalsIgnoreCase(cookieName)){
+//					Cookie cookie = new Cookie(cookies[i].getName(), cookies[i].getValue());
+//					cookie.setMaxAge(0);
+//					response.addCookie(cookie);
+					String contextPath = request.getContextPath(); 
+					cookies[i].setPath(contextPath);
+					cookies[i].setMaxAge(0);
+					cookies[i].setValue("NO_DATA");
+					cookies[i].setVersion(0);
+	                response.addCookie(cookies[i]); 
+	                break;
+				}
+			}
+		}
+	}
 }

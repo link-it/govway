@@ -49,6 +49,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  */
 public final class Logout extends Action {
 
+	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -74,6 +76,20 @@ public final class Logout extends Action {
 			LoginSessionUtilities.cleanLoginParametersSession(session);
 	
 			pd.setMessage(LoginCostanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO);
+			
+			// Controllo CooKies
+//			Cookie[] cookies = request.getCookies();
+//			ControlStationCore.logDebug("Analisi Cookies Request: ");
+//	        for(int i = 0; i< cookies.length ; ++i){
+//	        	String name = cookies[i].getName();
+//	        	String value = cookies[i].getValue();
+//	        	String path = cookies[i].getPath();
+//	        	String durata = ""+cookies[i].getMaxAge();
+//	        	ControlStationCore.logDebug("Cookie Name: ["+name+"] Value: ["+value+"] Path: ["+path+"] MaxAge: ["+durata+"]");
+//	        }
+	        
+			// Rimozione del cookie JSESSIONID
+	        ServletUtils.removeCookieFromResponse(org.openspcoop2.web.lib.mvc.Costanti.COOKIE_NAME_JSESSIONID, request, response);
 		
 			// Inizializzo di nuovo GeneralData, dopo aver rimosso
 			// dalla sessione la login dell'utente

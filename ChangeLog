@@ -1,3 +1,13 @@
+2015-06-22  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Risolto Bug #351
+	La presenza di piu' Cookies 'pddConsole' avviene quando si possiedono due tipologie di installazioni, una su application server wildfly e una su apache tomcat.
+	L'accesso alla pddConsole dell'installazione su apache tomcat provoca la creazione di un secondo cookies con stesso nome e host e path. 
+	Il path e' leggermente differente: Path: /pddConsole/ 
+	Ora al momento del logout l'applicazione elimina il cookie JSESSIONID, cio' evita la presenza di cookies multipli.
+	Il problema e' comunque risolvibile eliminando nel browser tutti i cookies relativi alla pddConsole.
+
 2015-06-15  Giuliano Pintori <pintori@link.it>
 
         * [PddConsole]

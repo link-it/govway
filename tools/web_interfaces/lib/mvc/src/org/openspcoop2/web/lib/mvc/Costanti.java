@@ -119,6 +119,10 @@ public class Costanti {
 	protected final static String SESSION_ATTRIBUTE_GESTIONE_WSBL ="GestioneWSBL";
 	protected final static String SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE ="ConfigurazioniPersonalizzate";
 	
+	/** COOKIES **/
+	
+	public static final String COOKIE_NAME_JSESSIONID = "JSESSIONID";
+	
 	
 	/** DATA ELEMENT **/
 	
