@@ -123,7 +123,7 @@ CREATE TABLE pa_properties
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT pa_properties_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_properties_1 UNIQUE (id_porta,nome,valore),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_properties PRIMARY KEY (id)

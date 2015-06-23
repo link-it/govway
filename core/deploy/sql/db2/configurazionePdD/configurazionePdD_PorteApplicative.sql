@@ -94,7 +94,7 @@ CREATE TABLE pa_properties
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints
-	CONSTRAINT pa_properties_1 UNIQUE (id_porta,nome,valore),
+	CONSTRAINT uniq_pa_properties_1 UNIQUE (id_porta,nome,valore),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_properties PRIMARY KEY (id)

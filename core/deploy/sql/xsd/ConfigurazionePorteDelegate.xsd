@@ -577,7 +577,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pd_mtom_request">
-                        <linkit:sql-table-constraint unique="pd_mtom_request"/>
+                        <linkit:sql-table-constraint unique="uniq_pd_mtom_request" index="idx_pd_mtom_request"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
                             reference-object-type="porte-delegate"
@@ -600,7 +600,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pd_mtom_response">
-                        <linkit:sql-table-constraint unique="pd_mtom_response"/>
+                        <linkit:sql-table-constraint unique="uniq_pd_mtom_response" index="idx_pd_mtom_response"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
                             reference-object-type="porte-delegate"
@@ -624,7 +624,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pd_ws_request">
-                        <linkit:sql-table-constraint unique="pd_ws_request"/>
+                        <linkit:sql-table-constraint unique="uniq_pd_ws_request" index="idx_pd_ws_request"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
                             reference-object-type="porte-delegate"
@@ -647,7 +647,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pd_ws_response">
-                        <linkit:sql-table-constraint unique="pd_ws_response"/>
+                        <linkit:sql-table-constraint unique="uniq_pd_ws_response" index="idx_pd_ws_response"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
                             reference-object-type="porte-delegate"

@@ -126,7 +126,7 @@ CREATE TABLE msgdiag_appender_prop
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
-	CONSTRAINT msgdiag_app_prop_1 UNIQUE (id_appender,nome,valore),
+	CONSTRAINT uniq_msgdiag_app_prop_1 UNIQUE (id_appender,nome,valore),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_msgdiag_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES msgdiag_appender(id),
 	CONSTRAINT pk_msgdiag_appender_prop PRIMARY KEY (id)
@@ -157,7 +157,7 @@ CREATE TABLE tracce_appender_prop
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
-	CONSTRAINT tracce_app_prop_1 UNIQUE (id_appender,nome,valore),
+	CONSTRAINT uniq_tracce_app_prop_1 UNIQUE (id_appender,nome,valore),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES tracce_appender(id),
 	CONSTRAINT pk_tracce_appender_prop PRIMARY KEY (id)

@@ -619,7 +619,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="msgdiag_appender_prop">
-                        <linkit:sql-table-constraint unique="msgdiag_app_prop"/>
+                        <linkit:sql-table-constraint unique="uniq_msgdiag_app_prop"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="msg-diag-appender"
                             reference-object-type="msg-diag-appender"
@@ -705,7 +705,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="tracce_appender_prop">
-                        <linkit:sql-table-constraint unique="tracce_app_prop"/>
+                        <linkit:sql-table-constraint unique="uniq_tracce_app_prop"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="tracciamento-appender"
                             reference-object-type="tracciamento-appender"
@@ -1027,7 +1027,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="servizi_pdd_filtri">
-                        <linkit:sql-table-constraint unique="tipo"/>
+                        <linkit:sql-table-constraint unique="uniq_serv_pdd_filtri"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="servizi-pdd"
                             reference-object-type="servizi-pdd"

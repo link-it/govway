@@ -1105,7 +1105,7 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="accordi_coop_partecipanti">
-                        <linkit:sql-table-constraint unique="unique_acc_coop_part"/>
+                        <linkit:sql-table-constraint unique="unique_acc_coop_part" index="idx_acc_coop_part"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="accordi-cooperazione"
                             reference-object-type="accordi-cooperazione"

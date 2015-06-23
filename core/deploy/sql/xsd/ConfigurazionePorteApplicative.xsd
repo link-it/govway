@@ -455,7 +455,7 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pa_properties">
-                        <linkit:sql-table-constraint unique="pa_properties"/>
+                        <linkit:sql-table-constraint unique="uniq_pa_properties" index="idx_pa_properties"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"
                             reference-object-type="porte-applicative"
@@ -483,7 +483,7 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pa_mtom_request">
-                        <linkit:sql-table-constraint unique="pa_mtom_request"/>
+                        <linkit:sql-table-constraint unique="uniq_pa_mtom_request" index="idx_pa_mtom_request"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"
                             reference-object-type="porte-applicative"
@@ -506,7 +506,7 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pa_mtom_response">
-                        <linkit:sql-table-constraint unique="pa_mtom_response"/>
+                        <linkit:sql-table-constraint unique="uniq_pa_mtom_response" index="idx_pa_mtom_response"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"
                             reference-object-type="porte-applicative"
@@ -529,7 +529,7 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pa_ws_request">
-                        <linkit:sql-table-constraint unique="pa_ws_request"/>
+                        <linkit:sql-table-constraint unique="uniq_pa_ws_request" index="idx_pa_ws_request"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"
                             reference-object-type="porte-applicative"
@@ -552,7 +552,7 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pa_ws_response">
-                        <linkit:sql-table-constraint unique="pa_ws_response"/>
+                        <linkit:sql-table-constraint unique="uniq_pa_ws_response" index="idx_pa_ws_response"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"
                             reference-object-type="porte-applicative"
