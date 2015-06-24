@@ -187,6 +187,10 @@ Batterie di test che verificano funzionalita' di sicurezza della Porta.
 Il test richiede l'installazione di diversi keystore in /etc/openspcoop2/keys:
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pd.jks
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa.jks 
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pd_truststore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa_truststore.jks
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pd.p12
+   - protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa.p12
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/testsuiteClient.jks
    - protocolli/spcoop/testsuite/deploy/wss_examples/jks/testsuiteServer.jks
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/jks/soapbox_encrypt.jceks
