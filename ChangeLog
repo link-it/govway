@@ -1,6 +1,13 @@
 2015-06-24  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
+        Risolto Bug #377
+	Risolto problema 'Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
+	Tale errore si verificava quando veniva utilizzato un keystore di tipo p12 sull'application server jboss7	
+
+2015-06-24  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
 	Risolto Bug #375
 	Risolto problema 'Unable to internalize message' che si presentava con messaggi senza attachments 
 	che possedeva il ContentType 'multipart/related; ...type="application/xop+xml"'

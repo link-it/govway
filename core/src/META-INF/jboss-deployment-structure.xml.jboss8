@@ -4,6 +4,14 @@
 	<!-- This corresponds to the top level deployment. For a war this is the war's module, for an ear -->
 	<!-- This is the top level ear module, which contains all the classes in the EAR's lib folder     -->
 	<deployment>
+		<!-- 
+			Indicazione di BouncyCastle tra le risorse disponibili (necessario per il Security Provider su jboss 7)
+			Utile per keystore di tipo P12 per non far scaturire un errore simile al seguente:
+			Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
+		-->
+        <resources>
+        	<resource-root path="lib/bcprov-ext-jdk15on-152.jar" use-physical-code-source="true"/>
+        </resources>
 		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
 		<exclusions>
 			<module name="org.apache.log4j" />
