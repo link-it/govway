@@ -154,6 +154,24 @@ public enum SOAPVersion {
 		}
 	}
 	
+	public static boolean isMultipart(Logger log, String cType){
+		try{
+			ContentType contentType = new ContentType(cType);
+			String baseType = contentType.getBaseType().toLowerCase(); 
+			if(baseType!=null && baseType.equals(Costanti.CONTENT_TYPE_MULTIPART)){
+				return true;
+			}
+			return false;
+			
+		} catch (Exception e) {
+			if(log!=null)
+				log.error("Unable to retrive SOAP Version: "+e.getMessage(),e);
+			else
+				e.printStackTrace(System.out);
+			return false;
+		}
+	}
+	
 	public static SOAPVersion getVersioneSoap(Logger log, String cType, boolean logError) {
 		try{
 			ContentType contentType = new ContentType(cType);

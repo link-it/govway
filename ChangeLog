@@ -1,3 +1,10 @@
+2015-06-24  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug #375
+	Risolto problema 'Unable to internalize message' che si presentava con messaggi senza attachments 
+	che possedeva il ContentType 'multipart/related; ...type="application/xop+xml"'
+
 2015-06-22  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole]

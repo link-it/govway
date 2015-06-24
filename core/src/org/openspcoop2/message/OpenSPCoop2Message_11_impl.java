@@ -48,6 +48,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.log4j.Logger;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.util.WSSecurityUtil;
@@ -552,8 +553,13 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 
 	@Override
 	public void updateContentType() throws SOAPException {
-		if(countAttachments() > 0 && saveRequired())
+		if(countAttachments() > 0 && saveRequired()){
 	   		saveChanges();
+		}else if((SOAPVersion.isMtom(Logger.getLogger(OpenSPCoop2Message.class), this.getContentType())) && saveRequired() ){
+			// Bug Fix: OP-375  'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="application/xop+xml"'
+			//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
+			saveChanges();
+		}
 	}
 
 	@Override
