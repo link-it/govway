@@ -36,10 +36,19 @@ public class ExtendedInfoManager {
 	// STATIC
 	
 	private static ExtendedInfoManager staticInstance = null;
-	public static synchronized void initialize(Loader openspcoop2Loader,
+	public static synchronized void initialize(
+			Loader openspcoop2Loader,
 			String classExtendedInfoConfigurazione,
 			String classExtendedInfoPortaDelegata, String classExtendedInfoPortaApplicativa){
-		if(staticInstance==null){
+		initialize(false, openspcoop2Loader, 
+				classExtendedInfoConfigurazione, classExtendedInfoPortaDelegata, classExtendedInfoPortaApplicativa);
+	}
+	public static synchronized void initialize(
+			boolean forceOverride,
+			Loader openspcoop2Loader,
+			String classExtendedInfoConfigurazione,
+			String classExtendedInfoPortaDelegata, String classExtendedInfoPortaApplicativa){
+		if(staticInstance==null || forceOverride){
 			staticInstance = new ExtendedInfoManager(openspcoop2Loader,
 					classExtendedInfoConfigurazione,
 					classExtendedInfoPortaDelegata, classExtendedInfoPortaApplicativa);

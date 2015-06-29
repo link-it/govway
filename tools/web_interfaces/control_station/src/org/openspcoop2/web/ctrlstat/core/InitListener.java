@@ -29,6 +29,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
@@ -159,6 +161,15 @@ public class InitListener implements ServletContextListener {
 		}
 		InitListener.log.info("Inizializzazione resources pddConsole effettuata con successo.");
 
+		
+		InitListener.log.info("Inizializzazione ExtendedInfoManager in corso...");
+		try{
+			ExtendedInfoManager.initialize(new Loader(), null, null, null);
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		InitListener.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
+		
 
 		try{
 			if(consoleProperties.isSinglePdD()==false){

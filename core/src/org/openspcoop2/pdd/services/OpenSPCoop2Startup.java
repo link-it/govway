@@ -597,7 +597,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			// Inizializza extended info
 			try{
-				ExtendedInfoManager.initialize(loader, propertiesReader.getExtendedInfoConfigurazione(), 
+				ExtendedInfoManager.initialize(true, loader, propertiesReader.getExtendedInfoConfigurazione(), 
 						propertiesReader.getExtendedInfoPortaDelegata(), propertiesReader.getExtendedInfoPortaApplicativa());
 			}catch(Exception e){
 				this.logError("Riscontrato errore durante l'inizializzazione del componente ExtendedInfoManager: "+e.getMessage(),e);

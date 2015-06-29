@@ -29,6 +29,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.loader.config.DatasourceProperties;
 import org.openspcoop2.web.loader.config.LoaderProperties;
 
@@ -107,6 +109,14 @@ public class LoaderStartup implements ServletContextListener {
 		DatasourceProperties.initialize(confDir,LoaderStartup.log);
 		
 		LoaderStartup.log.info("Inizializzazione loader effettuata con successo.");
+		
+		LoaderStartup.log.info("Inizializzazione ExtendedInfoManager in corso...");
+		try{
+			ExtendedInfoManager.initialize(new Loader(), null, null, null);
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		LoaderStartup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 
 	}
 
