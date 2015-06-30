@@ -51,6 +51,8 @@ implements PagedDataTable<V,FormType,SearchFormType>{
 	protected boolean enableDelete;
 	protected boolean customDelete;
 	
+	protected boolean showAddButton;
+	
 	
 	@Override
 	public boolean isIsList() {
@@ -92,6 +94,14 @@ implements PagedDataTable<V,FormType,SearchFormType>{
 	@Override
 	public void setMBean(ManagedBean<FormType, SearchFormType> mBean) {
 		this.mBean = mBean;
+	}
+	@Override
+	public boolean isShowAddButton() {
+		return this.showAddButton;
+	}
+	@Override
+	public void setShowAddButton(boolean showAddButton) {
+		this.showAddButton = showAddButton;
 	}
 
 }

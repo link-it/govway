@@ -45,12 +45,32 @@
 		<op2web:inputBooleanCheckBox field="#{field}" />
 	</c:if>
 	
-
+	<c:if test="#{type == 'multipleCheckBox'}">
+		<op2web:inputMultipleCheckBox field="#{field}" />
+	</c:if>
+	
+	<c:if test="#{type == 'radioButton'}">
+		<op2web:inputRadioButton field="#{field}" />
+	</c:if>
+	
+	<c:if test="#{type == 'slider'}">
+		<op2web:inputSlider field="#{field}" />
+	</c:if>
+	
+	<c:if test="#{type == 'spinner'}">
+		<op2web:inputSpinner field="#{field}" />
+	</c:if>
 	
 	<c:if test="#{type == 'pickList'}">
 		<op2web:inputPickList field="#{field}" />
 	</c:if>
 	
-
+	<c:if test="#{type == 'inputMultipleListBox'}">
+		<op2web:inputMultipleListBox field="#{field}" />
+	</c:if>
+	
+		<c:if test="#{type == 'inputSingleListBox'}">
+		<op2web:inputSingleListBox field="#{field}" />
+	</c:if>
 
 </ui:composition>

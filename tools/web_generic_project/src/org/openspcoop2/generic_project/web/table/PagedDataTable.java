@@ -59,4 +59,8 @@ public interface PagedDataTable<V,FormType extends Form,SearchFormType extends S
 	public boolean isCustomDelete();
 	public void setCustomDelete(boolean customDelete);
 
+	// Mostra/Nascondi pulsante nuovo Elemento
+	public boolean isShowAddButton();
+	public void setShowAddButton(boolean showAddButton);
+
 }

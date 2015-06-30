@@ -58,4 +58,16 @@ public interface Table<V> extends Serializable {
 	public Integer getRowsToDisplay();
 	public void setRowsToDisplay(Integer rowsToDisplay);
 
+	// Mostra/Nascondi la colonna del dettaglio
+	public boolean isShowDetailColumn();
+	public void setShowDetailColumn(boolean showDetailColumn);
+
+	// Metodi per la definizione testo del link di dettaglio
+	public String getDetailLinkText(); 
+	public void setDetailLinkText(String detailLinkText);
+
+	// Metodi per la definizione  della posizione della colonna dettaglio
+	public String getDetailColumnPosition(); 
+	public void setDetailColumnPosition(String detailColumnPosition);
+
 }

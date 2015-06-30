@@ -26,14 +26,18 @@ import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.input.BooleanCheckBox;
 import org.openspcoop2.generic_project.web.input.DateTime;
 import org.openspcoop2.generic_project.web.input.HtmlOption;
-import org.openspcoop2.generic_project.web.input.InputSecret;
 import org.openspcoop2.generic_project.web.input.InputNumber;
+import org.openspcoop2.generic_project.web.input.InputSecret;
 import org.openspcoop2.generic_project.web.input.MultipleCheckBox;
 import org.openspcoop2.generic_project.web.input.MultipleChoice;
+import org.openspcoop2.generic_project.web.input.MultipleListBox;
 import org.openspcoop2.generic_project.web.input.PickList;
 import org.openspcoop2.generic_project.web.input.RadioButton;
 import org.openspcoop2.generic_project.web.input.SelectList;
 import org.openspcoop2.generic_project.web.input.SingleChoice;
+import org.openspcoop2.generic_project.web.input.SingleListBox;
+import org.openspcoop2.generic_project.web.input.Slider;
+import org.openspcoop2.generic_project.web.input.Spinner;
 import org.openspcoop2.generic_project.web.input.Text;
 import org.openspcoop2.generic_project.web.input.TextArea;
 
@@ -50,7 +54,9 @@ public interface InputFieldFactory extends Serializable {
 
 	// Costruttori Elementi Text
 	public Text createText() throws FactoryException;
+	
 	public TextArea createTextArea() throws FactoryException;
+	
 	public InputSecret createInputSecret() throws FactoryException;
 
 	// Costruttori Elementi Date
@@ -58,6 +64,10 @@ public interface InputFieldFactory extends Serializable {
 
 	//Costruttori Elementi Numerici
 	public InputNumber createNumber() throws FactoryException;
+	
+	public Spinner createSpinner() throws FactoryException;
+	
+	public Slider createSlider() throws FactoryException;
 	
 	// Costruttore Elemento checkboxboolean
 	public BooleanCheckBox createBooleanCheckBox() throws FactoryException;
@@ -68,6 +78,8 @@ public interface InputFieldFactory extends Serializable {
 	public  <OptionType extends HtmlOption> SelectList<OptionType>  createSelectList() throws FactoryException;
 
 	public  <OptionType extends HtmlOption> RadioButton<OptionType>  createRadioButton() throws FactoryException;
+	
+	public  <OptionType extends HtmlOption> SingleListBox<OptionType>  createSingleListBox() throws FactoryException; 
 
 	// Costruttori Elementi di scleta multipla
 	public  <OptionType extends HtmlOption> MultipleChoice<OptionType>  createMultipleChoice() throws FactoryException; 
@@ -75,6 +87,8 @@ public interface InputFieldFactory extends Serializable {
 	public  <OptionType extends HtmlOption> PickList<OptionType>  createPickList() throws FactoryException;
 
 	public  <OptionType extends HtmlOption> MultipleCheckBox<OptionType>  createMultipleCheckBox() throws FactoryException;	
+	
+	public  <OptionType extends HtmlOption> MultipleListBox<OptionType>  createMultipleListBox() throws FactoryException;
 	
 
 }

@@ -33,6 +33,11 @@
    		<source>components/form/form.xhtml</source>
    	</tag>
    	
+   	   	<tag>
+   		<tag-name>editForm</tag-name>
+   		<source>components/form/editForm.xhtml</source>
+   	</tag>
+   	
    	<tag>
    		<tag-name>searchForm</tag-name>
    		<source>components/form/searchForm.xhtml</source>
@@ -91,6 +96,14 @@
    		<tag-name>inputNumber</tag-name>
    		<source>components/base/inputNumber.xhtml</source>
    	</tag>
+   	 <tag>
+   		<tag-name>inputSlider</tag-name>
+   		<source>components/base/inputSlider.xhtml</source>
+   	</tag>
+   	 <tag>
+   		<tag-name>inputSpinner</tag-name>
+   		<source>components/base/inputSpinner.xhtml</source>
+   	</tag>
    	
    	<!-- Componente Select List -->
    	<tag>
@@ -102,6 +115,18 @@
    	<tag>
    		<tag-name>inputBooleanCheckBox</tag-name>
    		<source>components/base/inputBooleanCheckBox.xhtml</source>
+   	</tag>
+   	
+   		<!-- Componente Check Box Multiple -->
+   	<tag>
+   		<tag-name>inputMultipleCheckBox</tag-name>
+   		<source>components/base/inputMultipleCheckBox.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente RadioButton -->
+   	<tag>
+   		<tag-name>inputRadioButton</tag-name>
+   		<source>components/base/inputRadioButton.xhtml</source>
    	</tag>
    	
    	   	<!-- Componente Input Text Secret -->
@@ -120,6 +145,18 @@
    	   	<tag>
    		<tag-name>inputTextArea</tag-name>
    		<source>components/base/inputTextArea.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente List Box Multiple -->
+   	<tag>
+   		<tag-name>inputMultipleListBox</tag-name>
+   		<source>components/base/inputMultipleListBox.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente Single List Box -->
+   	<tag>
+   		<tag-name>inputSingleListBox</tag-name>
+   		<source>components/base/inputSingleListBox.xhtml</source>
    	</tag>
    	
     <!-- Output Text -->
@@ -183,6 +220,12 @@
    	  <tag>
    		<tag-name>iconColumn</tag-name>
    		<source>components/table/iconColumn.xhtml</source>
+   	</tag>
+   	
+   	<!-- List View Paginata -->
+   	<tag>
+   		<tag-name>pagedListView</tag-name>
+   		<source>components/presentation/pagedListView.xhtml</source>
    	</tag>
    	
    <function>

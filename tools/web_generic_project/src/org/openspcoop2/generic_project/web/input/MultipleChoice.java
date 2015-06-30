@@ -33,5 +33,4 @@ import java.util.List;
  */
 public interface MultipleChoice<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType> {
 
-	
 }

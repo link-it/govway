@@ -46,6 +46,8 @@ public abstract class ChoiceFormField<T> extends BaseFormField<T>{
 
 	protected List<org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem> elencoHtmlOptions; 
 	
+	protected String direzione;
+	
 	public List<SelectItem> getElencoSelectItems() {
 		return this.elencoSelectItems;
 	}
@@ -62,4 +64,14 @@ public abstract class ChoiceFormField<T> extends BaseFormField<T>{
 	public void setOptions(List<org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem> elencoHtmlOptions) {
 		this.elencoHtmlOptions = elencoHtmlOptions;
 	}
+
+	public String getDirezione() {
+		return this.direzione;
+	}
+
+	public void setDirezione(String direzione) {
+		this.direzione = direzione;
+	}
+	
+	
 }

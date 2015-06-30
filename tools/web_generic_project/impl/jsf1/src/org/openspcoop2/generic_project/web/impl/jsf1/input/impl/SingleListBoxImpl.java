@@ -23,30 +23,31 @@ package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 import org.openspcoop2.generic_project.web.factory.Costanti;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
-import org.openspcoop2.generic_project.web.input.RadioButton;
+import org.openspcoop2.generic_project.web.input.SingleListBox;
 
-/***
- * 
- * Implementazione base di un elemento di tipo Radio Button.
- * 
- * 
- * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author$
- * @version $Rev$, $Date$ 
- * 
- */
-public class RadioButtonImpl extends SingleChoiceImpl implements RadioButton<SelectItem> {
-	
-	
+public class SingleListBoxImpl extends SelectListImpl implements SingleListBox<SelectItem>{
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private int numeroRigheDaVisualizzare = Costanti.LISTBOX_NUMERO_RIGHE_DA_VISUALIZZARE;
 	
-	public RadioButtonImpl(){
+	public SingleListBoxImpl(){
 		super();
-		this.setDirezione(Costanti.CHOICE_ORIENTATION_HORIZONTAL);
-		this.setType(FieldType.RADIO_BUTTON);
-		this.setConverterName("selectItemConverter");
+		
+		setType(FieldType.SINGLE_LISTBOX); 
+		
 	}
+
+	@Override
+	public int getNumeroRigheDaVisualizzare() {
+		return this.numeroRigheDaVisualizzare;
+	}
+
+	@Override
+	public void setNumeroRigheDaVisualizzare(int numeroRigheDaVisualizzare) {
+		this.numeroRigheDaVisualizzare = numeroRigheDaVisualizzare;
+	}
+
 }

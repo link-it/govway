@@ -1,3 +1,12 @@
+2015-06-30  Giuliano Pintori <pintori@link.it>
+
+        * [WebGenericProject]
+        Aggiunta funzionalità #373
+	Definite le API per gli elementi di input checkbox, listbox, slider, spinner.
+	Aggiunta implementazione JSF1 per gli elementi checkbox multiple, listbox a scelta singola e multipla, slider, spinner e radiobutton.
+	Aggiunta una prima implementazione JSF1 degli elementi searchForm, editForm e listView che definiscono dei macrocomponenti 
+	per form di ricerca, form di editing e tabelle di presentazione dati.
+
 2015-06-24  Andrea Poli <apoli@link.it>
 
 	* [Pdd]

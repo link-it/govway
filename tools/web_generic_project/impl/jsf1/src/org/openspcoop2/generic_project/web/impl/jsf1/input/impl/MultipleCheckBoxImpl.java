@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 
+import org.openspcoop2.generic_project.web.factory.Costanti;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.MultipleCheckBox;
@@ -45,7 +46,7 @@ public class MultipleCheckBoxImpl extends MultipleChoiceImpl implements Multiple
 	
 	public MultipleCheckBoxImpl(){
 		super();
-		
+		setDirezione(Costanti.CHOICE_ORIENTATION_HORIZONTAL);
 		setType(FieldType.MULTIPLE_CHECKBOX); 
 	}
 

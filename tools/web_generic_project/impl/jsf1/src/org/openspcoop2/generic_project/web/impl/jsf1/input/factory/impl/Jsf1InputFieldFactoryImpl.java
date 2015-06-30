@@ -28,11 +28,15 @@ import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.DateTimeImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.InputSecretImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.MultipleCheckBoxImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.MultipleChoiceImpl;
+import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.MultipleListBoxImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.NumberImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.PickListImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.RadioButtonImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.SelectListImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.SingleChoiceImpl;
+import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.SingleListBoxImpl;
+import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.SliderImpl;
+import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.SpinnerImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.TextAreaImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.impl.TextImpl;
 import org.openspcoop2.generic_project.web.input.BooleanCheckBox;
@@ -42,10 +46,14 @@ import org.openspcoop2.generic_project.web.input.InputNumber;
 import org.openspcoop2.generic_project.web.input.InputSecret;
 import org.openspcoop2.generic_project.web.input.MultipleCheckBox;
 import org.openspcoop2.generic_project.web.input.MultipleChoice;
+import org.openspcoop2.generic_project.web.input.MultipleListBox;
 import org.openspcoop2.generic_project.web.input.PickList;
 import org.openspcoop2.generic_project.web.input.RadioButton;
 import org.openspcoop2.generic_project.web.input.SelectList;
 import org.openspcoop2.generic_project.web.input.SingleChoice;
+import org.openspcoop2.generic_project.web.input.SingleListBox;
+import org.openspcoop2.generic_project.web.input.Slider;
+import org.openspcoop2.generic_project.web.input.Spinner;
 import org.openspcoop2.generic_project.web.input.Text;
 import org.openspcoop2.generic_project.web.input.TextArea;
 import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
@@ -108,6 +116,16 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		return new NumberImpl();
 	}
 	
+	@Override
+	public Slider createSlider() throws FactoryException {
+		return new SliderImpl();
+	}
+	
+	@Override
+	public Spinner createSpinner() throws FactoryException {
+		return new SpinnerImpl();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <OptionType extends HtmlOption> MultipleCheckBox<OptionType> createMultipleCheckBox()
@@ -146,5 +164,17 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		return (SingleChoice<OptionType>) new SingleChoiceImpl();
 	}
 	
-
+	@SuppressWarnings("unchecked")
+	@Override
+	public <OptionType extends HtmlOption> MultipleListBox<OptionType> createMultipleListBox()
+			throws FactoryException {
+			return (MultipleListBox<OptionType>) new MultipleListBoxImpl();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <OptionType extends HtmlOption> SingleListBox<OptionType> createSingleListBox()
+			throws FactoryException {
+		return (SingleListBox<OptionType>) new SingleListBoxImpl();
+	}
 }

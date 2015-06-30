@@ -34,7 +34,8 @@ public enum FieldType implements IEnumeration , Serializable , Cloneable{
 
 	TEXT ("text"), TEXT_AREA ("textarea"),SECRET ("secret") , SELECT_LIST("selectList"),
 	DATE("date"), NUMBER ("number") , BOOLEAN_CHECKBOX ("booleanCheckBox") ,PICKLIST ("pickList"), MULTIPLE_CHOICE("multipleChoice"), 
-	MULTIPLE_CHECKBOX ("multipleCheckBox"),SINGLE_CHOICE ("singleChoice"), RADIO_BUTTON("radioButton");
+	MULTIPLE_CHECKBOX ("multipleCheckBox"),SINGLE_CHOICE ("singleChoice"), RADIO_BUTTON("radioButton"),
+	MULTIPLE_LISTBOX ("multipleListBox"),SINGLE_LISTBOX ("singleListBox"), SLIDER("slider"), SPINNER("spinner");
 
 	//,TEXT_WITH_SUGGESTION ("textWithSuggestion")
 
@@ -132,6 +133,14 @@ public enum FieldType implements IEnumeration , Serializable , Cloneable{
 			res = FieldType.RADIO_BUTTON;
 		}else if(FieldType.MULTIPLE_CHECKBOX.getValue().equals(value)){
 			res = FieldType.MULTIPLE_CHECKBOX;
+		}else if(FieldType.MULTIPLE_LISTBOX.getValue().equals(value)){
+			res = FieldType.MULTIPLE_LISTBOX;
+		}else if(FieldType.SINGLE_LISTBOX.getValue().equals(value)){
+			res = FieldType.SINGLE_LISTBOX;
+		}else if(FieldType.SLIDER.getValue().equals(value)){
+			res = FieldType.SLIDER;
+		}else if(FieldType.SPINNER.getValue().equals(value)){
+			res = FieldType.SPINNER;
 		} 
 		
 		
@@ -166,6 +175,14 @@ public enum FieldType implements IEnumeration , Serializable , Cloneable{
 			res = FieldType.RADIO_BUTTON;
 		}else if(FieldType.MULTIPLE_CHECKBOX.toString().equals(value)){
 			res = FieldType.MULTIPLE_CHECKBOX;
+		}else if(FieldType.MULTIPLE_LISTBOX.toString().equals(value)){
+			res = FieldType.MULTIPLE_LISTBOX;
+		}else if(FieldType.SINGLE_LISTBOX.toString().equals(value)){
+			res = FieldType.SINGLE_LISTBOX;
+		}else if(FieldType.SLIDER.toString().equals(value)){
+			res = FieldType.SLIDER;
+		}else if(FieldType.SPINNER.toString().equals(value)){
+			res = FieldType.SPINNER;
 		}
 		return res;
 	}

@@ -20,17 +20,17 @@
  */
 package org.openspcoop2.generic_project.web.input;
 
-import java.util.List;
-
 /***
  * 
- * Interfaccia che descrive un elemento di input di tipo CheckBox Multiplo.
+ * Interfaccia che descrive un elemento di input di tipo Single List Box.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author$
- * @version $Rev$, $Date$ 
+ *  @author $Author: pintori $
+ * @version $Rev: 11029 $, $Date: 2015-06-22 15:35:20 +0200(lun, 22 giu 2015) $ 
  *
  */
-public interface MultipleCheckBox<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType> {
-	
+public interface SingleListBox<OptionType extends HtmlOption> extends Choice<OptionType,OptionType> {
+
+	public int getNumeroRigheDaVisualizzare();
+	public void setNumeroRigheDaVisualizzare(int numeroRigheDaVisualizzare);
 }

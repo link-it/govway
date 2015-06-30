@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf2.input.impl;
 
+import org.openspcoop2.generic_project.web.factory.Costanti;
 import org.openspcoop2.generic_project.web.impl.jsf2.input.ChoiceFormField;
 import org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
@@ -31,6 +32,10 @@ import org.openspcoop2.generic_project.web.input.SingleChoice;
  * @author Pintori Giuliano (pintori@link.it)
  *  @author $Author$
  * @version $Rev$, $Date$ 
+ * #set ( $value_str = $datePickerFormatter.format( $value) )
+#set ( $idx = $value_str)
+    
+$idx
  *
  */
 public class SingleChoiceImpl extends ChoiceFormField<SelectItem> implements SingleChoice<SelectItem>{
@@ -44,6 +49,7 @@ public class SingleChoiceImpl extends ChoiceFormField<SelectItem> implements Sin
 	
 	public SingleChoiceImpl(){
 		super();
+		setDirezione(Costanti.CHOICE_ORIENTATION_HORIZONTAL); 
 		setType(FieldType.SINGLE_CHOICE);
 	}
 	

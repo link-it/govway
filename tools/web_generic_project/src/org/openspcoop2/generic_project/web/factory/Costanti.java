@@ -30,13 +30,13 @@ package org.openspcoop2.generic_project.web.factory;
  *
  */
 public class Costanti {
-	
+
 	// Nome del file di configurazione
 	public static final String WEB_GENERIC_PROJECT_FACTORY_IMPL_PROPERTIES = "webGenericProjectImpl.properties";
-	
+
 	// Field del file di properties
 	public static final String IMPL_FACTORY_CLASS = "webGenericProjectFactoryImplClass";
-	
+
 	// Costanti output numerici
 	public static final String CONVERT_TYPE_CURRENCY = "currency";
 	public static final String CONVERT_TYPE_PERCENT = "percent";
@@ -48,4 +48,29 @@ public class Costanti {
 	public static final String CURRENCY_CODE_EURO = "EUR";
 	public static final String CURRENCY_CODE_GBP = "GBP";
 	public static final String CURRENCY_CODE_USA = "USD";
+
+	// Costanti Slider
+	// orintamento
+	public static final String SLIDER_ORIENTATION_HORIZONTAL = "horizontal";
+	public static final String SLIDER_ORIENTATION_VERTICAL = "vertical";
+	// posizione box input
+	public static final String SLIDER_INPUT_POSITION_LEFT = "left";
+	public static final String SLIDER_INPUT_POSITION_RIGHT = "right";
+	public static final String SLIDER_INPUT_POSITION_TOP = "top";
+	public static final String SLIDER_INPUT_POSITION_BOTTOM = "bottom";
+
+	// Costanti CheckBox
+	// orintamento
+	public static final String CHOICE_ORIENTATION_HORIZONTAL = "lineDirection";
+	public static final String CHOICE_ORIENTATION_VERTICAL = "pageDirection";
+	
+	// Costanti ListBox
+	//Numero Righe default
+	public static final int LISTBOX_NUMERO_RIGHE_DA_VISUALIZZARE = 5;
+	
+	//Costanti Table
+	//Posizione della colonna di dettaglio generata automaticamente.
+	public static final String TABLE_DETAIL_COLUMN_LEFT = "left";
+	public static final String TABLE_DETAIL_COLUMN_RIGHT = "right";
+
 }

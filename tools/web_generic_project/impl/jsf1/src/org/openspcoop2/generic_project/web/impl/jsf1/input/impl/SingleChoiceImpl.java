@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 
+import org.openspcoop2.generic_project.web.factory.Costanti;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.ChoiceFormField;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
@@ -46,6 +47,7 @@ public class SingleChoiceImpl extends ChoiceFormField<SelectItem> implements Sin
 	
 	public SingleChoiceImpl(){
 		super();
+		setDirezione(Costanti.CHOICE_ORIENTATION_HORIZONTAL);
 		setType(FieldType.SINGLE_CHOICE);
 	}
 	

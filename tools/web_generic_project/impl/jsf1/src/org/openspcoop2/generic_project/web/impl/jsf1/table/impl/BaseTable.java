@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.table.impl;
 
+import org.openspcoop2.generic_project.web.factory.Costanti;
+import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
 import org.openspcoop2.generic_project.web.table.Table;
 
 /***
@@ -45,7 +47,15 @@ public class BaseTable<V> implements Table<V> {
 	protected boolean rendered;
 	protected String width;
 	protected Integer rowsToDisplay;
+	
+	protected String detailColumnPosition = Costanti.TABLE_DETAIL_COLUMN_RIGHT;
+	protected boolean showDetailColumn = false;
+	protected String detailLinkText = null;
 
+	
+	public BaseTable(){
+		this.detailLinkText = Utils.getInstance().getMessageFromCommonsResourceBundle("commons.button.dettaglio.title");
+	}
 
 	@Override
 	public V getValue() {
@@ -94,6 +104,30 @@ public class BaseTable<V> implements Table<V> {
 	@Override
 	public void setRowsToDisplay(Integer rowsToDisplay) {
 		this.rowsToDisplay = rowsToDisplay;
+	}
+	@Override
+	public String getDetailColumnPosition() {
+		return this.detailColumnPosition;
+	}
+	@Override
+	public void setDetailColumnPosition(String detailColumnPosition) {
+		this.detailColumnPosition = detailColumnPosition;
+	}
+	@Override
+	public boolean isShowDetailColumn() {
+		return this.showDetailColumn;
+	}
+	@Override
+	public void setShowDetailColumn(boolean showDetailColumn) {
+		this.showDetailColumn = showDetailColumn;
+	}
+	@Override
+	public String getDetailLinkText() {
+		return this.detailLinkText;
+	}
+	@Override
+	public void setDetailLinkText(String detailLinkText) {
+		this.detailLinkText = detailLinkText;
 	}
 
 

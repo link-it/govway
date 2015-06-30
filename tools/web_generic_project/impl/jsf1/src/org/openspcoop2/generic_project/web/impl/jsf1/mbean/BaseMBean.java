@@ -309,7 +309,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 			return getDeleteOutcome();
 		}catch (Exception e) {
-			throw new DeleteException(e);
+			throw new DeleteException(e.getMessage());
 		}
 	}
 

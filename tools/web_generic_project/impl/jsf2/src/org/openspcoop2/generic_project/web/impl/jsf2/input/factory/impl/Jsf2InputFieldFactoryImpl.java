@@ -42,10 +42,14 @@ import org.openspcoop2.generic_project.web.input.InputNumber;
 import org.openspcoop2.generic_project.web.input.InputSecret;
 import org.openspcoop2.generic_project.web.input.MultipleCheckBox;
 import org.openspcoop2.generic_project.web.input.MultipleChoice;
+import org.openspcoop2.generic_project.web.input.MultipleListBox;
 import org.openspcoop2.generic_project.web.input.PickList;
 import org.openspcoop2.generic_project.web.input.RadioButton;
 import org.openspcoop2.generic_project.web.input.SelectList;
 import org.openspcoop2.generic_project.web.input.SingleChoice;
+import org.openspcoop2.generic_project.web.input.SingleListBox;
+import org.openspcoop2.generic_project.web.input.Slider;
+import org.openspcoop2.generic_project.web.input.Spinner;
 import org.openspcoop2.generic_project.web.input.Text;
 import org.openspcoop2.generic_project.web.input.TextArea;
 import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
@@ -142,6 +146,32 @@ public class Jsf2InputFieldFactoryImpl implements InputFieldFactory{
 	public <OptionType extends HtmlOption> SingleChoice<OptionType> createSingleChoice()
 			throws FactoryException {
 		return (SingleChoice<OptionType>) new SingleChoiceImpl();
+	}
+
+	@Override
+	public Spinner createSpinner() throws FactoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Slider createSlider() throws FactoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <OptionType extends HtmlOption> SingleListBox<OptionType> createSingleListBox()
+			throws FactoryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <OptionType extends HtmlOption> MultipleListBox<OptionType> createMultipleListBox()
+			throws FactoryException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

@@ -66,7 +66,12 @@ public class BaseException extends Exception {
 		if(sb.length() > 0)
 			sb.append(": ");
 
-		sb.append(super.getMessage());
+		String tmp = Utils.getInstance().getMessageFromResourceBundle(super.getMessage());
+
+		if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
+			sb.append(tmp);
+		else 
+			sb.append(super.getMessage());
 		
 		return sb.toString();
 	}

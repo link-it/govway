@@ -8,11 +8,25 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
 
-	<c:set var="formId" value="#{formBean.id}" />
-	<c:set var="isClosable" value="#{formBean.closable}" />
-	<c:set var="formTitle" value="#{formBean.nomeForm}" />
-	<c:set var="rendered" value="#{formBean.rendered}" />
-	<c:set var="renderRegionOnly" value="#{formBean.renderRegionOnly}" />
+	<c:if test="#{empty formId}">
+		<c:set var="formId" value="#{formBean.id}" />
+	</c:if>
+	
+	<c:if test="#{empty isClosable}">
+		<c:set var="isClosable" value="#{formBean.closable}" />
+	</c:if>
+	
+	<c:if test="#{empty formTitle}">
+		<c:set var="formTitle" value="#{formBean.nomeForm}" />
+	</c:if>
+	
+	<c:if test="#{empty rendered}">
+		<c:set var="rendered" value="#{formBean.rendered}" />
+	</c:if>
+	
+	<c:if test="#{empty renderRegionOnly}">
+		<c:set var="renderRegionOnly" value="#{formBean.renderRegionOnly}" />
+	</c:if>
 
 	<c:if test="#{isClosable == false and empty formTitle and rendered == true}">
 		<div class="form-container noborder">

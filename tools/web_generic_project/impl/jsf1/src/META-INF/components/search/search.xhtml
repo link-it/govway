@@ -8,24 +8,28 @@
 	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf">
 	<a4j:loadScript src="resource://jquery.js" />
 	
-	<c:if test="#{empty fieldsToUpdate}">
-		<c:set var="fieldsToUpdate" value="mainct,menuct" />
+	<c:if test="#{empty fieldsToUpdateButtonFiltra}">
+		<c:set var="fieldsToUpdateButtonFiltra" value="pagina" />
 	</c:if>	
 	
-	<op2web:form formBean="#{mBean.search}">
+	<c:if test="#{empty fieldsToUpdateButtonReset}">
+		<c:set var="fieldsToUpdateButtonReset" value="pagina" />
+	</c:if>	
+	
+	<op2web:searchForm searchBean="#{mBean.search}">
 				
 		<ui:insert />
 		 
 		<ui:define name="buttons">
 			<a4j:commandButton id="filtraButton"
 				value="#{msg['commons.button.filtra']}" styleClass="icon-refresh"
-				reRender="#{fieldsToUpdate}" status="mainStatus" action="#{mBean.filtra}">
+				reRender="#{fieldsToUpdateButtonFiltra}" status="mainStatus" action="#{mBean.filtra}">
 			</a4j:commandButton>
 
 			<a4j:commandButton id="pulisciButton"
-				value="#{msg['commons.button.reset']}" reRender="#{fieldsToUpdate}"
+				value="#{msg['commons.button.reset']}" reRender="#{mBean.search.id}_searchPnl,#{fieldsToUpdateButtonReset}"
 				status="mainStatus" styleClass="icon-delete" action="#{mBean.reset}">
 			</a4j:commandButton>
 		</ui:define>
-	</op2web:form>
+	</op2web:searchForm>
 </ui:component>

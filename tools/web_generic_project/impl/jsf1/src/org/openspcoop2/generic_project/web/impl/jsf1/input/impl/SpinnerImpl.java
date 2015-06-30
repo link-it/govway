@@ -20,33 +20,75 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 
-import org.openspcoop2.generic_project.web.factory.Costanti;
-import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
-import org.openspcoop2.generic_project.web.input.RadioButton;
+import org.openspcoop2.generic_project.web.input.Spinner;
 
 /***
  * 
- * Implementazione base di un elemento di tipo Radio Button.
+ * Implementazione base di un elemento di tipo Spinner.
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author$
- * @version $Rev$, $Date$ 
+ *  @author $Author: pintori $
+ * @version $Rev: 11029 $, $Date: 2015-06-22 15:35:20 +0200(lun, 22 giu 2015) $ 
  * 
  */
-public class RadioButtonImpl extends SingleChoiceImpl implements RadioButton<SelectItem> {
-	
-	
+public class SpinnerImpl extends NumberImpl implements Spinner{
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Number maxValue = 100;
+	private Number minValue = 0;
+	private Number step = 1;
+	private boolean cycled = true;
 	
-	public RadioButtonImpl(){
+	public SpinnerImpl(){
 		super();
-		this.setDirezione(Costanti.CHOICE_ORIENTATION_HORIZONTAL);
-		this.setType(FieldType.RADIO_BUTTON);
-		this.setConverterName("selectItemConverter");
+
+		this.setType(FieldType.SPINNER);
 	}
+
+	@Override
+	public Number getMaxValue() {
+		return this.maxValue;
+	}
+
+	@Override
+	public void setMaxValue(Number maxValue) {
+		this.maxValue = maxValue;
+	}
+
+	@Override
+	public Number getMinValue() {
+		return this.minValue;
+	}
+
+	@Override
+	public void setMinValue(Number minValue) {
+		this.minValue = minValue;
+	}
+
+	@Override
+	public Number getStep() {
+		return this.step;
+	}
+
+	@Override
+	public void setStep(Number step) {
+		this.step = step;
+	}
+
+	@Override
+	public boolean isCycled() {
+		return this.cycled;
+	}
+
+	@Override
+	public void setCycled(boolean cycled) {
+		this.cycled = cycled;
+	}
+
+	
 }

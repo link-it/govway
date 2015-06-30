@@ -35,4 +35,7 @@ public interface Choice<T,OptionType extends HtmlOption> extends FormField<T> {
 
 	public List<OptionType> getOptions();
 	public void setOptions(List<OptionType> elencoOptions);
+	
+	public String getDirezione();
+	public void setDirezione(String direzione);
 }

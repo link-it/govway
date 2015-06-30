@@ -23,30 +23,42 @@ package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 import org.openspcoop2.generic_project.web.factory.Costanti;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
-import org.openspcoop2.generic_project.web.input.RadioButton;
+import org.openspcoop2.generic_project.web.input.MultipleListBox;
+
 
 /***
  * 
- * Implementazione base di un elemento di tipo Radio Button.
+ * Implementazione base di un elemento di tipo MultipleListBox.
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author$
- * @version $Rev$, $Date$ 
+ *  @author $Author: pintori $
+ * @version $Rev: 11029 $, $Date: 2015-06-22 15:35:20 +0200(lun, 22 giu 2015) $ 
  * 
  */
-public class RadioButtonImpl extends SingleChoiceImpl implements RadioButton<SelectItem> {
-	
-	
+public class MultipleListBoxImpl extends MultipleChoiceImpl implements MultipleListBox<SelectItem>{
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public RadioButtonImpl(){
+	private int numeroRigheDaVisualizzare = Costanti.LISTBOX_NUMERO_RIGHE_DA_VISUALIZZARE;
+	
+	
+	public MultipleListBoxImpl(){
 		super();
-		this.setDirezione(Costanti.CHOICE_ORIENTATION_HORIZONTAL);
-		this.setType(FieldType.RADIO_BUTTON);
-		this.setConverterName("selectItemConverter");
+		
+		setType(FieldType.MULTIPLE_LISTBOX); 
+	}
+	
+	@Override
+	public int getNumeroRigheDaVisualizzare() {
+		return this.numeroRigheDaVisualizzare;
+	}
+
+	@Override
+	public void setNumeroRigheDaVisualizzare(int numeroRigheDaVisualizzare) {
+		this.numeroRigheDaVisualizzare = numeroRigheDaVisualizzare;
 	}
 }

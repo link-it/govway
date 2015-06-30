@@ -20,17 +20,31 @@
  */
 package org.openspcoop2.generic_project.web.input;
 
-import java.util.List;
-
 /***
  * 
- * Interfaccia che descrive un elemento di input di tipo CheckBox Multiplo.
+ * Interfaccia che descrive un elemento di input di tipo Spinner.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author$
- * @version $Rev$, $Date$ 
+ *  @author $Author: pintori $
+ * @version $Rev: 11029 $, $Date: 2015-06-22 15:35:20 +0200(lun, 22 giu 2015) $ 
  *
  */
-public interface MultipleCheckBox<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType> {
+public interface Spinner extends InputNumber {
 	
+	// incremento dello slider.
+	public Number getStep();
+	public void setStep(Number step);
+	
+	// Valore massimo dello slider.
+	public Number getMaxValue();
+	public void setMaxValue(Number maxValue);
+
+	// Valore minimo dello slider.
+	public Number getMinValue();
+	public void setMinValue(Number minValue);
+	
+	// indica se quando si supera il valore max/min si riprende dall'altro estremo.
+	public boolean isCycled();
+	public void setCycled(boolean cycled);
+
 }
