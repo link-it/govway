@@ -38,6 +38,7 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.Field;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IAliasTableField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -450,6 +451,11 @@ public class JDBCUtilities {
 						returnClassAliases.get(index).add(nomeField);
 					}
 				}
+				else if(o instanceof IAliasTableField){
+					StringBuffer bf = new StringBuffer();
+					buildAliasesPrefix((IField)o,bf);
+					returnClassAliases.get(index).add(bf.toString());
+				}
 				else if(o instanceof ComplexField){
 					StringBuffer bf = new StringBuffer();
 					buildAliasesPrefix((IField)o,bf);
@@ -485,16 +491,25 @@ public class JDBCUtilities {
 	}
 	
 	private static void buildAliasesPrefix(IField field,StringBuffer prefix){
-		if(field instanceof ComplexField){
-			ComplexField c = (ComplexField) field;
-			buildAliasesPrefix(c.getFather(), prefix);
-		}
 		
-		if(prefix.length()>0){
-			prefix.append(".");
+		if(field instanceof IAliasTableField){
+			prefix.append(((IAliasTableField)field).getAliasTable()).
+				append(".").
+				append(field.getFieldName());
 		}
-		prefix.append(field.getFieldName());
+		else{
 		
+			if(field instanceof ComplexField){
+				ComplexField c = (ComplexField) field;
+				buildAliasesPrefix(c.getFather(), prefix);
+			}
+			
+			if(prefix.length()>0){
+				prefix.append(".");
+			}
+			prefix.append(field.getFieldName());
+				
+		}
 	}
 
 	public static List<Object> prepareSelect(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject,

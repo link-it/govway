@@ -35,6 +35,7 @@ import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.Field;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IAliasTableField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -359,6 +360,8 @@ public class ExpressionSQL extends ExpressionImpl {
 				if(groupByFields!=null){
 					for (IField iField : groupByFields) {
 						
+						//System.out.println("CHECK ["+iField.getFieldName()+"] ["+iField.getFieldType().getName()+"] ...");
+						
 						// check tra altri select field add manually
 						boolean found = false;
 						for (Object checkSelectFieldManuallyAdd : selectFieldsManuallyAdd) {
@@ -369,16 +372,19 @@ public class ExpressionSQL extends ExpressionImpl {
 								}		
 							}
 						}
+						//System.out.println("CHECK ["+iField.getFieldName()+"] ["+iField.getFieldType().getName()+"] found in selectFieldsManuallyAdd: "+found);
 						if(found)
 							continue;
 						
 						// check in sql Query Object
 						String column1 = fieldConverter.toColumn(iField, true);
 						String column2 = fieldConverter.toColumn(iField, false);
+						//System.out.println("CHECK ["+iField.getFieldName()+"] ["+iField.getFieldType().getName()+"] COLUMN1["+column1+"] COLUMN2["+column2+"]");
 						boolean insert = true;
 						try{
 							insert = sqlQueryObject.getFieldsName().contains(column1)==false && sqlQueryObject.getFieldsName().contains(column2)==false;
 						}catch(org.openspcoop2.utils.sql.SQLQueryObjectException sql){}
+						//System.out.println("CHECK ["+iField.getFieldName()+"] ["+iField.getFieldType().getName()+"] INSERT["+insert+"]");
 						if(insert){
 							ExpressionSQL.addField_engine(sqlQueryObject, fieldConverter, iField, null, true);
 							selectFieldsManuallyAdd.add(iField);
@@ -486,7 +492,13 @@ public class ExpressionSQL extends ExpressionImpl {
 			}else{
 				tableName = sqlFieldConverter.toTable(iField);
 			}
-		}else{
+		}
+		else if(iField instanceof IAliasTableField){
+			IAliasTableField atf = (IAliasTableField) iField;
+			String originaleTableName = sqlFieldConverter.toTable(iField,false);
+			tableName = originaleTableName+_PREFIX_ALIASFIELD+ atf.getAliasTable();
+		}
+		else{
 			tableName = sqlFieldConverter.toTable(iField);
 		}
 		//System.out.println("ADD ["+tableName+"]");
@@ -499,7 +511,7 @@ public class ExpressionSQL extends ExpressionImpl {
 			if(field == null){
 				throw new ExpressionException("Field is null");
 			}
-			
+			//System.out.println("ADD CLASS ["+field.getClass().getName()+"]...");
 			if(field instanceof FunctionField){
 				
 				FunctionField ff = (FunctionField) field;
@@ -576,6 +588,7 @@ public class ExpressionSQL extends ExpressionImpl {
 				AliasField af = (AliasField) field;
 				IField afField = af.getField();
 				sqlQueryObject.addSelectAliasField( sqlFieldConverter.toColumn(afField, appendTablePrefix) , af.getAlias() );
+				//System.out.println("ADD ALIAS ["+sqlFieldConverter.toColumn(afField, appendTablePrefix)+"]["+af.getAlias()+"]...");
 				
 			}
 			else if(field instanceof Field){
@@ -589,9 +602,11 @@ public class ExpressionSQL extends ExpressionImpl {
 			}
 			else if(field instanceof ComplexField){
 				if(aliasField!=null){
-					sqlQueryObject.addSelectAliasField(sqlFieldConverter.toColumn((ComplexField)field, appendTablePrefix), aliasField);	
+					sqlQueryObject.addSelectAliasField(sqlFieldConverter.toColumn((ComplexField)field, appendTablePrefix), aliasField);
+					//System.out.println("ADD ALIAS ["+sqlFieldConverter.toColumn((ComplexField)field, appendTablePrefix)+"]["+aliasField+"]...");
 				}else{
 					sqlQueryObject.addSelectField(sqlFieldConverter.toColumn((ComplexField)field, appendTablePrefix));
+					//System.out.println("ADD ["+sqlFieldConverter.toColumn((ComplexField)field, appendTablePrefix)+"]...");
 				}
 			}
 			else{

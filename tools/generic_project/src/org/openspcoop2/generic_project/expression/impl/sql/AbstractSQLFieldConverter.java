@@ -23,6 +23,7 @@ package org.openspcoop2.generic_project.expression.impl.sql;
 import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.IAliasTableField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -89,6 +90,18 @@ public abstract class AbstractSQLFieldConverter implements ISQLFieldConverter {
 			return af.getAlias(); // un alias deve usare sempre l'alias
 		}
 		
+		else if(field instanceof IAliasTableField){
+			
+			IAliasTableField atf = (IAliasTableField) field;
+			if(appendTablePrefix){
+				return atf.getAliasTable()+"."+this.toColumn(atf.getField(), returnAlias, false);
+			}
+			else{
+				return this.toColumn(atf.getField(), returnAlias, false);
+			}
+			
+		}
+		
 		else{
 			
 			throw new ExpressionException("Field ["+field.toString()+"] not supported by converter.toColumn: "+this.getClass().getName());
@@ -132,6 +145,16 @@ public abstract class AbstractSQLFieldConverter implements ISQLFieldConverter {
 		else if(field instanceof AliasField){
 			AliasField af = (AliasField) field;
 			return this.toTable(af.getField(), returnAlias);
+		}
+		
+		else if(field instanceof IAliasTableField){
+			IAliasTableField af = (IAliasTableField) field;
+			if(returnAlias){
+				return af.getAliasTable();
+			}
+			else{
+				return this.toTable(af.getField());
+			}
 		}
 		
 		else{
