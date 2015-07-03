@@ -301,8 +301,12 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_WSS_TIMESTAMP="WSSTimestamp";
 	/** Porte Delegate per WS-Security: WSSEncrypt*/
 	public static final String PORTA_DELEGATA_WSS_ENCRYPT="WSSEncrypt";
+	/** Porte Delegate per WS-Security: WSSEncrypt*/
+	public static final String PORTA_DELEGATA_WSS_ENCRYPT_P12="WSSEncryptP12";
 	/** Porte Delegate per WS-Security: WSSSignature*/
 	public static final String PORTA_DELEGATA_WSS_SIGNATURE="WSSSignature";
+	/** Porte Delegate per WS-Security: WSSSignature*/
+	public static final String PORTA_DELEGATA_WSS_SIGNATURE_P12="WSSSignatureP12";
 	/** Porte Delegate per WS-Security: WSSEncrypt, con configurazione errata. Deve essere tornato un codice EGOV_IT_200 */
 	public static final String PORTA_DELEGATA_WSS_ENCRYPT_MESSAGGIO_ALTERATO="WSSEncryptError";
 	/** Porte Delegate per WS-Security: WSSSignature, con configurazione errata. Deve essere tornato un codice EGOV_IT_202*/
@@ -1122,8 +1126,12 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_TIMESTAMP="WSSTimestamp";
     /** ENTITA SPCOOP: Nome Azione WSSEncrypt del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT="WSSEncrypt";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptP12 del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_P12="WSSEncryptP12";
     /** ENTITA SPCOOP: Nome Azione WSSSignature del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE="WSSSignature";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureP12 del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_P12="WSSSignatureP12";
     /** ENTITA SPCOOP: Nome Azione WSSEncrypt del Servizio RichiestaStatoAvanzamento, con configurazione errata. Deve essere tornato un codice EGOV_IT_200 */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_MESSAGGIO_ALTERATO="WSSEncryptError";
     /** ENTITA SPCOOP: Nome Azione WSSSignature del Servizio RichiestaStatoAvanzamento, con configurazione errata. Deve essere tornato un codice EGOV_IT_202 */

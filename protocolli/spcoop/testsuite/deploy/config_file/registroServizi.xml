@@ -79,8 +79,10 @@
         profilo-collaborazione="sincrono" utilizzo-senza-azione="true">
         <azione nome="WSSTimestamp"/>
         <azione nome="WSSEncrypt"/>
+        <azione nome="WSSEncryptP12"/>
 	<azione nome="WSSEncryptLocalForwardSoloRichiesta"/>
         <azione nome="WSSSignature"/>
+        <azione nome="WSSSignatureP12"/>
 	<azione nome="WSSSignatureLocalForward"/>
         <azione nome="WSSSignatureLocalForwardSolaRichiesta"/>
         <azione nome="WSS"/>

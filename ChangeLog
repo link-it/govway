@@ -1,3 +1,9 @@
+2015-07-03 Giovanni Bussu <bussu@link.it>
+
+        * [TestsuiteProtocolloSPCoop]
+        Aggiunta funzionalità OP-381
+        Aggiunti i test indicati e fatta girare la testsuite WS-Security sugli application server tomcat, jboss5, jbossas7
+
 2015-06-30  Giuliano Pintori <pintori@link.it>
 
         * [WebGenericProject]

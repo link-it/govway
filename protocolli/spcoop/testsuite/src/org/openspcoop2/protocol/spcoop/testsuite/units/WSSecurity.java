@@ -341,6 +341,36 @@ public class WSSecurity {
 		}
 	}
 
+	/***
+	 * Test per il profilo di collaborazione Sincrono con WSSecurity Encrypt
+	 */
+	Repository repositorySincronoWSSEncryptP12=new Repository();
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_ENCRYPT_P12"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Encrypt e keystore P12")
+	public void sincronoWSSEncryptP12() throws FatalTestSuiteException, IOException, SOAPException{
+		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSEncryptP12,CostantiTestSuite.PORTA_DELEGATA_WSS_ENCRYPT_P12,addIDUnivoco);
+	}
+	@DataProvider (name="SincronoWSSEncrypt_P12")
+	public Object[][]testSincronoWSSEncryptP12()throws Exception{
+		String id=this.repositorySincronoWSSEncryptP12.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_ENCRYPT_P12"},dataProvider="SincronoWSSEncrypt_P12",dependsOnMethods={"sincronoWSSEncryptP12"})
+	public void testSincronoWSSEncryptP12(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+		this.collaborazioneSPCoopBase.testSincrono(data, id, 
+				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+				CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_P12, checkServizioApplicativo,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+
 
 
 
@@ -351,7 +381,7 @@ public class WSSecurity {
 	 * Test per il profilo di collaborazione Sincrono con WSSecurity Signature
 	 */
 	Repository repositorySincronoWSSSignature=new Repository();
-	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_SIGNATURE"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Signaturet")
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_SIGNATURE"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature")
 	public void sincronoWSSSignature() throws FatalTestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSSignature,CostantiTestSuite.PORTA_DELEGATA_WSS_SIGNATURE,addIDUnivoco);
 	}
@@ -370,6 +400,36 @@ public class WSSecurity {
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 				CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE, checkServizioApplicativo,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+
+	/***
+	 * Test per il profilo di collaborazione Sincrono con WSSecurity Signature
+	 */
+	Repository repositorySincronoWSSSignature_P12=new Repository();
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_SIGNATURE_P12"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature P12")
+	public void sincronoWSSSignatureP12() throws FatalTestSuiteException, IOException, SOAPException{
+		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSSignature_P12,CostantiTestSuite.PORTA_DELEGATA_WSS_SIGNATURE_P12,addIDUnivoco);
+	}
+	@DataProvider (name="SincronoWSSSignature_P12")
+	public Object[][]testSincronoWSSSignatureP12()throws Exception{
+		String id=this.repositorySincronoWSSSignature_P12.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_SIGNATURE_P12"},dataProvider="SincronoWSSSignature_P12",dependsOnMethods={"sincronoWSSSignatureP12"})
+	public void testSincronoWSSSignatureP12(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+		this.collaborazioneSPCoopBase.testSincrono(data, id, 
+				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+				CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_P12, checkServizioApplicativo,null);
 		}catch(Exception e){
 			throw e;
 		}finally{
