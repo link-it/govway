@@ -7,7 +7,7 @@
 2015-06-30  Giuliano Pintori <pintori@link.it>
 
         * [WebGenericProject]
-        Aggiunta funzionalità #373
+        Aggiunta funzionalità OP-372
 	Definite le API per gli elementi di input checkbox, listbox, slider, spinner.
 	Aggiunta implementazione JSF1 per gli elementi checkbox multiple, listbox a scelta singola e multipla, slider, spinner e radiobutton.
 	Aggiunta una prima implementazione JSF1 degli elementi searchForm, editForm e listView che definiscono dei macrocomponenti 
@@ -54,8 +54,12 @@
 2015-06-12  Giuliano Pintori <pintori@link.it>
 
         * [WebGenericProject]
-	Aggiunta funzionalità #362
-	Sviluppata un implementazione JSF1 per la libreria.
+	Aggiunta funzionalità OP-360
+	- Creata la parte API della libreria che definisce le interfacce dei componenti
+	da utilizzare per lo sviluppo delle applicazioni.
+	Sono stati definiti componenti di input da utilizzare all'interno dei form,
+	componenti di output per la presentazione dei dati e le interfacce per le tabelle.
+	- Sviluppata un implementazione JSF1 per la libreria.
 	L'implementazione mette a disposizione un insieme di oggetti base per
 	la creazione di un'applicazione web con framework JSF 1.2 insieme al
 	framework grafico Richfaces versione 3.3.4.
@@ -63,16 +67,6 @@
 	descritti dalle API.
 	Aggiunti i componenti base per gestire i ManagedBean e i DataModel per
 	l'accesso ai dati.
-
-2015-06-12  Giuliano Pintori <pintori@link.it>
-
-	* [WebGenericProject]
-	Aggiunta funzionalità #361
-	Creata la parte API della libreria che definisce le interfacce dei componenti
-	da utilizzare per lo sviluppo delle applicazioni.
-	Sono stati definiti componenti di input da utilizzare all'interno dei form,
-	componenti di output per la presentazione dei dati e le interfacce per le
-	tabelle.
 
 2015-06-12  Andrea Poli <apoli@link.it>
 
@@ -85,7 +79,7 @@
 2015-06-12  Andrea Poli <apoli@link.it>
 
 	* [Utils]
-	Aggiunta funzionalità #357
+	Aggiunta funzionalità OP-356
 	Aggiunto package 'org.openspcoop2.utils.mail' che fornisce utilities per spedire mail.
 	L'utility fornisce una interfaccia comune che permette di indicare quale engine di posta utilizzare.
 	Attualmente la scelta è tra:
@@ -101,17 +95,13 @@
 
 2015-05-20  Andrea Poli <apoli@link.it>
 
-	* [PddConsole]
-	Aggiunta funzionalità #349
-	Le maschere di configurazione di un connettore (in modalità avanzata) contengono adesso anche la possibilità di indicare
-	se il connettore deve agire in 'debug mode' (log delle azioni intraprese nella category log4j dedicata creata in #348)
+	* [PddConsole, Pdd]
+	Aggiunta funzionalità OP-61
+	In PddConsole le maschere di configurazione di un connettore (in modalità avanzata) contengono adesso anche la possibilità di indicare
+	se il connettore deve agire in 'debug mode' (log delle azioni intraprese nella category log4j dedicata creata nel runtime della pdd)
 	E' stata inoltre migliorata la maschera di gestione del connettore JMS
-
-2015-05-20  Andrea Poli <apoli@link.it>
-
-	* [Pdd]
-	Aggiunta funzionalità #348
-	Modificato il logging effettuato dai connettori in modo che venga utilizzata una category log4j dedicata (openspcoop2.connettori)
+	Per quanto concerne invece il runtime della PdD è stato modificato il logging effettuato dai connettori 
+	in modo che venga utilizzata una category log4j dedicata (openspcoop2.connettori)
 	per le emissioni dei log quando il connettore e' in debug mode. 
 
 2015-05-19  Andrea Poli <apoli@link.it>
@@ -232,7 +222,7 @@
 2015-04-13  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
-	Aggiunta funzionalità #324
+	Aggiunta funzionalità OP-110
 	Spostati i parametri delle cache 'configurazione' e 'autorizzazione' 
 	dal file di proprieta' openspcoop2.properties alla configurazione, 
 	in modo da poter agire sui parametri direttamente da pddConsole, 
@@ -451,7 +441,7 @@
 2015-01-29  Giuliano Pintori <pintori@link.it>
 
 	* [WebGenericProject]
-	Aggiunta funzionalità #283
+	Aggiunta funzionalità OP-95
 	Aggiunta la possibilita' di definire tramite le API le classi CSS da
 	utilizzare per personalizzare l'aspetto grafico dei componenti.
 
