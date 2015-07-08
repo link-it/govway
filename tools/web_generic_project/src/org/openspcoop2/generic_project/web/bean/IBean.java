@@ -35,7 +35,7 @@ import org.openspcoop2.generic_project.web.output.OutputField;
  * @version $Rev$, $Date$ 
  *
  */
-public interface IBean<DTOType,KeyType> {
+public interface IBean<DTOType,KeyType>  {
 
 	// Id
 	public KeyType getId();
@@ -49,6 +49,8 @@ public interface IBean<DTOType,KeyType> {
 	public Map<String, OutputField<?>> getFields();
 	public void setFields(Map<String, OutputField<?>> fields);
 	public void setField(String fieldName, OutputField<?> field);
+	public void setField(OutputField<?> field);
+	public OutputField<?> getField(String id) throws Exception;
 
 
 	// Factory per i componenti

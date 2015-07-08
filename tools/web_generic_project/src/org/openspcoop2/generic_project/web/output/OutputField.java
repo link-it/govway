@@ -32,10 +32,14 @@ import java.io.Serializable;
  *
  */
 public interface OutputField<T> extends Serializable{
-	
+
 	// Nome del field
 	public String getName();
 	public void setName(String name);
+
+	// Identificativo del field
+	public String getId();
+	public void setId(String id);
 
 	// Label del field
 	public abstract String getLabel();
@@ -44,11 +48,11 @@ public interface OutputField<T> extends Serializable{
 	// Valore del field
 	public abstract T getValue();
 	public void setValue(T value);
-	
+
 	// Default Value del field
 	public abstract T getDefaultValue();
 	public void setDefaultValue(T defaultValue);
-	
+
 	// controlla se il field deve essere visualizzato
 	public boolean isRendered();
 	public void setRendered(boolean rendered);

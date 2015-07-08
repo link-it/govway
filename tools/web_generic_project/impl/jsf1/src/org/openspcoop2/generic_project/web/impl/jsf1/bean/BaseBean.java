@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.bean;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,14 +44,14 @@ import org.openspcoop2.generic_project.web.output.OutputField;
  */
 public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyType> {
 
-private Map<String, OutputField<?>> fields = null;
-	
+	private Map<String, OutputField<?>> fields = null;
+
 	protected DTOType dto  ;
-	
+
 	protected KeyType id ;
-	
+
 	private WebGenericProjectFactory factory = null;
-	
+
 	@Override
 	public abstract KeyType getId();
 
@@ -63,11 +64,11 @@ private Map<String, OutputField<?>> fields = null;
 	public void setDTO(DTOType dto) {
 		this.dto = dto;
 	}
-	
+
 	public BaseBean(){
 		this.fields = new HashMap<String, OutputField<?>>();
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public DTOType getDTO(){
@@ -76,7 +77,7 @@ private Map<String, OutputField<?>> fields = null;
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 				this.dto = ((Class<DTOType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
 			}catch (Exception e) {
-				 
+
 			}
 		}
 		return this.dto;
@@ -91,18 +92,24 @@ private Map<String, OutputField<?>> fields = null;
 	public void setFields(Map<String, OutputField<?>> fields) {
 		this.fields = fields;
 	}
-	
+
 	@Override
 	public void setField(String fieldName, OutputField<?> field){
 		this.fields.put(fieldName, field);
 	}
-	
+
+	@Override
+	public void setField(OutputField<?> field) {
+		if(field != null && field.getName() != null)
+			this.setField(field.getName(), field);
+	}
+
 	@Override
 	public WebGenericProjectFactory getWebGenericProjectFactory()
 			throws FactoryException {
 		if(this.factory == null)
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf1Impl.FACTORY_NAME);
-		
+
 		return this.factory;
 	}
 
@@ -110,6 +117,62 @@ private Map<String, OutputField<?>> fields = null;
 	public void setWebGenericProjectFactory(WebGenericProjectFactory factory)
 			throws FactoryException {
 		this.factory  = factory;
-		
+
+	}
+
+	@Override
+	public OutputField<?> getField(String id) throws Exception {
+		return getFieldById(id);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private OutputField<?> getFieldById(String id) throws Exception{
+		OutputField<?> f = null;
+		try {
+			// Se il field si trova all'interno della mappa dei field, lo restituisco 
+			if(this.getFields() != null)
+				f = this.getFields().get(id);
+
+
+			if(f == null){
+				Class<? extends BaseBean> myClass = this.getClass();
+
+
+				Field[] fields = myClass.getDeclaredFields();
+
+				for (Field field : fields) {
+					Class<?> fieldClazz = field.getType();
+
+					// controllo che il field implementi l'interfaccia OutputField
+					if(OutputField.class.isAssignableFrom(fieldClazz)){
+						//prelevo accessibilita field
+						boolean accessible = field.isAccessible();
+						field.setAccessible(true);
+						OutputField<?> outputField = (OutputField<?>) field.get(this);
+						// ripristino accessibilita
+						field.setAccessible(accessible);
+
+						if(outputField != null){
+							String name = (String) outputField.getName();
+
+							// se ho trovato il field corretto allora ho terminato la ricerca.
+							if(name.equals(id)){
+								f = outputField;
+								
+								// se non l'ho trovato dentro la mappa dei field lo aggiungo per evitare di fare sempre la reflection
+								if(!this.fields.containsKey(name))
+									this.setField(name, f);
+																
+								break;
+							}
+						}
+					}
+
+				}
+			}
+		} catch (Exception e) {
+			throw e;		
+		} 
+		return f;
 	}
 }

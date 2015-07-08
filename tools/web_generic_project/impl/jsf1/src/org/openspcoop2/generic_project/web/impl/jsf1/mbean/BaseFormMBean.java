@@ -43,6 +43,7 @@ import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.MenuActionE
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.ModificaException;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.NuovoException;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.ResetException;
+import org.openspcoop2.generic_project.web.impl.jsf1.mbean.utils.NavigationManager;
 import org.openspcoop2.generic_project.web.impl.jsf1.utils.MessageUtils;
 import org.openspcoop2.generic_project.web.iservice.IBaseService;
 
@@ -71,15 +72,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 	protected transient Logger log= null;
 	protected WebGenericProjectFactory factory;
 
-	// outcome jsf per la navigazione, 
-	protected String deleteOutcome = null;
-	protected String inviaOutcome = null;
-	protected String modificaOutcome = null;
-	protected String dettaglioOutcome = null;
-	protected String nuovoOutcome = null;
-	protected String menuActionOutcome = null;
-	protected String annullaOutcome = null;
-	protected String resetOutcome = null;
+	protected NavigationManager navigationManager= null;
 
 	public BaseFormMBean(){
 		this(null);
@@ -88,7 +81,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 	public BaseFormMBean(Logger log) {
 		try {
 			this.log = log;
-			setOutcomes();
+			this.navigationManager = new NavigationManager();
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf1Impl.FACTORY_NAME);
 		} catch (FactoryException e) {
 			this.getLog().error(e,e);
@@ -188,7 +181,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 		}catch(Exception e){
 			throw new InviaException(e);
 		}
-		return this.getInviaOutcome();
+		return this.getNavigationManager().getInviaOutcome();
 	}
 
 
@@ -203,7 +196,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 	}
 
 	protected String _modifica() throws ModificaException{
-		return this.getModificaOutcome();
+		return this.getNavigationManager().getModificaOutcome();
 	}
 	public String delete(){
 		try{
@@ -221,7 +214,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 		}catch(Exception e){
 			throw new DeleteException(e);
 		}
-		return this.getDeleteOutcome();
+		return this.getNavigationManager().getDeleteOutcome();
 	}
 
 	public String dettaglio(){
@@ -240,7 +233,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 		}catch(Exception e){
 			throw new DettaglioException(e);
 		}
-		return this.getDettaglioOutcome();
+		return this.getNavigationManager().getDettaglioOutcome();
 	}
 
 
@@ -260,7 +253,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 		}catch(Exception e){
 			throw new NuovoException(e);
 		}
-		return this.getNuovoOutcome();
+		return this.getNavigationManager().getNuovoOutcome();
 	}
 
 
@@ -280,7 +273,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 		}catch(Exception e){
 			throw new AnnullaException(e);
 		}
-		return this.getAnnullaOutcome();
+		return this.getNavigationManager().getAnnullaOutcome();
 	}
 
 
@@ -300,7 +293,7 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 		}catch(Exception e){
 			throw new MenuActionException(e);
 		}
-		return this.getMenuActionOutcome();
+		return this.getNavigationManager().getMenuActionOutcome();
 	}
 
 
@@ -320,51 +313,14 @@ public class BaseFormMBean<BeanType,KeyType,FormType extends Form> {
 		}catch(Exception e){
 			throw new ResetException(e);
 		}
-		return this.getResetOutcome();
+		return this.getNavigationManager().getResetOutcome();
+	}
+	
+	public NavigationManager getNavigationManager() {
+		return this.navigationManager;
 	}
 
-
-	protected void setOutcomes(){
-		this.annullaOutcome = null;
-		this.deleteOutcome = null;
-		this.dettaglioOutcome = null;
-		this.inviaOutcome = null;
-		this.menuActionOutcome= null;
-		this.modificaOutcome = null;
-		this.nuovoOutcome = null;
-		this.resetOutcome = null;
-	}
-
-	// Getter degli outcome JSF
-
-	public String getDeleteOutcome() {
-		return this.deleteOutcome;
-	}
-
-	public String getInviaOutcome() {
-		return this.inviaOutcome;
-	}
-
-	public String getModificaOutcome() {
-		return this.modificaOutcome;
-	}
-
-	public String getDettaglioOutcome() {
-		return this.dettaglioOutcome;
-	}
-
-	public String getNuovoOutcome() {
-		return this.nuovoOutcome;
-	}
-
-	public String getMenuActionOutcome() {
-		return this.menuActionOutcome;
-	}
-
-	public String getAnnullaOutcome() {
-		return this.annullaOutcome;
-	}
-	public String getResetOutcome() {
-		return this.resetOutcome;
+	public void setNavigationManager(NavigationManager navigationManager) {
+		this.navigationManager = navigationManager;
 	}
 }

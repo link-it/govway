@@ -10,8 +10,8 @@
       
 		<a4j:loadScript src="resource://jquery.js"/>
 		
-		<c:if test="#{empty mBean}">
-			<c:set var="mBean" value="#{table.mBean}"/>
+		<c:if test="#{empty table}">
+			<c:set var="table" value="#{mBean.table}"/>
 		</c:if>
 		
 		<c:if test="#{empty width}">

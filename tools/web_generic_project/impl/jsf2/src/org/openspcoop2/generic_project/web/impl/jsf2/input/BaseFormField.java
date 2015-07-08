@@ -52,6 +52,8 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	private static final long serialVersionUID = 1L;
 	
 	protected String name;
+	
+	protected String id;
 
 	protected String label;
 
@@ -568,4 +570,13 @@ public abstract class BaseFormField<T> implements FormField<T>{
 		this.type = (FieldType) FieldType.toEnumConstantFromString(_value_type);
 	}
 
+	@Override
+	public String getId() {
+		return this.id;
+	}
+	
+	@Override
+	public void setId(String id) {
+		this.id  =id;
+	}
 }

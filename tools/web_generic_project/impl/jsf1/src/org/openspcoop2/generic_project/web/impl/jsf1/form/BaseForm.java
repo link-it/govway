@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.form;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,15 +57,15 @@ public abstract class BaseForm implements Form {
 	protected String id = null;
 
 	private boolean rendered = true;
-	
+
 	protected ActionListener actionListener = null;
-	
+
 	private boolean renderRegionOnly = true;
 
 	private ManagedBean<Form, SearchForm> mBean; 
-	
+
 	private WebGenericProjectFactory factory = null;
-	
+
 	public BaseForm(){
 		this.fields = new HashMap<String, FormField<?>>();
 	}
@@ -97,7 +98,7 @@ public abstract class BaseForm implements Form {
 	public void setActionListener(ActionListener actionListener) {
 		this.actionListener = actionListener;
 	}
-	
+
 	@Override
 	public boolean isClosable() {
 		return this.closable;
@@ -131,11 +132,17 @@ public abstract class BaseForm implements Form {
 		this.fields = fields; 
 	}
 
+	@Override
 	public void setField(String fieldName, FormField<?> field){
 		this.fields.put(fieldName, field);
 	}
 
-	 
+	@Override
+	public void setField(FormField<?> field) {
+		if(field != null && field.getName() != null)
+			this.setField(field.getName(), field);
+	}
+
 	@Override
 	public void setNomeForm (String nomeForm) {
 		this.nome = nomeForm;
@@ -166,7 +173,7 @@ public abstract class BaseForm implements Form {
 			throws FactoryException {
 		if(this.factory == null)
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf1Impl.FACTORY_NAME);
-		
+
 		return this.factory;
 	}
 
@@ -174,7 +181,71 @@ public abstract class BaseForm implements Form {
 	public void setWebGenericProjectFactory(WebGenericProjectFactory factory)
 			throws FactoryException {
 		this.factory  = factory;
-		
+
+	}
+
+	@Override
+	public FormField<?> getField(String id) throws Exception{
+		return getFieldById(id);
+	}		
+
+	@Override
+	public void resetFieldValue(String id) throws Exception{
+		FormField<?> field = getFieldById(id);
+
+		if(field != null)
+			field.reset();
+	}
+
+
+	private FormField<?> getFieldById(String id) throws Exception{
+		FormField<?> f = null;
+
+		try {
+			// Se il field si trova all'interno della mappa dei field, lo restituisco 
+			if(this.getFields() != null)
+				f = this.getFields().get(id);
+
+			if(f == null){
+				Class<? extends BaseForm> myClass = this.getClass();
+
+
+				Field[] fields = myClass.getDeclaredFields();
+
+				for (Field field : fields) {
+					Class<?> fieldClazz = field.getType();
+
+					// controllo che il field implementi l'interfaccia FormField
+					if(FormField.class.isAssignableFrom(fieldClazz)){
+						//prelevo accessibilita field
+						boolean accessible = field.isAccessible();
+						field.setAccessible(true);
+						FormField<?> formField = (FormField<?>) field.get(this);
+						// ripristino accessibilita
+						field.setAccessible(accessible);
+
+						if(formField != null){
+							String name = (String) formField.getName();
+
+							// se ho trovato il field corretto allora ho terminato la ricerca.
+							if(name.equals(id)){
+								f = formField;
+
+								// se non l'ho trovato dentro la mappa dei field lo aggiungo per evitare di fare sempre la reflection
+								if(!this.fields.containsKey(name))
+									this.setField(name, f);
+
+								break;
+							}
+						}
+					}
+
+				}
+			}
+		} catch (Exception e) {
+			throw e;		
+		} 
+		return f;
 	}
 
 }

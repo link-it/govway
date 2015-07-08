@@ -40,6 +40,8 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 	private static final long serialVersionUID = 1L;
 
 	protected String name;
+	
+	protected String id;
 
 	protected String label;
 
@@ -269,5 +271,15 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 	@Override
 	public void set_value_type(String _value_type) {
 		this.type = (OutputType) OutputType.toEnumConstantFromString(_value_type);
+	}
+	
+	@Override
+	public String getId() {
+		return this.id;
+	}
+	
+	@Override
+	public void setId(String id) {
+		this.id  =id;
 	}
 }

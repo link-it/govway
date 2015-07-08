@@ -47,6 +47,7 @@ import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.ModificaExc
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.NuovoException;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.ResetException;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.RestoreSearchException;
+import org.openspcoop2.generic_project.web.impl.jsf1.mbean.utils.NavigationManager;
 import org.openspcoop2.generic_project.web.impl.jsf1.utils.MessageUtils;
 import org.openspcoop2.generic_project.web.iservice.IBaseService;
 
@@ -84,18 +85,8 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 	protected BeanType metadata;
 	protected transient Logger log= null;
 	protected WebGenericProjectFactory factory;
-
-	// outcome jsf per la navigazione, 
-	protected String deleteOutcome = null;
-	protected String inviaOutcome = null;
-	protected String modificaOutcome = null;
-	protected String dettaglioOutcome = null;
-	protected String nuovoOutcome = null;
-	protected String menuActionOutcome = null;
-	protected String filtraOutcome = null;
-	protected String restoreSearchOutcome = null;
-	protected String annullaOutcome = null;
-	protected String resetOutcome = null;
+	protected NavigationManager navigationManager= null;
+ 
 
 	public BaseMBean() {
 		this(null);
@@ -104,7 +95,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 	public BaseMBean(Logger log) {
 		try {
 			this.log = log;
-			setOutcomes();
+			this.navigationManager = new NavigationManager();
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf1Impl.FACTORY_NAME);
 		} catch (FactoryException e) {
 			this.getLog().error(e,e);
@@ -238,7 +229,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new InviaException(e);
 		}
-		return this.getInviaOutcome();
+		return this.getNavigationManager().getInviaOutcome();
 	}
 
 
@@ -253,7 +244,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 	}
 
 	protected String _modifica() throws ModificaException{
-		return this.getModificaOutcome();
+		return this.getNavigationManager().getModificaOutcome();
 	}
 	public String delete(){
 		try{
@@ -307,7 +298,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 				this.service.delete(elem);
 			}
 
-			return getDeleteOutcome();
+			return this.getNavigationManager().getDeleteOutcome();
 		}catch (Exception e) {
 			throw new DeleteException(e.getMessage());
 		}
@@ -329,7 +320,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new DettaglioException(e);
 		}
-		return this.getDettaglioOutcome();
+		return this.getNavigationManager().getDettaglioOutcome();
 	}
 
 
@@ -349,7 +340,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new NuovoException(e);
 		}
-		return this.getNuovoOutcome();
+		return this.getNavigationManager().getNuovoOutcome();
 	}
 
 
@@ -369,7 +360,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new AnnullaException(e);
 		}
-		return this.getAnnullaOutcome();
+		return this.getNavigationManager().getAnnullaOutcome();
 	}
 
 
@@ -389,7 +380,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new FiltraException(e);
 		}
-		return this.getFiltraOutcome();
+		return this.getNavigationManager().getFiltraOutcome();
 	}
 
 
@@ -409,7 +400,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new MenuActionException(e);
 		}
-		return this.getMenuActionOutcome();
+		return this.getNavigationManager().getMenuActionOutcome();
 	}
 
 
@@ -429,7 +420,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new ResetException(e);
 		}
-		return this.getResetOutcome();
+		return this.getNavigationManager().getResetOutcome();
 	}
 
 
@@ -449,61 +440,15 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}catch(Exception e){
 			throw new RestoreSearchException(e);
 		}
-		return this.getRestoreSearchOutcome();
+		return this.getNavigationManager().getRestoreSearchOutcome();
 
 	}
 
-	// Getter degli outcome JSF
-
-	protected void setOutcomes(){
-		this.annullaOutcome = null;
-		this.deleteOutcome = null;
-		this.dettaglioOutcome = null;
-		this.filtraOutcome = null;
-		this.inviaOutcome = null;
-		this.menuActionOutcome= null;
-		this.modificaOutcome = null;
-		this.nuovoOutcome = null;
-		this.resetOutcome = null;
-		this.restoreSearchOutcome = null;
+	public NavigationManager getNavigationManager() {
+		return this.navigationManager;
 	}
 
-	public String getDeleteOutcome() {
-		return this.deleteOutcome;
-	}
-
-	public String getInviaOutcome() {
-		return this.inviaOutcome;
-	}
-
-	public String getModificaOutcome() {
-		return this.modificaOutcome;
-	}
-
-	public String getDettaglioOutcome() {
-		return this.dettaglioOutcome;
-	}
-
-	public String getNuovoOutcome() {
-		return this.nuovoOutcome;
-	}
-
-	public String getMenuActionOutcome() {
-		return this.menuActionOutcome;
-	}
-
-	public String getFiltraOutcome() {
-		return this.filtraOutcome;
-	}
-
-	public String getRestoreSearchOutcome() {
-		return this.restoreSearchOutcome;
-	}
-
-	public String getAnnullaOutcome() {
-		return this.annullaOutcome;
-	}
-	public String getResetOutcome() {
-		return this.resetOutcome;
+	public void setNavigationManager(NavigationManager navigationManager) {
+		this.navigationManager = navigationManager;
 	}
 }

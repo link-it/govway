@@ -43,8 +43,8 @@ public interface Table<V> extends Serializable {
 	public void setId(String id);
 
 	// Metodi per la definizione testo di header della tabella
-	public String getHeader(); 
-	public void setHeader(String header);
+	public String getHeaderText(); 
+	public void setHeaderText(String headerText);
 
 	// Metodi per il controllo della visualizzazione della tabella
 	public boolean isRendered();
@@ -69,5 +69,8 @@ public interface Table<V> extends Serializable {
 	// Metodi per la definizione  della posizione della colonna dettaglio
 	public String getDetailColumnPosition(); 
 	public void setDetailColumnPosition(String detailColumnPosition);
+	
+	public Object getMetadata();
+	public void setMetadata(Object metadata);
 
 }

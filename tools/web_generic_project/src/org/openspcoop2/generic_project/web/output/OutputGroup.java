@@ -22,6 +22,7 @@ package org.openspcoop2.generic_project.web.output;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /***
  * 
@@ -57,6 +58,12 @@ public interface OutputGroup extends Serializable {
 
 	// aggiungi field
 	public void addField(OutputField<?> field);
+	
+	public Map<String, OutputField<?>> getFieldsMap();
+	public void setFieldsMap(Map<String, OutputField<?>> fields);
+	public void setField(String fieldName, OutputField<?> field);
+	public void setField(OutputField<?> field);
+	public OutputField<?> getField(String id) throws Exception;
 
 	// classi css per le colonne 
 	public String getColumnClasses();

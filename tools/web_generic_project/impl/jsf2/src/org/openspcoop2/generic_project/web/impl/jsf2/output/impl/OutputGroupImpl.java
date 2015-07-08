@@ -22,6 +22,7 @@ package org.openspcoop2.generic_project.web.impl.jsf2.output.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.web.output.OutputField;
 import org.openspcoop2.generic_project.web.output.OutputGroup;
@@ -48,6 +49,8 @@ public class OutputGroupImpl implements OutputGroup{
 	private Integer columns = null;
 		
 	private List<OutputField<?>> fields = null;
+	
+	private Map<String, OutputField<?>> fieldsMap = null;
 	
 	private boolean rendered = true;
 	
@@ -137,5 +140,31 @@ public class OutputGroupImpl implements OutputGroup{
 	@Override
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
+	}
+	
+	@Override
+	public Map<String, OutputField<?>> getFieldsMap() {
+		return this.fieldsMap;
+	}
+
+	@Override
+	public void setFieldsMap(Map<String, OutputField<?>> fieldsMap) {
+		this.fieldsMap = fieldsMap;
+	}
+	
+	@Override
+	public void setField(String fieldName, OutputField<?> field){
+		this.fieldsMap.put(fieldName, field);
+	}
+
+	@Override
+	public void setField(OutputField<?> field) {
+		if(field != null && field.getName() != null)
+			this.setField(field.getName(), field);
+	}
+	
+	@Override
+	public OutputField<?> getField(String id) throws Exception {
+		return this.fieldsMap.get(id); 
 	}
 }

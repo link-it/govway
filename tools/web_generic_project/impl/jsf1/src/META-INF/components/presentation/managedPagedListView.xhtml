@@ -8,14 +8,59 @@
 	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf">
 	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
 	<a4j:loadScript src="resource://jquery.js" />
+
+	<c:if test="#{empty table}">
+		<c:set var="table" value="#{mBean.table}"/>
+	</c:if>
 	
+	<c:if test="#{empty width}">
+		<c:set var="width" value="#{table.width}" />
+	</c:if>
+		
 	<c:if test="#{empty id}">
-		<c:set var="id" value="listView" />
+		<c:set var="id" value="#{table.id}" />
 	</c:if>
 	
-	<c:if test="#{empty value}">
-		<c:set var="value" value="#{mBean.value}" />
+	<c:if test="#{empty rowsToDisplay}">
+		<c:set var="rowsToDisplay" value="#{table.rowsToDisplay}" />
 	</c:if>
+		
+	<c:if test="#{empty rendered}">
+		<c:set var="rendered" value="#{table.rendered}" />
+	</c:if>
+		
+	<c:if test="#{empty value}">
+		<c:set var="value" value="#{mBean.dataModel}" />
+	</c:if>
+	<c:if test="#{empty showSelectAll}">
+		<c:set var="showSelectAll" value="#{table.showSelectAll}"/>
+	</c:if>
+		
+	<c:if test="#{empty enableDelete}">
+		<c:set var="enableDelete" value="#{table.enableDelete}"/>
+	</c:if>
+		
+	<c:if test="#{empty isList}">
+		<c:set var="isList" value="#{table.isList}"/>
+	</c:if>
+		
+	<c:if test="#{empty headerText}">
+		<c:set var="headerText" value="#{table.headerText}"/>
+	</c:if>
+
+	<c:if test="#{empty showAddButton}">
+		<c:set var="showAddButton" value="#{table.showAddButton}"/>
+	</c:if>
+	<c:if test="#{empty showDetailColumn}">
+		<c:set var="showDetailColumn" value="#{table.showDetailColumn}"/>
+	</c:if>
+	<c:if test="#{empty detailColumnPosition}">
+		<c:set var="detailColumnPosition" value="#{table.detailColumnPosition}"/>
+	</c:if>
+	<c:if test="#{empty detailLinkText}">
+		<c:set var="detailLinkText" value="#{table.detailLinkText}"/>
+	</c:if>
+
 	<c:if test="#{empty showAddButton}">
 		<c:set var="showAddButton" value="false"/>
 	</c:if>

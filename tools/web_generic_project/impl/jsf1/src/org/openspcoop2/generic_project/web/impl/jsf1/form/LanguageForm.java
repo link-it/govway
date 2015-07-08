@@ -28,6 +28,7 @@ import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.LoginBean;
+import org.openspcoop2.generic_project.web.input.FormField;
 import org.openspcoop2.generic_project.web.input.SelectList;
 
 /**
@@ -102,5 +103,13 @@ public class LanguageForm extends BaseForm  implements Form,Serializable {
 		this.mBean.cambiaLinguaListener(ae); 
 	}
 
-
+	@Override
+	public FormField<?> getField(String id) {
+		return this.lingua;
+	}
+	
+	@Override
+	public void resetFieldValue(String id) {
+		this.lingua.reset();		
+	}
 }

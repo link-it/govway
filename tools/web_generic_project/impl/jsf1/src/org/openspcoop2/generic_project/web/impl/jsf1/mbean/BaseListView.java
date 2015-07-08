@@ -69,6 +69,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 		if(this.table==null){
 			try{
 				this.table = this.factory.getTableFactory().createTable();
+				this.table.setMetadata(this.getMetadata()); 
 			}catch (Exception e) {
 				throw e;
 			}

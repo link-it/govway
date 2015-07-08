@@ -43,7 +43,7 @@ public class BaseTable<V> implements Table<V> {
 	private static final long serialVersionUID = 1L; 
 	protected V value;
 	protected String id;
-	protected String header;
+	protected String headerText;
 	protected boolean rendered;
 	protected String width;
 	protected Integer rowsToDisplay;
@@ -51,6 +51,8 @@ public class BaseTable<V> implements Table<V> {
 	protected String detailColumnPosition = Costanti.TABLE_DETAIL_COLUMN_RIGHT;
 	protected boolean showDetailColumn = false;
 	protected String detailLinkText = null;
+	
+	protected Object metadata;
 	
 	public BaseTable(){
 		this.detailLinkText = Utils.getInstance().getMessageFromCommonsResourceBundle("commons.button.dettaglio.title");
@@ -74,12 +76,12 @@ public class BaseTable<V> implements Table<V> {
 		this.id = id;
 	}
 	@Override
-	public String getHeader() {
-		return this.header;
+	public String getHeaderText() {
+		return this.headerText;
 	}
 	@Override
-	public void setHeader(String header) {
-		this.header = header;
+	public void setHeaderText(String header) {
+		this.headerText = header;
 	}
 	@Override
 	public boolean isRendered() {
@@ -129,6 +131,14 @@ public class BaseTable<V> implements Table<V> {
 	public void setDetailLinkText(String detailLinkText) {
 		this.detailLinkText = detailLinkText;
 	}
-
+	@Override
+	public Object getMetadata() {
+		return this.metadata;
+	}
+	
+	@Override
+	public void setMetadata(Object metadata) {
+		this.metadata = metadata;
+	}
 
 }

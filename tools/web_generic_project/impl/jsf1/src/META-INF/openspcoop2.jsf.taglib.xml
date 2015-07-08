@@ -48,6 +48,15 @@
    		<source>components/search/search.xhtml</source>
    	</tag>
    	
+   	
+   	<tag>
+   		<tag-name>formFields</tag-name>
+   		<source>components/form/formFields.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>searchFields</tag-name>
+   		<source>components/form/searchFields.xhtml</source>
+   	</tag>
    
    	<!-- Generic Form field -->
    	<tag>
@@ -197,6 +206,11 @@
    		<source>components/table/genericColumn.xhtml</source>
    	</tag>
    	
+   	<tag>
+   		<tag-name>tableColumns</tag-name>
+   		<source>components/table/genericColumns.xhtml</source>
+   	</tag>
+   	
    	  <tag>
    		<tag-name>textColumn</tag-name>
    		<source>components/table/textColumn.xhtml</source>
@@ -226,6 +240,20 @@
    	<tag>
    		<tag-name>pagedListView</tag-name>
    		<source>components/presentation/pagedListView.xhtml</source>
+   	</tag>
+   	   	<tag>
+   		<tag-name>managedPagedListView</tag-name>
+   		<source>components/presentation/managedPagedListView.xhtml</source>
+   	</tag>
+   	
+   	<!-- List View Semplice -->
+   	<tag>
+   		<tag-name>simpleListView</tag-name>
+   		<source>components/presentation/simpleListView.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>managedSimpleListView</tag-name>
+   		<source>components/presentation/managedSimpleListView.xhtml</source>
    	</tag>
    	
    <function>

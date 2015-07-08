@@ -10,15 +10,13 @@
 	<a4j:loadScript src="resource://jquery.js" />
 	
 	<c:if test="#{empty id}">
-		<c:set var="id" value="listView" />
+		<c:set var="id" value="simpleListView" />
 	</c:if>
 	
 	<c:if test="#{empty value}">
 		<c:set var="value" value="#{mBean.value}" />
 	</c:if>
-	<c:if test="#{empty showAddButton}">
-		<c:set var="showAddButton" value="false"/>
-	</c:if>
+	 
 	<c:if test="#{empty showDetailColumn}">
 		<c:set var="showDetailColumn" value="false"/>
 	</c:if>
@@ -39,41 +37,20 @@
 	<c:if test="#{empty rowsToDisplay}">
 		<c:set var="rowsToDisplay" value="25"/>
 	</c:if>
-	<c:if test="#{empty showSelectAll}">
-		<c:set var="showSelectAll" value="true"/>
-	</c:if>
-	<c:if test="#{empty enableDelete}">
-		<c:set var="enableDelete" value="true"/>
-	</c:if>
-	<c:if test="#{empty isList}">
-		<c:set var="isList" value="false"/>
-	</c:if>
-	
-	<c:if test="#{empty noDataText}">
-		<c:set var="noDataText" value="#{commonsMsg['pagedDataTable.component.ultima']}"/>
-	</c:if>
 	
 	<c:if test="#{empty customRowClasses}">
 		<c:set var="customRowClasses" value="even,odd"/>
 	</c:if>
-	
-	<c:if test="#{empty topScrollerAlign}">
-		<c:set var="topScrollerAlign" value="center"/>
-	</c:if>
-	
 	<c:if test="#{empty itemMetadata}">
 		<c:set var="itemMetadata" value="#{mBean.metadata}" />
 	</c:if>
 	
-	<a4j:outputPanel id="#{id}" ajaxRendered="false" layout="block">
+	<a4j:outputPanel id="#{id}" layout="block" rendered="#{rendered}">
 		<h:form>
-			<op2web:dataTable value="#{value}" id="#{id}_dt" enableDelete="#{enableDelete}"
-					headerText="#{headerText}" showSelectAll="#{showSelectAll}" mBean="#{mBean}"
-					selectionMapTarget="#{mBean.selectedIds[item]}" rowsToDisplay="#{mBean.search.pageSize}">
-				<f:facet name="noData">
-					<h:outputText value="#{noDataText}" />
-				</f:facet>
-				
+			<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"
+				id="#{id}_tbl" onRowMouseOver="activeRow(this)"
+				rowClasses="#{customRowClasses}" width="#{width}">
+			
 				<!-- Link dettagli a sinistra-->
 				<rich:column style="text-align: center;" id="dtlClmn_sx" rendered="#{showDetailColumn and not empty mBean and detailColumnPosition == 'left'}">
 					<h:panelGroup>
@@ -84,8 +61,6 @@
 					</h:panelGroup>
 				</rich:column>
 				
-				
-	
 				<ui:insert/>
 	
 				<!-- Link dettagli a destra-->
@@ -97,14 +72,7 @@
 						</a4j:commandLink>
 					</h:panelGroup>
 				</rich:column>
-	
-				<ui:define name="buttons">
-					<ui:insert name="buttonsListView"/>
-					
-					<h:commandButton id="#{id}_aggiungi" styleClass="icon-add" value="#{commonsMsg['commons.button.nuovo']}" rendered="#{not empty showAddButton and showAddButton==true}"
-						action="#{mBean.nuovo}" actionListener="#{mBean.addNewListener}" />
-				</ui:define>
-			</op2web:dataTable>
+			</rich:dataTable>	
 		</h:form>
 	</a4j:outputPanel>
 </ui:component>

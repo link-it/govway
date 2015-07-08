@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf2.bean;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,5 +112,55 @@ public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyT
 			throws FactoryException {
 		this.factory  = factory;
 
+	}
+	
+	@Override
+	public OutputField<?> getField(String id) throws Exception {
+		return getFieldById(id);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private OutputField<?> getFieldById(String id) throws Exception{
+		OutputField<?> f = null;
+
+		// Se il field si trova all'interno della mappa dei field, lo restituisco 
+		if(this.getFields() != null)
+			f = this.getFields().get(id);
+
+		if(f == null){
+			Class<? extends BaseBean> myClass = this.getClass();
+
+			try {
+				Field[] fields = myClass.getDeclaredFields();
+
+				for (Field field : fields) {
+					Class<?> fieldClazz = field.getType();
+
+					// controllo che il field implementi l'interfaccia OutputField
+					if(OutputField.class.isAssignableFrom(fieldClazz)){
+						//prelevo accessibilita field
+						boolean accessible = field.isAccessible();
+						field.setAccessible(true);
+						OutputField<?> outputField = (OutputField<?>) field.get(this);
+						// ripristino accessibilita
+						field.setAccessible(accessible);
+
+						if(outputField != null){
+							String name = (String) outputField.getName();
+
+							// se ho trovato il field corretto allora ho terminato la ricerca.
+							if(name.equals(id)){
+								f = outputField;
+								break;
+							}
+						}
+					}
+
+				}
+			} catch (Exception e) {
+				throw e;		
+			} 
+		}
+		return f;
 	}
 }

@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf2.form;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -128,11 +129,17 @@ public abstract class BaseForm implements Form {
 	public void setFields(Map<String, FormField<?>> fields) {
 		this.fields = fields; 
 	}
-
+	
+	@Override
 	public void setField(String fieldName, FormField<?> field){
 		this.fields.put(fieldName, field);
 	}
-
+	
+	@Override
+	public void setField(FormField<?> field) {
+		if(field != null && field.getName() != null)
+			this.setField(field.getName(), field);
+	}
 	 
 	@Override
 	public void setNomeForm (String nomeForm) {
@@ -173,6 +180,64 @@ public abstract class BaseForm implements Form {
 			throws FactoryException {
 		this.factory  = factory;
 		
+	}
+	
+	@Override
+	public FormField<?> getField(String id) throws Exception{
+		return getFieldById(id);
+	}		
+
+	@Override
+	public void resetFieldValue(String id) throws Exception{
+		FormField<?> field = getFieldById(id);
+
+		if(field != null)
+			field.reset();
+	}
+
+
+	private FormField<?> getFieldById(String id) throws Exception{
+		FormField<?> f = null;
+
+		// Se il field si trova all'interno della mappa dei field, lo restituisco 
+		if(this.getFields() != null)
+			f = this.getFields().get(id);
+
+		if(f == null){
+			Class<? extends BaseForm> myClass = this.getClass();
+
+			try {
+				Field[] fields = myClass.getDeclaredFields();
+
+				for (Field field : fields) {
+					Class<?> fieldClazz = field.getType();
+
+					// controllo che il field implementi l'interfaccia FormField
+					if(FormField.class.isAssignableFrom(fieldClazz)){
+						//prelevo accessibilita field
+						boolean accessible = field.isAccessible();
+						field.setAccessible(true);
+						FormField<?> formField = (FormField<?>) field.get(this);
+						// ripristino accessibilita
+						field.setAccessible(accessible);
+
+						if(formField != null){
+							String name = (String) formField.getName();
+
+							// se ho trovato il field corretto allora ho terminato la ricerca.
+							if(name.equals(id)){
+								f = formField;
+								break;
+							}
+						}
+					}
+
+				}
+			} catch (Exception e) {
+				throw e;		
+			} 
+		}
+		return f;
 	}
 
 }

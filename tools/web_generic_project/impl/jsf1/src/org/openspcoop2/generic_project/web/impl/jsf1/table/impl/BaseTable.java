@@ -43,16 +43,18 @@ public class BaseTable<V> implements Table<V> {
 	private static final long serialVersionUID = 1L; 
 	protected V value;
 	protected String id;
-	protected String header;
+	protected String headerText;
 	protected boolean rendered;
 	protected String width;
 	protected Integer rowsToDisplay;
-	
+
 	protected String detailColumnPosition = Costanti.TABLE_DETAIL_COLUMN_RIGHT;
 	protected boolean showDetailColumn = false;
 	protected String detailLinkText = null;
 
-	
+	protected Object metadata = null;
+
+
 	public BaseTable(){
 		this.detailLinkText = Utils.getInstance().getMessageFromCommonsResourceBundle("commons.button.dettaglio.title");
 	}
@@ -74,12 +76,19 @@ public class BaseTable<V> implements Table<V> {
 		this.id = id;
 	}
 	@Override
-	public String getHeader() {
-		return this.header;
+	public String getHeaderText() {
+		try{
+			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.headerText);
+
+			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
+				return tmp;
+		}catch(Exception e){}
+		
+		return this.headerText;
 	}
 	@Override
-	public void setHeader(String header) {
-		this.header = header;
+	public void setHeaderText(String headerText) {
+		this.headerText = headerText;
 	}
 	@Override
 	public boolean isRendered() {
@@ -123,13 +132,28 @@ public class BaseTable<V> implements Table<V> {
 	}
 	@Override
 	public String getDetailLinkText() {
+		try{
+			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.detailLinkText);
+
+			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
+				return tmp;
+		}catch(Exception e){}
+		
 		return this.detailLinkText;
 	}
 	@Override
 	public void setDetailLinkText(String detailLinkText) {
 		this.detailLinkText = detailLinkText;
 	}
-
+	@Override
+	public Object getMetadata() {
+		return this.metadata;
+	}
+	
+	@Override
+	public void setMetadata(Object metadata) {
+		this.metadata = metadata;
+	}
 
 
 }

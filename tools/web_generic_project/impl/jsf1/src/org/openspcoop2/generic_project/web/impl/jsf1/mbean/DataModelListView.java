@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.mbean;
 
+import java.lang.reflect.ParameterizedType;
+
 import org.apache.log4j.Logger;
 import org.openspcoop2.generic_project.web.bean.IBean;
 import org.openspcoop2.generic_project.web.form.Form;
@@ -49,13 +51,36 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 	private static final long serialVersionUID = 1L; 
 	protected FormType form;
 	protected PagedDataTable<DMType,FormType,SearchFormType> table; 
+	protected DMType dataModel = null;
 
 	public DataModelListView () {
 		super();
 	}
-	
+
 	public DataModelListView (Logger log) {
 		super(log);
+	}
+
+	@Override
+	public void setSearch(SearchFormType search) {
+		super.setSearch(search);
+		try {
+			this.getDataModel().setForm(search);
+		} catch (Exception e) {
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setService(
+			IBaseService<BeanType, KeyType, SearchFormType> service) {
+		super.setService(service);
+
+		try {
+			if(service != null)
+				this.getDataModel().setDataProvider((DataProviderType) service);
+		} catch (Exception e) {
+		} 
 	}
 
 	@Override
@@ -73,6 +98,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 			try{
 				this.table = this.factory.getTableFactory().createPagedDataTable();
 				this.table.setMBean(this);
+				this.table.setMetadata(this.getMetadata()); 
 			}catch (Exception e) {
 				throw e;
 			}
@@ -84,5 +110,26 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 	public void setTable(PagedDataTable<DMType,FormType,SearchFormType> table) {
 		this.table = table;
 	}
+
+	@SuppressWarnings("unchecked")
+	public DMType getDataModel() throws Exception {
+		if(this.dataModel==null){
+			try{
+
+				ParameterizedType parameterizedType =  (ParameterizedType) getClass().getGenericSuperclass();
+				this.dataModel = ((Class<DMType>)parameterizedType.getActualTypeArguments()[4]).newInstance();
+			}catch (Exception e) {
+				this.getLog().error(e,e);
+				throw e;
+			}
+		}
+		return this.dataModel;
+	}
+
+	public void setDataModel(DMType dataModel) {
+		this.dataModel = dataModel;
+	}
+
+
 
 }

@@ -21,6 +21,8 @@
 package org.openspcoop2.generic_project.web.input.factory;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.input.BooleanCheckBox;
@@ -54,41 +56,63 @@ public interface InputFieldFactory extends Serializable {
 
 	// Costruttori Elementi Text
 	public Text createText() throws FactoryException;
+	public Text createText(String name, String label, String initialValue, boolean required) throws FactoryException;
+	public Text createTextInterval(String name, String label, String initialValueStart, String initialValueEnd, boolean required) throws FactoryException;
 	
 	public TextArea createTextArea() throws FactoryException;
+	public TextArea createTextArea(String name, String label, String initialValue, boolean required) throws FactoryException;
 	
 	public InputSecret createInputSecret() throws FactoryException;
+	public InputSecret createInputSecret(String name, String label, String initialValue, boolean required) throws FactoryException;
 
 	// Costruttori Elementi Date
 	public DateTime createDateTime() throws FactoryException;
+	public DateTime createDateTime(String name, String label, Date initialValue, boolean required) throws FactoryException;
+	public DateTime createDateTime(String name, String label, String pattern, Date initialValue, boolean required) throws FactoryException;
+	public DateTime createDateTimeInterval(String name, String label, Date initialValueStart, Date initialValueEnd, boolean required) throws FactoryException;
+	public DateTime createDateTimeInterval(String name, String label, String pattern, Date initialValueStart, Date initialValueEnd, boolean required) throws FactoryException;
+
 
 	//Costruttori Elementi Numerici
 	public InputNumber createNumber() throws FactoryException;
+	public InputNumber createNumber(String name, String label, Number initialValue, boolean required) throws FactoryException;
+	public InputNumber createNumberInterval(String name, String label, Number initialValueStart, Number initialValueEnd, boolean required) throws FactoryException;
 	
 	public Spinner createSpinner() throws FactoryException;
+	public Spinner createSpinner(String name, String label, Number initialValue, boolean required) throws FactoryException;
 	
 	public Slider createSlider() throws FactoryException;
+	public Slider createSlider(String name, String label, Number initialValue, boolean required) throws FactoryException;
 	
 	// Costruttore Elemento checkboxboolean
 	public BooleanCheckBox createBooleanCheckBox() throws FactoryException;
+	public BooleanCheckBox createBooleanCheckBox(String name, String label, Boolean initialValue, boolean required) throws FactoryException;
 
 	// Costruttori Elementi di scelta singola
-	public  <OptionType extends HtmlOption> SingleChoice <OptionType>  createSingleChoice() throws FactoryException; 
+	public  <OptionType extends HtmlOption> SingleChoice <OptionType> createSingleChoice() throws FactoryException; 
+	public  <OptionType extends HtmlOption> SingleChoice <OptionType> createSingleChoice(String name, String label, OptionType initialValue, boolean required) throws FactoryException;
 
-	public  <OptionType extends HtmlOption> SelectList<OptionType>  createSelectList() throws FactoryException;
-
-	public  <OptionType extends HtmlOption> RadioButton<OptionType>  createRadioButton() throws FactoryException;
+	public  <OptionType extends HtmlOption> SelectList <OptionType>  createSelectList() throws FactoryException;
+	public  <OptionType extends HtmlOption> SelectList <OptionType> createSelectList(String name, String label, OptionType initialValue, boolean required) throws FactoryException;
 	
-	public  <OptionType extends HtmlOption> SingleListBox<OptionType>  createSingleListBox() throws FactoryException; 
-
-	// Costruttori Elementi di scleta multipla
-	public  <OptionType extends HtmlOption> MultipleChoice<OptionType>  createMultipleChoice() throws FactoryException; 
-
-	public  <OptionType extends HtmlOption> PickList<OptionType>  createPickList() throws FactoryException;
-
-	public  <OptionType extends HtmlOption> MultipleCheckBox<OptionType>  createMultipleCheckBox() throws FactoryException;	
+	public  <OptionType extends HtmlOption> RadioButton <OptionType>  createRadioButton() throws FactoryException;
+	public  <OptionType extends HtmlOption> RadioButton <OptionType> createRadioButton(String name, String label, OptionType initialValue, boolean required) throws FactoryException;
 	
-	public  <OptionType extends HtmlOption> MultipleListBox<OptionType>  createMultipleListBox() throws FactoryException;
+	public  <OptionType extends HtmlOption> SingleListBox <OptionType>  createSingleListBox() throws FactoryException;
+	public  <OptionType extends HtmlOption> SingleListBox <OptionType> createSingleListBox(String name, String label, OptionType initialValue, boolean required) throws FactoryException;
+
+	// Costruttori Elementi di scelta multipla
+	public  <OptionType extends HtmlOption> MultipleChoice <OptionType>  createMultipleChoice() throws FactoryException; 
+	public  <OptionType extends HtmlOption> MultipleChoice <OptionType> createMultipleChoice(String name, String label, List<OptionType> initialValue, boolean required) throws FactoryException;
+
+	public  <OptionType extends HtmlOption> PickList <OptionType>  createPickList() throws FactoryException;
+	public  <OptionType extends HtmlOption> PickList <OptionType> createPickList(String name, String label, List<OptionType> initialValue, boolean required) throws FactoryException;
+
+	public  <OptionType extends HtmlOption> MultipleCheckBox <OptionType>  createMultipleCheckBox() throws FactoryException;
+	public  <OptionType extends HtmlOption> MultipleCheckBox <OptionType> createMultipleCheckBox(String name, String label, List<OptionType> initialValue, boolean required) throws FactoryException;
+	
+	public  <OptionType extends HtmlOption> MultipleListBox <OptionType>  createMultipleListBox() throws FactoryException;
+	public  <OptionType extends HtmlOption> MultipleListBox <OptionType> createMultipleListBox(String name, String label, List<OptionType> initialValue, boolean required) throws FactoryException;
 	
 
 }

@@ -49,6 +49,10 @@ public interface Form {
 	// Mappa per la gestione di tutti i field di un form
 	public Map<String, FormField<?>> getFields();
 	public void setFields(Map<String, FormField<?>> fields);
+	public void setField(String fieldName, FormField<?> field);
+	public void setField(FormField<?> field);
+	public FormField<?> getField(String id) throws Exception;
+	public void resetFieldValue(String id) throws Exception;
 	
 	// Metodi per la definizione della label del form
 	public String getNomeForm(); 
