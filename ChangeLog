@@ -1,3 +1,9 @@
+2015-07-08  Giuliano Pintori <pintori@link.it>
+
+        * [WebGenericProject]
+        Aggiunta funzionalità OP-385
+	Aggiunta nell'implementazione JSF1 la possibilita' di selezionare i field da visualizzare all'interno di searchForm, editForm, tabelle, e prentation indicandoli all'interno delle pagine xhtml.
+
 2015-07-03 Giovanni Bussu <bussu@link.it>
 
         * [TestsuiteProtocolloSPCoop]
