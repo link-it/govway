@@ -474,7 +474,7 @@ public class ClientCore {
 	/** 
 	 * Ritorna gli attachments presenti nell'iterator, in un HashMap.
 	 * @param parts
-	 * @return
+	 * @return HashMap
 	 */
 	private HashMap<?,?> putOnHash(Iterator<?> parts){
 		HashMap<String, AttachmentPart> hash=new HashMap<String, AttachmentPart>();
@@ -496,7 +496,7 @@ public class ClientCore {
 	 * Ritorna gli attachments presenti nell'iterator in un Vector
 	 * 
 	 * @param it
-	 * @return
+	 * @return Vector
 	 */
 	private Vector<?> getVector(Iterator<?> it){
 		Vector<AttachmentPart> vet=new Vector<AttachmentPart>();
