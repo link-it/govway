@@ -50,11 +50,17 @@ public class PWCallbackSend implements CallbackHandler {
 //                if ("erogatore".equals(pc.getIdentifer())) {
 //                    pc.setPassword("foobar");
 //                }
-                //System.out.println("Alias ["+pc.getIdentifer()+"]");
+                
+               // System.out.println("Alias ["+pc.getIdentifier()+"]");
                 if ("pd".equals(pc.getIdentifier())) {
                 	pc.setPassword("certpd");
                 }else if ("pa".equals(pc.getIdentifier())) {
                 	pc.setPassword("certpa");
+                }
+                else if ("pdP12".equalsIgnoreCase(pc.getIdentifier())) {
+                	pc.setPassword("keypd");
+                }else if ("paP12".equalsIgnoreCase(pc.getIdentifier())) {
+                	pc.setPassword("keypa");
                 }
                 
                 

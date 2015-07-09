@@ -1101,7 +1101,7 @@
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
                     <parameter nome="timeToLive" valore="600" />
-                    <parameter nome="user" valore="pd" />
+                    <parameter nome="user" valore="pdP12" />
                     <parameter nome="actor" valore="openspcoop"/>
                     <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
                     <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
@@ -3659,7 +3659,7 @@
                 <response-flow>
                     <parameter nome="action" valore="Signature" />
                     <parameter nome="timeToLive" valore="600" />
-                    <parameter nome="user" valore="pa" />
+                    <parameter nome="user" valore="paP12" />
                     <parameter nome="actor" valore="openspcoop"/>
                     <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
                     <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
