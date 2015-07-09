@@ -1,14 +1,15 @@
+2015-07-09 Giovanni Bussu <bussu@link.it>
+
+	* [TestsuiteProtocolloSPCoop]
+	Aggiunta funzionalità OP-380
+	Introdotti test di signature ed encrypt che utilizzano keystore di tipo P12
+
 2015-07-08  Giuliano Pintori <pintori@link.it>
 
         * [WebGenericProject]
         Aggiunta funzionalità OP-385
-	Aggiunta nell'implementazione JSF1 la possibilita' di selezionare i field da visualizzare all'interno di searchForm, editForm, tabelle, e prentation indicandoli all'interno delle pagine xhtml.
-
-2015-07-03 Giovanni Bussu <bussu@link.it>
-
-        * [TestsuiteProtocolloSPCoop]
-        Aggiunta funzionalità OP-381
-        Aggiunti i test indicati e fatta girare la testsuite WS-Security sugli application server tomcat, jboss5, jbossas7
+	Aggiunta nell'implementazione JSF1 la possibilita' di selezionare i field da visualizzare all'interno di searchForm, 
+	editForm, tabelle, e prentation indicandoli all'interno delle pagine xhtml.
 
 2015-06-30  Giuliano Pintori <pintori@link.it>
 
