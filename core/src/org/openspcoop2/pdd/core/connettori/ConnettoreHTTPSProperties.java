@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.io.Serializable;
 import java.security.KeyStore;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -38,7 +39,12 @@ import org.openspcoop2.utils.resources.SSLConfig;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPSProperties extends SSLConfig  {
+public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public static ConnettoreHTTPSProperties readProperties(java.util.Hashtable<String,String> properties) throws Exception{
 		ConnettoreHTTPSProperties propertiesHTTPS = new ConnettoreHTTPSProperties();

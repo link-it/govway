@@ -96,68 +96,68 @@ public class ConnettoreHTTP extends ConnettoreBase {
 	public ByteArrayOutputStream outByte = new ByteArrayOutputStream();
 
 	/** Msg di richiesta */
-	private OpenSPCoop2Message requestMsg;
+	protected OpenSPCoop2Message requestMsg;
 	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
+	protected java.util.Hashtable<String,String> properties;
 	/** Indicazione su di un eventuale sbustamento SOAP */
-	private boolean sbustamentoSoap;
+	protected boolean sbustamentoSoap;
 	/** Proprieta' del trasporto che deve gestire il connettore */
-	private java.util.Properties propertiesTrasporto;
+	protected java.util.Properties propertiesTrasporto;
 	/** Proprieta' urlBased che deve gestire il connettore */
-	private java.util.Properties propertiesUrlBased;
+	protected java.util.Properties propertiesUrlBased;
 	/** Tipo di Autenticazione */
 	//private String tipoAutenticazione;
 	/** Credenziali per l'autenticazione */
-	private Credenziali credenziali;
+	protected Credenziali credenziali;
 	/** Busta */
-	private Busta busta;
+	protected Busta busta;
 	/** Indicazione se siamo in modalita' debug */
-	private boolean debug = false;
+	protected boolean debug = false;
 
 	/** OpenSPCoopProperties */
-	private OpenSPCoop2Properties openspcoopProperties = null;
+	protected OpenSPCoop2Properties openspcoopProperties = null;
 
 	/** Identificativo */
-	private String idMessaggio;
+	protected String idMessaggio;
 	
 	/** Logger */
-	private ConnettoreLogger logger = null;
+	protected ConnettoreLogger logger = null;
 
 	/** Loader loader */
-	private Loader loader = null;
+	protected Loader loader = null;
 	
 	/** Identificativo Modulo */
-	private String idModulo = null;
+	protected String idModulo = null;
 	
 	/** SSL Configuration */
-	private boolean https = false;
-	private ConnettoreHTTPSProperties sslContextProperties;
+	protected boolean connettoreHttps = false;
+	protected ConnettoreHTTPSProperties sslContextProperties;
 	
 	/** Proxy Configuration */
-	private Proxy.Type proxyType = null;
-	private String proxyUrl = null;
-	private int proxyPort;
-	private String proxyUsername;
-	private String proxyPassword;
+	protected Proxy.Type proxyType = null;
+	protected String proxyUrl = null;
+	protected int proxyPort;
+	protected String proxyUsername;
+	protected String proxyPassword;
 	
 	/** Redirect */
-	private boolean followRedirects = false;
-	private String routeRedirect = null;
-	private int numberRedirect = 0;
-	private int maxNumberRedirects = 5;
+	protected boolean followRedirects = false;
+	protected String routeRedirect = null;
+	protected int numberRedirect = 0;
+	protected int maxNumberRedirects = 5;
 	
 	/** Connessione */
-	private InputStream is = null;
-	private HttpURLConnection httpConn = null;
+	protected InputStream is = null;
+	protected HttpURLConnection httpConn = null;
 	
 	/** httpMethod */
-	private String httpMethod = null;
+	protected String httpMethod = null;
 	public String getHttpMethod() {
 		return this.httpMethod;
 	}
 	
 	/** Indicazione su di un eventuale sbustamento API */
-	private boolean sbustamentoApi;	
+	protected boolean sbustamentoApi;	
 	public boolean isSbustamentoApi() {
 		return this.sbustamentoApi;
 	}
@@ -165,16 +165,22 @@ public class ConnettoreHTTP extends ConnettoreBase {
 	
 	/* Costruttori */
 	public ConnettoreHTTP(){
-		this.https = false;
+		this.connettoreHttps = false;
 	}
 	public ConnettoreHTTP(boolean https){
-		this.https = https;
+		this.connettoreHttps = https;
 	}
 	
 	
 	
 	/* ********  METODI  ******** */
 
+	protected void setSSLContext() throws Exception{
+		if(this.connettoreHttps){
+			this.sslContextProperties = ConnettoreHTTPSProperties.readProperties(this.properties);
+		}
+	}
+	
 	/**
 	 * Si occupa di effettuare la consegna.
 	 *
@@ -253,15 +259,13 @@ public class ConnettoreHTTP extends ConnettoreBase {
 		}
 		
 		// HTTPS
-		if(this.https){
-			try{
-				this.sslContextProperties = ConnettoreHTTPSProperties.readProperties(this.properties);
-			}catch(Exception e){
-				this.eccezioneProcessamento = e;
-				this.logger.error("[HTTPS error]"+ e.getMessage());
-				this.errore = "[HTTPS error]"+ e.getMessage();
-				return false;
-			}
+		try{
+			this.setSSLContext();
+		}catch(Exception e){
+			this.eccezioneProcessamento = e;
+			this.logger.error("[HTTPS error]"+ e.getMessage());
+			this.errore = "[HTTPS error]"+ e.getMessage();
+			return false;
 		}
 	
 		// Proxy
@@ -377,7 +381,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 	 * @return true in caso di consegna con successo, false altrimenti
 	 * 
 	 */
-	private boolean sendHTTP(ConnettoreMsg request){
+	protected boolean sendHTTP(ConnettoreMsg request){
 		
 		Sbustamento sbustamentoAPIengine = null;
 		Imbustamento imbustamentoAPIengine = null;
@@ -391,7 +395,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			
 			// Gestione https
 			SSLContext sslContext = null;
-			if(this.https){
+			if(this.sslContextProperties!=null){
 				
 				StringBuffer bfSSLConfig = new StringBuffer();
 				sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
@@ -446,7 +450,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			
 			
 			// Imposta Contesto SSL se attivo
-			if(this.https){
+			if(this.sslContextProperties!=null){
 				HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
 				httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
 				

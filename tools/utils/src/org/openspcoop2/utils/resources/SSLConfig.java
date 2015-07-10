@@ -22,6 +22,8 @@
 
 package org.openspcoop2.utils.resources;
 
+import java.io.Serializable;
+
 
 /**
  * SSLConfig
@@ -30,8 +32,13 @@ package org.openspcoop2.utils.resources;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SSLConfig  {
+public class SSLConfig implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	// AUTENTICAZIONE SERVER:
 	// Path del trustStore che contiene il certificato del server.
 	private String trustStoreLocation;
