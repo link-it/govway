@@ -359,6 +359,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "ResetCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
 	
 	/* LABEL PARAMETRI */
 	
@@ -399,8 +400,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE = "Dimensione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE = "Algoritmo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "Item Life Time (Secondi)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Item Idle Time (Secondi)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "Item Idle Time (Secondi)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Item Life Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "LRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "MRU";
 	

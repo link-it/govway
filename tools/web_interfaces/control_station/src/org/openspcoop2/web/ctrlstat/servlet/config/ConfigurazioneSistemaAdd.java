@@ -133,15 +133,73 @@ public final class ConfigurazioneSistemaAdd extends Action {
 		
 			if(nomeCache!=null && !"".equals(nomeCache) &&
 					nomeMetodo!=null && !"".equals(nomeMetodo)){
-				try{
-					String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
-							nomeCache,
-							nomeMetodo);
-					pd.setMessage("Cache ["+nomeCache+"]: "+result);
-				}catch(Exception e){
-					String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"]: "+e.getMessage();
-					ControlStationCore.getLog().error(errorMessage,e);
-					pd.setMessage(errorMessage);
+				
+				String nomeMetodoResetCache = confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias);
+				boolean resetMultiplo = false;
+				if(nomeMetodoResetCache!=null && nomeMetodoResetCache.equals(nomeMetodo)){
+					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES.equals(nomeCache)){
+						resetMultiplo=true;
+					}
+				}
+				
+				if(resetMultiplo){
+					StringBuffer bf = new StringBuffer();
+					List<String> caches = confCore.getJmxPdD_caches(alias);
+					if(caches!=null && caches.size()>0){
+						
+						for (String cache : caches) {
+							
+							String stato = null;
+							try{
+								stato = confCore.readJMXAttribute(confCore.getGestoreRisorseJMX(alias), alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+										cache,
+										confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+								if(stato.equalsIgnoreCase("true")){
+									stato = "abilitata";
+								}
+								else if(stato.equalsIgnoreCase("false")){
+									stato = "disabilitata";
+								}
+								else{
+									throw new Exception("Stato ["+stato+"] sconosciuto");
+								}
+							}catch(Exception e){
+								ControlStationCore.logError("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+								stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+							}
+							
+							if("abilitata".equals(stato)){
+								if(bf.length()>0){
+									bf.append("<BR/>");
+								}
+								String result = null;
+								try{
+									result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+											cache,
+											nomeMetodoResetCache);
+								}catch(Exception e){
+									String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"]: "+e.getMessage();
+									ControlStationCore.getLog().error(errorMessage,e);
+									result = errorMessage;
+								}
+								bf.append("Cache ["+cache+"]: "+result);
+							}
+						}
+						pd.setMessage(bf.toString());
+					
+					}
+				}
+				else{
+					try{
+						String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+								nomeCache,
+								nomeMetodo);
+						pd.setMessage("Cache ["+nomeCache+"]: "+result);
+					}catch(Exception e){
+						String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"]: "+e.getMessage();
+						ControlStationCore.getLog().error(errorMessage,e);
+						pd.setMessage(errorMessage);
+					}
 				}
 			}
 			

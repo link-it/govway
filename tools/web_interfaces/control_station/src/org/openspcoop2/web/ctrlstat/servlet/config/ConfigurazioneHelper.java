@@ -195,19 +195,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
-			de.setValue(idlecache);
-			if(view){
-				de.setType(DataElementType.TEXT_EDIT);
-			}
-			else{
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setName(nomeParametroIdleCache);
-			de.setSize( getSize());
-			dati.addElement(de);
-
-			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
 			de.setValue(lifecache);
 			if(view){
@@ -218,6 +205,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 			}
 			de.setName(nomeParametroLifeCache);
+			de.setSize( getSize());
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
+			de.setValue(idlecache);
+			if(view){
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(nomeParametroIdleCache);
 			de.setSize( getSize());
 			dati.addElement(de);
 		}
@@ -3003,6 +3003,55 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
 		
+		
+		boolean resetAllCaches = false;
+		List<String> caches = this.confCore.getJmxPdD_caches(alias);
+		if(caches!=null && caches.size()>0){
+			for (String cache : caches) {
+			
+				String stato = null;
+				try{
+					stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							cache,
+							this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+					if(stato.equalsIgnoreCase("true")){
+						stato = "abilitata";
+					}
+					else if(stato.equalsIgnoreCase("false")){
+						stato = "disabilitata";
+					}
+					else{
+						throw new Exception("Stato ["+stato+"] sconosciuto");
+					}
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+				
+				if("abilitata".equals(stato)){
+					resetAllCaches = true;
+					break;
+				}
+			}
+		}
+		if(resetAllCaches){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES+
+					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_resetCache(alias));
+			de.setType(DataElementType.LINK);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
+			de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}		
+		
+		
+		
+
+		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI);
 		de.setType(DataElementType.TITLE);
@@ -3203,7 +3252,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
-		List<String> caches = this.confCore.getJmxPdD_caches(alias);
+		caches = this.confCore.getJmxPdD_caches(alias);
 		if(caches!=null && caches.size()>0){
 			
 			for (String cache : caches) {
