@@ -37,8 +37,8 @@ import javax.servlet.http.HttpServletResponse;
  * Server EchoService
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: bussu $
- * @version $Rev: 10664 $, $Date: 2015-02-23 18:10:28 +0100 (Mon, 23 Feb 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 @SuppressWarnings("serial")

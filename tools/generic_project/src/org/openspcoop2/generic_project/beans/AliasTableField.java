@@ -24,7 +24,7 @@ package org.openspcoop2.generic_project.beans;
  * AliasTableField
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
+ * @author $Author$
  * @version $Rev$, $Date$
  */
 public class AliasTableField extends Field implements IAliasTableField {

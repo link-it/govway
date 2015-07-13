@@ -30,8 +30,8 @@ import org.openspcoop2.generic_project.web.input.Slider;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author: pintori $
- * @version $Rev: 11029 $, $Date: 2015-06-22 15:35:20 +0200(lun, 22 giu 2015) $ 
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class SliderImpl extends NumberImpl implements Slider{
