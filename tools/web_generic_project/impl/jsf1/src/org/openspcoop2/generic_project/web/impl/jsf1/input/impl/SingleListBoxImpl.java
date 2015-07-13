@@ -25,6 +25,16 @@ import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.SingleListBox;
 
+/***
+ * 
+ * SingleListBoxImpl
+ * 
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$ 
+ * 
+ */
 public class SingleListBoxImpl extends SelectListImpl implements SingleListBox<SelectItem>{
 
 	/**
