@@ -37,7 +37,7 @@
 
          <servizio-applicativo nome="Comune_SA" >
               <invocazione-porta>
-                 <credenziali tipo="basic" user="Comune_SA" password="123456" />
+                 <credenziali tipo="basic" user="Comune" password="123456" />
               </invocazione-porta>
           </servizio-applicativo>
 
@@ -48,25 +48,25 @@
 
       <soggetto tipo="PROXY" nome="CentroAnagrafico" > 
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11_PA" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP11_SA" /> 
           </porta-applicativa>
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12_PA" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP12_SA" />
           </porta-applicativa>
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11Sec_PA" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11Sec" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11Sec" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP11Sec_SA" />
           </porta-applicativa>
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12Sec_PA" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12Sec" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12Sec" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP12Sec_SA" />

@@ -26,7 +26,11 @@
 		 port-type="ComunicazioneVariazione"
 		 descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP11"
 		 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11.wsdl">
-	    <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11"/> 
+	    <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11">
+                     <connettore tipo="http" nome="Connector">
+                         <property nome="location" valore="http://localhost:8888/tutorial/oneway11" />
+                     </connettore>		
+	    </servizio> 
             <fruitore tipo="PROXY" nome="Comune" />
         </accordo-servizio-parte-specifica>
 
@@ -36,7 +40,11 @@
                  port-type="ComunicazioneVariazione"
                  descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP12"
                  wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12.wsdl">
-            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12"/>
+            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12">
+                     <connettore tipo="http" nome="Connector">
+                         <property nome="location" valore="http://localhost:8888/tutorial/oneway12" />
+                     </connettore>
+            </servizio>
             <fruitore tipo="PROXY" nome="Comune" />
         </accordo-servizio-parte-specifica>
 
@@ -46,7 +54,11 @@
                  port-type="ComunicazioneVariazione"
                  descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP11 con WSSecurity"
                  wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11Security.wsdl">
-            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11Sec"/>
+            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11Sec">
+                     <connettore tipo="http" nome="Connector">
+                         <property nome="location" valore="http://localhost:8888/tutorial/onewaySec11" />
+                     </connettore>
+            </servizio>
             <fruitore tipo="PROXY" nome="Comune" />
         </accordo-servizio-parte-specifica>
 
@@ -56,7 +68,11 @@
                  port-type="ComunicazioneVariazione"
                  descrizione="Esempio di accordo di servizio parte specifica (Oneway) per binding SOAP12 con WSSecurity"
                  wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12Security.wsdl">
-            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12Sec"/>
+            <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12Sec">
+                     <connettore tipo="http" nome="Connector">
+                         <property nome="location" valore="http://localhost:8888/tutorial/onewaySec12" />
+                     </connettore>
+            </servizio>
             <fruitore tipo="PROXY" nome="Comune" />
         </accordo-servizio-parte-specifica>
 

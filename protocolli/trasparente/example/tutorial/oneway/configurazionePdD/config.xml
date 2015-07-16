@@ -37,7 +37,7 @@
 
          <servizio-applicativo nome="Comune_SA" >
               <invocazione-porta>
-                 <credenziali tipo="basic" user="Comune_SA" password="123456" />
+                 <credenziali tipo="basic" user="Comune" password="123456" />
               </invocazione-porta>
           </servizio-applicativo>
 
@@ -48,25 +48,25 @@
 
       <soggetto tipo="PROXY" nome="CentroAnagrafico" > 
 
-          <porta-applicativa nome="ComunicazioneVariazioneSOAP11_PA" stateless="abilitato">
+          <porta-applicativa nome="ComunicazioneVariazioneSOAP11" stateless="abilitato">
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11" />
               <azione nome="Notifica" />
               <servizio-applicativo nome="ComunicazioneVariazioneSOAP11_SA" /> 
           </porta-applicativa>
 
-          <porta-applicativa nome="ComunicazioneVariazioneSOAP12_PA" stateless="abilitato">
+          <porta-applicativa nome="ComunicazioneVariazioneSOAP12" stateless="abilitato">
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12" />
               <azione nome="Notifica" />
               <servizio-applicativo nome="ComunicazioneVariazioneSOAP12_SA" />
           </porta-applicativa>
 
-          <porta-applicativa nome="ComunicazioneVariazioneSOAP11Sec_PA" stateless="abilitato">
+          <porta-applicativa nome="ComunicazioneVariazioneSOAP11Sec" stateless="abilitato">
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11Sec" />
               <azione nome="Notifica" />
               <servizio-applicativo nome="ComunicazioneVariazioneSOAP11Sec_SA" />
           </porta-applicativa>
 
-          <porta-applicativa nome="ComunicazioneVariazioneSOAP12Sec_PA" stateless="abilitato">
+          <porta-applicativa nome="ComunicazioneVariazioneSOAP12Sec" stateless="abilitato">
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12Sec" />
               <azione nome="Notifica" />
               <servizio-applicativo nome="ComunicazioneVariazioneSOAP12Sec_SA" />
