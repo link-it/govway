@@ -29,7 +29,7 @@ import org.openspcoop2.generic_project.web.form.SearchForm;
 /**
 *
 * BaseServiceWithBD Classe per la definizione dei metodi per interfacciarsi il livello Business Delegate.
-* Il parametro S di tipo {@link BaseSearchForm} e' un filtro di ricerca che viene popolato dall'interfaccia grafica.
+* Il parametro S di tipo BaseSearchForm e' un filtro di ricerca che viene popolato dall'interfaccia grafica.
 * Il parametro BD di tipo {@link BaseBD} e' il tipo generico della Business Delegate da utilizzare.
 * 
 * @param <BD> tipo della Business Delegate.

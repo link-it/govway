@@ -26,7 +26,7 @@ import org.openspcoop2.generic_project.web.form.Form;
 /**
  *
  * BaseService Classe per la definizione dei metodi per interfacciarsi con un eventuale livello Dao/Ejb.
- * Il parametro F di tipo {@link BaseForm} un form (Ricerca/CRUD) che viene popolato dall'interfaccia grafica.
+ * Il parametro F di tipo BaseForm un form (Ricerca/CRUD) che viene popolato dall'interfaccia grafica.
  * 
  * @param <F> tipo del form.
  * 
