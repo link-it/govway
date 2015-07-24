@@ -117,6 +117,19 @@ public class HttpUtilities {
 		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
 	}	
 	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
+		HttpResponseBody res = getHTTPResponse(path, readTimeout, connectTimeout, username, password);
+		return res.getResponse();
+	}
+	public static HttpResponseBody getHTTPResponse(String path) throws UtilsException{
+		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
+	}
+	public static HttpResponseBody getHTTPResponse(String path,int readTimeout,int connectTimeout) throws UtilsException{
+		return getHTTPResponse(path, readTimeout, connectTimeout, null, null);
+	}
+	public static HttpResponseBody getHTTPResponse(String path,String username,String password) throws UtilsException{
+		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
+	}	
+	public static HttpResponseBody getHTTPResponse(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
 		InputStream is = null;
 		ByteArrayOutputStream outResponse = null;
 		try{
@@ -165,7 +178,11 @@ public class HttpUtilities {
 
 			byte[] xmlottenuto = outResponse.toByteArray();
 			outResponse.close();
-			return xmlottenuto;
+			
+			HttpResponseBody response = new HttpResponseBody();
+			response.setResponse(xmlottenuto);
+			response.setResultHTTPOperation(resultHTTPOperation);
+			return response;
 		}catch(Exception e){
 			try{
 				if(is!=null)

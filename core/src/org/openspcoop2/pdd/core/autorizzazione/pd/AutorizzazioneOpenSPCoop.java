@@ -75,6 +75,11 @@ public class AutorizzazioneOpenSPCoop extends AbstractCore implements IAutorizza
     	esito.setServizioAutorizzato(true);
     	return esito;
     }
+
+	@Override
+	public boolean saveAuthorizationResultInCache() {
+		return true;
+	}
    
 }
 

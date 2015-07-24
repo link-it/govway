@@ -96,5 +96,11 @@ public class AutorizzazioneBusteRegistro extends AbstractCore implements IAutori
     	
     	return esito;
     }
+    
+    
+	@Override
+	public boolean saveAuthorizationResultInCache() {
+		return true;
+	}
 	
 }

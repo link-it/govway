@@ -280,8 +280,9 @@ public class GestoreAutorizzazione {
     	
     	checkDatiPortaDelegata(datiInvocazione);
     	
-    	if(GestoreAutorizzazione.cacheAutorizzazione==null){
-    		IAutorizzazionePortaDelegata auth = newInstanceAuthPortaDelegata(tipoAutorizzazione, pddContext, protocolFactory);
+    	IAutorizzazionePortaDelegata auth = newInstanceAuthPortaDelegata(tipoAutorizzazione, pddContext, protocolFactory);
+    	
+    	if(GestoreAutorizzazione.cacheAutorizzazione==null || !auth.saveAuthorizationResultInCache()){
     		return auth.process(datiInvocazione);
 		}
     	else{
@@ -305,7 +306,6 @@ public class GestoreAutorizzazione {
 
 				// Effettuo la query
 				GestoreAutorizzazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) ricerco nella configurazione...");
-				IAutorizzazionePortaDelegata auth = newInstanceAuthPortaDelegata(tipoAutorizzazione, pddContext, protocolFactory);
 				EsitoAutorizzazioneIntegrazione esito = auth.process(datiInvocazione);
 
 				// Aggiungo la risposta in cache (se esiste una cache)	
@@ -340,8 +340,9 @@ public class GestoreAutorizzazione {
     	  
     	checkDatiPortaApplicativa(datiInvocazione);
     	
-    	if(GestoreAutorizzazione.cacheAutorizzazione==null){
-    		IAutorizzazionePortaApplicativa auth = newInstanceAuthPortaApplicativa(tipoAutorizzazione, pddContext, protocolFactory);
+    	IAutorizzazionePortaApplicativa auth = newInstanceAuthPortaApplicativa(tipoAutorizzazione, pddContext, protocolFactory);
+    	
+    	if(GestoreAutorizzazione.cacheAutorizzazione==null || !auth.saveAuthorizationResultInCache()){
     		return auth.process(datiInvocazione);
 		}
     	else{
@@ -365,7 +366,6 @@ public class GestoreAutorizzazione {
 
 				// Effettuo la query
 				GestoreAutorizzazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) ricerco nella configurazione...");
-				IAutorizzazionePortaApplicativa auth = newInstanceAuthPortaApplicativa(tipoAutorizzazione, pddContext, protocolFactory);
 				EsitoAutorizzazioneCooperazione esito = auth.process(datiInvocazione);
 
 				// Aggiungo la risposta in cache (se esiste una cache)	

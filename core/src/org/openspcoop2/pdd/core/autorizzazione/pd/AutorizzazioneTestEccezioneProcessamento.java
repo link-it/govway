@@ -48,5 +48,9 @@ public class AutorizzazioneTestEccezioneProcessamento extends AbstractCore imple
     	
     }
    
+	@Override
+	public boolean saveAuthorizationResultInCache() {
+		return false;
+	}
 }
 

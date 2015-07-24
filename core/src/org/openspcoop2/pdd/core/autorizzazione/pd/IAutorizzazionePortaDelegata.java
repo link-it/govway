@@ -46,6 +46,8 @@ public interface IAutorizzazionePortaDelegata extends ICore {
      */
     public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione) throws AutorizzazioneException;
     
+    public boolean saveAuthorizationResultInCache();
+    
  
 }
 

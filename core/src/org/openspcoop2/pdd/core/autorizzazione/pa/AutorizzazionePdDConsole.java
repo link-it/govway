@@ -510,4 +510,8 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
     	return esito;
     }
 	
+	@Override
+	public boolean saveAuthorizationResultInCache() {
+		return true;
+	}
 }

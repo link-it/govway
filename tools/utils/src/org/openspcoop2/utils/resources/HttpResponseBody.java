@@ -19,32 +19,31 @@
  *
  */
 
-
-
-package org.openspcoop2.pdd.core.autorizzazione.pa;
-
-import org.openspcoop2.pdd.core.ICore;
+package org.openspcoop2.utils.resources;
 
 /**
- * Interfaccia che definisce un processo di autorizzazione per servizi applicativi che invocano richieste delegate.
+ * Classe che contiene la risposta http
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
+public class HttpResponseBody {
 
-public interface IAutorizzazionePortaApplicativa extends ICore {
-
-
-    /**
-     * Avvia il processo di autorizzazione.
-     *
-     * @param datiInvocazione datiInvocazione
-     * @return Esito dell'autorizzazione.
-     * 
-     */
-    public EsitoAutorizzazioneCooperazione process(DatiInvocazionePortaApplicativa datiInvocazione);
-    
-    public boolean saveAuthorizationResultInCache();
-    
+	byte[] response;
+	int resultHTTPOperation;
+	
+	public byte[] getResponse() {
+		return this.response;
+	}
+	public void setResponse(byte[] response) {
+		this.response = response;
+	}
+	public int getResultHTTPOperation() {
+		return this.resultHTTPOperation;
+	}
+	public void setResultHTTPOperation(int resultHTTPOperation) {
+		this.resultHTTPOperation = resultHTTPOperation;
+	}
+	
 }
