@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.2_lib"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.2_lib_axis14"/>
-        <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.2_lib_jboss4"/>
-        <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.2_lib_stub"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/op2_2.2.dev"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/op2_2.2.dev_testsuite"/>
-	<classpathentry kind="lib" path="/op2_2.2.dev/protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/stub_ws/validazioneContenutiWS_stub.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.3_lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.3_lib_axis14"/>
+        <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.3_lib_jboss4"/>
+        <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.3_lib_stub"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/op2_2.3.dev"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/op2_2.3.dev_testsuite"/>
+	<classpathentry kind="lib" path="/op2_2.3.dev/protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/stub_ws/validazioneContenutiWS_stub.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
