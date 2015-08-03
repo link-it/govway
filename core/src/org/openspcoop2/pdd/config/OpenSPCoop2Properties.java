@@ -1753,7 +1753,7 @@ public class OpenSPCoop2Properties {
 	 * 
 	 */
 	private static Boolean serverJ2EE = null;
-	public boolean isServerJ2EE() {	
+	public Boolean isServerJ2EE() {	
 		if(OpenSPCoop2Properties.serverJ2EE==null){
 			try{ 
 				String server = null;

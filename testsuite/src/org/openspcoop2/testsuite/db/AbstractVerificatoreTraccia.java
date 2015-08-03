@@ -878,7 +878,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 				String tipoRead = res.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_TIPO);
 				String nomeRead = res.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_NOME);
-				Integer versioneRead = res.getInt(CostantiDB.TRACCE_COLUMN_SERVIZIO_VERSIONE);
+				int versioneRead = res.getInt(CostantiDB.TRACCE_COLUMN_SERVIZIO_VERSIONE);
 
 				if(tipo==null){
 					if(tipoRead!=null)
@@ -897,13 +897,13 @@ public abstract class AbstractVerificatoreTraccia {
 				}
 
 				if(versione==null){
-					if(versioneRead!=null)
+					if(versioneRead<=0)
 						return false;
 				}else{
-					if(versioneRead==null){
+					if(versioneRead<=0){
 						return false;
 					}
-					if (!(versione.intValue()==versioneRead.intValue()))
+					if (!(versione.intValue()==versioneRead))
 						return false;
 				}
 			}

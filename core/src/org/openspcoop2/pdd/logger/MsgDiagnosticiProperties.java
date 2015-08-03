@@ -948,7 +948,7 @@ public class MsgDiagnosticiProperties {
 	
 	
 	/*---------- Get -------------*/
-	public int getLivello(String modulo,String keyLivelloPersonalizzato){
+	public Integer getLivello(String modulo,String keyLivelloPersonalizzato){
 		try{
 			String livello = MsgDiagnosticiProperties.livelliMsgDiagnosticiPersonalizzati.getValue(modulo+keyLivelloPersonalizzato);
 			if(livello!=null){

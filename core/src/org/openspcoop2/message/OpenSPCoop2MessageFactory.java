@@ -125,7 +125,6 @@ public abstract class OpenSPCoop2MessageFactory {
 	public abstract OpenSPCoop2Message createMessage(SOAPMessage msg) throws SOAPException,IOException;
 	protected abstract OpenSPCoop2Message _createMessage(MimeHeaders mhs, InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws SOAPException, IOException;	
 	
-	@SuppressWarnings("resource")
 	private OpenSPCoop2Message _createMessage(MimeHeaders mhs, InputStream is, NotifierInputStreamParams notifierInputStreamParams,
 			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws SOAPException, IOException, ParseException{	
 		
