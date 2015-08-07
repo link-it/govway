@@ -1,3 +1,13 @@
+Esempio di connettore da impostare in apache tomcat:
+
+<Connector port="8444" protocol="HTTP/1.1" SSLEnabled="true"
+           maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
+           emptySessionPath="true"
+           scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
+           keystoreFile="/etc/openspcoop2/keys/erogatore.jks"
+           keystorePass="openspcoop"/>
+
+
 Esempio di connettore da impostare nel file server.xml del Tomcat presente nelle versioni 4.x, 5.x e 6.x di JBoss:
 
 <Connector port="8444" protocol="HTTP/1.1" SSLEnabled="true" 
@@ -33,7 +43,7 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
 
 
 
-Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di JBoss/Wildfly 8.x:
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly 8.x:
 
 
     <management>
