@@ -1,3 +1,14 @@
+2015-08-05  Andrea Poli <apoli@link.it>
+
+	* [Pdd,PddConsole]
+	Aggiunta funzionalità OP-393
+	Strutturato tramite un oggetto del SDK (org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport) 
+	l'Esito di una importazione di archivio.
+	L'oggetto ritornato dalle utility di importazione degli archivi viene trasformato in una Stringa visualizzabile all'utente
+	da parte della pddConsole attraverso l'sdk org.openspcoop2.protocol.sdk.archive.IArchive.toString(ArchiveEsitoImport).
+	Questa strutturazione ha permesso di fornire un resoconto dell'import differente e più preciso 
+	a seconda del tipo di archivio importato: OpenSPCoop o package CNIPA. 
+
 2015-08-04  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 2.2
