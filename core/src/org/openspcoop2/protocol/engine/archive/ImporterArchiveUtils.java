@@ -64,6 +64,9 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
@@ -71,6 +74,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 
@@ -131,119 +135,86 @@ public class ImporterArchiveUtils {
 
 	
 	
-	public String importArchive(Archive archive, String userLogin,
+	public ArchiveEsitoImport importArchive(Archive archive, String userLogin,
 			boolean utilizzoAzioniDiretteInAccordoAbilitato,
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto) throws Exception,ImportInformationMissingException{
 		try{
 			
-			StringBuffer bfEsito = new StringBuffer();
+			ArchiveEsitoImport esito = new ArchiveEsitoImport();
 			
 			
 			// Pdd
-			if(archive.getPdd().size()>0){
-				bfEsito.append("PorteDominio (").append(archive.getPdd().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getPdd().size(); i++) {
+				ArchivePdd archivePdd = archive.getPdd().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePdd);
 				try{
-					ArchivePdd archivePdd = archive.getPdd().get(i);
-					String nomePdd= archivePdd.getNomePdd();
-					bfEsito.append("\t- [").append(nomePdd).append("] ");
-					this.importPdd(archivePdd, bfEsito);
+					this.importPdd(archivePdd, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getPdd().size()>0){
-				bfEsito.append("\n");	
+				esito.getPdd().add(detail);
 			}
 			
 			
 			
 			// Soggetti
-			if(archive.getSoggetti().size()>0){
-				bfEsito.append("Soggetti (").append(archive.getSoggetti().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getSoggetti().size(); i++) {
+				ArchiveSoggetto archiveSoggetto = archive.getSoggetti().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveSoggetto);
 				try{
-					ArchiveSoggetto archiveSoggetto = archive.getSoggetti().get(i);
-					IDSoggetto idSoggetto = archiveSoggetto.getIdSoggetto();
-					bfEsito.append("\t- [").append(idSoggetto.toString()).append("] ");
-					this.importSoggetto(archiveSoggetto, bfEsito);
+					this.importSoggetto(archiveSoggetto, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getSoggetti().size()>0){
-				bfEsito.append("\n");	
+				esito.getSoggetti().add(detail);
 			}
 			
 
 			// Servizi Applicativi
-			if(archive.getServiziApplicativi().size()>0){
-				bfEsito.append("ServiziApplicativi (").append(archive.getServiziApplicativi().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
+				ArchiveServizioApplicativo archiveServizioApplicativo = archive.getServiziApplicativi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveServizioApplicativo);
 				try{
-					ArchiveServizioApplicativo archiveServizioApplicativo = archive.getServiziApplicativi().get(i);
 					archiveServizioApplicativo.update();
-					IDServizioApplicativo idServizioApplicativo = archiveServizioApplicativo.getIdServizioApplicativo();
-					bfEsito.append("\t- [").append(idServizioApplicativo.getIdSoggettoProprietario().toString()).
-							append("_").append(idServizioApplicativo.getNome()).append("] ");
-					this.importServizioApplicativo(archiveServizioApplicativo, bfEsito);
+					this.importServizioApplicativo(archiveServizioApplicativo, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getServiziApplicativi().size()>0){
-				bfEsito.append("\n");	
+				esito.getServiziApplicativi().add(detail);
 			}
 			
 			
 			// Accordi di Cooperazione
-			if(archive.getAccordiCooperazione().size()>0){
-				bfEsito.append("Accordi di Cooperazione (").append(archive.getAccordiCooperazione().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getAccordiCooperazione().size(); i++) {
+				ArchiveAccordoCooperazione archiveAccordoCooperazione = archive.getAccordiCooperazione().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoCooperazione);
 				try{
-					ArchiveAccordoCooperazione archiveAccordoCooperazione = archive.getAccordiCooperazione().get(i);
 					archiveAccordoCooperazione.update();
-					IDAccordoCooperazione idAccordoCooperazione = archiveAccordoCooperazione.getIdAccordoCooperazione();
-					String uriAccordo = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoCooperazione);
-					bfEsito.append("\t- [").append(uriAccordo).append("] ");
-					this.importAccordoCooperazione(archiveAccordoCooperazione, bfEsito);
+					this.importAccordoCooperazione(archiveAccordoCooperazione, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getAccordiCooperazione().size()>0){
-				bfEsito.append("\n");	
+				esito.getAccordiCooperazione().add(detail);
 			}
 			
 			
 			// Accordi di Servizio Parte Comune
-			if(archive.getAccordiServizioParteComune().size()>0){
-				bfEsito.append("Accordi di Servizio Parte Comune (").append(archive.getAccordiServizioParteComune().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getAccordiServizioParteComune().size(); i++) {
+				ArchiveAccordoServizioParteComune archiveAccordoServizioParteComune = archive.getAccordiServizioParteComune().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioParteComune);
 				try{
-					ArchiveAccordoServizioParteComune archiveAccordoServizioParteComune = archive.getAccordiServizioParteComune().get(i);
 					archiveAccordoServizioParteComune.update();
-					IDAccordo idAccordo = archiveAccordoServizioParteComune.getIdAccordoServizioParteComune();
-					String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-					bfEsito.append("\t- [").append(uriAccordo).append("] ");
-					this.importAccordoServizioParteComune(archiveAccordoServizioParteComune, utilizzoAzioniDiretteInAccordoAbilitato, bfEsito);
+					this.importAccordoServizioParteComune(archiveAccordoServizioParteComune, utilizzoAzioniDiretteInAccordoAbilitato, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getAccordiServizioParteComune().size()>0){
-				bfEsito.append("\n");	
+				esito.getAccordiServizioParteComune().add(detail);
 			}
 			
 			
@@ -277,162 +248,117 @@ public class ImporterArchiveUtils {
 			
 			
 			// Accordi di Servizio Parte Specifica (implementano accordi di servizio parte comune)
-			if(listAccordiServizioParteSpecifica.size()>0){
-				bfEsito.append("Accordi di Servizio Parte Specifica (").append(listAccordiServizioParteSpecifica.size()).append(")\n");
-			}
 			for (int i = 0; i < listAccordiServizioParteSpecifica.size(); i++) {
+				ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica = listAccordiServizioParteSpecifica.get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioParteSpecifica);
 				try{
-					ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica = listAccordiServizioParteSpecifica.get(i);
 					//archiveAccordoServizioParteSpecifica.update(); eseguito durante la preparazione della lista listAccordiServizioParteSpecifica
-					IDAccordo idAccordo = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
-					String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-					bfEsito.append("\t- [").append(uriAccordo).append("] ");
 					this.importAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica, false, 
 							isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 							isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
-							bfEsito);
+							detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(listAccordiServizioParteSpecifica.size()>0){
-				bfEsito.append("\n");	
+				esito.getAccordiServizioParteSpecifica().add(detail);
 			}
 			
 			
 			// Accordi di Servizio Composto
-			if(archive.getAccordiServizioComposto().size()>0){
-				bfEsito.append("Accordi di Servizio Composto (").append(archive.getAccordiServizioComposto().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getAccordiServizioComposto().size(); i++) {
+				ArchiveAccordoServizioComposto archiveAccordoServizioComposto = archive.getAccordiServizioComposto().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioComposto);
 				try{
-					ArchiveAccordoServizioComposto archiveAccordoServizioComposto = archive.getAccordiServizioComposto().get(i);
 					archiveAccordoServizioComposto.update();
-					IDAccordo idAccordo = archiveAccordoServizioComposto.getIdAccordoServizioParteComune();
-					String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-					bfEsito.append("\t- [").append(uriAccordo).append("] ");
-					this.importAccordoServizioComposto(archiveAccordoServizioComposto, utilizzoAzioniDiretteInAccordoAbilitato, bfEsito);
+					this.importAccordoServizioComposto(archiveAccordoServizioComposto, utilizzoAzioniDiretteInAccordoAbilitato, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getAccordiServizioComposto().size()>0){
-				bfEsito.append("\n");	
+				esito.getAccordiServizioComposto().add(detail);
 			}
 
 			
 			// Accordi di Servizio Parte Specifica (implementano accordi di servizio composto)
-			if(listAccordiServizioParteSpecifica_serviziComposti.size()>0){
-				bfEsito.append("Accordi di Servizio Parte Specifica (").
-					append(listAccordiServizioParteSpecifica_serviziComposti.size()).append(") [accordi di servizio composto]\n");
-			}
 			for (int i = 0; i < listAccordiServizioParteSpecifica_serviziComposti.size(); i++) {
+				ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica = listAccordiServizioParteSpecifica_serviziComposti.get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioParteSpecifica);
 				try{
-					ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica = listAccordiServizioParteSpecifica_serviziComposti.get(i);
 					//archiveAccordoServizioParteSpecifica.update(); eseguito durante la preparazione della lista listAccordiServizioParteSpecifica_serviziComposti
-					IDAccordo idAccordo = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
-					String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-					bfEsito.append("\t- [").append(uriAccordo).append("] ");
 					this.importAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica, true, 
 							isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 							isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
-							bfEsito);
+							detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(listAccordiServizioParteSpecifica_serviziComposti.size()>0){
-				bfEsito.append("\n");	
+				esito.getAccordiServizioParteSpecificaServiziComposti().add(detail);
 			}
 			
 			
 			// Fruitori
-			if(archive.getAccordiFruitori().size()>0){
-				bfEsito.append("Fruitori (").append(archive.getAccordiFruitori().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
+				ArchiveFruitore archiveFruitore = archive.getAccordiFruitori().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveFruitore);
 				try{
-					ArchiveFruitore archiveFruitore = archive.getAccordiFruitori().get(i);
 					archiveFruitore.update();
-					IDAccordo idAccordo = archiveFruitore.getIdAccordoServizioParteSpecifica();
-					String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-					IDSoggetto idFruitore = archiveFruitore.getIdSoggettoFruitore();
-					bfEsito.append("\t- ["+idFruitore+"] -> [").append(uriAccordo).append("] ");
-					this.importFruitore(archiveFruitore, bfEsito);
+					this.importFruitore(archiveFruitore, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getAccordiFruitori().size()>0){
-				bfEsito.append("\n");	
+				esito.getAccordiFruitori().add(detail);
 			}
 			
 			
 			// PorteDelegate
-			if(archive.getPorteDelegate().size()>0){
-				bfEsito.append("PorteDelegate (").append(archive.getPorteDelegate().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
+				ArchivePortaDelegata archivePortaDelegata = archive.getPorteDelegate().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePortaDelegata);
 				try{
-					ArchivePortaDelegata archivePortaDelegata = archive.getPorteDelegate().get(i);
 					archivePortaDelegata.update();
-					IDPortaDelegata idPortaDelegata = archivePortaDelegata.getIdPortaDelegata();
-					IDSoggetto idProprietario = archivePortaDelegata.getIdSoggettoProprietario();
-					bfEsito.append("\t- ["+idProprietario+"]["+idPortaDelegata.getLocationPD()+"] ");
-					this.importPortaDelegata(archivePortaDelegata, bfEsito);
+					this.importPortaDelegata(archivePortaDelegata, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getPorteDelegate().size()>0){
-				bfEsito.append("\n");	
+				esito.getPorteDelegate().add(detail);
 			}
 			
 			
 			// PorteApplicative
-			if(archive.getPorteApplicative().size()>0){
-				bfEsito.append("PorteApplicative (").append(archive.getPorteApplicative().size()).append(")\n");
-			}
 			for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
+				ArchivePortaApplicativa archivePortaApplicativa = archive.getPorteApplicative().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePortaApplicativa);
 				try{
-					ArchivePortaApplicativa archivePortaApplicativa = archive.getPorteApplicative().get(i);
 					archivePortaApplicativa.update();
-					IDPortaApplicativaByNome idPortaApplicativa = archivePortaApplicativa.getIdPortaApplicativaByNome();
-					bfEsito.append("\t- ["+idPortaApplicativa.getSoggetto()+"]["+idPortaApplicativa.getNome()+"] ");
-					this.importPortaApplicativa(archivePortaApplicativa, bfEsito);
+					this.importPortaApplicativa(archivePortaApplicativa, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-			}
-			if(archive.getPorteApplicative().size()>0){
-				bfEsito.append("\n");	
+				esito.getPorteApplicative().add(detail);
 			}
 			
 			
 			
 			// Configurazione
 			if(archive.getConfigurazionePdD()!=null){
-				bfEsito.append("Configurazione\n");
+				Configurazione configurazione = archive.getConfigurazionePdD();
+				ArchiveEsitoImportDetailConfigurazione detail = new ArchiveEsitoImportDetailConfigurazione(configurazione);
 				try{
-					Configurazione configurazione = archive.getConfigurazionePdD();
-					bfEsito.append("\t- ");
-					this.importConfigurazione(configurazione, bfEsito);
+					this.importConfigurazione(configurazione, detail);
 				}catch(Exception e){
-					bfEsito.append("\t- non importata: ").append(e.getMessage());
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
 				}
-				bfEsito.append("\n");
-				bfEsito.append("\n");
+				esito.setConfigurazionePdD(detail);
 			}
 			
 			
-			
-			return bfEsito.toString();
+			return esito;
 			
 		}catch(Exception e){
 			throw e;
@@ -442,7 +368,7 @@ public class ImporterArchiveUtils {
 	
 	
 	
-	public void importPdd(ArchivePdd archivePdd,StringBuffer bf){
+	public void importPdd(ArchivePdd archivePdd,ArchiveEsitoImportDetail detail){
 		
 		String nomePdd = archivePdd.getNomePdd();
 		try{
@@ -450,7 +376,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsPortaDominio(nomePdd)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -512,20 +439,21 @@ public class ImporterArchiveUtils {
 			
 			// --- info ---
 			if(create){
-				bf.append("importato correttamente");
+				detail.setState(ArchiveStatoImport.CREATED);
 			}else{
-				bf.append("già presente, aggiornato correttamente");
+				detail.setState(ArchiveStatoImport.UPDATED);
 			}
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import della porta di dominio ["+nomePdd+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
 	
 	
-	public void importSoggetto(ArchiveSoggetto archiveSoggetto,StringBuffer bf){
+	public void importSoggetto(ArchiveSoggetto archiveSoggetto,ArchiveEsitoImportDetail detail){
 		
 		IDSoggetto idSoggetto = archiveSoggetto.getIdSoggetto();
 		try{
@@ -538,7 +466,8 @@ public class ImporterArchiveUtils {
 				// --- check esistenza ---
 				if(this.updateAbilitato==false){
 					if(this.importerEngine.existsSoggettoRegistro(idSoggetto)){
-						throw new Exception("già presente (aggiornamento non abilitato)");
+						detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+						return;
 					}
 				}
 				
@@ -621,7 +550,8 @@ public class ImporterArchiveUtils {
 				// --- check esistenza ---
 				if(this.updateAbilitato==false){
 					if(this.importerEngine.existsSoggettoConfigurazione(idSoggetto) && !create){
-						throw new Exception("già presente (aggiornamento non abilitato)");
+						detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+						return;
 					}
 				}
 				
@@ -689,15 +619,16 @@ public class ImporterArchiveUtils {
 			
 			// --- upload ---
 			if(create){
-				bf.append("importato correttamente");
+				detail.setState(ArchiveStatoImport.CREATED);
 			}else{
-				bf.append("già presente, aggiornato correttamente");
+				detail.setState(ArchiveStatoImport.UPDATED);
 			}
 			
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import del soggetto ["+idSoggetto+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
@@ -705,7 +636,7 @@ public class ImporterArchiveUtils {
 	
 	
 	public void importServizioApplicativo(ArchiveServizioApplicativo archiveServizioApplicativo,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDServizioApplicativo idServizioApplicativo = archiveServizioApplicativo.getIdServizioApplicativo();
 		IDSoggetto idSoggettoProprietario = archiveServizioApplicativo.getIdSoggettoProprietario();
@@ -714,7 +645,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsServizioApplicativo(idServizioApplicativo)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -770,12 +702,12 @@ public class ImporterArchiveUtils {
 
 				// update
 				this.importerEngine.updateServizioApplicativo(archiveServizioApplicativo.getServizioApplicativo());
-				bf.append("già presente, aggiornato correttamente");
+				detail.setState(ArchiveStatoImport.UPDATED);
 			}
 			// --- create ---
 			else{
 				this.importerEngine.createServizioApplicativo(archiveServizioApplicativo.getServizioApplicativo());
-				bf.append("importato correttamente");
+				detail.setState(ArchiveStatoImport.CREATED);
 			}
 				
 
@@ -783,7 +715,8 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import del servizio applicativo ["+idServizioApplicativo+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
@@ -792,7 +725,7 @@ public class ImporterArchiveUtils {
 	
 
 	public void importAccordoCooperazione(ArchiveAccordoCooperazione archiveAccordoCooperazione,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDAccordoCooperazione idAccordoCooperazione = archiveAccordoCooperazione.getIdAccordoCooperazione();
 		IDSoggetto idSoggettoReferente = archiveAccordoCooperazione.getIdSoggettoReferente();
@@ -801,7 +734,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoCooperazione(idAccordoCooperazione)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -913,12 +847,14 @@ public class ImporterArchiveUtils {
 
 				// update
 				this.importerEngine.updateAccordoCooperazione(archiveAccordoCooperazione.getAccordoCooperazione());
-				bf.append("già presente, aggiornato correttamente").append(warningInfoStatoFinale.toString());
+				detail.setState(ArchiveStatoImport.UPDATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString());
 			}
 			// --- create ---
 			else{
 				this.importerEngine.createAccordoCooperazione(archiveAccordoCooperazione.getAccordoCooperazione());
-				bf.append("importato correttamente").append(warningInfoStatoFinale.toString());
+				detail.setState(ArchiveStatoImport.CREATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString());
 			}
 				
 
@@ -926,7 +862,8 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import dell'accordo di cooperazione ["+idAccordoCooperazione+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
@@ -940,7 +877,7 @@ public class ImporterArchiveUtils {
 	
 	public void importAccordoServizioParteComune(ArchiveAccordoServizioParteComune archiveAccordoServizioParteComune,
 			boolean utilizzoAzioniDiretteInAccordoAbilitato,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteComune.getIdAccordoServizioParteComune();
 		IDSoggetto idSoggettoReferente = archiveAccordoServizioParteComune.getIdSoggettoReferente();
@@ -948,7 +885,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioParteComune)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -1043,17 +981,15 @@ public class ImporterArchiveUtils {
 
 				// update
 				this.importerEngine.updateAccordoServizioParteComune(archiveAccordoServizioParteComune.getAccordoServizioParteComune());
-				bf.append("già presente, aggiornato correttamente").
-					append(warningInfoStatoFinale.toString()).
-					append(warningAderenzaWSDL.toString());
+				detail.setState(ArchiveStatoImport.UPDATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString()+warningAderenzaWSDL.toString());
 					
 			}
 			// --- create ---
 			else{
 				this.importerEngine.createAccordoServizioParteComune(archiveAccordoServizioParteComune.getAccordoServizioParteComune());
-				bf.append("importato correttamente").
-					append(warningInfoStatoFinale.toString()).
-					append(warningAderenzaWSDL.toString());
+				detail.setState(ArchiveStatoImport.CREATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString()+warningAderenzaWSDL.toString());
 			}
 				
 
@@ -1061,14 +997,15 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import dell'accordo di servizio parte comune ["+idAccordoServizioParteComune+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
 	
 	public void importAccordoServizioComposto(ArchiveAccordoServizioComposto archiveAccordoServizioComposto,
 			boolean utilizzoAzioniDiretteInAccordoAbilitato,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDAccordo idAccordoServizioComposto = archiveAccordoServizioComposto.getIdAccordoServizioParteComune();
 		IDSoggetto idSoggettoReferente = archiveAccordoServizioComposto.getIdSoggettoReferente();
@@ -1078,7 +1015,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioComposto)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -1265,17 +1203,15 @@ public class ImporterArchiveUtils {
 
 				// update
 				this.importerEngine.updateAccordoServizioParteComune(archiveAccordoServizioComposto.getAccordoServizioParteComune());
-				bf.append("già presente, aggiornato correttamente").
-					append(warningInfoStatoFinale.toString()).
-					append(warningAderenzaWSDL.toString());
+				detail.setState(ArchiveStatoImport.UPDATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString()+warningAderenzaWSDL.toString());
 					
 			}
 			// --- create ---
 			else{
 				this.importerEngine.createAccordoServizioParteComune(archiveAccordoServizioComposto.getAccordoServizioParteComune());
-				bf.append("importato correttamente").
-					append(warningInfoStatoFinale.toString()).
-					append(warningAderenzaWSDL.toString());
+				detail.setState(ArchiveStatoImport.CREATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString()+warningAderenzaWSDL.toString());
 			}
 				
 
@@ -1283,7 +1219,8 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import dell'accordo di servizio parte comune ["+idAccordoServizioComposto+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
@@ -1427,7 +1364,7 @@ public class ImporterArchiveUtils {
 			boolean servizioComposto,
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteComune();
 		IDAccordo idAccordoServizioParteSpecifica = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
@@ -1441,7 +1378,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -1601,15 +1539,15 @@ public class ImporterArchiveUtils {
 
 				// update
 				this.importerEngine.updateAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica());
-				bf.append("già presente, aggiornato correttamente").
-					append(warningInfoStatoFinale.toString());
+				detail.setState(ArchiveStatoImport.UPDATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString());
 					
 			}
 			// --- create ---
 			else{
 				this.importerEngine.createAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica());
-				bf.append("importato correttamente").
-					append(warningInfoStatoFinale.toString());
+				detail.setState(ArchiveStatoImport.CREATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString());
 			}
 				
 
@@ -1617,7 +1555,8 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import dell'accordo di servizio parte specifica ["+idAccordoServizioParteSpecifica+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
@@ -1625,7 +1564,7 @@ public class ImporterArchiveUtils {
 	
 	
 	public void importFruitore(ArchiveFruitore archiveFruitore,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDAccordo idAccordoServizioParteSpecifica = archiveFruitore.getIdAccordoServizioParteSpecifica();
 		IDSoggetto idSoggettoFruitore = archiveFruitore.getIdSoggettoFruitore();
@@ -1648,7 +1587,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(old!=null){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -1741,17 +1681,18 @@ public class ImporterArchiveUtils {
 			oldAccordo.getServizio().setOldNomeSoggettoErogatoreForUpdate(oldAccordo.getServizio().getNomeSoggettoErogatore());
 			this.importerEngine.updateAccordoServizioParteSpecifica(oldAccordo);
 			if(old!=null){
-				bf.append("già presente, aggiornato correttamente").
-					append(warningInfoStatoFinale.toString());
+				detail.setState(ArchiveStatoImport.UPDATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString());
 			}else{
-				bf.append("importato correttamente").
-					append(warningInfoStatoFinale.toString());
+				detail.setState(ArchiveStatoImport.CREATED);
+				detail.setStateDetail(warningInfoStatoFinale.toString());
 			}
 					
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import del fruitore["+idSoggettoFruitore+"] dell'accordo di servizio parte specifica ["+idAccordoServizioParteSpecifica+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
@@ -1759,7 +1700,7 @@ public class ImporterArchiveUtils {
 	
 	
 	public void importPortaDelegata(ArchivePortaDelegata archivePortaDelegata,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDPortaDelegata idPortaDelegata = archivePortaDelegata.getIdPortaDelegata();
 		IDSoggetto idSoggettoProprietario = archivePortaDelegata.getIdSoggettoProprietario();
@@ -1767,7 +1708,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsPortaDelegata(idPortaDelegata)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -1894,12 +1836,12 @@ public class ImporterArchiveUtils {
 
 				// update
 				this.importerEngine.updatePortaDelegata(pd);
-				bf.append("già presente, aggiornato correttamente");
+				detail.setState(ArchiveStatoImport.UPDATED);
 			}
 			// --- create ---
 			else{
 				this.importerEngine.createPortaDelegata(pd);
-				bf.append("importato correttamente");
+				detail.setState(ArchiveStatoImport.CREATED);
 			}
 				
 
@@ -1907,7 +1849,8 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import della porta delegata ["+idPortaDelegata+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
@@ -1917,7 +1860,7 @@ public class ImporterArchiveUtils {
 	
 	
 	public void importPortaApplicativa(ArchivePortaApplicativa archivePortaApplicativa,
-			StringBuffer bf){
+			ArchiveEsitoImportDetail detail){
 		
 		IDPortaApplicativa idPortaApplicativa = archivePortaApplicativa.getIdPortaApplicativa();
 		IDPortaApplicativaByNome idPortaApplicativaByNome = archivePortaApplicativa.getIdPortaApplicativaByNome();
@@ -1926,7 +1869,8 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsPortaApplicativa(idPortaApplicativaByNome.getNome(),idSoggettoProprietario)){
-					throw new Exception("già presente (aggiornamento non abilitato)");
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
 				}
 			}
 			
@@ -2048,12 +1992,12 @@ public class ImporterArchiveUtils {
 
 				// update
 				this.importerEngine.updatePortaApplicativa(pa);
-				bf.append("già presente, aggiornato correttamente");
+				detail.setState(ArchiveStatoImport.UPDATED);
 			}
 			// --- create ---
 			else{
 				this.importerEngine.createPortaApplicativa(pa);
-				bf.append("importato correttamente");
+				detail.setState(ArchiveStatoImport.CREATED);
 			}
 				
 
@@ -2061,21 +2005,23 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import della porta applicativa ["+idPortaApplicativa+"]: "+e.getMessage(),e);
-			bf.append("non importato: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 	
 	
 	
-	public void importConfigurazione(Configurazione configurazionePdD, StringBuffer bf){		
+	public void importConfigurazione(Configurazione configurazionePdD, ArchiveEsitoImportDetailConfigurazione detail){		
 		try{
 			// update
 			this.importerEngine.updateConfigurazione(configurazionePdD);
-			bf.append("aggiornata correttamente");
+			detail.setState(ArchiveStatoImport.UPDATED);
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import della configurazione: "+e.getMessage(),e);
-			bf.append("non importata: ").append(e.getMessage());
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
 		}
 	}
 }

@@ -566,7 +566,8 @@ public final class Importer extends Action {
 			de = new DataElement();
 			de.setLabel("");
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-			de.setValue(archiviCore.importArchive(archive, userLogin, archiviHelper.smista(), 
+			de.setValue(archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
+					userLogin, archiviHelper.smista(), 
 					this.updateEnabled, nomePddOperativa));
 			de.setName("Resoconto");
 			de.setRows(30);

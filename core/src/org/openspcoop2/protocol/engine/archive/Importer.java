@@ -28,6 +28,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
@@ -117,11 +118,12 @@ public class Importer {
 		ImporterArchiveUtils importerArchiveUtils = 
 				new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, tipoPddDefault,
 						isShowGestioneWorkflowStatoDocumenti, updateAbilitato);
-		String result = importerArchiveUtils.importArchive(archive, userLogin, 
+		ArchiveEsitoImport result = importerArchiveUtils.importArchive(archive, userLogin, 
 				isShowAccordiColonnaAzioni,
 				isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto, 
 				isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto);
-		log.info(result);
+		String resultAsString = archiveEngine.toString(result, archiveMode);
+		log.info(resultAsString);
 		
 
 	}

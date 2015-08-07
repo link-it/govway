@@ -31,18 +31,39 @@ import java.util.Map;
 import javax.wsdl.BindingOperation;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
+import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
+import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
+import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
+import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
@@ -64,9 +85,13 @@ import org.w3c.dom.Document;
  */
 public class BasicArchive implements IArchive {
 
-	private IProtocolFactory protocolFactory = null;
+	protected IProtocolFactory protocolFactory = null;
+	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory;
+	protected IDAccordoFactory idAccordoFactory;
 	public BasicArchive(IProtocolFactory protocolFactory){
 		this.protocolFactory = protocolFactory;
+		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+		this.idAccordoFactory = IDAccordoFactory.getInstance();
 	}
 	
 	@Override
@@ -279,6 +304,314 @@ public class BasicArchive implements IArchive {
 	
 	
 	
+	/* ----- Utilita' generali di interpretazione di un Esito ----- */
+	
+	private String toString(ArchiveEsitoImport archive){
+		
+		StringBuffer bfEsito = new StringBuffer();
+		
+		// Pdd
+		if(archive.getPdd().size()>0){
+			bfEsito.append("PorteDominio (").append(archive.getPdd().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getPdd().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archivePdd = archive.getPdd().get(i);
+				String nomePdd = ((ArchivePdd)archivePdd.getArchiveObject()).getNomePdd();
+				bfEsito.append("\t- [").append(nomePdd).append("] ");
+				serializeStato(archivePdd, bfEsito);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getPdd().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Soggetti
+		if(archive.getSoggetti().size()>0){
+			bfEsito.append("Soggetti (").append(archive.getSoggetti().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getSoggetti().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveSoggetto = archive.getSoggetti().get(i);
+				IDSoggetto idSoggetto =((ArchiveSoggetto)archiveSoggetto.getArchiveObject()).getIdSoggetto();
+				bfEsito.append("\t- [").append(idSoggetto.toString()).append("] ");
+				serializeStato(archiveSoggetto, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getSoggetti().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Servizi Applicativi
+		if(archive.getServiziApplicativi().size()>0){
+			bfEsito.append("ServiziApplicativi (").append(archive.getServiziApplicativi().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveServizioApplicativo = archive.getServiziApplicativi().get(i);
+				IDServizioApplicativo idServizioApplicativo = ((ArchiveServizioApplicativo)archiveServizioApplicativo.getArchiveObject()).getIdServizioApplicativo();
+				bfEsito.append("\t- [").append(idServizioApplicativo.getIdSoggettoProprietario().toString()).
+						append("_").append(idServizioApplicativo.getNome()).append("] ");
+				serializeStato(archiveServizioApplicativo, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getServiziApplicativi().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Accordi di Cooperazione
+		if(archive.getAccordiCooperazione().size()>0){
+			bfEsito.append("Accordi di Cooperazione (").append(archive.getAccordiCooperazione().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getAccordiCooperazione().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveAccordoCooperazione = archive.getAccordiCooperazione().get(i);
+				IDAccordoCooperazione idAccordoCooperazione = ((ArchiveAccordoCooperazione)archiveAccordoCooperazione.getArchiveObject()).getIdAccordoCooperazione();
+				String uriAccordo = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoCooperazione);
+				bfEsito.append("\t- [").append(uriAccordo).append("] ");
+				serializeStato(archiveAccordoCooperazione, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAccordiCooperazione().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Accordi di Servizio Parte Comune
+		if(archive.getAccordiServizioParteComune().size()>0){
+			bfEsito.append("Accordi di Servizio Parte Comune (").append(archive.getAccordiServizioParteComune().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getAccordiServizioParteComune().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveAccordoServizioParteComune = archive.getAccordiServizioParteComune().get(i);
+				IDAccordo idAccordo = ((ArchiveAccordoServizioParteComune)archiveAccordoServizioParteComune.getArchiveObject()).getIdAccordoServizioParteComune();
+				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				bfEsito.append("\t- [").append(uriAccordo).append("] ");
+				serializeStato(archiveAccordoServizioParteComune, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAccordiServizioParteComune().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Accordi di Servizio Parte Specifica (implementano accordi di servizio parte comune)
+		if(archive.getAccordiServizioParteSpecifica().size()>0){
+			bfEsito.append("Accordi di Servizio Parte Specifica (").append(archive.getAccordiServizioParteSpecifica().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveAccordoServizioParteSpecifica = archive.getAccordiServizioParteSpecifica().get(i);
+				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				bfEsito.append("\t- [").append(uriAccordo).append("] ");
+				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAccordiServizioParteSpecifica().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Accordi di Servizio Composto
+		if(archive.getAccordiServizioComposto().size()>0){
+			bfEsito.append("Accordi di Servizio Composto (").append(archive.getAccordiServizioComposto().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getAccordiServizioComposto().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveAccordoServizioComposto = archive.getAccordiServizioComposto().get(i);
+				IDAccordo idAccordo = ((ArchiveAccordoServizioComposto)archiveAccordoServizioComposto.getArchiveObject()).getIdAccordoServizioParteComune();
+				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				bfEsito.append("\t- [").append(uriAccordo).append("] ");
+				serializeStato(archiveAccordoServizioComposto, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAccordiServizioComposto().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Accordi di Servizio Parte Specifica (implementano accordi di servizio composto)
+		if(archive.getAccordiServizioParteSpecificaServiziComposti().size()>0){
+			bfEsito.append("Accordi di Servizio Parte Specifica (").
+				append(archive.getAccordiServizioParteSpecificaServiziComposti().size()).append(") [accordi di servizio composto]\n");
+		}
+		for (int i = 0; i < archive.getAccordiServizioParteSpecificaServiziComposti().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveAccordoServizioParteSpecifica = archive.getAccordiServizioParteSpecificaServiziComposti().get(i);
+				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				bfEsito.append("\t- [").append(uriAccordo).append("] ");
+				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAccordiServizioParteSpecificaServiziComposti().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Fruitori
+		if(archive.getAccordiFruitori().size()>0){
+			bfEsito.append("Fruitori (").append(archive.getAccordiFruitori().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveFruitore = archive.getAccordiFruitori().get(i);
+				IDAccordo idAccordo = ((ArchiveFruitore)archiveFruitore.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				IDSoggetto idFruitore = ((ArchiveFruitore)archiveFruitore.getArchiveObject()).getIdSoggettoFruitore();
+				bfEsito.append("\t- ["+idFruitore+"] -> [").append(uriAccordo).append("] ");
+				serializeStato(archiveFruitore, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAccordiFruitori().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// PorteDelegate
+		if(archive.getPorteDelegate().size()>0){
+			bfEsito.append("PorteDelegate (").append(archive.getPorteDelegate().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archivePortaDelegata = archive.getPorteDelegate().get(i);
+				IDPortaDelegata idPortaDelegata = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdPortaDelegata();
+				IDSoggetto idProprietario = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdSoggettoProprietario();
+				bfEsito.append("\t- ["+idProprietario+"]["+idPortaDelegata.getLocationPD()+"] ");
+				serializeStato(archivePortaDelegata, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getPorteDelegate().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// PorteApplicative
+		if(archive.getPorteApplicative().size()>0){
+			bfEsito.append("PorteApplicative (").append(archive.getPorteApplicative().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archivePortaApplicativa = archive.getPorteApplicative().get(i);
+				IDPortaApplicativaByNome idPortaApplicativa = ((ArchivePortaApplicativa)archivePortaApplicativa.getArchiveObject()).getIdPortaApplicativaByNome();
+				bfEsito.append("\t- ["+idPortaApplicativa.getSoggetto()+"]["+idPortaApplicativa.getNome()+"] ");
+				serializeStato(archivePortaApplicativa, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getPorteApplicative().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Configurazione
+		if(archive.getConfigurazionePdD()!=null){
+			bfEsito.append("Configurazione\n");
+			try{
+				ArchiveEsitoImportDetailConfigurazione configurazione = archive.getConfigurazionePdD();
+				bfEsito.append("\t- ");
+				serializeStato(configurazione, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- non importata: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+			bfEsito.append("\n");
+		}
+		
+		
+		return bfEsito.toString();
+	}
+	private void serializeStato(ArchiveEsitoImportDetail detail,StringBuffer bfEsito){
+		String stateDetail = "";
+		if(detail.getStateDetail()!=null){
+			stateDetail = detail.getStateDetail();
+		}
+		switch (detail.getState()) {
+		case UPDATE_NOT_PERMISSED:
+			bfEsito.append("non importato: già presente (aggiornamento non abilitato)").append(stateDetail);
+			break;
+		case ERROR:
+			if(detail.getStateDetail()!=null){
+				stateDetail = " ["+detail.getStateDetail()+"]";
+			}
+			bfEsito.append("non importato"+stateDetail+": ").append(detail.getException().getMessage());
+			break;
+		case CREATED:
+			bfEsito.append("importato correttamente").append(stateDetail);
+			break;
+		case UPDATED:
+			bfEsito.append("già presente, aggiornato correttamente").append(stateDetail);
+			break;
+		}
+	}
+	private void serializeStato(ArchiveEsitoImportDetailConfigurazione detail,StringBuffer bfEsito){
+		String stateDetail = "";
+		if(detail.getStateDetail()!=null){
+			stateDetail = detail.getStateDetail();
+		}
+		switch (detail.getState()) {
+		case UPDATE_NOT_PERMISSED:
+			// Stato mai usato per questo oggetto
+			break;
+		case ERROR:
+			if(detail.getStateDetail()!=null){
+				stateDetail = " ["+detail.getStateDetail()+"]";
+			}
+			bfEsito.append("non importata"+stateDetail+": ").append(detail.getException().getMessage());
+			break;
+		case CREATED:
+			// Stato mai usato per questo oggetto
+			break;
+		case UPDATED:
+			bfEsito.append("aggiornata correttamente").append(stateDetail);
+			break;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/* ----- Import ----- */
 	
 	@Override
@@ -314,6 +647,11 @@ public class BasicArchive implements IArchive {
 			}catch(Exception eClose){}
 		}
 		
+	}
+	
+	@Override
+	public String toString(ArchiveEsitoImport esito, ArchiveMode archiveMode) throws ProtocolException{
+		return this.toString(esito);
 	}
 	
 	

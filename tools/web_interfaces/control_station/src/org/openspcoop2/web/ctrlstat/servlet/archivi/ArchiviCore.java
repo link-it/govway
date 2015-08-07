@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.engine.archive.ImporterArchiveUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
 import org.openspcoop2.protocol.sdk.archive.ExportMode;
@@ -174,7 +175,7 @@ public class ArchiviCore extends ControlStationCore {
 		}
 	}
 	
-	public String importArchive(Archive archive, String userLogin, boolean smista,
+	public String importArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista,
 			boolean updateAbilitato, String nomePddOperativa) throws Exception,ImportInformationMissingException{
 		
 		Connection con = null;
@@ -193,10 +194,14 @@ public class ArchiviCore extends ControlStationCore {
 					new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, this.getImportArchivi_tipoPdD(), 
 							this.isShowGestioneWorkflowStatoDocumenti(), updateAbilitato);
 			
-			return importerArchiveUtils.importArchive(archive, userLogin, 
+			ArchiveEsitoImport esito = importerArchiveUtils.importArchive(archive, userLogin, 
 					this.isShowAccordiColonnaAzioni(),
 					this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto(), 
 					this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto());
+			
+			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			IArchive archiveEngine = pf.createArchive();
+			return archiveEngine.toString(esito, archiveMode);
 						
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);

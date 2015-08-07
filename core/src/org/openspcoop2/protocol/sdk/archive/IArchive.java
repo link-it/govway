@@ -97,6 +97,14 @@ public interface IArchive {
 			IRegistryReader registryReader,boolean validationDocuments,
 			MapPlaceholder placeholder) throws ProtocolException;
 	
+	/**
+	 * Converte l'esito dell'operazione di import di un archivio in una stringa
+	 * 
+	 * @param esito esito dell'operazione di import
+	 * @param archiveMode archiveMode
+	 * @return Rappresentazione a Stringa dell'esito dell'importazione
+	 */
+	public String toString(ArchiveEsitoImport esito, ArchiveMode archiveMode) throws ProtocolException;
 	
 	
 	
