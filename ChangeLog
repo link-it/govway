@@ -1,5 +1,16 @@
 2015-08-31  Andrea Poli <apoli@link.it>
 
+	* [Pdd]
+	Risolto Bug OP-402
+	In presenza di un problema di risoluzione del nome dell'host durante la fase 
+	di consegna di un messaggio applicativo o di inoltro di una busta, 
+	veniva generato un messaggio generico, senza indicazioni sul motivo (host unknown):
+	Es. Vecchio Diagnostico ->  Errore avvenuto durante la consegna HTTP: serverDemo
+	E' stato esteso il diagnostico per indicare che l'errore è dovuto ad un host unknown.
+	Es. Nuovo Diagnostico -> Errore avvenuto durante la consegna HTTP: unknown host 'serverDemo'
+
+2015-08-31  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria]
 	Risolto Bug OP-400
 	Antinstaller non avviava la GUI o la command line di installazione (CreateUIFilter)
