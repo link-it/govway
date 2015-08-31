@@ -5,126 +5,21 @@
 	attributeFormDefault="unqualified">
 	
 	
-	<!-- *** Un  Wizard è composto da uno o più step **** -->
-	
 	<xsd:element name="openspcoop2">
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="wizard" minOccurs="0" />
-				<xsd:element ref="step" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element ref="soggetto" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="input" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-cooperazione" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-servizio-parte-comune" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="accordo-servizio-composto" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="fruitore" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
-	<!-- Wizard -->	
-	
-	<xsd:element name="wizard" type="Wizard" />
-	<xsd:complexType name="Wizard">
-		<xsd:sequence>
-			<xsd:element name="requisiti" type="Requisiti" minOccurs="0"/>
-		</xsd:sequence>
-		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
-		<xsd:attribute name="intestazione-originale" type="xsd:boolean" use="optional" />
-	</xsd:complexType>
-	<xsd:complexType name="Requisiti">
-		<xsd:sequence>
-			<xsd:element name="protocollo" type="RequisitoProtocollo" minOccurs="0" maxOccurs="unbounded"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="RequisitoProtocollo">
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-	</xsd:complexType>
-	
-	<!-- Step -->	
-	
-	<xsd:element name="step">
-		<xsd:complexType>
-			<xsd:choice>
-				<xsd:element ref="input" />
-				<xsd:element ref="soggetto" />
-				<xsd:element ref="servizio-applicativo" />
-				<xsd:element ref="accordo-cooperazione" />
-				<xsd:element ref="accordo-servizio-parte-comune" />
-				<xsd:element ref="accordo-servizio-parte-specifica" />
-				<xsd:element ref="accordo-servizio-composto" />
-				<xsd:element ref="fruitore" />
-			</xsd:choice>
-			<xsd:attribute name="id-step" type="xsd:string" use="required"/>
-			<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
-			<xsd:attribute name="hidden" type="xsd:boolean" use="optional" default="false"/>
-		</xsd:complexType>
-	</xsd:element>
-	
-	
-	
-	<!-- *** Una tipologia input permette di sovrascrivere un template dentro un xml **** -->
-	<xsd:element name="input" type="Input" />
-	<xsd:complexType name="Input">
-		<xsd:sequence>
-			<xsd:element name="widget" type="Widget" maxOccurs="unbounded"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="Widget">
-		<xsd:choice>
-			<xsd:element name="edit" type="WidgetEditValue" />
-			<xsd:element name="select" type="WidgetEditValue" />
-			<xsd:element name="title" type="WidgetEditValue" />
-		</xsd:choice>
-		
-		FINIREEEEEEEE
-		
-	</xsd:complexType>
-	
-	<xsd:complexType name="WidgetEditValue">
-		<xsd:attribute name="placeholder" type="xsd:string" />
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="default" type="xsd:string" use="optional"/>
-		<xsd:attribute name="type" type="WidgetEditValueType" use="optional"/>
-	</xsd:complexType>
-	<xsd:simpleType name="WidgetEditValueType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="text"/>
-			<xsd:enumeration value="textedit"/>
-			<xsd:enumeration value="crypt"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	
-	<xsd:complexType name="WidgetEditValue">
-		<xsd:attribute name="placeholder" type="xsd:string" />
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="default" type="xsd:string" use="optional"/>
-		<xsd:attribute name="type" type="WidgetEditValueType" use="optional"/>
-	</xsd:complexType>
-	<xsd:simpleType name="WidgetEditValueType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="text"/>
-			<xsd:enumeration value="textedit"/>
-			<xsd:enumeration value="crypt"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	
-	<xsd:complexType name="Proprieta">
-		<xsd:attribute name="placeholder" type="xsd:string" use="optional"/> <!-- Non serve in un title -->
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="default" type="xsd:string" use="optional"/>
-		<xsd:attribute name="type" type="InterfaceType" use="optional"/>
-	</xsd:complexType>
-	<xsd:simpleType name="InterfaceType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="text"/>
-			<xsd:enumeration value="textedit"/>
-			<xsd:enumeration value="crypt"/>
-			<xsd:enumeration value="checkbox"/>
-			<xsd:enumeration value="select"/>
-			<xsd:enumeration value="title"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	
-	
-	
-	
-	
 	
 	<xsd:complexType name="replaceMatchType">
 		<xsd:sequence>
@@ -296,5 +191,42 @@
 	</xsd:simpleType>
 	
 	
+	<!-- Input -->
+	
+	<xsd:element name="input" type="Input" />
+	
+	<xsd:complexType name="Input">
+		<xsd:sequence>
+			<xsd:element name="proprieta" type="Proprieta" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Proprieta">
+		<xsd:attribute name="placeholder" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="default" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Wizard -->	
+	
+	<xsd:element name="wizard" type="Wizard" />
+	
+	<xsd:complexType name="Wizard">
+		<xsd:sequence>
+			<xsd:element name="requisiti" type="Requisiti" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="step" type="xsd:int" use="optional"/>
+		<xsd:attribute name="intestazione-originale" type="xsd:boolean" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="Requisiti">
+		<xsd:sequence>
+			<xsd:element name="protocollo" type="RequisitoProtocollo" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RequisitoProtocollo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
 	
 </xsd:schema>
