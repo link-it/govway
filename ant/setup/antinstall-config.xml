@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
 <installer name="OpenSPCoop2 Installer v2.2" defaultImageResource="/logoSetup.png"
+    ui="swing,text"
+	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275">
     
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->

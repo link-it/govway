@@ -32,8 +32,8 @@
 	
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
-		<delete dir="${build}" />
-		<delete dir="${dist}" />
+		<delete dir="${build}" includeemptydirs="true" verbose="true" />
+		<delete dir="${dist}" includeemptydirs="true" verbose="true" />
 	</target>
 
 	

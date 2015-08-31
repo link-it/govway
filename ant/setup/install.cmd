@@ -21,7 +21,7 @@ set INTERFACE=text
 goto install
 
 :setswing
-set COMMAND="start %JAVA_HOME%\bin\javaw"
+set COMMAND="%JAVA_HOME%\bin\javaw"
 set INTERFACE=swing
 goto install
 
