@@ -143,8 +143,8 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			this.requestMsg =  request.getRequestMessage();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
 			return false;
 		}
 		this.propertiesTrasporto = request.getPropertiesTrasporto();
@@ -339,7 +339,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				
 			}catch(javax.xml.soap.SOAPException sendError){
 				this.eccezioneProcessamento = sendError;
-				String errorMsg = sendError.getMessage();
+				String errorMsg = this.readExceptionMessageFromException(sendError);
 				connection.close();
 				this.errore = "Errore avvenuto durante la consegna SOAP (lettura risposta): " + errorMsg;
 				return false;
@@ -418,8 +418,8 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			return true;
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore avvenuto durante la consegna SOAP: "+e.getMessage());
-			this.errore = "Errore avvenuto durante la consegna SOAP: "+e.getMessage();
+			this.logger.error("Errore avvenuto durante la consegna SOAP: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore avvenuto durante la consegna SOAP: "+this.readExceptionMessageFromException(e);
 			return false;
 		}
 	}

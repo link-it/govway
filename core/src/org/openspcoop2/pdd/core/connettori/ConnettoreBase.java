@@ -262,4 +262,17 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     	 	
     }
+    
+    protected String readExceptionMessageFromException(Throwable e) {
+    	
+    	// In questo metodo è possibile gestire meglio la casistica dei messaggi di errore ritornati.
+    	
+    	// 1. Host Unknown
+    	// java.net.UnknownHostException
+    	if(e instanceof java.net.UnknownHostException){
+    		return "unknown host '"+e.getMessage()+"'";
+    	}
+    	
+    	return e.getMessage();
+    }
 }

@@ -254,7 +254,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
 			this.logger.error("Riscontrato errore durante l'echo del msg soap",e);
-			this.errore = "Riscontrato errore durante l'echo del msg soap:" +e.getMessage();
+			this.errore = "Riscontrato errore durante l'echo del msg soap:" +this.readExceptionMessageFromException(e);
 			return false;
 		}finally{
 			// release database
@@ -377,7 +377,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 						connectionDB.commit();
 						connectionDB.setAutoCommit(true);
 					}catch (Exception e) {	
-						this.logger.error("Riscontrato errore durante la gestione transazione del DB per la richiesta: "+e.getMessage());
+						this.logger.error("Riscontrato errore durante la gestione transazione del DB per la richiesta: "+e.getMessage(),e);
 						// Rollback quanto effettuato (se l'errore e' avvenuto sul commit, o prima nell'execute delle PreparedStatement)
 						try{
 							connectionDB.rollback();

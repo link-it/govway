@@ -119,7 +119,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
 			this.logger.error("Riscontrato errore durante la writeTo",e);
-			this.errore = "Riscontrato errore durante la writeTo: " +e.getMessage();
+			this.errore = "Riscontrato errore durante la writeTo: " +this.readExceptionMessageFromException(e);
 			return false;
 		}
 		
@@ -131,7 +131,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
 			this.logger.error("Riscontrato errore durante la gestione PostOutRequestHandler",e);
-			this.errore = "Riscontrato errore durante la gestione PostOutRequestHandler: " +e.getMessage();
+			this.errore = "Riscontrato errore durante la gestione PostOutRequestHandler: " +this.readExceptionMessageFromException(e);
 			return false;
 		}
 			
@@ -160,7 +160,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
 			this.logger.error("Riscontrato errore durante la generazione di un msg SoapVuoto",e);
-			this.errore = "Riscontrato errore durante la generazione di un msg SoapVuoto: " +e.getMessage();
+			this.errore = "Riscontrato errore durante la generazione di un msg SoapVuoto: " +this.readExceptionMessageFromException(e);
 			return false;
 		}
 		

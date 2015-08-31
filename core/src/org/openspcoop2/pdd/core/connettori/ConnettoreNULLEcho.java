@@ -364,7 +364,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
 			this.logger.error("Riscontrato errore durante l'echo del msg soap",e);
-			this.errore = "Riscontrato errore durante l'echo del msg soap:" +e.getMessage();
+			this.errore = "Riscontrato errore durante l'echo del msg soap:" +this.readExceptionMessageFromException(e);
 			return false;
 		}finally{
 			

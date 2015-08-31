@@ -223,8 +223,8 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			this.requestMsg =  request.getRequestMessage();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
 			return false;
 		}
 		this.sbustamentoSoap = request.isSbustamentoSOAP();
@@ -238,8 +238,8 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			}
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
 			return false;
 		}
 
@@ -263,8 +263,8 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			this.setSSLContext();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.logger.error("[HTTPS error]"+ e.getMessage());
-			this.errore = "[HTTPS error]"+ e.getMessage();
+			this.logger.error("[HTTPS error]"+ this.readExceptionMessageFromException(e),e);
+			this.errore = "[HTTPS error]"+ this.readExceptionMessageFromException(e);
 			return false;
 		}
 	
@@ -305,7 +305,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 			try{
 				this.proxyPort = Integer.parseInt(proxyPortTmp);
 			}catch(Exception e){
-				this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+"' non corretta: "+e.getMessage();
+				this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT+"' non corretta: "+this.readExceptionMessageFromException(e);
 				return false;
 			}
 			
@@ -1064,8 +1064,8 @@ public class ConnettoreHTTP extends ConnettoreBase {
 									
 									if( premature == false ){
 										this.eccezioneProcessamento = e;
-										this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
-										this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
+										this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e);
+										this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e),e);
 										if(result2XX){
 											return false;
 										}
@@ -1159,8 +1159,8 @@ public class ConnettoreHTTP extends ConnettoreBase {
 							
 							if( premature == false ){
 								this.eccezioneProcessamento = e;
-								this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage();
-								this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + e.getMessage());
+								this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e);
+								this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e),e);
 								if(result2XX){
 									return false;
 								}
@@ -1168,7 +1168,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 						}
 					}catch(Exception e){
 						this.eccezioneProcessamento = e;
-						this.errore = "Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+"): " + e.getMessage();
+						this.errore = "Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+"): " + this.readExceptionMessageFromException(e);
 						this.logger.error("Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+")",e);
 						return false;
 					}
@@ -1188,8 +1188,8 @@ public class ConnettoreHTTP extends ConnettoreBase {
 						}
 					}catch(Exception e){
 						this.eccezioneProcessamento = e;
-						this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage();
-						this.logger.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + e.getMessage());
+						this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + this.readExceptionMessageFromException(e);
+						this.logger.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + this.readExceptionMessageFromException(e),e);
 						return false;
 					}
 	
@@ -1204,8 +1204,8 @@ public class ConnettoreHTTP extends ConnettoreBase {
 
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.errore = "Errore avvenuto durante la consegna HTTP: "+e.getMessage();
-			this.logger.error("Errore avvenuto durante la consegna HTTP: "+e.getMessage(),e);
+			this.errore = "Errore avvenuto durante la consegna HTTP: "+this.readExceptionMessageFromException(e);
+			this.logger.error("Errore avvenuto durante la consegna HTTP: "+this.readExceptionMessageFromException(e),e);
 			return false;
 		} 
 	}

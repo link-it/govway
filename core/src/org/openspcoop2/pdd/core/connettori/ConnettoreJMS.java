@@ -149,8 +149,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 			this.requestMsg =  request.getRequestMessage();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
 			return false;
 		}
 		this.sbustamentoSoap = request.isSbustamentoSOAP();
@@ -646,7 +646,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
 			this.logger.error("Errore avvenuto durante la consegna JMS",e);
-			this.errore = "Errore avvenuto durante la consegna JMS: "+e.getMessage();
+			this.errore = "Errore avvenuto durante la consegna JMS: "+this.readExceptionMessageFromException(e);
 			try{
 				// Rilascio Risorse
 				sender.close();

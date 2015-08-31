@@ -121,8 +121,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			this.requestMsg =  request.getRequestMessage();
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+e.getMessage(),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+e.getMessage();
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
 			return false;
 		}
 		this.propertiesTrasporto = request.getPropertiesTrasporto();
@@ -144,7 +144,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		try{
 			pFactory = this.buildProtocolFactoryForForwardMessage(this.properties);
 		}catch(Exception e){
-			this.errore = e.getMessage();
+			this.errore = this.readExceptionMessageFromException(e);
 			return false;
 		}
 				
@@ -170,7 +170,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 					this.logger.debug("Creazione URL...");
 				this.buildLocation(this.properties,true);
 			}catch(Exception e){
-				this.errore = e.getMessage();
+				this.errore = this.readExceptionMessageFromException(e);
 				return false;
 			}
 			
@@ -292,8 +292,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			return true;
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore avvenuto durante la consegna SOAP: "+e.getMessage());
-			this.errore = "Errore avvenuto durante la consegna SOAP: "+e.getMessage();
+			this.logger.error("Errore avvenuto durante la consegna SOAP: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore avvenuto durante la consegna SOAP: "+this.readExceptionMessageFromException(e);
 			return false;
 		}	
     }
