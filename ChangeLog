@@ -1,6 +1,12 @@
 2015-09-01  Giuliano Pintori <pintori@link.it>
 
         * [WebGenericProject]
+        Aggiunta funzionalità OP-398
+	Aggiunta implementazione Jsf2 della libreria con framework grafico Richfaces 4.
+
+2015-09-01  Giuliano Pintori <pintori@link.it>
+
+        * [WebGenericProject]
         Aggiunta funzionalità OP-388
 	Sistemata gestione delle risorse all'interno dell'implementazione JSF1 della libreria.
 	Estratte le classi comuni alle implementazioni JSF1 e JSF2 e spostate all'interno della libreria base.
