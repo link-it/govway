@@ -69,19 +69,12 @@
         <archive path="/op2_2.3.dev/lib/log/slf4j-api-1.6.2.jar"/>
         <archive path="/op2_2.3.dev/lib/log/log4j-1.2.16.jar"/>
 	<!-- lucene -->
-        <archive path="/op2_2.2.dev/lib/lucene/lucene-core-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-analyzers-common-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-codecs-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-misc-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-queries-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-suggest-4.7.0.jar"/>
-	<!-- lucene -->
-        <archive path="/op2_2.2.dev/lib/lucene/lucene-core-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-analyzers-common-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-codecs-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-misc-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-queries-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-suggest-4.7.0.jar"/>
+        <archive path="/op2_2.3.dev/lib/lucene/lucene-core-4.7.0.jar"/>
+	<archive path="/op2_2.3.dev/lib/lucene/lucene-analyzers-common-4.7.0.jar"/>
+	<archive path="/op2_2.3.dev/lib/lucene/lucene-codecs-4.7.0.jar"/>
+	<archive path="/op2_2.3.dev/lib/lucene/lucene-misc-4.7.0.jar"/>
+	<archive path="/op2_2.3.dev/lib/lucene/lucene-queries-4.7.0.jar"/>
+	<archive path="/op2_2.3.dev/lib/lucene/lucene-suggest-4.7.0.jar"/>
 	<!-- security -->
         <archive path="/op2_2.3.dev/lib/security/xmlsec-1.5.4.jar"/>
         <archive path="/op2_2.3.dev/lib/security/wss4j-1.6.10.jar"/>
@@ -113,8 +106,7 @@
         <archive path="/op2_2.3.dev/lib/shared/addressing-1.0.jar"/>
         <archive path="/op2_2.3.dev/lib/shared/activation-1.1.1.jar"/>
         <archive path="/op2_2.3.dev/lib/shared/aspectjrt-1.7.3.jar"/>
-	<archive path="/op2_2.2.dev/lib/shared/freemarker-2.3.23.jar"/>
-	<archive path="/op2_2.2.dev/lib/shared/freemarker-2.3.19.jar"/>
+	<archive path="/op2_2.3.dev/lib/shared/freemarker-2.3.23.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_2.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_2.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
