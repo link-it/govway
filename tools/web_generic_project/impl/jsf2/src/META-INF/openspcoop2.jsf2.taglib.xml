@@ -33,9 +33,29 @@
    		<source>components/form/form.xhtml</source>
    	</tag>
    	
-   		<tag>
+   	   	<tag>
+   		<tag-name>editForm</tag-name>
+   		<source>components/form/editForm.xhtml</source>
+   	</tag>
+   	
+   	<tag>
    		<tag-name>searchForm</tag-name>
    		<source>components/form/searchForm.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>search</tag-name>
+   		<source>components/search/search.xhtml</source>
+   	</tag>
+   	
+   	
+   	<tag>
+   		<tag-name>formFields</tag-name>
+   		<source>components/form/formFields.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>searchFields</tag-name>
+   		<source>components/form/searchFields.xhtml</source>
    	</tag>
    
    	<!-- Generic Form field -->
@@ -85,6 +105,14 @@
    		<tag-name>inputNumber</tag-name>
    		<source>components/input/inputNumber.xhtml</source>
    	</tag>
+   	 <tag>
+   		<tag-name>inputSlider</tag-name>
+   		<source>components/input/inputSlider.xhtml</source>
+   	</tag>
+   	 <tag>
+   		<tag-name>inputSpinner</tag-name>
+   		<source>components/input/inputSpinner.xhtml</source>
+   	</tag>
    	
    	<!-- Componente Select List -->
    	<tag>
@@ -96,6 +124,18 @@
    	<tag>
    		<tag-name>inputBooleanCheckBox</tag-name>
    		<source>components/input/inputBooleanCheckBox.xhtml</source>
+   	</tag>
+   	
+   		<!-- Componente Check Box Multiple -->
+   	<tag>
+   		<tag-name>inputMultipleCheckBox</tag-name>
+   		<source>components/input/inputMultipleCheckBox.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente RadioButton -->
+   	<tag>
+   		<tag-name>inputRadioButton</tag-name>
+   		<source>components/input/inputRadioButton.xhtml</source>
    	</tag>
    	
    	   	<!-- Componente Input Text Secret -->
@@ -116,6 +156,18 @@
    		<source>components/input/inputTextArea.xhtml</source>
    	</tag>
    	
+   	   		<!-- Componente List Box Multiple -->
+   	<tag>
+   		<tag-name>inputMultipleListBox</tag-name>
+   		<source>components/input/inputMultipleListBox.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente Single List Box -->
+   	<tag>
+   		<tag-name>inputSingleListBox</tag-name>
+   		<source>components/input/inputSingleListBox.xhtml</source>
+   	</tag>
+   	
     <!-- Output Text -->
     <tag>
    		<tag-name>outputText</tag-name>
@@ -130,6 +182,11 @@
    	<tag>
    		<tag-name>outputValuta</tag-name>
    		<source>components/output/outputValuta.xhtml</source>
+   	</tag>
+   	
+   	   	<tag>
+   		<tag-name>outputNumber</tag-name>
+   		<source>components/output/outputNumber.xhtml</source>
    	</tag>
    	
    	<tag>
@@ -149,6 +206,11 @@
    		<source>components/table/genericColumn.xhtml</source>
    	</tag>
    	
+   	<tag>
+   		<tag-name>tableColumns</tag-name>
+   		<source>components/table/genericColumns.xhtml</source>
+   	</tag>
+   	
    	  <tag>
    		<tag-name>textColumn</tag-name>
    		<source>components/table/textColumn.xhtml</source>
@@ -159,6 +221,11 @@
    		<source>components/table/valutaColumn.xhtml</source>
    	</tag>
    	
+   	<tag>
+   		<tag-name>numberColumn</tag-name>
+   		<source>components/table/numberColumn.xhtml</source>
+   	</tag>
+   	
    	  <tag>
    		<tag-name>dateColumn</tag-name>
    		<source>components/table/dateColumn.xhtml</source>
@@ -167,6 +234,26 @@
    	  <tag>
    		<tag-name>iconColumn</tag-name>
    		<source>components/table/iconColumn.xhtml</source>
+   	</tag>
+
+   	<!-- List View Paginata -->
+   	<tag>
+   		<tag-name>pagedListView</tag-name>
+   		<source>components/presentation/pagedListView.xhtml</source>
+   	</tag>
+   	   	<tag>
+   		<tag-name>managedPagedListView</tag-name>
+   		<source>components/presentation/managedPagedListView.xhtml</source>
+   	</tag>
+   	
+   	<!-- List View Semplice -->
+   	<tag>
+   		<tag-name>simpleListView</tag-name>
+   		<source>components/presentation/simpleListView.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>managedSimpleListView</tag-name>
+   		<source>components/presentation/managedSimpleListView.xhtml</source>
    	</tag>
    	
 </facelet-taglib>

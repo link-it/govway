@@ -20,16 +20,19 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf2.form;
 
+
 import org.openspcoop2.generic_project.web.form.CostantiForm;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 
-/**
- * Implementazione base per un oggetto Search Form.
+/***
+ * 
+ * Implementazione base di un form di ricerca.
+ * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
  *  @author $Author$
  * @version $Rev$, $Date$ 
- *
+ * 
  */
 public abstract class BaseSearchForm extends BaseForm implements SearchForm {
 
@@ -69,7 +72,6 @@ public abstract class BaseSearchForm extends BaseForm implements SearchForm {
 	
 	@Override
 	public Integer getNumeroPagine() {
-		// TODO Auto-generated method stub
 		return this.numeroPagine;
 	}
 
@@ -190,6 +192,14 @@ public abstract class BaseSearchForm extends BaseForm implements SearchForm {
 		return this.id;
 	}
  
+	@Override
+	public void setObject(Object object) throws Exception {
+
+	}
+
+	@Override
+	public Object getObject() throws Exception {return null;
+	}
 
 
 }

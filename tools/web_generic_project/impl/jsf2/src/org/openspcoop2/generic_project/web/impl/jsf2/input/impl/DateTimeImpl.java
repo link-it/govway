@@ -45,6 +45,6 @@ public class DateTimeImpl extends BaseFormField<Date> implements DateTime {
 		super();
 
 		this.setType(FieldType.DATE);
-		this.setPattern("dd/M/yy HH:mm:ss");
+		this.setPattern("dd/MM/yyyy HH:mm:ss");
 	}
 }

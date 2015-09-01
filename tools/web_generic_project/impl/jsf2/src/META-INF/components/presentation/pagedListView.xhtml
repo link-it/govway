@@ -1,0 +1,103 @@
+
+<!DOCTYPE ui:component
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<ui:component xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages"/>
+	<h:outputScript xmlns="" name="jquery.js"/>
+	
+	<c:if test="#{empty id}">
+		<c:set var="id" value="listView"/>
+	</c:if>
+	
+	<c:if test="#{empty value}">
+		<c:set var="value" value="#{mBean.value}"/>
+	</c:if>
+	<c:if test="#{empty showAddButton}">
+		<c:set var="showAddButton" value="false"/>
+	</c:if>
+	<c:if test="#{empty showDetailColumn}">
+		<c:set var="showDetailColumn" value="false"/>
+	</c:if>
+	<c:if test="#{empty detailColumnPosition}">
+		<c:set var="detailColumnPosition" value="right"/>
+	</c:if>
+	<c:if test="#{empty detailLinkText}">
+		<c:set var="detailLinkText" value="#{commonsMsg['commons.button.dettaglio.title']}"/>
+	</c:if>
+	
+	<c:if test="#{empty width}">
+		<c:set var="width" value="100%"/>
+	</c:if>
+	
+	<c:if test="#{empty rowsToDisplay}">
+		<c:set var="rowsToDisplay" value="#{mBean.search.pageSize}"/>
+	</c:if>
+	<c:if test="#{empty rowsToDisplay}">
+		<c:set var="rowsToDisplay" value="25"/>
+	</c:if>
+	<c:if test="#{empty showSelectAll}">
+		<c:set var="showSelectAll" value="true"/>
+	</c:if>
+	<c:if test="#{empty enableDelete}">
+		<c:set var="enableDelete" value="true"/>
+	</c:if>
+	<c:if test="#{empty isList}">
+		<c:set var="isList" value="false"/>
+	</c:if>
+	
+	<c:if test="#{empty noDataText}">
+		<c:set var="noDataText" value="#{commonsMsg['pagedDataTable.noData']}"/>
+	</c:if>
+	
+	<c:if test="#{empty customRowClasses}">
+		<c:set var="customRowClasses" value="even,odd"/>
+	</c:if>
+	
+	<c:if test="#{empty topScrollerStyleClass}">
+		<c:set var="topScrollerStyleClass" value="acent"/>
+	</c:if>
+	
+	<c:if test="#{empty itemMetadata}">
+		<c:set var="itemMetadata" value="#{mBean.metadata}"/>
+	</c:if>
+	
+	<a4j:outputPanel id="#{id}" ajaxRendered="false" layout="block">
+		<h:form>
+			<op2web:dataTable value="#{value}" id="#{id}_dt" enableDelete="#{enableDelete}" headerText="#{headerText}" showSelectAll="#{showSelectAll}" mBean="#{mBean}" selectionMapTarget="#{mBean.selectedIds[item]}" rowsToDisplay="#{mBean.search.pageSize}" styleClass="#{styleClass}" headerClass="#{headerClass}" footerClass="#{footerClass}">
+				<f:facet name="noData">
+					<h:outputText value="#{noDataText}" styleClass="acent"/>
+				</f:facet>
+				
+				<!-- Link dettagli a sinistra-->
+				<rich:column style="text-align: center;" id="dtlClmn_sx" rendered="#{showDetailColumn and not empty mBean and detailColumnPosition == 'left'}">
+					<h:panelGroup>
+						<a4j:commandLink id="#{id}_dettaglio_btn_sx" action="#{mBean.dettaglio}" execute="@this">
+							<a4j:param assignTo="#{mBean.selectedIdParam}" name="#{mBean.selectedIdParamName}" value="#{item.DTO.id}" />
+							<h:graphicImage xmlns="" width="16" height="16" title="#{detailLinkText}" alt="magnifier.png" library="images" name="magnifier.png"/>
+						</a4j:commandLink>
+					</h:panelGroup>
+				</rich:column>
+				
+				
+	
+				<ui:insert/>
+	
+				<!-- Link dettagli a destra-->
+				<rich:column style="text-align: center;" id="dtlClmn_dx" rendered="#{showDetailColumn and not empty mBean and detailColumnPosition == 'right'}">
+					<h:panelGroup>
+						<a4j:commandLink id="#{id}_dettaglio_btn_dx" action="#{mBean.dettaglio}" execute="@this">
+							<a4j:param assignTo="#{mBean.selectedIdParam}" name="#{mBean.selectedIdParamName}" value="#{item.DTO.id}" />
+							<h:graphicImage xmlns="" width="16" height="16" title="#{detailLinkText}" alt="magnifier.png" library="images" name="magnifier.png"/>
+						</a4j:commandLink>
+					</h:panelGroup>
+				</rich:column>
+	
+				<ui:define name="buttons">
+					<ui:insert name="buttonsListView"/>
+					
+					<h:commandButton id="#{id}_aggiungi" styleClass="icon-add" value="#{commonsMsg['commons.button.nuovo']}" rendered="#{not empty showAddButton and showAddButton==true}" action="#{mBean.nuovo}" actionListener="#{mBean.addNewListener}"/>
+				</ui:define>
+			</op2web:dataTable>
+		</h:form>
+	</a4j:outputPanel>
+</ui:component>

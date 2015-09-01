@@ -22,18 +22,35 @@ package org.openspcoop2.generic_project.web.impl.jsf2.mbean;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import org.openspcoop2.generic_project.web.impl.jsf2.datamodel.BaseDataModel;
+import org.apache.log4j.Logger;
+import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
+import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManager;
+import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
-import org.openspcoop2.generic_project.web.impl.jsf2.iservice.IBaseService;
+import org.openspcoop2.generic_project.web.impl.jsf2.CostantiJsf2Impl;
+import org.openspcoop2.generic_project.web.impl.jsf2.mbean.utils.NavigationManager;
 import org.openspcoop2.generic_project.web.impl.jsf2.utils.MessageUtils;
-import org.openspcoop2.generic_project.web.impl.jsf2.utils.Utils;
+import org.openspcoop2.generic_project.web.iservice.IBaseService;
+import org.openspcoop2.generic_project.web.mbean.IManagedBean;
+import org.openspcoop2.generic_project.web.mbean.exception.AnnullaException;
+import org.openspcoop2.generic_project.web.mbean.exception.DeleteException;
+import org.openspcoop2.generic_project.web.mbean.exception.DettaglioException;
+import org.openspcoop2.generic_project.web.mbean.exception.FiltraException;
+import org.openspcoop2.generic_project.web.mbean.exception.InviaException;
+import org.openspcoop2.generic_project.web.mbean.exception.MenuActionException;
+import org.openspcoop2.generic_project.web.mbean.exception.ModificaException;
+import org.openspcoop2.generic_project.web.mbean.exception.NuovoException;
+import org.openspcoop2.generic_project.web.mbean.exception.ResetException;
+import org.openspcoop2.generic_project.web.mbean.exception.RestoreSearchException;
 
 
 /**
@@ -49,94 +66,105 @@ import org.openspcoop2.generic_project.web.impl.jsf2.utils.Utils;
  * selectAll: flag che indica se sono stati selezionati tutti i dati.
  * search: Bean della ricerca relativa alle informazioni visualizzate.
  * 
- * @param <T> tipo dell'oggetto
- * @param <K> tipo della chiave dell'oggetto
- * @param <S> form di ricerca.
+ * @param <BeanType> tipo dell'oggetto
+ * @param <KeyType> tipo della chiave dell'oggetto
+ * @param <SearchFormType> form di ricerca.
  * 
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
- * @param <D>
  */
-public class BaseMBean<T,K,S extends SearchForm, D> {
+public abstract class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> implements IManagedBean<SearchFormType, Form>{ 
 
-	public static final String DATA_TABLE_SELECTION_MODE_MULTIPLE = "multiple";
-	public static final String DATA_TABLE_SELECTION_MODE_SINGLE = "single";
-	protected IBaseService<T,K,S> service;
-	protected T selectedElement;
-	//protected Map<T, Boolean> selectedIds = new HashMap<T, Boolean>();
-	protected ArrayList<T> toRemove;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L; 
+	protected IBaseService<BeanType,KeyType,SearchFormType> service;
+	protected BeanType selectedElement;
+	protected KeyType selectedId;
+	protected Map<BeanType, Boolean> selectedIds = new HashMap<BeanType, Boolean>();
+	protected ArrayList<BeanType> toRemove;
 	private boolean selectedAll = false;
-	protected S search;
-	protected T metadata;
-	
-	protected List<T> selection = new ArrayList<T>();  
-	protected String selectionMode;
-	
-	protected BaseDataModel<T, K, D> model ;
-	
-	
-	public BaseMBean(){
-		this.selectionMode = DATA_TABLE_SELECTION_MODE_MULTIPLE;
+	protected SearchFormType search;
+	protected BeanType metadata;
+	protected transient Logger log= null;
+	protected WebGenericProjectFactory factory;
+	protected NavigationManager navigationManager= null; 
+	protected String selectedIdParam = null;
+	protected String selectedIdParamName = null;
+
+	public BaseMBean() {
+		this(null);
 	}
 	
+	public BaseMBean(Logger log) {
+		try {
+			this.log = log;
+			this.navigationManager = new NavigationManager();
+			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf2Impl.FACTORY_NAME);
+			init();
+			initSelectedIdParamName();
+			initNavigationManager();
+		} catch (Exception e) {
+			this.getLog().error(e,e);
+		}
+	}
+	
+	public Logger getLog(){
+		if(this.log == null)
+			this.log = Logger.getLogger(BaseFormMBean.class);
+		
+		return this.log;
+	}
+	
+	public abstract void initNavigationManager() throws Exception; 
+	/***
+	 * 
+	 * 
+	 * @throws Exception
+	 */
+	public abstract void initSelectedIdParamName() throws Exception;
 
-	public void setService(IBaseService<T, K,S> service) {
+	@Override
+	public WebGenericProjectFactory getFactory() {
+		return this.factory;
+	}
+
+	@Override
+	public void setFactory(WebGenericProjectFactory factory) {
+		this.factory = factory;
+	}
+
+
+	public void setService(IBaseService<BeanType, KeyType,SearchFormType> service) {
 		this.service = service;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T getSelectedElement() throws Exception{
+	public BeanType getSelectedElement() throws Exception{
 		if(this.selectedElement==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.selectedElement = ((Class<T>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+				this.selectedElement = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
 			}catch (Exception e) {
+				this.getLog().error(e,e);
 				throw e;
 			}
 		}
 		return this.selectedElement;
 	}
 
-	public void setSelectedElement(T selectedElement) {
+	public void setSelectedElement(BeanType selectedElement) {
 		this.selectedElement = selectedElement;
 	}
 
-//	public Map<T, Boolean> getSelectedIds() {
-//		return this.selectedIds;
-//	}
-//
-//	public void setSelectedIds(Map<T, Boolean> selectedIds) {
-//		this.selectedIds = selectedIds;
-//	}
+	public Map<BeanType, Boolean> getSelectedIds() {
+		return this.selectedIds;
+	}
 
-
-	public String delete(){
-		this.toRemove = new ArrayList<T>();
-		Iterator<T> it = this.selection.iterator();//selectedIds.keySet().iterator();
-		while (it.hasNext()) {
-			T elem = it.next();
-		//	if(this.selectedIds.get(elem).booleanValue()){
-				this.toRemove.add(elem);
-				it.remove();
-			//}
-		}
-
-		for (T elem : this.toRemove) {
-			try{
-				this.service.delete(elem);
-			}catch (Exception e) {
-//				FacesContext ctx = FacesContext.getCurrentInstance();
-				String m = Utils.getInstance().getMessageFromCommonsResourceBundle("DELETE_ERROR");
-				MessageUtils.addErrorMsg(m + ": " + e.getMessage());
-//				String m = Utils.getMessageFromResourceBundle(ctx.getApplication().getMessageBundle(), "DELETE_ERROR", new String[]{elem.toString()}, ctx.getViewRoot().getLocale());
-//				ctx.addMessage(null, new FacesMessage(m,e.getLocalizedMessage()));
-			}
-
-		}
-
-
-		return null;
+	public void setSelectedIds(Map<BeanType, Boolean> selectedIds) {
+		this.selectedIds = selectedIds;
 	}
 
 	public List<FacesMessage> getMessages(){
@@ -157,61 +185,329 @@ public class BaseMBean<T,K,S extends SearchForm, D> {
 		this.selectedAll = selectedAll;
 	}
 
-	public S getSearch() {
-		return this.search;
-	}
 
-	public void setSearch(S search) {
-		this.search = search;
-	}
 
 	@SuppressWarnings("unchecked")
-	public T getMetadata() throws Exception{
+	public BeanType getMetadata() throws Exception{
 		if(this.metadata==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.metadata = ((Class<T>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+				this.metadata = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
 			}catch (Exception e) {
+				this.getLog().error(e,e);
 				throw e;
 			}
 		}
 		return this.metadata;
 	}
 
-	public void setMetadata(T metadata) {
+	public void setMetadata(BeanType metadata) {
 		this.metadata = metadata;
 	}
-	
+
 	/**
-	 * Listener eseguito prima di aggiungere un nuovo elemento, setta a null il selectedElement
+	 * Listener eseguito prima di aggiungere un nuovo ricerca, setta a null il selectedElement
 	 * in modo da "scordarsi" i valori gia' impostati.
 	 * @param ae
 	 */
 	public void addNewListener(ActionEvent ae){
 		this.selectedElement = null;
+		this.selectedId = null;
+		this.selectedIdParam = null;
 	}
 
-	public List<T> getSelection() {
-		return this.selection;
+	public KeyType getSelectedId() {
+		return this.selectedId;
 	}
 
-	public void setSelection(List<T> selection) {
-		this.selection = selection;
+	public void setSelectedId(KeyType selectedId) {
+		this.selectedId = selectedId;
 	}
 
-	public String getSelectionMode() {
-		return this.selectionMode;
+
+	/** Metodi che vengono utilizzati all'interno della pagina*/
+
+	public String invia(){
+		try{
+			return azioneInvia();
+		}catch (InviaException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo invia: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public String azioneInvia() throws InviaException {
+		try{
+			this.service.store(this.selectedElement);
+		}catch(Exception e){
+			throw new InviaException(e);
+		}
+		return this.getNavigationManager().getInviaOutcome();
 	}
 
-	public void setSelectionMode(String selectionMode) {
-		this.selectionMode = selectionMode;
+
+	public String modifica(){
+		try{
+			return azioneModifica();
+		}catch (ModificaException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo modifica: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public String azioneModifica() throws ModificaException {
+		return this.getNavigationManager().getModificaOutcome();
+	}
+	public String delete(){
+		try{
+			return azioneDelete();
+		}catch (DeleteException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo delete: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+
+		//		this.toRemove = new ArrayList<BeanType>();
+		//		Iterator<BeanType> it = this.selectedIds.keySet().iterator();
+		//		while (it.hasNext()) {
+		//			BeanType elem = it.next();
+		//			if(this.selectedIds.get(elem).booleanValue()){
+		//				this.toRemove.add(elem);
+		//				it.remove();
+		//			}
+		//		}
+		//
+		//		String m = null;
+		//		for (BeanType elem : this.toRemove) {
+		//			try{
+		//				this.service.delete(elem);
+		//			}catch (Exception e) {
+		//				//				FacesContext ctx = FacesContext.getCurrentInstance();
+		//				m = Utils.getInstance().getMessageFromCommonsResourceBundle("DELETE_ERROR") + ":" + e.getMessage();
+		//				//				MessageUtils.addErrorMsg(m + ": " + e.getMessage());
+		//				//				String m = Utils.getMessageFromResourceBundle(ctx.getApplication().getMessageBundle(), "DELETE_ERROR", new String[]{elem.toString()}, ctx.getViewRoot().getLocale());
+		//				//				ctx.addMessage(null, new FacesMessage(m,e.getLocalizedMessage()));
+		//			}
+		//
+		//		}
+
+
+		//		return m;
+	}
+	
+	@Override
+	public String azioneDelete() throws DeleteException {
+		try{
+			this.toRemove = new ArrayList<BeanType>();
+			Iterator<BeanType> it = this.selectedIds.keySet().iterator();
+			while (it.hasNext()) {
+				BeanType elem = it.next();
+				if(this.selectedIds.get(elem).booleanValue()){
+					this.toRemove.add(elem);
+					it.remove();
+				}
+			}
+			for (BeanType elem : this.toRemove) {
+				this.service.delete(elem);
+			}
+
+			return this.getNavigationManager().getDeleteOutcome();
+		}catch (Exception e) {
+			throw new DeleteException(e.getMessage());
+		}
 	}
 
-	public BaseDataModel<T, K, D> getModel() {
-		return this.model;
+	public String dettaglio(){
+		try{
+			return azioneDettaglio();
+		}catch (DettaglioException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo dettaglio: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public String azioneDettaglio() throws DettaglioException {
+		try{
+			// do nothing
+		}catch(Exception e){
+			throw new DettaglioException(e);
+		}
+		return this.getNavigationManager().getDettaglioOutcome();
 	}
 
-	public void setModel(BaseDataModel<T, K, D> model) {
-		this.model = model;
+
+	public String nuovo(){
+		try{
+			return azioneNuovo();
+		}catch (NuovoException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo nuovo: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
 	}
+	
+	@Override
+	public String azioneNuovo() throws NuovoException {
+		try{
+			// do nothing
+		}catch(Exception e){
+			throw new NuovoException(e);
+		}
+		return this.getNavigationManager().getNuovoOutcome();
+	}
+
+
+	public String annulla(){
+		try{
+			return azioneAnnulla();
+		}catch (AnnullaException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo annulla: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public String azioneAnnulla() throws AnnullaException {
+		try{
+			// do nothing
+		}catch(Exception e){
+			throw new AnnullaException(e);
+		}
+		return this.getNavigationManager().getAnnullaOutcome();
+	}
+
+
+	public String filtra(){
+		try{
+			return azioneFiltra();
+		}catch (FiltraException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo filtra: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+
+	@Override
+	public String azioneFiltra() throws FiltraException {
+		try{
+			// do nothing
+		}catch(Exception e){
+			throw new FiltraException(e);
+		}
+		return this.getNavigationManager().getFiltraOutcome();
+	}
+
+
+	public String menuAction(){
+		try{
+			return azioneMenuAction();
+		}catch (MenuActionException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo menu' action: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public String azioneMenuAction() throws MenuActionException {
+		try{
+			// do nothing
+		}catch(Exception e){
+			throw new MenuActionException(e);
+		}
+		return this.getNavigationManager().getMenuActionOutcome();
+	}
+
+
+	public String reset(){
+		try{
+			return azioneReset();
+		}catch (ResetException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo reset: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public String azioneReset() throws ResetException {
+		try{
+			this.search.reset();
+		}catch(Exception e){
+			throw new ResetException(e);
+		}
+		return this.getNavigationManager().getResetOutcome();
+	}
+
+
+	public String restoreSearch(){
+		try{
+			return azioneRestoreSearch();
+		}catch (RestoreSearchException e){
+			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo restore search: "+ e.getMessage(),e);
+			MessageUtils.addErrorMsg(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public String azioneRestoreSearch() throws RestoreSearchException {
+		try{
+			this.search.setRestoreSearch(true); 
+		}catch(Exception e){
+			throw new RestoreSearchException(e);
+		}
+		return this.getNavigationManager().getRestoreSearchOutcome();
+
+	}
+
+	public NavigationManager getNavigationManager() {
+		return this.navigationManager;
+	}
+
+	public void setNavigationManager(NavigationManager navigationManager) {
+		this.navigationManager = navigationManager;
+	}
+
+	@Override
+	public Form getForm() {
+		return null;
+	}
+
+	@Override
+	public void setForm(Form form) {
+	}
+
+	@Override
+	public SearchFormType getSearch() {
+		return this.search;
+	}
+
+	@Override
+	public void setSearch(SearchFormType search) {
+		this.search = search;
+	}
+
+	public String getSelectedIdParam() {
+		return this.selectedIdParam;
+	}
+
+	public abstract void setSelectedIdParam(String selectedIdParam);
+
+	public String getSelectedIdParamName() {
+		return this.selectedIdParamName;
+	}
+
+	public void setSelectedIdParamName(String selectedIdParamName) {
+		this.selectedIdParamName = selectedIdParamName;
+	}
+	
+	
 }

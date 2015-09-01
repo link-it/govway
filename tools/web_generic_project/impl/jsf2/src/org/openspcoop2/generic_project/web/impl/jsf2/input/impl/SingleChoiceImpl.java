@@ -22,7 +22,7 @@ package org.openspcoop2.generic_project.web.impl.jsf2.input.impl;
 
 import org.openspcoop2.generic_project.web.factory.Costanti;
 import org.openspcoop2.generic_project.web.impl.jsf2.input.ChoiceFormField;
-import org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem;
+import org.openspcoop2.generic_project.web.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.SingleChoice;
 
@@ -38,7 +38,7 @@ import org.openspcoop2.generic_project.web.input.SingleChoice;
 $idx
  *
  */
-public class SingleChoiceImpl extends ChoiceFormField<SelectItem> implements SingleChoice<SelectItem>{
+public class SingleChoiceImpl extends ChoiceFormField<SelectItem> implements SingleChoice {
 
 	/**
 	 * 

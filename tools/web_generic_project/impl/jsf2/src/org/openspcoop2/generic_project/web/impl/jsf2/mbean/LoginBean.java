@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
@@ -79,34 +80,55 @@ public class LoginBean{
 
 		this.languageForm.setRendered(true);
 
+		Locale decodeLocal = null;
+
 		try{
-			this.currentLocal = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			decodeLocal= FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		}catch(Exception e){
-			this.currentLocal = Locale.getDefault();
+			//			log.debug("Errore durante set Locale default: "+ e.getMessage());
+			decodeLocal = Locale.getDefault();
 		}
-		
+
+
+		impostaLocale(decodeLocal);
+
+
+		this.initDao = initDao;
+
+		init();
+	}
+
+	public void impostaLocale(Locale decodeLocal) {
+		//		log.debug("Set Locale default in corso..."); 
+		this.currentLocal = decodeLocal;
+
+		//		log.debug("Set Locale default completata Valore["+this.currentLocal.toString()+"]");
+
+		//		log.debug("Elenco delle lingue supportate");
+		//		for (Locale lingua : this.caricaListaLingueSupportate()) {
+		//			log.debug("Locale ["+lingua.toString()+"]");
+		//		}
+
 		// hack per la lingua
 		if(!this.caricaListaLingueSupportate().contains(this.currentLocal)){
 			this.currentLocal = Locale.ITALIAN;
 		}
 
 		((SelectListImpl) this.languageForm.getLingua()).setElencoSelectItems(this.getListaLingueSupportate());
-		
+
 		if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
-			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem(Locale.ITALIAN.getLanguage(),
+			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.ITALIAN.getLanguage(),
 					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal)));
 		if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
-			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem(Locale.ENGLISH.getLanguage(),
+			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.ENGLISH.getLanguage(),
 					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal)));
 		if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
-			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem(Locale.GERMAN.getLanguage(),
+			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.GERMAN.getLanguage(),
 					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal)));
 
 		this.currentLang = this.currentLocal.getLanguage();
 
-		this.initDao = initDao;
-
-		init();
+		//		log.debug("Lingua Settata ["+this.currentLang+"]");
 	}
 
 	protected void init(){
@@ -187,30 +209,37 @@ public class LoginBean{
 	public void setUsername(String username){this.username = username;}
 
 	public void cambiaLinguaListener(ActionEvent event){
+		//	cambiaLinguaActionListener(event);
+	}
 
-		org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem newValue = this.languageForm.getLingua().getValue();
+	public void cambiaLinguaValueChanged(ValueChangeEvent event){
+		Object newValueObj = event.getNewValue();
 
-		String value = newValue.getValue();
+		if(newValueObj instanceof org.openspcoop2.generic_project.web.input.SelectItem ){
+			org.openspcoop2.generic_project.web.input.SelectItem newValue = (org.openspcoop2.generic_project.web.input.SelectItem) newValueObj;//this.languageForm.getLingua().getValue();
 
-		if(value.equals(Locale.ITALIAN.getLanguage()))
-			this.currentLocal = Locale.ITALIAN;
-		else 
-			if(value.equals(Locale.GERMAN.getLanguage()))
-				this.currentLocal = Locale.GERMAN;
+			String value = newValue.getValue();
+
+			if(value.equals(Locale.ITALIAN.getLanguage()))
+				this.currentLocal = Locale.ITALIAN;
 			else 
-				if(value.equals(Locale.ENGLISH.getLanguage()))
-					this.currentLocal = Locale.ENGLISH;
+				if(value.equals(Locale.GERMAN.getLanguage()))
+					this.currentLocal = Locale.GERMAN;
+				else 
+					if(value.equals(Locale.ENGLISH.getLanguage()))
+						this.currentLocal = Locale.ENGLISH;
 
-		if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
-			newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal));
-		if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
-			newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal));
-		if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
-			newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal));
+			if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
+				newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal));
+			if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
+				newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal));
+			if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
+				newValue.setLabel(Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal));
 
-		this.currentLang = this.currentLocal.getLanguage();
+			this.currentLang = this.currentLocal.getLanguage();
 
-		((SelectListImpl) this.languageForm.getLingua()).setElencoSelectItems(this.getListaLingueSupportate());
+			((SelectListImpl) this.languageForm.getLingua()).setElencoSelectItems(this.getListaLingueSupportate());
+		}
 	}
 
 	public Locale getCurrentLocal() {
@@ -240,20 +269,20 @@ public class LoginBean{
 		return this.lingueSupportate;
 	}
 
-//	public List<SelectItem> caricaListaLingueSupportate() {
-//		List<SelectItem> lst = new ArrayList<SelectItem>();
-//
-//		lst.add(new SelectItem(
-//				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ITALIAN.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal))));
-//		lst.add(new SelectItem(
-//				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ENGLISH.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal))));
-//		lst.add(new SelectItem(
-//				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.GERMAN.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal))));
-//
-//		this.setListaLingueSupportate(lst);
-//
-//		return this.listaLingueSupportate;
-//	}
+	//	public List<SelectItem> caricaListaLingueSupportate() {
+	//		List<SelectItem> lst = new ArrayList<SelectItem>();
+	//
+	//		lst.add(new SelectItem(
+	//				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ITALIAN.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal))));
+	//		lst.add(new SelectItem(
+	//				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.ENGLISH.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal))));
+	//		lst.add(new SelectItem(
+	//				new org.openspcoop2.generic_project.web.form.field.SelectItem(Locale.GERMAN.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal))));
+	//
+	//		this.setListaLingueSupportate(lst);
+	//
+	//		return this.listaLingueSupportate;
+	//	}
 
 	public void setListaLingueSupportate(List<SelectItem> listaLingueSupportate) {
 		this.listaLingueSupportate = listaLingueSupportate;
@@ -261,14 +290,14 @@ public class LoginBean{
 
 	public List<SelectItem> getListaLingueSupportate() {
 		List<Locale> list = this.caricaListaLingueSupportate();
-		
+
 		this.listaLingueSupportate = new ArrayList<SelectItem>();
 		for (Locale locale : list) {
 			this.listaLingueSupportate.add(new SelectItem(
-					new org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem(
+					new org.openspcoop2.generic_project.web.input.SelectItem(
 							locale.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+locale.getLanguage(),this.currentLocal))));
 		}
-		
+
 		return this.listaLingueSupportate;
 
 	}

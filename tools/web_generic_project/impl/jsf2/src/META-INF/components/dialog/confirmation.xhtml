@@ -1,48 +1,38 @@
-<ui:component xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
-	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
-	<script type="text/javascript">
-//<![CDATA[
-	 function showConfirm(containerId,name){
-			var n = jQuery("div [id$='"+containerId+"'] input:checkbox:checked").length;
-			if(n>0){
-				PF(name).show();
-			}
-			return false;
-		 };
-//]]>
-</script>
 
-	<p:commandButton id="#{confirmId}_confirmBtn" icon="ui-icon-closethick"
-		value="#{label}"
-		onclick="showConfirm('#{confirmId}','#{confirmId}confirmation');return false;" />
+<!DOCTYPE ui:component
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<ui:component xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2">
+<h:outputScript xmlns="" library="default" name="resource://jquery.js"/>
+<script type="text/javascript" xml:space="preserve">//<![CDATA[
+//
+	function showConfirm(name){
+		var n = jQuery("input:checkbox:checked").length;
+		if(n>=1){
+			Richfaces.showModalPanel(name);
+		}
+		return false;
+	}
+//
+//]]></script>
 
-	<p:remoteCommand id="#{confirmId}_deleteFunction"
-		name="#{confirmId}_deleteFunction" action="#{mBean.delete}"
-		update="@([id$=#{fieldsToupdate}])" />
-
-	<p:dialog id="#{confirmId}confirmation" width="300" height="150"
-		widgetVar="#{confirmId}confirmation" modal="true">
-		<f:facet name="header">
-			<h:outputText value="Conferma Operazione" />
-		</f:facet>
-		<h:panelGrid>
-			<h:panelGrid columns="2">
-				<h:graphicImage value="/images/warn.png" alt="Warning" />
-				<h:outputText value="#{confirmMsg}" style="FONT-SIZE: large;" />
-			</h:panelGrid>
-			<h:panelGroup>
-				<p:spacer height="20" />
-				<input type="button" value="#{commonsMsg['commons.button.invia']}"
-					onclick="PF('#{confirmId}confirmation').hide();#{confirmId}_deleteFunction();return false" />
-				<input type="button" value="#{commonsMsg['commons.button.annulla']}"
-					onclick="PF('#{confirmId}confirmation').hide();return false" />
-			</h:panelGroup>
-		</h:panelGrid>
-		</p:modalPanel>
+<a4j:commandButton value="#{label}" onclick="showConfirm('#{confirmId}confirmation')"/>
+ 
+<a4j:jsFunction name="submit" action="#{mBean.delete}" render="#{reRender}"/>
+ 
+<rich:popupPanel xmlns="" modal="true" id="#{confirmId}confirmation" width="250" height="150">
+   <f:facet xmlns="http://www.w3.org/1999/xhtml" name="header">
+   	<h:outputText value="Conferma Operazione"/>
+   </f:facet>
+   <h:panelGrid xmlns="http://www.w3.org/1999/xhtml">
+      <h:panelGrid columns="2">
+         <h:graphicImage xmlns="" library="default" name="images/warn.png" alt="warn.png"/>
+	 	<h:outputText value="#{confirmMsg}" style="FONT-SIZE: large;"/>
+      </h:panelGrid>
+      <h:panelGroup>
+         <h:panelGroup xmlns="" layout="block" styleClass="spacer"/>
+	 <input type="button" value="Ok" onclick="#{rich:component(op2web:concat(confirmId,'confirmation'))}.hide();submit();return false"/>
+	 <input type="button" value="Annulla" onclick="#{rich:component(op2web:concat(confirmId,'confirmation'))}.hide();return false"/>
+      </h:panelGroup>
+   </h:panelGrid>
+</rich:popupPanel>
 </ui:component>

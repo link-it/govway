@@ -61,9 +61,9 @@ public class Jsf2TableFactoryImpl implements TableFactory{
 	}
 
 	@Override
-	public <V, FormType extends Form, SearchFormType extends SearchForm> PagedDataTable<V, FormType, SearchFormType> createPagedDataTable()
+	public <V, SearchFormType extends SearchForm, FormType extends Form> PagedDataTable<V, SearchFormType, FormType> createPagedDataTable()
 			throws FactoryException {
-		return  new BasePagedDataTable<V, FormType, SearchFormType>();
+		return  new BasePagedDataTable<V, SearchFormType, FormType>();
 	}
  
 }

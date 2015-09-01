@@ -1,92 +1,115 @@
-<ui:component xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2">
-	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
 
-	<c:set var="formId" value="#{formBean.idForm}" />
-	<c:set var="isClosable" value="#{formBean.closable}" />
-	<c:set var="formTitle" value="#{formBean.nomeForm}" />
-	<c:set var="rendered" value="#{formBean.rendered}" />
+<!DOCTYPE ui:component
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<ui:component xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages"/>
 
-	<c:if
-		test="#{isClosable == false and empty formTitle and rendered == true}">
-		<div class="form-container noborder">
-			<h:form id="#{formId}" prependId="false">
-				<p:panel id="#{formId}_formPnl" styleClass="noborder nobackground">
+	<c:if test="#{empty formId}">
+		<c:set var="formId" value="#{formBean.id}"/>
+	</c:if>
+	
+	<c:if test="#{empty isClosable}">
+		<c:set var="isClosable" value="#{formBean.closable}"/>
+	</c:if>
+	
+	<c:if test="#{empty formTitle}">
+		<c:set var="formTitle" value="#{formBean.nomeForm}"/>
+	</c:if>
+	
+	<c:if test="#{empty rendered}">
+		<c:set var="rendered" value="#{formBean.rendered}"/>
+	</c:if>
+	
+	<c:if test="#{empty renderRegionOnly}">
+		<c:set var="renderRegionOnly" value="#{formBean.renderRegionOnly}"/>
+	</c:if>
+	
+	<c:if test="#{empty formStyleClass}">
+		<c:set var="formStyleClass" value="form-container"/>
+	</c:if>
+	
+	<c:if test="#{empty showNotaCampiObbligatori}">
+		<c:set var="showNotaCampiObbligatori" value="#{formBean.showNotaCampiObbligatori}"/>
+	</c:if>
+	
+	<c:if test="#{isClosable == false and empty formTitle and rendered == true}">
+		<div class="#{formStyleClass} noborder nopadding nomargin">
+			<h:form id="#{formId}" prependId="false" execute="@this" ajaxSubmit="true">
+				<a4j:region id="#{formId}_regionFormPnl">
+					<a4j:outputPanel id="#{formId}_formPnl" ajaxRendered="false" layout="block">
 
-					<ui:insert />
+						<ui:insert/>
 
-				</p:panel>
+					</a4j:outputPanel>
+				</a4j:region>
 				<h:panelGroup layout="block" styleClass="buttonrow">
-					<ui:insert name="buttons" />
+					<ui:insert name="buttons"/>
 				</h:panelGroup>
 			</h:form>
 		</div>
 	</c:if>
 
-	<c:if
-		test="#{isClosable == false and !empty formTitle and rendered == true}">
-		<p:panel id="panel_#{formId}"  
-			header="#{formTitle}">
-			<div class="form-container noborder">
-				<h:form id="#{formId}" prependId="false">
-					<p:panel id="#{formId}_formPnl" styleClass="noborder nobackground"  >
+	<c:if test="#{isClosable == false and !empty formTitle and rendered == true}">
+		<rich:panel id="panel_#{formId}" bodyClass="nopadding" styleClass="nopadding">
+			<f:facet name="header">
+				<h:outputText id="outHeaderForm_#{formId}" value="#{formTitle}"/>
+			</f:facet>
 
-						<ui:insert />
+			<div class="#{formStyleClass} noborder">
+				<h:form id="#{formId}" prependId="false" execute="@this" ajaxSubmit="true">
+					<a4j:region id="#{formId}_regionFormPnl">
+						<a4j:outputPanel id="#{formId}_formPnl" ajaxRendered="false" layout="block">
 
-					</p:panel>
+							<ui:insert/>
+
+						</a4j:outputPanel>
+					</a4j:region>
 					<h:panelGroup layout="block" styleClass="buttonrow">
-						<ui:insert name="buttons" />
+						<ui:insert name="buttons"/>
 					</h:panelGroup>
 				</h:form>
 			</div>
-		</p:panel>
+		</rich:panel>
 	</c:if>
 
-	<c:if
-		test="#{isClosable == true and empty formTitle and rendered == true}">
-		<p:panel id="panel_#{formId}" toggleable="true" toggleSpeed="500"
-			closeSpeed="500" header="#{commonsMsg['ricerca.header']}"
-			 >
-			<div class="form-container noborder">
+	<c:if test="#{isClosable == true and empty formTitle and rendered == true}">
+		<rich:collapsiblePanel xmlns="" id="panel_#{formId}" opened="true" label="#{commonsMsg['ricerca.header']}" switchType="ajax" bodyClass="nopadding" styleClass="nopadding">
 
-				<h:form id="#{formId}" prependId="false">
+			<div xmlns="http://www.w3.org/1999/xhtml" class="#{formStyleClass} noborder">
+				<h:form id="#{formId}" prependId="false" execute="@this" ajaxSubmit="true">
+					<a4j:region id="#{formId}_regionFormPnl">
+						<a4j:outputPanel id="#{formId}_formPnl" ajaxRendered="false" layout="block">
 
-					<p:panel id="#{formId}_formPnl" styleClass="noborder nobackground" >
+							<ui:insert/>
 
-						<ui:insert />
-					</p:panel>
+						</a4j:outputPanel>
+					</a4j:region>
 					<h:panelGroup layout="block" styleClass="buttonrow">
-						<ui:insert name="buttons" />
+						<ui:insert name="buttons"/>
 					</h:panelGroup>
 				</h:form>
 			</div>
-		</p:panel>
+		</rich:collapsiblePanel>
 	</c:if>
 
-	<c:if
-		test="#{isClosable == true and !empty formTitle and rendered == true}">
-		<p:panel id="panel_#{formId}" toggleable="true" toggleSpeed="500"
-			closeSpeed="500" header="#{formTitle}" styleClass="inpanelBody">
+	<c:if test="#{isClosable == true and !empty formTitle and rendered == true}">
+		<rich:collapsiblePanel xmlns="" id="panel_#{formId}" opened="true" label="#{formTitle}" switchType="ajax" bodyClass="nopadding" styleClass="nopadding">
 
-			<div class="form-container noborder">
-				<h:form id="#{formId}" prependId="false">
+			<div xmlns="http://www.w3.org/1999/xhtml" class="#{formStyleClass} noborder">
+				<h:form id="#{formId}" prependId="false" execute="@this" ajaxSubmit="true">
+					<a4j:region id="#{formId}_regionFormPnl">
+						<a4j:outputPanel id="#{formId}_formPnl" ajaxRendered="false" layout="block">
 
-					<p:panel id="#{formId}_formPnl" styleClass="noborder nobackground">
+							<ui:insert/>
 
-						<ui:insert />
-
-					</p:panel>
+						</a4j:outputPanel>
+					</a4j:region>
 					<h:panelGroup layout="block" styleClass="buttonrow">
-						<ui:insert name="buttons" />
+						<ui:insert name="buttons"/>
 					</h:panelGroup>
 				</h:form>
 			</div>
-		</p:panel>
+		</rich:collapsiblePanel>
 	</c:if>
 
 

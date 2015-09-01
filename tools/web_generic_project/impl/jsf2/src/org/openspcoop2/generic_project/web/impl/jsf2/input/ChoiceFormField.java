@@ -20,10 +20,6 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf2.input;
 
-import java.util.List;
-
-import javax.faces.model.SelectItem;
-
 import org.openspcoop2.generic_project.web.factory.Costanti;
 
 /**
@@ -41,32 +37,12 @@ public abstract class ChoiceFormField<T> extends BaseFormField<T>{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	protected List<SelectItem> elencoSelectItems;
-
-	protected List<org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem> elencoHtmlOptions; 
-	
 	protected String direzione;
 	
 	public ChoiceFormField(){
 		this.direzione = Costanti.CHOICE_ORIENTATION_HORIZONTAL;
 	}
 	
-	public List<SelectItem> getElencoSelectItems() {
-		return this.elencoSelectItems;
-	}
-
-	public void setElencoSelectItems(List<SelectItem> elencoSelectItems) {
-		this.elencoSelectItems = elencoSelectItems;
-	}
-	
-
-	public List<org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem> getOptions() {
-		return this.elencoHtmlOptions;
-	}
-
-	public void setOptions(List<org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem> elencoHtmlOptions) {
-		this.elencoHtmlOptions = elencoHtmlOptions;
-	}
 	
 	public String getDirezione() {
 		return this.direzione;

@@ -1,37 +1,35 @@
-<ui:component xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:rich="http://richfaces.org/rich"
-      xmlns:a4j="http://richfaces.org/a4j"
-      xmlns:c="http://java.sun.com/jstl/core"
-      xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf">
-      <f:loadBundle var="commonsMsg" basename="commonsMessages" />
-      
-		<a4j:loadScript src="resource://jquery.js"/>
+
+<!DOCTYPE ui:component
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<ui:component xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:rich="http://richfaces.org/rich" xmlns:a4j="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2">
+      <f:loadBundle var="commonsMsg" basename="commonsMessages"/>
 		
-		<c:if test="#{empty mBean}">
-			<c:set var="mBean" value="#{table.mBean}"/>
+		<h:outputScript xmlns="" name="jquery.js"/>
+		<h:outputScript xmlns="" library="scripts" name="pagedDataTable.min.js"/>
+		<h:outputStylesheet xmlns="" library="css" name="dataTable.css"/>
+		
+		<c:if test="#{empty table}">
+			<c:set var="table" value="#{mBean.table}"/>
 		</c:if>
 		
 		<c:if test="#{empty width}">
-			<c:set var="width" value="#{table.width}" />
+			<c:set var="width" value="#{table.width}"/>
 		</c:if>
 		
 		<c:if test="#{empty id}">
-			<c:set var="id" value="#{table.id}" />
+			<c:set var="id" value="#{table.id}"/>
 		</c:if>
 		
 		<c:if test="#{empty rowsToDisplay}">
-			<c:set var="rowsToDisplay" value="#{table.rowsToDisplay}" />
+			<c:set var="rowsToDisplay" value="#{table.rowsToDisplay}"/>
 		</c:if>
 		
 		<c:if test="#{empty rendered}">
-			<c:set var="rendered" value="#{table.rendered}" />
+			<c:set var="rendered" value="#{table.rendered}"/>
 		</c:if>
 		
 		<c:if test="#{empty value}">
-			<c:set var="value" value="#{table.value}" />
+			<c:set var="value" value="#{table.value}"/>
 		</c:if>
 		
 		<c:if test="#{empty showSelectAll}">
@@ -75,100 +73,83 @@
 			<c:set var="customRowClasses" value="even,odd"/>
 		</c:if>
 		
-		<c:if test="#{empty topScrollerAlign}">
-			<c:set var="topScrollerAlign" value="center"/>
+		<c:if test="#{empty topScrollerStyleClass}">
+			<c:set var="topScrollerStyleClass" value="acent"/>
+		</c:if>
+		
+		<c:if test="#{empty styleClass}">
+			<c:set var="styleClass" value="#{table.styleClass}"/>
+		</c:if>
+		
+		<c:if test="#{empty headerClass}">
+			<c:set var="headerClass" value="#{table.headerClass}"/>
+		</c:if>
+		
+		<c:if test="#{empty footerClass}">
+			<c:set var="footerClass" value="#{table.footerClass}"/>
 		</c:if>
 		
 		<a4j:outputPanel id="#{id}" layout="block">
 		
-			<script type="text/javascript">
+			<script type="text/javascript">//<![CDATA[
 				 jQuery(document).ready(function() {
 					checkBrowser();
 				 });
-	
-				 function showConfirm(containerId,name){
-					var n = jQuery("div [id$='"+containerId+"'] input:checkbox[id$='column_ckb']:checked").length;
-					if(n>0){
-						Richfaces.showModalPanel(name);
-					}
-					return false;
-				 };
-
-				 function checkSelection(containerId){
-					 var n = jQuery("div [id$='"+containerId+"_tbl'] input:checkbox[id$='column_ckb']:checked").length;
-						if(n==0){
-							Richfaces.showModalPanel("#{id}_checkSelection");
-							return false;
-						}else{
-							return true;
-						}
-				 };
-				 
-			</script>
+			//]]></script>
 		
-			<rich:datascroller for="#{id}_tbl"
-						   id="#{id}_ds_top" 
-						   maxPages="10"
-						   renderIfSinglePage="false" 
-						   pagesVar="pages" 
-						   pageIndexVar="page" 
-						   reRender="#{id}_ds_down" fastControls="hide" 
-						   oncomplete="checkBrowser()" align="#{not empty topScrollerAlign ? topScrollerAlign : 'center'}">
+		<a4j:outputPanel id="#{id}_ds_top_pnl" layout="block" styleClass="#{not empty topScrollerStyleClass ? topScrollerStyleClass : 'acent'}">
+			<rich:dataScroller xmlns="" for="#{id}_tbl" id="#{id}_ds_top" maxPages="10" renderIfSinglePage="false" pagesVar="pages" pageIndexVar="page" render="#{id}_ds_down" fastControls="hide" 
+				oncomplete="checkBrowser()" styleClass="#{not empty topScrollerStyleClass ? topScrollerStyleClass : 'acent'}">
 						   
-				<f:facet name="pages">
+				<f:facet xmlns="http://www.w3.org/1999/xhtml" name="pages">
 					<h:panelGrid columns="3" rendered="#{not isList}">
-						<rich:spacer width="10px"/>
+						<h:panelGroup xmlns="" layout="block" styleClass="spacerHor"/>
 						<c:set var="_totRows" value="#{value.rowCount}"/>
 						<c:set var="_totRowsToDisplay" value="#{rowsToDisplay gt 0 ? (_totRows lt rowsToDisplay ? _totRows : rowsToDisplay) : _totRows}"/>
 						<c:set var="_rowsCount" value="#{(page*(_totRowsToDisplay))}"/>
 						<c:set var="_currentRowDisplayed" value="#{((page-1)*rowsToDisplay)+1}"/>						
 						<h:panelGroup id="#{id}tableHeaderText">
 							<h:outputText value="#{headerText}: " rendered="#{not empty headerText}"/>
-							<h:outputText value="record [#{(_totRows gt 0) ? _currentRowDisplayed : 0} - #{ _rowsCount gt _totRows ? _totRows : _rowsCount }] su #{_totRows}" />
+							<h:outputText value="record [#{(_totRows gt 0) ? _currentRowDisplayed : 0} - #{ _rowsCount gt _totRows ? _totRows : _rowsCount }] su #{_totRows}"/>
 						</h:panelGroup>						
-						<rich:spacer width="10px"/>
+						<h:panelGroup xmlns="" layout="block" styleClass="spacerHor"/>
 					</h:panelGrid>
 				</f:facet>
-				<f:facet name="previous">
-					<h:graphicImage id="#{id}_prev_top" value="/images/icons/silk/control_prev_blue.png" >
-						<rich:toolTip for="#{id}_prev_top">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.precedente']}" />
-						</rich:toolTip>
+				<f:facet xmlns="http://www.w3.org/1999/xhtml" name="previous">
+					<h:graphicImage xmlns="" id="#{id}_prev_top" library="images"  name="icons/silk/control_prev_blue.png" alt="control_prev_blue.png">
+						<rich:tooltip for="#{id}_prev_top">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.precedente']}"/>
+						</rich:tooltip>
 					</h:graphicImage>
 				</f:facet>
-				<f:facet name="next">
-					<h:graphicImage id="#{id}_next_top" value="/images/icons/silk/control_next_blue.png" >
-						<rich:toolTip for="#{id}_next_top">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.successiva']}" />
-						</rich:toolTip>
+				<f:facet xmlns="http://www.w3.org/1999/xhtml" name="next">
+					<h:graphicImage xmlns="" id="#{id}_next_top" library="images" name="icons/silk/control_next_blue.png" alt="control_next_blue.png">
+						<rich:tooltip for="#{id}_next_top">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.successiva']}"/>
+						</rich:tooltip>
 					</h:graphicImage>
 				</f:facet>
-				<f:facet name="last">
-					<h:graphicImage id="#{id}_last_top" value="/images/icons/silk/control_end_blue.png" >
-						<rich:toolTip for="#{id}_last_top">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.ultima']}" />
-						</rich:toolTip>
+				<f:facet xmlns="http://www.w3.org/1999/xhtml" name="last">
+					<h:graphicImage xmlns="" id="#{id}_last_top" library="images" name="icons/silk/control_end_blue.png" alt="control_end_blue.png">
+						<rich:tooltip for="#{id}_last_top">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.ultima']}"/>
+						</rich:tooltip>
 					</h:graphicImage>
 				</f:facet>
-				<f:facet name="first">
-					<h:graphicImage id="#{id}_first_top" value="/images/icons/silk/control_start_blue.png" >
-						<rich:toolTip for="#{id}_first_top">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.prima']}" />
-						</rich:toolTip>
+				<f:facet xmlns="http://www.w3.org/1999/xhtml" name="first">
+					<h:graphicImage xmlns="" id="#{id}_first_top" library="images" name="icons/silk/control_start_blue.png" alt="control_start_blue.png">
+						<rich:tooltip for="#{id}_first_top">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.prima']}"/>
+						</rich:tooltip>
 					</h:graphicImage>
 				</f:facet>
 				
-				<ui:insert name="requestParams"/>
+				<ui:insert xmlns="http://www.w3.org/1999/xhtml" name="requestParams"/>
 				
-		</rich:datascroller>
-		<rich:dataTable  
-				value="#{value}"
-				var="item"		
-				rows="#{rowsToDisplay}" 
-				id="#{id}_tbl" 
-				onRowMouseOver="activeRow(this)" 
-				rowClasses="#{customRowClasses}" 
-				width="#{width}">
+		</rich:dataScroller>
+		</a4j:outputPanel>
+		<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"   noDataLabel="#{noDataLabel}"
+			id="#{id}_tbl" onRowMouseOver="activeRow(this)" rowClasses="#{customRowClasses}" width="#{width}" styleClass="#{styleClass}" headerClass="#{headerClass}" footerClass="#{footerClass}">
 				
 				<!-- 
 				<c:if test="#{rowsToDisplay eq 0}">
@@ -176,75 +157,24 @@
 						<h:outputText value="#{headerText}" rendered="#{not empty headerText}"/>
 					</f:facet>
 				 </c:if>
-				  -->			
-					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
+				  -->		
+				  
+				  <c:if test="#{not empty headerText}">
+					<f:facet name="header">
+						<h:outputText value="#{headerText}" rendered="#{not empty headerText}"/>
+					</f:facet>
+				 </c:if>
+				 	
+					<rich:column style="text-align: center; width: 50px;" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
 	                      <h:panelGroup style="width:50px;" layout="block">
-	                         <script type="text/javascript" >
-	                        //<![CDATA[
-	                            function #{id}_checkAllCheckboxesInTable( inputId, state ){
-		                            var size = 0;
-		                            var tid = ":"+inputId+"_tbl";
-		                            if(state){
-		                            	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").not("[id$='selectedAllChbx']").attr("checked","on").size();
-		                            }else{
-		                            	jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").removeAttr("checked");
-		                            	size=0;
-		                            }
-
-		                            if(#{showSelectAll}){
-		                            	var _totRows = #{value.rowCount};
-		                            	var _rows = #{rowsToDisplay};
-		                            	if(state && _totRows>_rows ){
-			                            	var t1= formatMessage("#{commonsMsg['pagedDataTable.script.checkAllCheckboxesInTable.selezionati']}",{0:size,1:_totRows});
-			                            	jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text(t1);
-			                            	var t1= formatMessage("#{commonsMsg['pagedDataTable.script.checkAllCheckboxesInTable.selezionaTutti']}",{0:_totRows});
-			                            	jQuery("[id$='"+inputId+"_selectAllLink']").show().text(t2);
-			                           	}else{
-			                           		jQuery("[id$='"+inputId+"_selectedInfoLbl']").hide();
-			                           		jQuery("[id$='"+inputId+"_selectAllLink']").hide();
-			                           		jQuery("[id$='"+inputId+"_undoSelectAllLink']").hide();              		
-				                        }
-			                            
-			                            
-				                    }
-		                            
-	                            }
-	                            function #{id}_selectAllListener(inputId, selectAll){
-	                            	var _totRows = #{value.rowCount};
-	                            	var tid = ":"+inputId+"_tbl";
-									if(selectAll){
-										jQuery("[id$='"+inputId+"_selectedAllChbx']").attr("checked","on");
-										var t1 = formatMessage("#{commonsMsg['pagedDataTable.script.selectAllListener.selezionatiTutti']}",{0:_totRows});
-										jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text(t1);
-										jQuery("[id$='"+inputId+"_selectAllLink']").hide();
-										jQuery("[id$='"+inputId+"_undoSelectAllLink']").show().text("#{commonsMsg['pagedDataTable.script.selectAllListener.annullaSelezione']}.");
-									}else{
-										jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");
-										jQuery("[id$='"+inputId+"_selectedInfoLbl']").hide();
-		                           		jQuery("[id$='"+inputId+"_selectAllLink']").hide();
-		                           		jQuery("[id$='"+inputId+"_undoSelectAllLink']").hide();
-		                           		//jQuery("div [id$='"+inputId+"'] input:checkbox").removeAttr("checked");
-		                           		jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").removeAttr("checked");
-		                           		jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_checkAll']").removeAttr("checked");
-									}
-		                            
-		                        }
-		                        function formatMessage(text,values){
-		                        	  for(var v in values){
-		                        		    text =text.replace('{' + v + '}', values[v]);
-		                        		}
-		                        		return text;
-			                        }
-	                            //]]>
-	                          </script>
-	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="#{commonsMsg['pagedDataTable.component.selectAll']}" onclick="#{id}_checkAllCheckboxesInTable( '#{id}', this.checked );">
+	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="#{commonsMsg['pagedDataTable.component.selectAll']}" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay});">
 	                        	
 	                        </h:selectBooleanCheckbox>
 	                        <h:selectBooleanCheckbox id="#{id}_selectedAllChbx" value="#{mBean.selectedAll}" style="display:none"/>
 	                      </h:panelGroup>
 	                    </f:facet>
-	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"/>
+	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false" onclick="singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay} );"/>
 	                  </rich:column>
 					  
 					  <ui:insert/>
@@ -255,8 +185,8 @@
 						      		<div class="selectionInfoItems">
 						      			<h:outputText id="#{id}_selectedInfoLbl" style="display:none" value="" styleClass="selectionInfoItem"/>
 
-										<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="Seleziona tutti gli elementi" onclick="#{id}_selectAllListener('#{id}',true); return false;"/>
-					      				<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="Annulla selezione" onclick="#{id}_selectAllListener('#{id}',false); return false;"/>
+										<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="Seleziona tutti gli elementi" onclick="selectAllListener('#{id}',true,#{value.rowCount}); return false;"/>
+					      				<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="Annulla selezione" onclick="selectAllListener('#{id}',false,#{value.rowCount}); return false;"/>
 	
 						      		</div>
 			      					
@@ -265,7 +195,7 @@
 				      		<h:panelGroup layout="block" styleClass="buttonrow">
 					      		<div class="buttonrowlista">
 					      			<c:if test="#{empty customDelete or customDelete==false}">
-						      			<a4j:jsFunction id="#{id}_deleteSelected" name="#{id}_deleteSelected" action="#{mBean.delete}" reRender="#{id}"/>
+						      			<a4j:jsFunction id="#{id}_deleteSelected" name="#{id}_deleteSelected" action="#{mBean.delete}" render="#{id}"/>
 						      		</c:if>
 						      		<c:if test="#{not empty customDelete and customDelete==true and enableDelete}">
 						      			<ui:insert name="customDelete"/>
@@ -281,85 +211,80 @@
 					  
 						
 			</rich:dataTable>
-			<rich:datascroller id="#{id}_ds_down"
-					   for="#{id}_tbl" 
-					   maxPages="15"
-					   renderIfSinglePage="false" 
-					   pagesVar="pages" 
-					   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide">
+			<a4j:outputPanel id="#{id}_ds_down_pnl" layout="block" styleClass="#{not empty topScrollerStyleClass ? topScrollerStyleClass : 'acent'}">
+			<rich:dataScroller xmlns="" id="#{id}_ds_down" for="#{id}_tbl" maxPages="15" renderIfSinglePage="false" pagesVar="pages" pageIndexVar="page" render="#{id}_ds_top" 
+				fastControls="hide" oncomplete="checkBrowser();" styleClass="#{not empty topScrollerStyleClass ? topScrollerStyleClass : 'acent'}">
 					   
-					<f:facet name="previous">
-						<h:graphicImage id="#{id}_prev" value="/images/icons/silk/control_prev_blue.png" >
-							<rich:toolTip for="#{id}_prev">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.precedente']}" />
-							</rich:toolTip>
+					<f:facet xmlns="http://www.w3.org/1999/xhtml" name="previous">
+						<h:graphicImage xmlns="" id="#{id}_prev" library="images" name="icons/silk/control_prev_blue.png" alt="control_prev_blue.png">
+							<rich:tooltip for="#{id}_prev">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.precedente']}"/>
+							</rich:tooltip>
 						</h:graphicImage>
 					</f:facet>
-					<f:facet name="next">
-						<h:graphicImage id="#{id}_next" value="/images/icons/silk/control_next_blue.png" >
-							<rich:toolTip for="#{id}_next">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.successiva']}" />
-							</rich:toolTip>
+					<f:facet xmlns="http://www.w3.org/1999/xhtml" name="next">
+						<h:graphicImage xmlns="" id="#{id}_next" library="images" name="icons/silk/control_next_blue.png" alt="control_next_blue.png">
+							<rich:tooltip for="#{id}_next">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.successiva']}"/>
+							</rich:tooltip>
 						</h:graphicImage>
 					</f:facet>
-					<f:facet name="last">
-						<h:graphicImage id="#{id}_last" value="/images/icons/silk/control_end_blue.png" >
-							<rich:toolTip for="#{id}_last">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.ultima']}" />
-							</rich:toolTip>
+					<f:facet xmlns="http://www.w3.org/1999/xhtml" name="last">
+						<h:graphicImage xmlns="" id="#{id}_last" library="images" name="icons/silk/control_end_blue.png" alt="control_end_blue.png">
+							<rich:tooltip for="#{id}_last">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.ultima']}"/>
+							</rich:tooltip>
 						</h:graphicImage>
 					</f:facet>
-					<f:facet name="first">
-						<h:graphicImage id="#{id}_first" value="/images/icons/silk/control_start_blue.png" >
-							<rich:toolTip for="#{id}_first">
-							<h:outputText value="#{commonsMsg['pagedDataTable.component.prima']}" />
-							</rich:toolTip>
+					<f:facet xmlns="http://www.w3.org/1999/xhtml" name="first">
+						<h:graphicImage xmlns="" id="#{id}_first" library="images" name="icons/silk/control_start_blue.png" alt="control_start_blue.png">
+							<rich:tooltip for="#{id}_first">
+							<h:outputText xmlns="http://www.w3.org/1999/xhtml" value="#{commonsMsg['pagedDataTable.component.prima']}"/>
+							</rich:tooltip>
 						</h:graphicImage>
 					</f:facet>
 					
-					<ui:insert name="requestParams"/>
-			</rich:datascroller>
+					<ui:insert xmlns="http://www.w3.org/1999/xhtml" name="requestParams"/>
+			</rich:dataScroller>
+			</a4j:outputPanel>
 			
  
-			<rich:modalPanel id="#{id}_deleteConfirmation" width="300" height="150">
-			   <f:facet name="header">
-			   	<h:outputText value="#{commonsMsg['pagedDataTable.component.confermaRimozione.title']}" />
+			<rich:popupPanel xmlns="" modal="true" id="#{id}_deleteConfirmation" width="300" height="150">
+			   <f:facet xmlns="http://www.w3.org/1999/xhtml" name="header">
+			   	<h:outputText value="#{commonsMsg['pagedDataTable.component.confermaRimozione.title']}"/>
 			   </f:facet>
-			   <h:panelGrid>
+			   <h:panelGrid xmlns="http://www.w3.org/1999/xhtml">
 			      <h:panelGrid columns="2">
-			         <h:graphicImage value="/images/001_11.png" alt="#{commonsMsg['pagedDataTable.component.confermaRimozione.label']}"/>
-				 	<h:outputText value="#{commonsMsg['pagedDataTable.component.confermaRimozione.label']}" style="font-weight: bold;" />
+			         <h:graphicImage xmlns="" alt=".png" library="images" name="001_11.png"/>
+				 	<h:outputText value="#{commonsMsg['pagedDataTable.component.confermaRimozione.label']}" style="font-weight: bold;"/>
 			      </h:panelGrid>
 			      <h:panelGroup>
-			         <rich:spacer height="20px" />
+			         <h:panelGroup xmlns="" layout="block" styleClass="spacer"/>
 			         <div class="buttonrow">
-			     		<input id="#{id}_confermaRimozioneBtn" type="button" value="#{commonsMsg['pagedDataTable.component.confermaRimozione.ok']}" class="icon-ok"
-							   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');#{id}_deleteSelected();return false" />
-						<input id="#{id}_annullaRimozioneBtn" type="button" value="#{commonsMsg['pagedDataTable.component.confermaRimozione.ko']}" class="negative icon-delete"
-							   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');return false" />
+			     		<input id="#{id}_confermaRimozioneBtn" type="button" value="#{commonsMsg['pagedDataTable.component.confermaRimozione.ok']}" class="icon-ok" onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');#{id}_deleteSelected();return false"/>
+						<input id="#{id}_annullaRimozioneBtn" type="button" value="#{commonsMsg['pagedDataTable.component.confermaRimozione.ko']}" class="negative icon-delete" onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');return false"/>
 						         
 			         </div>
 				  </h:panelGroup>
 			   </h:panelGrid>
-			</rich:modalPanel>
+			</rich:popupPanel>
 			
-			<rich:modalPanel id="#{id}_checkSelection" width="300" height="150">
-			   <f:facet name="header">
-			   	<h:outputText value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.title']}" />
+			<rich:popupPanel xmlns="" modal="true" id="#{id}_checkSelection" width="300" height="150">
+			   <f:facet xmlns="http://www.w3.org/1999/xhtml" name="header">
+			   	<h:outputText value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.title']}"/>
 			   </f:facet>
-			   <h:panelGrid>
+			   <h:panelGrid xmlns="http://www.w3.org/1999/xhtml">
 			      <h:panelGrid columns="2">
-			         <h:graphicImage value="/images/001_11.png" alt="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.label']}"/>
-				 	<h:outputText value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.label']}" style="font-weight: bold;" />
+			         <h:graphicImage xmlns="" alt=".png" library="images" name="001_11.png"/>
+				 	<h:outputText value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.label']}" style="font-weight: bold;"/>
 			      </h:panelGrid>
 			      <h:panelGroup>
-			         <rich:spacer height="20px" />
+			         <h:panelGroup xmlns="" layout="block" styleClass="spacer"/>
 			         <div class="buttonrow">
-			     		<input type="button" value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.close']}" 
-							   onclick="Richfaces.hideModalPanel('#{id}_checkSelection');return false" />
+			     		<input type="button" value="#{commonsMsg['pagedDataTable.component.selezioneRichiesta.close']}" onclick="Richfaces.hideModalPanel('#{id}_checkSelection');return false"/>
 			         </div>
 				  </h:panelGroup>
 			   </h:panelGrid>
-			</rich:modalPanel>
+			</rich:popupPanel>
 		</a4j:outputPanel>
 </ui:component>

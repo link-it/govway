@@ -1,40 +1,33 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2"
- >
+
+<!DOCTYPE ui:composition
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<c:if test="#{empty required}">
-		<c:set var="required" value="#{field.required}" />
+		<c:set var="required" value="#{field.required}"/>
 	</c:if>
 		<c:if test="#{empty disabled}">
-		<c:set var="disabled" value="#{field.disabled}" />
+		<c:set var="disabled" value="#{field.disabled}"/>
 	</c:if>
 
 	<c:if test="#{empty field.converterType}">
 		<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
-			<h:inputText id="input_#{field.name}" value="#{field.value}"
-				style="#{field.style}" disabled="#{disabled}">
+			<h:inputText id="input_#{field.name}" value="#{field.value}" styleClass="#{field.styleClass}" style="#{field.style}" disabled="#{disabled}">
 			</h:inputText>
 		</op2web:prop>
 	</c:if>
 
 	<c:if test="#{not empty field.converterType and empty field.currencyCode and empty field.currencySymbol}">
 		<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
-			<h:inputText id="input_#{field.name}" value="#{field.value}"
-				style="#{field.style}" disabled="#{disabled}">
-				<f:convertNumber type="#{field.converterType}" />
+			<h:inputText id="input_#{field.name}" value="#{field.value}" styleClass="#{field.styleClass}" style="#{field.style}" disabled="#{disabled}">
+				<f:convertNumber type="#{field.converterType}"/>
 			</h:inputText>
 		</op2web:prop>
 	</c:if>
 	
 	<c:if test="#{not empty field.converterType and not empty field.currencySymbol}">
 		<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
-			<h:inputText id="input_#{field.name}" value="#{field.value}" disabled="#{disabled}"
-				style="#{field.style}">
+			<h:inputText id="input_#{field.name}" value="#{field.value}" disabled="#{disabled}" style="#{field.style}" styleClass="#{field.styleClass}">
 				<f:convertNumber type="#{field.converterType}" currencySymbol="#{field.currencySymbol}"/>
 			</h:inputText>
 		</op2web:prop>
@@ -42,9 +35,8 @@
 
 	<c:if test="#{not empty field.converterType and not empty field.currencyCode}">
 		<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
-			<h:inputText id="input_#{field.name}" value="#{field.value}" disabled="#{disabled}" 
-				style="#{field.style}">
-				<f:convertNumber type="#{field.converterType}" currencyCode="#{field.currencyCode}" />
+			<h:inputText id="input_#{field.name}" value="#{field.value}" disabled="#{disabled}" style="#{field.style}" styleClass="#{field.styleClass}">
+				<f:convertNumber type="#{field.converterType}" currencyCode="#{field.currencyCode}"/>
 			</h:inputText>
 		</op2web:prop>
 	</c:if>

@@ -21,9 +21,13 @@
 package org.openspcoop2.generic_project.web.impl.jsf2.utils;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
 
 /***
  * 
@@ -82,5 +86,96 @@ public class Utils extends org.openspcoop2.generic_project.web.core.Utils {
 		}
 
 		return locale;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T findBean(String beanName) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		return (T) context.getApplication().evaluateExpressionGet(context, "#{" + beanName + "}", Object.class);
+	}
+
+	public static String getRequestParameter(String parameterName) {
+		String parameterValue = null;
+
+		HttpServletRequest req = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+
+		Map<String, String[]> parameterMap = req.getParameterMap();
+
+
+		for (String key : parameterMap.keySet()) {
+
+			if(key.equals(parameterName)){
+				String[] strings = parameterMap.get(key);
+
+				if(strings.length == 1)
+					parameterValue = strings[0];
+
+				break;
+			}
+		}
+		return parameterValue;
+	}
+
+	public static String getRequestParameterEndsWith(String parameterName) {
+		String parameterValue = null;
+
+		HttpServletRequest req = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+
+		Map<String, String[]> parameterMap = req.getParameterMap();
+
+
+		for (String key : parameterMap.keySet()) {
+
+			if(key.endsWith(parameterName)){
+				String[] strings = parameterMap.get(key);
+
+				if(strings.length == 1)
+					parameterValue = strings[0];
+
+				break;
+			}
+		}
+		return parameterValue;
+	}
+
+
+	public static void printRequestParameter(String parameterName,Logger log) {
+		HttpServletRequest req = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+
+		Map<String, String[]> parameterMap = req.getParameterMap();
+
+		String val = "";
+		if(parameterName != null){
+			String[] strings = parameterMap.get(parameterName);
+
+			if(strings != null)
+				for (String string : strings) {
+					if(val.length() > 0)
+						val += ", " ;
+
+					val += string;
+				}
+			else 
+				val = "Non presente";
+			
+			log.debug("PAR ["+parameterName+"] VAL["+val+"]" );
+
+		}else {
+			for (String key : parameterMap.keySet()) {
+
+				if(key.equals(parameterName)){
+					String[] strings = parameterMap.get(key);
+
+					for (String string : strings) {
+						if(val.length() > 0)
+							val += ", " ;
+
+						val += string;
+					}
+				}
+
+				log.debug("PAR ["+key+"] VAL["+val+"]" );
+			}
+		}
 	}
 }

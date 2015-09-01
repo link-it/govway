@@ -22,7 +22,7 @@ package org.openspcoop2.generic_project.web.impl.jsf2.input.impl;
 
 import java.util.List;
 
-import org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem;
+import org.openspcoop2.generic_project.web.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.PickList;
 
@@ -34,7 +34,7 @@ import org.openspcoop2.generic_project.web.input.PickList;
  * @version $Rev$, $Date$ 
  *
  */
-public class PickListImpl extends MultipleChoiceImpl implements PickList<SelectItem>{ 
+public class PickListImpl extends MultipleChoiceImpl implements PickList { 
 
 	/**
 	 * 

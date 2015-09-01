@@ -23,10 +23,11 @@ package org.openspcoop2.generic_project.web.impl.jsf2.form;
 import java.io.Serializable;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.form.Form;
-import org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem;
+import org.openspcoop2.generic_project.web.impl.jsf2.input.impl.SelectListImpl;
 import org.openspcoop2.generic_project.web.impl.jsf2.mbean.LoginBean;
 import org.openspcoop2.generic_project.web.input.FormField;
 import org.openspcoop2.generic_project.web.input.SelectList;
@@ -39,7 +40,7 @@ import org.openspcoop2.generic_project.web.input.SelectList;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class LanguageForm extends BaseForm implements Form,Serializable {
+public class LanguageForm extends BaseForm  implements Form,Serializable { 
 
 	/**
 	 * 
@@ -47,7 +48,7 @@ public class LanguageForm extends BaseForm implements Form,Serializable {
 	private static final long serialVersionUID = 1L; 
 
 	private LoginBean mBean = null;
-	private SelectList<SelectItem> lingua = null; 
+	private SelectList lingua = null; 
 
 	public LanguageForm(){
 		try{
@@ -64,18 +65,18 @@ public class LanguageForm extends BaseForm implements Form,Serializable {
 		this.setClosable(false); 
 		this.setRenderRegionOnly(false);
 
-		this.lingua = this.getWebGenericProjectFactory().getInputFieldFactory().createSelectList();
+		this.lingua = this.getFactory().getInputFieldFactory().createSelectList();
 		this.lingua.setName("linguaPagina");
 		this.lingua.setRequired(false);
 		this.lingua.setLabel("");
-		this.lingua.setFieldsToUpdate(
-				"@([id$="+this.getId() 
-				+ "_formPnl]) @([id$=header]) @([id$=footerct]) @([id$=mainct]) @([id$=menuct])");
-
-		//				this.getIdForm() + "_formPnl,headerct,mainct,menuct"); //"this.getIdForm() + "_formPnl
+		this.lingua.setFieldsToUpdate(this.getId() + "_formPnl,headerct,mainct,menuct"); //"this.getIdForm() + "_formPnl
 		this.lingua.setForm(this);
 		this.lingua.setWidth(70);
-		this.lingua.setStyle("width:70px"); 
+		this.lingua.setStyleClass("languageSelect"); 
+		((SelectListImpl)this.lingua).setSelectItemsWidth(70); 
+		((SelectListImpl)this.lingua).setExecute("@all");
+
+
 	}
 
 	@Override
@@ -83,9 +84,7 @@ public class LanguageForm extends BaseForm implements Form,Serializable {
 		this.lingua.reset();
 	}
 
-	public void linguaPaginaSelectListener(ActionEvent ae){
-		this.mBean.cambiaLinguaListener(ae); 
-	}
+
 
 	public LoginBean getmBean() {
 		return this.mBean;
@@ -93,22 +92,47 @@ public class LanguageForm extends BaseForm implements Form,Serializable {
 
 	public void setmBean(LoginBean mBean) {
 		this.mBean = mBean;
+
 	}
 
-	public SelectList<SelectItem>  getLingua() {
+	public SelectList  getLingua() {
 		return this.lingua;
 	}
 
-	public void setLingua(SelectList<SelectItem>  lingua) {
+	public void setLingua(SelectList  lingua) {
 		this.lingua = lingua;
 	}
-	
+
+	public void linguaPaginaSelectListener(ActionEvent ae){
+		this.mBean.cambiaLinguaListener(ae); 
+	}
+
+	public void linguaPaginaValueChanged(ValueChangeEvent ae){
+		this.mBean.cambiaLinguaValueChanged(ae); 
+	}
+
 	@Override
 	public FormField<?> getField(String id) {
-		return null;
+		return this.lingua;
 	}
-	
+
 	@Override
 	public void resetFieldValue(String id) {
+		this.lingua.reset();		
 	}
+
+	@Override
+	public void setObject(Object object) throws Exception {
+
+	}
+
+	@Override
+	public Object getObject() throws Exception {return null;
+	}
+
+	@Override
+	public String valida() throws Exception {
+		return null;
+	}
+
 }

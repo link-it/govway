@@ -47,17 +47,21 @@ public class BaseTable<V> implements Table<V> {
 	protected boolean rendered;
 	protected String width;
 	protected Integer rowsToDisplay;
-	
+
 	protected String detailColumnPosition = Costanti.TABLE_DETAIL_COLUMN_RIGHT;
 	protected boolean showDetailColumn = false;
 	protected String detailLinkText = null;
+
+	protected Object metadata = null;
 	
-	protected Object metadata;
-	
+	protected String styleClass;
+	protected String headerClass;
+	protected String footerClass;
+
+
 	public BaseTable(){
 		this.detailLinkText = Utils.getInstance().getMessageFromCommonsResourceBundle("commons.button.dettaglio.title");
 	}
-
 
 	@Override
 	public V getValue() {
@@ -77,11 +81,18 @@ public class BaseTable<V> implements Table<V> {
 	}
 	@Override
 	public String getHeaderText() {
+		try{
+			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.headerText);
+
+			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
+				return tmp;
+		}catch(Exception e){}
+		
 		return this.headerText;
 	}
 	@Override
-	public void setHeaderText(String header) {
-		this.headerText = header;
+	public void setHeaderText(String headerText) {
+		this.headerText = headerText;
 	}
 	@Override
 	public boolean isRendered() {
@@ -125,6 +136,13 @@ public class BaseTable<V> implements Table<V> {
 	}
 	@Override
 	public String getDetailLinkText() {
+		try{
+			String tmp = Utils.getInstance().getMessageFromResourceBundle(this.detailLinkText);
+
+			if(tmp != null && !tmp.startsWith("?? key ") && !tmp.endsWith(" not found ??"))
+				return tmp;
+		}catch(Exception e){}
+		
 		return this.detailLinkText;
 	}
 	@Override
@@ -140,5 +158,36 @@ public class BaseTable<V> implements Table<V> {
 	public void setMetadata(Object metadata) {
 		this.metadata = metadata;
 	}
+
+	@Override
+	public String getStyleClass() {
+		return this.styleClass;
+	}
+
+	@Override
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+	@Override
+	public String getHeaderClass() {
+		return this.headerClass;
+	}
+
+	@Override
+	public void setHeaderClass(String headerClass) {
+		this.headerClass = headerClass;
+	}
+
+	@Override
+	public String getFooterClass() {
+		return this.footerClass;
+	}
+
+	@Override
+	public void setFooterClass(String footerClass) {
+		this.footerClass = footerClass;
+	}
+
 
 }

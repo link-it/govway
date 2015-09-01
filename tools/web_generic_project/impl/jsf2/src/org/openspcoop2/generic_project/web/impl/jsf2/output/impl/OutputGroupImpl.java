@@ -21,6 +21,7 @@
 package org.openspcoop2.generic_project.web.impl.jsf2.output.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,7 @@ public class OutputGroupImpl implements OutputGroup{
 	
 	public OutputGroupImpl(){
 		this.fields = new ArrayList<OutputField<?>>();
+		this.fieldsMap = new HashMap<String, OutputField<?>>();
 		this.columns = 2;
 		this.columnClasses = ""; //"gridContent verticalAlignTop";
 		this.styleClass = "";
@@ -120,6 +122,7 @@ public class OutputGroupImpl implements OutputGroup{
 	@Override
 	public void addField(OutputField<?> field){
 		this.fields.add(field);
+		setField(field); 
 	}
 
 	@Override
@@ -154,7 +157,8 @@ public class OutputGroupImpl implements OutputGroup{
 	
 	@Override
 	public void setField(String fieldName, OutputField<?> field){
-		this.fieldsMap.put(fieldName, field);
+		if(!this.fieldsMap.containsKey(fieldName))
+			this.fieldsMap.put(fieldName, field);
 	}
 
 	@Override
@@ -165,6 +169,38 @@ public class OutputGroupImpl implements OutputGroup{
 	
 	@Override
 	public OutputField<?> getField(String id) throws Exception {
-		return this.fieldsMap.get(id); 
+		return getFieldById(id); 
+	}
+	
+	private OutputField<?> getFieldById(String id) throws Exception{
+		OutputField<?> f = null;
+		try {
+			// Se il field si trova all'interno della mappa dei field, lo restituisco 
+			if(this.getFieldsMap() != null)
+				f = this.getFieldsMap().get(id);
+
+
+			if(f == null){
+				if(this.getFields() != null && this.getFields().size() > 0){
+					for (OutputField<?> outputField : this.getFields()) {
+						String name = (String) outputField.getName();
+
+						// se ho trovato il field corretto allora ho terminato la ricerca.
+						if(name.equals(id)){
+							f = outputField;
+							
+							// se non l'ho trovato dentro la mappa dei field lo aggiungo per evitare di fare sempre la reflection
+							if(!this.getFieldsMap().containsKey(name))
+								this.setField(name, f);
+															
+							break;
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw e;		
+		} 
+		return f;
 	}
 }

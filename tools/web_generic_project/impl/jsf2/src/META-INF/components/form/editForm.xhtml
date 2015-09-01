@@ -1,0 +1,50 @@
+
+<!DOCTYPE ui:component
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<ui:component xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf2" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages"/>
+	<h:outputScript xmlns="" name="jquery.js"/>
+
+	<c:set var="formBean" value="#{mBean.form}"/>
+	<c:set var="formId" value="#{formBean.id}"/>
+
+	<c:if test="#{empty fieldsToUpdateButtonInvia}">
+		<c:set var="fieldsToUpdateButtonInvia" value="pagina"/>
+	</c:if>	
+	
+	<c:if test="#{empty fieldsToUpdateButtonAnnulla}">
+		<c:set var="fieldsToUpdateButtonAnnulla" value="pagina"/>
+	</c:if>	
+	
+	<c:if test="#{empty hideButtonAnnulla}">
+		<c:set var="hideButtonAnnulla" value="false"/>
+	</c:if>	
+	
+	<c:if test="#{empty hideButtonInvia}">
+		<c:set var="hideButtonInvia" value="false"/>
+	</c:if>	
+	
+	<c:if test="#{empty showNotaCampiObbligatori}">
+		<c:set var="showNotaCampiObbligatori" value="#{formBean.showNotaCampiObbligatori}"/>
+	</c:if>
+
+
+	<op2web:form formBean="#{formBean}" rendered="#{rendered}">
+
+		<ui:insert/>
+		
+		<h:panelGroup xmlns="" layout="block" styleClass="spacer"/>
+
+		<ui:define name="buttons">
+			<a4j:commandButton id="#{formId}_invia" value="#{msg['commons.button.invia']}" rendered="#{not hideButtonInvia}" execute="@this" styleClass="icon-save" render="#{fieldsToUpdateButtonInvia}" status="mainStatus" action="#{mBean.invia}">
+			</a4j:commandButton>
+
+			<a4j:commandButton id="#{formId}_annulla" value="#{msg['commons.button.annulla']}" rendered="#{not hideButtonAnnulla}" execute="@this" status="mainStatus" styleClass="icon-delete" action="#{mBean.annulla}" render="#{fieldsToUpdateButtonAnnulla}">
+			</a4j:commandButton>
+			
+			<ui:insert name="buttonsEditForm"/>
+		</ui:define>
+
+	</op2web:form>
+
+</ui:component>

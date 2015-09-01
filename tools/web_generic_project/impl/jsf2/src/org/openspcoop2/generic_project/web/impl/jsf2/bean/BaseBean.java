@@ -25,12 +25,12 @@ import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openspcoop2.generic_project.web.bean.IBean;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManager;
 import org.openspcoop2.generic_project.web.impl.jsf2.CostantiJsf2Impl;
 import org.openspcoop2.generic_project.web.output.OutputField;
+import org.openspcoop2.generic_project.web.view.IViewBean;
 
 /**
  * Classe Base per i bean dell'interfaccia grafica.
@@ -42,7 +42,7 @@ import org.openspcoop2.generic_project.web.output.OutputField;
  *	@param <DTOType> Tipo di dato da visualizzare.
  *	@param <KeyType> Tipo della chiave del dato da visualizzare.
  */
-public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyType> {
+public abstract class BaseBean<DTOType, KeyType>  implements IViewBean<DTOType, KeyType> {
 
 	private Map<String, OutputField<?>> fields = null;
 
@@ -99,7 +99,13 @@ public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyT
 	}
 
 	@Override
-	public WebGenericProjectFactory getWebGenericProjectFactory()
+	public void setField(OutputField<?> field) {
+		if(field != null && field.getName() != null)
+			this.setField(field.getName(), field);
+	}
+
+	@Override
+	public WebGenericProjectFactory getFactory()
 			throws FactoryException {
 		if(this.factory == null)
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf2Impl.FACTORY_NAME);
@@ -108,7 +114,7 @@ public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyT
 	}
 
 	@Override
-	public void setWebGenericProjectFactory(WebGenericProjectFactory factory)
+	public void setFactory(WebGenericProjectFactory factory)
 			throws FactoryException {
 		this.factory  = factory;
 
@@ -122,15 +128,16 @@ public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyT
 	@SuppressWarnings("rawtypes")
 	private OutputField<?> getFieldById(String id) throws Exception{
 		OutputField<?> f = null;
+		try {
+			// Se il field si trova all'interno della mappa dei field, lo restituisco 
+			if(this.getFields() != null)
+				f = this.getFields().get(id);
 
-		// Se il field si trova all'interno della mappa dei field, lo restituisco 
-		if(this.getFields() != null)
-			f = this.getFields().get(id);
 
 		if(f == null){
 			Class<? extends BaseBean> myClass = this.getClass();
 
-			try {
+
 				Field[] fields = myClass.getDeclaredFields();
 
 				for (Field field : fields) {
@@ -151,16 +158,21 @@ public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyT
 							// se ho trovato il field corretto allora ho terminato la ricerca.
 							if(name.equals(id)){
 								f = outputField;
+								
+								// se non l'ho trovato dentro la mappa dei field lo aggiungo per evitare di fare sempre la reflection
+								if(!this.fields.containsKey(name))
+									this.setField(name, f);
+																
 								break;
 							}
 						}
 					}
 
 				}
-			} catch (Exception e) {
-				throw e;		
-			} 
-		}
+			}
+		} catch (Exception e) {
+			throw e;		
+		} 
 		return f;
 	}
 }

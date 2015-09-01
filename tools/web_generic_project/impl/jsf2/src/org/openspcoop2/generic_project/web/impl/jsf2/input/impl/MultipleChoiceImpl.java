@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.openspcoop2.generic_project.web.factory.Costanti;
 import org.openspcoop2.generic_project.web.impl.jsf2.input.ChoiceFormField;
-import org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem;
+import org.openspcoop2.generic_project.web.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.MultipleChoice;
 
@@ -36,7 +36,7 @@ import org.openspcoop2.generic_project.web.input.MultipleChoice;
  * @version $Rev$, $Date$ 
  *
  */
-public class MultipleChoiceImpl extends ChoiceFormField<List<SelectItem>> implements MultipleChoice<SelectItem>{
+public class MultipleChoiceImpl extends ChoiceFormField<List<SelectItem>> implements MultipleChoice {
 
 	/**
 	 * 

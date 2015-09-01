@@ -20,7 +20,6 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf2.input.impl;
 
-import org.openspcoop2.generic_project.web.impl.jsf2.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.RadioButton;
 
@@ -32,7 +31,7 @@ import org.openspcoop2.generic_project.web.input.RadioButton;
  * @version $Rev$, $Date$ 
  *
  */
-public class RadioButtonImpl extends SingleChoiceImpl implements RadioButton<SelectItem> {
+public class RadioButtonImpl extends SingleChoiceImpl implements RadioButton  {
 	
 	
 	/**
