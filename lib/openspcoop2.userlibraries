@@ -75,6 +75,13 @@
 	<archive path="/op2_2.2.dev/lib/lucene/lucene-misc-4.7.0.jar"/>
 	<archive path="/op2_2.2.dev/lib/lucene/lucene-queries-4.7.0.jar"/>
 	<archive path="/op2_2.2.dev/lib/lucene/lucene-suggest-4.7.0.jar"/>
+	<!-- lucene -->
+        <archive path="/op2_2.2.dev/lib/lucene/lucene-core-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-analyzers-common-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-codecs-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-misc-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-queries-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-suggest-4.7.0.jar"/>
 	<!-- security -->
         <archive path="/op2_2.3.dev/lib/security/xmlsec-1.5.4.jar"/>
         <archive path="/op2_2.3.dev/lib/security/wss4j-1.6.10.jar"/>
@@ -106,6 +113,7 @@
         <archive path="/op2_2.3.dev/lib/shared/addressing-1.0.jar"/>
         <archive path="/op2_2.3.dev/lib/shared/activation-1.1.1.jar"/>
         <archive path="/op2_2.3.dev/lib/shared/aspectjrt-1.7.3.jar"/>
+	<archive path="/op2_2.2.dev/lib/shared/freemarker-2.3.19.jar"/>
 	<archive path="/op2_2.2.dev/lib/shared/freemarker-2.3.19.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_2.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
@@ -176,13 +184,5 @@
 	<archive path="/op2_2.3.dev/lib/stub/cxf/openspcoop2_configStub_cxf.jar"/>
 	<archive path="/op2_2.3.dev/lib/stub/cxf/openspcoop2_registryStub_cxf.jar"/>
 	<archive path="/op2_2.3.dev/lib/stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
-    </library>
-    <library name="openspcoop2_2.2_lib_lucene" systemlibrary="false">
-        <archive path="/op2_2.2.dev/lib/lucene/lucene-core-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-analyzers-common-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-codecs-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-misc-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-queries-4.7.0.jar"/>
-	<archive path="/op2_2.2.dev/lib/lucene/lucene-suggest-4.7.0.jar"/>
     </library>
 </eclipse-userlibraries>
