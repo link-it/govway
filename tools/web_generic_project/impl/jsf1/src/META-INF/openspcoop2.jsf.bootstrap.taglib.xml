@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<!DOCTYPE facelet-taglib PUBLIC "-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN" "facelet-taglib_1_0.dtd">
+<facelet-taglib>
+	<namespace>http://www.openspcoop2.org/web/taglib/jsf/bootstrap</namespace>
+	
+	<tag>
+		<tag-name>dataTable</tag-name>
+		<source>bootstrap/components/table/pagedDataTable.xhtml</source>
+	</tag>
+		<tag>
+		<tag-name>simpleTable</tag-name>
+		<source>bootstrap/components/table/simpleTable.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>confirm</tag-name>
+		<source>bootstrap/components/dialog/confirmation.xhtml</source>
+   	</tag>
+   	   	<tag>
+   		<tag-name>prop</tag-name>
+   		<source>bootstrap/components/input/property.xhtml</source>
+   	</tag>
+   		<tag>
+   		<tag-name>inlineProp</tag-name>
+   		<source>bootstrap/components/input/inlineProperty.xhtml</source>
+   	</tag>
+    <tag>
+   		<tag-name>fieldset</tag-name>
+   		<source>bootstrap/components/input/fieldSet.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>form</tag-name>
+   		<source>bootstrap/components/form/form.xhtml</source>
+   	</tag>
+   	
+   	   	<tag>
+   		<tag-name>editForm</tag-name>
+   		<source>bootstrap/components/form/editForm.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>searchForm</tag-name>
+   		<source>bootstrap/components/form/searchForm.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>search</tag-name>
+   		<source>bootstrap/components/search/search.xhtml</source>
+   	</tag>
+   	
+   	
+   	<tag>
+   		<tag-name>formFields</tag-name>
+   		<source>bootstrap/components/form/formFields.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>searchFields</tag-name>
+   		<source>bootstrap/components/form/searchFields.xhtml</source>
+   	</tag>
+   
+   	<!-- Generic Form field -->
+   	<tag>
+   		<tag-name>formField</tag-name>
+   		<source>bootstrap/components/form/genericFormField.xhtml</source>
+   	</tag>
+   	
+   	<!-- Componente Base Input Text -->
+   	<tag>
+   		<tag-name>intervalInputText</tag-name>
+   		<source>bootstrap/components/input/intervalInputText.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>singleInputText</tag-name>
+   		<source>bootstrap/components/input/singleInputText.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>inputText</tag-name>
+   		<source>bootstrap/components/input/inputText.xhtml</source>
+   	</tag>
+   	
+   	 	<!-- Componente Base Input Date -->
+   	<tag>
+   		<tag-name>intervalInputDate</tag-name>
+   		<source>bootstrap/components/input/intervalinputDate.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>singleInputDate</tag-name>
+   		<source>bootstrap/components/input/singleInputDate.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>inputDate</tag-name>
+   		<source>bootstrap/components/input/inputDate.xhtml</source>
+   	</tag>
+   	
+   	 	<!-- Componente Base Input Number -->
+   	<tag>
+   		<tag-name>intervalInputNumber</tag-name>
+   		<source>bootstrap/components/input/intervalInputNumber.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>singleInputNumber</tag-name>
+   		<source>bootstrap/components/input/singleInputNumber.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>inputNumber</tag-name>
+   		<source>bootstrap/components/input/inputNumber.xhtml</source>
+   	</tag>
+   	 <tag>
+   		<tag-name>inputSlider</tag-name>
+   		<source>bootstrap/components/input/inputSlider.xhtml</source>
+   	</tag>
+   	 <tag>
+   		<tag-name>inputSpinner</tag-name>
+   		<source>bootstrap/components/input/inputSpinner.xhtml</source>
+   	</tag>
+   	
+   	<!-- Componente Select List -->
+   	<tag>
+   		<tag-name>inputSelect</tag-name>
+   		<source>bootstrap/components/input/inputSelect.xhtml</source>
+   	</tag>
+   	
+   		<!-- Componente Check Box boolean -->
+   	<tag>
+   		<tag-name>inputBooleanCheckBox</tag-name>
+   		<source>bootstrap/components/input/inputBooleanCheckBox.xhtml</source>
+   	</tag>
+   	
+   		<!-- Componente Check Box Multiple -->
+   	<tag>
+   		<tag-name>inputMultipleCheckBox</tag-name>
+   		<source>bootstrap/components/input/inputMultipleCheckBox.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente RadioButton -->
+   	<tag>
+   		<tag-name>inputRadioButton</tag-name>
+   		<source>bootstrap/components/input/inputRadioButton.xhtml</source>
+   	</tag>
+   	
+   	   	<!-- Componente Input Text Secret -->
+   	<tag>
+   		<tag-name>inputSecret</tag-name>
+   		<source>bootstrap/components/input/inputSecret.xhtml</source>
+   	</tag>
+   	
+   	<!-- Componente PickList-->
+   	<tag>
+   		<tag-name>inputPickList</tag-name>
+   		<source>bootstrap/components/input/inputPickList.xhtml</source>
+   	</tag>
+   	
+   	 	<!-- Componente Input TextArea -->
+   	   	<tag>
+   		<tag-name>inputTextArea</tag-name>
+   		<source>bootstrap/components/input/inputTextArea.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente List Box Multiple -->
+   	<tag>
+   		<tag-name>inputMultipleListBox</tag-name>
+   		<source>bootstrap/components/input/inputMultipleListBox.xhtml</source>
+   	</tag>
+   	
+   	   		<!-- Componente Single List Box -->
+   	<tag>
+   		<tag-name>inputSingleListBox</tag-name>
+   		<source>bootstrap/components/input/inputSingleListBox.xhtml</source>
+   	</tag>
+   	
+    <!-- Output Text -->
+    <tag>
+   		<tag-name>outputText</tag-name>
+   		<source>bootstrap/components/output/outputText.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>outputDate</tag-name>
+   		<source>bootstrap/components/output/outputDate.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>outputValuta</tag-name>
+   		<source>bootstrap/components/output/outputValuta.xhtml</source>
+   	</tag>
+   	
+   	   	<tag>
+   		<tag-name>outputNumber</tag-name>
+   		<source>bootstrap/components/output/outputNumber.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>output</tag-name>
+   		<source>bootstrap/components/output/genericOutput.xhtml</source>
+   	</tag>
+   	
+   	 <!-- Output Group -->
+    <tag>
+   		<tag-name>outputGroup</tag-name>
+   		<source>bootstrap/components/output/outputGroup.xhtml</source>
+   	</tag>
+   	
+   	   <!-- Colonna Tabella -->
+    <tag>
+   		<tag-name>tableColumn</tag-name>
+   		<source>bootstrap/components/table/genericColumn.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>tableColumns</tag-name>
+   		<source>bootstrap/components/table/genericColumns.xhtml</source>
+   	</tag>
+   	
+   	  <tag>
+   		<tag-name>textColumn</tag-name>
+   		<source>bootstrap/components/table/textColumn.xhtml</source>
+   	</tag>
+   	
+   		  <tag>
+   		<tag-name>valutaColumn</tag-name>
+   		<source>bootstrap/components/table/valutaColumn.xhtml</source>
+   	</tag>
+   	
+   	<tag>
+   		<tag-name>numberColumn</tag-name>
+   		<source>bootstrap/components/table/numberColumn.xhtml</source>
+   	</tag>
+   	
+   	  <tag>
+   		<tag-name>dateColumn</tag-name>
+   		<source>bootstrap/components/table/dateColumn.xhtml</source>
+   	</tag>
+   	
+   	  <tag>
+   		<tag-name>iconColumn</tag-name>
+   		<source>bootstrap/components/table/iconColumn.xhtml</source>
+   	</tag>
+   	
+   	<!-- List View Paginata -->
+   	<tag>
+   		<tag-name>pagedListView</tag-name>
+   		<source>bootstrap/components/presentation/pagedListView.xhtml</source>
+   	</tag>
+   	   	<tag>
+   		<tag-name>managedPagedListView</tag-name>
+   		<source>bootstrap/components/presentation/managedPagedListView.xhtml</source>
+   	</tag>
+   	
+   	<!-- List View Semplice -->
+   	<tag>
+   		<tag-name>simpleListView</tag-name>
+   		<source>bootstrap/components/presentation/simpleListView.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>managedSimpleListView</tag-name>
+   		<source>bootstrap/components/presentation/managedSimpleListView.xhtml</source>
+   	</tag>
+   	
+   <function>
+      <function-name>concat</function-name>
+      <function-class>org.openspcoop2.generic_project.web.impl.jsf1.taglib.functions.TaglibUtils</function-class>
+      <function-signature>java.lang.String concat(java.lang.String,java.lang.String)</function-signature>
+   </function>
+</facelet-taglib>

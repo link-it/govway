@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="#{empty required}">
+		<c:set var="required" value="#{field.required}" />
+	</c:if>
+	<c:if test="#{empty disabled}">
+		<c:set var="disabled" value="#{field.disabled}" />
+	</c:if>
+
+	<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
+		<c:if test="#{empty field.fieldsToUpdate}">
+			<h:selectManyCheckbox id="input_#{field.name}" 
+				layout="#{field.direzione}" styleClass="#{field.styleClass}" disabled="#{field.disabled}"
+				value="#{field.value}" > 
+					<f:selectItems value="#{field.elencoSelectItems}" />
+				</h:selectManyCheckbox>
+		</c:if>
+		
+		<c:if test="#{not empty field.fieldsToUpdate}">
+			<h:selectManyCheckbox id="input_#{field.name}" layout="#{field.direzione}"
+				styleClass="#{field.styleClass}" disabled="#{field.disabled}" value="#{field.value}" >
+				<f:selectItems value="#{field.elencoSelectItems}" />
+				<a4j:support status="mainStatus" event="onchange" reRender="#{field.fieldsToUpdate}" actionListener="#{field.valueChanged}" />
+			</h:selectManyCheckbox>
+		</c:if>
+	</op2web:prop>
+
+</ui:composition>

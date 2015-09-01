@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap" xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<c:set var="id" value="#{fieldDescriptor.name}" />
+	
+	<rich:column styleClass="#{fieldDescriptor.tableColumnStyleClass}">
+		<f:facet name="header" > 
+			<h:outputText value="#{fieldDescriptor.label}"  rendered="#{not empty fieldDescriptor.label}" 
+			styleClass="#{fieldDescriptor.labelStyleClass}"/>
+		</f:facet>
+		
+		<ui:insert name="icons"/>
+		
+		<ui:insert name="links"/>
+
+	</rich:column>
+</ui:composition>

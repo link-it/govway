@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:set var="id" value="#{group.id}" />
+	<c:set var="insideGroup" value="true" />
+	
+	<c:if test="#{empty nomiFields}">
+		<h:panelGrid id="panelGroupOut_#{id}" styleClass="#{group.styleClass}"
+			columnClasses="#{group.columnClasses}" 
+			rendered="#{group.rendered}" columns="#{group.columns}">
+
+			<c:forEach items="#{group.fields}" var="field">
+				<c:if test="#{field.rendered}">
+					<op2web:output field="#{field}" insideGroup="#{insideGroup}" />
+				</c:if>
+			</c:forEach>
+		</h:panelGrid>		
+	</c:if>
+
+	<c:if test="#{not empty nomiFields}">
+		<c:set var="fields" value="#{fn:split(nomiFields,',')}" />
+		<h:panelGrid id="panelGroupOut_#{id}_2" styleClass="#{group.styleClass}" columnClasses="#{group.columnClasses}" 
+			rendered="#{group.rendered}" columns="#{group.columns}">
+				
+			<c:forEach items="#{fields}" var="fieldName">
+				<c:set var="field" value="#{group.fieldsMap[fieldName]}" />
+		
+				<c:if test="#{field.rendered}">
+					<op2web:output field="#{field}" insideGroup="#{insideGroup}" />
+				</c:if>
+			</c:forEach>
+		</h:panelGrid>
+	</c:if>
+
+</ui:composition>

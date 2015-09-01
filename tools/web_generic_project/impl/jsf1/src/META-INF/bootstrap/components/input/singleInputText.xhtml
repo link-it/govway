@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="#{empty required}">
+		<c:set var="required" value="#{field.required}" />
+	</c:if>
+	<c:if test="#{empty disabled}">
+		<c:set var="disabled" value="#{field.disabled}" />
+	</c:if>
+	
+
+	<op2web:prop label="#{field.label}" required="#{field.required == 'true'}"
+		rendered="#{field.rendered == 'true'}">
+	
+		<c:if test="#{field.autoComplete == 'true'}">
+			<a4j:outputPanel layout="block" id="#{field.name}ComboCtr">
+			<h:inputText id="input_#{field.name}Combo" value="#{field.value}" styleClass="#{field.styleClass}"
+				style="#{field.style}" />
+			<rich:suggestionbox id="input_#{field.name}Suggestion" width="#{field.width}"
+				for="input_#{field.name}Combo" listWidth="#{field.selectItemsWidth}"
+				suggestionAction="#{field.fieldAutoComplete}" var="selectItem" fetchValue="#{selectItem.value}"
+				ajaxSingle="true" nothingLabel="--" param="input_#{field.name}Combo">
+				<h:column>
+					<h:outputText value="#{selectItem.label}" rendered="true" />
+				</h:column>
+				<a4j:support status="mainStatus" event="onselect" rendered="#{!empty field.fieldsToUpdate}"
+					actionListener="#{field.fieldSelected}"
+					reRender="#{field.fieldsToUpdate}" />
+			</rich:suggestionbox>
+			</a4j:outputPanel>
+		</c:if>
+		
+		<c:if test="#{field.autoComplete == 'false'}">
+			<h:inputText id="input_#{field.name}" value="#{field.value}" styleClass="#{field.styleClass}"
+				style="#{field.style}" disabled="#{field.disabled}" />
+		</c:if>
+	</op2web:prop>
+
+</ui:composition>

@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+
+	<c:if test="#{empty required}">
+		<c:set var="required" value="#{field.required}" />
+	</c:if>
+	<c:if test="#{empty disabled}">
+		<c:set var="disabled" value="#{field.disabled}" />
+	</c:if>
+
+	<c:if test="#{empty insideLeftPropStyleClass}">
+		<c:set var="insideLeftPropStyleClass" value="insideLeftProp" />
+	</c:if>
+
+	<c:if test="#{empty insideRightPropStyleClass}">
+		<c:set var="insideRightPropStyleClass" value="insideRightProp" />
+	</c:if>
+
+	<c:if test="#{empty field.converterType}">
+		<op2web:inlineProp labelEsterna="#{field.label}"
+			rendered="#{field.rendered}">
+			<ui:define name="prop1">
+				<op2web:prop label="#{commonsMsg['form.component.da']}"
+					styleClass="insideLeftProp" rendered="#{field.rendered}">
+					<h:inputText id="input1_#{field.name}" value="#{field.value}" disabled="#{disabled}"
+						style="#{field.style}" styleClass="#{field.styleClass}" />
+				</op2web:prop>
+			</ui:define>
+
+			<ui:define name="prop2">
+				<op2web:prop label="#{commonsMsg['form.component.a']}"
+					styleClass="insideRightProp" rendered="#{field.rendered}">
+					<h:inputText id="input2_#{field.name}" value="#{field.value2}" disabled="#{disabled}"
+						style="#{field.style}" styleClass="#{field.styleClass}" />
+				</op2web:prop>
+			</ui:define>
+		</op2web:inlineProp>
+	</c:if>
+
+
+	<c:if
+		test="#{not empty field.converterType and empty field.currencyCode and empty field.currencySymbol}">
+		<op2web:inlineProp labelEsterna="#{field.label}"
+			rendered="#{field.rendered}">
+			<ui:define name="prop1">
+				<op2web:prop label="#{commonsMsg['form.component.da']}"
+					styleClass="insideLeftProp" rendered="#{field.rendered}">
+					<h:inputText id="input1_#{field.name}" value="#{field.value}" disabled="#{disabled}"
+						style="#{field.style}">
+						<f:convertNumber type="#{field.converterType}" />
+					</h:inputText>
+				</op2web:prop>
+			</ui:define>
+
+			<ui:define name="prop2">
+				<op2web:prop label="#{commonsMsg['form.component.a']}"
+					styleClass="insideRightProp" rendered="#{field.rendered}">
+					<h:inputText id="input2_#{field.name}" value="#{field.value2}" disabled="#{disabled}"
+						style="#{field.style}">
+						<f:convertNumber type="#{field.converterType}" />
+					</h:inputText>
+				</op2web:prop>
+			</ui:define>
+		</op2web:inlineProp>
+	</c:if>
+
+	<c:if
+		test="#{not empty field.converterType and not empty field.currencySymbol}">
+		<op2web:inlineProp labelEsterna="#{field.label}"
+			rendered="#{field.rendered}">
+			<ui:define name="prop1">
+				<op2web:prop label="#{commonsMsg['form.component.da']}"
+					styleClass="insideLeftProp" rendered="#{field.rendered}">
+					<h:inputText id="input1_#{field.name}" value="#{field.value}" disabled="#{disabled}"
+						style="#{field.style}">
+						<f:convertNumber type="#{field.converterType}"
+							currencySymbol="#{field.currencySymbol}" />
+					</h:inputText>
+				</op2web:prop>
+			</ui:define>
+
+			<ui:define name="prop2">
+				<op2web:prop label="#{commonsMsg['form.component.a']}"
+					styleClass="insideRightProp" rendered="#{field.rendered}">
+					<h:inputText id="input2_#{field.name}" value="#{field.value2}" disabled="#{disabled}"
+						style="#{field.style}">
+						<f:convertNumber type="#{field.converterType}"
+							currencySymbol="#{field.currencySymbol}" />
+					</h:inputText>
+				</op2web:prop>
+			</ui:define>
+		</op2web:inlineProp>
+	</c:if>
+
+	<c:if
+		test="#{not empty field.converterType and not empty field.currencyCode}">
+		<op2web:inlineProp labelEsterna="#{field.label}"
+			rendered="#{field.rendered}">
+			<ui:define name="prop1">
+				<op2web:prop label="#{commonsMsg['form.component.da']}"
+					styleClass="insideLeftProp" rendered="#{field.rendered}">
+					<h:inputText id="input1_#{field.name}" value="#{field.value}" disabled="#{disabled}"
+						style="#{field.style}">
+						<f:convertNumber type="#{field.converterType}"
+							currencyCode="#{field.currencyCode}" />
+					</h:inputText>
+				</op2web:prop>
+			</ui:define>
+
+			<ui:define name="prop2">
+				<op2web:prop label="#{commonsMsg['form.component.a']}"
+					styleClass="insideRightProp" rendered="#{field.rendered}">
+					<h:inputText id="input2_#{field.name}" value="#{field.value2}" disabled="#{disabled}"
+						style="#{field.style}">
+						<f:convertNumber type="#{field.converterType}"
+							currencyCode="#{field.currencyCode}" />
+					</h:inputText>
+				</op2web:prop>
+			</ui:define>
+		</op2web:inlineProp>
+	</c:if>
+
+</ui:composition>

@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap" xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<c:set var="id" value="#{fieldDescriptor.name}" />
+	
+	<rich:column styleClass="#{fieldDescriptor.tableColumnStyleClass}">
+		<f:facet name="header">
+			<h:outputText value="#{fieldDescriptor.label}" rendered="#{not empty fieldDescriptor.label}" styleClass="#{fieldDescriptor.labelStyleClass}"/>
+		</f:facet>
+
+						<h:outputText id="#{id}NoValue" value="--" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{empty fieldValue.value and empty fieldValue.defaultValue}" />
+				
+			<h:outputText id="#{id}DValue" value="#{fieldValue.defaultValue}" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{empty fieldValue.value and not empty fieldValue.defaultValue}" />
+			
+		<h:outputText id="#{id}TextValue" value="#{fieldValue.value}" escape="#{field.escape}" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{not empty fieldValue.value and fieldValue.secret == false}" />
+				
+		<h:outputText id="#{id}TextValueSecret" value="#{fieldValue.secretValue}" styleClass="#{fieldDescriptor.valueStyleClass}"
+				rendered="#{not empty fieldValue.value and fieldValue.secret == true}" />	
+	</rich:column>
+</ui:composition>

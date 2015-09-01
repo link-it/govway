@@ -1,0 +1,144 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+
+	<c:set var="formId" value="#{searchBean.id}" />
+	<c:set var="isClosable" value="#{searchBean.closable}" />
+	<c:set var="formTitle" value="#{searchBean.nomeForm}" />
+	<c:set var="rendered" value="#{searchBean.rendered}" />
+	<c:set var="renderRegionOnly" value="#{searchBean.renderRegionOnly}" />
+		
+	<c:if test="#{empty formStyleClass}">
+		<c:set var="formStyleClass" value="form-horizontal" />
+	</c:if>
+	
+	<c:if test="#{empty showNotaCampiObbligatori}">
+		<c:set var="showNotaCampiObbligatori" value="#{searchBean.showNotaCampiObbligatori}" />
+	</c:if>
+	
+	
+	<c:if test="#{isClosable == false and empty formTitle and rendered == true}">
+		<div class="#{formStyleClass} noborder nopadding nomargin">
+			<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
+				ajaxSubmit="true">
+				<a4j:region id="#{formId}_regionSearchPnl" renderRegionOnly="#{renderRegionOnly}">
+					<a4j:outputPanel id="#{formId}_searchPnl" ajaxRendered="false"
+						layout="block">
+
+						<ui:insert />
+
+					</a4j:outputPanel>
+				</a4j:region>
+				<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="col-md-4 control-label legend">
+							<c:if test="#{showNotaCampiObbligatori == true}">
+								&#160;<em>*</em>&#160;#{msg['commons.label.campiObbligatori']}
+							</c:if>
+						</h:outputLabel>
+  						<div class="col-md-8">
+							<ui:insert name="buttons" />
+						</div>
+					</h:panelGroup>
+			</a4j:form>
+		</div>
+	</c:if>
+
+	<c:if test="#{isClosable == false and !empty formTitle and rendered == true}">
+		<rich:panel id="panel_#{formId}" bodyClass="nopadding"  styleClass="nopadding">
+			<f:facet name="header">
+				<h:outputText id="outHeaderSearch_#{formId}" value="#{formTitle}" />
+			</f:facet>
+
+			<div class="#{formStyleClass} noborder">
+				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
+					ajaxSubmit="true">
+					<a4j:region id="#{formId}_regionSearchPnl" renderRegionOnly="#{renderRegionOnly}">
+						<a4j:outputPanel id="#{formId}_searchPnl" ajaxRendered="false"
+							layout="block">
+
+							<ui:insert />
+
+						</a4j:outputPanel>
+					</a4j:region>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="col-md-4 control-label legend">
+							<c:if test="#{showNotaCampiObbligatori == true}">
+								&#160;<em>*</em>&#160;#{msg['commons.label.campiObbligatori']}
+							</c:if>
+						</h:outputLabel>
+  						<div class="col-md-8">
+							<ui:insert name="buttons" />
+						</div>
+					</h:panelGroup>
+				</a4j:form>
+			</div>
+		</rich:panel>
+	</c:if>
+
+	<c:if test="#{isClosable == true and empty formTitle and rendered == true}">
+		<rich:simpleTogglePanel id="panel_#{formId}" opened="true"
+			label="#{commonsMsg['ricerca.header']}" switchType="ajax"
+			bodyClass="nopadding"  styleClass="nopadding">
+
+			<div class="#{formStyleClass} noborder">
+				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
+					ajaxSubmit="true">
+					<a4j:region id="#{formId}_regionSearchPnl" renderRegionOnly="#{renderRegionOnly}">
+						<a4j:outputPanel id="#{formId}_searchPnl" ajaxRendered="false"
+							layout="block">
+
+							<ui:insert />
+
+						</a4j:outputPanel>
+					</a4j:region>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="col-md-4 control-label legend">
+							<c:if test="#{showNotaCampiObbligatori == true}">
+								&#160;<em>*</em>&#160;#{msg['commons.label.campiObbligatori']}
+							</c:if>
+						</h:outputLabel>
+  						<div class="col-md-8">
+							<ui:insert name="buttons" />
+						</div>
+					</h:panelGroup>
+				</a4j:form>
+			</div>
+		</rich:simpleTogglePanel>
+	</c:if>
+
+	<c:if test="#{isClosable == true and !empty formTitle and rendered == true}">
+		<rich:simpleTogglePanel id="panel_#{formId}" opened="true"
+			label="#{formTitle}" switchType="ajax" bodyClass="nopadding"  styleClass="nopadding">
+
+			<div class="#{formStyleClass} noborder">
+				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
+					ajaxSubmit="true">
+					<a4j:region id="#{formId}_regionSearchPnl" renderRegionOnly="#{renderRegionOnly}">
+						<a4j:outputPanel id="#{formId}_searchPnl" ajaxRendered="false"
+							layout="block">
+
+							<ui:insert />
+
+						</a4j:outputPanel>
+					</a4j:region>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="col-md-4 control-label legend">
+							<c:if test="#{showNotaCampiObbligatori == true}">
+								&#160;<em>*</em>&#160;#{msg['commons.label.campiObbligatori']}
+							</c:if>
+						</h:outputLabel>
+  						<div class="col-md-8">
+							<ui:insert name="buttons" />
+						</div>
+					</h:panelGroup>
+				</a4j:form>
+			</div>
+		</rich:simpleTogglePanel>
+	</c:if>
+</ui:component>

@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap" xmlns:c="http://java.sun.com/jstl/core">
+
+	
+	<c:set var="field" value="#{field}" />
+	
+	<c:if test="#{empty insideGroup}">
+		<c:set var="insideGroup" value="#{field.insideGroup}" />
+	</c:if>
+
+	<c:if test="#{empty type}">
+		<c:set var="type" value="#{field._value_type}" />
+	</c:if>
+
+	<c:if test="#{type == 'text'}">
+		<op2web:outputText field="#{field}"  insideGroup="#{insideGroup}"  />
+	</c:if>
+	
+	<c:if test="#{type == 'date'}">
+		<op2web:outputDate field="#{field}"  insideGroup="#{insideGroup}"  />
+	</c:if>
+	
+	<c:if test="#{type == 'number'}">
+		<op2web:outputValuta field="#{field}"  insideGroup="#{insideGroup}"  />
+	</c:if>
+	
+	<c:if test="#{type == 'valuta'}">
+		<op2web:outputValuta field="#{field}"  insideGroup="#{insideGroup}"  />
+	</c:if>
+
+</ui:composition>

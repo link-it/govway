@@ -1,0 +1,44 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf/bootstrap">
+	<a4j:loadScript src="resource://jquery.js" />
+	
+	<c:if test="#{empty fieldsToUpdateButtonFiltra}">
+		<c:set var="fieldsToUpdateButtonFiltra" value="pagina" />
+	</c:if>	
+	
+	<c:if test="#{empty fieldsToUpdateButtonReset}">
+		<c:set var="fieldsToUpdateButtonReset" value="pagina" />
+	</c:if>	
+	
+		<c:if test="#{empty hideButtonFiltra}">
+		<c:set var="hideButtonFiltra" value="false" />
+	</c:if>	
+	
+	<c:if test="#{empty hideButtonReset}">
+		<c:set var="hideButtonReset" value="false" />
+	</c:if>	
+	
+	<op2web:searchForm searchBean="#{mBean.search}">
+				
+		<ui:insert />
+		 
+		<ui:define name="buttons">
+			<a4j:commandLink id="filtraButton" rendered="#{not hideButtonFiltra}"
+				 styleClass="btn btn-success" reRender="#{fieldsToUpdateButtonFiltra}" status="mainStatus" action="#{mBean.filtra}">
+				<span class="glyphicon glyphicon-search"></span>&#160;<h:outputText value="#{msg['commons.button.filtra']}"/>
+			</a4j:commandLink>
+			<rich:spacer width="10" rendered="#{not hideButtonFiltra and not hideButtonReset}"/>
+			<a4j:commandLink id="pulisciButton" rendered="#{not hideButtonReset}"
+				reRender="#{mBean.search.id}_searchPnl,#{fieldsToUpdateButtonReset}"
+				status="mainStatus" styleClass="btn btn-default" action="#{mBean.reset}">
+				<span class="glyphicon glyphicon-refresh"></span>&#160;<h:outputText value="#{msg['commons.button.reset']}"/>
+			</a4j:commandLink>
+		</ui:define>
+	</op2web:searchForm>
+</ui:component>
