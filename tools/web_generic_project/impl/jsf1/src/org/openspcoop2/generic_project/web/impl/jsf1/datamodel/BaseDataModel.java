@@ -46,7 +46,7 @@ import org.ajax4jsf.model.SerializableDataModel;
 * @version $Rev$, $Date$
 */
 
-public abstract class BaseDataModel<KeyType, BeanType, DataProvider> extends SerializableDataModel {
+public abstract class BaseDataModel<BeanType, KeyType, DataProvider> extends SerializableDataModel {
 
 	/**
 	 * 

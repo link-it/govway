@@ -72,5 +72,19 @@ public interface Table<V> extends Serializable {
 	
 	public Object getMetadata();
 	public void setMetadata(Object metadata);
+	
+	// Metodi per la definizione della classe CSS per l'header della tabella
+	public String getHeaderClass(); 
+	public void setHeaderClass(String headerClass);
+	
+	// Metodi per la definizione della classe CSS per il footer della tabella
+	public String getFooterClass(); 
+	public void setFooterClass(String footerClass);
+	
+	// Metodi per la definizione della classe CSS per la tabella
+	public String getStyleClass(); 
+	public void setStyleClass(String styleClass);
+	
+	
 
 }

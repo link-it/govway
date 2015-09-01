@@ -22,7 +22,7 @@ package org.openspcoop2.generic_project.web.table;
 
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
-import org.openspcoop2.generic_project.web.mbean.ManagedBean;
+import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 
 
 /***
@@ -37,11 +37,11 @@ import org.openspcoop2.generic_project.web.mbean.ManagedBean;
  * @param <FormType> Tipo del form.
  * @param <SearchFormType> Tipo del SearchForm.
  */
-public interface PagedDataTable<V,FormType extends Form,SearchFormType extends SearchForm> extends Table<V> {
+public interface PagedDataTable<V,SearchFormType extends SearchForm,FormType extends Form> extends Table<V> {
 
 	// Getter/Setter per il ManagedBean 
-	public ManagedBean<FormType,SearchFormType> getMBean();
-	public void setMBean(ManagedBean<FormType,SearchFormType> mBean); 
+	public IManagedBean<SearchFormType, FormType> getMBean();
+	public void setMBean(IManagedBean<SearchFormType, FormType> mBean); 
 
 	// Mostra/Nascondi check box per la selezione di tutte le righe
 	public boolean isShowSelectAll();

@@ -22,6 +22,7 @@ package org.openspcoop2.generic_project.web.factory;
 
 import java.io.Serializable;
 
+import org.openspcoop2.generic_project.web.core.Utils;
 import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
 import org.openspcoop2.generic_project.web.output.factory.OutputFieldFactory;
 import org.openspcoop2.generic_project.web.table.factory.TableFactory;
@@ -50,5 +51,5 @@ public interface WebGenericProjectFactory extends Serializable{
 	// Factory che definisce gli elementi di tipo tabella
 	public TableFactory getTableFactory() throws FactoryException;
 	
-	 
+	public Utils getUtils() throws FactoryException;
 }

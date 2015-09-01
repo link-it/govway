@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
-import org.openspcoop2.generic_project.web.mbean.ManagedBean;
 import org.openspcoop2.generic_project.web.table.Table;
 
 /***
@@ -39,7 +38,7 @@ import org.openspcoop2.generic_project.web.table.Table;
  * 
  */
 public abstract class BaseListView<BeanType, KeyType, SearchFormType extends SearchForm, FormType extends Form, ValueType> 
-extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<FormType, SearchFormType>{
+extends BaseMBean<BeanType, KeyType, SearchFormType>{
 
 	 /**
 	 * 
@@ -60,9 +59,10 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 		return this.form;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setForm(FormType form) {
-		this.form = form;
+	public void setForm(Form form) {
+		this.form = (FormType) form;
 	}
 
 	public Table<List<ValueType>> getTable() throws Exception{

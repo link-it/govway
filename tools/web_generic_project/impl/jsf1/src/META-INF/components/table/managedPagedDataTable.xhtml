@@ -9,6 +9,8 @@
       <f:loadBundle var="commonsMsg" basename="commonsMessages" />
       
 		<a4j:loadScript src="resource://jquery.js"/>
+		<a4j:loadScript src="resource:///scripts/pagedDataTable.min.js" />
+		<a4j:loadStyle src="resource:///css/dataTable.css"  />
 		
 		<c:if test="#{empty table}">
 			<c:set var="table" value="#{mBean.table}"/>
@@ -79,31 +81,24 @@
 			<c:set var="topScrollerAlign" value="center"/>
 		</c:if>
 		
+		<c:if test="#{empty styleClass}">
+			<c:set var="styleClass" value="#{table.styleClass}" />
+		</c:if>
+		
+		<c:if test="#{empty headerClass}">
+			<c:set var="headerClass" value="#{table.headerClass}" />
+		</c:if>
+		
+		<c:if test="#{empty footerClass}">
+			<c:set var="footerClass" value="#{table.footerClass}" />
+		</c:if>
+		
 		<a4j:outputPanel id="#{id}" layout="block">
 		
 			<script type="text/javascript">
 				 jQuery(document).ready(function() {
 					checkBrowser();
 				 });
-	
-				 function showConfirm(containerId,name){
-					var n = jQuery("div [id$='"+containerId+"'] input:checkbox[id$='column_ckb']:checked").length;
-					if(n>0){
-						Richfaces.showModalPanel(name);
-					}
-					return false;
-				 };
-
-				 function checkSelection(containerId){
-					 var n = jQuery("div [id$='"+containerId+"_tbl'] input:checkbox[id$='column_ckb']:checked").length;
-						if(n==0){
-							Richfaces.showModalPanel("#{id}_checkSelection");
-							return false;
-						}else{
-							return true;
-						}
-				 };
-				 
 			</script>
 		
 			<rich:datascroller for="#{id}_tbl"
@@ -168,7 +163,9 @@
 				id="#{id}_tbl" 
 				onRowMouseOver="activeRow(this)" 
 				rowClasses="#{customRowClasses}" 
-				width="#{width}">
+				width="#{width}"
+				styleClass="#{styleClass}"
+				headerClass="#{headerClass}" footerClass="#{footerClass}" >
 				
 				<!-- 
 				<c:if test="#{rowsToDisplay eq 0}">
@@ -180,71 +177,13 @@
 					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
 	                      <h:panelGroup style="width:50px;" layout="block">
-	                         <script type="text/javascript" >
-	                        //<![CDATA[
-	                            function #{id}_checkAllCheckboxesInTable( inputId, state ){
-		                            var size = 0;
-		                            var tid = ":"+inputId+"_tbl";
-		                            if(state){
-		                            	size = jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").not("[id$='selectedAllChbx']").attr("checked","on").size();
-		                            }else{
-		                            	jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").removeAttr("checked");
-		                            	size=0;
-		                            }
-
-		                            if(#{showSelectAll}){
-		                            	var _totRows = #{value.rowCount};
-		                            	var _rows = #{rowsToDisplay};
-		                            	if(state && _totRows>_rows ){
-			                            	var t1= formatMessage("#{commonsMsg['pagedDataTable.script.checkAllCheckboxesInTable.selezionati']}",{0:size,1:_totRows});
-			                            	jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text(t1);
-			                            	var t1= formatMessage("#{commonsMsg['pagedDataTable.script.checkAllCheckboxesInTable.selezionaTutti']}",{0:_totRows});
-			                            	jQuery("[id$='"+inputId+"_selectAllLink']").show().text(t2);
-			                           	}else{
-			                           		jQuery("[id$='"+inputId+"_selectedInfoLbl']").hide();
-			                           		jQuery("[id$='"+inputId+"_selectAllLink']").hide();
-			                           		jQuery("[id$='"+inputId+"_undoSelectAllLink']").hide();              		
-				                        }
-			                            
-			                            
-				                    }
-		                            
-	                            }
-	                            function #{id}_selectAllListener(inputId, selectAll){
-	                            	var _totRows = #{value.rowCount};
-	                            	var tid = ":"+inputId+"_tbl";
-									if(selectAll){
-										jQuery("[id$='"+inputId+"_selectedAllChbx']").attr("checked","on");
-										var t1 = formatMessage("#{commonsMsg['pagedDataTable.script.selectAllListener.selezionatiTutti']}",{0:_totRows});
-										jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text(t1);
-										jQuery("[id$='"+inputId+"_selectAllLink']").hide();
-										jQuery("[id$='"+inputId+"_undoSelectAllLink']").show().text("#{commonsMsg['pagedDataTable.script.selectAllListener.annullaSelezione']}.");
-									}else{
-										jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");
-										jQuery("[id$='"+inputId+"_selectedInfoLbl']").hide();
-		                           		jQuery("[id$='"+inputId+"_selectAllLink']").hide();
-		                           		jQuery("[id$='"+inputId+"_undoSelectAllLink']").hide();
-		                           		//jQuery("div [id$='"+inputId+"'] input:checkbox").removeAttr("checked");
-		                           		jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_column_ckb']").removeAttr("checked");
-		                           		jQuery("table [id$='"+tid+"'] input:checkbox[id$='#{id}_checkAll']").removeAttr("checked");
-									}
-		                            
-		                        }
-		                        function formatMessage(text,values){
-		                        	  for(var v in values){
-		                        		    text =text.replace('{' + v + '}', values[v]);
-		                        		}
-		                        		return text;
-			                        }
-	                            //]]>
-	                          </script>
-	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="#{commonsMsg['pagedDataTable.component.selectAll']}" onclick="#{id}_checkAllCheckboxesInTable( '#{id}', this.checked );">
+	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="#{commonsMsg['pagedDataTable.component.selectAll']}" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay});">
 	                        	
 	                        </h:selectBooleanCheckbox>
 	                        <h:selectBooleanCheckbox id="#{id}_selectedAllChbx" value="#{mBean.selectedAll}" style="display:none"/>
 	                      </h:panelGroup>
 	                    </f:facet>
-	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"/>
+	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"  onclick="singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay} );"/>
 	                  </rich:column>
 					  
 					  <ui:insert/>
@@ -255,8 +194,8 @@
 						      		<div class="selectionInfoItems">
 						      			<h:outputText id="#{id}_selectedInfoLbl" style="display:none" value="" styleClass="selectionInfoItem"/>
 
-										<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="Seleziona tutti gli elementi" onclick="#{id}_selectAllListener('#{id}',true); return false;"/>
-					      				<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="Annulla selezione" onclick="#{id}_selectAllListener('#{id}',false); return false;"/>
+										<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="Seleziona tutti gli elementi" onclick="selectAllListener('#{id}',true,#{value.rowCount}); return false;"/>
+					      				<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="Annulla selezione" onclick="selectAllListener('#{id}',false,#{value.rowCount}); return false;"/>
 	
 						      		</div>
 			      					
@@ -286,7 +225,7 @@
 					   maxPages="15"
 					   renderIfSinglePage="false" 
 					   pagesVar="pages" 
-					   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide">
+					   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide" oncomplete="checkBrowser();">
 					   
 					<f:facet name="previous">
 						<h:graphicImage id="#{id}_prev" value="/images/icons/silk/control_prev_blue.png" >

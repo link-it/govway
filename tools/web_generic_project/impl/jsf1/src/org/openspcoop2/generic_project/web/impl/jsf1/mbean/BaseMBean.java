@@ -32,24 +32,25 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManager;
+import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 import org.openspcoop2.generic_project.web.impl.jsf1.CostantiJsf1Impl;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.AnnullaException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.DeleteException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.DettaglioException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.FiltraException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.InviaException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.MenuActionException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.ModificaException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.NuovoException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.ResetException;
-import org.openspcoop2.generic_project.web.impl.jsf1.mbean.exception.RestoreSearchException;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.utils.NavigationManager;
 import org.openspcoop2.generic_project.web.impl.jsf1.utils.MessageUtils;
 import org.openspcoop2.generic_project.web.iservice.IBaseService;
+import org.openspcoop2.generic_project.web.mbean.IManagedBean;
+import org.openspcoop2.generic_project.web.mbean.exception.AnnullaException;
+import org.openspcoop2.generic_project.web.mbean.exception.DeleteException;
+import org.openspcoop2.generic_project.web.mbean.exception.DettaglioException;
+import org.openspcoop2.generic_project.web.mbean.exception.FiltraException;
+import org.openspcoop2.generic_project.web.mbean.exception.InviaException;
+import org.openspcoop2.generic_project.web.mbean.exception.MenuActionException;
+import org.openspcoop2.generic_project.web.mbean.exception.ModificaException;
+import org.openspcoop2.generic_project.web.mbean.exception.NuovoException;
+import org.openspcoop2.generic_project.web.mbean.exception.ResetException;
+import org.openspcoop2.generic_project.web.mbean.exception.RestoreSearchException;
 
 
 /**
@@ -73,8 +74,12 @@ import org.openspcoop2.generic_project.web.iservice.IBaseService;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> { 
+public abstract class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> implements IManagedBean<SearchFormType, Form>{ 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L; 
 	protected IBaseService<BeanType,KeyType,SearchFormType> service;
 	protected BeanType selectedElement;
 	protected KeyType selectedId;
@@ -85,7 +90,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 	protected BeanType metadata;
 	protected transient Logger log= null;
 	protected WebGenericProjectFactory factory;
-	protected NavigationManager navigationManager= null;
+	protected NavigationManager navigationManager= null; 
  
 
 	public BaseMBean() {
@@ -97,7 +102,9 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 			this.log = log;
 			this.navigationManager = new NavigationManager();
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf1Impl.FACTORY_NAME);
-		} catch (FactoryException e) {
+			init();
+			initNavigationManager();
+		} catch (Exception e) {
 			this.getLog().error(e,e);
 		}
 	}
@@ -108,11 +115,15 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		
 		return this.log;
 	}
+	
+	public abstract void initNavigationManager() throws Exception; 
 
+	@Override
 	public WebGenericProjectFactory getFactory() {
 		return this.factory;
 	}
 
+	@Override
 	public void setFactory(WebGenericProjectFactory factory) {
 		this.factory = factory;
 	}
@@ -166,13 +177,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		this.selectedAll = selectedAll;
 	}
 
-	public SearchFormType getSearch() {
-		return this.search;
-	}
 
-	public void setSearch(SearchFormType search) {
-		this.search = search;
-	}
 
 	@SuppressWarnings("unchecked")
 	public BeanType getMetadata() throws Exception{
@@ -215,15 +220,16 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String invia(){
 		try{
-			return _invia();
+			return azioneInvia();
 		}catch (InviaException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo invia: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _invia() throws InviaException{
+	
+	@Override
+	public String azioneInvia() throws InviaException {
 		try{
 			this.service.store(this.selectedElement);
 		}catch(Exception e){
@@ -235,20 +241,21 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String modifica(){
 		try{
-			return _modifica();
+			return azioneModifica();
 		}catch (ModificaException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo modifica: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _modifica() throws ModificaException{
+	
+	@Override
+	public String azioneModifica() throws ModificaException {
 		return this.getNavigationManager().getModificaOutcome();
 	}
 	public String delete(){
 		try{
-			return _delete();
+			return azioneDelete();
 		}catch (DeleteException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo delete: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
@@ -282,8 +289,9 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 		//		return m;
 	}
-
-	protected String _delete() throws DeleteException{
+	
+	@Override
+	public String azioneDelete() throws DeleteException {
 		try{
 			this.toRemove = new ArrayList<BeanType>();
 			Iterator<BeanType> it = this.selectedIds.keySet().iterator();
@@ -306,15 +314,16 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String dettaglio(){
 		try{
-			return _dettaglio();
+			return azioneDettaglio();
 		}catch (DettaglioException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo dettaglio: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _dettaglio() throws DettaglioException{
+	
+	@Override
+	public String azioneDettaglio() throws DettaglioException {
 		try{
 			// do nothing
 		}catch(Exception e){
@@ -326,15 +335,16 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String nuovo(){
 		try{
-			return _nuovo();
+			return azioneNuovo();
 		}catch (NuovoException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo nuovo: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _nuovo() throws NuovoException{
+	
+	@Override
+	public String azioneNuovo() throws NuovoException {
 		try{
 			// do nothing
 		}catch(Exception e){
@@ -346,15 +356,16 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String annulla(){
 		try{
-			return _annulla();
+			return azioneAnnulla();
 		}catch (AnnullaException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo annulla: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _annulla() throws AnnullaException{
+	
+	@Override
+	public String azioneAnnulla() throws AnnullaException {
 		try{
 			// do nothing
 		}catch(Exception e){
@@ -366,7 +377,7 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String filtra(){
 		try{
-			return _filtra();
+			return azioneFiltra();
 		}catch (FiltraException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo filtra: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
@@ -374,7 +385,8 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 		}
 	}
 
-	protected String _filtra() throws FiltraException{
+	@Override
+	public String azioneFiltra() throws FiltraException {
 		try{
 			// do nothing
 		}catch(Exception e){
@@ -386,15 +398,16 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String menuAction(){
 		try{
-			return _menuAction();
+			return azioneMenuAction();
 		}catch (MenuActionException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo menu' action: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _menuAction() throws MenuActionException{
+	
+	@Override
+	public String azioneMenuAction() throws MenuActionException {
 		try{
 			// do nothing
 		}catch(Exception e){
@@ -406,15 +419,16 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String reset(){
 		try{
-			return _reset();
+			return azioneReset();
 		}catch (ResetException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo reset: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _reset() throws ResetException{
+	
+	@Override
+	public String azioneReset() throws ResetException {
 		try{
 			this.search.reset();
 		}catch(Exception e){
@@ -426,15 +440,16 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public String restoreSearch(){
 		try{
-			return _restoreSearch();
+			return azioneRestoreSearch();
 		}catch (RestoreSearchException e){
 			this.getLog().error("Si e' verificato un errore durante l'esecuzione del metodo restore search: "+ e.getMessage(),e);
 			MessageUtils.addErrorMsg(e.getMessage());
 			return null;
 		}
 	}
-
-	protected String _restoreSearch() throws RestoreSearchException{
+	
+	@Override
+	public String azioneRestoreSearch() throws RestoreSearchException {
 		try{
 			this.search.setRestoreSearch(true); 
 		}catch(Exception e){
@@ -450,5 +465,24 @@ public class BaseMBean<BeanType,KeyType,SearchFormType extends SearchForm> {
 
 	public void setNavigationManager(NavigationManager navigationManager) {
 		this.navigationManager = navigationManager;
+	}
+
+	@Override
+	public Form getForm() {
+		return null;
+	}
+
+	@Override
+	public void setForm(Form form) {
+	}
+
+	@Override
+	public SearchFormType getSearch() {
+		return this.search;
+	}
+
+	@Override
+	public void setSearch(SearchFormType search) {
+		this.search = search;
 	}
 }

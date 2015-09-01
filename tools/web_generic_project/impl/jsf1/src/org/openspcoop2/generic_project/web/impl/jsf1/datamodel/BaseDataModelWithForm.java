@@ -30,8 +30,8 @@ import javax.faces.context.FacesContext;
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SerializableDataModel;
-import org.openspcoop2.generic_project.web.bean.IBean;
 import org.openspcoop2.generic_project.web.form.Form;
+import org.openspcoop2.generic_project.web.view.IViewBean;
 
 /**
  * 
@@ -51,8 +51,8 @@ import org.openspcoop2.generic_project.web.form.Form;
  
 */
 
-public abstract class BaseDataModelWithForm<KeyType, BeanType extends IBean<DTOType, KeyType>,
-	DataProvider, DTOType, FormType extends Form> extends SerializableDataModel {
+public abstract class BaseDataModelWithForm< DTOType, KeyType,BeanType extends IViewBean<DTOType, KeyType>,
+	DataProvider,  FormType extends Form> extends SerializableDataModel {
 
 	/**
 	 * 

@@ -27,14 +27,21 @@
 	<c:if test="#{empty renderRegionOnly}">
 		<c:set var="renderRegionOnly" value="#{formBean.renderRegionOnly}" />
 	</c:if>
-
+	
+	<c:if test="#{empty formStyleClass}">
+		<c:set var="formStyleClass" value="form-container" />
+	</c:if>
+	
+	<c:if test="#{empty showNotaCampiObbligatori}">
+		<c:set var="showNotaCampiObbligatori" value="#{formBean.showNotaCampiObbligatori}" />
+	</c:if>
+	
 	<c:if test="#{isClosable == false and empty formTitle and rendered == true}">
-		<div class="form-container noborder">
-			<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
+		<div class="#{formStyleClass} noborder nopadding nomargin">
+			<a4j:form id="#{formId}" prependId="false" ajaxSingle="true" 
 				ajaxSubmit="true">
 				<a4j:region id="#{formId}_regionFormPnl" renderRegionOnly="#{renderRegionOnly}">
-					<a4j:outputPanel id="#{formId}_formPnl" ajaxRendered="false"
-						layout="block">
+					<a4j:outputPanel id="#{formId}_formPnl" ajaxRendered="false" layout="block">
 
 						<ui:insert />
 
@@ -48,12 +55,12 @@
 	</c:if>
 
 	<c:if test="#{isClosable == false and !empty formTitle and rendered == true}">
-		<rich:panel id="panel_#{formId}" bodyClass="inpanelBody">
+		<rich:panel id="panel_#{formId}" bodyClass="nopadding"  styleClass="nopadding">
 			<f:facet name="header">
 				<h:outputText id="outHeaderForm_#{formId}" value="#{formTitle}" />
 			</f:facet>
 
-			<div class="form-container noborder">
+			<div class="#{formStyleClass} noborder">
 				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
 					ajaxSubmit="true">
 					<a4j:region id="#{formId}_regionFormPnl" renderRegionOnly="#{renderRegionOnly}">
@@ -75,9 +82,9 @@
 	<c:if test="#{isClosable == true and empty formTitle and rendered == true}">
 		<rich:simpleTogglePanel id="panel_#{formId}" opened="true"
 			label="#{commonsMsg['ricerca.header']}" switchType="ajax"
-			bodyClass="inpanelBody">
+			bodyClass="nopadding"  styleClass="nopadding">
 
-			<div class="form-container noborder">
+			<div class="#{formStyleClass} noborder">
 				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
 					ajaxSubmit="true">
 					<a4j:region id="#{formId}_regionFormPnl" renderRegionOnly="#{renderRegionOnly}">
@@ -98,9 +105,9 @@
 
 	<c:if test="#{isClosable == true and !empty formTitle and rendered == true}">
 		<rich:simpleTogglePanel id="panel_#{formId}" opened="true"
-			label="#{formTitle}" switchType="ajax" bodyClass="inpanelBody">
+			label="#{formTitle}" switchType="ajax" bodyClass="nopadding"  styleClass="nopadding">
 
-			<div class="form-container noborder">
+			<div class="#{formStyleClass} noborder">
 				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
 					ajaxSubmit="true">
 					<a4j:region id="#{formId}_regionFormPnl" renderRegionOnly="#{renderRegionOnly}">

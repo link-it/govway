@@ -31,6 +31,7 @@ import org.openspcoop2.generic_project.web.output.OutputField;
 import org.openspcoop2.generic_project.web.output.OutputGroup;
 import org.openspcoop2.generic_project.web.output.OutputNumber;
 import org.openspcoop2.generic_project.web.output.Text;
+import org.openspcoop2.generic_project.web.view.IViewBean;
 
 /***
  * 
@@ -45,45 +46,75 @@ public interface OutputFieldFactory  extends Serializable{
 
 	// Costruttori Elementi Text
 	public Text createText();
+	public Text createText(IViewBean<?, ?> viewBean);
 	public Text createText(String name,String label);
+	public Text createText(String name,String label,IViewBean<?, ?> viewBean);
 	public Text createText(String name,String label, String value);
+	public Text createText(String name,String label, String value,IViewBean<?, ?> viewBean);
 	
 	// Costruttori Elementi Date
 	public DateTime createDateTime();
+	public DateTime createDateTime(IViewBean<?, ?> viewBean);
 	public DateTime createDateTime(String name,String label);
+	public DateTime createDateTime(String name,String label,IViewBean<?, ?> viewBean);
 	public DateTime createDateTime(String name,String label,String pattern);
+	public DateTime createDateTime(String name,String label,String pattern,IViewBean<?, ?> viewBean);
 	public DateTime createDateTime(String name,String label, Date value);
+	public DateTime createDateTime(String name,String label, Date value,IViewBean<?, ?> viewBean);
 	public DateTime createDateTime(String name,String label, String pattern, Date value);
+	public DateTime createDateTime(String name,String label, String pattern, Date value,IViewBean<?, ?> viewBean);
 	
 	//Costruttori Elementi Numerici
 	public OutputNumber createNumber();
+	public OutputNumber createNumber(IViewBean<?, ?> viewBean);
 	public OutputNumber createNumber(String name,String label);
+	public OutputNumber createNumber(String name,String label,IViewBean<?, ?> viewBean);
 	public OutputNumber createNumber(String name,String label, Number value);
+	public OutputNumber createNumber(String name,String label, Number value,IViewBean<?, ?> viewBean);
 	
 	// Costruttori Elementi Immagine
 	public Image createImage();
+	public Image createImage(IViewBean<?, ?> viewBean);
 	public Image createImage(String name,String label);
+	public Image createImage(String name,String label,IViewBean<?, ?> viewBean);
 	public Image createImage(String name,String label,String image);
+	public Image createImage(String name,String label,String image,IViewBean<?, ?> viewBean);
 	public Image createImage(String name,String label,String image, String title);
+	public Image createImage(String name,String label,String image, String title,IViewBean<?, ?> viewBean);
 	public Image createImage(String name,String label,String image, String title, String alt);
+	public Image createImage(String name,String label,String image, String title, String alt,IViewBean<?, ?> viewBean);
 	
 	// Costruttori Elementi Button
 	public Button createButton();
+	public Button createButton(IViewBean<?, ?> viewBean);
 	public Button createButton(String name,String label);
+	public Button createButton(String name,String label,IViewBean<?, ?> viewBean);
 	public Button createButton(String name,String label,String href);
+	public Button createButton(String name,String label,String href,IViewBean<?, ?> viewBean);
 	public Button createButton(String name,String label,String href, String image);
+	public Button createButton(String name,String label,String href, String image,IViewBean<?, ?> viewBean);
 	public Button createButton(String name,String label,String href, String image, String title);
+	public Button createButton(String name,String label,String href, String image, String title,IViewBean<?, ?> viewBean);
 	public Button createButton(String name,String label,String href, String image, String title, String alt);
+	public Button createButton(String name,String label,String href, String image, String title, String alt,IViewBean<?, ?> viewBean);
 	
 	// grouping
 	public OutputGroup createOutputGroup();
+	public OutputGroup createOutputGroup(IViewBean<?, ?> viewBean);
 	public OutputGroup createOutputGroup(String id);
+	public OutputGroup createOutputGroup(String id,IViewBean<?, ?> viewBean);
 	public OutputGroup createOutputGroup(String id, String label);
+	public OutputGroup createOutputGroup(String id, String label,IViewBean<?, ?> viewBean);
 	public OutputGroup createOutputGroup(String id, Integer columns);
+	public OutputGroup createOutputGroup(String id, Integer columns,IViewBean<?, ?> viewBean);
 	public OutputGroup createOutputGroup(String id, String label, Integer columns);
+	public OutputGroup createOutputGroup(String id, String label, Integer columns,IViewBean<?, ?> viewBean);
 	public OutputGroup createOutputGroup(String id, List<OutputField<?>> listaOutput);
+	public OutputGroup createOutputGroup(String id, List<OutputField<?>> listaOutput,IViewBean<?, ?> viewBean);
 	public OutputGroup createOutputGroup(String id, Integer columns,List<OutputField<?>> listaOutput);
+	public OutputGroup createOutputGroup(String id, Integer columns,List<OutputField<?>> listaOutput,IViewBean<?, ?> viewBean);
 	public OutputGroup createOutputGroup(String id, String label, Integer columns,List<OutputField<?>> listaOutput);
+	public OutputGroup createOutputGroup(String id, String label, Integer columns,List<OutputField<?>> listaOutput,IViewBean<?, ?> viewBean);
 	
 	
 }

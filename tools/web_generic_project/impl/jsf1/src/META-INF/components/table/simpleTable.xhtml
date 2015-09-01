@@ -23,7 +23,8 @@
 
 		<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"
 			id="#{id}_tbl" onRowMouseOver="activeRow(this)"
-			rowClasses="#{customRowClasses}" width="#{width}">
+			rowClasses="#{customRowClasses}" width="#{width}" styleClass="#{styleClass}"
+			headerClass="#{headerClass}" footerClass="#{footerClass}">
 
 			<ui:insert />
 

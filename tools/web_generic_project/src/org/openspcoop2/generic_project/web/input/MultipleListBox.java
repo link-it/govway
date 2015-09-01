@@ -31,7 +31,7 @@ package org.openspcoop2.generic_project.web.input;
  */
 import java.util.List;
 
-public interface MultipleListBox<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType>{
+public interface MultipleListBox extends Choice<List<SelectItem>,SelectItem>{
 	
 	public int getNumeroRigheDaVisualizzare();
 	public void setNumeroRigheDaVisualizzare(int numeroRigheDaVisualizzare);

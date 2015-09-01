@@ -29,7 +29,7 @@ package org.openspcoop2.generic_project.web.input;
  * @version $Rev$, $Date$ 
  *
  */
-public interface SelectList<OptionType extends HtmlOption> extends Choice<OptionType,OptionType>{ 
+public interface SelectList  extends Choice<SelectItem,SelectItem>{ 
 
 	
 }

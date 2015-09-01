@@ -202,4 +202,15 @@ public class WebGenericProjectFactoryManager {
 
 		return propertiesReader;
 	}
+	
+	public WebGenericProjectFactory getDefaultFactory() throws FactoryException {
+		if(this.factories.size() > 0 ){
+			Enumeration<String> keys = this.factories.keys();
+			String factoryName = keys.nextElement();
+			return this.factories.get(factoryName);
+		}
+		else{
+			throw new FactoryException("Default WebGenericProjectFactory not found");
+		}
+	}
 }

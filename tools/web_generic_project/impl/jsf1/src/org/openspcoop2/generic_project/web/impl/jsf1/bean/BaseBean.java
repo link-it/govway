@@ -25,12 +25,12 @@ import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openspcoop2.generic_project.web.bean.IBean;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManager;
 import org.openspcoop2.generic_project.web.impl.jsf1.CostantiJsf1Impl;
 import org.openspcoop2.generic_project.web.output.OutputField;
+import org.openspcoop2.generic_project.web.view.IViewBean;
 
 /***
  * 
@@ -42,7 +42,7 @@ import org.openspcoop2.generic_project.web.output.OutputField;
  * @version $Rev$, $Date$ 
  * 
  */
-public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyType> {
+public abstract class BaseBean<DTOType, KeyType>  implements IViewBean<DTOType, KeyType> {
 
 	private Map<String, OutputField<?>> fields = null;
 
@@ -105,7 +105,7 @@ public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyT
 	}
 
 	@Override
-	public WebGenericProjectFactory getWebGenericProjectFactory()
+	public WebGenericProjectFactory getFactory()
 			throws FactoryException {
 		if(this.factory == null)
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf1Impl.FACTORY_NAME);
@@ -114,7 +114,7 @@ public abstract class BaseBean<DTOType, KeyType>  implements IBean<DTOType, KeyT
 	}
 
 	@Override
-	public void setWebGenericProjectFactory(WebGenericProjectFactory factory)
+	public void setFactory(WebGenericProjectFactory factory)
 			throws FactoryException {
 		this.factory  = factory;
 

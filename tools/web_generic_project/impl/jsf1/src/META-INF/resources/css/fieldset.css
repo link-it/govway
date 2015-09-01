@@ -1,0 +1,22 @@
+/*collapsible field set*/
+div.form-container form fieldset.collapsed,div.form-container .display-form fieldset.collapsed {
+	    border-bottom-width: 0;
+        border-left-width: 0;
+        border-right-width: 0;
+        margin-bottom: 0;
+}
+
+div.form-container form fieldset.collapsible legend
+,div.form-container .display-form fieldset.collapsible legend{
+    background: transparent url('../images/icons/silk/control_down_blue.png') no-repeat left;
+    text-indent: 20px;
+    cursor: pointer;
+}
+
+div.form-container form fieldset.collapsed legend
+,div.form-container .display-form fieldset.collapsed legend{
+    background: transparent url('../images/icons/silk/control_next_blue.png') no-repeat left;
+    text-indent: 20px;
+    cursor: pointer;    
+}
+.extdt-innerdiv{ overflow-x:auto !important; overflow-y:hidden; }

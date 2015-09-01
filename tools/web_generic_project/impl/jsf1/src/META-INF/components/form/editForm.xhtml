@@ -27,6 +27,10 @@
 	<c:if test="#{empty hideButtonInvia}">
 		<c:set var="hideButtonInvia" value="false" />
 	</c:if>	
+	
+	<c:if test="#{empty showNotaCampiObbligatori}">
+		<c:set var="showNotaCampiObbligatori" value="#{formBean.showNotaCampiObbligatori}" />
+	</c:if>
 
 
 	  <script type="text/javascript">

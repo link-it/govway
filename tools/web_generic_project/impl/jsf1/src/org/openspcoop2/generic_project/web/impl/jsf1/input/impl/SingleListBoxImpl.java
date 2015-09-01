@@ -21,7 +21,6 @@
 package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 
 import org.openspcoop2.generic_project.web.factory.Costanti;
-import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.SingleListBox;
 
@@ -35,7 +34,7 @@ import org.openspcoop2.generic_project.web.input.SingleListBox;
  * @version $Rev$, $Date$ 
  * 
  */
-public class SingleListBoxImpl extends SelectListImpl implements SingleListBox<SelectItem>{
+public class SingleListBoxImpl extends SelectListImpl implements SingleListBox{
 
 	/**
 	 * 

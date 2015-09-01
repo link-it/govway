@@ -192,6 +192,14 @@ public abstract class BaseSearchForm extends BaseForm implements SearchForm {
 		return this.id;
 	}
  
+	@Override
+	public void setObject(Object object) throws Exception {
+
+	}
+
+	@Override
+	public Object getObject() throws Exception {return null;
+	}
 
 
 }

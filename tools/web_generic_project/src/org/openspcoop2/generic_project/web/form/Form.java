@@ -25,7 +25,7 @@ import java.util.Map;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.input.FormField;
-import org.openspcoop2.generic_project.web.mbean.ManagedBean;
+import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 
 /***
  * 
@@ -45,6 +45,11 @@ public interface Form {
 	// Metodi che definiscono la init e il reset dei campi del form.
 	public void init() throws Exception;
 	public void reset() ;
+	
+	// interfaccia per la 
+	public void setObject(Object object)throws Exception;
+	public Object getObject()throws Exception;
+	public String valida()throws Exception;
 	
 	// Mappa per la gestione di tutti i field di un form
 	public Map<String, FormField<?>> getFields();
@@ -67,10 +72,14 @@ public interface Form {
 	public void setClosable(boolean closable);
 	
 	// Getter/Setter per il ManagedBean 
-	public ManagedBean<Form, SearchForm> getMBean();
-	public void setMBean(ManagedBean<Form, SearchForm> mBean); 
+	public IManagedBean<SearchForm, Form> getMBean();
+	public void setMBean(IManagedBean<SearchForm, Form> mBean);
 	
 	// Factory per i componenti
-	public WebGenericProjectFactory getWebGenericProjectFactory() throws FactoryException;
-	public void setWebGenericProjectFactory(WebGenericProjectFactory factory) throws FactoryException;
+	public WebGenericProjectFactory getFactory() throws FactoryException;
+	public void setFactory(WebGenericProjectFactory factory) throws FactoryException;
+	
+	public boolean isShowNotaCampiObbligatori();
+	public void setShowNotaCampiObbligatori(boolean showNotaCampiObbligatori);
+	
 }

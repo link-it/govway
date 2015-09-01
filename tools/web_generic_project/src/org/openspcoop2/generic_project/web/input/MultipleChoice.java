@@ -31,6 +31,6 @@ import java.util.List;
  * @version $Rev$, $Date$ 
  *
  */
-public interface MultipleChoice<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType> {
+public interface MultipleChoice extends Choice<List<SelectItem>,SelectItem> {
 
 }

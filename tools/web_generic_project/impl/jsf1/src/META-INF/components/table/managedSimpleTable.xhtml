@@ -28,6 +28,18 @@
 		<c:set var="value" value="#{table.value}" />
 	</c:if>
 	
+	<c:if test="#{empty styleClass}">
+		<c:set var="styleClass" value="#{table.styleClass}" />
+	</c:if>
+	
+	<c:if test="#{empty headerClass}">
+		<c:set var="headerClass" value="#{table.headerClass}" />
+	</c:if>
+	
+	<c:if test="#{empty footerClass}">
+		<c:set var="footerClass" value="#{table.footerClass}" />
+	</c:if>
+	
 
 	<c:if test="#{empty width}">
 		<c:set var="width" value="100%" />
@@ -44,7 +56,8 @@
 
 		<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"
 			id="#{id}_tbl" onRowMouseOver="activeRow(this)"
-			rowClasses="#{customRowClasses}" width="#{width}">
+			rowClasses="#{customRowClasses}" width="#{width}" styleClass="#{styleClass}"
+			headerClass="#{headerClass}" footerClass="#{footerClass}">
 
 			<ui:insert />
 

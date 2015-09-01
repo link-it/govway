@@ -1,0 +1,29 @@
+
+/* Label pulsante seleziona tutto */
+.selectionInfoCtr{
+	margin-bottom: 5px;
+}
+.selectionInfoItems{
+	text-align: center;
+}
+.selectionInfoItem{
+	margin-right: 5px;
+}
+
+
+/*Table row*/
+.even {
+	background-color: #FCFFFE;
+}
+
+.odd {
+	background-color: #ECF3FE;
+}
+.active{
+	background-color: #FFEBDA;
+}
+
+.buttonrowlista{
+   display: block;
+   float: right;
+}

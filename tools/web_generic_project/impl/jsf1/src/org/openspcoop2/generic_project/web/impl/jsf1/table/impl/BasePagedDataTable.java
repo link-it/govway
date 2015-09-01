@@ -22,7 +22,7 @@ package org.openspcoop2.generic_project.web.impl.jsf1.table.impl;
 
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
-import org.openspcoop2.generic_project.web.mbean.ManagedBean;
+import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 import org.openspcoop2.generic_project.web.table.PagedDataTable;
 
 /***
@@ -38,14 +38,14 @@ import org.openspcoop2.generic_project.web.table.PagedDataTable;
  * @param <FormType> Tipo del form da utilizzare per effettuare delle azioni di modifica dei dati.
  * @param <SearchFormType> Tipo di form di ricerca da utilizzare per gestire la paginazione.
  */
-public class BasePagedDataTable<V,FormType extends Form, SearchFormType extends SearchForm> extends BaseTable<V>
-implements PagedDataTable<V,FormType,SearchFormType>{
+public class BasePagedDataTable<V, SearchFormType extends SearchForm,FormType extends Form> extends BaseTable<V>
+implements PagedDataTable<V,SearchFormType,FormType>{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L; 
-	private ManagedBean<FormType, SearchFormType> mBean;
+	private IManagedBean< SearchFormType,FormType> mBean;
 	protected boolean isList;
 	protected boolean showSelectAll;
 	protected boolean enableDelete;
@@ -88,11 +88,11 @@ implements PagedDataTable<V,FormType,SearchFormType>{
 	}
 	
 	@Override
-	public ManagedBean<FormType, SearchFormType> getMBean() {
+	public IManagedBean<SearchFormType,FormType> getMBean() {
 		return this.mBean;
 	}
 	@Override
-	public void setMBean(ManagedBean<FormType, SearchFormType> mBean) {
+	public void setMBean(IManagedBean<SearchFormType,FormType> mBean) {
 		this.mBean = mBean;
 	}
 	@Override

@@ -30,9 +30,9 @@ import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.generic_project.web.bean.IBean;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 import org.openspcoop2.generic_project.web.iservice.IBaseService;
+import org.openspcoop2.generic_project.web.view.IViewBean;
 
 /**
  * 
@@ -52,10 +52,9 @@ import org.openspcoop2.generic_project.web.iservice.IBaseService;
 
 */
 
-public abstract class ParameterizedDataModel<KeyType, BeanType extends IBean<DTOType, KeyType>, 
-	DataProvider extends IBaseService<BeanType, KeyType, SearchFormType>, DTOType, SearchFormType extends SearchForm>
+public abstract class ParameterizedDataModel<DTOType, KeyType, BeanType extends IViewBean<DTOType, KeyType>, DataProvider extends IBaseService<BeanType, KeyType, SearchFormType>,  SearchFormType extends SearchForm>
 
-	extends BaseDataModelWithForm<KeyType, BeanType, DataProvider,DTOType,SearchFormType> {
+	extends BaseDataModelWithForm<DTOType, KeyType,BeanType,DataProvider,SearchFormType> {
 
 	/**
 	 * 

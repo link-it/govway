@@ -34,7 +34,7 @@ import org.openspcoop2.generic_project.web.form.SearchForm;
 import org.openspcoop2.generic_project.web.impl.jsf1.CostantiJsf1Impl;
 import org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils;
 import org.openspcoop2.generic_project.web.input.FormField;
-import org.openspcoop2.generic_project.web.mbean.ManagedBean;
+import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 
 /***
  * 
@@ -62,9 +62,11 @@ public abstract class BaseForm implements Form {
 
 	private boolean renderRegionOnly = true;
 
-	private ManagedBean<Form, SearchForm> mBean; 
+	private IManagedBean<SearchForm,Form> mBean; 
 
 	private WebGenericProjectFactory factory = null;
+	
+	private boolean showNotaCampiObbligatori = false;
 
 	public BaseForm(){
 		this.fields = new HashMap<String, FormField<?>>();
@@ -159,17 +161,17 @@ public abstract class BaseForm implements Form {
 	}
 
 	@Override
-	public ManagedBean<Form, SearchForm> getMBean() {
+	public IManagedBean<SearchForm,Form> getMBean() {
 		return this.mBean;
 	}
 
 	@Override
-	public void setMBean(ManagedBean<Form, SearchForm> mBean) {
+	public void setMBean(IManagedBean<SearchForm,Form> mBean) {
 		this.mBean = mBean;
 	}
 
 	@Override
-	public WebGenericProjectFactory getWebGenericProjectFactory()
+	public WebGenericProjectFactory getFactory()
 			throws FactoryException {
 		if(this.factory == null)
 			this.factory = WebGenericProjectFactoryManager.getInstance().getWebGenericProjectFactoryByName(CostantiJsf1Impl.FACTORY_NAME);
@@ -178,7 +180,7 @@ public abstract class BaseForm implements Form {
 	}
 
 	@Override
-	public void setWebGenericProjectFactory(WebGenericProjectFactory factory)
+	public void setFactory(WebGenericProjectFactory factory)
 			throws FactoryException {
 		this.factory  = factory;
 
@@ -248,4 +250,13 @@ public abstract class BaseForm implements Form {
 		return f;
 	}
 
+	@Override
+	public boolean isShowNotaCampiObbligatori() {
+		return this.showNotaCampiObbligatori;
+	}
+
+	@Override
+	public void setShowNotaCampiObbligatori(boolean showNotaCampiObbligatori) {
+		this.showNotaCampiObbligatori = showNotaCampiObbligatori;
+	}
 }

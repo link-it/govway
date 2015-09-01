@@ -35,6 +35,7 @@ public class CostantiForm {
 	/** Suffissi comuni dei nomi degli event handler */
 	public static final String SELECTED_ELEMENT_EVENT_HANDLER = "SelectListener";
 	public static final String ONCHANGE_EVENT_HANDLER = "OnChangeListener";
+	public static final String VALUE_CHANGED_EVENT_HANDLER = "ValueChanged";
 	public static final String AUTO_COMPLETE_EVENT_HANDLER = "AutoComplete";
 	public static final String ONTRANSFER_EVENT_HANDLER = "OnTransfer";
 	

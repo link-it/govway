@@ -49,7 +49,8 @@
 		<h:form>
 			<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"
 				id="#{id}_tbl" onRowMouseOver="activeRow(this)"
-				rowClasses="#{customRowClasses}" width="#{width}">
+				rowClasses="#{customRowClasses}" width="#{width}" styleClass="#{styleClass}"
+				headerClass="#{headerClass}" footerClass="#{footerClass}">
 			
 				<!-- Link dettagli a sinistra-->
 				<rich:column style="text-align: center;" id="dtlClmn_sx" rendered="#{showDetailColumn and not empty mBean and detailColumnPosition == 'left'}">

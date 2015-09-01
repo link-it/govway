@@ -99,7 +99,9 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	protected boolean redisplay;
 
 	protected String style;
-
+	
+	protected String styleClass;
+	
 	protected String pattern;
 
 	protected int width;	
@@ -587,5 +589,15 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	@Override
 	public void setId(String id) {
 		this.id  =id;
+	}
+
+	@Override
+	public String getStyleClass() {
+		return this.styleClass;
+	}
+
+	@Override
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
 	}
 }

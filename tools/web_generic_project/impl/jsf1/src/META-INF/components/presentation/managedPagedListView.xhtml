@@ -110,11 +110,24 @@
 		<c:set var="itemMetadata" value="#{mBean.metadata}" />
 	</c:if>
 	
+	<c:if test="#{empty styleClass}">
+		<c:set var="styleClass" value="#{table.styleClass}" />
+	</c:if>
+	
+	<c:if test="#{empty headerClass}">
+		<c:set var="headerClass" value="#{table.headerClass}" />
+	</c:if>
+	
+	<c:if test="#{empty footerClass}">
+		<c:set var="footerClass" value="#{table.footerClass}" />
+	</c:if>
+	
 	<a4j:outputPanel id="#{id}" ajaxRendered="false" layout="block">
 		<h:form>
 			<op2web:dataTable value="#{value}" id="#{id}_dt" enableDelete="#{enableDelete}"
 					headerText="#{headerText}" showSelectAll="#{showSelectAll}" mBean="#{mBean}"
-					selectionMapTarget="#{mBean.selectedIds[item]}" rowsToDisplay="#{mBean.search.pageSize}">
+					selectionMapTarget="#{mBean.selectedIds[item]}" rowsToDisplay="#{mBean.search.pageSize}"
+					styleClass="#{styleClass}" headerClass="#{headerClass}" footerClass="#{footerClass}">
 				<f:facet name="noData">
 					<h:outputText value="#{noDataText}" />
 				</f:facet>

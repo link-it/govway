@@ -71,8 +71,8 @@ public class SelectListItemConverter implements Converter {
 		}
 		
 		for (SelectItem selectItem : selectItems) {
-			org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem comboBoxItem = 
-					(org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem)selectItem.getValue();
+			org.openspcoop2.generic_project.web.input.SelectItem comboBoxItem = 
+					(org.openspcoop2.generic_project.web.input.SelectItem)selectItem.getValue();
 			if(comboBoxItem.getLabel().equalsIgnoreCase(value)) {
 				return comboBoxItem;
 			}
@@ -86,8 +86,8 @@ public class SelectListItemConverter implements Converter {
 			return "";
 		}
 
-		if(value instanceof org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem ){
-			org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem) value;
+		if(value instanceof org.openspcoop2.generic_project.web.input.SelectItem ){
+			org.openspcoop2.generic_project.web.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.input.SelectItem) value;
 			return comboBoxItem.getLabel();
 		}
 
@@ -95,8 +95,8 @@ public class SelectListItemConverter implements Converter {
 		if(value instanceof SelectItem){
 			SelectItem facesSelectItem = (SelectItem) value;
 
-			if(facesSelectItem.getValue() instanceof org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem ){
-				org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem) facesSelectItem.getValue();
+			if(facesSelectItem.getValue() instanceof org.openspcoop2.generic_project.web.input.SelectItem ){
+				org.openspcoop2.generic_project.web.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.input.SelectItem) facesSelectItem.getValue();
 				return comboBoxItem.getLabel();
 			}
 		}

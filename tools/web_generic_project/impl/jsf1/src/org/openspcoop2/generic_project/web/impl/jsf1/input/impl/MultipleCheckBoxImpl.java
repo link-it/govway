@@ -21,7 +21,6 @@
 package org.openspcoop2.generic_project.web.impl.jsf1.input.impl;
 
 import org.openspcoop2.generic_project.web.factory.Costanti;
-import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.input.FieldType;
 import org.openspcoop2.generic_project.web.input.MultipleCheckBox;
 
@@ -36,7 +35,7 @@ import org.openspcoop2.generic_project.web.input.MultipleCheckBox;
  * @version $Rev$, $Date$ 
  * 
  */
-public class MultipleCheckBoxImpl extends MultipleChoiceImpl implements MultipleCheckBox<SelectItem>{
+public class MultipleCheckBoxImpl extends MultipleChoiceImpl implements MultipleCheckBox{
 
 	/**
 	 * 

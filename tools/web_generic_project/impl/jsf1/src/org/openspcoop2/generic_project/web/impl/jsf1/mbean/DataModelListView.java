@@ -23,13 +23,13 @@ package org.openspcoop2.generic_project.web.impl.jsf1.mbean;
 import java.lang.reflect.ParameterizedType;
 
 import org.apache.log4j.Logger;
-import org.openspcoop2.generic_project.web.bean.IBean;
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 import org.openspcoop2.generic_project.web.impl.jsf1.datamodel.ParameterizedDataModel;
 import org.openspcoop2.generic_project.web.iservice.IBaseService;
-import org.openspcoop2.generic_project.web.mbean.ManagedBean;
+import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 import org.openspcoop2.generic_project.web.table.PagedDataTable;
+import org.openspcoop2.generic_project.web.view.IViewBean;
 
 /***
  * 
@@ -41,16 +41,16 @@ import org.openspcoop2.generic_project.web.table.PagedDataTable;
  * @version $Rev$, $Date$ 
  * 
  */
-public abstract class DataModelListView<BeanType extends IBean<DTOType,KeyType>, KeyType, SearchFormType extends SearchForm, FormType extends Form,
-DMType extends ParameterizedDataModel<KeyType, BeanType, DataProviderType, DTOType, SearchFormType>, DTOType,DataProviderType extends IBaseService<BeanType,KeyType,SearchFormType>>    
-extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<FormType, SearchFormType>{
+public abstract class DataModelListView<DTOType, KeyType, BeanType extends IViewBean<DTOType,KeyType>,  SearchFormType extends SearchForm, FormType extends Form,
+DMType extends ParameterizedDataModel<DTOType,KeyType, BeanType, DataProviderType, SearchFormType>, DataProviderType extends IBaseService<BeanType,KeyType,SearchFormType>>    
+extends BaseMBean<BeanType, KeyType, SearchFormType> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L; 
 	protected FormType form;
-	protected PagedDataTable<DMType,FormType,SearchFormType> table; 
+	protected PagedDataTable<DMType,SearchFormType,FormType> table; 
 	protected DMType dataModel = null;
 
 	public DataModelListView () {
@@ -88,16 +88,18 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 		return this.form;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setForm(FormType form) {
-		this.form = form;
+	public void setForm(Form form) {
+		this.form = (FormType) form;
 	}
 
-	public PagedDataTable<DMType,FormType,SearchFormType> getTable() throws Exception{
+	@SuppressWarnings("unchecked")
+	public PagedDataTable<DMType,SearchFormType,FormType> getTable() throws Exception{
 		if(this.table==null){
 			try{
 				this.table = this.factory.getTableFactory().createPagedDataTable();
-				this.table.setMBean(this);
+				this.table.setMBean((IManagedBean<SearchFormType, FormType>) this);
 				this.table.setMetadata(this.getMetadata()); 
 			}catch (Exception e) {
 				throw e;
@@ -107,7 +109,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 		return this.table;
 	}
 
-	public void setTable(PagedDataTable<DMType,FormType,SearchFormType> table) {
+	public void setTable(PagedDataTable<DMType,SearchFormType,FormType> table) {
 		this.table = table;
 	}
 
@@ -131,5 +133,35 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> implements ManagedBean<Form
 	}
 
 
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public BeanType getMetadata() throws Exception{
+		if(this.metadata==null){
+			try{
+				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+				this.metadata = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]).newInstance();
+			}catch (Exception e) {
+				this.getLog().error(e,e);
+				throw e;
+			}
+		}
+		return this.metadata;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public BeanType getSelectedElement() throws Exception{
+		if(this.selectedElement==null){
+			try{
+				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+				this.selectedElement = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]).newInstance();
+			}catch (Exception e) {
+				this.getLog().error(e,e);
+				throw e;
+			}
+		}
+		return this.selectedElement;
+	}
 
 }

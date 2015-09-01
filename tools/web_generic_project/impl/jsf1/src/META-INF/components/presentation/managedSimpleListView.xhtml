@@ -48,7 +48,17 @@
 	<c:if test="#{empty detailLinkText}">
 		<c:set var="detailLinkText" value="#{commonsMsg['commons.button.dettaglio.title']}"/>
 	</c:if>
+	<c:if test="#{empty styleClass}">
+		<c:set var="styleClass" value="#{table.styleClass}" />
+	</c:if>
 	
+	<c:if test="#{empty headerClass}">
+		<c:set var="headerClass" value="#{table.headerClass}" />
+	</c:if>
+	
+	<c:if test="#{empty footerClass}">
+		<c:set var="footerClass" value="#{table.footerClass}" />
+	</c:if>
 
 	<c:if test="#{empty width}">
 		<c:set var="width" value="100%" />
@@ -68,7 +78,8 @@
 		<h:form>
 			<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"
 				id="#{id}_tbl" onRowMouseOver="activeRow(this)"
-				rowClasses="#{customRowClasses}" width="#{width}">
+				rowClasses="#{customRowClasses}" width="#{width}" styleClass="#{styleClass}"
+				headerClass="#{headerClass}" footerClass="#{footerClass}">
 			
 				<!-- Link dettagli a sinistra-->
 				<rich:column style="text-align: center;" id="dtlClmn_sx" rendered="#{showDetailColumn and not empty mBean and detailColumnPosition == 'left'}">

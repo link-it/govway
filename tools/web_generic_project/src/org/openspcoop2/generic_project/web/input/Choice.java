@@ -31,7 +31,7 @@ import java.util.List;
  * @version $Rev$, $Date$ 
  *
  */
-public interface Choice<T,OptionType extends HtmlOption> extends FormField<T> { 
+public interface Choice<T,OptionType extends SelectItem> extends FormField<T> { 
 
 	public List<OptionType> getOptions();
 	public void setOptions(List<OptionType> elencoOptions);

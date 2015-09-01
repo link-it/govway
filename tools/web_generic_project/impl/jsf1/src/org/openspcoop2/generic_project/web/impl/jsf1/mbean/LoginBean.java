@@ -119,13 +119,13 @@ public class LoginBean {
 		((SelectListImpl) this.languageForm.getLingua()).setElencoSelectItems(this.getListaLingueSupportate()); 
 
 		if(this.currentLocal.getLanguage().equals(Locale.ITALIAN.getLanguage()))
-			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem(Locale.ITALIAN.getLanguage(),
+			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.ITALIAN.getLanguage(),
 					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ITALIAN.getLanguage(),this.currentLocal)));
 		if(this.currentLocal.getLanguage().equals(Locale.ENGLISH.getLanguage()))
-			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem(Locale.ENGLISH.getLanguage(),
+			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.ENGLISH.getLanguage(),
 					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.ENGLISH.getLanguage(),this.currentLocal)));
 		if(this.currentLocal.getLanguage().equals(Locale.GERMAN.getLanguage()))
-			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem(Locale.GERMAN.getLanguage(),
+			this.languageForm.getLingua().setValue(new org.openspcoop2.generic_project.web.input.SelectItem(Locale.GERMAN.getLanguage(),
 					Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+Locale.GERMAN.getLanguage(),this.currentLocal)));
 
 		this.currentLang = this.currentLocal.getLanguage();
@@ -216,7 +216,7 @@ public class LoginBean {
 
 	public void cambiaLinguaListener(ActionEvent event){
 
-		org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem newValue = this.languageForm.getLingua().getValue();
+		org.openspcoop2.generic_project.web.input.SelectItem newValue = this.languageForm.getLingua().getValue();
 
 		String value = newValue.getValue();
 
@@ -293,7 +293,7 @@ public class LoginBean {
 		this.listaLingueSupportate = new ArrayList<SelectItem>();
 		for (Locale locale : list) {
 			this.listaLingueSupportate.add(new SelectItem(
-					new org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem(locale.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+locale.getLanguage(),this.currentLocal))));
+					new org.openspcoop2.generic_project.web.input.SelectItem(locale.getLanguage(),Utils.getInstance().getMessageFromCommonsResourceBundle("lingua."+locale.getLanguage(),this.currentLocal))));
 		}
 		
 		return this.listaLingueSupportate;

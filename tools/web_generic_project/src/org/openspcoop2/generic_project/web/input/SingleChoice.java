@@ -29,6 +29,6 @@ package org.openspcoop2.generic_project.web.input;
  * @version $Rev$, $Date$ 
  *
  */
-public interface SingleChoice<OptionType extends HtmlOption> extends Choice<OptionType,OptionType>  {
+public interface SingleChoice  extends Choice<SelectItem,SelectItem> {
 
 }

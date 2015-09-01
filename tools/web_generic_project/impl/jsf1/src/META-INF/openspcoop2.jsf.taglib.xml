@@ -17,15 +17,15 @@
    	</tag>
    	   	<tag>
    		<tag-name>prop</tag-name>
-   		<source>components/base/property.xhtml</source>
+   		<source>components/input/property.xhtml</source>
    	</tag>
    		<tag>
    		<tag-name>inlineProp</tag-name>
-   		<source>components/base/inlineProperty.xhtml</source>
+   		<source>components/input/inlineProperty.xhtml</source>
    	</tag>
     <tag>
    		<tag-name>fieldset</tag-name>
-   		<source>components/base/fieldSet.xhtml</source>
+   		<source>components/input/fieldSet.xhtml</source>
    	</tag>
    	
    	<tag>
@@ -67,105 +67,105 @@
    	<!-- Componente Base Input Text -->
    	<tag>
    		<tag-name>intervalInputText</tag-name>
-   		<source>components/base/intervalInputText.xhtml</source>
+   		<source>components/input/intervalInputText.xhtml</source>
    	</tag>
    	<tag>
    		<tag-name>singleInputText</tag-name>
-   		<source>components/base/singleInputText.xhtml</source>
+   		<source>components/input/singleInputText.xhtml</source>
    	</tag>
    	<tag>
    		<tag-name>inputText</tag-name>
-   		<source>components/base/inputText.xhtml</source>
+   		<source>components/input/inputText.xhtml</source>
    	</tag>
    	
    	 	<!-- Componente Base Input Date -->
    	<tag>
    		<tag-name>intervalInputDate</tag-name>
-   		<source>components/base/intervalinputDate.xhtml</source>
+   		<source>components/input/intervalinputDate.xhtml</source>
    	</tag>
    	<tag>
    		<tag-name>singleInputDate</tag-name>
-   		<source>components/base/singleInputDate.xhtml</source>
+   		<source>components/input/singleInputDate.xhtml</source>
    	</tag>
    	<tag>
    		<tag-name>inputDate</tag-name>
-   		<source>components/base/inputDate.xhtml</source>
+   		<source>components/input/inputDate.xhtml</source>
    	</tag>
    	
    	 	<!-- Componente Base Input Number -->
    	<tag>
    		<tag-name>intervalInputNumber</tag-name>
-   		<source>components/base/intervalInputNumber.xhtml</source>
+   		<source>components/input/intervalInputNumber.xhtml</source>
    	</tag>
    	<tag>
    		<tag-name>singleInputNumber</tag-name>
-   		<source>components/base/singleInputNumber.xhtml</source>
+   		<source>components/input/singleInputNumber.xhtml</source>
    	</tag>
    	<tag>
    		<tag-name>inputNumber</tag-name>
-   		<source>components/base/inputNumber.xhtml</source>
+   		<source>components/input/inputNumber.xhtml</source>
    	</tag>
    	 <tag>
    		<tag-name>inputSlider</tag-name>
-   		<source>components/base/inputSlider.xhtml</source>
+   		<source>components/input/inputSlider.xhtml</source>
    	</tag>
    	 <tag>
    		<tag-name>inputSpinner</tag-name>
-   		<source>components/base/inputSpinner.xhtml</source>
+   		<source>components/input/inputSpinner.xhtml</source>
    	</tag>
    	
    	<!-- Componente Select List -->
    	<tag>
    		<tag-name>inputSelect</tag-name>
-   		<source>components/base/inputSelect.xhtml</source>
+   		<source>components/input/inputSelect.xhtml</source>
    	</tag>
    	
    		<!-- Componente Check Box boolean -->
    	<tag>
    		<tag-name>inputBooleanCheckBox</tag-name>
-   		<source>components/base/inputBooleanCheckBox.xhtml</source>
+   		<source>components/input/inputBooleanCheckBox.xhtml</source>
    	</tag>
    	
    		<!-- Componente Check Box Multiple -->
    	<tag>
    		<tag-name>inputMultipleCheckBox</tag-name>
-   		<source>components/base/inputMultipleCheckBox.xhtml</source>
+   		<source>components/input/inputMultipleCheckBox.xhtml</source>
    	</tag>
    	
    	   		<!-- Componente RadioButton -->
    	<tag>
    		<tag-name>inputRadioButton</tag-name>
-   		<source>components/base/inputRadioButton.xhtml</source>
+   		<source>components/input/inputRadioButton.xhtml</source>
    	</tag>
    	
    	   	<!-- Componente Input Text Secret -->
    	<tag>
    		<tag-name>inputSecret</tag-name>
-   		<source>components/base/inputSecret.xhtml</source>
+   		<source>components/input/inputSecret.xhtml</source>
    	</tag>
    	
    	<!-- Componente PickList-->
    	<tag>
    		<tag-name>inputPickList</tag-name>
-   		<source>components/base/inputPickList.xhtml</source>
+   		<source>components/input/inputPickList.xhtml</source>
    	</tag>
    	
    	 	<!-- Componente Input TextArea -->
    	   	<tag>
    		<tag-name>inputTextArea</tag-name>
-   		<source>components/base/inputTextArea.xhtml</source>
+   		<source>components/input/inputTextArea.xhtml</source>
    	</tag>
    	
    	   		<!-- Componente List Box Multiple -->
    	<tag>
    		<tag-name>inputMultipleListBox</tag-name>
-   		<source>components/base/inputMultipleListBox.xhtml</source>
+   		<source>components/input/inputMultipleListBox.xhtml</source>
    	</tag>
    	
    	   		<!-- Componente Single List Box -->
    	<tag>
    		<tag-name>inputSingleListBox</tag-name>
-   		<source>components/base/inputSingleListBox.xhtml</source>
+   		<source>components/input/inputSingleListBox.xhtml</source>
    	</tag>
    	
     <!-- Output Text -->

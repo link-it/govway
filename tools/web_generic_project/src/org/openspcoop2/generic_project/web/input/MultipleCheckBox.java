@@ -31,6 +31,6 @@ import java.util.List;
  * @version $Rev$, $Date$ 
  *
  */
-public interface MultipleCheckBox<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType> {
+public interface MultipleCheckBox extends Choice<List<SelectItem>,SelectItem> {
 	
 }

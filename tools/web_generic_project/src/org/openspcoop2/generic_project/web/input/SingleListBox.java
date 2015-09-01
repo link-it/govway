@@ -29,7 +29,7 @@ package org.openspcoop2.generic_project.web.input;
  * @version $Rev$, $Date$ 
  *
  */
-public interface SingleListBox<OptionType extends HtmlOption> extends Choice<OptionType,OptionType> {
+public interface SingleListBox  extends Choice<SelectItem,SelectItem> {
 
 	public int getNumeroRigheDaVisualizzare();
 	public void setNumeroRigheDaVisualizzare(int numeroRigheDaVisualizzare);

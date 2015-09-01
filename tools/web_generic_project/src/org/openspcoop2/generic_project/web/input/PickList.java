@@ -31,5 +31,5 @@ import java.util.List;
  * @version $Rev$, $Date$ 
  *
  */
-public interface PickList<OptionType extends HtmlOption> extends Choice<List<OptionType>,OptionType>{
+public interface PickList extends Choice<List<SelectItem>,SelectItem>{
 }

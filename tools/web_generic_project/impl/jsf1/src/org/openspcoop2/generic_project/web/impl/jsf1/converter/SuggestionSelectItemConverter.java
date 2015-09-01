@@ -55,21 +55,21 @@ public class SuggestionSelectItemConverter extends InputTextSelectItemConverter 
 		if(StringUtils.isEmpty(value))
 			value = "*";
 				 
-		org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem selectItem = null;
+		org.openspcoop2.generic_project.web.input.SelectItem selectItem = null;
 		if(component instanceof HtmlInputText){
 			HtmlInputText inputText = (HtmlInputText) component;
 
 			Object valueAsObj = inputText.getValue();
 
 			if(valueAsObj != null)
-				if(valueAsObj instanceof org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem)
-					selectItem = (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem) valueAsObj;
+				if(valueAsObj instanceof org.openspcoop2.generic_project.web.input.SelectItem)
+					selectItem = (org.openspcoop2.generic_project.web.input.SelectItem) valueAsObj;
 			
 			valueAsObj = inputText.getSubmittedValue();
 			
 			if(valueAsObj != null)
-				if(valueAsObj instanceof org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem)
-					selectItem = (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem) valueAsObj;
+				if(valueAsObj instanceof org.openspcoop2.generic_project.web.input.SelectItem)
+					selectItem = (org.openspcoop2.generic_project.web.input.SelectItem) valueAsObj;
 			
 		}
 		
@@ -95,9 +95,9 @@ public class SuggestionSelectItemConverter extends InputTextSelectItemConverter 
 //						Object value2 = suggestionBox.getValue();
 //						
 //						if(value2 instanceof List){
-//							List<org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem> listaSuggestion =( List<org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem> )value2;
+//							List<org.openspcoop2.generic_project.web.input.SelectItem> listaSuggestion =( List<org.openspcoop2.generic_project.web.input.SelectItem> )value2;
 //							
-//							for (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem item : listaSuggestion) {
+//							for (org.openspcoop2.generic_project.web.input.SelectItem item : listaSuggestion) {
 //								if(item.getLabel() != null && item.getLabel().equals(value))
 //									return item;
 //							}

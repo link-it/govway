@@ -53,6 +53,10 @@ public class BaseTable<V> implements Table<V> {
 	protected String detailLinkText = null;
 
 	protected Object metadata = null;
+	
+	protected String styleClass;
+	protected String headerClass;
+	protected String footerClass;
 
 
 	public BaseTable(){
@@ -153,6 +157,36 @@ public class BaseTable<V> implements Table<V> {
 	@Override
 	public void setMetadata(Object metadata) {
 		this.metadata = metadata;
+	}
+
+	@Override
+	public String getStyleClass() {
+		return this.styleClass;
+	}
+
+	@Override
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+	@Override
+	public String getHeaderClass() {
+		return this.headerClass;
+	}
+
+	@Override
+	public void setHeaderClass(String headerClass) {
+		this.headerClass = headerClass;
+	}
+
+	@Override
+	public String getFooterClass() {
+		return this.footerClass;
+	}
+
+	@Override
+	public void setFooterClass(String footerClass) {
+		this.footerClass = footerClass;
 	}
 
 

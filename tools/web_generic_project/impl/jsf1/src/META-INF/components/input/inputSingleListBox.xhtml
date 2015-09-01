@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:op2web="http://www.openspcoop2.org/web/taglib/jsf"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="commonsMsg" basename="commonsMessages" />
+	
+	<c:if test="#{empty required}">
+		<c:set var="required" value="false" />
+	</c:if>
+
+	<op2web:prop label="#{field.label}" required="#{field.required == 'true'}"
+		rendered="#{field.rendered == 'true'}">
+		<c:if test="#{empty field.fieldsToUpdate}">
+			<h:selectOneListbox value="#{field.value}" id="input_#{field.name}" style="#{field.style}" rendered="#{field.rendered == 'true'}" 
+					required="#{field.required}" requiredMessage="#{field.requiredMessage}" converter="selectItemConverter" 
+					size="#{field.numeroRigheDaVisualizzare}" styleClass="#{field.styleClass}" >
+				<f:selectItems value="#{field.elencoSelectItems}" />
+			</h:selectOneListbox>
+		</c:if>
+
+		<c:if test="#{!empty field.fieldsToUpdate}">
+			<h:selectOneListbox value="#{field.value}" id="input_#{field.name}" style="#{field.style}" rendered="#{field.rendered == 'true'}" 
+					required="#{field.required}" requiredMessage="#{field.requiredMessage}" styleClass="#{field.styleClass}" converter="selectItemConverter" size="#{field.numeroRigheDaVisualizzare}">
+				<f:selectItems value="#{field.elencoSelectItems}" />
+				<a4j:support status="mainStatus" event="onselect" reRender="#{field.fieldsToUpdate}" actionListener="#{field.fieldSelected}" />
+			</h:selectOneListbox>
+		</c:if>
+	</op2web:prop>
+</ui:composition>

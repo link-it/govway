@@ -45,7 +45,7 @@ public class InputTextSelectItemConverter implements Converter {
 		if(StringUtils.isEmpty(value))
 			value = "*";
 				 
-		org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem selectItem = null;
+		org.openspcoop2.generic_project.web.input.SelectItem selectItem = null;
 		if(component instanceof HtmlInputText){
 			HtmlInputText inputText = (HtmlInputText) component;
 
@@ -53,11 +53,11 @@ public class InputTextSelectItemConverter implements Converter {
 
 			if(valueAsObj != null)
 				if(valueAsObj instanceof SelectItem)
-					selectItem = (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem) valueAsObj;
+					selectItem = (org.openspcoop2.generic_project.web.input.SelectItem) valueAsObj;
 		}
 		
 		if(selectItem == null)
-			selectItem = new org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem(value, value);
+			selectItem = new org.openspcoop2.generic_project.web.input.SelectItem(value, value);
 
 		return selectItem;
 	}
@@ -68,8 +68,8 @@ public class InputTextSelectItemConverter implements Converter {
 			return "";
 		}
 
-		if(value instanceof org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem ){
-			org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem) value;
+		if(value instanceof org.openspcoop2.generic_project.web.input.SelectItem ){
+			org.openspcoop2.generic_project.web.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.input.SelectItem) value;
 			return comboBoxItem.getLabel();
 		}
 
@@ -77,8 +77,8 @@ public class InputTextSelectItemConverter implements Converter {
 		if(value instanceof SelectItem){
 			SelectItem facesSelectItem = (SelectItem) value;
 
-			if(facesSelectItem.getValue() instanceof org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem ){
-				org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem) facesSelectItem.getValue();
+			if(facesSelectItem.getValue() instanceof org.openspcoop2.generic_project.web.input.SelectItem ){
+				org.openspcoop2.generic_project.web.input.SelectItem comboBoxItem = (org.openspcoop2.generic_project.web.input.SelectItem) facesSelectItem.getValue();
 				return comboBoxItem.getLabel();
 			}
 		}

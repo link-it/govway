@@ -26,7 +26,6 @@ import javax.faces.event.ActionEvent;
 
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.form.Form;
-import org.openspcoop2.generic_project.web.impl.jsf1.input.SelectItem;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.LoginBean;
 import org.openspcoop2.generic_project.web.input.FormField;
 import org.openspcoop2.generic_project.web.input.SelectList;
@@ -47,7 +46,7 @@ public class LanguageForm extends BaseForm  implements Form,Serializable {
 	private static final long serialVersionUID = 1L; 
 
 	private LoginBean mBean = null;
-	private SelectList<SelectItem> lingua = null; 
+	private SelectList lingua = null; 
 
 	public LanguageForm(){
 		try{
@@ -64,7 +63,7 @@ public class LanguageForm extends BaseForm  implements Form,Serializable {
 		this.setClosable(false); 
 		this.setRenderRegionOnly(false);
 
-		this.lingua = this.getWebGenericProjectFactory().getInputFieldFactory().createSelectList();
+		this.lingua = this.getFactory().getInputFieldFactory().createSelectList();
 		this.lingua.setName("linguaPagina");
 		this.lingua.setRequired(false);
 		this.lingua.setLabel("");
@@ -91,11 +90,11 @@ public class LanguageForm extends BaseForm  implements Form,Serializable {
 
 	}
 
-	public SelectList<SelectItem> getLingua() {
+	public SelectList  getLingua() {
 		return this.lingua;
 	}
 
-	public void setLingua(SelectList<SelectItem> lingua) {
+	public void setLingua(SelectList  lingua) {
 		this.lingua = lingua;
 	}
 
@@ -107,9 +106,24 @@ public class LanguageForm extends BaseForm  implements Form,Serializable {
 	public FormField<?> getField(String id) {
 		return this.lingua;
 	}
-	
+
 	@Override
 	public void resetFieldValue(String id) {
 		this.lingua.reset();		
 	}
+
+	@Override
+	public void setObject(Object object) throws Exception {
+
+	}
+
+	@Override
+	public Object getObject() throws Exception {return null;
+	}
+
+	@Override
+	public String valida() throws Exception {
+		return null;
+	}
+
 }

@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.input;
 
+
 /***
  * 
  * Interfaccia che descrive un elemento di input di tipo RadioButton.
@@ -29,6 +30,6 @@ package org.openspcoop2.generic_project.web.input;
  * @version $Rev$, $Date$ 
  *
  */
-public interface RadioButton<OptionType extends HtmlOption> extends Choice<OptionType,OptionType>{
+public interface RadioButton extends Choice<SelectItem,SelectItem>{
 
 }

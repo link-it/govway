@@ -21,7 +21,7 @@
 package org.openspcoop2.generic_project.web.impl.jsf1;
 
 import org.apache.log4j.Logger;
-
+import org.openspcoop2.generic_project.web.core.Utils;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.impl.jsf1.input.factory.impl.Jsf1InputFieldFactoryImpl;
@@ -85,6 +85,9 @@ public class FactoryJsf1Impl implements WebGenericProjectFactory{
 		this.factoryName = factoryName;
 	}
 
- 
+	@Override
+	public Utils getUtils() throws FactoryException {
+		return org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils.getInstance();
+	}
 
 }

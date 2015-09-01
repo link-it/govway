@@ -41,5 +41,5 @@ public interface TableFactory extends Serializable{
 
 	public <V> Table<V> createTable() throws FactoryException;
 
-	public <V,FormType extends Form,SearchFormType extends SearchForm> PagedDataTable<V, FormType, SearchFormType> createPagedDataTable() throws FactoryException;
+	public <V,SearchFormType extends SearchForm,FormType extends Form> PagedDataTable<V, SearchFormType,FormType> createPagedDataTable() throws FactoryException;
 }
