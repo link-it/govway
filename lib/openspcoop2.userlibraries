@@ -177,4 +177,12 @@
 	<archive path="/op2_2.3.dev/lib/stub/cxf/openspcoop2_registryStub_cxf.jar"/>
 	<archive path="/op2_2.3.dev/lib/stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
     </library>
+    <library name="openspcoop2_2.2_lib_lucene" systemlibrary="false">
+        <archive path="/op2_2.2.dev/lib/lucene/lucene-core-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-analyzers-common-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-codecs-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-misc-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-queries-4.7.0.jar"/>
+	<archive path="/op2_2.2.dev/lib/lucene/lucene-suggest-4.7.0.jar"/>
+    </library>
 </eclipse-userlibraries>
