@@ -53,7 +53,9 @@ public class ArchivePdd implements IArchiveObject {
 	private String nomePdd;
 	private org.openspcoop2.core.registry.PortaDominio portaDominio;
 	
-	public ArchivePdd(org.openspcoop2.core.registry.PortaDominio portaDominio) throws ProtocolException{
+	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
+
+	public ArchivePdd(org.openspcoop2.core.registry.PortaDominio portaDominio, String idCorrelazione) throws ProtocolException{
 		
 		if(portaDominio==null){
 			throw new ProtocolException("PortaDominio non fornito");
@@ -64,6 +66,8 @@ public class ArchivePdd implements IArchiveObject {
 		this.nomePdd = portaDominio.getNome();
 		this.portaDominio = portaDominio;
 		
+		this.idCorrelazione = idCorrelazione;
+		
 	}
 	
 	
@@ -72,6 +76,10 @@ public class ArchivePdd implements IArchiveObject {
 	}
 	public org.openspcoop2.core.registry.PortaDominio getPortaDominio() {
 		return this.portaDominio;
+	}
+	
+	public String getIdCorrelazione() {
+		return this.idCorrelazione;
 	}
 
 }

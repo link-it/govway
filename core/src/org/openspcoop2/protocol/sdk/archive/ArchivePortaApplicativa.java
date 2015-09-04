@@ -72,19 +72,22 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 	private IDPortaApplicativaByNome idPortaApplicativaByNome;
 	private PortaApplicativa portaApplicativa;
 	
+	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	
-	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, portaApplicativa), false);
+	
+	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa, String idCorrelazione) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, portaApplicativa), idCorrelazione, false);
 	}
-	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa, boolean informationMissingManagementEnabled) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, portaApplicativa), informationMissingManagementEnabled);
+	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, portaApplicativa),idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa) throws ProtocolException{
-		this(portaApplicativa,false);
+	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa, String idCorrelazione) throws ProtocolException{
+		this(portaApplicativa,idCorrelazione,false);
 	}	
-	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(portaApplicativa, informationMissingManagementEnabled);
+		this.idCorrelazione = idCorrelazione;
 	}
 	private static PortaApplicativa injectProprietario(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa) throws ProtocolException{
 		if(portaApplicativa==null){
@@ -178,5 +181,9 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 	}
 	public PortaApplicativa getPortaApplicativa() {
 		return this.portaApplicativa;
+	}
+	
+	public String getIdCorrelazione() {
+		return this.idCorrelazione;
 	}
 }

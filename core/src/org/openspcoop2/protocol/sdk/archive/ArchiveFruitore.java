@@ -86,12 +86,15 @@ public class ArchiveFruitore implements IArchiveObject {
 	private IDAccordo idAccordoServizioParteSpecifica;
 	private Fruitore fruitore;
 	
+	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
-	public ArchiveFruitore(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore) throws ProtocolException{
-		this(idAccordoServizioParteSpecifica, fruitore, false);
+	
+	public ArchiveFruitore(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore, String idCorrelazione) throws ProtocolException{
+		this(idAccordoServizioParteSpecifica, fruitore, idCorrelazione, false);
 	}
-	public ArchiveFruitore(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveFruitore(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		update(idAccordoServizioParteSpecifica, fruitore, informationMissingManagementEnabled);
+		this.idCorrelazione = idCorrelazione;
 	}
 	
 	
@@ -158,5 +161,7 @@ public class ArchiveFruitore implements IArchiveObject {
 		return this.fruitore;
 	}
 
-	
+	public String getIdCorrelazione() {
+		return this.idCorrelazione;
+	}
 }

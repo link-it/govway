@@ -68,20 +68,22 @@ public class ArchivePortaDelegata implements IArchiveObject {
 	private IDPortaDelegata idPortaDelegata;
 	private PortaDelegata portaDelegata;
 	
+	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	
 	
-	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, portaDelegata), false);
+	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata, String idCorrelazione) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, portaDelegata),idCorrelazione, false);
 	}
-	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata, boolean informationMissingManagementEnabled) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, portaDelegata), informationMissingManagementEnabled);
+	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, portaDelegata), idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchivePortaDelegata(PortaDelegata portaDelegata) throws ProtocolException{
-		this(portaDelegata,false);
+	public ArchivePortaDelegata(PortaDelegata portaDelegata, String idCorrelazione) throws ProtocolException{
+		this(portaDelegata,idCorrelazione,false);
 	}	
-	public ArchivePortaDelegata(PortaDelegata portaDelegata, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchivePortaDelegata(PortaDelegata portaDelegata, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(portaDelegata, informationMissingManagementEnabled);
+		this.idCorrelazione = idCorrelazione;
 	}
 	private static PortaDelegata injectProprietario(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata) throws ProtocolException{
 		if(portaDelegata==null){
@@ -154,5 +156,9 @@ public class ArchivePortaDelegata implements IArchiveObject {
 	}
 	public PortaDelegata getPortaDelegata() {
 		return this.portaDelegata;
+	}
+	
+	public String getIdCorrelazione() {
+		return this.idCorrelazione;
 	}
 }

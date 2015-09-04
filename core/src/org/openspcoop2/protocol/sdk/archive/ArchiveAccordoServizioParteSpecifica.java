@@ -92,19 +92,22 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 	private IDAccordo idAccordoServizioParteComune;
 	private AccordoServizioParteSpecifica accordoServizioParteSpecifica;
 	
+	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	
-	public ArchiveAccordoServizioParteSpecifica(IDSoggetto idSoggettoProprietario, AccordoServizioParteSpecifica accordoServizioParteSpecifica) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, accordoServizioParteSpecifica), false);
+	
+	public ArchiveAccordoServizioParteSpecifica(IDSoggetto idSoggettoProprietario, AccordoServizioParteSpecifica accordoServizioParteSpecifica, String idCorrelazione) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, accordoServizioParteSpecifica),idCorrelazione, false);
 	}
-	public ArchiveAccordoServizioParteSpecifica(IDSoggetto idSoggettoProprietario, AccordoServizioParteSpecifica accordoServizioParteSpecifica, boolean informationMissingManagementEnabled) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, accordoServizioParteSpecifica), informationMissingManagementEnabled);
+	public ArchiveAccordoServizioParteSpecifica(IDSoggetto idSoggettoProprietario, AccordoServizioParteSpecifica accordoServizioParteSpecifica, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, accordoServizioParteSpecifica), idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchiveAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica) throws ProtocolException{
-		this(accordoServizioParteSpecifica,false);
+	public ArchiveAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica, String idCorrelazione) throws ProtocolException{
+		this(accordoServizioParteSpecifica,idCorrelazione,false);
 	}	
-	public ArchiveAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(accordoServizioParteSpecifica, informationMissingManagementEnabled);
+		this.idCorrelazione = idCorrelazione;
 	}
 	private static AccordoServizioParteSpecifica injectProprietario(IDSoggetto idSoggettoProprietario, AccordoServizioParteSpecifica accordoServizioParteSpecifica) throws ProtocolException{
 		if(accordoServizioParteSpecifica==null){
@@ -208,5 +211,8 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 		return this.accordoServizioParteSpecifica;
 	}
 
+	public String getIdCorrelazione() {
+		return this.idCorrelazione;
+	}
 	
 }

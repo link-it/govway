@@ -93,18 +93,21 @@ public class ArchiveAccordoCooperazione implements IArchiveObject {
 	private List<IDSoggetto> idSoggettiPartecipanti = new ArrayList<IDSoggetto>();
 	private AccordoCooperazione accordoCooperazione;
 	
+	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
-	public ArchiveAccordoCooperazione(IDSoggetto idSoggettoProprietario, AccordoCooperazione accordoCooperazione) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, accordoCooperazione), false);
+	
+	public ArchiveAccordoCooperazione(IDSoggetto idSoggettoProprietario, AccordoCooperazione accordoCooperazione, String idCorrelazione) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, accordoCooperazione), idCorrelazione, false);
 	}
-	public ArchiveAccordoCooperazione(IDSoggetto idSoggettoProprietario, AccordoCooperazione accordoCooperazione, boolean informationMissingManagementEnabled) throws ProtocolException{
-		this(injectProprietario(idSoggettoProprietario, accordoCooperazione), informationMissingManagementEnabled);
+	public ArchiveAccordoCooperazione(IDSoggetto idSoggettoProprietario, AccordoCooperazione accordoCooperazione, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+		this(injectProprietario(idSoggettoProprietario, accordoCooperazione), idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchiveAccordoCooperazione(AccordoCooperazione accordoCooperazione) throws ProtocolException{
-		this(accordoCooperazione,false);
+	public ArchiveAccordoCooperazione(AccordoCooperazione accordoCooperazione, String idCorrelazione) throws ProtocolException{
+		this(accordoCooperazione,idCorrelazione,false);
 	}	
-	public ArchiveAccordoCooperazione(AccordoCooperazione accordoCooperazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveAccordoCooperazione(AccordoCooperazione accordoCooperazione, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(accordoCooperazione, informationMissingManagementEnabled);
+		this.idCorrelazione = idCorrelazione;
 	}
 	private static AccordoCooperazione injectProprietario(IDSoggetto idSoggettoProprietario, AccordoCooperazione accordoCooperazione) throws ProtocolException{
 		if(accordoCooperazione==null){
@@ -206,6 +209,8 @@ public class ArchiveAccordoCooperazione implements IArchiveObject {
 		return this.accordoCooperazione;
 	}
 	
-	
+	public String getIdCorrelazione() {
+		return this.idCorrelazione;
+	}
 
 }

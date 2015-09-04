@@ -626,7 +626,7 @@ public class BasicArchive implements IArchive {
 			IRegistryReader registryReader,boolean validationDocuments,
 			MapPlaceholder placeholder) throws ProtocolException {
 		
-		ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger());
+		ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader);
 		return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		
 	}
@@ -637,7 +637,7 @@ public class BasicArchive implements IArchive {
 			MapPlaceholder placeholder) throws ProtocolException {
 		
 		try{
-			ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger());
+			ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader);
 			return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		}finally{
 			try{

@@ -96,7 +96,7 @@ public class Importer {
 		DriverRegistroServiziDB driverRegistroServizi = null; 
 		DriverConfigurazioneDB driverConfigurazione = null;
 		// TODO INIT
-		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(driverRegistroServizi);
+		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(driverRegistroServizi,driverConfigurazione);
 		
 		
 		// trasformazione in archivio openspcoop2

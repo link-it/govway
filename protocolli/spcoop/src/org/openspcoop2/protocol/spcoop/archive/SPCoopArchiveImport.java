@@ -104,7 +104,7 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoServizioParteComune archiveASPC = new ArchiveAccordoServizioParteComune(aspcOpenSPCoop2,true);
+				ArchiveAccordoServizioParteComune archiveASPC = new ArchiveAccordoServizioParteComune(aspcOpenSPCoop2,"CnipaPackageASPC",true);
 				archiveObject.getAccordiServizioParteComune().add(archiveASPC);
 
 				return archiveObject;
@@ -172,7 +172,7 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoServizioComposto archiveASC = new ArchiveAccordoServizioComposto(asCompostoOpenSPCoop2,true);
+				ArchiveAccordoServizioComposto archiveASC = new ArchiveAccordoServizioComposto(asCompostoOpenSPCoop2,"CnipaPackageASC",true);
 				archiveObject.getAccordiServizioComposto().add(archiveASC);
 				
 				return archiveObject;
@@ -239,7 +239,7 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoServizioParteSpecifica archiveASPS = new ArchiveAccordoServizioParteSpecifica(aspsOpenSPCoop2,true);
+				ArchiveAccordoServizioParteSpecifica archiveASPS = new ArchiveAccordoServizioParteSpecifica(aspsOpenSPCoop2,"CnipaPackageASPS",true);
 				archiveObject.getAccordiServizioParteSpecifica().add(archiveASPS);
 								
 				return archiveObject;
@@ -312,7 +312,7 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoCooperazione archiveAC = new ArchiveAccordoCooperazione(acOpenSPCoop2,true);
+				ArchiveAccordoCooperazione archiveAC = new ArchiveAccordoCooperazione(acOpenSPCoop2,"CnipaPackageAC",true);
 				archiveObject.getAccordiCooperazione().add(archiveAC);
 				
 				return archiveObject;

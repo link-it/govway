@@ -60,7 +60,9 @@ public class ArchiveSoggetto implements IArchiveObject {
 	private org.openspcoop2.core.registry.Soggetto soggettoRegistro;
 	private org.openspcoop2.core.config.Soggetto soggettoConfigurazione;
 	
-	public ArchiveSoggetto(org.openspcoop2.core.registry.Soggetto soggettoRegistro) throws ProtocolException{
+	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
+	
+	public ArchiveSoggetto(org.openspcoop2.core.registry.Soggetto soggettoRegistro, String idCorrelazione) throws ProtocolException{
 		
 		if(soggettoRegistro==null){
 			throw new ProtocolException("SoggettoRegistro non fornito");
@@ -75,8 +77,10 @@ public class ArchiveSoggetto implements IArchiveObject {
 	
 		this.idSoggetto = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
 		
+		this.idCorrelazione = idCorrelazione;
+		
 	}
-	public ArchiveSoggetto(org.openspcoop2.core.config.Soggetto soggettoConfigurazione) throws ProtocolException{
+	public ArchiveSoggetto(org.openspcoop2.core.config.Soggetto soggettoConfigurazione, String idCorrelazione) throws ProtocolException{
 		
 		if(soggettoConfigurazione==null){
 			throw new ProtocolException("SoggettoConfigurazione non fornito");
@@ -91,9 +95,11 @@ public class ArchiveSoggetto implements IArchiveObject {
 		
 		this.idSoggetto = new IDSoggetto(soggettoConfigurazione.getTipo(), soggettoConfigurazione.getNome());
 		
+		this.idCorrelazione = idCorrelazione;
+		
 	}
 	public ArchiveSoggetto(org.openspcoop2.core.config.Soggetto soggettoConfigurazione,
-			org.openspcoop2.core.registry.Soggetto soggettoRegistro) throws ProtocolException{
+			org.openspcoop2.core.registry.Soggetto soggettoRegistro, String idCorrelazione) throws ProtocolException{
 		
 		if(soggettoRegistro==null){
 			throw new ProtocolException("SoggettoRegistro non fornito");
@@ -125,6 +131,8 @@ public class ArchiveSoggetto implements IArchiveObject {
 		
 		this.idSoggetto = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
 		
+		this.idCorrelazione = idCorrelazione;
+		
 	}
 	
 	
@@ -136,5 +144,9 @@ public class ArchiveSoggetto implements IArchiveObject {
 	}
 	public org.openspcoop2.core.config.Soggetto getSoggettoConfigurazione() {
 		return this.soggettoConfigurazione;
+	}
+	
+	public String getIdCorrelazione() {
+		return this.idCorrelazione;
 	}
 }

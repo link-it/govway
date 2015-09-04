@@ -91,22 +91,23 @@ public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteC
 	
 	private IDAccordoCooperazione idAccordoCooperazione;
 	private List<IDServizio> idServiziComponenti = new ArrayList<IDServizio>();
-	
-	
+		
 
-	public ArchiveAccordoServizioComposto(IDSoggetto idSoggettoProprietario,AccordoServizioParteComune accordoServizioParteComune)throws ProtocolException {
-		super(idSoggettoProprietario, accordoServizioParteComune);
+	public ArchiveAccordoServizioComposto(IDSoggetto idSoggettoProprietario,AccordoServizioParteComune accordoServizioParteComune, String idCorrelazione)throws ProtocolException {
+		super(idSoggettoProprietario, accordoServizioParteComune,idCorrelazione);
 	}
 	public ArchiveAccordoServizioComposto(IDSoggetto idSoggettoProprietario,AccordoServizioParteComune accordoServizioParteComune,
+			String idCorrelazione,
 			boolean informationMissingManagementEnabled) throws ProtocolException {
-		super(idSoggettoProprietario, accordoServizioParteComune,informationMissingManagementEnabled);
+		super(idSoggettoProprietario, accordoServizioParteComune,idCorrelazione,informationMissingManagementEnabled);
 	}
-	public ArchiveAccordoServizioComposto(AccordoServizioParteComune accordoServizioParteComune) throws ProtocolException {
-		super(accordoServizioParteComune);
+	public ArchiveAccordoServizioComposto(AccordoServizioParteComune accordoServizioParteComune, String idCorrelazione) throws ProtocolException {
+		super(accordoServizioParteComune,idCorrelazione);
 	}
-	public ArchiveAccordoServizioComposto(AccordoServizioParteComune accordoServizioParteComune,
+	public ArchiveAccordoServizioComposto(AccordoServizioParteComune accordoServizioParteComune, 
+			String idCorrelazione,
 			boolean informationMissingManagementEnabled) throws ProtocolException {
-		super(accordoServizioParteComune, informationMissingManagementEnabled);
+		super(accordoServizioParteComune,idCorrelazione, informationMissingManagementEnabled);
 	}
 	
 	
@@ -167,5 +168,6 @@ public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteC
 	public List<IDServizio> getIdServiziComponenti() {
 		return this.idServiziComponenti;
 	}
+
 
 }

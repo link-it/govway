@@ -222,7 +222,7 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveRegistryReader reader = new ArchiveRegistryReader(driver.getDriverRegistroServiziDB());
+			ArchiveRegistryReader reader = new ArchiveRegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
 			
 			ArchiveValidator validator = new ArchiveValidator(reader);
 			validator.validateArchive(archive, protocolloEffettivo, validazioneDocumenti, importInformationMissingCollection, userLogin, 
@@ -245,7 +245,7 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveRegistryReader reader = new ArchiveRegistryReader(driver.getDriverRegistroServiziDB());
+			ArchiveRegistryReader reader = new ArchiveRegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
 			
 			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();

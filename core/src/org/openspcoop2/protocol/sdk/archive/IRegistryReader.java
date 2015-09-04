@@ -20,9 +20,12 @@
  */
 package org.openspcoop2.protocol.sdk.archive;
 
+import java.util.List;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -38,9 +41,13 @@ import org.openspcoop2.core.registry.Soggetto;
  */
 public interface IRegistryReader {
 
-	public boolean existsSoggettoByCodiceIPA(String codiceIPA) throws RegistryNotFound;
+	public boolean existsPortaDominio(String nome);
 	
-	public boolean existsSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound;
+	public List<String> findPorteDominio(boolean operativo) throws RegistryNotFound;
+	
+	public boolean existsSoggettoByCodiceIPA(String codiceIPA);
+	
+	public boolean existsSoggetto(IDSoggetto idSoggetto);
 	
 	public IDSoggetto getIdSoggettoByCodiceIPA(String codiceIPA) throws RegistryNotFound;
 	
@@ -50,11 +57,13 @@ public interface IRegistryReader {
 	
 	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo) throws RegistryNotFound;
 	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,boolean readAllegati) throws RegistryNotFound;
+	public List<IDAccordo> findAccordiServizioParteComune(FiltroRicercaAccordi filtro) throws RegistryNotFound; 
 	
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordo) throws RegistryNotFound;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordo,boolean readAllegati) throws RegistryNotFound;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws RegistryNotFound;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,boolean readAllegati) throws RegistryNotFound;
+	public List<IDAccordo> findAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound; 
 	
 	public IDServizio convertToIDServizio(IDAccordo idAccordoServizioParteSpecifica) throws RegistryNotFound;
 	
@@ -62,5 +71,7 @@ public interface IRegistryReader {
 	
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo) throws RegistryNotFound;
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,boolean readAllegati) throws RegistryNotFound;
+	
+	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo);
 	
 }

@@ -82,6 +82,7 @@ public class ExporterArchiveUtils {
 	@SuppressWarnings("unused")
 	private Logger log;
 	private ProtocolFactoryManager protocolFactoryManager;
+	private String idCorrelazione = "export"; // non necessario in questa funzione. Comunque viene qua usata una variabile se servisse in futuro
 	
 	public ExporterArchiveUtils(AbstractArchiveEngine archiveEngine,Logger log) throws Exception{
 		this.archiveEngine = archiveEngine;
@@ -92,14 +93,14 @@ public class ExporterArchiveUtils {
 	public void export(String protocol,Archive archive,OutputStream out,ArchiveMode mode) throws Exception{
 		IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = protocolFactory.createArchive();
-		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(this.archiveEngine.getDriverRegistroServizi());
+		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione());
 		archiveEngine.exportArchive(archive, out, mode, archiveRegistryReader);
 	}
 	
 	public byte[] export(String protocol,Archive archive,ArchiveMode mode) throws Exception{
 		IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = protocolFactory.createArchive();
-		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(this.archiveEngine.getDriverRegistroServizi());
+		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione());
 		return archiveEngine.exportArchive(archive, mode, archiveRegistryReader);
 	}
 	
@@ -215,7 +216,7 @@ public class ExporterArchiveUtils {
 					
 					// add
 					org.openspcoop2.core.registry.PortaDominio pdd = this.archiveEngine.getPortaDominio(nomePdd);
-					ArchivePdd archivePdd = new ArchivePdd(pdd);
+					ArchivePdd archivePdd = new ArchivePdd(pdd, this.idCorrelazione);
 					archive.getPdd().add(archivePdd);
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -267,7 +268,7 @@ public class ExporterArchiveUtils {
 					// add
 					org.openspcoop2.core.registry.Soggetto soggettoRegistro = this.archiveEngine.getSoggettoRegistro(idSoggetto);
 					org.openspcoop2.core.config.Soggetto soggettoConfigurazione = this.archiveEngine.getSoggettoConfigurazione(idSoggetto);
-					ArchiveSoggetto archiveSoggetto = new ArchiveSoggetto(soggettoConfigurazione, soggettoRegistro);
+					ArchiveSoggetto archiveSoggetto = new ArchiveSoggetto(soggettoConfigurazione, soggettoRegistro, this.idCorrelazione);
 					archive.getSoggetti().add(archiveSoggetto);
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -444,7 +445,7 @@ public class ExporterArchiveUtils {
 					if(sa.getNomeSoggettoProprietario()==null){
 						sa.setNomeSoggettoProprietario(idServizioApplicativo.getIdSoggettoProprietario().getNome());
 					}
-					ArchiveServizioApplicativo archiveSa = new ArchiveServizioApplicativo(sa);
+					ArchiveServizioApplicativo archiveSa = new ArchiveServizioApplicativo(sa, this.idCorrelazione);
 					archive.getServiziApplicativi().add(archiveSa);
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -494,7 +495,7 @@ public class ExporterArchiveUtils {
 				
 					// add
 					org.openspcoop2.core.registry.AccordoCooperazione ac = this.archiveEngine.getAccordoCooperazione(idAccordoCooperazione,true);
-					ArchiveAccordoCooperazione archiveAc = new ArchiveAccordoCooperazione(ac);
+					ArchiveAccordoCooperazione archiveAc = new ArchiveAccordoCooperazione(ac, this.idCorrelazione);
 					archive.getAccordiCooperazione().add(archiveAc);
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -564,7 +565,7 @@ public class ExporterArchiveUtils {
 				
 					// add
 					org.openspcoop2.core.registry.AccordoServizioParteComune as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,true);
-					ArchiveAccordoServizioParteComune archiveAs = new ArchiveAccordoServizioParteComune(as);
+					ArchiveAccordoServizioParteComune archiveAs = new ArchiveAccordoServizioParteComune(as, this.idCorrelazione);
 					archive.getAccordiServizioParteComune().add(archiveAs);
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -625,7 +626,7 @@ public class ExporterArchiveUtils {
 				
 					// add
 					as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,true);
-					ArchiveAccordoServizioComposto archiveAs = new ArchiveAccordoServizioComposto(as);
+					ArchiveAccordoServizioComposto archiveAs = new ArchiveAccordoServizioComposto(as, this.idCorrelazione);
 					archive.getAccordiServizioComposto().add(archiveAs);
 				
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -704,7 +705,7 @@ public class ExporterArchiveUtils {
 					if(as.getServizio().getNomeSoggettoErogatore()==null){
 						as.getServizio().setNomeSoggettoErogatore(nomeSoggetto);
 					}
-					ArchiveAccordoServizioParteSpecifica archiveAs = new ArchiveAccordoServizioParteSpecifica(as);
+					ArchiveAccordoServizioParteSpecifica archiveAs = new ArchiveAccordoServizioParteSpecifica(as, this.idCorrelazione);
 					while(as.sizeFruitoreList()>0){
 						fruitoriList.add(as.removeFruitore(0));
 					}
@@ -847,7 +848,7 @@ public class ExporterArchiveUtils {
 						}
 					}
 					
-					ArchiveFruitore archiveFruitore = new ArchiveFruitore(idAccordoServizio, fruitore);
+					ArchiveFruitore archiveFruitore = new ArchiveFruitore(idAccordoServizio, fruitore, this.idCorrelazione);
 					archive.getAccordiFruitori().add(archiveFruitore);
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -912,7 +913,7 @@ public class ExporterArchiveUtils {
 					if(pd.getNomeSoggettoProprietario()==null){
 						pd.setNomeSoggettoProprietario(idPortaDelegata.getSoggettoFruitore().getNome());
 					}
-					ArchivePortaDelegata archivePd = new ArchivePortaDelegata(pd);
+					ArchivePortaDelegata archivePd = new ArchivePortaDelegata(pd, this.idCorrelazione);
 					archive.getPorteDelegate().add(archivePd);
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -989,7 +990,7 @@ public class ExporterArchiveUtils {
 					if(pa.getNomeSoggettoProprietario()==null){
 						pa.setNomeSoggettoProprietario(idPortaApplicativa.getSoggetto().getNome());
 					}
-					ArchivePortaApplicativa archivePa = new ArchivePortaApplicativa(pa);
+					ArchivePortaApplicativa archivePa = new ArchivePortaApplicativa(pa, this.idCorrelazione);
 					archive.getPorteApplicative().add(archivePa);
 				
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
