@@ -1,3 +1,11 @@
+2015-09-10  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-405
+	Aggiunto il package org.openspcoop2.utils.csv che contiene un set di classi di utilità per l'elaborazione dei files CSV.
+	I parser ed i writer sono configurabili sia a livello di programmazione java che attraverso file di proprietà esterni.
+	E' stata utilizzata la libreria "commons csv"
+
 2015-09-01  Giuliano Pintori <pintori@link.it>
 
         * [WebGenericProject]
