@@ -17262,6 +17262,69 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
+	public void createServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException{
+		Connection con = null;
+		PreparedStatement stmt = null;
+
+		this.log.debug("createServizioApplicativoAutorizzato...");
+
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = this.datasource.getConnection();
+			else
+				con = this.globalConnection;
+
+			long idSoggettoLong = DBUtils.getIdSoggetto(idFruitore.getNome(), idFruitore.getTipo(), con, this.tipoDB);
+			if(idSoggettoLong<=0){
+				throw new Exception("Soggetto Fruitore ["+idFruitore.toString()+"] non esistente");
+			}
+			long idAccordoServizioParteSpecificaLong = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false).getId();
+			if(idAccordoServizioParteSpecificaLong<=0){
+				throw new Exception("AccordoServizioParteSpecifica ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
+			}
+			long idServizioApplicativo = DBUtils.getIdServizioApplicativo(nomeServizioApplicativo, idFruitore.getTipo(), idFruitore.getNome(), con, this.tipoDB);
+			if(idServizioApplicativo<=0){
+				throw new Exception("ServizioApplicativo ["+nomeServizioApplicativo+"] del soggetto ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addInsertTable(CostantiDB.POLITICHE_SICUREZZA);
+			sqlQueryObject.addInsertField("id_fruitore", "?");
+			sqlQueryObject.addInsertField("id_servizio", "?");
+			sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+			String queryString = sqlQueryObject.createSQLInsert();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSoggettoLong);
+			stmt.setLong(2, idAccordoServizioParteSpecificaLong);
+			stmt.setLong(3, idServizioApplicativo);
+			stmt.executeUpdate();
+			stmt.close();
+			
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("createServizioApplicativoAutorizzato error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
+	}
+		
 
 	/**
 	 *  Ritorna gli identificatori dei soggetti che rispettano il parametro di ricerca
@@ -17287,7 +17350,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				con = this.globalConnection;
 
 			long idSoggettoLong = DBUtils.getIdSoggetto(idFruitore.getNome(), idFruitore.getTipo(), con, this.tipoDB);
+			if(idSoggettoLong<=0){
+				throw new Exception("Soggetto Fruitore ["+idFruitore.toString()+"] non esistente");
+			}
 			long idAccordoServizioParteSpecificaLong = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false).getId();
+			if(idAccordoServizioParteSpecificaLong<=0){
+				throw new Exception("AccordoServizioParteSpecifica ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
+			}
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.POLITICHE_SICUREZZA);
@@ -17296,8 +17365,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".nome");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
-			sqlQueryObject.addWhereCondition("id_fruitore > ?");
-			sqlQueryObject.addWhereCondition("id_servizio > ?");
+			sqlQueryObject.addWhereCondition("id_fruitore = ?");
+			sqlQueryObject.addWhereCondition("id_servizio = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.POLITICHE_SICUREZZA+".id_servizio_applicativo");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -17334,6 +17403,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			//Chiudo statement and resultset
 			try{
 				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
 				if(stm!=null) stm.close();
 			}catch (Exception e) {
 				//ignore

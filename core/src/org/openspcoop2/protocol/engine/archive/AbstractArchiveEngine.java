@@ -302,6 +302,17 @@ public abstract class AbstractArchiveEngine {
 	}
 	
 	
+	// --- Politiche di Sicurezza ---
+	
+	public void createServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.createServizioApplicativoAutorizzato(idAccordoServizioParteSpecifica, idFruitore, nomeServizioApplicativo);
+	}
+	
+	public List<IDServizioApplicativo> getAllIdServiziApplicativiAutorizzati(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.driverRegistroServizi.getAllIdServiziApplicativiAutorizzati(idAccordoServizioParteSpecifica, idFruitore);
+	}
+		
+	
 	
 	// --- Porte Delegate ---
 	

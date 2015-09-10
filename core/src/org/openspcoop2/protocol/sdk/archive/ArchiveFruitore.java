@@ -20,6 +20,9 @@
  */
 package org.openspcoop2.protocol.sdk.archive;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
@@ -86,6 +89,11 @@ public class ArchiveFruitore implements IArchiveObject {
 	private IDAccordo idAccordoServizioParteSpecifica;
 	private Fruitore fruitore;
 	
+	private List<String> serviziApplicativiAutorizzati = new ArrayList<String>();
+	public List<String> getServiziApplicativiAutorizzati() {
+		return this.serviziApplicativiAutorizzati;
+	}
+
 	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	

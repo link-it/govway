@@ -351,7 +351,7 @@ public class ZIPUtils  {
 									nomeSoggetto = tipoNomeSoggetto.substring(1);
 								}
 								else if(tipoNomeSoggetto.endsWith("_")){
-									// caso eccezionale con solo il nome
+									// caso eccezionale con solo il tipo
 									tipoSoggetto = tipoNomeSoggetto.substring(0,tipoNomeSoggetto.length()-1);
 								}
 								else{
@@ -364,7 +364,7 @@ public class ZIPUtils  {
 									}
 									if(nomeSoggetto==null || "".equals(nomeSoggetto)){
 										throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+
-												"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il sogggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: tipo non identificato");
+												"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il sogggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: nome non identificato");
 									}
 								}
 								
@@ -546,7 +546,8 @@ public class ZIPUtils  {
 			}
 			archivio.setConfigurazionePdD(configurazione);
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (configurazione) non valida rispetto allo schema (ConfigurazionePdD): "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -563,7 +564,8 @@ public class ZIPUtils  {
 			}
 			archivio.getPdd().add(key,new ArchivePdd(pdd,idCorrelazione));
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (porta-dominio) non valida rispetto allo schema (RegistroServizi): "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-dominio) non valida rispetto allo schema (RegistroServizi): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -590,7 +592,8 @@ public class ZIPUtils  {
 			archivio.setInformationMissing(informationMissingOp2);
 			
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (informationMissing) non valida rispetto allo schema informationMissing.xsd: "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (informationMissing) non valida rispetto allo schema informationMissing.xsd: "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -678,7 +681,8 @@ public class ZIPUtils  {
 			}
 			
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (soggetto) non valida rispetto allo schema ("+schema+"): "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (soggetto) non valida rispetto allo schema ("+schema+"): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 		
@@ -700,7 +704,8 @@ public class ZIPUtils  {
 			}
 			archivio.getServiziApplicativi().add(key,new ArchiveServizioApplicativo(sa,idCorrelazione,true));
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (servizio-applicativo) non valida rispetto allo schema (ConfigurazionePdD): "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (servizio-applicativo) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -724,7 +729,8 @@ public class ZIPUtils  {
 			}
 			archivio.getPorteDelegate().add(key,new ArchivePortaDelegata(pd,idCorrelazione,true));
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (porta-delegata) non valida rispetto allo schema (ConfigurazionePdD): "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-delegata) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -745,7 +751,8 @@ public class ZIPUtils  {
 			}
 			archivio.getPorteApplicative().add(key,new ArchivePortaApplicativa(pa,idCorrelazione,true));
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (porta-applicativa) non valida rispetto allo schema (ConfigurazionePdD): "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-applicativa) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -829,7 +836,8 @@ public class ZIPUtils  {
 				}			
 
 			}catch(Exception eDeserializer){
-				throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (accordo-servizio-parte-comune) non valida rispetto allo schema (RegistroServizi): "
+				String xmlString = this.toStringXmlElementForErrorMessage(xml);
+				throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (accordo-servizio-parte-comune) non valida rispetto allo schema (RegistroServizi): "
 						+eDeserializer.getMessage(),eDeserializer);
 			}
 			
@@ -962,7 +970,8 @@ public class ZIPUtils  {
 				archivio.getAccordiServizioParteSpecifica().add(key,new ArchiveAccordoServizioParteSpecifica(asps,idCorrelazione,true));
 	
 			}catch(Exception eDeserializer){
-				throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (accordo-servizio-parte-specifica) non valida rispetto allo schema (RegistroServizi): "
+				String xmlString = this.toStringXmlElementForErrorMessage(xml);
+				throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (accordo-servizio-parte-specifica) non valida rispetto allo schema (RegistroServizi): "
 						+eDeserializer.getMessage(),eDeserializer);
 			}
 			
@@ -1022,6 +1031,16 @@ public class ZIPUtils  {
 				
 			}
 			
+			// fruitori (politiche di sicurezza)
+			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar) &&
+					nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI)){
+				
+				this.readAccordoServizioParteSpecifica_Fruitore_ServiziApplicativiAutorizzati(archivio, bin, xml, entryName, 
+						nomeFileSenzaAccordo,
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, 
+						validationDocuments, idCorrelazione);
+			}
+			
 			// fruitori
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)){
 				this.readAccordoServizioParteSpecifica_Fruitore(archivio, bin, xml, entryName, 
@@ -1062,7 +1081,84 @@ public class ZIPUtils  {
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValuesWithoutCheck(nomeAccordo, tipoSoggetto, nomeSoggetto, versioneAccordo);
 			archivio.getAccordiFruitori().add(keyFruitore,new ArchiveFruitore(idAccordo,fruitore,idCorrelazione,true));
 		}catch(Exception eDeserializer){
-			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readAccordoServizioParteSpecifica_Fruitore_ServiziApplicativiAutorizzati(Archive archivio,InputStream bin,byte[]xml,String entryName,
+			String nomeFileSenzaAccordo,
+			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo,
+			boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+		
+		// *** comprendo tipo e nome fruitore ****
+		
+		String prefixError = "Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
+				"] il file ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI+
+				"] deve essere contenuto in una directory definita tramite la struttura <tipo>_<nome> che descrive il sogggetto fruitore.";
+		
+		// comprendo tipo e nome soggetto
+		String tipoNomeSoggettoFruitore = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length(), 
+				nomeFileSenzaAccordo.length()-(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI).length());
+		if(tipoNomeSoggettoFruitore==null || "".equals(tipoNomeSoggettoFruitore) || !tipoNomeSoggettoFruitore.contains("_")){
+			throw new ProtocolException(prefixError+" Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
+		}
+		tipoNomeSoggettoFruitore = tipoNomeSoggettoFruitore.trim();
+		String tipoSoggettoFruitore = null;
+		String nomeSoggettoFruitore = null;
+		if(tipoNomeSoggettoFruitore.equals("_")){
+			// caso eccezionale senza ne tipo ne nome
+		}
+		else if(tipoNomeSoggettoFruitore.startsWith("_")){
+			// caso eccezionale con solo il nome
+			nomeSoggettoFruitore = tipoNomeSoggettoFruitore.substring(1);
+		}
+		else if(tipoNomeSoggettoFruitore.endsWith("_")){
+			// caso eccezionale con solo il tipo
+			tipoSoggettoFruitore = tipoNomeSoggettoFruitore.substring(0,tipoNomeSoggettoFruitore.length()-1);
+		}
+		else{
+			// caso normale
+			tipoSoggettoFruitore = tipoNomeSoggettoFruitore.split("_")[0];
+			nomeSoggettoFruitore = tipoNomeSoggettoFruitore.split("_")[1];
+			if(tipoSoggettoFruitore==null || "".equals(tipoSoggettoFruitore)){
+				throw new ProtocolException(prefixError+" Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: tipo non identificato");
+			}
+			if(nomeSoggettoFruitore==null || "".equals(nomeSoggettoFruitore)){
+				throw new ProtocolException(prefixError+" Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: nome non identificato");
+			}
+		}
+		
+		
+		// *** leggo lista servizi applicativi autorizzati ****
+		
+		String tipoSoggettoFruitoreKey = (tipoSoggettoFruitore!=null ? tipoSoggettoFruitore : "" );
+		String nomeSoggettoFruitoreKey = (nomeSoggettoFruitore!=null ? nomeSoggettoFruitore : "" );
+		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
+		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
+		String versioneKey = (versioneAccordo!=null ? versioneAccordo : "" );
+		
+		try{
+			String csvLine = new String(xml);
+			String [] line = csvLine.split(",");
+			if(line==null || line.length<=0){
+				throw new Exception("csv non contiene valori");
+			}
+			
+			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitoreKey, nomeSoggettoFruitoreKey, tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
+			if(archivio.getAccordiFruitori().containsKey(keyFruitore)==false){
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire la lista dei serviziApplicativiAutorizzati senza fornire la definizione xml della fruizione");
+			}
+			
+			ArchiveFruitore archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
+			for (int i = 0; i < line.length; i++) {
+				archiveFruitore.getServiziApplicativiAutorizzati().add(line[i].trim());
+			}
+			
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura csv (serviziApplicativiAutorizzati) non valida: "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -1126,7 +1222,8 @@ public class ZIPUtils  {
 				archivio.getAccordiCooperazione().add(key,new ArchiveAccordoCooperazione(ac,idCorrelazione,true));		
 
 			}catch(Exception eDeserializer){
-				throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (accordo-cooperazione) non valida rispetto allo schema (RegistroServizi): "
+				String xmlString = this.toStringXmlElementForErrorMessage(xml);
+				throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (accordo-cooperazione) non valida rispetto allo schema (RegistroServizi): "
 						+eDeserializer.getMessage(),eDeserializer);
 			}
 			
@@ -1175,5 +1272,9 @@ public class ZIPUtils  {
 			}
 		}
 		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire un documento di un accordo senza definirlo anche all'interno della definizione xml dell'accordo");
+	}
+	
+	protected String toStringXmlElementForErrorMessage(byte[]xml){
+		return xml!=null ? "Xml: ["+new String(xml)+"] \n" : "Xml Undefined. \n";
 	}
 }

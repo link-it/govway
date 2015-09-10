@@ -23,6 +23,8 @@ package org.openspcoop2.protocol.engine.archive;
 
 import java.util.List;
 
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -324,6 +326,35 @@ public class ArchiveRegistryReader implements IRegistryReader {
 			return this.driverConfigurazioneDB.existsServizioApplicativo(idServizioApplicativo);
 		}catch(Exception e){
 			return false;
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativo(String username, String password){
+		try{
+			return this.driverConfigurazioneDB.getServizioApplicativoAutenticato(username, password)!=null;
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativo(String subject){
+		try{
+			return this.driverConfigurazioneDB.getServizioApplicativoAutenticato(subject)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound{
+		try{
+			return this.driverConfigurazioneDB.getServizioApplicativo(idServizioApplicativo);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
 		}
 	}
 }

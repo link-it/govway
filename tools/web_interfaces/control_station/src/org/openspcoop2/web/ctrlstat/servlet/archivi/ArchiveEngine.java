@@ -27,6 +27,8 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -34,6 +36,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 
 /**
  * ArchiveEngine
@@ -224,6 +227,27 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throws DriverRegistroServiziException {
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, accordoServizioParteSpecifica);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	// --- Politiche di Sicurezza ---
+		
+	@Override
+	public void createServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+		try{
+			AccordoServizioParteSpecifica asps = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false);
+			Soggetto s = this.getSoggettoRegistro(idFruitore);
+			
+			PoliticheSicurezza polSic = new PoliticheSicurezza();
+			polSic.setNomeServizioApplicativo(nomeServizioApplicativo);
+			polSic.setIdServizio(asps.getId());
+			polSic.setIdFruitore(s.getId());
+			
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, polSic);
 		}catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}

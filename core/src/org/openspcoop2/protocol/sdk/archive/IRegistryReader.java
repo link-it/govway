@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.sdk.archive;
 
 import java.util.List;
 
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -73,5 +74,8 @@ public interface IRegistryReader {
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,boolean readAllegati) throws RegistryNotFound;
 	
 	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo);
+	public boolean existsServizioApplicativo(String username, String password);
+	public boolean existsServizioApplicativo(String subject);
+	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound;
 	
 }

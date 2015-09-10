@@ -851,6 +851,16 @@ public class ExporterArchiveUtils {
 					ArchiveFruitore archiveFruitore = new ArchiveFruitore(idAccordoServizio, fruitore, this.idCorrelazione);
 					archive.getAccordiFruitori().add(archiveFruitore);
 					
+					// serviziApplicativi autorizzati
+					try{
+						List<IDServizioApplicativo> list = this.archiveEngine.getAllIdServiziApplicativiAutorizzati(idAccordoServizio, idFruitore);
+						if(list!=null && list.size()>0){
+							for (IDServizioApplicativo idServizioApplicativo : list) {
+								archiveFruitore.getServiziApplicativiAutorizzati().add(idServizioApplicativo.getNome());
+							}
+						}
+					}catch(DriverRegistroServiziNotFound notFound){}
+					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
 					// soggetto
@@ -873,7 +883,7 @@ public class ExporterArchiveUtils {
 		
 			// servizi applicativi autorizzati
 			try{
-				List<IDServizioApplicativo> idSA = this.archiveEngine.getDriverRegistroServizi().getAllIdServiziApplicativiAutorizzati(idAccordoServizio, idFruitore);
+				List<IDServizioApplicativo> idSA = this.archiveEngine.getAllIdServiziApplicativiAutorizzati(idAccordoServizio, idFruitore);
 				if(idSA!=null && idSA.size()>0){
 					for (IDServizioApplicativo idServizioApplicativo : idSA) {
 						this.readServizioApplicativo(archive, idServizioApplicativo, cascadeConfig, ArchiveType.FRUITORE);

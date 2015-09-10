@@ -51,6 +51,7 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -1680,6 +1681,30 @@ public class ImporterArchiveUtils {
 			oldAccordo.getServizio().setOldTipoSoggettoErogatoreForUpdate(oldAccordo.getServizio().getTipoSoggettoErogatore());
 			oldAccordo.getServizio().setOldNomeSoggettoErogatoreForUpdate(oldAccordo.getServizio().getNomeSoggettoErogatore());
 			this.importerEngine.updateAccordoServizioParteSpecifica(oldAccordo);
+			
+			// gestione serviziApplicativiAutorizzati
+			if(archiveFruitore.getServiziApplicativiAutorizzati()!=null && archiveFruitore.getServiziApplicativiAutorizzati().size()>0){
+				List<IDServizioApplicativo> listaAttuale = null;
+				try{
+					listaAttuale = this.importerEngine.getAllIdServiziApplicativiAutorizzati(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+				}catch(DriverRegistroServiziNotFound notFound){}
+				if(listaAttuale==null){
+					listaAttuale = new ArrayList<IDServizioApplicativo>();
+				}
+				for (String nomeServizioApplicativo : archiveFruitore.getServiziApplicativiAutorizzati()) {
+					boolean found = false;
+					for (IDServizioApplicativo idServizioApplicativo : listaAttuale) {
+						if(idServizioApplicativo.getNome().equals(nomeServizioApplicativo)){
+							found = true;
+							break;
+						}
+					}
+					if(!found){
+						this.importerEngine.createServizioApplicativoAutorizzato(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore(), nomeServizioApplicativo);
+					}
+				}
+			}
+			
 			if(old!=null){
 				detail.setState(ArchiveStatoImport.UPDATED);
 				detail.setStateDetail(warningInfoStatoFinale.toString());
