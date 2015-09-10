@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -521,7 +522,7 @@ public final class Importer extends Action {
 
 				if(pd.getMessage()!=null){
 					if(importInformationMissingException==null){
-						pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_HEADER+pd.getMessage());
+						pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_HEADER+StringEscapeUtils.escapeHtml(pd.getMessage()));
 					}
 				}
 				

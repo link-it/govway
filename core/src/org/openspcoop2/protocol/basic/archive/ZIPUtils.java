@@ -1024,26 +1024,47 @@ public class ZIPUtils  {
 			
 			// fruitori
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)){
-				try{
-					if(validationDocuments){
-						org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
-					}
-					Fruitore fruitore = this.jibxRegistryDeserializer.readFruitore(xml);
-					String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
-					if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
-						throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un fruitore con key ["+keyFruitore+"]");
-					}
-					
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValuesWithoutCheck(nomeAccordo, tipoSoggetto, nomeSoggetto, versioneAccordo);
-					archivio.getAccordiFruitori().add(keyFruitore,new ArchiveFruitore(idAccordo,fruitore,idCorrelazione,true));
-				}catch(Exception eDeserializer){
-					throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
-							+eDeserializer.getMessage(),eDeserializer);
-				}
+				this.readAccordoServizioParteSpecifica_Fruitore(archivio, bin, xml, entryName, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, 
+						validationDocuments, idCorrelazione);
 			}
 			
 		}
 		
+	}
+	
+	public void readAccordoServizioParteSpecifica_Fruitore(Archive archivio,InputStream bin,byte[]xml,String entryName,
+			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo,
+			boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+		
+		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
+		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
+		String versioneKey = (versioneAccordo!=null ? versioneAccordo : "" );
+		
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			
+			if(USE_VERSION_XML_BEAN.equals(versioneAccordo)){
+				// devo recuperare la versione dell'accordo
+				String keyAccordo = ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
+				versioneKey = archivio.getAccordiServizioParteSpecifica().get(keyAccordo).getAccordoServizioParteSpecifica().getVersione();
+				versioneAccordo = versioneKey;
+			}
+			
+			Fruitore fruitore = this.jibxRegistryDeserializer.readFruitore(xml);
+			String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
+			if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un fruitore con key ["+keyFruitore+"]");
+			}
+			
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValuesWithoutCheck(nomeAccordo, tipoSoggetto, nomeSoggetto, versioneAccordo);
+			archivio.getAccordiFruitori().add(keyFruitore,new ArchiveFruitore(idAccordo,fruitore,idCorrelazione,true));
+		}catch(Exception eDeserializer){
+			throw new ProtocolException("Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
 	}
 	
 	
