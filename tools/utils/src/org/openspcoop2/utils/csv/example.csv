@@ -1,0 +1,10 @@
+Nome Servizio,Nome Accordo di Servizio,Nome Soggetto Erogatore,Nome Soggetto Fruitore,SA FRUITORE,SA EROGATORE
+
+Aggiornamento,ASEsempio,SoggettoErogatore,SoggettoFruitore1,SA_Fruitore1/ab42@e3d,TRACE_ECHO
+Aggiornamento,ASEsempio,SoggettoErogatore,SoggettoFruitore2,SA_Fruitore2/ab42@e3d,TRACE_ECHO
+Ping,ASEsempio,SoggettoErogatore,SoggettoFruitore1,SA_Fruitore1/ab42@e3d,TRACE
+Ping,ASEsempio,SoggettoErogatore,SoggettoFruitore2,SA_Fruitore2/ab42@e3d,TRACE
+Ping,ASEsempio,SoggettoErogatore, ,SA_FruitoreNonDisponibile/2434$23@,TRACE
+Ping,ASEsempio,SoggettoErogatore,SoggettoFruitore2,NonRispettaIlPattern,TRACE
+, , , , ,,
+Altro,ASEsempio,SoggettoErogatore,SoggettoFruitore2, ,, 
