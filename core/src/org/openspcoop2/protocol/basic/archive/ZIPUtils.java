@@ -262,6 +262,12 @@ public class ZIPUtils  {
 	
 	public static final String ID_CORRELAZIONE_DEFAULT = "@PackageOpenSPCoop@";
 	
+	public static final List<Character> LIST_CHARACTER_PERMIT_IMPORT_PACKAGES = new ArrayList<Character>();
+	static{
+		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('-');
+		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('.');
+	}
+	
 	/**
 	 * Ritorna la rappresentazione java di un archivio
 	 * 
@@ -821,15 +827,17 @@ public class ZIPUtils  {
 				aspc.getSoggettoReferente().setNome(nomeSoggetto);
 				
 				// nome e versione
-				if(!convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false).equals(nomeAccordo)){
+				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				if(!convertName.equals(nomeAccordo)){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
-							aspc.getNome()+"] differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
+							aspc.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
 				}
 				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 					if(versioneAccordo!=null){
-						if(aspc.getVersione()!=null && !convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getVersione(),false).equals(versioneAccordo)){
+						String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getVersione(),false);
+						if(aspc.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
 							throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-									aspc.getVersione()+"] differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+									aspc.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
 						}
 					}
 					aspc.setVersione(versioneAccordo);
@@ -964,15 +972,17 @@ public class ZIPUtils  {
 				asps.getServizio().setNomeSoggettoErogatore(nomeSoggetto);
 				
 				// nome e versione
-				if(!convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false).equals(nomeAccordo)){
+				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				if(!convertName.equals(nomeAccordo)){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
-							asps.getNome()+"] differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
+							asps.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
 				}
 				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 					if(versioneAccordo!=null){
-						if(asps.getVersione()!=null && !convertCharNonPermessiQualsiasiSistemaOperativo(asps.getVersione(),false).equals(versioneAccordo)){
+						String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getVersione(),false);
+						if(asps.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
 							throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-									asps.getVersione()+"] differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+									asps.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
 						}
 					}
 					asps.setVersione(versioneAccordo);
@@ -1221,15 +1231,17 @@ public class ZIPUtils  {
 				ac.getSoggettoReferente().setNome(nomeSoggetto);
 				
 				// nome e versione
-				if(!convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false).equals(nomeAccordo)){
+				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				if(!convertName.equals(nomeAccordo)){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
-							ac.getNome()+"] differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
+							ac.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
 				}
 				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 					if(versioneAccordo!=null){
-						if(ac.getVersione()!=null && !convertCharNonPermessiQualsiasiSistemaOperativo(ac.getVersione(),false).equals(versioneAccordo)){
+						String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getVersione(),false);
+						if(ac.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
 							throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-									ac.getVersione()+"] differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+									ac.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
 						}
 					}
 					ac.setVersione(versioneAccordo);
@@ -1280,12 +1292,8 @@ public class ZIPUtils  {
 	private Documento getDocument(List<Documento> documenti, String nome, String entryName) throws ProtocolException{
 		for (Documento documento : documenti) {
 			
-			// Permit '.'
-			List<Character> listCharacterPermit = new ArrayList<Character>();
-			listCharacterPermit.add('.');
-			
 			String fileName = documento.getFile();
-			fileName = this.convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,listCharacterPermit);
+			fileName = this.convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
 			
 			if(nome.equals(fileName)){
 				return documento;
