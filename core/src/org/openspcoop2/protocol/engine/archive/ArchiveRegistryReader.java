@@ -256,7 +256,7 @@ public class ArchiveRegistryReader implements IRegistryReader {
 					filtroRicerca.setTipoSoggettoErogatore(filtro.getSoggetto().getTipo());
 				}
 				if(filtro.getSoggetto().getNome()!=null){
-					filtroRicerca.setTipoSoggettoErogatore(filtro.getSoggetto().getNome());
+					filtroRicerca.setNomeSoggettoErogatore(filtro.getSoggetto().getNome());
 				}
 			}
 			return this.driverRegistroServiziDB.getAllIdAccordiServizioParteSpecifica(filtroRicerca);
