@@ -51,7 +51,7 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
  */
 public class Parser {
 
-	private static final String PARSER_NAME_PREFIX_= "mapping.property.";
+	private static final String PARSER_NAME_PREFIX_= "mapping.field.";
 	private static final String PARSER_REGEXP_PREFIX_= "mapping.regexp.";
 	private static final String PARSER_REGEXP_SUFFIX_NOT_FOUND= ".notFound";
 	private static final String PARSER_DEFAULT_PREFIX_= "mapping.default.";
