@@ -1,3 +1,11 @@
+2015-09-15  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-409
+	La gestione dell'opzione di debug nell'interfaccia avanzata, non veniva correttamente gestita in caso di connettori di tipo 'custom'.
+	L'indicazione del debug veniva ulteriormente aggiunta tra le proprietà oltre che impostata sul connettore.
+	Sono inoltre stati sistemati bug minori che occorrevano durante la gestione dei connettori custom.
+
 2015-09-10  Andrea Poli <apoli@link.it>
 
 	* [Utils]
