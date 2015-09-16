@@ -158,6 +158,7 @@ public class BasicArchive implements IArchive {
 					for (PortType ptCheck : accordoServizioParteComune.getPortTypeList()) {
 						if(ptCheck.getNome().equals(ptName)){
 							ptOpenSPCoop = ptCheck;
+							foundPortType = true;
 							break;
 						}
 					}
