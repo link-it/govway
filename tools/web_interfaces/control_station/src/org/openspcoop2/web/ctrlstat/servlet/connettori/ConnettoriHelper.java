@@ -489,7 +489,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			// Controllo che la property non sia gia' stata
 			// registrata
-			boolean giaRegistrato = false;
+			boolean giaRegistratoProprietaNormale = false;
+			boolean giaRegistratoProprietaDebug = false;
 			if (servlet.equals(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE)) {
 				int myIdInt = Integer.parseInt(myId);
 				Fruitore myAccErFru = this.apsCore.getErogatoreFruitore(myIdInt);
@@ -497,7 +498,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
-						giaRegistrato = true;
+						if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){
+							giaRegistratoProprietaDebug = true;
+						}else{
+							giaRegistratoProprietaNormale = true;
+						}
 						break;
 					}
 				}
@@ -509,7 +514,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
-						giaRegistrato = true;
+						if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){
+							giaRegistratoProprietaDebug = true;
+						}else{
+							giaRegistratoProprietaNormale = true;
+						}
 						break;
 					}
 				}
@@ -521,7 +530,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
-						giaRegistrato = true;
+						if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){
+							giaRegistratoProprietaDebug = true;
+						}else{
+							giaRegistratoProprietaNormale = true;
+						}
 						break;
 					}
 				}
@@ -534,7 +547,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					org.openspcoop2.core.config.Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
-						giaRegistrato = true;
+						if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){
+							giaRegistratoProprietaDebug = true;
+						}else{
+							giaRegistratoProprietaNormale = true;
+						}
 						break;
 					}
 				}
@@ -547,7 +564,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					org.openspcoop2.core.config.Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
-						giaRegistrato = true;
+						if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){
+							giaRegistratoProprietaDebug = true;
+						}else{
+							giaRegistratoProprietaNormale = true;
+						}
 						break;
 					}
 				}
@@ -560,14 +581,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
-						giaRegistrato = true;
+						if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){
+							giaRegistratoProprietaDebug = true;
+						}else{
+							giaRegistratoProprietaNormale = true;
+						}
 						break;
 					}
 				}
 			}
 
-			if (giaRegistrato) {
-				this.pd.setMessage("La property " + nome + " &egrave; gi&agrave; stata associata al connettore");
+			if (giaRegistratoProprietaNormale) {
+				this.pd.setMessage("La propriet&agrave; '" + nome + "' &egrave; gi&agrave; stata associata al connettore");
+				return false;
+			}
+			if (giaRegistratoProprietaDebug) {
+				this.pd.setMessage("La keyword '" + nome + "' non &egrave; associabile come nome ad una propriet&agrave; del connettore");
 				return false;
 			}
 
@@ -1134,8 +1163,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 						int myIdInt = Integer.parseInt(elem6);
 						Fruitore myAccErFru = this.apsCore.getErogatoreFruitore(myIdInt);
 						org.openspcoop2.core.registry.Connettore connettore = myAccErFru.getConnettore();
-						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
-							numProp = connettore.sizePropertyList();
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
+							for (int i = 0; i < connettore.sizePropertyList(); i++) {
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+									numProp++;
+								}
+							}
+							// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+						}
 					}
 					if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
@@ -1146,8 +1181,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
 						Servizio servizio = asps.getServizio();
 						org.openspcoop2.core.registry.Connettore connettore = servizio.getConnettore();
-						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
-							numProp = connettore.sizePropertyList();
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
+							for (int i = 0; i < connettore.sizePropertyList(); i++) {
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+									numProp++;
+								}
+							}
+							// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+						}
 					}
 					if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
@@ -1158,8 +1199,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 						int idServizioFruitoreInt = Integer.parseInt(elem2);
 						Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
 						org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
-						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
-							numProp = connettore.sizePropertyList();
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
+							for (int i = 0; i < connettore.sizePropertyList(); i++) {
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+									numProp++;
+								}
+							}
+							// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+						}
 					}
 					if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
 							servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
@@ -1172,16 +1219,37 @@ public class ConnettoriHelper extends ConsoleHelper {
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem2),
 								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
 						
+						
 						if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 							InvocazioneServizio is = sa.getInvocazioneServizio();
 							Connettore connettore = is.getConnettore();
-							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom())
-								numProp = connettore.sizePropertyList();
+							if(connettore.getCustom()==null || !connettore.getCustom()){
+								// è cambiato il tipo
+								de.setType(DataElementType.HIDDEN);
+							}
+							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
+								for (int i = 0; i < connettore.sizePropertyList(); i++) {
+									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+										numProp++;
+									}
+								}
+								// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+							}
 						} else {
 							RispostaAsincrona ra = sa.getRispostaAsincrona();
 							Connettore connettore = ra.getConnettore();
-							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom())
-								numProp = connettore.sizePropertyList();
+							if(connettore.getCustom()==null || !connettore.getCustom()){
+								// è cambiato il tipo
+								de.setType(DataElementType.HIDDEN);
+							}
+							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
+								for (int i = 0; i < connettore.sizePropertyList(); i++) {
+									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+										numProp++;
+									}
+								}
+								// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+							}
 						}
 					}
 					if (servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
@@ -1194,8 +1262,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 						SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
 						Soggetto ss = scs.getSoggettoReg();
 						org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
-						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) )
-							numProp = connettore.sizePropertyList();
+						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
+							for (int i = 0; i < connettore.sizePropertyList(); i++) {
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+									numProp++;
+								}
+							}
+							// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+						}
 					}
 				} catch (Exception ex) {
 					this.log.error("Exception: " + ex.getMessage(), ex);
@@ -1759,16 +1833,26 @@ public class ConnettoriHelper extends ConsoleHelper {
 					connettore.removeProperty(0);
 			}
 			
+			String debugValue = null;
 			if(ServletUtils.isCheckBoxEnabled(connettoreDebug)){
-				Property p = new Property();
-				p.setNome(CostantiDB.CONNETTORE_DEBUG);
-				p.setValore("true");
-				connettore.addProperty(p);
+				debugValue = "true";
 			}
 			else{
+				debugValue = "false";
+			}
+			boolean found = false;
+			for (int i = 0; i < connettore.sizePropertyList(); i++) {
+				Property pCheck = connettore.getProperty(i);
+				if(CostantiDB.CONNETTORE_DEBUG.equals(pCheck.getNome())){
+					pCheck.setValore(debugValue);
+					found = true;
+					break;
+				}
+			}
+			if(!found){
 				Property p = new Property();
 				p.setNome(CostantiDB.CONNETTORE_DEBUG);
-				p.setValore("false");
+				p.setValore(debugValue);
 				connettore.addProperty(p);
 			}
 
@@ -1859,16 +1943,27 @@ public class ConnettoriHelper extends ConsoleHelper {
 					connettore.removeProperty(0);
 			}
 
+			
+			String debugValue = null;
 			if(ServletUtils.isCheckBoxEnabled(connettoreDebug)){
-				org.openspcoop2.core.config.Property p = new org.openspcoop2.core.config.Property();
-				p.setNome(CostantiDB.CONNETTORE_DEBUG);
-				p.setValore("true");
-				connettore.addProperty(p);
+				debugValue = "true";
 			}
 			else{
+				debugValue = "false";
+			}
+			boolean found = false;
+			for (int i = 0; i < connettore.sizePropertyList(); i++) {
+				org.openspcoop2.core.config.Property pCheck = connettore.getProperty(i);
+				if(CostantiDB.CONNETTORE_DEBUG.equals(pCheck.getNome())){
+					pCheck.setValore(debugValue);
+					found = true;
+					break;
+				}
+			}
+			if(!found){
 				org.openspcoop2.core.config.Property p = new org.openspcoop2.core.config.Property();
 				p.setNome(CostantiDB.CONNETTORE_DEBUG);
-				p.setValore("false");
+				p.setValore(debugValue);
 				connettore.addProperty(p);
 			}
 			

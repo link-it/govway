@@ -37,7 +37,8 @@ public class ConnettoreCustomUtils {
 	public static void addProprietaConnettoriCustom(Vector<DataElement> dati,
 			String nome, String valore,
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio,
-			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo)  {
+			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
+			String provider)  {
 
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME);
@@ -134,6 +135,13 @@ public class ConnettoreCustomUtils {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_ACCORDO);
 		dati.addElement(de);
+
+		de = new DataElement();
+		de.setValue(provider);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PROVIDER);
+		dati.addElement(de);
+		
 	}
 	
 }

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -295,6 +296,46 @@ public class ServletTestService extends HttpServlet {
 					this.log.info("sleep "+millisecond+"ms terminated");
 				}
 			}
+			
+			
+			
+			
+			
+			
+			// sleep in intervallo
+			String min = req.getParameter("sleepMin");
+			String max = req.getParameter("sleepMax");
+			if(max!=null){
+				int maxSleep = Integer.parseInt((String)max);
+				int minSleep = 0;
+				if(min!=null){
+					minSleep = Integer.parseInt((String)min);
+				}
+				Random r = new Random();
+				int sleepInteger = minSleep + r.nextInt(maxSleep-minSleep);
+				if(sleepInteger>1000){
+					int count = sleepInteger/1000;
+					int resto = sleepInteger%1000;
+					this.log.info("sleep "+sleepInteger+"ms ...");
+					for (int i = 0; i < count; i++) {
+						try{
+							Thread.sleep(1000);
+						}catch(Exception e){}
+					}
+					try{
+						Thread.sleep(resto);
+					}catch(Exception e){}
+					this.log.info("sleep "+sleepInteger+"ms terminated");
+				}else{
+					this.log.info("sleep "+sleepInteger+"ms ...");
+					try{
+						Thread.sleep(sleepInteger);
+					}catch(Exception e){}
+					this.log.info("sleep "+sleepInteger+"ms terminated");
+				}
+			}	
+			
+			
 			
 			
 

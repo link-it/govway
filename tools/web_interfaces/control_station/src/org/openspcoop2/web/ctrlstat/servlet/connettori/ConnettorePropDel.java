@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -343,12 +344,18 @@ public final class ConnettorePropDel extends Action {
 			
 			List<Object> lista = new ArrayList<Object>();
 			if (connettore != null) {
-				for (int i = 0; i<connettore.sizePropertyList(); i++)
-					lista.add(connettore.getProperty(i));
+				for (int i = 0; i<connettore.sizePropertyList(); i++){
+					if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+						lista.add(connettore.getProperty(i));
+					}
+				}
 			}
 			if (connettoreC != null) {
-				for (int i = 0; i<connettoreC.sizePropertyList(); i++)
-					lista.add(connettoreC.getProperty(i));
+				for (int i = 0; i<connettoreC.sizePropertyList(); i++){
+					if(CostantiDB.CONNETTORE_DEBUG.equals(connettoreC.getProperty(i).getNome())==false){
+						lista.add(connettoreC.getProperty(i));
+					}
+				}
 			}
 
 			connettoriHelper.prepareConnettorePropList(lista, new Search(), newMyId,tipoAccordo);

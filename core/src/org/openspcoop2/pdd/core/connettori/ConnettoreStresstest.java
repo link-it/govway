@@ -183,6 +183,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 //					String key = (String) enValues.nextElement();
 //					System.out.println("KEY["+key+"]=["+request.getConnectorProperties().get(key)+"]");
 //				}
+				
 				Object max = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_STRESS_TEST_SLEEP_MAX);
 				Object min = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_STRESS_TEST_SLEEP_MIN);
 				if(max!=null){
@@ -212,6 +213,32 @@ public class ConnettoreStresstest extends ConnettoreBase {
 							Thread.sleep(sleep);
 						}catch(Exception e){}
 						this.logger.info("sleep "+sleep+"ms terminated", false);
+					}
+				}
+				else{
+					Object sleepConstant = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_STRESS_TEST_SLEEP);
+					if(sleepConstant!=null){
+						int millisecond = Integer.parseInt((String)sleepConstant);
+						if(millisecond>1000){
+							int count = millisecond/1000;
+							int resto = millisecond%1000;
+							this.logger.info("sleep "+millisecond+"ms ...", false);
+							for (int i = 0; i < count; i++) {
+								try{
+									Thread.sleep(1000);
+								}catch(Exception e){}
+							}
+							try{
+								Thread.sleep(resto);
+							}catch(Exception e){}
+							this.logger.info("sleep "+millisecond+"ms terminated", false);
+						}else{
+							this.logger.info("sleep "+millisecond+"ms ...", false);
+							try{
+								Thread.sleep(millisecond);
+							}catch(Exception e){}
+							this.logger.info("sleep "+millisecond+"ms terminated", false);
+						}
 					}
 				}
 			}

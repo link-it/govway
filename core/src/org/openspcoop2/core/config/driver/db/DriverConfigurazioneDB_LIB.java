@@ -6017,6 +6017,20 @@ public class DriverConfigurazioneDB_LIB {
 				String nome = rs.getString("name");
 				String valore = rs.getString("value");
 				
+				if(CostantiDB.CONNETTORE_DEBUG.equals(nome)){ // lo posso aver aggiunto prima
+					boolean found = false;
+					for (int i = 0; i < connettore.sizePropertyList(); i++) {
+						if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())){
+							// already exists
+							found = true;
+							break;
+						}
+					}
+					if(found){
+						continue; // è gia stato aggiunto.
+					}
+				}
+				
 				Property prop = new Property();
 				prop.setNome(nome);
 				prop.setValore(valore);
