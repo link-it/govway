@@ -108,13 +108,13 @@ public class ZIPUtils  {
 	
 	/* ----- Utils  ----- */
 	
-	protected String convertCharNonPermessiQualsiasiSistemaOperativo(String nome){
+	public String convertCharNonPermessiQualsiasiSistemaOperativo(String nome){
 		return this.convertCharNonPermessiQualsiasiSistemaOperativo(nome, true, null);
 	}
-	protected String convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore){
+	public String convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore){
 		return this.convertCharNonPermessiQualsiasiSistemaOperativo(nome, permitUnderscore, null);
 	}
-	protected String convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore,List<Character> permit){
+	public String convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore,List<Character> permit){
 		StringBuffer bf = new StringBuffer();
 		for (int i = 0; i < nome.length(); i++) {
 			if(Character.isLetterOrDigit(nome.charAt(i))){
@@ -262,11 +262,11 @@ public class ZIPUtils  {
 	
 	public static final String ID_CORRELAZIONE_DEFAULT = "@PackageOpenSPCoop@";
 	
-	public static final List<Character> LIST_CHARACTER_PERMIT_IMPORT_PACKAGES = new ArrayList<Character>();
-	static{
-		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('-');
-		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('.');
-	}
+//	public static final List<Character> LIST_CHARACTER_PERMIT_IMPORT_PACKAGES = new ArrayList<Character>();
+//	static{
+//		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('-');
+//		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('.');
+//	}
 	
 	/**
 	 * Ritorna la rappresentazione java di un archivio
@@ -827,7 +827,8 @@ public class ZIPUtils  {
 				aspc.getSoggettoReferente().setNome(nomeSoggetto);
 				
 				// nome e versione
-				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				//String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false);
 				if(!convertName.equals(nomeAccordo)){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
 							aspc.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
@@ -972,7 +973,8 @@ public class ZIPUtils  {
 				asps.getServizio().setNomeSoggettoErogatore(nomeSoggetto);
 				
 				// nome e versione
-				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				//String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false);
 				if(!convertName.equals(nomeAccordo)){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
 							asps.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
@@ -1231,7 +1233,8 @@ public class ZIPUtils  {
 				ac.getSoggettoReferente().setNome(nomeSoggetto);
 				
 				// nome e versione
-				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				//String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false);
 				if(!convertName.equals(nomeAccordo)){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
 							ac.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
@@ -1290,10 +1293,15 @@ public class ZIPUtils  {
 	}
 	
 	private Documento getDocument(List<Documento> documenti, String nome, String entryName) throws ProtocolException{
+		
+		List<Character> permitPoint = new ArrayList<Character>();
+		permitPoint.add('.');
+				
 		for (Documento documento : documenti) {
 			
 			String fileName = documento.getFile();
-			fileName = this.convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
+			fileName = this.convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,permitPoint);
+			//fileName = this.convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
 			
 			if(nome.equals(fileName)){
 				return documento;
