@@ -21,8 +21,11 @@
 
 package org.openspcoop2.protocol.basic.archive;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -95,8 +98,14 @@ public class EsitoUtils {
 		ArchiveIdCorrelazione defaultArchiveIdCorrelazione = null;
 		
 		Enumeration<String> correlazioni = map.keys();
+		List<String> idCorrelazioneOrdinato = new ArrayList<String>();
 		while (correlazioni.hasMoreElements()) {
 			String idCorrelazione = (String) correlazioni.nextElement();
+			idCorrelazioneOrdinato.add(idCorrelazione);
+		}
+		Collections.sort(idCorrelazioneOrdinato);
+		
+		for (String idCorrelazione : idCorrelazioneOrdinato) {
 			ArchiveIdCorrelazione archiveIdCorrelazione = mapIdCorrelazione.get(idCorrelazione);
 			ArchiveEsitoImport archiveCorrelazione = map.get(idCorrelazione);
 		
