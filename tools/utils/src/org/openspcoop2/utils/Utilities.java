@@ -24,6 +24,7 @@
 package org.openspcoop2.utils;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -98,6 +100,58 @@ public class Utilities {
 
 
 
+	public static java.util.Properties getAsProperties(InputStream is) throws UtilsException{
+		try{
+			if(is==null){
+				throw new UtilsException("Utilities.getAsProperties error: InputStream is null");
+			}
+			Properties p = new Properties();
+			p.load(is);
+			return p;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static java.util.Properties getAsProperties(byte[] content) throws UtilsException{
+		ByteArrayInputStream bin = null;
+		try{
+			if(content==null){
+				throw new UtilsException("Utilities.getAsProperties error: Content is null");
+			}
+			bin = new ByteArrayInputStream(content);
+			return getAsProperties(bin);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				if(bin!=null){
+					bin.close();
+				}
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public static java.util.Properties getAsProperties(URL url) throws UtilsException{
+		InputStream is = null;
+		try{
+			if(url==null){
+				throw new UtilsException("Utilities.getAsProperties error: URL is null");
+			}
+			is = url.openStream();
+			return getAsProperties(is);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				if(is!=null){
+					is.close();
+				}
+			}catch(Exception eClose){}
+		}
+	}
 
 	/**
 	 * Legge le proprieta' che possiedono un nome che inizia con un determinato prefisso

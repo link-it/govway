@@ -168,7 +168,7 @@ public class ZIPUtils  {
 		File tmp = null;
 		FileOutputStream fout = null; 
 		try{
-			tmp = File.createTempFile("openspcoop", org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_EXT);
+			tmp = File.createTempFile("openspcoop", "."+org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_EXT);
 			
 			fout = new FileOutputStream(tmp);
 			fout.write(zip);
@@ -178,6 +178,9 @@ public class ZIPUtils  {
 			return getArchive(tmp,placeholder,validationDocuments);
 			
 		}catch(Exception e){
+//			if(tmp!=null)
+//				throw new ProtocolException("["+tmp.getAbsolutePath()+"] "+ e.getMessage(),e);
+//			else
 			throw new ProtocolException(e.getMessage(),e);
 		}finally{
 			try{
@@ -301,29 +304,41 @@ public class ZIPUtils  {
 					//System.out.println("VERIFICARE NAME["+nome+"] TIPO["+tipo+"]");
 					
 					InputStream inputStream = zip.getInputStream(zipEntry);
-					byte[]xml = Utilities.getAsByteArray(inputStream);
-					xml = placeholder.replace(xml);
-					ByteArrayInputStream bin = new ByteArrayInputStream(xml);
+					byte[]content = Utilities.getAsByteArray(inputStream);
+					// NOTA: non deve essere effettuato qua poiche il contenuto pu0 non essere 'xml'.
+					//       vedi csv ....
+					//xml = placeholder.replace(xml);
+					//ByteArrayInputStream bin = new ByteArrayInputStream(xml);
+					ByteArrayInputStream bin = null;
 					try{
 						
 						// ********** configurazione ****************
 						if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
 							this.readConfigurazione(archivio, bin, xml, entryName, validationDocuments);
 						}
 						
 						// ********** pdd ****************
 						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_PORTE_DOMINIO_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
 							this.readPortaDominio(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 						}
 						
 						// ********** informationMissing ********************
 						else if(entryName.equals((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_INFORMATION_MISSING)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
 							this.readInformationMissing(archivio, bin, xml, entryName, validationDocuments);
 						}
 						
 						// ********** soggetti/* ********************
 						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+File.separatorChar)) ){
 							
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
+														
 							String name = entryName.substring((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+File.separatorChar).length());
 							
 							if(name.contains((File.separatorChar+""))==false){
@@ -499,7 +514,8 @@ public class ZIPUtils  {
 												
 						// others ?
 						else{
-							this.readExternalArchive(rootDir, archivio, bin, xml, entryName, validationDocuments);
+							bin = new ByteArrayInputStream(content);
+							this.readExternalArchive(rootDir, archivio, bin, content, entryName, validationDocuments);
 						}
 												
 					}finally{

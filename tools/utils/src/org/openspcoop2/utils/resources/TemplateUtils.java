@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Map;
 
+import org.apache.commons.io.input.CharSequenceReader;
+
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
@@ -101,6 +103,10 @@ public class TemplateUtils {
 	public static Template getTemplate(Class<?> c,String prefix,ObjectWrapper wrapper,String templateName) throws IOException{
 		Configuration cfg = TemplateUtils.newTemplateEngine(c,prefix,wrapper);
 		return cfg.getTemplate(templateName);
+	}
+	
+	public static Template buildTemplate(String name,byte[] bytes) throws IOException{
+		return new Template(name, new CharSequenceReader(new String(bytes)),newTemplateEngine());
 	}
 	
 	

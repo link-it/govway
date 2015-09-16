@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -199,6 +200,20 @@ public class Parser {
 			this.mapping.add(recordMapping);
 		}
 		
+	}
+	
+	public ParserResult parseCsvFile(Format format, String csvContent) throws UtilsException{
+		Reader reader = null;
+		try{
+			reader = new StringReader(csvContent);
+			return this.parseCsvFile(format, reader);
+		}finally{
+			try{
+				if(reader!=null){
+					reader.close();
+				}
+			}catch(Exception eClose){}
+		}
 	}
 	
 	public ParserResult parseCsvFile(Format format, byte[] csv) throws UtilsException{
