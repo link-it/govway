@@ -1,6 +1,14 @@
 2015-09-15  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
+        Risolto Bug OP-411
+	Quando si procedeva alla creazione di un accordo di servizio parte comune utilizzando un wsdl 
+	che conteneva la parte implementativa (Binding e Service), la creazione andava in errore.
+	L'errore segnalava impropriamente che il wsdl dichiarava più volte uno stesso portType.
+
+2015-09-15  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
 	Risolto Bug OP-409
 	La gestione dell'opzione di debug nell'interfaccia avanzata, non veniva correttamente gestita in caso di connettori di tipo 'custom'.
 	L'indicazione del debug veniva ulteriormente aggiunta tra le proprietà oltre che impostata sul connettore.
