@@ -63,6 +63,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -259,6 +260,8 @@ public class ZIPUtils  {
 		}
 	}
 	
+	public static final String ID_CORRELAZIONE_DEFAULT = "@PackageOpenSPCoop@";
+	
 	/**
 	 * Ritorna la rappresentazione java di un archivio
 	 * 
@@ -274,7 +277,8 @@ public class ZIPUtils  {
 				placeholder = new MapPlaceholder();
 			}
 			
-			String idCorrelazione = zip.getName(); // come correlazione degli elementi viene usato il nome dell'archivio zip
+			ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione(ID_CORRELAZIONE_DEFAULT);
+			idCorrelazione.setDescrizione(zip.getName()); // come descrizione viene usato il nome dell'archivio zip
 			
 			String rootDir = null;
 			
@@ -568,7 +572,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	public void readPortaDominio(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+	public void readPortaDominio(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
@@ -614,7 +618,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	public void readSoggetto(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+	public void readSoggetto(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		boolean registro = false;
 		String schema = null;
 		if(RegistroServiziUtils.isRegistroServizi(xml, CostantiRegistroServizi.LOCAL_NAME_SOGGETTO)){
@@ -704,7 +708,7 @@ public class ZIPUtils  {
 		
 	}
 	
-	public void readServizioApplicativo(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+	public void readServizioApplicativo(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
@@ -726,7 +730,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	public void readPortaDelegata(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+	public void readPortaDelegata(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
@@ -751,7 +755,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	public void readPortaApplicativa(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+	public void readPortaApplicativa(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
@@ -776,7 +780,7 @@ public class ZIPUtils  {
 	public final static String USE_VERSION_XML_BEAN = "USE_VERSION_XML_BEAN";
 	
 	public void readAccordoServizioParteComune(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		String key = null;
 		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
@@ -939,7 +943,7 @@ public class ZIPUtils  {
 	}
 	
 	public void readAccordoServizioParteSpecifica(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
@@ -1070,7 +1074,7 @@ public class ZIPUtils  {
 	
 	public void readAccordoServizioParteSpecifica_Fruitore(Archive archivio,InputStream bin,byte[]xml,String entryName,
 			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo,
-			boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
@@ -1106,7 +1110,7 @@ public class ZIPUtils  {
 	public void readAccordoServizioParteSpecifica_Fruitore_ServiziApplicativiAutorizzati(Archive archivio,InputStream bin,byte[]xml,String entryName,
 			String nomeFileSenzaAccordo,
 			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo,
-			boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		// *** comprendo tipo e nome fruitore ****
 		
@@ -1181,7 +1185,7 @@ public class ZIPUtils  {
 	
 	
 	public void readAccordoCooperazione(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, String idCorrelazione) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );

@@ -72,6 +72,12 @@
     <servlet-name>configurazioneSistemaExporter</servlet-name>
 	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSistemaExporter</servlet-class>
   </servlet>
+  
+  <!-- Servlet per il Download del Resoconto di Importazione -->
+  <servlet>
+    <servlet-name>downloadResoconto</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.ResocontoExporter</servlet-class>
+  </servlet>
 
 
   <!-- Servlet per il download dei documenti -->
@@ -100,6 +106,12 @@
   <servlet-mapping>
     <servlet-name>configurazioneSistemaExporter</servlet-name>
     <url-pattern>/exporterConfigurazione</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per il Download del Resoconto di Importazione -->
+  <servlet-mapping>
+    <servlet-name>downloadResoconto</servlet-name>
+	<url-pattern>/downloadResoconto</url-pattern>
   </servlet-mapping>
 
   <!-- Action Servlet Mapping -->

@@ -69,6 +69,7 @@ public class ArchiviCostanti {
 	public final static String SERVLET_NAME_TRACCE_EXPORT = "exporterTracce";
 	public final static String SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT = "exporterDiagnostica";
 	public final static String SERVLET_NAME_PACKAGE_EXPORT = "exporterArchivi";
+	public final static String SERVLET_NAME_RESOCONTO_EXPORT = "downloadResoconto";
 	
 	
 	
@@ -113,6 +114,7 @@ public class ArchiviCostanti {
 	
 	public final static String LABEL_ARCHIVI_IMPORT = "Importa";
 	public final static String LABEL_ARCHIVI_EXPORT = "Esporta";
+	public final static String LABEL_DOWNLOAD = "Download";
 	public final static String LABEL_REPORTISTICA = CostantiControlStation.LABEL_STRUMENTI;
 	public final static String LABEL_DIAGNOSTICA = "Diagnostica";
 	public final static String LABEL_TRACCIAMENTO = "Tracciamento";
@@ -347,6 +349,8 @@ public class ArchiviCostanti {
 	/* DEFAULT VALUE PARAMETRI */
 	
 	public final static String FORMATO_DATA = "yyyy-MM-dd hh:mm:ss.SSS";
+	
+	public final static String PARAMETRO_DOWNLOAD_RESOCONTO_VALORE = "DownloadResocontoValore";
 	
 	public final static String PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED = "-";
 	

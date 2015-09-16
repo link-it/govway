@@ -60,9 +60,9 @@ public class ArchiveSoggetto implements IArchiveObject {
 	private org.openspcoop2.core.registry.Soggetto soggettoRegistro;
 	private org.openspcoop2.core.config.Soggetto soggettoConfigurazione;
 	
-	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
+	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
-	public ArchiveSoggetto(org.openspcoop2.core.registry.Soggetto soggettoRegistro, String idCorrelazione) throws ProtocolException{
+	public ArchiveSoggetto(org.openspcoop2.core.registry.Soggetto soggettoRegistro, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		if(soggettoRegistro==null){
 			throw new ProtocolException("SoggettoRegistro non fornito");
@@ -80,7 +80,7 @@ public class ArchiveSoggetto implements IArchiveObject {
 		this.idCorrelazione = idCorrelazione;
 		
 	}
-	public ArchiveSoggetto(org.openspcoop2.core.config.Soggetto soggettoConfigurazione, String idCorrelazione) throws ProtocolException{
+	public ArchiveSoggetto(org.openspcoop2.core.config.Soggetto soggettoConfigurazione, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		if(soggettoConfigurazione==null){
 			throw new ProtocolException("SoggettoConfigurazione non fornito");
@@ -99,7 +99,7 @@ public class ArchiveSoggetto implements IArchiveObject {
 		
 	}
 	public ArchiveSoggetto(org.openspcoop2.core.config.Soggetto soggettoConfigurazione,
-			org.openspcoop2.core.registry.Soggetto soggettoRegistro, String idCorrelazione) throws ProtocolException{
+			org.openspcoop2.core.registry.Soggetto soggettoRegistro, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		if(soggettoRegistro==null){
 			throw new ProtocolException("SoggettoRegistro non fornito");
@@ -146,7 +146,7 @@ public class ArchiveSoggetto implements IArchiveObject {
 		return this.soggettoConfigurazione;
 	}
 	
-	public String getIdCorrelazione() {
+	public ArchiveIdCorrelazione getIdCorrelazione() {
 		return this.idCorrelazione;
 	}
 }

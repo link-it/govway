@@ -90,20 +90,20 @@ public class ArchiveAccordoServizioParteComune implements IArchiveObject {
 	protected IDAccordo idAccordoServizioParteComune;
 	protected AccordoServizioParteComune accordoServizioParteComune;
 	
-	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
+	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 		
 	
 	
-	public ArchiveAccordoServizioParteComune(IDSoggetto idSoggettoProprietario, AccordoServizioParteComune accordoServizioParteComune, String idCorrelazione) throws ProtocolException{
+	public ArchiveAccordoServizioParteComune(IDSoggetto idSoggettoProprietario, AccordoServizioParteComune accordoServizioParteComune, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, accordoServizioParteComune),idCorrelazione, false);
 	}
-	public ArchiveAccordoServizioParteComune(IDSoggetto idSoggettoProprietario, AccordoServizioParteComune accordoServizioParteComune, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveAccordoServizioParteComune(IDSoggetto idSoggettoProprietario, AccordoServizioParteComune accordoServizioParteComune, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, accordoServizioParteComune),idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchiveAccordoServizioParteComune(AccordoServizioParteComune accordoServizioParteComune, String idCorrelazione) throws ProtocolException{
+	public ArchiveAccordoServizioParteComune(AccordoServizioParteComune accordoServizioParteComune, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(accordoServizioParteComune,idCorrelazione,false);
 	}	
-	public ArchiveAccordoServizioParteComune(AccordoServizioParteComune accordoServizioParteComune, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveAccordoServizioParteComune(AccordoServizioParteComune accordoServizioParteComune, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(accordoServizioParteComune, informationMissingManagementEnabled);
 		this.idCorrelazione = idCorrelazione;
 	}
@@ -182,7 +182,7 @@ public class ArchiveAccordoServizioParteComune implements IArchiveObject {
 		return this.accordoServizioParteComune;
 	}
 	
-	public String getIdCorrelazione() {
+	public ArchiveIdCorrelazione getIdCorrelazione() {
 		return this.idCorrelazione;
 	}
 }

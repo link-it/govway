@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
@@ -104,7 +105,9 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoServizioParteComune archiveASPC = new ArchiveAccordoServizioParteComune(aspcOpenSPCoop2,"CnipaPackageASPC",true);
+				ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione("CnipaPackageASPC");
+				
+				ArchiveAccordoServizioParteComune archiveASPC = new ArchiveAccordoServizioParteComune(aspcOpenSPCoop2,idCorrelazione,true);
 				archiveObject.getAccordiServizioParteComune().add(archiveASPC);
 
 				return archiveObject;
@@ -172,7 +175,9 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoServizioComposto archiveASC = new ArchiveAccordoServizioComposto(asCompostoOpenSPCoop2,"CnipaPackageASC",true);
+				ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione("CnipaPackageASC");
+				
+				ArchiveAccordoServizioComposto archiveASC = new ArchiveAccordoServizioComposto(asCompostoOpenSPCoop2,idCorrelazione,true);
 				archiveObject.getAccordiServizioComposto().add(archiveASC);
 				
 				return archiveObject;
@@ -239,7 +244,9 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoServizioParteSpecifica archiveASPS = new ArchiveAccordoServizioParteSpecifica(aspsOpenSPCoop2,"CnipaPackageASPS",true);
+				ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione("CnipaPackageASPS");
+				
+				ArchiveAccordoServizioParteSpecifica archiveASPS = new ArchiveAccordoServizioParteSpecifica(aspsOpenSPCoop2,idCorrelazione,true);
 				archiveObject.getAccordiServizioParteSpecifica().add(archiveASPS);
 								
 				return archiveObject;
@@ -312,7 +319,9 @@ public class SPCoopArchiveImport {
 				
 				Archive archiveObject = new Archive();
 				
-				ArchiveAccordoCooperazione archiveAC = new ArchiveAccordoCooperazione(acOpenSPCoop2,"CnipaPackageAC",true);
+				ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione("CnipaPackageAC");
+				
+				ArchiveAccordoCooperazione archiveAC = new ArchiveAccordoCooperazione(acOpenSPCoop2,idCorrelazione,true);
 				archiveObject.getAccordiCooperazione().add(archiveAC);
 				
 				return archiveObject;

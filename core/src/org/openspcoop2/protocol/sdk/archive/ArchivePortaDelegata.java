@@ -68,20 +68,20 @@ public class ArchivePortaDelegata implements IArchiveObject {
 	private IDPortaDelegata idPortaDelegata;
 	private PortaDelegata portaDelegata;
 	
-	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
+	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	
 	
-	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata, String idCorrelazione) throws ProtocolException{
+	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, portaDelegata),idCorrelazione, false);
 	}
-	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchivePortaDelegata(IDSoggetto idSoggettoProprietario, PortaDelegata portaDelegata, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, portaDelegata), idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchivePortaDelegata(PortaDelegata portaDelegata, String idCorrelazione) throws ProtocolException{
+	public ArchivePortaDelegata(PortaDelegata portaDelegata, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(portaDelegata,idCorrelazione,false);
 	}	
-	public ArchivePortaDelegata(PortaDelegata portaDelegata, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchivePortaDelegata(PortaDelegata portaDelegata, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(portaDelegata, informationMissingManagementEnabled);
 		this.idCorrelazione = idCorrelazione;
 	}
@@ -158,7 +158,7 @@ public class ArchivePortaDelegata implements IArchiveObject {
 		return this.portaDelegata;
 	}
 	
-	public String getIdCorrelazione() {
+	public ArchiveIdCorrelazione getIdCorrelazione() {
 		return this.idCorrelazione;
 	}
 }

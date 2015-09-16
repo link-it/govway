@@ -281,6 +281,8 @@ public class GestoreAutorizzazioni {
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_SYSTEM_PROPERTIES);
 		}
 		this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_SISTEMA);
+		this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);
+		this.servletConfigurazione.add(ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT);
 		/** Permessi associati alla gestione della configurazione */
 		this.permessiConfigurazione = new PermessiUtente();
 		this.permessiConfigurazione.setSistema(true);

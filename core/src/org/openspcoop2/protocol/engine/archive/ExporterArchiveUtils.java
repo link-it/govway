@@ -60,6 +60,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
@@ -82,12 +83,13 @@ public class ExporterArchiveUtils {
 	@SuppressWarnings("unused")
 	private Logger log;
 	private ProtocolFactoryManager protocolFactoryManager;
-	private String idCorrelazione = "export"; // non necessario in questa funzione. Comunque viene qua usata una variabile se servisse in futuro
+	private ArchiveIdCorrelazione idCorrelazione = null;
 	
 	public ExporterArchiveUtils(AbstractArchiveEngine archiveEngine,Logger log) throws Exception{
 		this.archiveEngine = archiveEngine;
 		this.log = log;
 		this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		this.idCorrelazione = new ArchiveIdCorrelazione("export"); // non necessario in questa funzione. Comunque viene qua usata una variabile se servisse in futuro
 	}
 	
 	public void export(String protocol,Archive archive,OutputStream out,ArchiveMode mode) throws Exception{

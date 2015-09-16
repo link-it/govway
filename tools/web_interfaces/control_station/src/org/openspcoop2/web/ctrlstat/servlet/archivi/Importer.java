@@ -558,7 +558,10 @@ public final class Importer extends Action {
 			}
 			*/
 			
-			
+			String esito = archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
+					userLogin, archiviHelper.smista(), 
+					this.updateEnabled, nomePddOperativa);
+									
 			DataElement de = new DataElement();
 			de.setLabel("Riepilogo Configurazioni Effettuate");
 			de.setType(DataElementType.TITLE);
@@ -567,13 +570,23 @@ public final class Importer extends Action {
 			de = new DataElement();
 			de.setLabel("");
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-			de.setValue(archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
-					userLogin, archiviHelper.smista(), 
-					this.updateEnabled, nomePddOperativa));
+			de.setValue(esito);
 			de.setName("Resoconto");
 			de.setRows(30);
 			de.setCols(130);
 			dati.addElement(de);
+			
+			if(esito!=null && !"".equals(esito)){
+				
+				// Salvo resoconto per fornirlo alla servlet
+				session.setAttribute(ArchiviCostanti.PARAMETRO_DOWNLOAD_RESOCONTO_VALORE, esito);
+				
+				DataElement saveAs = new DataElement();
+				saveAs.setValue(ArchiviCostanti.LABEL_DOWNLOAD);
+				saveAs.setType(DataElementType.LINK);
+				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT);
+				dati.add(saveAs);
+			}
 			
 			pd.disableEditMode();
 	

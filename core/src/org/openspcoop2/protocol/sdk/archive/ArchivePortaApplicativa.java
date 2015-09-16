@@ -72,20 +72,20 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 	private IDPortaApplicativaByNome idPortaApplicativaByNome;
 	private PortaApplicativa portaApplicativa;
 	
-	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
+	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	
 	
-	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa, String idCorrelazione) throws ProtocolException{
+	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, portaApplicativa), idCorrelazione, false);
 	}
-	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchivePortaApplicativa(IDSoggetto idSoggettoProprietario, PortaApplicativa portaApplicativa, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, portaApplicativa),idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa, String idCorrelazione) throws ProtocolException{
+	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(portaApplicativa,idCorrelazione,false);
 	}	
-	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchivePortaApplicativa(PortaApplicativa portaApplicativa, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(portaApplicativa, informationMissingManagementEnabled);
 		this.idCorrelazione = idCorrelazione;
 	}
@@ -183,7 +183,7 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 		return this.portaApplicativa;
 	}
 	
-	public String getIdCorrelazione() {
+	public ArchiveIdCorrelazione getIdCorrelazione() {
 		return this.idCorrelazione;
 	}
 }

@@ -69,20 +69,20 @@ public class ArchiveServizioApplicativo implements IArchiveObject {
 	private IDServizioApplicativo idServizioApplicativo;
 	private ServizioApplicativo servizioApplicativo;
 	
-	private String idCorrelazione; // permette di correlare più oggetti tra di loro 
+	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 
 	
-	public ArchiveServizioApplicativo(IDSoggetto idSoggettoProprietario, ServizioApplicativo servizioApplicativo, String idCorrelazione) throws ProtocolException{
+	public ArchiveServizioApplicativo(IDSoggetto idSoggettoProprietario, ServizioApplicativo servizioApplicativo, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, servizioApplicativo), idCorrelazione, false);
 	}
-	public ArchiveServizioApplicativo(IDSoggetto idSoggettoProprietario, ServizioApplicativo servizioApplicativo, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveServizioApplicativo(IDSoggetto idSoggettoProprietario, ServizioApplicativo servizioApplicativo, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this(injectProprietario(idSoggettoProprietario, servizioApplicativo), idCorrelazione, informationMissingManagementEnabled);
 	}
-	public ArchiveServizioApplicativo(ServizioApplicativo servizioApplicativo, String idCorrelazione) throws ProtocolException{
+	public ArchiveServizioApplicativo(ServizioApplicativo servizioApplicativo, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(servizioApplicativo, idCorrelazione,false);
 	}	
-	public ArchiveServizioApplicativo(ServizioApplicativo servizioApplicativo, String idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveServizioApplicativo(ServizioApplicativo servizioApplicativo, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		this.update(servizioApplicativo, informationMissingManagementEnabled);
 		this.idCorrelazione = idCorrelazione;
 	}
@@ -155,7 +155,7 @@ public class ArchiveServizioApplicativo implements IArchiveObject {
 		return this.servizioApplicativo;
 	}
 
-	public String getIdCorrelazione() {
+	public ArchiveIdCorrelazione getIdCorrelazione() {
 		return this.idCorrelazione;
 	}
 }
