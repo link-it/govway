@@ -1,5 +1,11 @@
 2015-09-18  Andrea Poli <apoli@link.it>
 
+	* [GenericProject]
+	Aggiunta funzionalità OP-415
+	Migliorata la gestione dei metodi toEnum delle classi costanti presenti nei package */constants/*
+
+2015-09-18  Andrea Poli <apoli@link.it>
+
 	* [Pdd,PddConsole]
 	Aggiunta funzionalità OP-413
 	Migliorato engine di importazione dei package:
