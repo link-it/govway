@@ -1,6 +1,12 @@
 2015-09-18  Andrea Poli <apoli@link.it>
 
 	* [GenericProject]
+	Risolto Bug OP-404
+	Il Fetch di un oggetto non funzionava, se il valore da impostare per un field era null e il field era di tipo primitivo (int,long,boolean,...)
+
+2015-09-18  Andrea Poli <apoli@link.it>
+
+	* [GenericProject]
 	Aggiunta funzionalità OP-415
 	Migliorata la gestione dei metodi toEnum delle classi costanti presenti nei package */constants/*
 
