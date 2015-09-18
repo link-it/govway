@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento CondizioniPagamentoType xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum CondizioniPagamentoType implements IEnumeration , Serializable , Clo
 	}
 	
 	public static CondizioniPagamentoType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static CondizioniPagamentoType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		CondizioniPagamentoType res = null;
-		if(CondizioniPagamentoType.TP01.getValue().equals(value)){
-			res = CondizioniPagamentoType.TP01;
-		}else if(CondizioniPagamentoType.TP02.getValue().equals(value)){
-			res = CondizioniPagamentoType.TP02;
-		}else if(CondizioniPagamentoType.TP03.getValue().equals(value)){
-			res = CondizioniPagamentoType.TP03;
+		for (CondizioniPagamentoType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		CondizioniPagamentoType res = null;
-		if(CondizioniPagamentoType.TP01.toString().equals(value)){
-			res = CondizioniPagamentoType.TP01;
-		}else if(CondizioniPagamentoType.TP02.toString().equals(value)){
-			res = CondizioniPagamentoType.TP02;
-		}else if(CondizioniPagamentoType.TP03.toString().equals(value)){
-			res = CondizioniPagamentoType.TP03;
+		for (CondizioniPagamentoType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

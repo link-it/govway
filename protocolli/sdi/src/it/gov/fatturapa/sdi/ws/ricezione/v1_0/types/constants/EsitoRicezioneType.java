@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento esitoRicezione_Type xsd (tipo:string) 
@@ -132,17 +133,43 @@ public enum EsitoRicezioneType implements IEnumeration , Serializable , Cloneabl
 	}
 	
 	public static EsitoRicezioneType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static EsitoRicezioneType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		EsitoRicezioneType res = null;
-		if(EsitoRicezioneType.ER01.getValue().equals(value)){
-			res = EsitoRicezioneType.ER01;
+		for (EsitoRicezioneType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		EsitoRicezioneType res = null;
-		if(EsitoRicezioneType.ER01.toString().equals(value)){
-			res = EsitoRicezioneType.ER01;
+		for (EsitoRicezioneType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

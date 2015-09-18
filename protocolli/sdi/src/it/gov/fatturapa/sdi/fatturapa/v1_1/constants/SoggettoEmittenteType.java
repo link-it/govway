@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento SoggettoEmittenteType xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum SoggettoEmittenteType implements IEnumeration , Serializable , Clone
 	}
 	
 	public static SoggettoEmittenteType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static SoggettoEmittenteType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		SoggettoEmittenteType res = null;
-		if(SoggettoEmittenteType.CC.getValue().equals(value)){
-			res = SoggettoEmittenteType.CC;
-		}else if(SoggettoEmittenteType.TZ.getValue().equals(value)){
-			res = SoggettoEmittenteType.TZ;
+		for (SoggettoEmittenteType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		SoggettoEmittenteType res = null;
-		if(SoggettoEmittenteType.CC.toString().equals(value)){
-			res = SoggettoEmittenteType.CC;
-		}else if(SoggettoEmittenteType.TZ.toString().equals(value)){
-			res = SoggettoEmittenteType.TZ;
+		for (SoggettoEmittenteType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipologiaServizio xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum TipologiaServizio implements IEnumeration , Serializable , Cloneable
 	}
 	
 	public static TipologiaServizio toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipologiaServizio toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipologiaServizio res = null;
-		if(TipologiaServizio.NORMALE.getValue().equals(value)){
-			res = TipologiaServizio.NORMALE;
-		}else if(TipologiaServizio.CORRELATO.getValue().equals(value)){
-			res = TipologiaServizio.CORRELATO;
+		for (TipologiaServizio tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipologiaServizio res = null;
-		if(TipologiaServizio.NORMALE.toString().equals(value)){
-			res = TipologiaServizio.NORMALE;
-		}else if(TipologiaServizio.CORRELATO.toString().equals(value)){
-			res = TipologiaServizio.CORRELATO;
+		for (TipologiaServizio tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

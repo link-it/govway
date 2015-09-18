@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento MTOMProcessorType xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum MTOMProcessorType implements IEnumeration , Serializable , Cloneable
 	}
 	
 	public static MTOMProcessorType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static MTOMProcessorType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		MTOMProcessorType res = null;
-		if(MTOMProcessorType.DISABLE.getValue().equals(value)){
-			res = MTOMProcessorType.DISABLE;
-		}else if(MTOMProcessorType.PACKAGING.getValue().equals(value)){
-			res = MTOMProcessorType.PACKAGING;
-		}else if(MTOMProcessorType.UNPACKAGING.getValue().equals(value)){
-			res = MTOMProcessorType.UNPACKAGING;
-		}else if(MTOMProcessorType.VERIFY.getValue().equals(value)){
-			res = MTOMProcessorType.VERIFY;
+		for (MTOMProcessorType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		MTOMProcessorType res = null;
-		if(MTOMProcessorType.DISABLE.toString().equals(value)){
-			res = MTOMProcessorType.DISABLE;
-		}else if(MTOMProcessorType.PACKAGING.toString().equals(value)){
-			res = MTOMProcessorType.PACKAGING;
-		}else if(MTOMProcessorType.UNPACKAGING.toString().equals(value)){
-			res = MTOMProcessorType.UNPACKAGING;
-		}else if(MTOMProcessorType.VERIFY.toString().equals(value)){
-			res = MTOMProcessorType.VERIFY;
+		for (MTOMProcessorType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento erroreInvio_Type xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum ErroreInvioType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static ErroreInvioType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static ErroreInvioType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		ErroreInvioType res = null;
-		if(ErroreInvioType.EI01.getValue().equals(value)){
-			res = ErroreInvioType.EI01;
-		}else if(ErroreInvioType.EI02.getValue().equals(value)){
-			res = ErroreInvioType.EI02;
-		}else if(ErroreInvioType.EI03.getValue().equals(value)){
-			res = ErroreInvioType.EI03;
+		for (ErroreInvioType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		ErroreInvioType res = null;
-		if(ErroreInvioType.EI01.toString().equals(value)){
-			res = ErroreInvioType.EI01;
-		}else if(ErroreInvioType.EI02.toString().equals(value)){
-			res = ErroreInvioType.EI02;
-		}else if(ErroreInvioType.EI03.toString().equals(value)){
-			res = ErroreInvioType.EI03;
+		for (ErroreInvioType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento BolloVirtualeType xsd (tipo:string) 
@@ -132,17 +133,43 @@ public enum BolloVirtualeType implements IEnumeration , Serializable , Cloneable
 	}
 	
 	public static BolloVirtualeType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static BolloVirtualeType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		BolloVirtualeType res = null;
-		if(BolloVirtualeType.SI.getValue().equals(value)){
-			res = BolloVirtualeType.SI;
+		for (BolloVirtualeType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		BolloVirtualeType res = null;
-		if(BolloVirtualeType.SI.toString().equals(value)){
-			res = BolloVirtualeType.SI;
+		for (BolloVirtualeType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

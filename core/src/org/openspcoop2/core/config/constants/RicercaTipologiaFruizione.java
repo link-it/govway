@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento RicercaTipologiaFruizione xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum RicercaTipologiaFruizione implements IEnumeration , Serializable , C
 	}
 	
 	public static RicercaTipologiaFruizione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static RicercaTipologiaFruizione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		RicercaTipologiaFruizione res = null;
-		if(RicercaTipologiaFruizione.ALL.getValue().equals(value)){
-			res = RicercaTipologiaFruizione.ALL;
-		}else if(RicercaTipologiaFruizione.DISABILITATO.getValue().equals(value)){
-			res = RicercaTipologiaFruizione.DISABILITATO;
-		}else if(RicercaTipologiaFruizione.NORMALE.getValue().equals(value)){
-			res = RicercaTipologiaFruizione.NORMALE;
-		}else if(RicercaTipologiaFruizione.ASINCRONA_SIMMETRICA.getValue().equals(value)){
-			res = RicercaTipologiaFruizione.ASINCRONA_SIMMETRICA;
+		for (RicercaTipologiaFruizione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		RicercaTipologiaFruizione res = null;
-		if(RicercaTipologiaFruizione.ALL.toString().equals(value)){
-			res = RicercaTipologiaFruizione.ALL;
-		}else if(RicercaTipologiaFruizione.DISABILITATO.toString().equals(value)){
-			res = RicercaTipologiaFruizione.DISABILITATO;
-		}else if(RicercaTipologiaFruizione.NORMALE.toString().equals(value)){
-			res = RicercaTipologiaFruizione.NORMALE;
-		}else if(RicercaTipologiaFruizione.ASINCRONA_SIMMETRICA.toString().equals(value)){
-			res = RicercaTipologiaFruizione.ASINCRONA_SIMMETRICA;
+		for (RicercaTipologiaFruizione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

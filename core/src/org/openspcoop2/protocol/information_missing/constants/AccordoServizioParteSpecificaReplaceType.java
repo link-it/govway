@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento AccordoServizioParteSpecificaReplaceType xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum AccordoServizioParteSpecificaReplaceType implements IEnumeration , S
 	}
 	
 	public static AccordoServizioParteSpecificaReplaceType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static AccordoServizioParteSpecificaReplaceType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		AccordoServizioParteSpecificaReplaceType res = null;
-		if(AccordoServizioParteSpecificaReplaceType.CONNETTORE.getValue().equals(value)){
-			res = AccordoServizioParteSpecificaReplaceType.CONNETTORE;
-		}else if(AccordoServizioParteSpecificaReplaceType.STATO_ARCHIVIO.getValue().equals(value)){
-			res = AccordoServizioParteSpecificaReplaceType.STATO_ARCHIVIO;
+		for (AccordoServizioParteSpecificaReplaceType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		AccordoServizioParteSpecificaReplaceType res = null;
-		if(AccordoServizioParteSpecificaReplaceType.CONNETTORE.toString().equals(value)){
-			res = AccordoServizioParteSpecificaReplaceType.CONNETTORE;
-		}else if(AccordoServizioParteSpecificaReplaceType.STATO_ARCHIVIO.toString().equals(value)){
-			res = AccordoServizioParteSpecificaReplaceType.STATO_ARCHIVIO;
+		for (AccordoServizioParteSpecificaReplaceType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

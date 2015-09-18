@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento BindingStyle xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum BindingStyle implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static BindingStyle toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static BindingStyle toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		BindingStyle res = null;
-		if(BindingStyle.DOCUMENT.getValue().equals(value)){
-			res = BindingStyle.DOCUMENT;
-		}else if(BindingStyle.RPC.getValue().equals(value)){
-			res = BindingStyle.RPC;
+		for (BindingStyle tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		BindingStyle res = null;
-		if(BindingStyle.DOCUMENT.toString().equals(value)){
-			res = BindingStyle.DOCUMENT;
-		}else if(BindingStyle.RPC.toString().equals(value)){
-			res = BindingStyle.RPC;
+		for (BindingStyle tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

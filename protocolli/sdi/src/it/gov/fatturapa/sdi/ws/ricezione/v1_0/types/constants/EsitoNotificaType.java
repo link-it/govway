@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento esitoNotifica_Type xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum EsitoNotificaType implements IEnumeration , Serializable , Cloneable
 	}
 	
 	public static EsitoNotificaType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static EsitoNotificaType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		EsitoNotificaType res = null;
-		if(EsitoNotificaType.ES00.getValue().equals(value)){
-			res = EsitoNotificaType.ES00;
-		}else if(EsitoNotificaType.ES01.getValue().equals(value)){
-			res = EsitoNotificaType.ES01;
-		}else if(EsitoNotificaType.ES02.getValue().equals(value)){
-			res = EsitoNotificaType.ES02;
+		for (EsitoNotificaType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		EsitoNotificaType res = null;
-		if(EsitoNotificaType.ES00.toString().equals(value)){
-			res = EsitoNotificaType.ES00;
-		}else if(EsitoNotificaType.ES01.toString().equals(value)){
-			res = EsitoNotificaType.ES01;
-		}else if(EsitoNotificaType.ES02.toString().equals(value)){
-			res = EsitoNotificaType.ES02;
+		for (EsitoNotificaType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

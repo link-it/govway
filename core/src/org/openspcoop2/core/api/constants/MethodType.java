@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento MethodType xsd (tipo:string) 
@@ -144,41 +145,43 @@ public enum MethodType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static MethodType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static MethodType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		MethodType res = null;
-		if(MethodType.GET.getValue().equals(value)){
-			res = MethodType.GET;
-		}else if(MethodType.POST.getValue().equals(value)){
-			res = MethodType.POST;
-		}else if(MethodType.PUT.getValue().equals(value)){
-			res = MethodType.PUT;
-		}else if(MethodType.HEAD.getValue().equals(value)){
-			res = MethodType.HEAD;
-		}else if(MethodType.DELETE.getValue().equals(value)){
-			res = MethodType.DELETE;
-		}else if(MethodType.OPTIONS.getValue().equals(value)){
-			res = MethodType.OPTIONS;
-		}else if(MethodType.TRACE.getValue().equals(value)){
-			res = MethodType.TRACE;
+		for (MethodType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		MethodType res = null;
-		if(MethodType.GET.toString().equals(value)){
-			res = MethodType.GET;
-		}else if(MethodType.POST.toString().equals(value)){
-			res = MethodType.POST;
-		}else if(MethodType.PUT.toString().equals(value)){
-			res = MethodType.PUT;
-		}else if(MethodType.HEAD.toString().equals(value)){
-			res = MethodType.HEAD;
-		}else if(MethodType.DELETE.toString().equals(value)){
-			res = MethodType.DELETE;
-		}else if(MethodType.OPTIONS.toString().equals(value)){
-			res = MethodType.OPTIONS;
-		}else if(MethodType.TRACE.toString().equals(value)){
-			res = MethodType.TRACE;
+		for (MethodType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

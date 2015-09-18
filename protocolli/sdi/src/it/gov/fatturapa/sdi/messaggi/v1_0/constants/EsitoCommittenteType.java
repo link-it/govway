@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento EsitoCommittente_Type xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum EsitoCommittenteType implements IEnumeration , Serializable , Clonea
 	}
 	
 	public static EsitoCommittenteType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static EsitoCommittenteType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		EsitoCommittenteType res = null;
-		if(EsitoCommittenteType.EC01.getValue().equals(value)){
-			res = EsitoCommittenteType.EC01;
-		}else if(EsitoCommittenteType.EC02.getValue().equals(value)){
-			res = EsitoCommittenteType.EC02;
+		for (EsitoCommittenteType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		EsitoCommittenteType res = null;
-		if(EsitoCommittenteType.EC01.toString().equals(value)){
-			res = EsitoCommittenteType.EC01;
-		}else if(EsitoCommittenteType.EC02.toString().equals(value)){
-			res = EsitoCommittenteType.EC02;
+		for (EsitoCommittenteType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipoProfiloCollaborazione xsd (tipo:string) 
@@ -140,33 +141,43 @@ public enum TipoProfiloCollaborazione implements IEnumeration , Serializable , C
 	}
 	
 	public static TipoProfiloCollaborazione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoProfiloCollaborazione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoProfiloCollaborazione res = null;
-		if(TipoProfiloCollaborazione.ONEWAY.getValue().equals(value)){
-			res = TipoProfiloCollaborazione.ONEWAY;
-		}else if(TipoProfiloCollaborazione.SINCRONO.getValue().equals(value)){
-			res = TipoProfiloCollaborazione.SINCRONO;
-		}else if(TipoProfiloCollaborazione.ASINCRONO_SIMMETRICO.getValue().equals(value)){
-			res = TipoProfiloCollaborazione.ASINCRONO_SIMMETRICO;
-		}else if(TipoProfiloCollaborazione.ASINCRONO_ASIMMETRICO.getValue().equals(value)){
-			res = TipoProfiloCollaborazione.ASINCRONO_ASIMMETRICO;
-		}else if(TipoProfiloCollaborazione.SCONOSCIUTO.getValue().equals(value)){
-			res = TipoProfiloCollaborazione.SCONOSCIUTO;
+		for (TipoProfiloCollaborazione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoProfiloCollaborazione res = null;
-		if(TipoProfiloCollaborazione.ONEWAY.toString().equals(value)){
-			res = TipoProfiloCollaborazione.ONEWAY;
-		}else if(TipoProfiloCollaborazione.SINCRONO.toString().equals(value)){
-			res = TipoProfiloCollaborazione.SINCRONO;
-		}else if(TipoProfiloCollaborazione.ASINCRONO_SIMMETRICO.toString().equals(value)){
-			res = TipoProfiloCollaborazione.ASINCRONO_SIMMETRICO;
-		}else if(TipoProfiloCollaborazione.ASINCRONO_ASIMMETRICO.toString().equals(value)){
-			res = TipoProfiloCollaborazione.ASINCRONO_ASIMMETRICO;
-		}else if(TipoProfiloCollaborazione.SCONOSCIUTO.toString().equals(value)){
-			res = TipoProfiloCollaborazione.SCONOSCIUTO;
+		for (TipoProfiloCollaborazione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

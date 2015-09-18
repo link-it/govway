@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento CausalePagamentoType xsd (tipo:string) 
@@ -176,109 +177,43 @@ public enum CausalePagamentoType implements IEnumeration , Serializable , Clonea
 	}
 	
 	public static CausalePagamentoType toEnumConstant(java.lang.Character value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static CausalePagamentoType toEnumConstant(java.lang.Character value, boolean throwNotFoundException) throws NotFoundException{
 		CausalePagamentoType res = null;
-		if(CausalePagamentoType.A.getValue() == value){
-			res = CausalePagamentoType.A;
-		}else if(CausalePagamentoType.B.getValue() == value){
-			res = CausalePagamentoType.B;
-		}else if(CausalePagamentoType.C.getValue() == value){
-			res = CausalePagamentoType.C;
-		}else if(CausalePagamentoType.D.getValue() == value){
-			res = CausalePagamentoType.D;
-		}else if(CausalePagamentoType.E.getValue() == value){
-			res = CausalePagamentoType.E;
-		}else if(CausalePagamentoType.F.getValue() == value){
-			res = CausalePagamentoType.F;
-		}else if(CausalePagamentoType.G.getValue() == value){
-			res = CausalePagamentoType.G;
-		}else if(CausalePagamentoType.H.getValue() == value){
-			res = CausalePagamentoType.H;
-		}else if(CausalePagamentoType.I.getValue() == value){
-			res = CausalePagamentoType.I;
-		}else if(CausalePagamentoType.L.getValue() == value){
-			res = CausalePagamentoType.L;
-		}else if(CausalePagamentoType.M.getValue() == value){
-			res = CausalePagamentoType.M;
-		}else if(CausalePagamentoType.N.getValue() == value){
-			res = CausalePagamentoType.N;
-		}else if(CausalePagamentoType.O.getValue() == value){
-			res = CausalePagamentoType.O;
-		}else if(CausalePagamentoType.P.getValue() == value){
-			res = CausalePagamentoType.P;
-		}else if(CausalePagamentoType.Q.getValue() == value){
-			res = CausalePagamentoType.Q;
-		}else if(CausalePagamentoType.R.getValue() == value){
-			res = CausalePagamentoType.R;
-		}else if(CausalePagamentoType.S.getValue() == value){
-			res = CausalePagamentoType.S;
-		}else if(CausalePagamentoType.T.getValue() == value){
-			res = CausalePagamentoType.T;
-		}else if(CausalePagamentoType.U.getValue() == value){
-			res = CausalePagamentoType.U;
-		}else if(CausalePagamentoType.V.getValue() == value){
-			res = CausalePagamentoType.V;
-		}else if(CausalePagamentoType.W.getValue() == value){
-			res = CausalePagamentoType.W;
-		}else if(CausalePagamentoType.X.getValue() == value){
-			res = CausalePagamentoType.X;
-		}else if(CausalePagamentoType.Y.getValue() == value){
-			res = CausalePagamentoType.Y;
-		}else if(CausalePagamentoType.Z.getValue() == value){
-			res = CausalePagamentoType.Z;
+		for (CausalePagamentoType tmp : values()) {
+			if(tmp.getValue().toString().equals(value!=null?value.toString():null)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		CausalePagamentoType res = null;
-		if(CausalePagamentoType.A.toString().equals(value)){
-			res = CausalePagamentoType.A;
-		}else if(CausalePagamentoType.B.toString().equals(value)){
-			res = CausalePagamentoType.B;
-		}else if(CausalePagamentoType.C.toString().equals(value)){
-			res = CausalePagamentoType.C;
-		}else if(CausalePagamentoType.D.toString().equals(value)){
-			res = CausalePagamentoType.D;
-		}else if(CausalePagamentoType.E.toString().equals(value)){
-			res = CausalePagamentoType.E;
-		}else if(CausalePagamentoType.F.toString().equals(value)){
-			res = CausalePagamentoType.F;
-		}else if(CausalePagamentoType.G.toString().equals(value)){
-			res = CausalePagamentoType.G;
-		}else if(CausalePagamentoType.H.toString().equals(value)){
-			res = CausalePagamentoType.H;
-		}else if(CausalePagamentoType.I.toString().equals(value)){
-			res = CausalePagamentoType.I;
-		}else if(CausalePagamentoType.L.toString().equals(value)){
-			res = CausalePagamentoType.L;
-		}else if(CausalePagamentoType.M.toString().equals(value)){
-			res = CausalePagamentoType.M;
-		}else if(CausalePagamentoType.N.toString().equals(value)){
-			res = CausalePagamentoType.N;
-		}else if(CausalePagamentoType.O.toString().equals(value)){
-			res = CausalePagamentoType.O;
-		}else if(CausalePagamentoType.P.toString().equals(value)){
-			res = CausalePagamentoType.P;
-		}else if(CausalePagamentoType.Q.toString().equals(value)){
-			res = CausalePagamentoType.Q;
-		}else if(CausalePagamentoType.R.toString().equals(value)){
-			res = CausalePagamentoType.R;
-		}else if(CausalePagamentoType.S.toString().equals(value)){
-			res = CausalePagamentoType.S;
-		}else if(CausalePagamentoType.T.toString().equals(value)){
-			res = CausalePagamentoType.T;
-		}else if(CausalePagamentoType.U.toString().equals(value)){
-			res = CausalePagamentoType.U;
-		}else if(CausalePagamentoType.V.toString().equals(value)){
-			res = CausalePagamentoType.V;
-		}else if(CausalePagamentoType.W.toString().equals(value)){
-			res = CausalePagamentoType.W;
-		}else if(CausalePagamentoType.X.toString().equals(value)){
-			res = CausalePagamentoType.X;
-		}else if(CausalePagamentoType.Y.toString().equals(value)){
-			res = CausalePagamentoType.Y;
-		}else if(CausalePagamentoType.Z.toString().equals(value)){
-			res = CausalePagamentoType.Z;
+		for (CausalePagamentoType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

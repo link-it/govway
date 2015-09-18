@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento PortaDelegataAzioneIdentificazione xsd (tipo:string) 
@@ -142,37 +143,43 @@ public enum PortaDelegataAzioneIdentificazione implements IEnumeration , Seriali
 	}
 	
 	public static PortaDelegataAzioneIdentificazione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static PortaDelegataAzioneIdentificazione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		PortaDelegataAzioneIdentificazione res = null;
-		if(PortaDelegataAzioneIdentificazione.STATIC.getValue().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.STATIC;
-		}else if(PortaDelegataAzioneIdentificazione.URL_BASED.getValue().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.URL_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.CONTENT_BASED.getValue().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.CONTENT_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.INPUT_BASED.getValue().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.INPUT_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED.getValue().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.WSDL_BASED.getValue().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.WSDL_BASED;
+		for (PortaDelegataAzioneIdentificazione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		PortaDelegataAzioneIdentificazione res = null;
-		if(PortaDelegataAzioneIdentificazione.STATIC.toString().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.STATIC;
-		}else if(PortaDelegataAzioneIdentificazione.URL_BASED.toString().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.URL_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.CONTENT_BASED.toString().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.CONTENT_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.INPUT_BASED.toString().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.INPUT_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED.toString().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED;
-		}else if(PortaDelegataAzioneIdentificazione.WSDL_BASED.toString().equals(value)){
-			res = PortaDelegataAzioneIdentificazione.WSDL_BASED;
+		for (PortaDelegataAzioneIdentificazione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

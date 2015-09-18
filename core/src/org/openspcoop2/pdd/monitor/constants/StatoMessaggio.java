@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento StatoMessaggio xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum StatoMessaggio implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static StatoMessaggio toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static StatoMessaggio toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoMessaggio res = null;
-		if(StatoMessaggio.CONSEGNA.getValue().equals(value)){
-			res = StatoMessaggio.CONSEGNA;
-		}else if(StatoMessaggio.SPEDIZIONE.getValue().equals(value)){
-			res = StatoMessaggio.SPEDIZIONE;
-		}else if(StatoMessaggio.PROCESSAMENTO.getValue().equals(value)){
-			res = StatoMessaggio.PROCESSAMENTO;
-		}else if(StatoMessaggio.CANCELLATO.getValue().equals(value)){
-			res = StatoMessaggio.CANCELLATO;
+		for (StatoMessaggio tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoMessaggio res = null;
-		if(StatoMessaggio.CONSEGNA.toString().equals(value)){
-			res = StatoMessaggio.CONSEGNA;
-		}else if(StatoMessaggio.SPEDIZIONE.toString().equals(value)){
-			res = StatoMessaggio.SPEDIZIONE;
-		}else if(StatoMessaggio.PROCESSAMENTO.toString().equals(value)){
-			res = StatoMessaggio.PROCESSAMENTO;
-		}else if(StatoMessaggio.CANCELLATO.toString().equals(value)){
-			res = StatoMessaggio.CANCELLATO;
+		for (StatoMessaggio tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

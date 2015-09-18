@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento CredenzialeTipo xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum CredenzialeTipo implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static CredenzialeTipo toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static CredenzialeTipo toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		CredenzialeTipo res = null;
-		if(CredenzialeTipo.BASIC.getValue().equals(value)){
-			res = CredenzialeTipo.BASIC;
-		}else if(CredenzialeTipo.SSL.getValue().equals(value)){
-			res = CredenzialeTipo.SSL;
+		for (CredenzialeTipo tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		CredenzialeTipo res = null;
-		if(CredenzialeTipo.BASIC.toString().equals(value)){
-			res = CredenzialeTipo.BASIC;
-		}else if(CredenzialeTipo.SSL.toString().equals(value)){
-			res = CredenzialeTipo.SSL;
+		for (CredenzialeTipo tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

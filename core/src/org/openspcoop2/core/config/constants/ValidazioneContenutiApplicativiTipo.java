@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento ValidazioneContenutiApplicativiTipo xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum ValidazioneContenutiApplicativiTipo implements IEnumeration , Serial
 	}
 	
 	public static ValidazioneContenutiApplicativiTipo toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static ValidazioneContenutiApplicativiTipo toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		ValidazioneContenutiApplicativiTipo res = null;
-		if(ValidazioneContenutiApplicativiTipo.WSDL.getValue().equals(value)){
-			res = ValidazioneContenutiApplicativiTipo.WSDL;
-		}else if(ValidazioneContenutiApplicativiTipo.OPENSPCOOP.getValue().equals(value)){
-			res = ValidazioneContenutiApplicativiTipo.OPENSPCOOP;
-		}else if(ValidazioneContenutiApplicativiTipo.XSD.getValue().equals(value)){
-			res = ValidazioneContenutiApplicativiTipo.XSD;
+		for (ValidazioneContenutiApplicativiTipo tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		ValidazioneContenutiApplicativiTipo res = null;
-		if(ValidazioneContenutiApplicativiTipo.WSDL.toString().equals(value)){
-			res = ValidazioneContenutiApplicativiTipo.WSDL;
-		}else if(ValidazioneContenutiApplicativiTipo.OPENSPCOOP.toString().equals(value)){
-			res = ValidazioneContenutiApplicativiTipo.OPENSPCOOP;
-		}else if(ValidazioneContenutiApplicativiTipo.XSD.toString().equals(value)){
-			res = ValidazioneContenutiApplicativiTipo.XSD;
+		for (ValidazioneContenutiApplicativiTipo tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

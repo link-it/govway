@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipologiaErogazione xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum TipologiaErogazione implements IEnumeration , Serializable , Cloneab
 	}
 	
 	public static TipologiaErogazione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipologiaErogazione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipologiaErogazione res = null;
-		if(TipologiaErogazione.DISABILITATO.getValue().equals(value)){
-			res = TipologiaErogazione.DISABILITATO;
-		}else if(TipologiaErogazione.TRASPARENTE.getValue().equals(value)){
-			res = TipologiaErogazione.TRASPARENTE;
-		}else if(TipologiaErogazione.ASINCRONA_ASIMMETRICA.getValue().equals(value)){
-			res = TipologiaErogazione.ASINCRONA_ASIMMETRICA;
-		}else if(TipologiaErogazione.MESSAGE_BOX.getValue().equals(value)){
-			res = TipologiaErogazione.MESSAGE_BOX;
+		for (TipologiaErogazione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipologiaErogazione res = null;
-		if(TipologiaErogazione.DISABILITATO.toString().equals(value)){
-			res = TipologiaErogazione.DISABILITATO;
-		}else if(TipologiaErogazione.TRASPARENTE.toString().equals(value)){
-			res = TipologiaErogazione.TRASPARENTE;
-		}else if(TipologiaErogazione.ASINCRONA_ASIMMETRICA.toString().equals(value)){
-			res = TipologiaErogazione.ASINCRONA_ASIMMETRICA;
-		}else if(TipologiaErogazione.MESSAGE_BOX.toString().equals(value)){
-			res = TipologiaErogazione.MESSAGE_BOX;
+		for (TipologiaErogazione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

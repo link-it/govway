@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipoCassaType xsd (tipo:string) 
@@ -174,101 +175,43 @@ public enum TipoCassaType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static TipoCassaType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoCassaType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoCassaType res = null;
-		if(TipoCassaType.TC01.getValue().equals(value)){
-			res = TipoCassaType.TC01;
-		}else if(TipoCassaType.TC02.getValue().equals(value)){
-			res = TipoCassaType.TC02;
-		}else if(TipoCassaType.TC03.getValue().equals(value)){
-			res = TipoCassaType.TC03;
-		}else if(TipoCassaType.TC04.getValue().equals(value)){
-			res = TipoCassaType.TC04;
-		}else if(TipoCassaType.TC05.getValue().equals(value)){
-			res = TipoCassaType.TC05;
-		}else if(TipoCassaType.TC06.getValue().equals(value)){
-			res = TipoCassaType.TC06;
-		}else if(TipoCassaType.TC07.getValue().equals(value)){
-			res = TipoCassaType.TC07;
-		}else if(TipoCassaType.TC08.getValue().equals(value)){
-			res = TipoCassaType.TC08;
-		}else if(TipoCassaType.TC09.getValue().equals(value)){
-			res = TipoCassaType.TC09;
-		}else if(TipoCassaType.TC10.getValue().equals(value)){
-			res = TipoCassaType.TC10;
-		}else if(TipoCassaType.TC11.getValue().equals(value)){
-			res = TipoCassaType.TC11;
-		}else if(TipoCassaType.TC12.getValue().equals(value)){
-			res = TipoCassaType.TC12;
-		}else if(TipoCassaType.TC13.getValue().equals(value)){
-			res = TipoCassaType.TC13;
-		}else if(TipoCassaType.TC14.getValue().equals(value)){
-			res = TipoCassaType.TC14;
-		}else if(TipoCassaType.TC15.getValue().equals(value)){
-			res = TipoCassaType.TC15;
-		}else if(TipoCassaType.TC16.getValue().equals(value)){
-			res = TipoCassaType.TC16;
-		}else if(TipoCassaType.TC17.getValue().equals(value)){
-			res = TipoCassaType.TC17;
-		}else if(TipoCassaType.TC18.getValue().equals(value)){
-			res = TipoCassaType.TC18;
-		}else if(TipoCassaType.TC19.getValue().equals(value)){
-			res = TipoCassaType.TC19;
-		}else if(TipoCassaType.TC20.getValue().equals(value)){
-			res = TipoCassaType.TC20;
-		}else if(TipoCassaType.TC21.getValue().equals(value)){
-			res = TipoCassaType.TC21;
-		}else if(TipoCassaType.TC22.getValue().equals(value)){
-			res = TipoCassaType.TC22;
+		for (TipoCassaType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoCassaType res = null;
-		if(TipoCassaType.TC01.toString().equals(value)){
-			res = TipoCassaType.TC01;
-		}else if(TipoCassaType.TC02.toString().equals(value)){
-			res = TipoCassaType.TC02;
-		}else if(TipoCassaType.TC03.toString().equals(value)){
-			res = TipoCassaType.TC03;
-		}else if(TipoCassaType.TC04.toString().equals(value)){
-			res = TipoCassaType.TC04;
-		}else if(TipoCassaType.TC05.toString().equals(value)){
-			res = TipoCassaType.TC05;
-		}else if(TipoCassaType.TC06.toString().equals(value)){
-			res = TipoCassaType.TC06;
-		}else if(TipoCassaType.TC07.toString().equals(value)){
-			res = TipoCassaType.TC07;
-		}else if(TipoCassaType.TC08.toString().equals(value)){
-			res = TipoCassaType.TC08;
-		}else if(TipoCassaType.TC09.toString().equals(value)){
-			res = TipoCassaType.TC09;
-		}else if(TipoCassaType.TC10.toString().equals(value)){
-			res = TipoCassaType.TC10;
-		}else if(TipoCassaType.TC11.toString().equals(value)){
-			res = TipoCassaType.TC11;
-		}else if(TipoCassaType.TC12.toString().equals(value)){
-			res = TipoCassaType.TC12;
-		}else if(TipoCassaType.TC13.toString().equals(value)){
-			res = TipoCassaType.TC13;
-		}else if(TipoCassaType.TC14.toString().equals(value)){
-			res = TipoCassaType.TC14;
-		}else if(TipoCassaType.TC15.toString().equals(value)){
-			res = TipoCassaType.TC15;
-		}else if(TipoCassaType.TC16.toString().equals(value)){
-			res = TipoCassaType.TC16;
-		}else if(TipoCassaType.TC17.toString().equals(value)){
-			res = TipoCassaType.TC17;
-		}else if(TipoCassaType.TC18.toString().equals(value)){
-			res = TipoCassaType.TC18;
-		}else if(TipoCassaType.TC19.toString().equals(value)){
-			res = TipoCassaType.TC19;
-		}else if(TipoCassaType.TC20.toString().equals(value)){
-			res = TipoCassaType.TC20;
-		}else if(TipoCassaType.TC21.toString().equals(value)){
-			res = TipoCassaType.TC21;
-		}else if(TipoCassaType.TC22.toString().equals(value)){
-			res = TipoCassaType.TC22;
+		for (TipoCassaType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

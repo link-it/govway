@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento StatoFunzionalita xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum StatoFunzionalita implements IEnumeration , Serializable , Cloneable
 	}
 	
 	public static StatoFunzionalita toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static StatoFunzionalita toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoFunzionalita res = null;
-		if(StatoFunzionalita.ABILITATO.getValue().equals(value)){
-			res = StatoFunzionalita.ABILITATO;
-		}else if(StatoFunzionalita.DISABILITATO.getValue().equals(value)){
-			res = StatoFunzionalita.DISABILITATO;
+		for (StatoFunzionalita tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoFunzionalita res = null;
-		if(StatoFunzionalita.ABILITATO.toString().equals(value)){
-			res = StatoFunzionalita.ABILITATO;
-		}else if(StatoFunzionalita.DISABILITATO.toString().equals(value)){
-			res = StatoFunzionalita.DISABILITATO;
+		for (StatoFunzionalita tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

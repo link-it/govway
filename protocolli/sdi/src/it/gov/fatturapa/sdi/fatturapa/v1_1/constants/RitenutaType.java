@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento RitenutaType xsd (tipo:string) 
@@ -132,17 +133,43 @@ public enum RitenutaType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static RitenutaType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static RitenutaType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		RitenutaType res = null;
-		if(RitenutaType.SI.getValue().equals(value)){
-			res = RitenutaType.SI;
+		for (RitenutaType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		RitenutaType res = null;
-		if(RitenutaType.SI.toString().equals(value)){
-			res = RitenutaType.SI;
+		for (RitenutaType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

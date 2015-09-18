@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento RegistroTipo xsd (tipo:string) 
@@ -140,33 +141,43 @@ public enum RegistroTipo implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static RegistroTipo toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static RegistroTipo toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		RegistroTipo res = null;
-		if(RegistroTipo.XML.getValue().equals(value)){
-			res = RegistroTipo.XML;
-		}else if(RegistroTipo.UDDI.getValue().equals(value)){
-			res = RegistroTipo.UDDI;
-		}else if(RegistroTipo.WEB.getValue().equals(value)){
-			res = RegistroTipo.WEB;
-		}else if(RegistroTipo.DB.getValue().equals(value)){
-			res = RegistroTipo.DB;
-		}else if(RegistroTipo.WS.getValue().equals(value)){
-			res = RegistroTipo.WS;
+		for (RegistroTipo tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		RegistroTipo res = null;
-		if(RegistroTipo.XML.toString().equals(value)){
-			res = RegistroTipo.XML;
-		}else if(RegistroTipo.UDDI.toString().equals(value)){
-			res = RegistroTipo.UDDI;
-		}else if(RegistroTipo.WEB.toString().equals(value)){
-			res = RegistroTipo.WEB;
-		}else if(RegistroTipo.DB.toString().equals(value)){
-			res = RegistroTipo.DB;
-		}else if(RegistroTipo.WS.toString().equals(value)){
-			res = RegistroTipo.WS;
+		for (RegistroTipo tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

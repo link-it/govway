@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento CorrelazioneApplicativaRichiestaIdentificazione xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum CorrelazioneApplicativaRichiestaIdentificazione implements IEnumerat
 	}
 	
 	public static CorrelazioneApplicativaRichiestaIdentificazione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static CorrelazioneApplicativaRichiestaIdentificazione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		CorrelazioneApplicativaRichiestaIdentificazione res = null;
-		if(CorrelazioneApplicativaRichiestaIdentificazione.URL_BASED.getValue().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.URL_BASED;
-		}else if(CorrelazioneApplicativaRichiestaIdentificazione.CONTENT_BASED.getValue().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.CONTENT_BASED;
-		}else if(CorrelazioneApplicativaRichiestaIdentificazione.INPUT_BASED.getValue().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.INPUT_BASED;
-		}else if(CorrelazioneApplicativaRichiestaIdentificazione.DISABILITATO.getValue().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.DISABILITATO;
+		for (CorrelazioneApplicativaRichiestaIdentificazione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		CorrelazioneApplicativaRichiestaIdentificazione res = null;
-		if(CorrelazioneApplicativaRichiestaIdentificazione.URL_BASED.toString().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.URL_BASED;
-		}else if(CorrelazioneApplicativaRichiestaIdentificazione.CONTENT_BASED.toString().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.CONTENT_BASED;
-		}else if(CorrelazioneApplicativaRichiestaIdentificazione.INPUT_BASED.toString().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.INPUT_BASED;
-		}else if(CorrelazioneApplicativaRichiestaIdentificazione.DISABILITATO.toString().equals(value)){
-			res = CorrelazioneApplicativaRichiestaIdentificazione.DISABILITATO;
+		for (CorrelazioneApplicativaRichiestaIdentificazione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

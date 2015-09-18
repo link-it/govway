@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento pddType xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum PddType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static PddType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static PddType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		PddType res = null;
-		if(PddType.OPERATIVO.getValue().equals(value)){
-			res = PddType.OPERATIVO;
-		}else if(PddType.ESTERNO.getValue().equals(value)){
-			res = PddType.ESTERNO;
+		for (PddType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		PddType res = null;
-		if(PddType.OPERATIVO.toString().equals(value)){
-			res = PddType.OPERATIVO;
-		}else if(PddType.ESTERNO.toString().equals(value)){
-			res = PddType.ESTERNO;
+		for (PddType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

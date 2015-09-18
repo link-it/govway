@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento FaultIntegrazioneTipo xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum FaultIntegrazioneTipo implements IEnumeration , Serializable , Clone
 	}
 	
 	public static FaultIntegrazioneTipo toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static FaultIntegrazioneTipo toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		FaultIntegrazioneTipo res = null;
-		if(FaultIntegrazioneTipo.SOAP.getValue().equals(value)){
-			res = FaultIntegrazioneTipo.SOAP;
-		}else if(FaultIntegrazioneTipo.XML.getValue().equals(value)){
-			res = FaultIntegrazioneTipo.XML;
+		for (FaultIntegrazioneTipo tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		FaultIntegrazioneTipo res = null;
-		if(FaultIntegrazioneTipo.SOAP.toString().equals(value)){
-			res = FaultIntegrazioneTipo.SOAP;
-		}else if(FaultIntegrazioneTipo.XML.toString().equals(value)){
-			res = FaultIntegrazioneTipo.XML;
+		for (FaultIntegrazioneTipo tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

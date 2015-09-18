@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipoCodificaEccezione xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum TipoCodificaEccezione implements IEnumeration , Serializable , Clone
 	}
 	
 	public static TipoCodificaEccezione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoCodificaEccezione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoCodificaEccezione res = null;
-		if(TipoCodificaEccezione.ECCEZIONE_VALIDAZIONE_PROTOCOLLO.getValue().equals(value)){
-			res = TipoCodificaEccezione.ECCEZIONE_VALIDAZIONE_PROTOCOLLO;
-		}else if(TipoCodificaEccezione.ECCEZIONE_PROCESSAMENTO.getValue().equals(value)){
-			res = TipoCodificaEccezione.ECCEZIONE_PROCESSAMENTO;
-		}else if(TipoCodificaEccezione.SCONOSCIUTO.getValue().equals(value)){
-			res = TipoCodificaEccezione.SCONOSCIUTO;
+		for (TipoCodificaEccezione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoCodificaEccezione res = null;
-		if(TipoCodificaEccezione.ECCEZIONE_VALIDAZIONE_PROTOCOLLO.toString().equals(value)){
-			res = TipoCodificaEccezione.ECCEZIONE_VALIDAZIONE_PROTOCOLLO;
-		}else if(TipoCodificaEccezione.ECCEZIONE_PROCESSAMENTO.toString().equals(value)){
-			res = TipoCodificaEccezione.ECCEZIONE_PROCESSAMENTO;
-		}else if(TipoCodificaEccezione.SCONOSCIUTO.toString().equals(value)){
-			res = TipoCodificaEccezione.SCONOSCIUTO;
+		for (TipoCodificaEccezione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

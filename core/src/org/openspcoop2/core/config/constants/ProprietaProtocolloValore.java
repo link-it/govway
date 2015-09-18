@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento ProprietaProtocolloValore xsd (tipo:string) 
@@ -154,61 +155,43 @@ public enum ProprietaProtocolloValore implements IEnumeration , Serializable , C
 	}
 	
 	public static ProprietaProtocolloValore toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static ProprietaProtocolloValore toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		ProprietaProtocolloValore res = null;
-		if(ProprietaProtocolloValore.TIPO_MITTENTE.getValue().equals(value)){
-			res = ProprietaProtocolloValore.TIPO_MITTENTE;
-		}else if(ProprietaProtocolloValore.MITTENTE.getValue().equals(value)){
-			res = ProprietaProtocolloValore.MITTENTE;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_MITTENTE.getValue().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_MITTENTE;
-		}else if(ProprietaProtocolloValore.TIPO_DESTINATARIO.getValue().equals(value)){
-			res = ProprietaProtocolloValore.TIPO_DESTINATARIO;
-		}else if(ProprietaProtocolloValore.DESTINATARIO.getValue().equals(value)){
-			res = ProprietaProtocolloValore.DESTINATARIO;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_DESTINATARIO.getValue().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_DESTINATARIO;
-		}else if(ProprietaProtocolloValore.TIPO_SERVIZIO.getValue().equals(value)){
-			res = ProprietaProtocolloValore.TIPO_SERVIZIO;
-		}else if(ProprietaProtocolloValore.SERVIZIO.getValue().equals(value)){
-			res = ProprietaProtocolloValore.SERVIZIO;
-		}else if(ProprietaProtocolloValore.VERSIONE_SERVIZIO.getValue().equals(value)){
-			res = ProprietaProtocolloValore.VERSIONE_SERVIZIO;
-		}else if(ProprietaProtocolloValore.AZIONE.getValue().equals(value)){
-			res = ProprietaProtocolloValore.AZIONE;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO.getValue().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO_CORRELAZIONE_APPLICATIVA.getValue().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO_CORRELAZIONE_APPLICATIVA;
+		for (ProprietaProtocolloValore tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		ProprietaProtocolloValore res = null;
-		if(ProprietaProtocolloValore.TIPO_MITTENTE.toString().equals(value)){
-			res = ProprietaProtocolloValore.TIPO_MITTENTE;
-		}else if(ProprietaProtocolloValore.MITTENTE.toString().equals(value)){
-			res = ProprietaProtocolloValore.MITTENTE;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_MITTENTE.toString().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_MITTENTE;
-		}else if(ProprietaProtocolloValore.TIPO_DESTINATARIO.toString().equals(value)){
-			res = ProprietaProtocolloValore.TIPO_DESTINATARIO;
-		}else if(ProprietaProtocolloValore.DESTINATARIO.toString().equals(value)){
-			res = ProprietaProtocolloValore.DESTINATARIO;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_DESTINATARIO.toString().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_DESTINATARIO;
-		}else if(ProprietaProtocolloValore.TIPO_SERVIZIO.toString().equals(value)){
-			res = ProprietaProtocolloValore.TIPO_SERVIZIO;
-		}else if(ProprietaProtocolloValore.SERVIZIO.toString().equals(value)){
-			res = ProprietaProtocolloValore.SERVIZIO;
-		}else if(ProprietaProtocolloValore.VERSIONE_SERVIZIO.toString().equals(value)){
-			res = ProprietaProtocolloValore.VERSIONE_SERVIZIO;
-		}else if(ProprietaProtocolloValore.AZIONE.toString().equals(value)){
-			res = ProprietaProtocolloValore.AZIONE;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO.toString().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO;
-		}else if(ProprietaProtocolloValore.IDENTIFICATIVO_CORRELAZIONE_APPLICATIVA.toString().equals(value)){
-			res = ProprietaProtocolloValore.IDENTIFICATIVO_CORRELAZIONE_APPLICATIVA;
+		for (ProprietaProtocolloValore tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

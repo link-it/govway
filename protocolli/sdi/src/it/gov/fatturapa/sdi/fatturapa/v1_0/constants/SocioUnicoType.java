@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento SocioUnicoType xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum SocioUnicoType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static SocioUnicoType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static SocioUnicoType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		SocioUnicoType res = null;
-		if(SocioUnicoType.SU.getValue().equals(value)){
-			res = SocioUnicoType.SU;
-		}else if(SocioUnicoType.SM.getValue().equals(value)){
-			res = SocioUnicoType.SM;
+		for (SocioUnicoType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		SocioUnicoType res = null;
-		if(SocioUnicoType.SU.toString().equals(value)){
-			res = SocioUnicoType.SU;
-		}else if(SocioUnicoType.SM.toString().equals(value)){
-			res = SocioUnicoType.SM;
+		for (SocioUnicoType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

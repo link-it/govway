@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento urlMappingSourceType xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum UrlMappingSourceType implements IEnumeration , Serializable , Clonea
 	}
 	
 	public static UrlMappingSourceType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static UrlMappingSourceType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		UrlMappingSourceType res = null;
-		if(UrlMappingSourceType.PROPERTIES.getValue().equals(value)){
-			res = UrlMappingSourceType.PROPERTIES;
-		}else if(UrlMappingSourceType.XML.getValue().equals(value)){
-			res = UrlMappingSourceType.XML;
+		for (UrlMappingSourceType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		UrlMappingSourceType res = null;
-		if(UrlMappingSourceType.PROPERTIES.toString().equals(value)){
-			res = UrlMappingSourceType.PROPERTIES;
-		}else if(UrlMappingSourceType.XML.toString().equals(value)){
-			res = UrlMappingSourceType.XML;
+		for (UrlMappingSourceType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

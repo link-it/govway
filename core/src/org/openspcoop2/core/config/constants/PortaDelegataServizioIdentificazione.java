@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento PortaDelegataServizioIdentificazione xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum PortaDelegataServizioIdentificazione implements IEnumeration , Seria
 	}
 	
 	public static PortaDelegataServizioIdentificazione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static PortaDelegataServizioIdentificazione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		PortaDelegataServizioIdentificazione res = null;
-		if(PortaDelegataServizioIdentificazione.STATIC.getValue().equals(value)){
-			res = PortaDelegataServizioIdentificazione.STATIC;
-		}else if(PortaDelegataServizioIdentificazione.URL_BASED.getValue().equals(value)){
-			res = PortaDelegataServizioIdentificazione.URL_BASED;
-		}else if(PortaDelegataServizioIdentificazione.CONTENT_BASED.getValue().equals(value)){
-			res = PortaDelegataServizioIdentificazione.CONTENT_BASED;
-		}else if(PortaDelegataServizioIdentificazione.INPUT_BASED.getValue().equals(value)){
-			res = PortaDelegataServizioIdentificazione.INPUT_BASED;
+		for (PortaDelegataServizioIdentificazione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		PortaDelegataServizioIdentificazione res = null;
-		if(PortaDelegataServizioIdentificazione.STATIC.toString().equals(value)){
-			res = PortaDelegataServizioIdentificazione.STATIC;
-		}else if(PortaDelegataServizioIdentificazione.URL_BASED.toString().equals(value)){
-			res = PortaDelegataServizioIdentificazione.URL_BASED;
-		}else if(PortaDelegataServizioIdentificazione.CONTENT_BASED.toString().equals(value)){
-			res = PortaDelegataServizioIdentificazione.CONTENT_BASED;
-		}else if(PortaDelegataServizioIdentificazione.INPUT_BASED.toString().equals(value)){
-			res = PortaDelegataServizioIdentificazione.INPUT_BASED;
+		for (PortaDelegataServizioIdentificazione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

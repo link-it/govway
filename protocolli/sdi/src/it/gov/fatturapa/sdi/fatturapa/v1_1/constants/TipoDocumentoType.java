@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipoDocumentoType xsd (tipo:string) 
@@ -142,37 +143,43 @@ public enum TipoDocumentoType implements IEnumeration , Serializable , Cloneable
 	}
 	
 	public static TipoDocumentoType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoDocumentoType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoDocumentoType res = null;
-		if(TipoDocumentoType.TD01.getValue().equals(value)){
-			res = TipoDocumentoType.TD01;
-		}else if(TipoDocumentoType.TD02.getValue().equals(value)){
-			res = TipoDocumentoType.TD02;
-		}else if(TipoDocumentoType.TD03.getValue().equals(value)){
-			res = TipoDocumentoType.TD03;
-		}else if(TipoDocumentoType.TD04.getValue().equals(value)){
-			res = TipoDocumentoType.TD04;
-		}else if(TipoDocumentoType.TD05.getValue().equals(value)){
-			res = TipoDocumentoType.TD05;
-		}else if(TipoDocumentoType.TD06.getValue().equals(value)){
-			res = TipoDocumentoType.TD06;
+		for (TipoDocumentoType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoDocumentoType res = null;
-		if(TipoDocumentoType.TD01.toString().equals(value)){
-			res = TipoDocumentoType.TD01;
-		}else if(TipoDocumentoType.TD02.toString().equals(value)){
-			res = TipoDocumentoType.TD02;
-		}else if(TipoDocumentoType.TD03.toString().equals(value)){
-			res = TipoDocumentoType.TD03;
-		}else if(TipoDocumentoType.TD04.toString().equals(value)){
-			res = TipoDocumentoType.TD04;
-		}else if(TipoDocumentoType.TD05.toString().equals(value)){
-			res = TipoDocumentoType.TD05;
-		}else if(TipoDocumentoType.TD06.toString().equals(value)){
-			res = TipoDocumentoType.TD06;
+		for (TipoDocumentoType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

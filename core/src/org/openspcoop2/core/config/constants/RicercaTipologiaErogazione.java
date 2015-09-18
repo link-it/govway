@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento RicercaTipologiaErogazione xsd (tipo:string) 
@@ -140,33 +141,43 @@ public enum RicercaTipologiaErogazione implements IEnumeration , Serializable , 
 	}
 	
 	public static RicercaTipologiaErogazione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static RicercaTipologiaErogazione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		RicercaTipologiaErogazione res = null;
-		if(RicercaTipologiaErogazione.ALL.getValue().equals(value)){
-			res = RicercaTipologiaErogazione.ALL;
-		}else if(RicercaTipologiaErogazione.DISABILITATO.getValue().equals(value)){
-			res = RicercaTipologiaErogazione.DISABILITATO;
-		}else if(RicercaTipologiaErogazione.TRASPARENTE.getValue().equals(value)){
-			res = RicercaTipologiaErogazione.TRASPARENTE;
-		}else if(RicercaTipologiaErogazione.ASINCRONA_ASIMMETRICA.getValue().equals(value)){
-			res = RicercaTipologiaErogazione.ASINCRONA_ASIMMETRICA;
-		}else if(RicercaTipologiaErogazione.MESSAGE_BOX.getValue().equals(value)){
-			res = RicercaTipologiaErogazione.MESSAGE_BOX;
+		for (RicercaTipologiaErogazione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		RicercaTipologiaErogazione res = null;
-		if(RicercaTipologiaErogazione.ALL.toString().equals(value)){
-			res = RicercaTipologiaErogazione.ALL;
-		}else if(RicercaTipologiaErogazione.DISABILITATO.toString().equals(value)){
-			res = RicercaTipologiaErogazione.DISABILITATO;
-		}else if(RicercaTipologiaErogazione.TRASPARENTE.toString().equals(value)){
-			res = RicercaTipologiaErogazione.TRASPARENTE;
-		}else if(RicercaTipologiaErogazione.ASINCRONA_ASIMMETRICA.toString().equals(value)){
-			res = RicercaTipologiaErogazione.ASINCRONA_ASIMMETRICA;
-		}else if(RicercaTipologiaErogazione.MESSAGE_BOX.toString().equals(value)){
-			res = RicercaTipologiaErogazione.MESSAGE_BOX;
+		for (RicercaTipologiaErogazione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

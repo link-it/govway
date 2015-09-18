@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento AccordoServizioParteComuneReplaceType xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum AccordoServizioParteComuneReplaceType implements IEnumeration , Seri
 	}
 	
 	public static AccordoServizioParteComuneReplaceType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static AccordoServizioParteComuneReplaceType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		AccordoServizioParteComuneReplaceType res = null;
-		if(AccordoServizioParteComuneReplaceType.RIFERIMENTO.getValue().equals(value)){
-			res = AccordoServizioParteComuneReplaceType.RIFERIMENTO;
-		}else if(AccordoServizioParteComuneReplaceType.STATO_ARCHIVIO.getValue().equals(value)){
-			res = AccordoServizioParteComuneReplaceType.STATO_ARCHIVIO;
+		for (AccordoServizioParteComuneReplaceType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		AccordoServizioParteComuneReplaceType res = null;
-		if(AccordoServizioParteComuneReplaceType.RIFERIMENTO.toString().equals(value)){
-			res = AccordoServizioParteComuneReplaceType.RIFERIMENTO;
-		}else if(AccordoServizioParteComuneReplaceType.STATO_ARCHIVIO.toString().equals(value)){
-			res = AccordoServizioParteComuneReplaceType.STATO_ARCHIVIO;
+		for (AccordoServizioParteComuneReplaceType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

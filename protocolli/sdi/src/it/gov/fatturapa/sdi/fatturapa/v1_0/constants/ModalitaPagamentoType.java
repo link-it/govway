@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento ModalitaPagamentoType xsd (tipo:string) 
@@ -164,81 +165,43 @@ public enum ModalitaPagamentoType implements IEnumeration , Serializable , Clone
 	}
 	
 	public static ModalitaPagamentoType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static ModalitaPagamentoType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		ModalitaPagamentoType res = null;
-		if(ModalitaPagamentoType.MP01.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP01;
-		}else if(ModalitaPagamentoType.MP02.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP02;
-		}else if(ModalitaPagamentoType.MP03.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP03;
-		}else if(ModalitaPagamentoType.MP04.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP04;
-		}else if(ModalitaPagamentoType.MP05.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP05;
-		}else if(ModalitaPagamentoType.MP06.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP06;
-		}else if(ModalitaPagamentoType.MP07.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP07;
-		}else if(ModalitaPagamentoType.MP08.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP08;
-		}else if(ModalitaPagamentoType.MP09.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP09;
-		}else if(ModalitaPagamentoType.MP10.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP10;
-		}else if(ModalitaPagamentoType.MP11.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP11;
-		}else if(ModalitaPagamentoType.MP12.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP12;
-		}else if(ModalitaPagamentoType.MP13.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP13;
-		}else if(ModalitaPagamentoType.MP14.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP14;
-		}else if(ModalitaPagamentoType.MP15.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP15;
-		}else if(ModalitaPagamentoType.MP16.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP16;
-		}else if(ModalitaPagamentoType.MP17.getValue().equals(value)){
-			res = ModalitaPagamentoType.MP17;
+		for (ModalitaPagamentoType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		ModalitaPagamentoType res = null;
-		if(ModalitaPagamentoType.MP01.toString().equals(value)){
-			res = ModalitaPagamentoType.MP01;
-		}else if(ModalitaPagamentoType.MP02.toString().equals(value)){
-			res = ModalitaPagamentoType.MP02;
-		}else if(ModalitaPagamentoType.MP03.toString().equals(value)){
-			res = ModalitaPagamentoType.MP03;
-		}else if(ModalitaPagamentoType.MP04.toString().equals(value)){
-			res = ModalitaPagamentoType.MP04;
-		}else if(ModalitaPagamentoType.MP05.toString().equals(value)){
-			res = ModalitaPagamentoType.MP05;
-		}else if(ModalitaPagamentoType.MP06.toString().equals(value)){
-			res = ModalitaPagamentoType.MP06;
-		}else if(ModalitaPagamentoType.MP07.toString().equals(value)){
-			res = ModalitaPagamentoType.MP07;
-		}else if(ModalitaPagamentoType.MP08.toString().equals(value)){
-			res = ModalitaPagamentoType.MP08;
-		}else if(ModalitaPagamentoType.MP09.toString().equals(value)){
-			res = ModalitaPagamentoType.MP09;
-		}else if(ModalitaPagamentoType.MP10.toString().equals(value)){
-			res = ModalitaPagamentoType.MP10;
-		}else if(ModalitaPagamentoType.MP11.toString().equals(value)){
-			res = ModalitaPagamentoType.MP11;
-		}else if(ModalitaPagamentoType.MP12.toString().equals(value)){
-			res = ModalitaPagamentoType.MP12;
-		}else if(ModalitaPagamentoType.MP13.toString().equals(value)){
-			res = ModalitaPagamentoType.MP13;
-		}else if(ModalitaPagamentoType.MP14.toString().equals(value)){
-			res = ModalitaPagamentoType.MP14;
-		}else if(ModalitaPagamentoType.MP15.toString().equals(value)){
-			res = ModalitaPagamentoType.MP15;
-		}else if(ModalitaPagamentoType.MP16.toString().equals(value)){
-			res = ModalitaPagamentoType.MP16;
-		}else if(ModalitaPagamentoType.MP17.toString().equals(value)){
-			res = ModalitaPagamentoType.MP17;
+		for (ModalitaPagamentoType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

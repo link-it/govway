@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipiMessaggi xsd (tipo:string) 
@@ -148,49 +149,43 @@ public enum TipiMessaggi implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static TipiMessaggi toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipiMessaggi toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipiMessaggi res = null;
-		if(TipiMessaggi.RC.getValue().equals(value)){
-			res = TipiMessaggi.RC;
-		}else if(TipiMessaggi.NS.getValue().equals(value)){
-			res = TipiMessaggi.NS;
-		}else if(TipiMessaggi.MC.getValue().equals(value)){
-			res = TipiMessaggi.MC;
-		}else if(TipiMessaggi.NE.getValue().equals(value)){
-			res = TipiMessaggi.NE;
-		}else if(TipiMessaggi.MT.getValue().equals(value)){
-			res = TipiMessaggi.MT;
-		}else if(TipiMessaggi.EC.getValue().equals(value)){
-			res = TipiMessaggi.EC;
-		}else if(TipiMessaggi.SE.getValue().equals(value)){
-			res = TipiMessaggi.SE;
-		}else if(TipiMessaggi.DT.getValue().equals(value)){
-			res = TipiMessaggi.DT;
-		}else if(TipiMessaggi.AT.getValue().equals(value)){
-			res = TipiMessaggi.AT;
+		for (TipiMessaggi tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipiMessaggi res = null;
-		if(TipiMessaggi.RC.toString().equals(value)){
-			res = TipiMessaggi.RC;
-		}else if(TipiMessaggi.NS.toString().equals(value)){
-			res = TipiMessaggi.NS;
-		}else if(TipiMessaggi.MC.toString().equals(value)){
-			res = TipiMessaggi.MC;
-		}else if(TipiMessaggi.NE.toString().equals(value)){
-			res = TipiMessaggi.NE;
-		}else if(TipiMessaggi.MT.toString().equals(value)){
-			res = TipiMessaggi.MT;
-		}else if(TipiMessaggi.EC.toString().equals(value)){
-			res = TipiMessaggi.EC;
-		}else if(TipiMessaggi.SE.toString().equals(value)){
-			res = TipiMessaggi.SE;
-		}else if(TipiMessaggi.DT.toString().equals(value)){
-			res = TipiMessaggi.DT;
-		}else if(TipiMessaggi.AT.toString().equals(value)){
-			res = TipiMessaggi.AT;
+		for (TipiMessaggi tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

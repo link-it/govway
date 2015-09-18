@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipoRilevanzaEccezione xsd (tipo:string) 
@@ -142,37 +143,43 @@ public enum TipoRilevanzaEccezione implements IEnumeration , Serializable , Clon
 	}
 	
 	public static TipoRilevanzaEccezione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoRilevanzaEccezione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoRilevanzaEccezione res = null;
-		if(TipoRilevanzaEccezione.DEBUG.getValue().equals(value)){
-			res = TipoRilevanzaEccezione.DEBUG;
-		}else if(TipoRilevanzaEccezione.INFO.getValue().equals(value)){
-			res = TipoRilevanzaEccezione.INFO;
-		}else if(TipoRilevanzaEccezione.WARN.getValue().equals(value)){
-			res = TipoRilevanzaEccezione.WARN;
-		}else if(TipoRilevanzaEccezione.ERROR.getValue().equals(value)){
-			res = TipoRilevanzaEccezione.ERROR;
-		}else if(TipoRilevanzaEccezione.FATAL.getValue().equals(value)){
-			res = TipoRilevanzaEccezione.FATAL;
-		}else if(TipoRilevanzaEccezione.SCONOSCIUTO.getValue().equals(value)){
-			res = TipoRilevanzaEccezione.SCONOSCIUTO;
+		for (TipoRilevanzaEccezione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoRilevanzaEccezione res = null;
-		if(TipoRilevanzaEccezione.DEBUG.toString().equals(value)){
-			res = TipoRilevanzaEccezione.DEBUG;
-		}else if(TipoRilevanzaEccezione.INFO.toString().equals(value)){
-			res = TipoRilevanzaEccezione.INFO;
-		}else if(TipoRilevanzaEccezione.WARN.toString().equals(value)){
-			res = TipoRilevanzaEccezione.WARN;
-		}else if(TipoRilevanzaEccezione.ERROR.toString().equals(value)){
-			res = TipoRilevanzaEccezione.ERROR;
-		}else if(TipoRilevanzaEccezione.FATAL.toString().equals(value)){
-			res = TipoRilevanzaEccezione.FATAL;
-		}else if(TipoRilevanzaEccezione.SCONOSCIUTO.toString().equals(value)){
-			res = TipoRilevanzaEccezione.SCONOSCIUTO;
+		for (TipoRilevanzaEccezione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

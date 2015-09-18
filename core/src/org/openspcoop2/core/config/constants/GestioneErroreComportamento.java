@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento GestioneErroreComportamento xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum GestioneErroreComportamento implements IEnumeration , Serializable ,
 	}
 	
 	public static GestioneErroreComportamento toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static GestioneErroreComportamento toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		GestioneErroreComportamento res = null;
-		if(GestioneErroreComportamento.ACCETTA.getValue().equals(value)){
-			res = GestioneErroreComportamento.ACCETTA;
-		}else if(GestioneErroreComportamento.RISPEDISCI.getValue().equals(value)){
-			res = GestioneErroreComportamento.RISPEDISCI;
+		for (GestioneErroreComportamento tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		GestioneErroreComportamento res = null;
-		if(GestioneErroreComportamento.ACCETTA.toString().equals(value)){
-			res = GestioneErroreComportamento.ACCETTA;
-		}else if(GestioneErroreComportamento.RISPEDISCI.toString().equals(value)){
-			res = GestioneErroreComportamento.RISPEDISCI;
+		for (GestioneErroreComportamento tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration Identified 
@@ -140,33 +141,43 @@ public enum Identified implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static Identified toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static Identified toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		Identified res = null;
-		if(Identified.ACCORDO_COOPERAZIONE.getValue().equals(value)){
-			res = Identified.ACCORDO_COOPERAZIONE;
-		}else if(Identified.ACCORDO_SERVIZIO_PARTE_COMUNE.getValue().equals(value)){
-			res = Identified.ACCORDO_SERVIZIO_PARTE_COMUNE;
-		}else if(Identified.PORTA_DOMINIO.getValue().equals(value)){
-			res = Identified.PORTA_DOMINIO;
-		}else if(Identified.SOGGETTO.getValue().equals(value)){
-			res = Identified.SOGGETTO;
-		}else if(Identified.ACCORDO_SERVIZIO_PARTE_SPECIFICA.getValue().equals(value)){
-			res = Identified.ACCORDO_SERVIZIO_PARTE_SPECIFICA;
+		for (Identified tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		Identified res = null;
-		if(Identified.ACCORDO_COOPERAZIONE.toString().equals(value)){
-			res = Identified.ACCORDO_COOPERAZIONE;
-		}else if(Identified.ACCORDO_SERVIZIO_PARTE_COMUNE.toString().equals(value)){
-			res = Identified.ACCORDO_SERVIZIO_PARTE_COMUNE;
-		}else if(Identified.PORTA_DOMINIO.toString().equals(value)){
-			res = Identified.PORTA_DOMINIO;
-		}else if(Identified.SOGGETTO.toString().equals(value)){
-			res = Identified.SOGGETTO;
-		}else if(Identified.ACCORDO_SERVIZIO_PARTE_SPECIFICA.toString().equals(value)){
-			res = Identified.ACCORDO_SERVIZIO_PARTE_SPECIFICA;
+		for (Identified tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

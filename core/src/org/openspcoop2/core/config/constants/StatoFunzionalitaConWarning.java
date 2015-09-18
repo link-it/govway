@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento StatoFunzionalitaConWarning xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum StatoFunzionalitaConWarning implements IEnumeration , Serializable ,
 	}
 	
 	public static StatoFunzionalitaConWarning toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static StatoFunzionalitaConWarning toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoFunzionalitaConWarning res = null;
-		if(StatoFunzionalitaConWarning.ABILITATO.getValue().equals(value)){
-			res = StatoFunzionalitaConWarning.ABILITATO;
-		}else if(StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(value)){
-			res = StatoFunzionalitaConWarning.DISABILITATO;
-		}else if(StatoFunzionalitaConWarning.WARNING_ONLY.getValue().equals(value)){
-			res = StatoFunzionalitaConWarning.WARNING_ONLY;
+		for (StatoFunzionalitaConWarning tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoFunzionalitaConWarning res = null;
-		if(StatoFunzionalitaConWarning.ABILITATO.toString().equals(value)){
-			res = StatoFunzionalitaConWarning.ABILITATO;
-		}else if(StatoFunzionalitaConWarning.DISABILITATO.toString().equals(value)){
-			res = StatoFunzionalitaConWarning.DISABILITATO;
-		}else if(StatoFunzionalitaConWarning.WARNING_ONLY.toString().equals(value)){
-			res = StatoFunzionalitaConWarning.WARNING_ONLY;
+		for (StatoFunzionalitaConWarning tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

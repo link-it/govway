@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'attributo tipo.tipo xsd (tipo:string) 
@@ -142,37 +143,43 @@ public enum ReplaceKeywordType implements IEnumeration , Serializable , Cloneabl
 	}
 	
 	public static ReplaceKeywordType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static ReplaceKeywordType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		ReplaceKeywordType res = null;
-		if(ReplaceKeywordType.EQUALS.getValue().equals(value)){
-			res = ReplaceKeywordType.EQUALS;
-		}else if(ReplaceKeywordType.EMPTY.getValue().equals(value)){
-			res = ReplaceKeywordType.EMPTY;
-		}else if(ReplaceKeywordType.CONTAINS.getValue().equals(value)){
-			res = ReplaceKeywordType.CONTAINS;
-		}else if(ReplaceKeywordType.STARTS_WITH.getValue().equals(value)){
-			res = ReplaceKeywordType.STARTS_WITH;
-		}else if(ReplaceKeywordType.ENDS_WITH.getValue().equals(value)){
-			res = ReplaceKeywordType.ENDS_WITH;
-		}else if(ReplaceKeywordType.ALL.getValue().equals(value)){
-			res = ReplaceKeywordType.ALL;
+		for (ReplaceKeywordType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		ReplaceKeywordType res = null;
-		if(ReplaceKeywordType.EQUALS.toString().equals(value)){
-			res = ReplaceKeywordType.EQUALS;
-		}else if(ReplaceKeywordType.EMPTY.toString().equals(value)){
-			res = ReplaceKeywordType.EMPTY;
-		}else if(ReplaceKeywordType.CONTAINS.toString().equals(value)){
-			res = ReplaceKeywordType.CONTAINS;
-		}else if(ReplaceKeywordType.STARTS_WITH.toString().equals(value)){
-			res = ReplaceKeywordType.STARTS_WITH;
-		}else if(ReplaceKeywordType.ENDS_WITH.toString().equals(value)){
-			res = ReplaceKeywordType.ENDS_WITH;
-		}else if(ReplaceKeywordType.ALL.toString().equals(value)){
-			res = ReplaceKeywordType.ALL;
+		for (ReplaceKeywordType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

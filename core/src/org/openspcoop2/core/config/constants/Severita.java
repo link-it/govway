@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento Severita xsd (tipo:string) 
@@ -150,53 +151,43 @@ public enum Severita implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static Severita toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static Severita toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		Severita res = null;
-		if(Severita.OFF.getValue().equals(value)){
-			res = Severita.OFF;
-		}else if(Severita.FATAL.getValue().equals(value)){
-			res = Severita.FATAL;
-		}else if(Severita.ERROR_PROTOCOLL.getValue().equals(value)){
-			res = Severita.ERROR_PROTOCOLL;
-		}else if(Severita.ERROR_INTEGRATION.getValue().equals(value)){
-			res = Severita.ERROR_INTEGRATION;
-		}else if(Severita.INFO_PROTOCOLL.getValue().equals(value)){
-			res = Severita.INFO_PROTOCOLL;
-		}else if(Severita.INFO_INTEGRATION.getValue().equals(value)){
-			res = Severita.INFO_INTEGRATION;
-		}else if(Severita.DEBUG_LOW.getValue().equals(value)){
-			res = Severita.DEBUG_LOW;
-		}else if(Severita.DEBUG_MEDIUM.getValue().equals(value)){
-			res = Severita.DEBUG_MEDIUM;
-		}else if(Severita.DEBUG_HIGH.getValue().equals(value)){
-			res = Severita.DEBUG_HIGH;
-		}else if(Severita.ALL.getValue().equals(value)){
-			res = Severita.ALL;
+		for (Severita tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		Severita res = null;
-		if(Severita.OFF.toString().equals(value)){
-			res = Severita.OFF;
-		}else if(Severita.FATAL.toString().equals(value)){
-			res = Severita.FATAL;
-		}else if(Severita.ERROR_PROTOCOLL.toString().equals(value)){
-			res = Severita.ERROR_PROTOCOLL;
-		}else if(Severita.ERROR_INTEGRATION.toString().equals(value)){
-			res = Severita.ERROR_INTEGRATION;
-		}else if(Severita.INFO_PROTOCOLL.toString().equals(value)){
-			res = Severita.INFO_PROTOCOLL;
-		}else if(Severita.INFO_INTEGRATION.toString().equals(value)){
-			res = Severita.INFO_INTEGRATION;
-		}else if(Severita.DEBUG_LOW.toString().equals(value)){
-			res = Severita.DEBUG_LOW;
-		}else if(Severita.DEBUG_MEDIUM.toString().equals(value)){
-			res = Severita.DEBUG_MEDIUM;
-		}else if(Severita.DEBUG_HIGH.toString().equals(value)){
-			res = Severita.DEBUG_HIGH;
-		}else if(Severita.ALL.toString().equals(value)){
-			res = Severita.ALL;
+		for (Severita tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipoTempo xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum TipoTempo implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static TipoTempo toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoTempo toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoTempo res = null;
-		if(TipoTempo.LOCALE.getValue().equals(value)){
-			res = TipoTempo.LOCALE;
-		}else if(TipoTempo.SINCRONIZZATO.getValue().equals(value)){
-			res = TipoTempo.SINCRONIZZATO;
-		}else if(TipoTempo.SCONOSCIUTO.getValue().equals(value)){
-			res = TipoTempo.SCONOSCIUTO;
+		for (TipoTempo tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoTempo res = null;
-		if(TipoTempo.LOCALE.toString().equals(value)){
-			res = TipoTempo.LOCALE;
-		}else if(TipoTempo.SINCRONIZZATO.toString().equals(value)){
-			res = TipoTempo.SINCRONIZZATO;
-		}else if(TipoTempo.SCONOSCIUTO.toString().equals(value)){
-			res = TipoTempo.SCONOSCIUTO;
+		for (TipoTempo tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

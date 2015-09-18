@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento ProfiloCollaborazione xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum ProfiloCollaborazione implements IEnumeration , Serializable , Clone
 	}
 	
 	public static ProfiloCollaborazione toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static ProfiloCollaborazione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		ProfiloCollaborazione res = null;
-		if(ProfiloCollaborazione.ONEWAY.getValue().equals(value)){
-			res = ProfiloCollaborazione.ONEWAY;
-		}else if(ProfiloCollaborazione.SINCRONO.getValue().equals(value)){
-			res = ProfiloCollaborazione.SINCRONO;
-		}else if(ProfiloCollaborazione.ASINCRONO_SIMMETRICO.getValue().equals(value)){
-			res = ProfiloCollaborazione.ASINCRONO_SIMMETRICO;
-		}else if(ProfiloCollaborazione.ASINCRONO_ASIMMETRICO.getValue().equals(value)){
-			res = ProfiloCollaborazione.ASINCRONO_ASIMMETRICO;
+		for (ProfiloCollaborazione tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		ProfiloCollaborazione res = null;
-		if(ProfiloCollaborazione.ONEWAY.toString().equals(value)){
-			res = ProfiloCollaborazione.ONEWAY;
-		}else if(ProfiloCollaborazione.SINCRONO.toString().equals(value)){
-			res = ProfiloCollaborazione.SINCRONO;
-		}else if(ProfiloCollaborazione.ASINCRONO_SIMMETRICO.toString().equals(value)){
-			res = ProfiloCollaborazione.ASINCRONO_SIMMETRICO;
-		}else if(ProfiloCollaborazione.ASINCRONO_ASIMMETRICO.toString().equals(value)){
-			res = ProfiloCollaborazione.ASINCRONO_ASIMMETRICO;
+		for (ProfiloCollaborazione tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

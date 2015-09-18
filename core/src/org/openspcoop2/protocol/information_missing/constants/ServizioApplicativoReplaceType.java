@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento ServizioApplicativoReplaceType xsd (tipo:string) 
@@ -138,29 +139,43 @@ public enum ServizioApplicativoReplaceType implements IEnumeration , Serializabl
 	}
 	
 	public static ServizioApplicativoReplaceType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static ServizioApplicativoReplaceType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		ServizioApplicativoReplaceType res = null;
-		if(ServizioApplicativoReplaceType.RIFERIMENTO.getValue().equals(value)){
-			res = ServizioApplicativoReplaceType.RIFERIMENTO;
-		}else if(ServizioApplicativoReplaceType.CONNETTORE.getValue().equals(value)){
-			res = ServizioApplicativoReplaceType.CONNETTORE;
-		}else if(ServizioApplicativoReplaceType.CREDENZIALI_ACCESSO_PDD.getValue().equals(value)){
-			res = ServizioApplicativoReplaceType.CREDENZIALI_ACCESSO_PDD;
-		}else if(ServizioApplicativoReplaceType.ALLINEA_CREDENZIALI_PD.getValue().equals(value)){
-			res = ServizioApplicativoReplaceType.ALLINEA_CREDENZIALI_PD;
+		for (ServizioApplicativoReplaceType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		ServizioApplicativoReplaceType res = null;
-		if(ServizioApplicativoReplaceType.RIFERIMENTO.toString().equals(value)){
-			res = ServizioApplicativoReplaceType.RIFERIMENTO;
-		}else if(ServizioApplicativoReplaceType.CONNETTORE.toString().equals(value)){
-			res = ServizioApplicativoReplaceType.CONNETTORE;
-		}else if(ServizioApplicativoReplaceType.CREDENZIALI_ACCESSO_PDD.toString().equals(value)){
-			res = ServizioApplicativoReplaceType.CREDENZIALI_ACCESSO_PDD;
-		}else if(ServizioApplicativoReplaceType.ALLINEA_CREDENZIALI_PD.toString().equals(value)){
-			res = ServizioApplicativoReplaceType.ALLINEA_CREDENZIALI_PD;
+		for (ServizioApplicativoReplaceType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento statoType xsd (tipo:string) 
@@ -136,25 +137,43 @@ public enum StatoType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static StatoType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static StatoType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoType res = null;
-		if(StatoType.FINALE.getValue().equals(value)){
-			res = StatoType.FINALE;
-		}else if(StatoType.OPERATIVO.getValue().equals(value)){
-			res = StatoType.OPERATIVO;
-		}else if(StatoType.BOZZA.getValue().equals(value)){
-			res = StatoType.BOZZA;
+		for (StatoType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		StatoType res = null;
-		if(StatoType.FINALE.toString().equals(value)){
-			res = StatoType.FINALE;
-		}else if(StatoType.OPERATIVO.toString().equals(value)){
-			res = StatoType.OPERATIVO;
-		}else if(StatoType.BOZZA.toString().equals(value)){
-			res = StatoType.BOZZA;
+		for (StatoType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento FruitoreReplaceType xsd (tipo:string) 
@@ -132,17 +133,43 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 	}
 	
 	public static FruitoreReplaceType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static FruitoreReplaceType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		FruitoreReplaceType res = null;
-		if(FruitoreReplaceType.STATO_ARCHIVIO.getValue().equals(value)){
-			res = FruitoreReplaceType.STATO_ARCHIVIO;
+		for (FruitoreReplaceType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		FruitoreReplaceType res = null;
-		if(FruitoreReplaceType.STATO_ARCHIVIO.toString().equals(value)){
-			res = FruitoreReplaceType.STATO_ARCHIVIO;
+		for (FruitoreReplaceType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"]] not found");
 		}
 		return res;
 	}
