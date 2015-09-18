@@ -1,3 +1,12 @@
+2015-09-18  Andrea Poli <apoli@link.it>
+
+	* [Pdd,PddConsole]
+	Aggiunta funzionalità OP-413
+	Migliorato engine di importazione dei package:
+	- Migliorati controlli sulle dipendenze degli oggetti, controlli introdotti in una classe di utilità
+	- Aggiunta funzionalità di download del resoconto di una importazione
+	- Aggiunto supporto per eliminazione degli oggetti presenti in un package 'openspcoop' 
+
 2015-09-15  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
