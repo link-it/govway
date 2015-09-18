@@ -33,6 +33,15 @@ import java.util.Map;
  */
 public abstract class AbstractJDBCFetch implements IJDBCFetch {
 
+	private char charDefault;
+	private boolean booleanDefault;
+	private byte byteDefault;
+	private short shortDefault; 
+	private int intDefault;
+	private long longDefault;
+	private double doubleDefault;
+	private float floatDefault;
+	
 	protected Object getObjectFromMap(Map<String,Object> map,String name){
 		if(map==null){
 			return null;
@@ -59,7 +68,44 @@ public abstract class AbstractJDBCFetch implements IJDBCFetch {
 //		}
 		Method m = o.getClass().getMethod(nomeMetodo, tipoParametroMetodo);
 //		System.out.println("Invoco Metodo ["+nomeMetodo+"] Object["+o.getClass().getName()+"] valore["+value+"]");
-		m.invoke(o, value);
+		
+		if(value!=null){
+			m.invoke(o, value);
+		}
+		else{
+			
+			// NOTA: il set va fatto comunque per annullare il valore precedente.
+		
+			if(tipoParametroMetodo.getName().equals(char.class.getName())){
+				m.invoke(o, this.charDefault);
+			}
+			else if(tipoParametroMetodo.getName().equals(boolean.class.getName())){
+				m.invoke(o, this.booleanDefault);
+			}
+			else if(tipoParametroMetodo.getName().equals(byte.class.getName())){
+				m.invoke(o, this.byteDefault);		
+			}
+			else if(tipoParametroMetodo.getName().equals(short.class.getName())){
+				m.invoke(o, this.shortDefault);		
+			}
+			else if(tipoParametroMetodo.getName().equals(int.class.getName())){
+				m.invoke(o, this.intDefault);		
+			}
+			else if(tipoParametroMetodo.getName().equals(long.class.getName())){
+				m.invoke(o, this.longDefault);		
+			}
+			else if(tipoParametroMetodo.getName().equals(double.class.getName())){
+				m.invoke(o, this.doubleDefault);	
+			}
+			else if(tipoParametroMetodo.getName().equals(float.class.getName())){
+				m.invoke(o, this.floatDefault);	
+			}
+			else{
+				m.invoke(o, value);
+			}
+			
+		}
+		
 	}
 
 }
