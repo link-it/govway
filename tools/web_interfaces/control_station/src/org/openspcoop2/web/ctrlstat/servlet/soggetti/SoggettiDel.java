@@ -25,7 +25,6 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,13 +34,15 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -94,8 +95,7 @@ public final class SoggettiDel extends Action {
 			// soggInUsoPorteDel = "";
 			// String nomeprov = "", tipoprov = "";
 			boolean isInUso = false;
-			HashMap<String, ArrayList<String>> whereIsInUso = new HashMap<String, ArrayList<String>>();
-	
+			
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 	
 			soggettiHelper.makeMenu();
@@ -110,59 +110,29 @@ public final class SoggettiDel extends Action {
 
 				Soggetto soggettoRegistro = null;
 				org.openspcoop2.core.config.Soggetto soggettoConfig = null;
-				String tipoNome = null;
+				IDSoggetto idSoggetto = null;
 				if(soggettiCore.isRegistroServiziLocale()){
 					soggettoRegistro = soggettiCore.getSoggettoRegistro(Long.parseLong(idsToRemove.get(i)));
-					soggettoConfig = soggettiCore.getSoggetto(new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome()));
+					idSoggetto = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
+					soggettoConfig = soggettiCore.getSoggetto(idSoggetto);
 				}
 				else{
 					soggettoConfig = soggettiCore.getSoggetto(Long.parseLong(idsToRemove.get(i)));
+					idSoggetto = new IDSoggetto(soggettoConfig.getTipo(), soggettoConfig.getNome());
 				}
 				boolean soggettoInUso = false;
+				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				if(soggettiCore.isRegistroServiziLocale()){
 					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoRegistro, whereIsInUso);
-					tipoNome = soggettoRegistro.getTipo() + "/" + soggettoRegistro.getNome();
 				}else{
 					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoConfig, whereIsInUso);
-					tipoNome = soggettoConfig.getTipo() + "/" + soggettoConfig.getNome();
 				}
 
 
 				if (soggettoInUso) {
-					Set<String> keys = whereIsInUso.keySet();
 					isInUso = true;
-					msg += tipoNome + " non rimosso perch&egrave; :<br>";
-					for (String key : keys) {
-						ArrayList<String> messages = whereIsInUso.get(key);
-
-						if (key.equals("Fruitore") && (messages.size() > 0)) {
-							msg += "- fruitore di Servizi: " + messages.toString() + "<BR>";
-						}
-						if (key.equals("Erogatore") && (messages.size() > 0)) {
-							msg += "- erogatore di Servizi: " + messages.toString() + "<BR>";
-						}
-						if (key.equals("Porte Delegate") && (messages.size() > 0)) {
-							msg += "- in uso in Porte Delegate: " + messages.toString() + "<BR>";
-						}
-						if (key.equals("Porte Applicative") && (messages.size() > 0)) {
-							msg += "- in uso in Porte Applicative: " + messages.toString() + "<BR>";
-						}
-						if (key.equals("Servizi Applicativi") && (messages.size() > 0)) {
-							msg += "- in uso in Servizi Applicativi: " + messages.toString() + "<BR>";
-						}
-						if (key.equals("Accordi") && (messages.size() > 0)) {
-							msg += "- referente in Accordi: " + messages.toString() + "<BR>";
-						}
-						if (key.equals("Accordi Cooperazione") && (messages.size() > 0)) {
-							msg += "- referente in Accordi Cooperazione: " + messages.toString() + "<BR>";
-						}
-						if (key.equals("Soggetti Partecipanti") && (messages.size() > 0)) {
-							msg += "- partecipante in Accordi Cooperazione: " + messages.toString() + "<BR>";
-						}
-
-					}// chiudo for
-
-					msg += "<br>";
+					msg += DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 
 				} else {
 					SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);

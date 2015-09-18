@@ -21,8 +21,8 @@
 
 package org.openspcoop2.core.registry.driver;
 
+import org.openspcoop2.core.commons.AccordiUtils;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 
 /**
@@ -144,10 +144,7 @@ public class IDAccordoCooperazioneFactory {
 	}
 	
 	public boolean versioneNonDefinita(String value){
-		if(value==null || CostantiRegistroServizi.VERSIONE_DEFAULT.equals(value))
-			return true;
-		else
-			return false;
+		return AccordiUtils.versioneNonDefinita(value);
 	}
 	
 }

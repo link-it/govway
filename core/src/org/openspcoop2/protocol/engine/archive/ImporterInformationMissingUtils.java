@@ -63,7 +63,6 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
-import org.openspcoop2.protocol.sdk.archive.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
@@ -1153,7 +1152,11 @@ public class ImporterInformationMissingUtils {
 			if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune().trim())){
 				try{
 					aspc = this.registryReader.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
-				}catch(RegistryNotFound notFound){
+					if(aspc==null){
+						throw new Exception("getAccordoServizioParteComune return null"); 
+					}
+				//}catch(RegistryNotFound notFound){
+				}catch(Exception notFound){ // Se non esiste il soggetto, il metodo sopra ritorna null, poichè il driver non ritorna notFound. Questo succede se il soggetto è nell'archivio
 					// verifico che non esista nell'archivio che sto importanto
 					boolean found = false;
 					if(this.archive.getAccordiServizioParteComune()!=null && this.archive.getAccordiServizioParteComune().size()>0){
@@ -1181,7 +1184,7 @@ public class ImporterInformationMissingUtils {
 						}
 					}
 					if(!found){
-						throw new ProtocolException("Accordo di Servizio Parte Comune ["+asps.getAccordoServizioParteComune()+"], riferito dall'archivio, non esiste");
+						throw new ProtocolException("Accordo di Servizio Parte Comune ["+asps.getAccordoServizioParteComune()+"], riferito dall'archivio, non esiste",notFound);
 					}
 				}
 			}
@@ -1560,7 +1563,11 @@ public class ImporterInformationMissingUtils {
 			AccordoServizioParteSpecifica accordoAsps = null;
 			try{
 				accordoAsps = this.registryReader.getAccordoServizioParteSpecifica(asps);
-			}catch(RegistryNotFound notFound){
+				if(accordoAsps==null){
+					throw new Exception("getAccordoServizioParteSpecifica return null"); 
+				}
+			//}catch(RegistryNotFound notFound){
+			}catch(Exception notFound){ // Se non esiste il soggetto, il metodo sopra ritorna null, poichè il driver non ritorna notFound. Questo succede se il soggetto è nell'archivio
 				// verifico che non esista nell'archivio che sto importanto
 				boolean found = false;
 				if(this.archive.getAccordiServizioParteSpecifica()!=null && this.archive.getAccordiServizioParteSpecifica().size()>0){
@@ -1575,7 +1582,7 @@ public class ImporterInformationMissingUtils {
 					}
 				}
 				if(!found){
-					throw new ProtocolException("Accordo di Servizio Parte Specifica ["+asps+"], riferito dall'archivio fruitore, non esiste");
+					throw new ProtocolException("Accordo di Servizio Parte Specifica ["+asps+"], riferito dall'archivio fruitore, non esiste",notFound);
 				}
 			}
 			
@@ -1585,7 +1592,11 @@ public class ImporterInformationMissingUtils {
 			AccordoServizioParteComune aspc = null;
 			try{
 				aspc = this.registryReader.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(accordoAsps.getAccordoServizioParteComune()));
-			}catch(RegistryNotFound notFound){
+				if(aspc==null){
+					throw new Exception("getAccordoServizioParteComune return null"); 
+				}
+			//}catch(RegistryNotFound notFound){
+			}catch(Exception notFound){ // Se non esiste il soggetto, il metodo sopra ritorna null, poichè il driver non ritorna notFound. Questo succede se il soggetto è nell'archivio
 				// verifico che non esista nell'archivio che sto importanto
 				boolean found = false;
 				if(this.archive.getAccordiServizioParteComune()!=null && this.archive.getAccordiServizioParteComune().size()>0){
@@ -1613,7 +1624,8 @@ public class ImporterInformationMissingUtils {
 					}
 				}
 				if(!found){
-					throw new ProtocolException("Accordo di Servizio Parte Comune ["+accordoAsps.getAccordoServizioParteComune()+"], riferito dall'accordo parte specifica dell'archivio fruitore, non esiste");
+					throw new ProtocolException("Accordo di Servizio Parte Comune ["+accordoAsps.getAccordoServizioParteComune()+
+							"], riferito dall'accordo parte specifica dell'archivio fruitore, non esiste",notFound);
 				}
 			}
 			

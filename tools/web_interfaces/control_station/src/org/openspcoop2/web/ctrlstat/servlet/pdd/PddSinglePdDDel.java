@@ -33,6 +33,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -84,9 +85,11 @@ public final class PddSinglePdDDel extends Action {
 			pddHelper.makeMenu();
 
 			PortaDominio pdd = null;
-			ArrayList<String> infos = new ArrayList<String>();
 			StringBuffer pddOperative = new StringBuffer();
-			StringBuffer pddInUso = new StringBuffer();
+			
+			boolean isInUso = false;
+			String msg = "";
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 				
 				pdd = pddCore.getPortaDominio(idsToRemove.get(i));
@@ -97,22 +100,28 @@ public final class PddSinglePdDDel extends Action {
 						pddOperative.append(",");
 					pddOperative.append(pddControlStation.getNome());
 				}
-				else if (pddCore.isPddInUsoSinglePdd(pdd, infos)) {
-					if(pddInUso.length()>0)
-						pddInUso.append(",");
-					pddInUso.append(pddControlStation.getNome());
-				} else {
-					pddCore.performDeleteOperation(userLogin, pddHelper.smista(), pdd);
+				else{
+					ArrayList<String> infos = new ArrayList<String>();
+					if (pddCore.isPddInUso(pddControlStation, infos)) {
+						isInUso = true;
+						msg += DBOggettiInUsoUtils.toString(pdd.getNome(), infos, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+
+					} else {
+						pddCore.performDeleteOperation(userLogin, pddHelper.smista(), pdd);
+					}
 				}
+				
 			}
 			
-			if(pddOperative.length()>0 && pddInUso.length()>0){
-				pd.setMessage("Porta di Dominio ["+pddOperative+"] non rimuovibile poichè rappresenta la Porta di Dominio locale<br>"+
-						"Porte di Dominio ["+pddInUso+"] non rimosse perch&egrave; associate ad uno o pi&ugrave; Soggetti: " + infos.toString()+"<br>");
-			}else if(pddOperative.length()>0){
-				pd.setMessage("Porta di Dominio ["+pddOperative+"] non rimuovibile poichè rappresenta la Porta di Dominio locale<br>");
-			}else if(pddInUso.length()>0){
-				pd.setMessage("Porte di Dominio ["+pddInUso+"] non rimosse perch&egrave; associate ad uno o pi&ugrave; Soggetti: " + infos.toString()+"<br>");
+			if(pddOperative.length()>0){
+				isInUso = true;
+				msg += "La Porta di Dominio ["+pddOperative+"] è non rimuovibile poichè rappresenta la Porta di Dominio locale";
+				msg += "<br>";
+			}
+			
+			if (isInUso) {
+				pd.setMessage(msg);
 			}
 			
 

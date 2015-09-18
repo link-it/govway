@@ -305,6 +305,34 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	
 	
+	public Connection getConnection() throws DriverConfigurazioneException{
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConnection] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+		
+		return con;
+	}
+	
+	public void releaseConnection(Connection con){
+		if (this.atomica) {
+			try {
+				con.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	
 	
 	
 	public List<List<Object>> readCustom(ISQLQueryObject sqlQueryObject, List<Class<?>> returnTypes, List<JDBCObject> paramTypes) throws DriverConfigurazioneException
@@ -639,6 +667,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
+		
 	/**
 	 * Cancella un Soggetto e il Connettore
 	 * 

@@ -129,6 +129,23 @@ public final class Importer extends Action {
 			String postBackElementName = ServletUtils.getPostBackElementName(request);
 			
 			
+			// Indicazione se devo effettuare una delete od una import
+			boolean deleter = false;
+			String parametroModalitaFunzionamento = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);
+			if(parametroModalitaFunzionamento!=null){
+				deleter = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA.equals(parametroModalitaFunzionamento.trim());
+			}
+			else{
+				// default
+				parametroModalitaFunzionamento = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
+			}
+			DataElement modalitaDataElement = new DataElement();
+			modalitaDataElement.setLabel(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);
+			modalitaDataElement.setValue(parametroModalitaFunzionamento);
+			modalitaDataElement.setType(DataElementType.HIDDEN);
+			modalitaDataElement.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);
+			
+			
 			// parametri vari
 			this.filePath = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH);
 			if(this.filePath==null || "".equals(this.filePath)){
@@ -287,19 +304,26 @@ public final class Importer extends Action {
 					this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo == null){
 				
 				// setto la barra del titolo
+				String nomeFunzionalita = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
+				if(deleter){
+					nomeFunzionalita = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;	
+				}
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
-						new Parameter(ArchiviCostanti.LABEL_ARCHIVI_IMPORT,null));
+						new Parameter(nomeFunzionalita,null));
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
+				dati.addElement(modalitaDataElement);
+				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
 						protocolli, this.protocollo, 
 						importModes, this.importMode, 
-						importTypes, this.importType);
+						importTypes, this.importType,
+						deleter);
 				
 				pd.setDati(dati);
 
@@ -491,6 +515,8 @@ public final class Importer extends Action {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
+				dati.addElement(modalitaDataElement);
+				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				if(importInformationMissingException!=null){
@@ -515,7 +541,8 @@ public final class Importer extends Action {
 					archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
 							protocolli, this.protocollo, 
 							importModes, this.importMode, 
-							importTypes, this.importType);
+							importTypes, this.importType,
+							deleter);
 				}
 				
 				pd.setDati(dati);
@@ -558,10 +585,18 @@ public final class Importer extends Action {
 			}
 			*/
 			
-			String esito = archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
-					userLogin, archiviHelper.smista(), 
-					this.updateEnabled, nomePddOperativa);
+			String esito = null;
+			if(deleter){
+				esito = archiviCore.deleteArchive(archive, archiveMode, protocolloEffettivo, 
+						userLogin, archiviHelper.smista());
+			}else{
+				esito = archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
+						userLogin, archiviHelper.smista(), 
+						this.updateEnabled, nomePddOperativa);
+			}
 									
+			dati.addElement(modalitaDataElement);
+			
 			DataElement de = new DataElement();
 			de.setLabel("Riepilogo Configurazioni Effettuate");
 			de.setType(DataElementType.TITLE);

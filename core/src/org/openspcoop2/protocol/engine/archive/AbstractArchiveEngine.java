@@ -21,8 +21,12 @@
 
 package org.openspcoop2.protocol.engine.archive;
 
+import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -104,7 +108,28 @@ public abstract class AbstractArchiveEngine {
 	public void updatePortaDominio(PortaDominio pdd) throws DriverRegistroServiziException {
 		this.driverRegistroServizi.updatePortaDominio(pdd);
 	}
+	
+	public void deletePortaDominio(PortaDominio pdd) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deletePortaDominio(pdd);
+	}
+	
+	public boolean isPddInUso(String nomePortaDominio, List<String> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection();
+			return DBOggettiInUsoUtils.isPddInUso(con, this.driverRegistroServizi.getTipoDB(), nomePortaDominio, whereIsInUso);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
 		
+	
 	
 	// --- Soggetti Registro ---
 	
@@ -126,6 +151,26 @@ public abstract class AbstractArchiveEngine {
 	
 	public void updateSoggettoRegistro(org.openspcoop2.core.registry.Soggetto soggetto) throws DriverRegistroServiziException {
 		this.driverRegistroServizi.updateSoggetto(soggetto);
+	}
+	
+	public void deleteSoggettoRegistro(org.openspcoop2.core.registry.Soggetto soggetto) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteSoggetto(soggetto);
+	}
+	
+	public boolean isSoggettoRegistroInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection();
+			return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.driverRegistroServizi.getTipoDB(), idSoggetto, whereIsInUso);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
 	}
 	
 	
@@ -152,6 +197,26 @@ public abstract class AbstractArchiveEngine {
 		this.driverConfigurazione.updateSoggetto(soggetto);
 	}
 	
+	public void deleteSoggettoConfigurazione(org.openspcoop2.core.config.Soggetto soggetto) throws DriverConfigurazioneException {
+		this.driverConfigurazione.deleteSoggetto(soggetto);
+	}
+	
+	public boolean isSoggettoConfigurazioneInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
+		Connection con = null;
+		try{
+			con = this.driverConfigurazione.getConnection();
+			return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.driverConfigurazione.getTipoDB(), idSoggetto, whereIsInUso);
+		}
+		catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverConfigurazione.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
 	
 	
 	// --- Servizi Applicativi ---
@@ -174,6 +239,27 @@ public abstract class AbstractArchiveEngine {
 	
 	public void updateServizioApplicativo(org.openspcoop2.core.config.ServizioApplicativo servizioApplicativo) throws DriverConfigurazioneException {
 		this.driverConfigurazione.updateServizioApplicativo(servizioApplicativo);
+	}
+	
+	public void deleteServizioApplicativo(org.openspcoop2.core.config.ServizioApplicativo servizioApplicativo) throws DriverConfigurazioneException {
+		this.driverConfigurazione.deleteServizioApplicativo(servizioApplicativo);
+	}
+	
+	public boolean isServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo, 
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
+		Connection con = null;
+		try{
+			con = this.driverConfigurazione.getConnection();
+			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.driverConfigurazione.getTipoDB(), idServizioApplicativo, whereIsInUso, true);
+		}
+		catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverConfigurazione.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
 	}
 	
 	
@@ -204,8 +290,29 @@ public abstract class AbstractArchiveEngine {
 		this.driverRegistroServizi.updateAccordoCooperazione(accordoCooperazione);
 	}
 	
+	public void deleteAccordoCooperazione(AccordoCooperazione accordoCooperazione) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteAccordoCooperazione(accordoCooperazione);
+	}
+	
 	public void validaStatoAccordoCooperazione(AccordoCooperazione accordoCooperazione) throws ValidazioneStatoPackageException {
 		this.driverRegistroServizi.validaStatoAccordoCooperazione(accordoCooperazione);
+	}
+	
+	public boolean isAccordoCooperazioneInUso(IDAccordoCooperazione idAccordo, 
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection();
+			return DBOggettiInUsoUtils.isAccordoCooperazioneInUso(con, this.driverRegistroServizi.getTipoDB(), idAccordo, whereIsInUso);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
 	}
 	
 	
@@ -235,8 +342,29 @@ public abstract class AbstractArchiveEngine {
 		this.driverRegistroServizi.updateAccordoServizioParteComune(accordoServizioParteComune);
 	}
 	
+	public void deleteAccordoServizioParteComune(AccordoServizioParteComune accordoServizioParteComune) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteAccordoServizioParteComune(accordoServizioParteComune);
+	}
+	
 	public void validaStatoAccordoServizioParteComune(AccordoServizioParteComune accordoServizioParteComune,boolean utilizzoAzioniDiretteInAccordoAbilitato) throws ValidazioneStatoPackageException {
 		this.driverRegistroServizi.validaStatoAccordoServizio(accordoServizioParteComune,utilizzoAzioniDiretteInAccordoAbilitato);
+	}
+	
+	public boolean isAccordoServizioParteComuneInUso(IDAccordo idAccordo, 
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection();
+			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.driverRegistroServizi.getTipoDB(), idAccordo, whereIsInUso);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
 	}
 	
 	
@@ -278,6 +406,10 @@ public abstract class AbstractArchiveEngine {
 		this.driverRegistroServizi.updateAccordoServizioParteSpecifica(accordoServizioParteSpecifica);
 	}
 	
+	public void deleteAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteAccordoServizioParteSpecifica(accordoServizioParteSpecifica);
+	}
+	
 	public void validaStatoAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica) throws ValidazioneStatoPackageException {
 		this.driverRegistroServizi.validaStatoAccordoServizioParteSpecifica(accordoServizioParteSpecifica);
 	}
@@ -301,6 +433,41 @@ public abstract class AbstractArchiveEngine {
 				isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto);
 	}
 	
+	public boolean isAccordoServizioParteSpecificaInUso(IDAccordo idAccordo, 
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection();
+			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.driverRegistroServizi.getTipoDB(), idAccordo, whereIsInUso, null);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean isAccordoServizioParteSpecificaInUso(IDServizio idServizio, 
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection();
+			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.driverRegistroServizi.getTipoDB(), idServizio, whereIsInUso, null);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	
 	
 	// --- Politiche di Sicurezza ---
 	
@@ -310,6 +477,10 @@ public abstract class AbstractArchiveEngine {
 	
 	public List<IDServizioApplicativo> getAllIdServiziApplicativiAutorizzati(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.driverRegistroServizi.getAllIdServiziApplicativiAutorizzati(idAccordoServizioParteSpecifica, idFruitore);
+	}
+	
+	public void deleteServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteServizioApplicativoAutorizzato(idAccordoServizioParteSpecifica, idFruitore, nomeServizioApplicativo);
 	}
 		
 	
@@ -338,6 +509,10 @@ public abstract class AbstractArchiveEngine {
 	
 	public void createPortaDelegata(org.openspcoop2.core.config.PortaDelegata portaDelegata) throws DriverConfigurazioneException {
 		this.driverConfigurazione.createPortaDelegata(portaDelegata);
+	}
+	
+	public void deletePortaDelegata(org.openspcoop2.core.config.PortaDelegata portaDelegata) throws DriverConfigurazioneException {
+		this.driverConfigurazione.deletePortaDelegata(portaDelegata);
 	}
 	
 	public void updatePortaDelegata(org.openspcoop2.core.config.PortaDelegata portaDelegata) throws DriverConfigurazioneException {
@@ -375,6 +550,10 @@ public abstract class AbstractArchiveEngine {
 	
 	public void createPortaApplicativa(org.openspcoop2.core.config.PortaApplicativa portaApplicativa) throws DriverConfigurazioneException {
 		this.driverConfigurazione.createPortaApplicativa(portaApplicativa);
+	}
+	
+	public void deletePortaApplicativa(org.openspcoop2.core.config.PortaApplicativa portaApplicativa) throws DriverConfigurazioneException {
+		this.driverConfigurazione.deletePortaApplicativa(portaApplicativa);
 	}
 	
 	public void updatePortaApplicativa(org.openspcoop2.core.config.PortaApplicativa portaApplicativa) throws DriverConfigurazioneException {

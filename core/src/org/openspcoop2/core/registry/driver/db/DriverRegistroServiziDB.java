@@ -45,6 +45,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.IDriverWS;
@@ -239,6 +240,35 @@ IDriverWS ,IMonitoraggioRisorsa{
 		DriverRegistroServiziDB_LIB.setTipoDB(tipoDB);
 
 	}
+	
+	
+	
+	public Connection getConnection() throws DriverRegistroServiziException{
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+				con.setAutoCommit(false);
+			} catch (SQLException e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getConnection] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+		
+		return con;
+	}
+	
+	public void releaseConnection(Connection con){
+		if (this.atomica) {
+			try {
+				con.close();
+			} catch (Exception e) {
+			}
+		}
+	}
 
 
 
@@ -319,7 +349,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				con = this.globalConnection;
 
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoCooperazione(idAccordo, con, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoCooperazione(idAccordo, con, this.tipoDB);
 			if(idAccordoLong<=0){
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getAccordoCooperazione] Accordo non trovato (id:"+idAccordoLong+")");
 			}
@@ -930,7 +960,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		this.log.debug("operazione atomica = " + this.atomica);
 		try {
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoCooperazione(idAccordo, connection, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoCooperazione(idAccordo, connection, this.tipoDB);
 			if (idAccordoLong <= 0)
 				return false;
 			else
@@ -1120,7 +1150,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				con = this.globalConnection;
 
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, con, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordo, con, this.tipoDB);
 			if(idAccordoLong<=0){
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getAccordoServizioParteComune] Accordo non trovato (id:"+idAccordo+")");
 			}
@@ -2243,7 +2273,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				soggettoReferente = new IDSoggetto(accordoServizio.getSoggettoReferente().getTipo(),accordoServizio.getSoggettoReferente().getNome());
 			}
 			IDAccordo idAccordoObject = this.idAccordoFactory.getIDAccordoFromValues(accordoServizio.getNome(),soggettoReferente,accordoServizio.getVersione());
-			long idAccordo = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordoObject, connection, this.tipoDB);
+			long idAccordo = DBUtils.getIdAccordoServizioParteComune(idAccordoObject, connection, this.tipoDB);
 			if (idAccordo<=0) {
 				error = true;
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoServizio] non riesco a trovare l'id del'Accordo inserito");
@@ -2380,7 +2410,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB);
 			if (idAccordoLong <= 0)
 				return false;
 			else
@@ -2476,7 +2506,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			connection = this.globalConnection;
 
 		try {
-			return existsAccordoServizioParteComuneAzione(nome, DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB));
+			return existsAccordoServizioParteComuneAzione(nome, DBUtils.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB));
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException(e);
 		} finally {
@@ -2638,7 +2668,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			connection = this.globalConnection;
 
 		try {
-			return existsAccordoServizioParteComunePorttype(nome, DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB));
+			return existsAccordoServizioParteComunePorttype(nome, DBUtils.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB));
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException(e);
 		} finally {
@@ -2808,8 +2838,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			connection = this.globalConnection;
 
 		try {
-			long idAccordo = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idPortType.getIdAccordo(), connection, this.tipoDB);
-			return existsAccordoServizioParteComunePorttypeOperation(nome, DriverRegistroServiziDB_LIB.getIdPortType(idAccordo,idPortType.getNome(), connection));
+			long idAccordo = DBUtils.getIdAccordoServizioParteComune(idPortType.getIdAccordo(), connection, this.tipoDB);
+			return existsAccordoServizioParteComunePorttypeOperation(nome, DBUtils.getIdPortType(idAccordo,idPortType.getNome(), connection));
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException(e);
 		} finally {
@@ -2970,7 +3000,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			long idAccordoLong = -1;
 			try{
-				idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordoAttualeInseritoDB, connection,this.tipoDB);
+				idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordoAttualeInseritoDB, connection,this.tipoDB);
 			}catch(Exception e){
 				if(accordoServizio.getOldIDAccordoForUpdate()!=null){
 					// Provo con soggetto attuale
@@ -2983,7 +3013,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						idAccordoAttualeInseritoDB = this.idAccordoFactory.getIDAccordoFromValues(idAccordoAttualeInseritoDB.getNome(),null,
 								idAccordoAttualeInseritoDB.getVersione());
 					}
-					idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordoAttualeInseritoDB, connection,this.tipoDB);
+					idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordoAttualeInseritoDB, connection,this.tipoDB);
 				}else{
 					throw e;
 				}
@@ -3518,7 +3548,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 
 			IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(nome,BeanUtilities.getSoggettoReferenteID(accordoServizio.getSoggettoReferente()),accordoServizio.getVersione());
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB);
 			if (idAccordoLong <= 0)
 				throw new DriverRegistroServiziException("Impossibile recuperare l'id dell'Accordo di Servizio : " + nome);
 
@@ -3879,6 +3909,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		}
 	}
+
 
 
 	/**
@@ -5965,7 +5996,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				return false;
 			}
 
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteSpecifica(idAccordo, connection, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteSpecifica(idAccordo, connection, this.tipoDB);
 			if (idAccordoLong <= 0)
 				return false;
 			else
@@ -7085,7 +7116,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				nomeSoggEr = sogErogatore.getNome();
 				tipoSoggEr = sogErogatore.getTipo();
 
-				longIdAccordoServizioParteSpecifica = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica, con, this.tipoDB);
+				longIdAccordoServizioParteSpecifica = DBUtils.getIdAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica, con, this.tipoDB);
 				if (longIdAccordoServizioParteSpecifica <= 0)
 					throw new DriverRegistroServiziNotFound("Accordo di Servizio Parte Specifica ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
 				break;
@@ -7100,7 +7131,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// per settare il nome del servizio devo accedere al db
 				// tramite id del soggetto erogatore e id dell-accordo (che lo
 				// recupero tramite il nomeAccordo passato come parametro)
-				longIdAccordoServizioParteComune = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordoServizioParteComune, con, this.tipoDB);
+				longIdAccordoServizioParteComune = DBUtils.getIdAccordoServizioParteComune(idAccordoServizioParteComune, con, this.tipoDB);
 
 				// Prendo l'id del soggetto
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -9859,11 +9890,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	/**
 	 * Controlla se l'accordo e' in uso
 	 */
-	public boolean isAccordoInUso(AccordoServizioParteComune as,Map<ErrorsHandlerCostant,String> whereIsInUso) throws DriverRegistroServiziException {
+	public boolean isAccordoInUso(AccordoServizioParteComune as,Map<ErrorsHandlerCostant,List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		String nomeMetodo = "isAccordoInUso";
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
 
 		if (this.atomica) {
 			try {
@@ -9880,65 +9909,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-			boolean isInUso = false;
-			Vector<String> nomiServizi = new Vector<String>();
-			//Vector<String> nomiServiziApplicativi = new Vector<String>();
-			//controllo se in uso in servizi
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id_accordo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			String queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, as.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()){
-				isInUso=true;
-				String nomeServizio = risultato.getString("tipo_soggetto")+"/"+risultato.getString("nome_soggetto")+" - "+risultato.getString("tipo_servizio")+"/"+risultato.getString("nome_servizio");
-				nomiServizi.add(nomeServizio);
-			}
-			risultato.close();
-			stmt.close();
-
-			//controllo servizi applicativi
-			//questo controllo avviene nel driver controlstation in quanto a questo livello non sono presenti
-			//informazioni sui servizi applicativi
-			/*
-			String pattern = "SELECT * FROM {0},{1} WHERE {0}.id_accordo=? AND {0}.id_servizio_applicativo={1}.id";
-			queryString= MessageFormat.format(pattern, CostantiDB.RUOLI_SA,CostantiDB.SERVIZI_APPLICATIVI);
-			stmt=con.prepareStatement(queryString);
-			stmt.setLong(1, as.getId());
-			risultato=stmt.executeQuery();
-			while(risultato.next()){
-				isInUso=true;
-				String nomeSA = risultato.getString("nome");
-				nomiServiziApplicativi.add(nomeSA);
-			}
-			risultato.close();
-			stmt.close();
-			 */
-
-
-			if(nomiServizi.size()>0) whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SERVIZI, nomiServizi.toString());
-
-			//if(nomiServiziApplicativi.size()>0) whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SERVIZI_APPLICATIVI, nomiServiziApplicativi.toString());
-
-			return isInUso;
+			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso_soloOggettiRegistro(con, this.tipoDB, 
+					this.idAccordoFactory.getIDAccordoFromAccordo(as), whereIsInUso);
 
 		} catch (Exception se) {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
-			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
@@ -10121,7 +10098,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public boolean isAccordoCooperazioneInUso(AccordoCooperazione ac,Map<ErrorsHandlerCostant,String> whereIsInUso) throws DriverRegistroServiziException {
+	public boolean isAccordoCooperazioneInUso(AccordoCooperazione ac,Map<ErrorsHandlerCostant,List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		String nomeMetodo = "isAccordoCooperazioneInUso";
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -10142,33 +10119,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-			boolean isInUso = false;
-			Vector<String> nomiAccordi = new Vector<String>();
-
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo_cooperazione = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo = "+CostantiDB.ACCORDI+".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			String queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, ac.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()){
-				isInUso=true;
-				AccordoServizioParteComune as = this.getAccordoServizioParteComune(risultato.getLong("id_accordo"));
-				nomiAccordi.add(this.idAccordoFactory.getUriFromAccordo(as));
-			}
-			risultato.close();
-			stmt.close();
-
-
-			if(nomiAccordi.size()>0) whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_ACCORDI, nomiAccordi.toString());
-
-
-			return isInUso;
+			return DBOggettiInUsoUtils.isAccordoCooperazioneInUso(con, this.tipoDB, this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac), whereIsInUso);
 
 		} catch (Exception se) {
 
@@ -15558,7 +15509,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			//recupero idAccordo
 			IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, con, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordo, con, this.tipoDB);
 			// Controllo che il pdd non sia in uso
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
@@ -15641,7 +15592,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 
 			//recupero idAccordo
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idPT.getIdAccordo(), con, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idPT.getIdAccordo(), con, this.tipoDB);
 			// Controllo che il pdd non sia in uso
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
@@ -15753,7 +15704,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 
 			//recupero idAccordo
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idPT.getIdAccordo(), con, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idPT.getIdAccordo(), con, this.tipoDB);
 			// Controllo che il pdd non sia in uso
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
@@ -15841,7 +15792,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 
 			//recupero idAccordo
-			long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, con, this.tipoDB);
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordo, con, this.tipoDB);
 			// Controllo che il pdd non sia in uso
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
@@ -16082,7 +16033,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 
 		try {
-			long idDoc = DriverRegistroServiziDB_LIB.getIdDocumento(nome, tipo, ruolo, idProprietario,con,this.tipoDB,tipoProprietario);
+			String tipoProprietarioAsString = null;
+			if(tipoProprietario!=null){
+				tipoProprietarioAsString = tipoProprietario.toString();
+			}
+			long idDoc = DBUtils.getIdDocumento(nome, tipo, ruolo, idProprietario,con,this.tipoDB,tipoProprietarioAsString);
 			return DriverRegistroServiziDB_LIB.getDocumento(idDoc, readBytes, con, this.tipoDB);
 
 		} catch (Exception se) {
@@ -17318,6 +17273,71 @@ IDriverWS ,IMonitoraggioRisorsa{
 			
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("createServizioApplicativoAutorizzato error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
+	}
+	
+	
+	public void deleteServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException{
+		Connection con = null;
+		PreparedStatement stmt = null;
+
+		this.log.debug("deleteServizioApplicativoAutorizzato...");
+
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = this.datasource.getConnection();
+			else
+				con = this.globalConnection;
+
+			long idSoggettoLong = DBUtils.getIdSoggetto(idFruitore.getNome(), idFruitore.getTipo(), con, this.tipoDB);
+			if(idSoggettoLong<=0){
+				throw new Exception("Soggetto Fruitore ["+idFruitore.toString()+"] non esistente");
+			}
+			long idAccordoServizioParteSpecificaLong = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false).getId();
+			if(idAccordoServizioParteSpecificaLong<=0){
+				throw new Exception("AccordoServizioParteSpecifica ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
+			}
+			long idServizioApplicativo = DBUtils.getIdServizioApplicativo(nomeServizioApplicativo, idFruitore.getTipo(), idFruitore.getNome(), con, this.tipoDB);
+			if(idServizioApplicativo<=0){
+				throw new Exception("ServizioApplicativo ["+nomeServizioApplicativo+"] del soggetto ["+idAccordoServizioParteSpecifica.toString()+"] non esistente");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.POLITICHE_SICUREZZA);
+			sqlQueryObject.addWhereCondition("id_fruitore=?");
+			sqlQueryObject.addWhereCondition("id_servizio=?");
+			sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String queryString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSoggettoLong);
+			stmt.setLong(2, idAccordoServizioParteSpecificaLong);
+			stmt.setLong(3, idServizioApplicativo);
+			stmt.executeUpdate();
+			stmt.close();
+			
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("deleteServizioApplicativoAutorizzato error",e);
 		} finally {
 
 			//Chiudo statement and resultset

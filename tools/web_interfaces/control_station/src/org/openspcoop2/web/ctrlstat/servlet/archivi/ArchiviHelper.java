@@ -614,7 +614,8 @@ public class ArchiviHelper extends ConsoleHelper {
 			boolean validazioneDocumenti,boolean updateEnabled,
 			List<String> protocolliSelectList,String protocollo,
 			List<ImportMode> importModes,String importMode,
-			List<ArchiveModeType> importTypes,String importType){
+			List<ArchiveModeType> importTypes,String importType,
+			boolean deleter){
 
 		User user = ServletUtils.getUserFromSession(this.session);
 
@@ -681,7 +682,7 @@ public class ArchiviHelper extends ConsoleHelper {
 			de.setSelected(validazioneDocumenti);
 		}
 		else{
-			de.setType("hidden");
+			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
 		de.setSize(this.getSize());
@@ -691,8 +692,12 @@ public class ArchiviHelper extends ConsoleHelper {
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED);
 		de.setValue(""+updateEnabled);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-		de.setType(DataElementType.CHECKBOX);
-		de.setSelected(updateEnabled);
+		if(deleter){
+			de.setType(DataElementType.HIDDEN);
+		}else{
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(updateEnabled);
+		}
 		//}
 		//else{
 		//	de.setType("hidden");

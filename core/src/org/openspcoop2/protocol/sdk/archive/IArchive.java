@@ -106,6 +106,15 @@ public interface IArchive {
 	 */
 	public String toString(ArchiveEsitoImport esito, ArchiveMode archiveMode) throws ProtocolException;
 	
+	/**
+	 * Converte l'esito dell'operazione di eliminazione di un archivio in una stringa
+	 * 
+	 * @param esito esito dell'operazione di eliminazione
+	 * @param archiveMode archiveMode
+	 * @return Rappresentazione a Stringa dell'esito dell'eliminazione
+	 */
+	public String toString(ArchiveEsitoDelete esito, ArchiveMode archiveMode) throws ProtocolException;
+	
 	
 	
 	

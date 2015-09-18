@@ -88,6 +88,15 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
+	@Override
+	public void deletePortaDominio(PortaDominio pdd)
+			throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, pdd);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
 	
 	
 	// --- Soggetti Registro ---
@@ -106,6 +115,15 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throws DriverRegistroServiziException {
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, soggetto);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deleteSoggettoRegistro(Soggetto soggetto)
+			throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, soggetto);
 		}catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
@@ -134,6 +152,16 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
+	@Override
+	public void deleteSoggettoConfigurazione(
+			org.openspcoop2.core.config.Soggetto soggetto)
+			throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, soggetto);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
 
 	
 	// --- Servizi Applicativi ---
@@ -154,6 +182,16 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, servizioApplicativo);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deleteServizioApplicativo(
+			ServizioApplicativo servizioApplicativo)
+			throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, servizioApplicativo);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -182,6 +220,16 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
+	@Override
+	public void deleteAccordoCooperazione(
+			AccordoCooperazione accordoCooperazione)
+			throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, accordoCooperazione);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
 
 	
 	// --- Accordi di Servizio Parte Comune ---
@@ -206,6 +254,16 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
+	@Override
+	public void deleteAccordoServizioParteComune(
+			AccordoServizioParteComune accordoServizioParteComune)
+			throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, accordoServizioParteComune);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
 
 	
 	// --- Accordi di Servizio Parte Specifica ---
@@ -220,13 +278,22 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
-
 	@Override
 	public void updateAccordoServizioParteSpecifica(
 			AccordoServizioParteSpecifica accordoServizioParteSpecifica)
 			throws DriverRegistroServiziException {
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, accordoServizioParteSpecifica);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deleteAccordoServizioParteSpecifica(
+			AccordoServizioParteSpecifica accordoServizioParteSpecifica)
+			throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, accordoServizioParteSpecifica);
 		}catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
@@ -248,6 +315,22 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			polSic.setIdFruitore(s.getId());
 			
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, polSic);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}	
+	@Override
+	public void deleteServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+		try{
+			AccordoServizioParteSpecifica asps = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false);
+			Soggetto s = this.getSoggettoRegistro(idFruitore);
+			
+			PoliticheSicurezza polSic = new PoliticheSicurezza();
+			polSic.setNomeServizioApplicativo(nomeServizioApplicativo);
+			polSic.setIdServizio(asps.getId());
+			polSic.setIdFruitore(s.getId());
+			
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, polSic);
 		}catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
@@ -274,6 +357,15 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
+	@Override
+	public void deletePortaDelegata(PortaDelegata portaDelegata)
+			throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, portaDelegata);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
 
 	
 	// --- Porte Applicative ---
@@ -293,6 +385,15 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, portaApplicativa);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deletePortaApplicativa(PortaApplicativa portaApplicativa)
+			throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, portaApplicativa);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

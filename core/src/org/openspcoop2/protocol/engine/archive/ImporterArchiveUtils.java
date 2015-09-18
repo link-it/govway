@@ -815,7 +815,7 @@ public class ImporterArchiveUtils {
 						}catch(ValidazioneStatoPackageException validazioneExceptionLevelOperativo){
 							warningInfoStatoFinale.append("\n\t\t(WARNING) Accordo salvato con stato '").append(StatiAccordo.bozza.toString()).append("'\n\t\t\t");
 							warningInfoStatoFinale.append(validazioneException.toString("\n\t\t\t - ","\n\t\t\t - "));
-							warningInfoStatoFinale.append(validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
+							warningInfoStatoFinale.append("\n\t\t\t"+validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
 							archiveAccordoCooperazione.getAccordoCooperazione().setStatoPackage(StatiAccordo.bozza.toString());
 						}
 					}
@@ -943,7 +943,7 @@ public class ImporterArchiveUtils {
 						}catch(ValidazioneStatoPackageException validazioneExceptionLevelOperativo){
 							warningInfoStatoFinale.append("\n\t\t(WARNING) Accordo salvato con stato '").append(StatiAccordo.bozza.toString()).append("':\n\t\t\t");
 							warningInfoStatoFinale.append(validazioneException.toString("\n\t\t\t - ","\n\t\t\t - "));
-							warningInfoStatoFinale.append(validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
+							warningInfoStatoFinale.append("\n\t\t\t"+validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
 							archiveAccordoServizioParteComune.getAccordoServizioParteComune().setStatoPackage(StatiAccordo.bozza.toString());
 						}
 					}
@@ -1165,7 +1165,7 @@ public class ImporterArchiveUtils {
 						}catch(ValidazioneStatoPackageException validazioneExceptionLevelOperativo){
 							warningInfoStatoFinale.append("\n\t\t(WARNING) Accordo salvato con stato '").append(StatiAccordo.bozza.toString()).append("':\n\t\t\t");
 							warningInfoStatoFinale.append(validazioneException.toString("\n\t\t\t - ","\n\t\t\t - "));
-							warningInfoStatoFinale.append(validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
+							warningInfoStatoFinale.append("\n\t\t\t"+validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
 							archiveAccordoServizioComposto.getAccordoServizioParteComune().setStatoPackage(StatiAccordo.bozza.toString());
 						}
 					}
@@ -1499,7 +1499,7 @@ public class ImporterArchiveUtils {
 						}catch(ValidazioneStatoPackageException validazioneExceptionLevelOperativo){
 							warningInfoStatoFinale.append("\n\t\t(WARNING) Accordo salvato con stato '").append(StatiAccordo.bozza.toString()).append("':\n\t\t\t");
 							warningInfoStatoFinale.append(validazioneException.toString("\n\t\t\t - ","\n\t\t\t - "));
-							warningInfoStatoFinale.append(validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
+							warningInfoStatoFinale.append("\n\t\t\t"+validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
 							archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setStatoPackage(StatiAccordo.bozza.toString());
 						}
 					}
@@ -1651,7 +1651,7 @@ public class ImporterArchiveUtils {
 						}catch(ValidazioneStatoPackageException validazioneExceptionLevelOperativo){
 							warningInfoStatoFinale.append("\n\t\t(WARNING) Fruitore salvato con stato '").append(StatiAccordo.bozza.toString()).append("':\n\t\t\t");
 							warningInfoStatoFinale.append(validazioneException.toString("\n\t\t\t - ","\n\t\t\t - "));
-							warningInfoStatoFinale.append(validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
+							warningInfoStatoFinale.append("\n\t\t\t"+validazioneExceptionLevelOperativo.toString("\n\t\t\t - ","\n\t\t\t - "));
 							archiveFruitore.getFruitore().setStatoPackage(StatiAccordo.bozza.toString());
 						}
 					}

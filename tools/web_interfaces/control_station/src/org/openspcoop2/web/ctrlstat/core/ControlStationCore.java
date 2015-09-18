@@ -2027,7 +2027,7 @@ public class ControlStationCore {
 					/***********************************************************
 					 * Caso Speciale dei Soggetti *
 					 **********************************************************/
-					// soggetto config
+					// soggetto ctrlstat
 					if (oggetto instanceof SoggettoCtrlStat) {
 						SoggettoCtrlStat soggetto = (SoggettoCtrlStat) oggetto;
 
@@ -2481,10 +2481,31 @@ public class ControlStationCore {
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
 						doSetDati = true;
 					}
+					
+					if (oggetto instanceof PoliticheSicurezza) {
+						PoliticheSicurezza ps = (PoliticheSicurezza) oggetto;
+						driver.deletePoliticheSicurezza(ps);
+
+						org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(ps.getIdFruitore());
+
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.del);
+						operazioneDaSmistare.setPdd(sogg.getPortaDominio());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.politicheSicurezza);
+						operazioneDaSmistare.addParameter(OperationsParameter.PS_ID_SERVIZIO_APPLICATIVO, ps.getIdServizioApplicativo()+"");
+						operazioneDaSmistare.addParameter(OperationsParameter.PS_ID_FRUITORE, ps.getIdFruitore()+"");
+						operazioneDaSmistare.addParameter(OperationsParameter.PS_ID_SERVIZIO, ps.getIdServizio()+"");
+
+						doSetDati = true;
+
+					}
+					
 					/***********************************************************
-					 * Operazioni su ConfigurazioneDB *
+					 * Caso Speciale dei Soggetti *
 					 **********************************************************/
-					// soggetto config
+			
+					// soggetto ctrlstat
 					if (oggetto instanceof SoggettoCtrlStat) {
 						SoggettoCtrlStat soggetto = (SoggettoCtrlStat) oggetto;
 
@@ -2510,6 +2531,57 @@ public class ControlStationCore {
 
 						doSetDati = true;
 					}
+					
+					// soggetto config
+					if (oggetto instanceof org.openspcoop2.core.config.Soggetto) {
+						
+						org.openspcoop2.core.config.Soggetto sogConf = (org.openspcoop2.core.config.Soggetto) oggetto;
+						driver.getDriverConfigurazioneDB().deleteSoggetto(sogConf);
+
+						// Chiedo la setDati
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.del);
+						operazioneDaSmistare.setIDTable(sogConf.getId().intValue());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogConf.getTipo());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogConf.getNome());
+
+						doSetDati = true;
+
+					}
+					
+					// soggetto reg
+					if (oggetto instanceof org.openspcoop2.core.registry.Soggetto) {
+						
+						org.openspcoop2.core.registry.Soggetto sogReg = (org.openspcoop2.core.registry.Soggetto) oggetto;
+
+						if(this.registroServiziLocale){
+							driver.getDriverRegistroServiziDB().deleteSoggetto(sogReg);
+						}
+
+						// Chiedo la setDati
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.del);
+						operazioneDaSmistare.setIDTable(sogReg.getId().intValue());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
+
+						// operazioneDaSmistare.setTipoSoggetto(soggetto.getTipo());
+						// operazioneDaSmistare.setNomeSoggetto(soggetto.getNome());
+						operazioneDaSmistare.setPdd(sogReg.getPortaDominio());
+						
+						doSetDati = true;
+
+					}
+					
+					
+					
+					/***********************************************************
+					 * Operazioni su ConfigurazioneDB *
+					 **********************************************************/
 
 					// ServizioApplicativo
 					if (oggetto instanceof ServizioApplicativo) {
@@ -2525,7 +2597,13 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sa.getNomeSoggettoProprietario());
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sa.getTipoSoggettoProprietario());
 						if(this.isRegistroServiziLocale()){
-							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(sa.getIdSoggetto());
+							org.openspcoop2.core.registry.Soggetto sogg = null;
+							if(sa.getIdSoggetto()!=null && sa.getIdSoggetto()>0){
+								sogg = driver.getDriverRegistroServiziDB().getSoggetto(sa.getIdSoggetto());
+							}
+							else{
+								sogg = driver.getDriverRegistroServiziDB().getSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+							}	
 							operazioneDaSmistare.setPdd(sogg.getPortaDominio());
 						}
 
@@ -2915,7 +2993,7 @@ public class ControlStationCore {
 			} catch (Exception ex) {
 			}
 
-			throw new ControlStationCoreException(e);
+			throw new ControlStationCoreException(e.getMessage(),e);
 		} finally {
 			// qui posso riabilitare l'auto commit
 			// e rilasciare la connessione

@@ -23,6 +23,8 @@
 
 package org.openspcoop2.core.registry.constants;
 
+import org.openspcoop2.core.commons.AccordiUtils;
+
 /**
  * Costanti per gli oggetti dao del package org.openspcoop.dao.registry
  *
@@ -69,8 +71,8 @@ public class CostantiRegistroServizi {
     public static final BindingUse WSDL_USE_LITERAL = BindingUse.LITERAL;
     
     /** Valori di default per IDAccordo */
-    public static final int SOGGETTO_REFERENTE_DEFAULT=0;
-    public static final String VERSIONE_DEFAULT="";
+    public static final int SOGGETTO_REFERENTE_DEFAULT=AccordiUtils.SOGGETTO_REFERENTE_DEFAULT;
+    public static final String VERSIONE_DEFAULT=AccordiUtils.VERSIONE_DEFAULT;
     
     public final static String MANIFESTO_XML = "manifesto.xml";
 

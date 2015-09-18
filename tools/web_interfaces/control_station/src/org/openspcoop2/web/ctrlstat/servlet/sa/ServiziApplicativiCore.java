@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -76,7 +77,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			}
 
 		} catch (DriverControlStationNotFound e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(),e);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(),e);
 			throw new DriverConfigurazioneNotFound(e);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -630,6 +631,25 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean isServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo,
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		Connection con = null;
+		String nomeMetodo = "isServizioApplicativoInUso";
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+
+			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.tipoDB, idServizioApplicativo, whereIsInUso, isRegistroServiziLocale);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

@@ -528,6 +528,9 @@ public class ConsoleHelper {
 						dimensioneEntries++; // importa
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 							dimensioneEntries++; // esporta
+							if(isModalitaAvanzata){
+								dimensioneEntries++; // elimina
+							}
 						}
 					}
 					if (!pu.isUtenti()){
@@ -553,12 +556,20 @@ public class ConsoleHelper {
 					}
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
-						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT;
+						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
+							
+							if(isModalitaAvanzata){
+								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
+								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+										ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
+								index++;
+							}
 						}
 					}
 					entries[index][0] = AuditCostanti.LABEL_AUDIT;
@@ -582,6 +593,9 @@ public class ConsoleHelper {
 						dimensioneEntries++; // importa
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 							dimensioneEntries++; // esporta
+							if(isModalitaAvanzata){
+								dimensioneEntries++; // elimina
+							}
 						}
 					}
 					if(!pu.isUtenti()){
@@ -607,12 +621,20 @@ public class ConsoleHelper {
 						}
 						if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
-							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT;
+							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
 							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
+								
+								if(isModalitaAvanzata){
+									entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
+									entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+											ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
+									index++;		
+								}
 							}
 						}
 						if (!pu.isUtenti()) {
@@ -666,6 +688,9 @@ public class ConsoleHelper {
 						dimensioneEntries++; // importa
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 							dimensioneEntries++; // esporta
+							if(isModalitaAvanzata){
+								dimensioneEntries++; // elimina
+							}
 						}
 					}
 					if (!pu.isUtenti()){
@@ -687,12 +712,20 @@ public class ConsoleHelper {
 					}
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
-						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT;
+						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
+							
+							if(isModalitaAvanzata){
+								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
+								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+										ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
+								index++;
+							}
 						}
 					}
 					entries[index][0] = AuditCostanti.LABEL_AUDIT;
@@ -715,6 +748,9 @@ public class ConsoleHelper {
 						dimensioneEntries++; // importa
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 							dimensioneEntries++; // esporta
+							if(isModalitaAvanzata){
+								dimensioneEntries++; // elimina
+							}
 						}
 					}
 					if(!pu.isUtenti()){
@@ -740,12 +776,20 @@ public class ConsoleHelper {
 						}
 						if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
-							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT;
+							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
 							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
+								
+								if(isModalitaAvanzata){
+									entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
+									entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
+											ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA;
+									index++;		
+								}
 							}
 						}
 						if (!pu.isUtenti()) {

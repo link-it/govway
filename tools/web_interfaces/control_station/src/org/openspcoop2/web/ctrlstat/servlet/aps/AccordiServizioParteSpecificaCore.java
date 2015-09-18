@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
@@ -319,7 +320,24 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 	
 		
-
+	public boolean isAccordoServizioParteSpecificaInUso(AccordoServizioParteSpecifica as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso,
+			String nomePAGenerataAutomaticamente) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "isAccordoServizioPArteSpecificaInUso";
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			IDServizio idServizio = new IDServizio(as.getServizio().getTipoSoggettoErogatore(), as.getServizio().getNomeSoggettoErogatore(), 
+					as.getServizio().getTipo(), as.getServizio().getNome());
+			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePAGenerataAutomaticamente);			
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 	
 	public boolean isServizioInUso(AccordoServizioParteSpecifica as, Map<ErrorsHandlerCostant, String> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
@@ -414,7 +432,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			}
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -762,7 +780,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			}
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -786,7 +804,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 			return driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica(idService,deepRead);
 		} catch (DriverRegistroServiziNotFound e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;
 		} catch (DriverRegistroServiziException e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -815,7 +833,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -912,6 +930,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().getIdServiziWithPortType(idPT);
 		} catch (DriverRegistroServiziNotFound e) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -933,6 +952,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().getIdServiziWithAccordo(idAccordo,checkPTisNull);
 		} catch (DriverRegistroServiziNotFound e) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1212,7 +1232,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica(idServizio);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1236,7 +1256,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getIDAccordoServizioParteSpecifica(idServizio);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1281,7 +1301,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica(idServizio,readContenutoAllegati);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1326,7 +1346,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getIdAccordoServizioParteSpecifica(idAccordo);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1351,7 +1371,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			return driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica(idAccordo);
 
 		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

@@ -19,23 +19,26 @@
  *
  */
 
-package org.openspcoop2.protocol.sdk.constants;
-
+package org.openspcoop2.core.commons;
 
 /**
- *  ArchiveStatoImport
+ * AccordiUtils
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum ArchiveStatoImport {
+public class AccordiUtils {
 
-	CREATED,
-	UPDATED,
-	UPDATE_NOT_PERMISSED,
-	ERROR,
-	DELETED,
-	DELETED_NOT_EXISTS;
+    /** Valori di default per IDAccordo */
+    public static final int SOGGETTO_REFERENTE_DEFAULT=0;
+    public static final String VERSIONE_DEFAULT="";
+	
+	public static boolean versioneNonDefinita(String value){
+		if(value==null || VERSIONE_DEFAULT.equals(value))
+			return true;
+		else
+			return false;
+	}
 	
 }

@@ -33,6 +33,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCParameterUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCSqlLogger;
@@ -484,6 +487,404 @@ public class DBUtils {
 
 	}
 
+	
+	
+	
+	
+	
+	public static long getIdPortaDominio(String nome, Connection con, String tipoDB) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idPdD=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PDD);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, nome);
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idPdD = rs.getLong("id");
+			}
+
+			return idPdD;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	
+	
+	
+
+	public static long getIdAccordo(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB) throws CoreException
+	{
+		return DBUtils.getIdAccordo(nomeServizio,tipoServizio,nomeProprietario,tipoProprietario,con,tipoDB,CostantiDB.SOGGETTI);
+	}
+	public static long getIdAccordo(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idServizio;
+		long idAccordo = -1;
+		try
+		{
+			idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id = ?");
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setLong(1, idServizio);
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idAccordo = rs.getLong("id_accordo");
+			}
+
+			return idAccordo;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	public static long getIdPortType(Long idAccordo,String nomePortType,Connection con) throws CoreException{
+		PreparedStatement selectStmt = null;
+		ResultSet selectRS = null;
+		long id=-1;
+		try
+		{
+			String selectQuery = "SELECT id FROM " + CostantiDB.PORT_TYPE + " WHERE id_accordo = ? AND nome=?";
+			selectStmt = con.prepareStatement(selectQuery);
+			selectStmt.setLong(1, idAccordo);
+			selectStmt.setString(2, nomePortType);
+			selectRS = selectStmt.executeQuery();
+			if (selectRS.next()) {
+				id = selectRS.getLong("id");	
+			}
+			selectRS.close();
+			selectStmt.close();
+			return id;
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(selectRS!=null) selectRS.close();
+				if(selectStmt!=null) selectStmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	public static long getIdAccordoServizioParteComune(IDAccordo idAccordo,Connection con, String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idAccordoLong=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.addWhereCondition("id_referente = ?");
+			if(AccordiUtils.versioneNonDefinita(idAccordo.getVersione()))
+				sqlQueryObject.addWhereCondition(false,"versione = ?","versione is null");
+			else
+				sqlQueryObject.addWhereCondition("versione = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idAccordo.getNome());
+			
+			long idSoggettoReferente =  AccordiUtils.SOGGETTO_REFERENTE_DEFAULT;
+			if(idAccordo.getSoggettoReferente()!=null){
+				idSoggettoReferente = DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
+				if(idSoggettoReferente<=0){
+					throw new CoreException("[getIdAccordoServizioParteComune] Soggetto Referente ["+idAccordo.getSoggettoReferente().toString()+"] non esiste");
+				}
+			}
+			stm.setLong(2, idSoggettoReferente);
+				
+			String vers = AccordiUtils.VERSIONE_DEFAULT;
+			if(idAccordo.getVersione()!=null)
+				vers = idAccordo.getVersione();
+			stm.setString(3, vers);
+						
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idAccordoLong = rs.getLong("id");
+			}
+
+			return idAccordoLong;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	
+	
+	
+	public static long getIdAccordoCooperazione(IDAccordoCooperazione idAccordo,Connection con, String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idAccordoLong=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			if(AccordiUtils.versioneNonDefinita(idAccordo.getVersione()))
+				sqlQueryObject.addWhereCondition(false,"versione = ?","versione is null");
+			else
+				sqlQueryObject.addWhereCondition("versione = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idAccordo.getNome());
+				
+			String vers = AccordiUtils.VERSIONE_DEFAULT;
+			if(idAccordo.getVersione()!=null)
+				vers = idAccordo.getVersione();
+			stm.setString(2, vers);
+						
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idAccordoLong = rs.getLong("id");
+			}
+
+			return idAccordoLong;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	public static long getIdAccordoServizioParteSpecifica(IDAccordo idAccordo,Connection con, String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idAccordoLong=-1;
+		try
+		{
+			
+			// NOTA: nell'APS, il soggetto e la versione sono obbligatori
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("aps_nome = ?");
+			sqlQueryObject.addWhereCondition("id_soggetto = ?");
+			sqlQueryObject.addWhereCondition("aps_versione = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idAccordo.getNome());
+			
+			long idSoggettoReferente =  DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
+			if(idSoggettoReferente<=0){
+				throw new CoreException("[getIdAccordoServizio] Soggetto Referente ["+idAccordo.getSoggettoReferente().toString()+"] non esiste");
+			}
+			stm.setLong(2, idSoggettoReferente);
+				
+			stm.setString(3, idAccordo.getVersione());
+						
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idAccordoLong = rs.getLong("id");
+			}
+
+			return idAccordoLong;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	public static long getIdAccordoServizioParteSpecifica(IDServizio idServizio,Connection con, String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idAccordoLong=-1;
+		try
+		{
+			
+			// NOTA: nell'APS, il soggetto e la versione sono obbligatori
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.addWhereCondition("tipo_soggetto = ?");
+			sqlQueryObject.addWhereCondition("nome_soggetto = ?");
+			sqlQueryObject.addWhereCondition("tipo_servizio = ?");
+			sqlQueryObject.addWhereCondition("nome_servizio = ?");
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idServizio.getSoggettoErogatore().getTipo());
+			stm.setString(2, idServizio.getSoggettoErogatore().getNome());
+			stm.setString(3, idServizio.getTipoServizio());
+			stm.setString(4, idServizio.getServizio());
+			
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idAccordoLong = rs.getLong("id");
+			}
+
+			return idAccordoLong;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+
+	public static long getIdDocumento(String nome, String tipo, String ruolo, long idProprietario,Connection con,String tipoDB,String tipoProprietario) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idDoc=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.DOCUMENTI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id_proprietario = ?");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.addWhereCondition("tipo = ?");
+			sqlQueryObject.addWhereCondition("ruolo = ?");
+			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idProprietario);
+			stm.setString(2, nome);
+			stm.setString(3, tipo);
+			stm.setString(4, ruolo);
+			stm.setString(5, tipoProprietario);
+			rs = stm.executeQuery();
+			if (rs.next())
+				idDoc = rs.getLong("id");
+			rs.close();
+			stm.close();
+
+			return idDoc;
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	
+	
+	
+	
 	
 
 	/**

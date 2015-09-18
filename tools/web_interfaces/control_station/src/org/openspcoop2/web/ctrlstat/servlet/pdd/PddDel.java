@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -84,8 +85,10 @@ public final class PddDel extends Action {
 			PddCore pddCore = new PddCore();
 			
 			PdDControlStation pdd = null;
-			ArrayList<String> infos = new ArrayList<String>();
+			
 			boolean isInUso = false;
+			String msg = "";
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
@@ -93,8 +96,11 @@ public final class PddDel extends Action {
 				// nome = de.getValue();
 				pdd = pddCore.getPdDControlStation(Long.parseLong(idsToRemove.get(i)));
 
+				ArrayList<String> infos = new ArrayList<String>();
 				if (pddCore.isPddInUso(pdd, infos)) {
 					isInUso = true;
+					msg += DBOggettiInUsoUtils.toString(pdd.getNome(), infos, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 
 				} else {
 					pddCore.performDeleteOperation(userLogin, pddHelper.smista(), pdd);
@@ -103,7 +109,7 @@ public final class PddDel extends Action {
 			}
 
 			if (isInUso) {
-				pd.setMessage("Porte di Dominio non rimosse perch&egrave; associate ad uno o pi&ugrave; Soggetti: " + infos.toString());
+				pd.setMessage(msg);
 			}
 
 			// Preparo il menu

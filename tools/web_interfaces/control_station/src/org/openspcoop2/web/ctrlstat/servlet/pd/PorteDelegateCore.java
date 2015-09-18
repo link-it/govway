@@ -282,7 +282,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaDelegata(idPD);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -307,7 +307,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaDelegata(idPortaDelegata);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

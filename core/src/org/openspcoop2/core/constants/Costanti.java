@@ -63,4 +63,7 @@ public class Costanti {
 	}
 	
 	public final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = "undefined";
+	
+	
+	public final static String WEB_NEW_LINE = "<br/>";
 }

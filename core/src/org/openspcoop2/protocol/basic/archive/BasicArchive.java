@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoDelete;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
@@ -329,7 +330,12 @@ public class BasicArchive implements IArchive {
 	
 	@Override
 	public String toString(ArchiveEsitoImport esito, ArchiveMode archiveMode) throws ProtocolException{
-		return this.esitoUtils.toString(esito,false);
+		return this.esitoUtils.toString(esito,false,true);
+	}
+	
+	@Override
+	public String toString(ArchiveEsitoDelete esito, ArchiveMode archiveMode) throws ProtocolException{
+		return this.esitoUtils.toString(esito,false,false);
 	}
 	
 	

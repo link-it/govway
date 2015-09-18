@@ -32,10 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
@@ -50,9 +50,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -114,6 +112,7 @@ public class DriverControlStationDB  {
 	private DriverAuditDBAppender auditDBappender = null;
 
 	private IDAccordoFactory idAccordoFactory = null;
+	@SuppressWarnings("unused")
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
 	
 	public String getTipoDatabase() {
@@ -3193,13 +3192,10 @@ public class DriverControlStationDB  {
 
 	
 	
-	public boolean isAccordoInUso(AccordoServizioParteComune as, Map<ErrorsHandlerCostant, String> whereIsInUso) throws DriverControlStationException {
+	public boolean isAccordoInUso(AccordoServizioParteComune as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
 		String nomeMetodo = "isAccordoInUso";
 
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String queryString;
 
 		if (this.atomica) {
 			try {
@@ -3215,53 +3211,11 @@ public class DriverControlStationDB  {
 		}
 
 		try {
-			boolean isInUso = false;
-
-			// controllo utilizzando il driver registro
-			isInUso = this.regservDB.isAccordoInUso(as, whereIsInUso);
-
-			// effettuo controlli aggiuntivi su servizi applicativi
-			Vector<String> nomiServiziApplicativi = new Vector<String>();
-
-			// controllo servizi applicativi
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = " + CostantiDB.SERVIZI_APPLICATIVI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, as.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				isInUso = true;
-				String nomeSA = risultato.getString("nome");
-				nomiServiziApplicativi.add(nomeSA);
-			}
-			risultato.close();
-			stmt.close();
-
-			if (nomiServiziApplicativi.size() > 0)
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SERVIZI_APPLICATIVI, nomiServiziApplicativi.toString());
-
-			return isInUso;
+			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.tipoDB, this.idAccordoFactory.getIDAccordoFromAccordo(as), whereIsInUso);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
@@ -3277,10 +3231,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "pddInUso";
 
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String queryString;
-
+		
 		if (this.atomica) {
 			try {
 				con = this.datasource.getConnection();
@@ -3296,39 +3247,11 @@ public class DriverControlStationDB  {
 
 		try {
 
-			// Controllo che il pdd non sia in uso
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("server = ?");
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, pdd.getNome());
-			risultato = stmt.executeQuery();
-			boolean isInUso = false;
-			while (risultato.next()) {
-				String tipo_soggetto = risultato.getString("tipo_soggetto");
-				String nome_soggetto = risultato.getString("nome_soggetto");
-				whereIsInUso.add(tipo_soggetto + "/" + nome_soggetto);
-				isInUso = true;
-			}
-
-			return isInUso;
+			return DBOggettiInUsoUtils.isPddInUso(con, this.tipoDB, pdd.getNome(), whereIsInUso);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
@@ -3340,20 +3263,16 @@ public class DriverControlStationDB  {
 		}
 	}
 
-	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Map<String, ArrayList<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
 		return isSoggettoInUso(soggettoConfig,null,whereIsInUso);
 	}
-	public boolean isSoggettoInUso(Soggetto soggettoRegistro, Map<String, ArrayList<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isSoggettoInUso(Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
 		return isSoggettoInUso(null,soggettoRegistro,whereIsInUso);
 	}
-	private boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Soggetto soggettoRegistro, Map<String, ArrayList<String>> whereIsInUso) throws DriverControlStationException {
+	private boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
 		String nomeMetodo = "isSoggettoInUso";
 
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String queryString = "";
-		boolean isInUso = false;
 		if (this.atomica) {
 			try {
 				con = this.datasource.getConnection();
@@ -3371,257 +3290,31 @@ public class DriverControlStationDB  {
 
 		try {
 
-			long idSoggetto = -1;
 			String tipoSoggetto = null;
 			String nomeSoggetto = null;
 			if(soggettoRegistro!=null){
-				idSoggetto = soggettoRegistro.getId();
 				tipoSoggetto = soggettoRegistro.getTipo();
 				nomeSoggetto = soggettoRegistro.getNome();
 			}else{
-				idSoggetto = soggettoConfig.getId();
 				tipoSoggetto = soggettoConfig.getTipo();
 				nomeSoggetto = soggettoConfig.getNome();
 			}
-			
-			ArrayList<String> servizi_fruitori_list = whereIsInUso.get("Fruitore");
-			ArrayList<String> servizi_applicativi_list = whereIsInUso.get("Servizi Applicativi");
-			ArrayList<String> porte_delegate_list = whereIsInUso.get("Porte Delegate");
-			ArrayList<String> servizi_list = whereIsInUso.get("Erogatore");
-			ArrayList<String> porte_applicative_list = whereIsInUso.get("Porte Applicative");
-			ArrayList<String> accordi_list = whereIsInUso.get("Accordi");
-			ArrayList<String> accordi_coop_list = whereIsInUso.get("Accordi Cooperazione");
-			ArrayList<String> partecipanti_list = whereIsInUso.get("Soggetti Partecipanti");
-
-			if (servizi_fruitori_list == null) {
-				servizi_fruitori_list = new ArrayList<String>();
-			}
-			if (servizi_applicativi_list == null) {
-				servizi_applicativi_list = new ArrayList<String>();
-			}
-			if (porte_delegate_list == null) {
-				porte_delegate_list = new ArrayList<String>();
-			}
-			if (servizi_list == null) {
-				servizi_list = new ArrayList<String>();
-			}
-			if (porte_applicative_list == null) {
-				porte_applicative_list = new ArrayList<String>();
-			}
-			if (accordi_list == null) {
-				accordi_list = new ArrayList<String>();
-			}
-			if (accordi_coop_list == null) {
-				accordi_coop_list = new ArrayList<String>();
-			}
-			if (partecipanti_list == null) {
-				partecipanti_list = new ArrayList<String>();
-			}
+			IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto, nomeSoggetto);
 			
 			if(soggettoRegistro!=null){
-				// controllo che non sia fruitore di un servizio
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("id_soggetto = ?");
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				stmt.setLong(1, idSoggetto);
-				risultato = stmt.executeQuery();
-				while (risultato.next()) {
-	
-					AccordoServizioParteSpecifica servizio = this.regservDB.getAccordoServizioParteSpecifica(risultato.getLong("id_servizio"));
-	
-					servizi_fruitori_list.add(servizio.getServizio().getTipo() + "/" + servizio.getServizio().getNome());
-	
-					isInUso = true;
-	
-				}
-				risultato.close();
-				stmt.close();
-				whereIsInUso.put("Fruitore", servizi_fruitori_list);
-			}
-
-			// Controllo che il soggetto non sia in uso nei servizi applicativi
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idSoggetto);
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				servizi_applicativi_list.add(risultato.getString("nome"));// nome
-				// del
-				// servizio
-				// applicativo
-
-				isInUso = true;
-			}
-			risultato.close();
-			stmt.close();
-			whereIsInUso.put("Servizi Applicativi", servizi_applicativi_list);
-
-			if(soggettoRegistro!=null){
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("id_soggetto = ?");
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				stmt.setLong(1, idSoggetto);
-				risultato = stmt.executeQuery();
-				while (risultato.next()) {
-					String nome_servizio = risultato.getString("nome_servizio");
-					String tipo_servizio = risultato.getString("tipo_servizio");
-					servizi_list.add(tipo_servizio + "/" + nome_servizio);
-					isInUso = true;
-				}
-				risultato.close();
-				stmt.close();
-				whereIsInUso.put("Erogatore", servizi_list);
-			}
-
-			// controllo porte delegate sia per id che per tipo e
-			// nome
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id_soggetto_erogatore = ?");
-			sqlQueryObject.addWhereCondition(true, "tipo_soggetto_erogatore = ?", "nome_soggetto_erogatore = ?");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.setANDLogicOperator(false);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idSoggetto);// controllo se soggetto
-			// erogatore di porte delegate
-			stmt.setString(2, tipoSoggetto);// controllo se soggetto
-			// erogatore di porte
-			// delegate
-			stmt.setString(3, nomeSoggetto);// controllo se soggetto
-			// erogatore di porte
-			// delegate
-
-			stmt.setLong(4, idSoggetto);// controllo se soggetto
-			// proprietario di porte
-			// delegate
-
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				porte_delegate_list.add(risultato.getString("nome_porta"));// nome
-				// porta
-				// delegata
-				isInUso = true;
-			}
-			risultato.close();
-			stmt.close();
-
-			whereIsInUso.put("Porte Delegate", porte_delegate_list);
-
-			// controllo se in uso in porte applicative come proprietario della
-			// porta
-			// o come soggetto virtuale
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.addWhereCondition("id_soggetto_virtuale = ?");
-			sqlQueryObject.addWhereCondition(true, "tipo_soggetto_virtuale = ?", "nome_soggetto_virtuale = ?");
-			sqlQueryObject.setANDLogicOperator(false);
-			queryString = sqlQueryObject.createSQLQuery();
-
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idSoggetto);
-			stmt.setLong(2, idSoggetto);
-			stmt.setString(3, tipoSoggetto);
-			stmt.setString(4, nomeSoggetto);
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				porte_applicative_list.add(risultato.getString("nome_porta"));
-				isInUso = true;
-			}
-			risultato.close();
-			stmt.close();
-
-			whereIsInUso.put("Porte Applicative", porte_applicative_list);
-
-			if(soggettoRegistro!=null){
-				//controllo se referente
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("id_referente = ?");
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				stmt.setLong(1, idSoggetto);
-				risultato = stmt.executeQuery();
-				while (risultato.next()){
-					isInUso=true;
-					AccordoServizioParteComune accordo = this.getDriverRegistroServiziDB().getAccordoServizioParteComune(risultato.getLong("id"));
-					accordi_list.add(this.idAccordoFactory.getUriFromAccordo(accordo));
-				}
-				risultato.close();
-				stmt.close();
-				whereIsInUso.put("Accordi", accordi_list);
-			}
-
-			if(soggettoRegistro!=null){
-				//controllo se referente di un accordo cooperazione
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("id_referente = ?");
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				stmt.setLong(1, idSoggetto);
-				risultato = stmt.executeQuery();
-				while (risultato.next()){
-					isInUso=true;
-					AccordoCooperazione accordo = this.getDriverRegistroServiziDB().getAccordoCooperazione(risultato.getLong("id"));
-					accordi_coop_list.add(this.idAccordoCooperazioneFactory.getUriFromAccordo(accordo));
-				}
-				risultato.close();
-				stmt.close();
-				whereIsInUso.put("Accordi Cooperazione", accordi_coop_list);
-			}
-
-			if(soggettoRegistro!=null){
-				//controllo se partecipante
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE_PARTECIPANTI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("id_soggetto = ?");
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				stmt.setLong(1, idSoggetto);
-				risultato = stmt.executeQuery();
-				while (risultato.next()){
-					isInUso=true;
-					AccordoCooperazione accordo = this.getDriverRegistroServiziDB().getAccordoCooperazione(risultato.getLong("id_accordo_cooperazione"));
-					partecipanti_list.add(this.idAccordoCooperazioneFactory.getUriFromAccordo(accordo));
-				}
-				risultato.close();
-				stmt.close();
-				whereIsInUso.put("Soggetti Partecipanti", partecipanti_list);
-			}
+				
+				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.tipoDB, idSoggetto, whereIsInUso);
 			
-			return isInUso;
+			}
+			else{
+				
+				return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.tipoDB, idSoggetto, whereIsInUso);
+				
+			}
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
 			try {
 				if (this.atomica) {
 					this.log.debug("rilascio connessioni al db...");

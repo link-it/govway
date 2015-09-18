@@ -27,13 +27,12 @@
 				<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
 				
 				<!-- org.openspcoop.2.core -->
-				<var name="packagesCompiled" value="org.openspcoop2.core,org.openspcoop2.core.commons,org.openspcoop2.core.constants" />
+				<var name="packagesCompiled" value="org.openspcoop2.core,org.openspcoop2.core.constants" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core"/>
 					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="core"/>
-					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="commons/**/*.java"/>
-					<param name="compile_src_openspcoop2.BUILD_INCLUDES_2" value="constants/**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="constants/**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core"/>
@@ -50,6 +49,19 @@
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.id"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>
+				</antcall>
+				
+				<!-- org.openspcoop.2.core.commons -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.commons" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/commons"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="core-commons"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.commons"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>
 				</antcall>
 						

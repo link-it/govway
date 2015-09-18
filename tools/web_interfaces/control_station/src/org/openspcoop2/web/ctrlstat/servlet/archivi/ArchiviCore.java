@@ -33,6 +33,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.archive.ArchiveRegistryReader;
 import org.openspcoop2.protocol.engine.archive.ArchiveValidator;
+import org.openspcoop2.protocol.engine.archive.DeleterArchiveUtils;
 import org.openspcoop2.protocol.engine.archive.ExporterArchiveUtils;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingCollection;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingException;
@@ -40,6 +41,7 @@ import org.openspcoop2.protocol.engine.archive.ImporterArchiveUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoDelete;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
@@ -198,6 +200,35 @@ public class ArchiviCore extends ControlStationCore {
 					this.isShowAccordiColonnaAzioni(),
 					this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto(), 
 					this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto());
+			
+			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			IArchive archiveEngine = pf.createArchive();
+			return archiveEngine.toString(esito, archiveMode);
+						
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	
+	public String deleteArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista) throws Exception,ImportInformationMissingException{
+		
+		Connection con = null;
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), driver.getDriverConfigurazioneDB(), 
+					this, smista, userLogin);
+			
+			DeleterArchiveUtils deleterArchiveUtils = 
+					new DeleterArchiveUtils(importerEngine, log, userLogin);
+			
+			ArchiveEsitoDelete esito = deleterArchiveUtils.deleteArchive(archive, userLogin);
 			
 			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();

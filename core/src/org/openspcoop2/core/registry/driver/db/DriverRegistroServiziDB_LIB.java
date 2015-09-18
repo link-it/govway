@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.commons.AccordiUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -298,7 +299,7 @@ public class DriverRegistroServiziDB_LIB {
 				if(nomePdd==null || "".equals(nomePdd))
 					nomePdd = pdd.getNome();
 				
-				long idPdd = DriverRegistroServiziDB_LIB.getIdPortaDominio(nomePdd, con, DriverRegistroServiziDB_LIB.tipoDB);
+				long idPdd = DBUtils.getIdPortaDominio(nomePdd, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idPdd <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDPortaDominio(UPDATE)] Id Porta di Dominio non valido.");
 				
@@ -345,7 +346,7 @@ public class DriverRegistroServiziDB_LIB {
 			case DELETE:
 				// DELETE
 
-				idPdd = DriverRegistroServiziDB_LIB.getIdPortaDominio(nome, con, DriverRegistroServiziDB_LIB.tipoDB);
+				idPdd = DBUtils.getIdPortaDominio(nome, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idPdd <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDPortaDominio(DELETE)] Id Porta di Dominio non valido.");
 				
@@ -1041,7 +1042,7 @@ public class DriverRegistroServiziDB_LIB {
 				String uriAccordo = asps.getAccordoServizioParteComune();
 				if(uriAccordo==null || uriAccordo.equals("")) throw new DriverRegistroServiziException("L'uri dell'Accordo di Servizio non puo essere null.");
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordo);
-				idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoServizioParteComune(idAccordo, con, DriverRegistroServiziDB_LIB.tipoDB);
+				idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordo, con, DriverRegistroServiziDB_LIB.tipoDB);
 			}
 		} catch (Exception e) {
 			DriverRegistroServiziDB_LIB.log.error("Driver Error for get IDAccordo nome:["+asps.getAccordoServizioParteComune()+"].", e);
@@ -2231,7 +2232,7 @@ public class DriverRegistroServiziDB_LIB {
 
 				Long idPT = 0l;
 				if(pt.getId()==null || pt.getId()<=0){
-					idPT = DriverRegistroServiziDB_LIB.getIdPortType(idAccordo, pt.getNome(), con);
+					idPT = DBUtils.getIdPortType(idAccordo, pt.getNome(), con);
 					if(idPT==null || idPT<=0)
 						throw new Exception("ID del porttype["+pt.getNome()+"] idAccordo["+idAccordo+"] non trovato");
 				}
@@ -2262,7 +2263,7 @@ public class DriverRegistroServiziDB_LIB {
 
 
 			if ( (CostantiDB.CREATE == type) || (CostantiDB.UPDATE == type)) {
-				Long idPT = DriverRegistroServiziDB_LIB.getIdPortType(idAccordo, pt.getNome(), con);
+				Long idPT = DBUtils.getIdPortType(idAccordo, pt.getNome(), con);
 				if(idPT==null || idPT<=0)
 					throw new Exception("ID del porttype["+pt.getNome()+"] idAccordo["+idAccordo+"] non trovato");
 
@@ -3241,7 +3242,12 @@ public class DriverRegistroServiziDB_LIB {
 					
 					//if(doc.getId()<=0){
 					// Rileggo sempre id, puo' essere diverso (es. importato tramite sincronizzazioni)
-					doc.setId(DriverRegistroServiziDB_LIB.getIdDocumento(doc.getFile(), doc.getTipo(), doc.getRuolo(), idProprietario, connection, DriverRegistroServiziDB_LIB.tipoDB, tipologiaProprietarioDocumento));
+					String tipologiaProprietarioDocumentoString = null;
+					if(tipologiaProprietarioDocumento!=null){
+						tipologiaProprietarioDocumentoString = tipologiaProprietarioDocumento.toString();
+					}
+					doc.setId(DBUtils.getIdDocumento(doc.getFile(), doc.getTipo(), doc.getRuolo(), idProprietario, connection, 
+							DriverRegistroServiziDB_LIB.tipoDB, tipologiaProprietarioDocumentoString));
 					//}
 					// L'ora di registrazione deve essere impostata solo se non presente, in tale caso siamo in un caso di creazione del nuovo documento
 					if(doc.getOraRegistrazione()==null){
@@ -3612,7 +3618,7 @@ public class DriverRegistroServiziDB_LIB {
 				// Necessario sempre per la sincronizzazione
 				if(asServComposto.getAccordoCooperazione()!=null){
 					idAccordoCooperazione = 
-						DriverRegistroServiziDB_LIB.getIdAccordoCooperazione(IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromUri(asServComposto.getAccordoCooperazione()),
+							DBUtils.getIdAccordoCooperazione(IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromUri(asServComposto.getAccordoCooperazione()),
 								con, DriverRegistroServiziDB_LIB.tipoDB);
 				}
 				//}
@@ -3710,7 +3716,7 @@ public class DriverRegistroServiziDB_LIB {
 				// Necessario sempre per la sincronizzazione
 				if(asServComposto.getAccordoCooperazione()!=null){
 					idAccordoCooperazione = 
-						DriverRegistroServiziDB_LIB.getIdAccordoCooperazione(IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromUri(asServComposto.getAccordoCooperazione()),
+							DBUtils.getIdAccordoCooperazione(IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromUri(asServComposto.getAccordoCooperazione()),
 								con, DriverRegistroServiziDB_LIB.tipoDB);
 				}
 				//}
@@ -3788,8 +3794,28 @@ public class DriverRegistroServiziDB_LIB {
 				
 				if(asServComposto!=null){
 					idAccServComposto = asServComposto.getId();
-					if(idAccServComposto <=0 )
-						throw new  DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] ID AccordoServizioComposto non definito.");
+					if(idAccServComposto <=0 ){
+						//throw new  DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] ID AccordoServizioComposto non definito.");
+						
+						// lo cerco
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
+						sqlQueryObject.addSelectField("id");
+						sqlQueryObject.addWhereCondition("id_accordo=?");
+						updateQuery = sqlQueryObject.createSQLQuery();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setLong(1, idAccordo);
+						selectRS = updateStmt.executeQuery();
+						if(selectRS.next()){
+							idAccServComposto = selectRS.getLong("id");
+						}
+						selectRS.close();
+						updateStmt.close();
+						
+						if(idAccServComposto <=0 ){
+							throw new  DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] ID AccordoServizioComposto non definito e non recuperabile.");
+						}
+					}
 				}else{
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
@@ -3903,7 +3929,7 @@ public class DriverRegistroServiziDB_LIB {
 				if(accordoCooperazione.getVersione()!=null && !"".equals(accordoCooperazione.getVersione())){
 					updateStmt.setString(3, accordoCooperazione.getVersione());
 				}else{
-					updateStmt.setString(3, CostantiRegistroServizi.VERSIONE_DEFAULT);
+					updateStmt.setString(3, AccordiUtils.VERSIONE_DEFAULT);
 				}
 				
 				if(privato)
@@ -3942,7 +3968,7 @@ public class DriverRegistroServiziDB_LIB {
 				
 				// recupero l-id dell'accordo appena inserito
 				IDAccordoCooperazione idAccordoObject = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(accordoCooperazione.getNome(),accordoCooperazione.getVersione());
-				long idAccordoCooperazione = DriverRegistroServiziDB_LIB.getIdAccordoCooperazione(idAccordoObject, con, DriverRegistroServiziDB_LIB.tipoDB);
+				long idAccordoCooperazione = DBUtils.getIdAccordoCooperazione(idAccordoObject, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idAccordoCooperazione<=0) {
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB::CRUDAccordoCooperazione] non riesco a trovare l'id del'Accordo inserito");
 				}
@@ -4045,7 +4071,7 @@ public class DriverRegistroServiziDB_LIB {
 					idAccordoAttualeInseritoDB = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromAccordo(accordoCooperazione);
 				}
 				
-				long idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoCooperazione(idAccordoAttualeInseritoDB, con,DriverRegistroServiziDB_LIB.tipoDB);
+				long idAccordoLong = DBUtils.getIdAccordoCooperazione(idAccordoAttualeInseritoDB, con,DriverRegistroServiziDB_LIB.tipoDB);
 
 				if (idAccordoLong <= 0)
 					throw new DriverRegistroServiziException("Impossibile recuperare l'id dell'Accordo di Cooperazione : " + nome);
@@ -4074,7 +4100,7 @@ public class DriverRegistroServiziDB_LIB {
 				if(accordoCooperazione.getVersione()!=null && !"".equals(accordoCooperazione.getVersione())){
 					updateStmt.setString(3, accordoCooperazione.getVersione());
 				}else{
-					updateStmt.setString(3, CostantiRegistroServizi.VERSIONE_DEFAULT);
+					updateStmt.setString(3, AccordiUtils.VERSIONE_DEFAULT);
 				}
 				
 				if(privato)
@@ -4090,7 +4116,7 @@ public class DriverRegistroServiziDB_LIB {
 							accordoCooperazione.getSoggettoReferente().getTipo(), con, DriverRegistroServiziDB_LIB.tipoDB);
 					updateStmt.setLong(index, idSRef);
 				}else{
-					updateStmt.setLong(index, CostantiRegistroServizi.SOGGETTO_REFERENTE_DEFAULT);
+					updateStmt.setLong(index, AccordiUtils.SOGGETTO_REFERENTE_DEFAULT);
 				}
 				index++;
 				
@@ -4225,7 +4251,7 @@ public class DriverRegistroServiziDB_LIB {
 				// DELETE
 				
 				IDAccordoCooperazione idAccordo = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nome,accordoCooperazione.getVersione());
-				idAccordoLong = DriverRegistroServiziDB_LIB.getIdAccordoCooperazione(idAccordo, con, DriverRegistroServiziDB_LIB.tipoDB);
+				idAccordoLong = DBUtils.getIdAccordoCooperazione(idAccordo, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idAccordoLong <= 0)
 					throw new DriverRegistroServiziException("Impossibile recuperare l'id dell'Accordo di Cooperazione : " + nome);
 				
@@ -4497,356 +4523,5 @@ public class DriverRegistroServiziDB_LIB {
 	}
 	
 	
-	/**
-	 * Recupera l'id della porta di dominio in base al nome passato come parametro
-	 * @param nome
-	 * @param con
-	 * @return L'id della porta di dominio se esiste, altrimenti -1
-	 * @throws CoreException 
-	 */
-	public static long getIdPortaDominio(String nome, Connection con, String tipoDB) throws CoreException
-	{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idPdD=-1;
-		try
-		{
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PDD);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("nome = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String query = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(query);
-			stm.setString(1, nome);
-
-			rs=stm.executeQuery();
-
-			if(rs.next()){
-				idPdD = rs.getLong("id");
-			}
-
-			return idPdD;
-
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
 	
-	/**
-	 * Recupera l'id dell'accordo relativo al servizio fornito dal soggetto
-	 * @param nomeServizio Nome del Servizio
-	 * @param tipoServizio Tipo del Servizio
-	 * @param nomeProprietario Nome Soggetto Proprietario del Servizio
-	 * @param tipoProprietario Tipo Soggetto Proprietario del Servizio
-	 * @param con
-	 * @return L'id dell'accordo se esiste, -1 altrimenti
-	 * @throws CoreException TODO
-	 */
-	public static long getIdAccordo(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB) throws CoreException
-	{
-		return DriverRegistroServiziDB_LIB.getIdAccordo(nomeServizio,tipoServizio,nomeProprietario,tipoProprietario,con,tipoDB,CostantiDB.SOGGETTI);
-	}
-	public static long getIdAccordo(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
-	{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idServizio;
-		long idAccordo = -1;
-		try
-		{
-			idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
-
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id = ?");
-			String query = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(query);
-			stm.setLong(1, idServizio);
-
-			rs=stm.executeQuery();
-
-			if(rs.next()){
-				idAccordo = rs.getLong("id_accordo");
-			}
-
-			return idAccordo;
-
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
-	
-	public static long getIdPortType(Long idAccordo,String nomePortType,Connection con) throws CoreException{
-		PreparedStatement selectStmt = null;
-		ResultSet selectRS = null;
-		long id=-1;
-		try
-		{
-			String selectQuery = "SELECT id FROM " + CostantiDB.PORT_TYPE + " WHERE id_accordo = ? AND nome=?";
-			selectStmt = con.prepareStatement(selectQuery);
-			selectStmt.setLong(1, idAccordo);
-			selectStmt.setString(2, nomePortType);
-			selectRS = selectStmt.executeQuery();
-			if (selectRS.next()) {
-				id = selectRS.getLong("id");	
-			}
-			selectRS.close();
-			selectStmt.close();
-			return id;
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(selectRS!=null) selectRS.close();
-				if(selectStmt!=null) selectStmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
-	
-	/**
-	 * Recupera l'id dell accordo con un determinato nome
-	 * @param idAccordo L'id dell'accordo di cui si vuole sapere l'id
-	 * @param con
-	 * @return L'id dell'accordo se esiste, -1 altrimenti
-	 * @throws CoreException
-	 */
-	public static long getIdAccordoServizioParteComune(IDAccordo idAccordo,Connection con, String tipoDB) throws CoreException,DriverRegistroServiziNotFound{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idAccordoLong=-1;
-		try
-		{
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("nome = ?");
-			sqlQueryObject.addWhereCondition("id_referente = ?");
-			if(IDAccordoFactory.getInstance().versioneNonDefinita(idAccordo.getVersione()))
-				sqlQueryObject.addWhereCondition(false,"versione = ?","versione is null");
-			else
-				sqlQueryObject.addWhereCondition("versione = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String query = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(query);
-			stm.setString(1, idAccordo.getNome());
-			
-			long idSoggettoReferente =  CostantiRegistroServizi.SOGGETTO_REFERENTE_DEFAULT;
-			if(idAccordo.getSoggettoReferente()!=null){
-				idSoggettoReferente = DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
-				if(idSoggettoReferente<=0){
-					throw new DriverRegistroServiziNotFound("[getIdAccordoServizio] Soggetto Referente ["+idAccordo.getSoggettoReferente().toString()+"] non esiste");
-				}
-			}
-			stm.setLong(2, idSoggettoReferente);
-				
-			String vers = CostantiRegistroServizi.VERSIONE_DEFAULT;
-			if(idAccordo.getVersione()!=null)
-				vers = idAccordo.getVersione();
-			stm.setString(3, vers);
-						
-			rs=stm.executeQuery();
-
-			if(rs.next()){
-				idAccordoLong = rs.getLong("id");
-			}
-
-			return idAccordoLong;
-
-		}catch (DriverRegistroServiziNotFound e) {
-			throw e;
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
-	public static long getIdAccordoCooperazione(IDAccordoCooperazione idAccordo,Connection con, String tipoDB) throws CoreException{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idAccordoLong=-1;
-		try
-		{
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("nome = ?");
-			if(IDAccordoFactory.getInstance().versioneNonDefinita(idAccordo.getVersione()))
-				sqlQueryObject.addWhereCondition(false,"versione = ?","versione is null");
-			else
-				sqlQueryObject.addWhereCondition("versione = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String query = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(query);
-			stm.setString(1, idAccordo.getNome());
-				
-			String vers = CostantiRegistroServizi.VERSIONE_DEFAULT;
-			if(idAccordo.getVersione()!=null)
-				vers = idAccordo.getVersione();
-			stm.setString(2, vers);
-						
-			rs=stm.executeQuery();
-
-			if(rs.next()){
-				idAccordoLong = rs.getLong("id");
-			}
-
-			return idAccordoLong;
-
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
-	
-	public static long getIdAccordoServizioParteSpecifica(IDAccordo idAccordo,Connection con, String tipoDB) throws CoreException{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idAccordoLong=-1;
-		try
-		{
-			
-			// NOTA: nell'APS, il soggetto e la versione sono obbligatori
-			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("aps_nome = ?");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.addWhereCondition("aps_versione = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String query = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(query);
-			stm.setString(1, idAccordo.getNome());
-			
-			long idSoggettoReferente =  DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
-			if(idSoggettoReferente<=0){
-				throw new CoreException("[getIdAccordoServizio] Soggetto Referente ["+idAccordo.getSoggettoReferente().toString()+"] non esiste");
-			}
-			stm.setLong(2, idSoggettoReferente);
-				
-			stm.setString(3, idAccordo.getVersione());
-						
-			rs=stm.executeQuery();
-
-			if(rs.next()){
-				idAccordoLong = rs.getLong("id");
-			}
-
-			return idAccordoLong;
-
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
-	
-
-	public static long getIdDocumento(String nome, String tipo, String ruolo, long idProprietario,Connection con,String tipoDB,ProprietariDocumento tipoProprietario) throws CoreException{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idDoc=-1;
-		try
-		{
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.DOCUMENTI);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("id_proprietario = ?");
-			sqlQueryObject.addWhereCondition("nome = ?");
-			sqlQueryObject.addWhereCondition("tipo = ?");
-			sqlQueryObject.addWhereCondition("ruolo = ?");
-			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = con.prepareStatement(sqlQuery);
-			stm.setLong(1, idProprietario);
-			stm.setString(2, nome);
-			stm.setString(3, tipo);
-			stm.setString(4, ruolo);
-			stm.setString(5, tipoProprietario.toString());
-			rs = stm.executeQuery();
-			if (rs.next())
-				idDoc = rs.getLong("id");
-			rs.close();
-			stm.close();
-
-			return idDoc;
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
 }

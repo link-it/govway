@@ -92,7 +92,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPorteApplicative_SoggettiVirtuali(idPA);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -118,7 +118,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaApplicativa(idPA);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -143,7 +143,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaApplicativa(idPA, ricercaPuntuale);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -167,7 +167,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaApplicativaVirtuale(idPA, soggettoVirtuale);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -191,7 +191,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaApplicativaVirtuale(idPA, soggettoVirtuale, ricercaPuntuale);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -216,7 +216,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaApplicativa(nomePorta, soggettoProprietario);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -467,7 +467,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaApplicativa(idPortaApplicativa);
 
 		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -619,6 +619,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getPortaApplicativaAzione(nome);
 
 		}catch(DriverConfigurazioneNotFound dNotF){
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + dNotF.getMessage(), dNotF);
 			throw dNotF;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

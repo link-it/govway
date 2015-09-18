@@ -21,9 +21,15 @@
 
 package org.openspcoop2.protocol.engine.archive;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
 
 /**
@@ -98,14 +104,35 @@ public class ArchiveValidator {
 		}
 		
 		// Accordi di Servizio Parte Specifica 
+		// Divisione tra parte specifica "normale" e "composta".
+		// In particolare non si prendono tutti i composti, ma solo quelli che richiedono prima il caricamento dell'accordo di servizio composto presente in questo archivio.
+		List<ArchiveAccordoServizioParteSpecifica> listServiziImplementanoAccordiServizioCompostoPresentiArchivio = new ArrayList<ArchiveAccordoServizioParteSpecifica>();
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
-			importerInformationMissingUtils.validateAndFillAccordoServizioParteSpecifica(archive.getAccordiServizioParteSpecifica().get(i));
+			ArchiveAccordoServizioParteSpecifica archiveServizio = archive.getAccordiServizioParteSpecifica().get(i);
+			String uriAccordoServizioParteComune = archiveServizio.getAccordoServizioParteSpecifica().getAccordoServizioParteComune();
+			boolean found = false;
+			for (int j = 0; j < archive.getAccordiServizioComposto().size(); j++) {
+				AccordoServizioParteComune as = archive.getAccordiServizioComposto().get(j).getAccordoServizioParteComune();
+				String uri = IDAccordoFactory.getInstance().getUriFromAccordo(as);
+				if(uriAccordoServizioParteComune.equals(uri)){
+					found = true;
+					listServiziImplementanoAccordiServizioCompostoPresentiArchivio.add(archiveServizio);
+					break;
+				}
+			}
+			if(!found)
+				importerInformationMissingUtils.validateAndFillAccordoServizioParteSpecifica(archive.getAccordiServizioParteSpecifica().get(i));
 		}
 
 		// Accordi di Servizio Composti
 		for (int i = 0; i < archive.getAccordiServizioComposto().size(); i++) {
 			importerInformationMissingUtils.validateAndFillAccordoServizioParteComune(archive.getAccordiServizioComposto().get(i),
 					checkCorrelazioneAsincrona);
+		}
+		
+		// Accordi di Servizio Parte Specifica Composti
+		for (ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica : listServiziImplementanoAccordiServizioCompostoPresentiArchivio) {
+			importerInformationMissingUtils.validateAndFillAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica);
 		}
 		
 		// Fruizioni

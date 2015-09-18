@@ -23,7 +23,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +35,12 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -101,15 +107,12 @@ public final class ServiziApplicativiDel extends Action {
 			// }
 
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-
+			
+			boolean isInUso = false;
+			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			String silInUsoDelegate = "";
-			String silInUsoApplicative = "";
-			String silInUsoRuoli = "";
-			String silInUsoPS = "";
-			// String idString = "";
-			// int idServApp = 0;
+			String msg = "";
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
@@ -120,80 +123,27 @@ public final class ServiziApplicativiDel extends Action {
 
 				// Prendo il nome del servizio applicativo
 				ServizioApplicativo sa = saCore.getServizioApplicativo(Long.parseLong(idsToRemove.get(i)));
-				String nome = sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"_"+sa.getNome();
-
+				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+				idServizioApplicativo.setNome(sa.getNome());
+				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+				
 				// Controllo che il sil non sia in uso
+				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new Hashtable<ErrorsHandlerCostant, List<String>>();
+				boolean saInUso  = saCore.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, saCore.isRegistroServiziLocale());
+				
+				if (saInUso) {
+					isInUso = true;
+					msg += DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 
-				// Porte delegate
-				if (saCore.existsPortaDelegataServizioApplicativo(sa.getId())) {
-					if (silInUsoDelegate.equals("")) {
-						silInUsoDelegate = nome;
-					} else {
-						silInUsoDelegate = silInUsoDelegate + ", " + nome;
-					}
-					continue;
+				} else {
+
+					// Elimino il sil
+					saCore.performDeleteOperation(userLogin, saHelper.smista(), sa);
 				}
-
-				// Porte applicative
-				if (saCore.existsPortaApplicativaServizioApplicativo(sa.getId())) {
-					if (silInUsoApplicative.equals("")) {
-						silInUsoApplicative = nome;
-					} else {
-						silInUsoApplicative = silInUsoApplicative + ", " + nome;
-					}
-					continue;
-				}
-
-				// Ruoli
-				if(saCore.isRegistroServiziLocale()){
-					if (saCore.existsRuoloServizioApplicativo(sa.getId())) {
-						if (silInUsoRuoli.equals("")) {
-							silInUsoRuoli = nome;
-						} else {
-							silInUsoRuoli = silInUsoRuoli + ", " + nome;
-						}
-						continue;
-					}
-	
-					// controllo se in uso come politiche di sicurezza
-					if (saCore.existsPoliticaSicurezzaServizioApplicativo(sa.getId())) {
-						if (silInUsoPS.equals("")) {
-							silInUsoPS = nome;
-						} else {
-							silInUsoPS = silInUsoPS + ", " + nome;
-						}
-						continue;
-					}
-				}
-
-				// controllo se in uso come politiche di sicurezza
-				if (saCore.existsPoliticaSicurezzaServizioApplicativo(sa.getId())) {
-					if (silInUsoPS.equals("")) {
-						silInUsoPS = nome;
-					} else {
-						silInUsoPS = silInUsoPS + ", " + nome;
-					}
-					continue;
-				}
-
-				// Elimino il sil
-				saCore.performDeleteOperation(userLogin, saHelper.smista(), sa);
 			}
 
-			String msg = "";
-			if (!silInUsoDelegate.equals("") || !silInUsoApplicative.equals("") || !silInUsoRuoli.equals("") || !silInUsoPS.equals("")) {
-				if (!silInUsoDelegate.equals("")) {
-					msg = "Servizi applicativi non rimossi perch&egrave; in uso in una o pi&ugrave; porte delegate: " + silInUsoDelegate + "<BR>";
-				}
-				if (!silInUsoApplicative.equals("")) {
-					msg += "Servizi applicativi non rimossi perch&egrave; in uso in una o pi&ugrave; porte applicative: " + silInUsoApplicative;
-				}
-				if (!silInUsoRuoli.equals("")) {
-					msg += "Servizi applicativi non rimossi perch&egrave; in uso in uno o pi&ugrave; ruoli: " + silInUsoRuoli;
-				}
-				if (!silInUsoPS.equals("")) {
-					msg += "Servizi applicativi non rimossi perch&egrave; in uso in una o pi&ugrave; politiche di sicurezza: " + silInUsoPS;
-				}
+			if (isInUso) {
 				pd.setMessage(msg);
 			}
 

@@ -114,6 +114,7 @@ public class ArchiviCostanti {
 	
 	public final static String LABEL_ARCHIVI_IMPORT = "Importa";
 	public final static String LABEL_ARCHIVI_EXPORT = "Esporta";
+	public final static String LABEL_ARCHIVI_ELIMINA = "Elimina";
 	public final static String LABEL_DOWNLOAD = "Download";
 	public final static String LABEL_REPORTISTICA = CostantiControlStation.LABEL_STRUMENTI;
 	public final static String LABEL_DIAGNOSTICA = "Diagnostica";
@@ -238,6 +239,7 @@ public class ArchiviCostanti {
 		
 	public final static String PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA = "severita";
 	
+	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA = "modalita";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE = "theFile";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH = "filePath";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME = "fileName";
@@ -347,6 +349,9 @@ public class ArchiviCostanti {
 	
 	
 	/* DEFAULT VALUE PARAMETRI */
+	
+	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT = "import";
+	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA = "elimina";
 	
 	public final static String FORMATO_DATA = "yyyy-MM-dd hh:mm:ss.SSS";
 	

@@ -19,23 +19,15 @@
  *
  */
 
-package org.openspcoop2.protocol.sdk.constants;
-
+package org.openspcoop2.protocol.sdk.archive;
 
 /**
- *  ArchiveStatoImport
+ *  ArchiveEsitoDelete
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum ArchiveStatoImport {
+public class ArchiveEsitoDelete extends ArchiveEsitoImport {
 
-	CREATED,
-	UPDATED,
-	UPDATE_NOT_PERMISSED,
-	ERROR,
-	DELETED,
-	DELETED_NOT_EXISTS;
-	
 }

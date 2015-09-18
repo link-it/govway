@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoDelete;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
@@ -259,7 +260,7 @@ public class SPCoopArchive extends BasicArchive {
 	
 	/* ----- Utilita' generali di interpretazione di un Esito ----- */
 	
-	private String toString(ArchiveEsitoImport archive){
+	private String toString(ArchiveEsitoImport archive, boolean importOperation){
 		
 		StringBuffer bfEsito = new StringBuffer();
 		
@@ -273,7 +274,7 @@ public class SPCoopArchive extends BasicArchive {
 				IDAccordoCooperazione idAccordoCooperazione = ((ArchiveAccordoCooperazione)archiveAccordoCooperazione.getArchiveObject()).getIdAccordoCooperazione();
 				String uriAccordo = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoCooperazione);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoCooperazione, bfEsito);
+				this.esitoUtils.serializeStato(archiveAccordoCooperazione, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- non importato: ").append(e.getMessage());
 			}
@@ -288,7 +289,7 @@ public class SPCoopArchive extends BasicArchive {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioParteComune)archiveAccordoServizioParteComune.getArchiveObject()).getIdAccordoServizioParteComune();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioParteComune, bfEsito);
+				this.esitoUtils.serializeStato(archiveAccordoServizioParteComune, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- non importato: ").append(e.getMessage());
 			}
@@ -303,7 +304,7 @@ public class SPCoopArchive extends BasicArchive {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito);
+				this.esitoUtils.serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- non importato: ").append(e.getMessage());
 			}
@@ -318,7 +319,7 @@ public class SPCoopArchive extends BasicArchive {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioComposto)archiveAccordoServizioComposto.getArchiveObject()).getIdAccordoServizioParteComune();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioComposto, bfEsito);
+				this.esitoUtils.serializeStato(archiveAccordoServizioComposto, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- non importato: ").append(e.getMessage());
 			}
@@ -333,36 +334,13 @@ public class SPCoopArchive extends BasicArchive {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito);
+				this.esitoUtils.serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- non importato: ").append(e.getMessage());
 			}
 		}
 		
 		return bfEsito.toString();
-	}
-	private void serializeStato(ArchiveEsitoImportDetail detail,StringBuffer bfEsito){
-		String stateDetail = "";
-		if(detail.getStateDetail()!=null){
-			stateDetail = detail.getStateDetail();
-		}
-		switch (detail.getState()) {
-		case UPDATE_NOT_PERMISSED:
-			bfEsito.append("non importato: già presente (aggiornamento non abilitato)").append(stateDetail);
-			break;
-		case ERROR:
-			if(detail.getStateDetail()!=null){
-				stateDetail = " ["+detail.getStateDetail()+"]";
-			}
-			bfEsito.append("non importato"+stateDetail+": ").append(detail.getException().getMessage());
-			break;
-		case CREATED:
-			bfEsito.append("importato correttamente").append(stateDetail);
-			break;
-		case UPDATED:
-			bfEsito.append("già presente, aggiornato correttamente").append(stateDetail);
-			break;
-		}
 	}
 	
 	
@@ -486,11 +464,24 @@ public class SPCoopArchive extends BasicArchive {
 			return super.toString(esito, archiveMode);
 		}
 		else if(SPCoopCostantiArchivi.CNIPA_MODE.equals(archiveMode)){
-			return this.toString(esito);
+			return this.toString(esito,true);
 		}
 		else{
 			throw new ProtocolException("Mode ["+archiveMode+"] unknown");
 		}	
+	}
+	
+	@Override
+	public String toString(ArchiveEsitoDelete esito, ArchiveMode archiveMode) throws ProtocolException{
+		if(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_IMPORT_ARCHIVE_MODE.equals(archiveMode)){
+			return super.toString(esito, archiveMode);
+		}
+		else if(SPCoopCostantiArchivi.CNIPA_MODE.equals(archiveMode)){
+			return this.toString(esito,false);
+		}
+		else{
+			throw new ProtocolException("Mode ["+archiveMode+"] unknown");
+		}
 	}
 	
 	

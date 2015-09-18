@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.ac;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +34,12 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.ErrorsHandler;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -100,6 +100,8 @@ public final class AccordiCooperazioneDel extends Action {
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 			String msg = "";
+			boolean isInUso = false;
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
@@ -111,28 +113,22 @@ public final class AccordiCooperazioneDel extends Action {
 				if("".equals(tipoSICA))
 					tipoSICA = null;
 
+				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+				
 				AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordo);
+				IDAccordoCooperazione idAccordoCooperazione = idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac);
 
-				HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
-				ErrorsHandler errors = new ErrorsHandler();
-				if(acCore.isAccordoCooperazioneInUso(ac, whereIsInUso)){
-					Iterator<ErrorsHandlerCostant> it = whereIsInUso.keySet().iterator();
-					while (it.hasNext()) {
-						ErrorsHandlerCostant key = it.next();
-						errors.addError(key, whereIsInUso.get(key));
-					}
-
-					errors.setCustomMessage("Accordo Cooperazione [" + idAccordoCooperazioneFactory.getUriFromAccordo(ac) + "] non rimosso perche' :");
-					msg += errors.formatErrorMessage();
-
-					// esco dal ciclo
-					continue;
-				}else{
+				if (acCore.isAccordoCooperazioneInUso(ac, whereIsInUso)) {// accordo in uso
+					isInUso = true;
+					msg += DBOggettiInUsoUtils.toString(idAccordoCooperazione, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+				} else {// accordo non in uso
 					acCore.performDeleteOperation(userLogin, acHelper.smista(), ac);
 				}
+				
 			}
 
-			if (!msg.equals("")) {
+			if (isInUso) {
 				pd.setMessage(msg);
 			}
 			

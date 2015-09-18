@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -36,17 +35,15 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.ErrorsHandler;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -78,6 +75,7 @@ import org.openspcoop2.web.lib.users.dao.PermessiUtente;
  */
 public final class AccordiServizioParteSpecificaDel extends Action {
 
+	@SuppressWarnings("unused")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -126,14 +124,15 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			// }
 			//
 			// String nomeservizio = "", tiposervizio = "";
-			ErrorsHandler errors;
 			String nomeservizio = "", tiposervizio = "";
 			String nomesogg = "", tiposogg = "";
-			String msg = "";
 			// int idConnettore = 0;
 
 			IExtendedListServlet extendedServlet = porteApplicativeCore.getExtendedServletPortaApplicativa();
 
+			String msg = "";
+			boolean isInUso = false;
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				PortaApplicativa paGenerataAutomcaticamente = null;
@@ -148,7 +147,6 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 
 				IDServizio idS = new IDServizio(tiposogg, nomesogg, tiposervizio, nomeservizio);
 
-				boolean isInUso = false;
 				// DataElement de = (DataElement) ((Vector<?>)
 				// pdold.getDati()
 				// .elementAt(idToRemove[i])).elementAt(0);
@@ -166,8 +164,6 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				// String tipoprov = provTok.nextToken();
 				// String nomeprov = provTok.nextToken();
 
-				errors = new ErrorsHandler();
-
 				// IDSoggetto idS = new IDSoggetto(tipoprov, nomeprov);
 				// Soggetto soggetto = core.getSoggettoRegistro(idS);
 				// int idProv = soggetto.getId().intValue();
@@ -182,130 +178,78 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				// Connettore connServ = ss.getConnettore();
 				// idConnettore = connServ.getId().intValue();
 
-				// Controllo che il servizio non sia in uso in porte
-				// applicative (servizio e' identificato anche
-				// dall'erogatore del servizio)
-				List<PortaApplicativa> paList = porteApplicativeCore.getPorteApplicativeWithServizio(asps.getId(), ss.getTipo(), ss.getNome(), asps.getIdSoggetto(), ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore());
-				for (int j = 0; j < paList.size(); j++) {
-					PortaApplicativa myPA = paList.get(j);
-					String nome_porta = myPA.getNome();
-
-					// Verifico se sono in modalità di interfaccia 'standard' che non si tratti della PortaApplicativa generata automaticamente.
-					// In tal caso la posso eliminare.
-					boolean foundPAGenerataAutomaticamente = false;
-										
-					//if(InterfaceType.STANDARD.equals(utente.getInterfaceType()) && paList.size()==1){
-					if(paList.size()==1){ // anche l'eliminazione della PD associata alla fruizione viene effettuata anche in modalità avanzata
+				
+				// Verifico se sono in modalità di interfaccia 'standard' che non si tratti della PortaApplicativa generata automaticamente.
+				// In tal caso la posso eliminare.
+				boolean foundPAGenerataAutomaticamente = false;
+				String nomeGenerato = null;
+				if(apsCore.isGenerazioneAutomaticaPorteApplicative() && asps!=null && asps.getPortType()!=null && !"".equals(asps.getPortType())){
+					boolean generaPACheckSoggetto = true;
+					IDSoggetto idSoggettoEr = new IDSoggetto(ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore());
+					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
 						
-						if(apsCore.isGenerazioneAutomaticaPorteApplicative() && asps!=null && asps.getPortType()!=null && !"".equals(asps.getPortType())){
-							boolean generaPACheckSoggetto = true;
-							IDSoggetto idSoggettoEr = new IDSoggetto(ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore());
-							Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
+					if (soggetto.getPortaDominio() != null) {
+						String nomePdd = soggetto.getPortaDominio();
 							
-							if (soggetto.getPortaDominio() != null) {
-								String nomePdd = soggetto.getPortaDominio();
-								
-								PdDControlStation portaDominio = pddCore.getPdDControlStation(nomePdd);
-								
-								if(portaDominio.getTipo().equals(PddTipologia.ESTERNO.toString()))
-									generaPACheckSoggetto = false;
-								
-							} else {
-								// se non ho una porta di domini non devo generare la porta applicativa
-								generaPACheckSoggetto  =false;
-							}
+						PdDControlStation portaDominio = pddCore.getPdDControlStation(nomePdd);
 							
-							if(generaPACheckSoggetto){
-								
-								String nomeGenerato = ss.getTipoSoggettoErogatore()+ss.getNomeSoggettoErogatore()+"/"+
-										ss.getTipo()+asps.getPortType();
-								if(nomeGenerato.equals(nome_porta)){
-									paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(myPA.getNome(), new IDSoggetto(tiposogg, nomesogg));
-									foundPAGenerataAutomaticamente = true;
-								}
-								
-							}
+						if(portaDominio.getTipo().equals(PddTipologia.ESTERNO.toString()))
+							generaPACheckSoggetto = false;
+							
+					} else {
+						// se non ho una porta di domini non devo generare la porta applicativa
+						generaPACheckSoggetto  =false;
+					}
+						
+					if(generaPACheckSoggetto){
+							
+						nomeGenerato = ss.getTipoSoggettoErogatore()+ss.getNomeSoggettoErogatore()+"/"+
+								ss.getTipo()+asps.getPortType();
+						// provo a vedere se esiste
+						if(porteApplicativeCore.existsPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg))){
+							paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg));
+							foundPAGenerataAutomaticamente = true;
 						}
 						
 					}
 					
-					if(!foundPAGenerataAutomaticamente){
-						isInUso = true;
-						errors.addError(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, nome_porta);
-					}
-
 				}
-
-				// Controllo che il servizio non sia in uso in porte
-				// delegate (servizio e' identificato anche dall'erogatore
-				// del servizio)
-				List<PortaDelegata> pdeList = porteDelegateCore.getPorteDelegateWithServizio(asps.getId(), ss.getTipo(), ss.getNome(), asps.getIdSoggetto(), ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore());
-				for (int j = 0; j < pdeList.size(); j++) {
-					PortaDelegata myPD = pdeList.get(j);
+				
+				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+				
+				if (apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, nomeGenerato)) {// accordo in uso
 					isInUso = true;
-					String nome_porta = myPD.getNome();
-					errors.addError(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, nome_porta);
-				}
-
-				// controllo se ci sono fruitori
-				List<Fruitore> sfList = apsCore.getServiziFruitoriWithServizio(asps.getId().intValue());
-				if (sfList != null) {
-					for (int j = 0; j < sfList.size(); j++) {
-						Fruitore myFru = sfList.get(j);
-						isInUso = true;
-						String nomeFruitore = myFru.getTipo() + "/" + myFru.getNome();
-						errors.addError(ErrorsHandlerCostant.POSSIEDE_FRUITORI, nomeFruitore);
-					}
-				}
-
-				// controllo se in uso, altrimenti posso eliminare il
-				// servizio
-				if (isInUso) {
-					errors.setCustomMessage("Servizio [" + ss.getTipo() + "/" + ss.getNome() + "] di [" + ss.getTipoSoggettoErogatore() + "/" + ss.getNomeSoggettoErogatore() + "] non rimosso perche':");
-					// formatto i messaggi di errore da visualizzare
-					// all'utente
-					msg += errors.formatErrorMessage();
-				} else {
-					ErrorsHandler errorsh = new ErrorsHandler();
-					HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
-					if (apsCore.isServizioInUso(asps, whereIsInUso)) {
-
-						Iterator<ErrorsHandlerCostant> it = whereIsInUso.keySet().iterator();
-						while (it.hasNext()) {
-							ErrorsHandlerCostant key = it.next();
-							errorsh.addError(key, whereIsInUso.get(key));
-						}
-
-						errorsh.setCustomMessage("Servizio [" + ss.getTipo()+"/"+ss.getNome() + "] erogato dal soggetto ["+ss.getTipoSoggettoErogatore()+"/"+ss.getNomeSoggettoErogatore()+"] non rimosso perche' :");
-						msg += errorsh.formatErrorMessage();
-					} else {
-						List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
-						if(paGenerataAutomcaticamente!=null){
-							
-							if(extendedServlet!=null){
-								List<IExtendedBean> listExt = null;
-								try{
-									listExt = extendedServlet.extendedBeanList(paGenerataAutomcaticamente);
-								}catch(Exception e){
-									ControlStationCore.logError(e.getMessage(), e);
-								}
-								if(listExt!=null && listExt.size()>0){
-									for (IExtendedBean iExtendedBean : listExt) {
-										WrapperExtendedBean wrapper = new WrapperExtendedBean();
-										wrapper.setExtendedBean(iExtendedBean);
-										wrapper.setExtendedServlet(extendedServlet);
-										wrapper.setOriginalBean(paGenerataAutomcaticamente);
-										wrapper.setManageOriginalBean(false);		
-										listaOggettiDaEliminare.add(wrapper);
-									}
+					msg += DBOggettiInUsoUtils.toString(idS, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+				} else {// accordo non in uso
+					
+					List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+					if(paGenerataAutomcaticamente!=null){
+						
+						if(extendedServlet!=null){
+							List<IExtendedBean> listExt = null;
+							try{
+								listExt = extendedServlet.extendedBeanList(paGenerataAutomcaticamente);
+							}catch(Exception e){
+								ControlStationCore.logError(e.getMessage(), e);
+							}
+							if(listExt!=null && listExt.size()>0){
+								for (IExtendedBean iExtendedBean : listExt) {
+									WrapperExtendedBean wrapper = new WrapperExtendedBean();
+									wrapper.setExtendedBean(iExtendedBean);
+									wrapper.setExtendedServlet(extendedServlet);
+									wrapper.setOriginalBean(paGenerataAutomcaticamente);
+									wrapper.setManageOriginalBean(false);		
+									listaOggettiDaEliminare.add(wrapper);
 								}
 							}
-							
-							listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 						}
-						listaOggettiDaEliminare.add(asps);
-						apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray());
+						
+						listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 					}
+					listaOggettiDaEliminare.add(asps);
+					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray());
+
 				}
 			}// chiudo for
 

@@ -70,10 +70,10 @@ public class EsitoUtils {
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 	}
 	
-	public String toString(ArchiveEsitoImport archive, boolean readIdCorrelazione) throws ProtocolException{
+	public String toString(ArchiveEsitoImport archive, boolean readIdCorrelazione, boolean importOperation) throws ProtocolException{
 		
 		if(!readIdCorrelazione){
-			return this._toString(archive);
+			return this._toString(archive,importOperation);
 		}
 		
 		Hashtable<String, ArchiveEsitoImport> map = new Hashtable<String, ArchiveEsitoImport>();
@@ -88,7 +88,7 @@ public class EsitoUtils {
 			// in caso di una unica correlazione non riporto comunque il raggruppamento se è quella di default
 			String idCorrelazione = map.keys().nextElement();
 			if(ZIPUtils.ID_CORRELAZIONE_DEFAULT.equals(idCorrelazione)){
-				return this._toString(archive);
+				return this._toString(archive,importOperation);
 			}
 		}
 		
@@ -115,20 +115,20 @@ public class EsitoUtils {
 				continue;
 			}
 			
-			this.append(bfEsito, archiveIdCorrelazione, archiveCorrelazione);
+			this.append(bfEsito, archiveIdCorrelazione, archiveCorrelazione, importOperation);
 			
 		}
 		
 		if(defaultArchiveEsitoImport!=null){
 			ArchiveIdCorrelazione i = new ArchiveIdCorrelazione(defaultArchiveIdCorrelazione.getId());
 			i.setDescrizione("       Altro      ");
-			this.append(bfEsito, i, defaultArchiveEsitoImport);
+			this.append(bfEsito, i, defaultArchiveEsitoImport, importOperation);
 		}
 		
 		return bfEsito.toString();
 		
 	}
-	private void append(StringBuffer bfEsito, ArchiveIdCorrelazione archiveIdCorrelazione, ArchiveEsitoImport archiveCorrelazione){
+	private void append(StringBuffer bfEsito, ArchiveIdCorrelazione archiveIdCorrelazione, ArchiveEsitoImport archiveCorrelazione, boolean importOperation){
 		
 		String descrizione = archiveIdCorrelazione.getDescrizione();
 		if(descrizione==null){
@@ -146,12 +146,12 @@ public class EsitoUtils {
 		}
 		bfEsito.append("\n");
 		bfEsito.append("\n");
-		bfEsito.append(this._toString(archiveCorrelazione));
+		bfEsito.append(this._toString(archiveCorrelazione,importOperation));
 		bfEsito.append("\n\n");
 		
 	}
 			
-	private String _toString(ArchiveEsitoImport archive){
+	private String _toString(ArchiveEsitoImport archive, boolean importOperation){
 		
 		StringBuffer bfEsito = new StringBuffer();
 		
@@ -164,7 +164,7 @@ public class EsitoUtils {
 				ArchiveEsitoImportDetail archivePdd = archive.getPdd().get(i);
 				String nomePdd = ((ArchivePdd)archivePdd.getArchiveObject()).getNomePdd();
 				bfEsito.append("\t- [").append(nomePdd).append("] ");
-				serializeStato(archivePdd, bfEsito);
+				serializeStato(archivePdd, bfEsito, importOperation);
 			}catch(Throwable e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -184,7 +184,7 @@ public class EsitoUtils {
 				ArchiveEsitoImportDetail archiveSoggetto = archive.getSoggetti().get(i);
 				IDSoggetto idSoggetto =((ArchiveSoggetto)archiveSoggetto.getArchiveObject()).getIdSoggetto();
 				bfEsito.append("\t- [").append(idSoggetto.toString()).append("] ");
-				serializeStato(archiveSoggetto, bfEsito);
+				serializeStato(archiveSoggetto, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -205,7 +205,7 @@ public class EsitoUtils {
 				IDServizioApplicativo idServizioApplicativo = ((ArchiveServizioApplicativo)archiveServizioApplicativo.getArchiveObject()).getIdServizioApplicativo();
 				bfEsito.append("\t- [").append(idServizioApplicativo.getIdSoggettoProprietario().toString()).
 						append("_").append(idServizioApplicativo.getNome()).append("] ");
-				serializeStato(archiveServizioApplicativo, bfEsito);
+				serializeStato(archiveServizioApplicativo, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -226,7 +226,7 @@ public class EsitoUtils {
 				IDAccordoCooperazione idAccordoCooperazione = ((ArchiveAccordoCooperazione)archiveAccordoCooperazione.getArchiveObject()).getIdAccordoCooperazione();
 				String uriAccordo = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoCooperazione);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoCooperazione, bfEsito);
+				serializeStato(archiveAccordoCooperazione, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -247,7 +247,7 @@ public class EsitoUtils {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioParteComune)archiveAccordoServizioParteComune.getArchiveObject()).getIdAccordoServizioParteComune();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioParteComune, bfEsito);
+				serializeStato(archiveAccordoServizioParteComune, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -268,7 +268,7 @@ public class EsitoUtils {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito);
+				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -289,7 +289,7 @@ public class EsitoUtils {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioComposto)archiveAccordoServizioComposto.getArchiveObject()).getIdAccordoServizioParteComune();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioComposto, bfEsito);
+				serializeStato(archiveAccordoServizioComposto, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -311,7 +311,7 @@ public class EsitoUtils {
 				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
-				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito);
+				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -333,7 +333,7 @@ public class EsitoUtils {
 				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 				IDSoggetto idFruitore = ((ArchiveFruitore)archiveFruitore.getArchiveObject()).getIdSoggettoFruitore();
 				bfEsito.append("\t- ["+idFruitore+"] -> [").append(uriAccordo).append("] ");
-				serializeStato(archiveFruitore, bfEsito);
+				serializeStato(archiveFruitore, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -354,7 +354,7 @@ public class EsitoUtils {
 				IDPortaDelegata idPortaDelegata = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdPortaDelegata();
 				IDSoggetto idProprietario = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdSoggettoProprietario();
 				bfEsito.append("\t- ["+idProprietario+"]["+idPortaDelegata.getLocationPD()+"] ");
-				serializeStato(archivePortaDelegata, bfEsito);
+				serializeStato(archivePortaDelegata, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -374,7 +374,7 @@ public class EsitoUtils {
 				ArchiveEsitoImportDetail archivePortaApplicativa = archive.getPorteApplicative().get(i);
 				IDPortaApplicativaByNome idPortaApplicativa = ((ArchivePortaApplicativa)archivePortaApplicativa.getArchiveObject()).getIdPortaApplicativaByNome();
 				bfEsito.append("\t- ["+idPortaApplicativa.getSoggetto()+"]["+idPortaApplicativa.getNome()+"] ");
-				serializeStato(archivePortaApplicativa, bfEsito);
+				serializeStato(archivePortaApplicativa, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
 			}
@@ -402,7 +402,7 @@ public class EsitoUtils {
 		
 		return bfEsito.toString();
 	}
-	private void serializeStato(ArchiveEsitoImportDetail detail,StringBuffer bfEsito){
+	public void serializeStato(ArchiveEsitoImportDetail detail,StringBuffer bfEsito, boolean importOperation){
 		String stateDetail = "";
 		if(detail.getStateDetail()!=null){
 			stateDetail = detail.getStateDetail();
@@ -415,7 +415,10 @@ public class EsitoUtils {
 			if(detail.getStateDetail()!=null){
 				stateDetail = " ["+detail.getStateDetail()+"]";
 			}
-			bfEsito.append("non importato"+stateDetail+": ").append(detail.getException().getMessage());
+			if(importOperation)
+				bfEsito.append("non importato"+stateDetail+": ").append(detail.getException().getMessage());
+			else
+				bfEsito.append("non eliminato"+stateDetail+": ").append(detail.getException().getMessage());
 			break;
 		case CREATED:
 			bfEsito.append("importato correttamente").append(stateDetail);
@@ -423,9 +426,15 @@ public class EsitoUtils {
 		case UPDATED:
 			bfEsito.append("già presente, aggiornato correttamente").append(stateDetail);
 			break;
+		case DELETED_NOT_EXISTS:
+			bfEsito.append("non esistente").append(stateDetail);
+			break;
+		case DELETED:
+			bfEsito.append("eliminato correttamente").append(stateDetail);
+			break;
 		}
 	}
-	private void serializeStato(ArchiveEsitoImportDetailConfigurazione detail,StringBuffer bfEsito){
+	public void serializeStato(ArchiveEsitoImportDetailConfigurazione detail,StringBuffer bfEsito){
 		String stateDetail = "";
 		if(detail.getStateDetail()!=null){
 			stateDetail = detail.getStateDetail();
@@ -445,6 +454,12 @@ public class EsitoUtils {
 			break;
 		case UPDATED:
 			bfEsito.append("aggiornata correttamente").append(stateDetail);
+			break;
+		case DELETED_NOT_EXISTS:
+			// Stato mai usato per questo oggetto
+			break;
+		case DELETED:
+			// Stato mai usato per questo oggetto
 			break;
 		}
 	}
