@@ -23,6 +23,7 @@ package org.openspcoop2.generic_project.dao.jdbc;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
@@ -41,7 +42,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
  */
 public interface IJDBCServiceCRUDWithoutId<T,SM>  extends IJDBCServiceCRUD_DB<T,SM>  {
 
-	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,T obj) throws NotFoundException,NotImplementedException,ServiceException,Exception;
+	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException,NotImplementedException,ServiceException,Exception;
 	
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,T obj, UpdateField ... updateFields) throws ServiceException,NotFoundException,NotImplementedException,Exception;
 	
@@ -49,7 +50,7 @@ public interface IJDBCServiceCRUDWithoutId<T,SM>  extends IJDBCServiceCRUD_DB<T,
 	
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,T obj, UpdateModel ... updateModels) throws ServiceException,NotFoundException,NotImplementedException, Exception;
 	
-	public void updateOrCreate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, T obj) throws NotImplementedException,ServiceException,Exception;
+	public void updateOrCreate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
 	public NonNegativeNumber deleteAll(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject) throws NotImplementedException,ServiceException,Exception;
 	

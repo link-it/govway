@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.InUse;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -47,6 +48,8 @@ public interface IXMLServiceSearchWithId<XML,T,K, SM> extends IXMLExpressionCons
 	public K convertToId(Logger log,XML xmlRoot,T id) throws NotImplementedException,ServiceException,Exception;
 	
 	public T get(Logger log,XML xmlRoot,K id) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
+	
+	public T get(Logger log,XML xmlRoot, K id, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
 	
 	public boolean exists(Logger log,XML xmlRoot,K id) throws MultipleResultException,NotImplementedException,ServiceException,Exception;
 	

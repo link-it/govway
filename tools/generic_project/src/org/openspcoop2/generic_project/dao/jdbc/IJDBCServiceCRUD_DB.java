@@ -23,6 +23,7 @@ package org.openspcoop2.generic_project.dao.jdbc;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -36,7 +37,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
  */
 public interface IJDBCServiceCRUD_DB<T,SM> extends IJDBCServiceManager<SM> {
 
-	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, T obj) throws NotImplementedException,ServiceException,Exception;
+	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, T obj,IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,long tableId) throws ServiceException,NotImplementedException, Exception;
 	

@@ -41,8 +41,8 @@ import org.openspcoop2.generic_project.web.mbean.exception.RestoreSearchExceptio
  * Interfaccia che descrive le funzionalita' di base di un Bean di una pagina Web.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author: pintori $
- * @version $Rev: 11029 $, $Date: 2015-06-22 15:35:20 +0200(lun, 22 giu 2015) $ 
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  *
  */
 public interface IManagedBean<SearchFormType extends SearchForm,FormType extends Form> extends Serializable {

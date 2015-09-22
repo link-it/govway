@@ -21,6 +21,7 @@
 package org.openspcoop2.generic_project.dao.xml;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
@@ -38,9 +39,9 @@ import org.openspcoop2.generic_project.expression.IExpression;
  */
 public interface IXMLServiceCRUDWithId<XML,T,K,SM>  extends IXMLServiceManager<SM> {
 
-	public void create(Logger log,XML xmlRoot,T obj) throws NotImplementedException,ServiceException,Exception;
+	public void create(Logger log,XML xmlRoot,T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
-	public void update(Logger log,XML xmlRoot,K oldId, T obj) throws NotFoundException,NotImplementedException,ServiceException,Exception;
+	public void update(Logger log,XML xmlRoot,K oldId, T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException,NotImplementedException,ServiceException,Exception;
 	
 	public void updateFields(Logger log,XML xmlRoot,K oldId, UpdateField ... updateFields) throws ServiceException,NotFoundException,NotImplementedException, Exception;
 	
@@ -48,7 +49,7 @@ public interface IXMLServiceCRUDWithId<XML,T,K,SM>  extends IXMLServiceManager<S
 	
 	public void updateFields(Logger log,XML xmlRoot,K oldId, UpdateModel ... updateModels) throws ServiceException,NotFoundException,NotImplementedException,Exception;
 	
-	public void updateOrCreate(Logger log,XML xmlRoot,K oldId, T obj) throws NotImplementedException,ServiceException,Exception;
+	public void updateOrCreate(Logger log,XML xmlRoot,K oldId, T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
 	public void deleteById(Logger log,XML xmlRoot,K id) throws NotImplementedException,ServiceException,Exception;
 	

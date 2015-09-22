@@ -38,4 +38,8 @@ public interface IDBServiceSearchWithId<T,K> extends IDBServiceSearch<T>, IServi
 	
 	public void mappingTableIds(long tableId, T obj) throws ServiceException,NotFoundException,NotImplementedException;
 	
+	public Long findTableId(K id, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException;
+
+	public K findId(long tableId, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException;
+
 }

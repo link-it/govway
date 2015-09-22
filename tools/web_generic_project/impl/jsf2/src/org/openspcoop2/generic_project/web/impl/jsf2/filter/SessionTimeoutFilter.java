@@ -43,8 +43,8 @@ import org.apache.commons.lang.StringUtils;
 * e controllare le pagine richieste dall'utente sono accedibili anche senza sessione (es. pagina di login).
 * 
 * @author Pintori Giuliano (pintori@link.it)
-* @author $Author: apoli $
-* @version $Rev: 11026 $, $Date: 2015-06-22 13:14:14 +0200(lun, 22 giu 2015) $
+* @author $Author$
+* @version $Rev$, $Date$
 */
 public class SessionTimeoutFilter implements Filter {
 

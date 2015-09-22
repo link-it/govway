@@ -30,8 +30,8 @@ import org.openspcoop2.generic_project.web.input.SingleListBox;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 11086 $, $Date: 2015-07-13 09:03:53 +0200(lun, 13 lug 2015) $ 
+ * @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class SingleListBoxImpl extends SelectListImpl implements SingleListBox {

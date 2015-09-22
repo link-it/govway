@@ -23,6 +23,7 @@ package org.openspcoop2.generic_project.dao;
 
 import java.util.List;
 
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.InUse;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -41,6 +42,8 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 public interface IDBServiceSearch<T> {
 
 	public T get(long tableId) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
+	
+	public T get(long tableId, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
 	
 	public boolean exists(long tableId) throws ServiceException,MultipleResultException,NotImplementedException;
 	

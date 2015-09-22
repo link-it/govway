@@ -23,6 +23,7 @@ package org.openspcoop2.generic_project.dao.jpa;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -39,7 +40,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
  */
 public interface IJPAServiceCRUDSingleObject<T,SM>  extends IJPAServiceCRUD_DB<T,SM> {
 
-	public void update(Logger log,EntityManager em,T obj) throws NotFoundException,NotImplementedException,ServiceException,Exception;
+	public void update(Logger log,EntityManager em,T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException,NotImplementedException,ServiceException,Exception;
 	
 	public void updateFields(Logger log,EntityManager em,UpdateField ... updateFields) throws ServiceException,NotFoundException,NotImplementedException,Exception;
 	
@@ -47,6 +48,6 @@ public interface IJPAServiceCRUDSingleObject<T,SM>  extends IJPAServiceCRUD_DB<T
 	
 	public void updateFields(Logger log,EntityManager em,UpdateModel ... updateModels) throws ServiceException,NotFoundException,NotImplementedException,Exception;
 	
-	public void updateOrCreate(Logger log,EntityManager em,T obj) throws NotImplementedException,ServiceException,Exception;
+	public void updateOrCreate(Logger log,EntityManager em,T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
 }

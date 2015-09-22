@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.dao;
 
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
@@ -40,11 +41,19 @@ public interface IServiceCRUDWithId<T,K>  {
 
 	public void create(T obj) throws ServiceException,NotImplementedException;
 	
+	public void create(T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException;
+	
 	public void create(T obj, boolean validate) throws ServiceException,NotImplementedException,ValidationException;
+	
+	public void create(T obj, boolean validate, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException,ValidationException;
 	
 	public void update(K oldId, T obj) throws ServiceException,NotFoundException,NotImplementedException;
 	
+	public void update(K oldId, T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,NotImplementedException;
+	
 	public void update(K oldId, T obj, boolean validate) throws ServiceException,NotFoundException,NotImplementedException,ValidationException;
+	
+	public void update(K oldId, T obj, boolean validate, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,NotImplementedException,ValidationException;
 	
 	public void updateFields(K oldId, UpdateField ... updateFields) throws ServiceException,NotFoundException,NotImplementedException;
 	
@@ -54,7 +63,11 @@ public interface IServiceCRUDWithId<T,K>  {
 	
 	public void updateOrCreate(K oldId, T obj) throws ServiceException,NotImplementedException;
 	
+	public void updateOrCreate(K oldId, T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException;
+	
 	public void updateOrCreate(K oldId, T obj, boolean validate) throws ServiceException,NotImplementedException,ValidationException;
+	
+	public void updateOrCreate(K oldId, T obj, boolean validate, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException,ValidationException;
 	
 	public void deleteById(K id) throws ServiceException,NotImplementedException;
 	

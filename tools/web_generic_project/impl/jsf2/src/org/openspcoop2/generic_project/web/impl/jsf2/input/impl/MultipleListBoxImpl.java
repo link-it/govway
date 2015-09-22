@@ -31,8 +31,8 @@ import org.openspcoop2.generic_project.web.input.MultipleListBox;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author: apoli $
- * @version $Rev: 11085 $, $Date: 2015-07-13 09:02:27 +0200(lun, 13 lug 2015) $ 
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class MultipleListBoxImpl extends MultipleChoiceImpl implements MultipleListBox{

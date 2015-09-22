@@ -23,6 +23,7 @@ package org.openspcoop2.generic_project.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.InUse;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -44,6 +45,8 @@ public interface IServiceSearchSingleObject<T> extends IExpressionConstructor {
 	public void validate(T object) throws ServiceException,ValidationException,NotImplementedException;
 	
 	public T get() throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
+	
+	public T get(IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
 	
 	public boolean exists() throws ServiceException,MultipleResultException,NotImplementedException;
 	

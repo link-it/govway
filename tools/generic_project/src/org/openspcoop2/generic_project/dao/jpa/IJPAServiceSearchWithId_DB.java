@@ -41,4 +41,8 @@ public interface IJPAServiceSearchWithId_DB<T,K,SM> extends IJPAServiceSearch_DB
 	
 	public void mappingTableIds(Logger log,EntityManager em, long tableId, T obj) throws ServiceException,NotFoundException,NotImplementedException, Exception;
 	
+	public Long findTableId(Logger log,EntityManager em, K id, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException, Exception;
+
+	public K findId(Logger log,EntityManager em, long tableId, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException, Exception;
+
 }

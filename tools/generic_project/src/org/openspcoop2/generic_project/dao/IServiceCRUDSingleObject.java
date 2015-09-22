@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.generic_project.dao;
 
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -39,11 +40,19 @@ public interface IServiceCRUDSingleObject<T>  {
 
 	public void create(T obj) throws ServiceException,NotImplementedException;
 	
+	public void create(T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException;
+	
 	public void create(T obj, boolean validate) throws ServiceException,NotImplementedException,ValidationException;
+	
+	public void create(T obj, boolean validate, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException,ValidationException;
 	
 	public void update(T obj) throws ServiceException,NotFoundException,NotImplementedException;
 	
+	public void update(T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,NotImplementedException;
+	
 	public void update(T obj, boolean validate) throws ServiceException,NotFoundException,NotImplementedException,ValidationException;
+	
+	public void update(T obj, boolean validate, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,NotImplementedException,ValidationException;
 	
 	public void updateFields(UpdateField ... updateFields) throws ServiceException,NotFoundException,NotImplementedException;
 	
@@ -53,7 +62,11 @@ public interface IServiceCRUDSingleObject<T>  {
 	
 	public void updateOrCreate(T obj) throws ServiceException,NotImplementedException;
 	
+	public void updateOrCreate(T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException;
+	
 	public void updateOrCreate(T obj, boolean validate) throws ServiceException,NotImplementedException,ValidationException;
+	
+	public void updateOrCreate(T obj, boolean validate, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException,ValidationException;
 	
 	public void delete(T obj) throws ServiceException,NotImplementedException;
 	

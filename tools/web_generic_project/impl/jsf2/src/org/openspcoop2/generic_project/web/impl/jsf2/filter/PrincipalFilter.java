@@ -45,8 +45,8 @@ import org.openspcoop2.utils.Identity;
 * PrincipalFilter Filtro base per il controllo della login via Container basata sulla presenza del principal.
 * 
 * @author Pintori Giuliano (pintori@link.it)
-* @author $Author: apoli $
-* @version $Rev: 11026 $, $Date: 2015-06-22 13:14:14 +0200(lun, 22 giu 2015) $
+* @author $Author$
+* @version $Rev$, $Date$
  *
  */
 public class PrincipalFilter implements Filter {

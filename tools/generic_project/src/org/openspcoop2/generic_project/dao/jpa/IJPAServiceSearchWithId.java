@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.InUse;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -49,6 +50,8 @@ public interface IJPAServiceSearchWithId<T,K,SM> extends IJPAServiceSearchWithId
 	public K convertToId(Logger log,EntityManager em,T id) throws NotImplementedException,ServiceException,Exception;
 	
 	public T get(Logger log,EntityManager em,K id) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
+	
+	public T get(Logger log,EntityManager em, K id, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
 	
 	public boolean exists(Logger log,EntityManager em,K id) throws MultipleResultException,NotImplementedException,ServiceException,Exception;
 	

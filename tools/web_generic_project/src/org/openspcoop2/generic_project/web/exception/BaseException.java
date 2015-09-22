@@ -29,8 +29,8 @@ import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManag
  * Classe Base che definisce delle eccezioni con dei messaggi userfriendly.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author: pintori $
- * @version $Rev: 11051 $, $Date: 2015-06-30 17:15:40 +0200(mar, 30 giu 2015) $ 
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  */
 public class BaseException extends Exception {

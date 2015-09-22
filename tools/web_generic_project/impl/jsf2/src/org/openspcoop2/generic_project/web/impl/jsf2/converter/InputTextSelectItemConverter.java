@@ -32,8 +32,8 @@ import org.apache.commons.lang.StringUtils;
  * InputTextSelectItemConverter converter per gli elementi di tipo input text con value di tipo complesso SelectItem
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 11026 $, $Date: 2015-06-22 13:14:14 +0200(lun, 22 giu 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class InputTextSelectItemConverter implements Converter {
 

@@ -18,29 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.dao.jpa;
-
-
-import javax.persistence.EntityManager;
-
-import org.apache.log4j.Logger;
-import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
-import org.openspcoop2.generic_project.exception.ServiceException;
+package org.openspcoop2.generic_project.beans;
 
 /**
- * IJPAServiceCRUD_DB
+ * IDMappingBehaviour
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IJPAServiceCRUD_DB<T,SM> extends IJPAServiceManager<SM>  {
-	
-	public void create(Logger log,EntityManager em, T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
-	
-	public void deleteById(Logger log,EntityManager em,long tableId) throws ServiceException,NotImplementedException, Exception;
-	
-	public void delete(Logger log,EntityManager em,T obj) throws NotImplementedException,ServiceException,Exception;
+public enum IDMappingBehaviour {
 
+	ENABLED, DISABLED, USE_TABLE_ID;
+	
 }

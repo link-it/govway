@@ -32,8 +32,8 @@ import org.openspcoop2.generic_project.web.impl.jsf2.mbean.LoginBean;
 * HttpSessionCheckListener Fornisce il supporto per il controllo dello stato della sessione dell'utente.
 * 
 * @author Pintori Giuliano (pintori@link.it)
-* @author $Author: apoli $
-* @version $Rev: 11026 $, $Date: 2015-06-22 13:14:14 +0200(lun, 22 giu 2015) $
+* @author $Author$
+* @version $Rev$, $Date$
 */
 public class HttpSessionCheckListener implements HttpSessionListener {
 

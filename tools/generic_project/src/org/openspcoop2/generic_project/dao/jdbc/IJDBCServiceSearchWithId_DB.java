@@ -42,4 +42,8 @@ public interface IJDBCServiceSearchWithId_DB<T,K,SM> extends IJDBCServiceSearch_
 	
 	public void mappingTableIds(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, long tableId, T obj) throws ServiceException,NotFoundException,NotImplementedException, Exception;
 	
+	public Long findTableId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, K id, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException, Exception;
+
+	public K findId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException, Exception;
+
 }

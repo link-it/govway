@@ -36,8 +36,8 @@ import org.ajax4jsf.model.ExtendedDataModel;
  * 
  * 
  * @author Pintori Giuliano (pintori@link.it)
- *  @author $Author: pintori $
- * @version $Rev: 11029 $, $Date: 2015-06-22 15:35:20 +0200(lun, 22 giu 2015) $ 
+ *  @author $Author$
+ * @version $Rev$, $Date$ 
  * 
  * @param <T> Tipo del bean.
  * @param <U> Tipo della chiave del bean.

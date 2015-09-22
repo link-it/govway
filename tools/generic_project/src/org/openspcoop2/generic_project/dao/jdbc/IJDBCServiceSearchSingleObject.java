@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.InUse;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -43,6 +44,8 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
 public interface IJDBCServiceSearchSingleObject<T,SM> extends IJDBCServiceSearchSingleObject_DB<T,SM>{
 
 	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
+	
+	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException,Exception;
 	
 	public boolean exists(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject) throws MultipleResultException,NotImplementedException,ServiceException,Exception;
 	
