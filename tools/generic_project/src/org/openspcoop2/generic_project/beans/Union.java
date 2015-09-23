@@ -82,7 +82,21 @@ public class Union {
 		this.mapFieldsToAliasFunction.put(alias, functionParamAlias);
 	}
 	
-	public SortOrder getSortOrder() {
+	public SortOrder getSortOrder() throws ExpressionException{
+		if(
+				( this.sortOrder==null || SortOrder.UNSORTED.equals(this.sortOrder) ) 
+					&& 
+				( this.orderByList!=null && this.orderByList.size()>0 )
+			){
+			// ritorno un sortOrder a caso tra i orderedFields, tanto poi viene usato sempre quello indicato per ogni field.
+			for (UnionOrderedColumn unionOrderedColumn : this.orderByList) {
+				if(unionOrderedColumn.getSortOrder()!=null){
+					return unionOrderedColumn.getSortOrder();
+				}
+			}
+			// Se non ho trovato un sort order ma sono state impostate condizioni di order by sollevo una eccezione.
+			throw new ExpressionException("To add order by conditions must first be defined the sort order (by sortOrder method or as parameter by addOrderBy method)"); 
+		}
 		return this.sortOrder;
 	}
 	public void setSortOrder(SortOrder sortOrder) {

@@ -762,23 +762,31 @@ public class JDBCUtilities {
 		}
 		
 		// Check eventuali order by siano alias che corrispondano ad alias reali
-		if(union.getOrderByList()!=null && union.getOrderByList().size()>0 && !SortOrder.UNSORTED.equals(union.getSortOrder())){
-			List<String> aliasExpression = expressionComparator.getReturnFieldAliases();
-			List<String> aliasExternalExpression = union.getFields();
-			for (UnionOrderedColumn uoo : union.getOrderByList()) {
-				String aliasOrderBy = uoo.getAlias();
-				SortOrder sortOrder = uoo.getSortOrder();
-				if(aliasExpression.contains(aliasOrderBy)==false && aliasExternalExpression.contains(aliasOrderBy)==false){
-					throw new ServiceException("The alias used in the condition of order by the union must be one of the aliases used in internal or external expressions");
-				}
-				if(sortOrder==null){
-					sqlQueryObject.addOrderBy(aliasOrderBy);
-				}
-				else{
-					sqlQueryObject.addOrderBy(aliasOrderBy,SortOrder.ASC.equals(sortOrder));
-				}
+		if(union.getOrderByList()!=null && union.getOrderByList().size()>0){
+			SortOrder sortOrderUnion = null;
+			try{
+				sortOrderUnion = union.getSortOrder();
+			}catch(Exception e){
+				throw new ServiceException(e.getMessage(),e);
 			}
-			sqlQueryObject.setSortType(SortOrder.ASC.equals(union.getSortOrder()));
+			if(!SortOrder.UNSORTED.equals(sortOrderUnion)){
+				List<String> aliasExpression = expressionComparator.getReturnFieldAliases();
+				List<String> aliasExternalExpression = union.getFields();
+				for (UnionOrderedColumn uoo : union.getOrderByList()) {
+					String aliasOrderBy = uoo.getAlias();
+					SortOrder sortOrder = uoo.getSortOrder();
+					if(aliasExpression.contains(aliasOrderBy)==false && aliasExternalExpression.contains(aliasOrderBy)==false){
+						throw new ServiceException("The alias used in the condition of order by the union must be one of the aliases used in internal or external expressions");
+					}
+					if(sortOrder==null){
+						sqlQueryObject.addOrderBy(aliasOrderBy);
+					}
+					else{
+						sqlQueryObject.addOrderBy(aliasOrderBy,SortOrder.ASC.equals(sortOrder));
+					}
+				}
+				sqlQueryObject.setSortType(SortOrder.ASC.equals(sortOrderUnion));
+			}
 		}
 		
 		// Check Limit/Offset
