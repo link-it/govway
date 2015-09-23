@@ -31,6 +31,8 @@ import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -68,7 +70,8 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			String function, String url,
 			Credenziali credenziali,
 			String functionParameters,
-			DirectVMProtocolInfo directVMProtocolInfo) throws ConnectorException{
+			DirectVMProtocolInfo directVMProtocolInfo,
+			PdDContext pddContext) throws ConnectorException{
 		try{
 			this.message = msg;
 			
@@ -101,6 +104,10 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			this.functionParameters = functionParameters;
 			
 			this.directVMProtocolInfo = directVMProtocolInfo;
+			
+			if(pddContext!=null){
+				this.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP,pddContext);
+			}
 			
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);

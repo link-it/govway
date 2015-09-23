@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
@@ -241,6 +242,14 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 				directVMProtocolInfo.setIdTransazione(o!=null ? (String)o : null);
 			}
 			
+			PdDContext newPddContext = null;
+			String pddContextPreserve = this.properties.get(CostantiConnettori.CONNETTORE_DIRECT_VM_PDD_CONTEXT_PRESERVE);
+			if(pddContextPreserve!=null){
+				if("true".equalsIgnoreCase(pddContextPreserve.trim())){
+					newPddContext = this.getPddContext();
+				}
+			}
+			
 			DirectVMConnectorInMessage inMessage = new DirectVMConnectorInMessage(this.requestMsg, 
 					this.getIdModuloAsIDService(),
 					this.getIdModulo(), 
@@ -250,7 +259,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 					this.getFunction(), 
 					this.location, this.credenziali,
 					this.getFunctionParameters(),
-					directVMProtocolInfo);
+					directVMProtocolInfo,
+					newPddContext);
 			
 			DirectVMConnectorOutMessage outMessage = new DirectVMConnectorOutMessage();
 			

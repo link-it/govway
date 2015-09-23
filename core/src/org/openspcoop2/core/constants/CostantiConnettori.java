@@ -118,6 +118,7 @@ public class CostantiConnettori {
     
     public static final String CONNETTORE_DIRECT_VM_PROTOCOL = "protocol";
     public static final String CONNETTORE_DIRECT_VM_CONTEXT = "context";
+    public static final String CONNETTORE_DIRECT_VM_PDD_CONTEXT_PRESERVE = "contextPreserve";
     public static final String CONNETTORE_DIRECT_VM_PD = "pd";
     public static final String CONNETTORE_DIRECT_VM_PA = "pa";
     
