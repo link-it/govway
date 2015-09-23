@@ -1,3 +1,10 @@
+2015-09-23  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-422
+	Aggiunta la proprietà 'contextPreserve' (true/false) utilizzabile nei connettori 'virtual memory' 
+	per indicare di preservare il contesto tra le transazioni.
+
 2015-09-18  Andrea Poli <apoli@link.it>
 
 	* [GenericProject]
