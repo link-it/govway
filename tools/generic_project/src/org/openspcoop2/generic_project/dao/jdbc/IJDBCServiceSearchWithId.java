@@ -50,17 +50,15 @@ public interface IJDBCServiceSearchWithId<T,K,SM> extends IJDBCServiceSearchWith
 
 	public K convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,T id) throws NotImplementedException,ServiceException,Exception;
 	
-	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,K id) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
-	
 	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, K id, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
 	
 	public boolean exists(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,K id) throws MultipleResultException,NotImplementedException,ServiceException,Exception;
 	
-	public List<K> findAllIds(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCPaginatedExpression expression) throws NotImplementedException,ServiceException,Exception;
+	public List<K> findAllIds(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCPaginatedExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
-	public List<T> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCPaginatedExpression expression) throws NotImplementedException,ServiceException,Exception;
+	public List<T> findAll(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCPaginatedExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
-	public T find(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCExpression expression) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
+	public T find(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
 	
 	public NonNegativeNumber count(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCExpression expression) throws NotImplementedException,ServiceException,Exception;
 	

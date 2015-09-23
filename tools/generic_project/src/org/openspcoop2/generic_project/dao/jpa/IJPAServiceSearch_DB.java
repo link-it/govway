@@ -42,8 +42,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
  */
 public interface IJPAServiceSearch_DB<T,SM> extends IJPAExpressionConstructor<SM>  {
 
-	public T get(Logger log,EntityManager em, long tableId) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
-	
 	public T get(Logger log,EntityManager em, long tableId, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
 	
 	public boolean exists(Logger log,EntityManager em, long tableId) throws ServiceException,MultipleResultException,NotImplementedException, Exception;

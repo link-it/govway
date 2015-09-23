@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.Union;
@@ -50,7 +51,11 @@ public interface IServiceSearchWithoutId<T> extends IExpressionConstructor {
 	
 	public List<T> findAll(IPaginatedExpression expression) throws ServiceException,NotImplementedException;
 	
+	public List<T> findAll(IPaginatedExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException;
+	
 	public T find(IExpression expression) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
+	
+	public T find(IExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
 	
 	public NonNegativeNumber count(IExpression expression) throws ServiceException,NotImplementedException;
 		

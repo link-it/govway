@@ -60,9 +60,15 @@ public interface IServiceSearchWithId<T,K> extends IExpressionConstructor {
 	
 	public List<K> findAllIds(IPaginatedExpression expression) throws ServiceException,NotImplementedException;
 	
+	public List<K> findAllIds(IPaginatedExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException;
+	
 	public List<T> findAll(IPaginatedExpression expression) throws ServiceException,NotImplementedException;
 	
+	public List<T> findAll(IPaginatedExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotImplementedException;
+	
 	public T find(IExpression expression) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
+	
+	public T find(IExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException;
 	
 	public NonNegativeNumber count(IExpression expression) throws ServiceException,NotImplementedException;
 	

@@ -48,8 +48,6 @@ public interface IJDBCServiceSearch_DB<T,SM> extends IJDBCExpressionConstructor<
 	
 	public IJDBCFetch getFetch();
 	
-	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, long tableId) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
-	
 	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, long tableId, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
 	
 	public boolean exists(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, long tableId) throws ServiceException,MultipleResultException,NotImplementedException, Exception;

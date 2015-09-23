@@ -43,8 +43,6 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
  */
 public interface IJDBCServiceSearchSingleObject<T,SM> extends IJDBCServiceSearchSingleObject_DB<T,SM>{
 
-	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
-	
 	public T get(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException,Exception;
 	
 	public boolean exists(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject) throws MultipleResultException,NotImplementedException,ServiceException,Exception;

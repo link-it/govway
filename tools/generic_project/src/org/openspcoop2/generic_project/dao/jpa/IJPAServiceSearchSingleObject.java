@@ -43,8 +43,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
  */
 public interface IJPAServiceSearchSingleObject<T,SM> extends IJPAServiceSearchSingleObject_DB<T,SM>{
 
-	public T get(Logger log,EntityManager em) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
-	
 	public T get(Logger log,EntityManager em, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException,Exception;
 	
 	public boolean exists(Logger log,EntityManager em) throws MultipleResultException,NotImplementedException,ServiceException,Exception;

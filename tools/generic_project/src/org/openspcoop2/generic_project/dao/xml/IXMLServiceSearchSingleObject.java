@@ -41,8 +41,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
  */
 public interface IXMLServiceSearchSingleObject<XML,T,SM> extends IXMLExpressionConstructor<SM> {
 
-	public T get(Logger log,XML xmlRoot) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
-	
 	public T get(Logger log,XML xmlRoot, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException,Exception;
 	
 	public boolean exists(Logger log,XML xmlRoot) throws MultipleResultException,NotImplementedException,ServiceException,Exception;

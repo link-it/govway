@@ -47,17 +47,15 @@ public interface IXMLServiceSearchWithId<XML,T,K, SM> extends IXMLExpressionCons
 
 	public K convertToId(Logger log,XML xmlRoot,T id) throws NotImplementedException,ServiceException,Exception;
 	
-	public T get(Logger log,XML xmlRoot,K id) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
-	
 	public T get(Logger log,XML xmlRoot, K id, IDMappingBehaviour idMappingResolutionBehaviour) throws ServiceException,NotFoundException,MultipleResultException,NotImplementedException, Exception;
 	
 	public boolean exists(Logger log,XML xmlRoot,K id) throws MultipleResultException,NotImplementedException,ServiceException,Exception;
 	
-	public List<K> findAllIds(Logger log,XML xmlRoot,XMLPaginatedExpression expression) throws NotImplementedException,ServiceException,Exception;
+	public List<K> findAllIds(Logger log,XML xmlRoot,XMLPaginatedExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
-	public List<T> findAll(Logger log,XML xmlRoot,XMLPaginatedExpression expression) throws NotImplementedException,ServiceException,Exception;
+	public List<T> findAll(Logger log,XML xmlRoot,XMLPaginatedExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
-	public T find(Logger log,XML xmlRoot,XMLExpression expression) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
+	public T find(Logger log,XML xmlRoot,XMLExpression expression, IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException,MultipleResultException,NotImplementedException,ServiceException,Exception;
 	
 	public NonNegativeNumber count(Logger log,XML xmlRoot,XMLExpression expression) throws NotImplementedException,ServiceException,Exception;
 	
