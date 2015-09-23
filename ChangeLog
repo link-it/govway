@@ -1,5 +1,16 @@
 2015-09-23  Andrea Poli <apoli@link.it>
 
+	* [Utils,GenericProject]
+	Risolto Bug OP-420
+	Le librerie di generazione dei comandi SQL 'tools/utils/src/org/openspcoop2/utils/sql' e 
+	'tools/generic_project/src/org/openspcoop2/generic_project/expression' 
+	non supportavano correttamente le condizioni di ORDER BY.
+	In presenza di più di una colonna di ordinamento, il criterio di ordinamento indicato veniva applicato solamente all'ultima colonna:
+	es. ORDER BY nome, tipo_servizio, servizio DESC;
+	e quindi di fatto le altre colonne subivano l'ordinamento di default (ASC).
+
+2015-09-23  Andrea Poli <apoli@link.it>
+
 	* [Pdd]
 	Aggiunta funzionalità OP-422
 	Aggiunta la proprietà 'contextPreserve' (true/false) utilizzabile nei connettori 'virtual memory' 
