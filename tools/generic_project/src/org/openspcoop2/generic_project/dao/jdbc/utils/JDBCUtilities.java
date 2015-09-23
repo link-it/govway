@@ -44,6 +44,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.Union;
 import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.beans.UnionOrderedColumn;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchSingleObject;
@@ -764,11 +765,18 @@ public class JDBCUtilities {
 		if(union.getOrderByList()!=null && union.getOrderByList().size()>0 && !SortOrder.UNSORTED.equals(union.getSortOrder())){
 			List<String> aliasExpression = expressionComparator.getReturnFieldAliases();
 			List<String> aliasExternalExpression = union.getFields();
-			for (String aliasOrderBy : union.getOrderByList()) {
+			for (UnionOrderedColumn uoo : union.getOrderByList()) {
+				String aliasOrderBy = uoo.getAlias();
+				SortOrder sortOrder = uoo.getSortOrder();
 				if(aliasExpression.contains(aliasOrderBy)==false && aliasExternalExpression.contains(aliasOrderBy)==false){
 					throw new ServiceException("The alias used in the condition of order by the union must be one of the aliases used in internal or external expressions");
 				}
-				sqlQueryObject.addOrderBy(aliasOrderBy);
+				if(sortOrder==null){
+					sqlQueryObject.addOrderBy(aliasOrderBy);
+				}
+				else{
+					sqlQueryObject.addOrderBy(aliasOrderBy,SortOrder.ASC.equals(sortOrder));
+				}
 			}
 			sqlQueryObject.setSortType(SortOrder.ASC.equals(union.getSortOrder()));
 		}

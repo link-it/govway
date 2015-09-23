@@ -44,7 +44,7 @@ public class Union {
 	private Hashtable<String, String> mapFieldsToAliasFunction = new Hashtable<String, String>();
 	
 	private SortOrder sortOrder = null;
-	private List<String> orderByList = new ArrayList<String>();
+	private List<UnionOrderedColumn> orderByList = new ArrayList<UnionOrderedColumn>();
 	
 	private List<String> groupByList = new ArrayList<String>();
 	
@@ -90,9 +90,20 @@ public class Union {
 	}
 	
 	public void addOrderBy(String alias){
-		this.orderByList.add(alias);
+		UnionOrderedColumn uoo = new UnionOrderedColumn(alias);
+		this.orderByList.add(uoo);
 	}
-	public List<String> getOrderByList() {
+	public void addOrderBy(String alias, SortOrder sortOrder) throws ExpressionException{
+		if(sortOrder==null){
+			throw new ExpressionException("Sort order parameter undefined"); 
+		}
+		if(SortOrder.UNSORTED.equals(sortOrder)){
+			throw new ExpressionException("Sort order parameter not valid (use ASC or DESC)"); 
+		}
+		UnionOrderedColumn uoo = new UnionOrderedColumn(alias, sortOrder);
+		this.orderByList.add(uoo);
+	}
+	public List<UnionOrderedColumn> getOrderByList() {
 		return this.orderByList;
 	}
 	
