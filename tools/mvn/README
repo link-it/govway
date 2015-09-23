@@ -1,3 +1,8 @@
+# Prerequisito: 
+cd tools/web_generic_project; ant clean build
+cd tools/web_generic_project/impl/jsf1/; ant clean build
+cd tools/web_generic_project/impl/jsf2/; ant clean build
+
 # Istruzione per utilizzare l'installer dei JAR Openspcoop2
 
 Lo script prende come parametro un boolean opzionale che indica se bisogna fare l'installazione SNAPSHOT oppure RELEASE.
