@@ -73,7 +73,7 @@ public class ExpressionImpl implements IExpression {
 		this.notOperator = expr.notOperator;
 		this.objectFormatter = expr.objectFormatter;
 		this.orderedFields = expr.orderedFields;
-		this.sortOrder = expr.sortOrder;
+		this._sortOrder = expr.getSortOrder();
 		this.groupByFields = expr.groupByFields;
 		this.throwExpressionNotInitialized = expr.throwExpressionNotInitialized;
 	}
@@ -87,8 +87,8 @@ public class ExpressionImpl implements IExpression {
 	
 	protected boolean notOperator = false;
 	
-	protected SortOrder sortOrder = SortOrder.UNSORTED;
-	protected List<IField> orderedFields = new ArrayList<IField>();
+	private SortOrder _sortOrder = SortOrder.UNSORTED;
+	protected List<OrderedField> orderedFields = new ArrayList<OrderedField>();
 	
 	protected List<IField> groupByFields = new ArrayList<IField>();
 	
@@ -660,7 +660,7 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression sortOrder(SortOrder sortOrder)
 			throws ExpressionNotImplementedException, ExpressionException {
-		this.sortOrder = sortOrder;
+		this._sortOrder = sortOrder;
 		return this;
 	}
 
@@ -676,19 +676,49 @@ public class ExpressionImpl implements IExpression {
 	public IExpression addOrder(IField field)
 			throws ExpressionNotImplementedException, ExpressionException {
 		this.checkArgoments(field,false);
-		if(this.sortOrder==null || SortOrder.UNSORTED.equals(this.sortOrder)){
+		if(this._sortOrder==null || SortOrder.UNSORTED.equals(this._sortOrder)){
 			throw new ExpressionException("To add order by conditions must first be defined the sort order (by sortOrder method)"); 
 		}
-		this.orderedFields.add(field);
+		this.orderedFields.add(new OrderedField(field, this._sortOrder));
 		return this;
 	}
 	
-	public SortOrder getSortOrder() {
-		return this.sortOrder;
+	/**
+	 * Adds a sort field order
+	 * 
+	 * @param field sort field order
+	 * @param sortOrder sort of research 
+	 * @return the instance of itself
+	 * @throws ExpressionNotImplementedException Method not implemented
+	 * @throws ExpressionException Error Processing
+	 */
+	@Override
+	public IExpression addOrder(IField field, SortOrder sortOrder) throws ExpressionNotImplementedException,ExpressionException{
+		this.checkArgoments(field,false);
+		if(sortOrder==null){
+			throw new ExpressionException("Sort order parameter undefined"); 
+		}
+		if(SortOrder.UNSORTED.equals(sortOrder)){
+			throw new ExpressionException("Sort order parameter not valid (use ASC or DESC)"); 
+		}
+		this.orderedFields.add(new OrderedField(field, sortOrder));
+		return this;
 	}
-
-	public List<IField> getOrderedFields() {
+	
+	public List<OrderedField> getOrderedFields() {
 		return this.orderedFields;
+	}
+	
+	public SortOrder getSortOrder(){
+		if(
+			( this._sortOrder==null || SortOrder.UNSORTED.equals(this._sortOrder) ) 
+				&& 
+			( this.orderedFields!=null && this.orderedFields.size()>0 )
+		){
+			// ritorno un sortOrder a caso tra i orderedFields, tanto poi viene usato sempre quello indicato per ogni field.
+			return this.orderedFields.get(0).getSortOrder();
+		}
+		return this._sortOrder;
 	}
 	
 	
@@ -738,7 +768,7 @@ public class ExpressionImpl implements IExpression {
 		if(checkOnlyWhereCondition==false){
 			if(this.orderedFields!=null){
 				for (int i = 0; i < this.orderedFields.size(); i++) {
-					if(field.equals(this.orderedFields.get(i))){
+					if(field.equals(this.orderedFields.get(i).getField())){
 						return true;
 					}
 				}
@@ -772,7 +802,7 @@ public class ExpressionImpl implements IExpression {
 		if(checkOnlyWhereCondition==false){
 			if(this.orderedFields!=null){
 				for (int i = 0; i < this.orderedFields.size(); i++) {
-					IField field = this.orderedFields.get(i);
+					IField field = this.orderedFields.get(i).getField();
 					boolean inUseModel = false;
 					if(model.getBaseField()!=null){
 						// Modello di un elemento non radice
@@ -840,7 +870,7 @@ public class ExpressionImpl implements IExpression {
 		if(onlyWhereCondition==false){
 			if(this.orderedFields!=null){
 				for (int i = 0; i < this.orderedFields.size(); i++) {
-					IField field = this.orderedFields.get(i);
+					IField field = this.orderedFields.get(i).getField();
 					if(o==null){
 						o = new ArrayList<IField>();
 					}
@@ -960,16 +990,17 @@ public class ExpressionImpl implements IExpression {
 			}
 			
 			
-			if(!SortOrder.UNSORTED.equals(this.sortOrder)){
+			if(!SortOrder.UNSORTED.equals(this.getSortOrder())){
 				
 				bf.append(" ORDER BY ");
 				if(this.orderedFields.size()>0){
 					int index = 0;
-					for (Iterator<IField> iterator = this.orderedFields.iterator(); iterator.hasNext();) {
-						IField field = iterator.next();
+					for (Iterator<OrderedField> iterator = this.orderedFields.iterator(); iterator.hasNext();) {
+						OrderedField orderedField = iterator.next();
 						if(index>0){
 							bf.append(" , ");
 						}
+						IField field = orderedField.getField();
 						if(field instanceof ComplexField){
 							ComplexField cf = (ComplexField) field;
 							if(cf.getFather()!=null){
@@ -982,13 +1013,17 @@ public class ExpressionImpl implements IExpression {
 						}
 						bf.append(".");
 						bf.append(field.getFieldName());
+						
+						bf.append(" ");
+						bf.append(orderedField.getSortOrder().name());
 						index++;
 					}
 				}else{
 					bf.append(" DEFAULT_ORDER_FIELD");
+					
+					bf.append(" ");
+					bf.append(this.getSortOrder().name());
 				}
-				bf.append(" ");
-				bf.append(this.sortOrder.name());
 			}
 						
 			return bf.toString();

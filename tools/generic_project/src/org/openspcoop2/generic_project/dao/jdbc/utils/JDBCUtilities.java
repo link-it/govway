@@ -60,6 +60,7 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.expression.impl.OrderedField;
 import org.openspcoop2.generic_project.expression.impl.sql.ExpressionSQL;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterException;
@@ -194,8 +195,8 @@ public class JDBCUtilities {
 	
 	
 	
-	private static List<IField> getOrderedFields(IExpression expression){
-		List<IField> listOrderedFields = null;
+	private static List<OrderedField> getOrderedFields(IExpression expression){
+		List<OrderedField> listOrderedFields = null;
 		if(expression instanceof JDBCPaginatedExpression){
 			listOrderedFields = ((JDBCPaginatedExpression)expression).getOrderedFields();
 		}
@@ -281,7 +282,7 @@ public class JDBCUtilities {
 	public static List<Object> prepareCount(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject,IExpression expression,
 			ISQLFieldConverter sqlConverter,IModel<?> model) throws SQLQueryObjectException, JDBCAdapterException, ExpressionException, ExpressionNotImplementedException, ServiceException{
 	
-		List<IField> listOrderedFields = getOrderedFields(expression);
+		List<OrderedField> listOrderedFields = getOrderedFields(expression);
 		SortOrder sortOrder = getSortOrder(expression);
 		
 		if(listOrderedFields!=null && listOrderedFields.size()>0 && sortOrder!=null && !sortOrder.equals(SortOrder.UNSORTED)){
@@ -531,13 +532,14 @@ public class JDBCUtilities {
 			JDBCPaginatedExpression paginatedExpressionTmp = new JDBCPaginatedExpression(sqlFieldConverter);
 			org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.setAliasFields(sqlQueryObjectDistinct,paginatedExpressionTmp,false,field);
 			sqlQueryObjectDistinct.setSelectDistinct(true);
-			List<IField> listOrderedFields = getOrderedFields(expression);
+			List<OrderedField> listOrderedFields = getOrderedFields(expression);
 			SortOrder sortOrder = getSortOrder(expression);
 			if(listOrderedFields!=null &&  listOrderedFields.size()>0 &&
 					sortOrder!=null &&
 					!SortOrder.UNSORTED.equals(sortOrder)){
 				boolean orderBy = false;
-				for (IField orderedField : listOrderedFields) {
+				for (OrderedField orderedFieldBean : listOrderedFields) {
+					IField orderedField = orderedFieldBean.getField();
 					boolean contains = false;
 					for (int i = 0; i < field.length; i++) {
 						if(orderedField.equals(field[i])){
@@ -546,7 +548,7 @@ public class JDBCUtilities {
 						}
 					}
 					if(contains){
-						sqlQueryObjectDistinct.addOrderBy(sqlFieldConverter.toColumn(orderedField, false));
+						sqlQueryObjectDistinct.addOrderBy(sqlFieldConverter.toColumn(orderedField, false), SortOrder.ASC.equals(orderedFieldBean.getSortOrder()));
 						orderBy = true;
 					}
 				}
@@ -573,9 +575,10 @@ public class JDBCUtilities {
 		// Se sono impostati groupBy, le condizioni di order by devono essere colonne definite anche nel group by
 		List<IField> listGroupByFields = getGroupByFields(expression);
 		if(listGroupByFields!=null && listGroupByFields.size()>0){
-			List<IField> listOrderedFields = getOrderedFields(expression);
+			List<OrderedField> listOrderedFields = getOrderedFields(expression);
 			if(listOrderedFields!=null && listOrderedFields.size()>0){
-				for (IField iField : listOrderedFields) {
+				for (OrderedField orderedField : listOrderedFields) {
+					IField iField = orderedField.getField();
 					if(listGroupByFields.contains(iField)==false){
 						throw new ServiceException("The field used for order by condition is invalid because it is not contained in GROUP BY clause. Field: ["+iField.toString()+"]");
 					}

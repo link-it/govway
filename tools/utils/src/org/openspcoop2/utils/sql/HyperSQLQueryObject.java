@@ -316,16 +316,21 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 				Iterator<String> it = this.orderBy.iterator();
 				boolean first = true;
 				while(it.hasNext()){
+					String column = it.next();
 					if(!first)
 						bf.append(",");
 					else
 						first = false;
-					bf.append(it.next());
-				}
-				if(this.sortTypeAsc){
-					bf.append(" ASC ");
-				}else{
-					bf.append(" DESC ");
+					bf.append(column);
+					boolean sortTypeAsc = this.sortTypeAsc;
+					if(this.orderBySortType.containsKey(column)){
+						sortTypeAsc = this.orderBySortType.get(column);
+					}
+					if(sortTypeAsc){
+						bf.append(" ASC ");
+					}else{
+						bf.append(" DESC ");
+					}
 				}
 			}
 //		}
@@ -445,16 +450,21 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 			Iterator<String> it = this.orderBy.iterator();
 			boolean first = true;
 			while(it.hasNext()){
+				String column = it.next();
 				if(!first)
 					bf.append(",");
 				else
 					first = false;
-				bf.append(it.next());
-			}
-			if(this.sortTypeAsc){
-				bf.append(" ASC ");
-			}else{
-				bf.append(" DESC ");
+				bf.append(column);
+				boolean sortTypeAsc = this.sortTypeAsc;
+				if(this.orderBySortType.containsKey(column)){
+					sortTypeAsc = this.orderBySortType.get(column);
+				}
+				if(sortTypeAsc){
+					bf.append(" ASC ");
+				}else{
+					bf.append(" DESC ");
+				}
 			}
 		}
 		

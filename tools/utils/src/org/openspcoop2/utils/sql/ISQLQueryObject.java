@@ -732,6 +732,15 @@ public interface ISQLQueryObject {
 	public ISQLQueryObject addOrderBy(String orderByNomeField) throws SQLQueryObjectException;
 	
 	/**
+	 * Aggiunge una condizione di OrderBy per i field con il nome sottostante.
+	 * I field devono essere precedentemente stati inseriti come SelectField
+	 * 
+	 * @param orderByNomeField Nome del field di ordinamento
+	 * @param asc Imposta la stringa di ordinamento (Crescente:true/Decrescente:false)
+	 */
+	public ISQLQueryObject addOrderBy(String orderByNomeField, boolean asc) throws SQLQueryObjectException;
+	
+	/**
 	 * Imposta la stringa di ordinamento (Crescente:true/Decrescente:false)
 	 */
 	public void setSortType(boolean asc) throws SQLQueryObjectException;

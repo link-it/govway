@@ -2354,6 +2354,32 @@ public class ClientTest {
 		
 		expr = expr.sortOrder(SortOrder.DESC);
 		System.out.println("- test 7: "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().equals(Author.model().NAME,"NAME");
+		expr = expr.addOrder(Author.model().DATE_OF_BIRTH,SortOrder.DESC);
+		expr = expr.addOrder(Author.model().AGE,SortOrder.ASC);
+		System.out.println("- test 8 (expr) Date-DESC Age-ASC: "+ClientTest.toString(expr));
+		
+		IPaginatedExpression pagExpr = (IPaginatedExpression) ClientTest.newPaginatedExpressionImplForAuthor().equals(Author.model().NAME,"NAME");
+		pagExpr = (IPaginatedExpression) pagExpr.addOrder(Author.model().DATE_OF_BIRTH,SortOrder.DESC);
+		pagExpr = (IPaginatedExpression) pagExpr.addOrder(Author.model().AGE,SortOrder.ASC);
+		pagExpr.offset(0);
+		pagExpr.limit(10);
+		System.out.println("- test 8 (pagExpr) Date-DESC Age-ASC: "+ClientTest.toString(pagExpr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().equals(Author.model().NAME,"NAME");
+		expr = expr.sortOrder(SortOrder.DESC);
+		expr = expr.addOrder(Author.model().DATE_OF_BIRTH);
+		expr = expr.addOrder(Author.model().AGE,SortOrder.ASC);
+		System.out.println("- test 9 (expr) Date-DefaultDESC Age-ASC: "+ClientTest.toString(expr));
+		
+		pagExpr = (IPaginatedExpression) ClientTest.newPaginatedExpressionImplForAuthor().equals(Author.model().NAME,"NAME");
+		pagExpr = (IPaginatedExpression) pagExpr.sortOrder(SortOrder.DESC);
+		pagExpr = (IPaginatedExpression) pagExpr.addOrder(Author.model().DATE_OF_BIRTH);
+		pagExpr = (IPaginatedExpression) pagExpr.addOrder(Author.model().AGE,SortOrder.ASC);
+		pagExpr.offset(0);
+		pagExpr.limit(10);
+		System.out.println("- test 9 (pagExpr) Date-DefaultDESC Age-ASC: "+ClientTest.toString(pagExpr));
 						
 	}
 	

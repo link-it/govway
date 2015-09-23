@@ -76,6 +76,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	
 	/** OrderBy di Field esistenti */
 	Vector<String> orderBy = new Vector<String>();
+	Hashtable<String, Boolean> orderBySortType = new Hashtable<String, Boolean>();
 	
 	/** Tipo di ordinamento */
 	boolean sortTypeAsc = true;
@@ -1743,6 +1744,19 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return this;
 	}
 
+	/**
+	 * Aggiunge una condizione di OrderBy per i field con il nome sottostante.
+	 * I field devono essere precedentemente stati inseriti come SelectField
+	 * 
+	 * @param orderByNomeField Nome del field di ordinamento
+	 * @param asc Imposta la stringa di ordinamento (Crescente:true/Decrescente:false)
+	 */
+	@Override
+	public ISQLQueryObject addOrderBy(String orderByNomeField, boolean asc) throws SQLQueryObjectException{
+		this.addOrderBy(orderByNomeField);
+		this.orderBySortType.put(orderByNomeField, asc);
+		return this;
+	}
 
 	/**
 	 * Imposta la stringa di ordinamento (Crescente:true/Decrescente:false)

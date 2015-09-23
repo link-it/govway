@@ -428,6 +428,17 @@ public interface IExpression {
 	 * @throws ExpressionException Error Processing
 	 */
 	public IExpression addOrder(IField field) throws ExpressionNotImplementedException,ExpressionException;
+	
+	/**
+	 * Adds a sort field order
+	 * 
+	 * @param field sort field order
+	 * @param sortOrder sort of research 
+	 * @return the instance of itself
+	 * @throws ExpressionNotImplementedException Method not implemented
+	 * @throws ExpressionException Error Processing
+	 */
+	public IExpression addOrder(IField field, SortOrder sortOrder) throws ExpressionNotImplementedException,ExpressionException;
 
 	
 	

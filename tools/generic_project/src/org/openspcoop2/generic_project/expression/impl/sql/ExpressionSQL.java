@@ -49,6 +49,7 @@ import org.openspcoop2.generic_project.expression.impl.ConjunctionExpressionImpl
 import org.openspcoop2.generic_project.expression.impl.ExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.InExpressionImpl;
 import org.openspcoop2.generic_project.expression.impl.LikeExpressionImpl;
+import org.openspcoop2.generic_project.expression.impl.OrderedField;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -152,7 +153,7 @@ public class ExpressionSQL extends ExpressionImpl {
 
 	}
 	
-	protected static String sqlOrder(ISQLFieldConverter fieldConverter,SortOrder sortOrder,List<IField> orderedFields) throws ExpressionException{
+	protected static String sqlOrder(ISQLFieldConverter fieldConverter,SortOrder sortOrder,List<OrderedField> orderedFields) throws ExpressionException{
 		try{
 			
 			StringBuffer bf = new StringBuffer();
@@ -161,19 +162,22 @@ public class ExpressionSQL extends ExpressionImpl {
 				bf.append(" ORDER BY ");
 				if(orderedFields.size()>0){
 					int index = 0;
-					for (Iterator<IField> iterator =orderedFields.iterator(); iterator.hasNext();) {
-						IField field = iterator.next();
+					for (Iterator<OrderedField> iterator =orderedFields.iterator(); iterator.hasNext();) {
+						OrderedField orderedField = iterator.next();
+						IField field = orderedField.getField();
 						if(index>0){
 							bf.append(" , ");
 						}
 						bf.append(fieldConverter.toColumn(field,true));
+						bf.append(" ");
+						bf.append(orderedField.getSortOrder().name());
 						index++;
 					}
 				}else{
 					bf.append(" id");
+					bf.append(" ");
+					bf.append(sortOrder.name());
 				}
-				bf.append(" ");
-				bf.append(sortOrder.name());
 			}
 				
 			return bf.toString();
@@ -189,19 +193,20 @@ public class ExpressionSQL extends ExpressionImpl {
 		
 	}
 	
-	protected static void sqlOrder(ISQLFieldConverter fieldConverter, ISQLQueryObject sqlQueryObject,SortOrder sortOrder,List<IField> orderedFields,
+	protected static void sqlOrder(ISQLFieldConverter fieldConverter, ISQLQueryObject sqlQueryObject,SortOrder sortOrder,List<OrderedField> orderedFields,
 			List<IField> groupByFields) throws ExpressionException{
 		try{
 			
 			if(!SortOrder.UNSORTED.equals(sortOrder)){
 				
 				if(orderedFields.size()>0){
-					for (Iterator<IField> iterator = orderedFields.iterator(); iterator.hasNext();) {
-						IField field = iterator.next();
+					for (Iterator<OrderedField> iterator = orderedFields.iterator(); iterator.hasNext();) {
+						OrderedField orderedField = iterator.next();
+						IField field = orderedField.getField();
 						
 						String columnOrderAlias = fieldConverter.toColumn(field,true,true);
 						String columnOrderBy = fieldConverter.toColumn(field,true);
-						sqlQueryObject.addOrderBy(columnOrderBy);
+						sqlQueryObject.addOrderBy(columnOrderBy,SortOrder.ASC.equals(orderedField.getSortOrder()));
 						
 						// Search by alias
 						Vector<String> v = new Vector<String>();
@@ -403,7 +408,7 @@ public class ExpressionSQL extends ExpressionImpl {
 	// SQL FROM
 	
 	protected static void sqlFrom(ISQLQueryObject sqlQueryObject,List<IField> fields,ISQLFieldConverter sqlFieldConverter,String tableNamePrincipale,
-			List<Object> fieldsManuallyAdd, List<IField> orderByFields, List<IField> groupByFields) throws ExpressionException{
+			List<Object> fieldsManuallyAdd, List<OrderedField> orderByFields, List<IField> groupByFields) throws ExpressionException{
 		try{
 			List<String> tables = new ArrayList<String>();
 			
@@ -442,7 +447,8 @@ public class ExpressionSQL extends ExpressionImpl {
 			}
 			
 			if(orderByFields!=null){
-				for (IField iField : orderByFields) {
+				for (OrderedField orderedField : orderByFields) {
+					IField iField = orderedField.getField();
 					String tableName = getTableName(iField,sqlFieldConverter);
 					if(tables.contains(tableName)==false){
 						tables.add(tableName);

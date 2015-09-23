@@ -228,6 +228,12 @@ public class NotImplementedExpression implements IExpression {
 	throws ExpressionNotImplementedException, ExpressionException {
 		throw new ExpressionNotImplementedException("Not Implemented");
 	}
+	
+	@Override
+	public IExpression addOrder(IField field, SortOrder sortOrder) 
+	throws ExpressionNotImplementedException,ExpressionException{
+		throw new ExpressionNotImplementedException("Not Implemented");
+	}
 
 	@Override
 	public IExpression addGroupBy(IField field)

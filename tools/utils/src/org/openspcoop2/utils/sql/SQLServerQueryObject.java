@@ -363,15 +363,24 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 						first = false;
 					String condizione = it.next();
 					if(this.alias.containsKey(condizione)){
-						bf.append(this.alias.get(condizione));
+						if(this.isSelectDistinct()){
+							bf.append(condizione);
+						}
+						else{
+							bf.append(this.alias.get(condizione));
+						}
 					}else{
 						bf.append(this.normalizeField(condizione,false));
 					}
-				}
-				if(this.sortTypeAsc){
-					bf.append(" ASC ");
-				}else{
-					bf.append(" DESC ");
+					boolean sortTypeAsc = this.sortTypeAsc;
+					if(this.orderBySortType.containsKey(condizione)){
+						sortTypeAsc = this.orderBySortType.get(condizione);
+					}
+					if(sortTypeAsc){
+						bf.append(" ASC ");
+					}else{
+						bf.append(" DESC ");
+					}
 				}
 			}
 		
@@ -466,16 +475,21 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 					Iterator<String> it = this.orderBy.iterator();
 					boolean first = true;
 					while(it.hasNext()){
+						String column = it.next();
 						if(!first)
 							bf.append(",");
 						else
 							first = false;
-						bf.append(it.next());
-					}
-					if(this.sortTypeAsc){
-						bf.append(" ASC ");
-					}else{
-						bf.append(" DESC ");
+						bf.append(column);
+						boolean sortTypeAsc = this.sortTypeAsc;
+						if(this.orderBySortType.containsKey(column)){
+							sortTypeAsc = this.orderBySortType.get(column);
+						}
+						if(sortTypeAsc){
+							bf.append(" ASC ");
+						}else{
+							bf.append(" DESC ");
+						}
 					}
 				}
 				
@@ -539,16 +553,19 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 							bf.append(",");
 						else
 							first = false;
-						String field = it.next();
+						String originalField = it.next();
 						
-						field = this.normalizeField(field);
+						String field = this.normalizeField(originalField);
 						bf.append(field);	
-					
-					}
-					if(this.sortTypeAsc){
-						bf.append(" ASC ");
-					}else{
-						bf.append(" DESC ");
+						boolean sortTypeAsc = this.sortTypeAsc;
+						if(this.orderBySortType.containsKey(originalField)){
+							sortTypeAsc = this.orderBySortType.get(originalField);
+						}
+						if(sortTypeAsc){
+							bf.append(" ASC ");
+						}else{
+							bf.append(" DESC ");
+						}
 					}
 				}
 			}
@@ -643,16 +660,21 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 					Iterator<String> it = this.orderBy.iterator();
 					boolean first = true;
 					while(it.hasNext()){
+						String column = it.next();
 						if(!first)
 							bf.append(",");
 						else
 							first = false;
-						bf.append(it.next());
-					}
-					if(this.sortTypeAsc){
-						bf.append(" ASC ");
-					}else{
-						bf.append(" DESC ");
+						bf.append(column);
+						boolean sortTypeAsc = this.sortTypeAsc;
+						if(this.orderBySortType.containsKey(column)){
+							sortTypeAsc = this.orderBySortType.get(column);
+						}
+						if(sortTypeAsc){
+							bf.append(" ASC ");
+						}else{
+							bf.append(" DESC ");
+						}
 					}
 				}
 			}
@@ -755,11 +777,15 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 					}else{
 						bf.append(condizione);
 					}
-				}
-				if(this.sortTypeAsc){
-					bf.append(" ASC ");
-				}else{
-					bf.append(" DESC ");
+					boolean sortTypeAsc = this.sortTypeAsc;
+					if(this.orderBySortType.containsKey(condizione)){
+						sortTypeAsc = this.orderBySortType.get(condizione);
+					}
+					if(sortTypeAsc){
+						bf.append(" ASC ");
+					}else{
+						bf.append(" DESC ");
+					}
 				}
 			}
 			
@@ -926,16 +952,21 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				Iterator<String> it = this.orderBy.iterator();
 				boolean first = true;
 				while(it.hasNext()){
+					String column = it.next();
 					if(!first)
 						bf.append(",");
 					else
 						first = false;
-					bf.append(it.next());
-				}
-				if(this.sortTypeAsc){
-					bf.append(" ASC ");
-				}else{
-					bf.append(" DESC ");
+					bf.append(column);
+					boolean sortTypeAsc = this.sortTypeAsc;
+					if(this.orderBySortType.containsKey(column)){
+						sortTypeAsc = this.orderBySortType.get(column);
+					}
+					if(sortTypeAsc){
+						bf.append(" ASC ");
+					}else{
+						bf.append(" DESC ");
+					}
 				}
 			}
 		}

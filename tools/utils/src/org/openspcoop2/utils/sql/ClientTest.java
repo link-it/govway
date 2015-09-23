@@ -750,9 +750,10 @@ public class ClientTest {
 
 			sqlQueryObject.addGroupBy("aliasMSG.mittente");
 			sqlQueryObject.addGroupBy("ALIASDEST");
-			sqlQueryObject.addOrderBy("cont");
+			sqlQueryObject.addOrderBy("cont",false);
 			sqlQueryObject.addOrderBy("avgMedio");
-			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("mittente",true);
+			sqlQueryObject.addOrderBy("ALIASDEST",false);
 			sqlQueryObject.setSortType(true);
 
 			//System.out.println("["+tipo.toString()+"] getField: \t"+sqlQueryObject.getFields());
@@ -829,15 +830,15 @@ public class ClientTest {
 			sqlQueryObject.addFromTable("tracce");
 
 			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectField("tracce","tipo_destinatario");
+			sqlQueryObject.addSelectAliasField("tracce","tipo_destinatario", "TIPODEST");
 			sqlQueryObject.addSelectField("tracce.destinatario");
 			sqlQueryObject.addSelectField("mittente");
 
 			sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
 
 			sqlQueryObject.addOrderBy("mittente");
-			sqlQueryObject.addOrderBy("tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("TIPODEST",false);
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			String test = sqlQueryObject.createSQLQuery();
@@ -847,9 +848,9 @@ public class ClientTest {
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");
+					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
+						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");			
 					}
 				}
 				else{
@@ -896,15 +897,15 @@ public class ClientTest {
 			sqlQueryObject.addFromTable("tracce");
 
 			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectField("tracce","tipo_destinatario");
+			sqlQueryObject.addSelectAliasField("tracce","tipo_destinatario", "TIPODEST");
 			sqlQueryObject.addSelectField("tracce.destinatario");
 			sqlQueryObject.addSelectField("mittente");
 
 			sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
 
 			sqlQueryObject.addOrderBy("mittente");
-			sqlQueryObject.addOrderBy("tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("TIPODEST",false);
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			int limit = 10;
@@ -926,9 +927,9 @@ public class ClientTest {
 							throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
 						}
 					}
-					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");
+					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
+						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");					
 					}
 				}
 				else{
@@ -971,15 +972,15 @@ public class ClientTest {
 			sqlQueryObject.addFromTable("tracce");
 
 			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectField("tracce","tipo_destinatario");
+			sqlQueryObject.addSelectAliasField("tracce","tipo_destinatario", "TIPODEST");
 			sqlQueryObject.addSelectField("tracce.destinatario");
 			sqlQueryObject.addSelectField("mittente");
 
 			sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
 
 			sqlQueryObject.addOrderBy("mittente");
-			sqlQueryObject.addOrderBy("tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("TIPODEST",false);
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			int limit = 10;
@@ -1000,9 +1001,9 @@ public class ClientTest {
 							throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
 						}
 					}
-					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");
+					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
+						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");						
 					}
 				}
 				else{
@@ -1045,15 +1046,15 @@ public class ClientTest {
 			sqlQueryObject.addFromTable("tracce");
 
 			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectField("tracce","tipo_destinatario");
+			sqlQueryObject.addSelectAliasField("tracce","tipo_destinatario", "TIPODEST");
 			sqlQueryObject.addSelectField("tracce.destinatario");
 			sqlQueryObject.addSelectField("mittente");
 
 			sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
 
 			sqlQueryObject.addOrderBy("mittente");
-			sqlQueryObject.addOrderBy("tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("TIPODEST",false);
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			sqlQueryObject.setOffset(2);
@@ -1090,9 +1091,9 @@ public class ClientTest {
 							}
 						}
 					}
-					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");
+					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
+						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");					
 					}
 				}
 				else{
@@ -1143,18 +1144,18 @@ public class ClientTest {
 			sqlQueryObject.setSelectDistinct(distinct);
 			sqlQueryObject.addSelectCountField("id", "cont", true);
 			sqlQueryObject.addSelectField("mittente");
-			sqlQueryObject.addSelectField("tracce.tipo_destinatario");
+			sqlQueryObject.addSelectAliasField("tracce.tipo_destinatario", "TIPODEST");
 			sqlQueryObject.addSelectField("destinatario");
 
 			sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
 
 			sqlQueryObject.addOrderBy("mittente");
-			sqlQueryObject.addOrderBy("tracce.tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("TIPODEST",false);
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			sqlQueryObject.addGroupBy("mittente");
-			sqlQueryObject.addGroupBy("tipo_destinatario");
+			sqlQueryObject.addGroupBy("TIPODEST");
 			sqlQueryObject.addGroupBy("tracce.destinatario");
 
 			String test = sqlQueryObject.createSQLQuery();
@@ -1226,18 +1227,18 @@ public class ClientTest {
 			sqlQueryObject.setSelectDistinct(distinct);
 			sqlQueryObject.addSelectCountField("id", "cont", true);
 			sqlQueryObject.addSelectField("mittente");
-			sqlQueryObject.addSelectField("tracce.tipo_destinatario");
+			sqlQueryObject.addSelectAliasField("tracce.tipo_destinatario", "TIPODEST");
 			sqlQueryObject.addSelectField("destinatario");
 		
 			sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
 		
 			sqlQueryObject.addOrderBy("mittente");
-			sqlQueryObject.addOrderBy("tracce.tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("TIPODEST",false);
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 		
 			sqlQueryObject.addGroupBy("mittente");
-			sqlQueryObject.addGroupBy("tipo_destinatario");
+			sqlQueryObject.addGroupBy("TIPODEST");
 			sqlQueryObject.addGroupBy("tracce.destinatario");
 		
 			int limit = 5;
@@ -1315,7 +1316,7 @@ public class ClientTest {
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			String test = null;
@@ -1389,7 +1390,7 @@ public class ClientTest {
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("tipo_destinatario");
-			sqlQueryObject.addOrderBy("tracce.destinatario");
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			int limit = 10;
@@ -1477,7 +1478,7 @@ public class ClientTest {
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("tipo_destinatario");
-			sqlQueryObject.addOrderBy("tr.destinatario");
+			sqlQueryObject.addOrderBy("tr.destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 
@@ -1566,13 +1567,16 @@ public class ClientTest {
 		sqlQueryObject.setSelectDistinct(true);
 		sqlQueryObject.addSelectCountField("id", "cont", true);
 		sqlQueryObject.addSelectField("mittente");
+		sqlQueryObject.addSelectField("destinatario");
 
 		sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
 
 		sqlQueryObject.addOrderBy("mittente");
+		sqlQueryObject.addOrderBy("destinatario",false);
 		sqlQueryObject.setSortType(true);
 
 		sqlQueryObject.addGroupBy("mittente");
+		sqlQueryObject.addGroupBy("destinatario");
 
 		sqlQueryObject.setLimit(limit);
 		sqlQueryObject.setOffset(0);
@@ -1600,6 +1604,7 @@ public class ClientTest {
 
 			if(count==false){
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 			}
 
@@ -1718,6 +1723,7 @@ public class ClientTest {
 				sqlQueryObject.addSelectField("cont");
 	
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 
 				int limitEsterno = 6;
@@ -1812,6 +1818,7 @@ public class ClientTest {
 				sqlQueryObject.addSelectField("cont");
 	
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 
 				int offset = 2;
@@ -1909,6 +1916,7 @@ public class ClientTest {
 				sqlQueryObject.addSelectField("cont");
 	
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 
 				int limitEsterno = 4;
@@ -2007,6 +2015,7 @@ public class ClientTest {
 
 			if(count==false){
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 			}
 
@@ -2125,6 +2134,7 @@ public class ClientTest {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
 
 			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			sqlQueryObject.setLimit(10);
@@ -2150,6 +2160,7 @@ public class ClientTest {
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
 
 			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			sqlQueryObject.setOffset(2);
@@ -2174,6 +2185,7 @@ public class ClientTest {
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
 
 			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			sqlQueryObject.setLimit(10);
@@ -2226,10 +2238,12 @@ public class ClientTest {
 
 			if(count==false){
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 			}
 			
 			sqlQueryObject.addGroupBy("mittente");
+			sqlQueryObject.addGroupBy("destinatario");
 
 			String test = null;
 			if(count){
@@ -2361,9 +2375,11 @@ public class ClientTest {
 				sqlQueryObject.addSelectSumField("cont", "contRisultatoGroupBy");
 	
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 				
 				sqlQueryObject.addGroupBy("mittente");
+				sqlQueryObject.addGroupBy("destinatario");
 
 				int limitEsterno = 6;
 				int offset = 2;
@@ -2486,9 +2502,11 @@ public class ClientTest {
 				sqlQueryObject.addSelectSumField("cont", "contRisultatoGroupBy");
 	
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 				
 				sqlQueryObject.addGroupBy("mittente");
+				sqlQueryObject.addGroupBy("destinatario");
 
 				int offset = 2;
 				offset = offset/2; // groupBy
@@ -2609,9 +2627,11 @@ public class ClientTest {
 				sqlQueryObject.addSelectSumField("cont", "contRisultatoGroupBy");
 	
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 				
 				sqlQueryObject.addGroupBy("mittente");
+				sqlQueryObject.addGroupBy("destinatario");
 
 				int limitEsterno = 4;
 				limitEsterno = limitEsterno/2; // groupBy
@@ -2730,10 +2750,12 @@ public class ClientTest {
 
 			if(count==false){
 				sqlQueryObject.addOrderBy("mittente");
+				sqlQueryObject.addOrderBy("destinatario",false);
 				sqlQueryObject.setSortType(true);
 			}
 
 			sqlQueryObject.addGroupBy("mittente");
+			sqlQueryObject.addGroupBy("destinatario");
 			
 			String test = null;
 			if(count){
@@ -2767,12 +2789,14 @@ public class ClientTest {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
 
 			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			sqlQueryObject.setLimit(10);
 			sqlQueryObject.setOffset(2);
 			
 			sqlQueryObject.addGroupBy("mittente");
+			sqlQueryObject.addGroupBy("destinatario");
 
 			try{
 				if(count){
@@ -2794,11 +2818,13 @@ public class ClientTest {
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
 
 			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("destinatario",false);
 			sqlQueryObject.setSortType(true);
 			
 			sqlQueryObject.setOffset(2);
 			
 			sqlQueryObject.addGroupBy("mittente");
+			sqlQueryObject.addGroupBy("destinatario");
 
 			try{
 				if(count){
@@ -2820,11 +2846,13 @@ public class ClientTest {
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
 
 			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("destinatario",false);
 			sqlQueryObject.setSortType(true);
 
 			sqlQueryObject.setLimit(10);
 			
 			sqlQueryObject.addGroupBy("mittente");
+			sqlQueryObject.addGroupBy("destinatario");
 
 			try{
 				if(count){
