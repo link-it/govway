@@ -41,7 +41,8 @@ openspcoop2.requests=1
 openspcoop2.socketTimeout=60
 
 # ChunkingMode
-openspcoop2.useChunking=true
+# NOTA: Se vengono utilizzati attachments e/o buste viene sempre generato l'header Content-Length
+openspcoop2.useChunking=false
 
 # Http1.0
 openspcoop2.http10=false
