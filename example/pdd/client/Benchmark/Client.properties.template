@@ -33,6 +33,10 @@ openspcoop2.threads=2
 # Number of requests to perform for the benchmarking session. 
 openspcoop2.requests=1
 
+# Durata del test in secondi
+# NOTA: Questa opzione è in alternativa alla precedente opzione 'openspcoop2.requests'
+#openspcoop2.durationInSeconds=30
+
 # Client side socket timeout (in ms)
 openspcoop2.socketTimeout=60
 
@@ -42,7 +46,19 @@ openspcoop2.useChunking=true
 # Http1.0
 openspcoop2.http10=false
 
+# Header Custom
+#openspcoop2.header.nomeHeader1=ValoreHeader1
+#...
+#openspcoop2.header.nomeHeaderN=ValoreHeaderN
 
+# Utilizza tutti i files presenti nella directory per inviarli come SOAP With Attachments
+#openspcoop2.attachmentDirectory=attachtments
+
+# SOAPHeader contenente una busta (es. EGov)
+# NOTA: Se si usa questa opzione, il file indicato nella proprietà 'file' deve essere solamente il contenuto da inserire nel SOAP-Body
+#openspcoop2.busta=busteSPCoop/headerEGov_withFormat.xml
+# Contenuto XML senza struttura SOAP
+#file=fileToSend/requestBody.xml
 
 
 # ---------------------- File da spedire (default request.xml) ---------------------------

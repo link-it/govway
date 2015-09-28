@@ -42,6 +42,8 @@
         <archive path="/op2_2.3.dev/lib/httpcore/httpclient-cache-4.2.5.jar"/>
         <archive path="/op2_2.3.dev/lib/httpcore/httpclient-4.2.5.jar"/>
         <archive path="/op2_2.3.dev/lib/httpcore/httpasyncclient-4.0-beta3.jar"/>
+	<archive path="/op2_2.2.dev/lib/httpcore/apache-mime4j-core-0.7.2.jar"/>
+	<archive path="/op2_2.2.dev/lib/httpcore/apache-mime4j-dom-0.7.2.jar"/>
 	<!-- javax -->
         <archive path="/op2_2.3.dev/lib/javax/javax.el.jar"/>
         <archive path="/op2_2.3.dev/lib/javax/javax.xml.jar"/>

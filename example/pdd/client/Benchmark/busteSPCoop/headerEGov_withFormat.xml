@@ -1,0 +1,29 @@
+<eGov_IT:Intestazione SOAP_ENV:actor="http://www.cnipa.it/eGov_it/portadominio" SOAP_ENV:mustUnderstand="1" xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eGov_IT="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/">
+   <eGov_IT:IntestazioneMessaggio>
+    <eGov_IT:Mittente>
+            <eGov_IT:IdentificativoParte tipo="SPC">CLIENTEPROVA</eGov_IT:IdentificativoParte>
+    </eGov_IT:Mittente>
+    <eGov_IT:Destinatario>
+            <eGov_IT:IdentificativoParte tipo="SPC">CLIENTEPROVA</eGov_IT:IdentificativoParte>
+    </eGov_IT:Destinatario>
+    <eGov_IT:ProfiloCollaborazione>EGOV_IT_ServizioSincrono</eGov_IT:ProfiloCollaborazione>
+    <eGov_IT:Servizio tipo="SPC">servizio</eGov_IT:Servizio>
+    <eGov_IT:Azione>echo</eGov_IT:Azione>
+    <eGov_IT:Messaggio>
+            <eGov_IT:Identificatore>CLIENTEPROVA_CLIENTEPROVASPCoopIT_1@ID_SERIAL@{%06d}_@ID_DATE@{yyyy-MM-dd_HH:mm}</eGov_IT:Identificatore>
+            <eGov_IT:OraRegistrazione tempo="EGOV_IT_SPC">@DATE@{yyyy-MM-dd'T'HH:mm:ss}</eGov_IT:OraRegistrazione>
+    </eGov_IT:Messaggio>
+    <eGov_IT:ProfiloTrasmissione confermaRicezione="false" inoltro="EGOV_IT_ALPIUUNAVOLTA"/>
+   </eGov_IT:IntestazioneMessaggio>
+   <eGov_IT:ListaTrasmissioni>
+    <eGov_IT:Trasmissione>
+     <eGov_IT:Origine>
+             <eGov_IT:IdentificativoParte tipo="SPC">CLIENTEPROVA</eGov_IT:IdentificativoParte>
+     </eGov_IT:Origine>
+     <eGov_IT:Destinazione>
+             <eGov_IT:IdentificativoParte tipo="SPC">CLIENTEPROVA</eGov_IT:IdentificativoParte>
+     </eGov_IT:Destinazione>
+     <eGov_IT:OraRegistrazione tempo="EGOV_IT_SPC">@DATE@{yyyy-MM-dd'T'HH:mm:ss}</eGov_IT:OraRegistrazione>
+    </eGov_IT:Trasmissione>
+   </eGov_IT:ListaTrasmissioni>
+</eGov_IT:Intestazione>

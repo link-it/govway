@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -143,9 +144,20 @@ public class Client {
         // The default is to just use a single thread/client.
         config.setThreads(Integer.parseInt(Client.getProperty(reader, "openspcoop2.threads", true)));
         
-        //  Number of requests to perform for the benchmarking session. 
-        // The default is to just perform a single request which usually leads to non-representative benchmarking results.
-        config.setRequests(Integer.parseInt(Client.getProperty(reader, "openspcoop2.requests", true)));
+        String numReq = Client.getProperty(reader, "openspcoop2.requests", false);
+        String timeSec = Client.getProperty(reader, "openspcoop2.durationInSeconds", false);
+        if(numReq!=null && timeSec!=null){
+        	throw new Exception("Indicare solo una tra le due seguenti proprietà 'openspcoop2.requests' e 'openspcoop2.durationInSeconds'");
+        }
+        else if(numReq!=null){
+	        //  Number of requests to perform for the benchmarking session. 
+	        // The default is to just perform a single request which usually leads to non-representative benchmarking results.
+	        config.setRequests(Integer.parseInt(numReq));
+        }
+        else{
+        	// Durata del test in secondi
+        	config.setDurationSec(Integer.parseInt(timeSec));
+        }
         
         // ContentType
         config.setContentType(contentType);
@@ -171,6 +183,21 @@ public class Client {
         // Http1.0
         config.setUseHttp1_0(Boolean.parseBoolean(Client.getProperty(reader, "openspcoop2.http10", true)));
         
+        // Attchment directory
+        String attachDir = Client.getProperty(reader, "openspcoop2.attachmentDirectory", false);
+        if(attachDir!=null){
+        	File f = new File(attachDir);
+        	config.setAttachmentsDir(f);
+        }
+        
+        // Gestione
+        String busta = Client.getProperty(reader, "openspcoop2.busta", false);
+        if(busta!=null){
+        	File f = new File(busta);
+        	config.setBustaFileHeader(f);
+        }
+        
+        
         List<String> headers = new ArrayList<String>();
         
         // Autenticazione Basic
@@ -182,6 +209,17 @@ public class Client {
 			headers.add("Authorization:"+authentication);
 		}
         
+		// Header Custom
+		Properties p = readProperties("openspcoop2.header.", reader);
+		if(p!=null && p.size()>0){
+			Enumeration<?> enKeys = p.keys();
+			while (enKeys.hasMoreElements()) {
+				String key = (String) enKeys.nextElement();
+				String value = p.getProperty(key);
+				headers.add(key+":"+value);
+			}
+		}
+		
 		// Altri header
 		if(riferimentoMessaggio!=null){
 			headers.add(trasportoKeywordRiferimentoMessaggio+":"+riferimentoMessaggio.trim());
@@ -247,5 +285,28 @@ public class Client {
 			return tmp;
 		}
 		
+	}
+	
+	private static java.util.Properties readProperties (String prefix,java.util.Properties sorgente)throws Exception{
+		java.util.Properties prop = new java.util.Properties();
+		try{ 
+			java.util.Enumeration<?> en = sorgente.propertyNames();
+			for (; en.hasMoreElements() ;) {
+				String property = (String) en.nextElement();
+				if(property.startsWith(prefix)){
+					String key = (property.substring(prefix.length()));
+					if(key != null)
+						key = key.trim();
+					String value = sorgente.getProperty(property);
+					if(value!=null)
+						value = value.trim();
+					if(key!=null && value!=null)
+						prop.setProperty(key,value);
+				}
+			}
+			return prop;
+		}catch(java.lang.Exception e) {
+			throw new Exception("Utilities.readProperties Riscontrato errore durante la lettura delle propriete con prefisso ["+prefix+"]: "+e.getMessage(),e);
+		}  
 	}
 }
