@@ -65,9 +65,10 @@
 		-->
 		<!-- esempio oracle -->
 		<!--
-		    <valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleValidConnectionChecker</valid-connection-checker-class-name>
+		    <!-- <valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleValidConnectionChecker</valid-connection-checker-class-name> -->
 		    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter</exception-sorter-class-name>
 		    <new-connection-sql>SELECT 1 FROM DUAL</new-connection-sql>
+		    <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
 		-->
 		<!--
 			NOTA: per Oracle e JBoss in jboss-service.xml impostare l'attributo Pad al valore 'true'. Es:
