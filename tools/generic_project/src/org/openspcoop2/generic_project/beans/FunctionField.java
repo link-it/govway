@@ -67,6 +67,10 @@ public class FunctionField {
 				throw new ExpressionException("Alias ["+this.alias+"] is not allowed with the function AVG"); 
 			}
 			
+			if("avg".equalsIgnoreCase(this.alias) && Function.AVG_DOUBLE.equals(this.function) ){
+				throw new ExpressionException("Alias ["+this.alias+"] is not allowed with the function AVG_DOUBLE"); 
+			}
+			
 			if("max".equalsIgnoreCase(this.alias) && Function.MAX.equals(this.function) ){
 				throw new ExpressionException("Alias ["+this.alias+"] is not allowed with the function MAX"); 
 			}
@@ -282,8 +286,13 @@ public class FunctionField {
 			return this.functionValueType;
 		}
 		else{
-			// devono essere tutti dello stesso tipo
-			return this.fields.get(0).getFieldType();
+			if(this.function!=null && Function.AVG_DOUBLE.equals(this.function)){
+				return Double.class;
+			}
+			else{
+				// devono essere tutti dello stesso tipo
+				return this.fields.get(0).getFieldType();
+			}
 		}
 	}
 	

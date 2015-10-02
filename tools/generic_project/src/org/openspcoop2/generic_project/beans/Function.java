@@ -29,6 +29,6 @@ package org.openspcoop2.generic_project.beans;
  */
 public enum Function {
 
-	AVG, MAX, MIN, SUM, COUNT, COUNT_DISTINCT
+	AVG, AVG_DOUBLE, MAX, MIN, SUM, COUNT, COUNT_DISTINCT
 	
 }

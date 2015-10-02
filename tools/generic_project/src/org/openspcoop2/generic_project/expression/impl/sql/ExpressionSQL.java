@@ -676,6 +676,7 @@ public class ExpressionSQL extends ExpressionImpl {
 	public static void setFunction(Function function,boolean timestamp,String column,String alias,ISQLQueryObject sqlQueryObject) throws SQLQueryObjectException{
 		switch (function) {
 		case AVG:
+		case AVG_DOUBLE:
 			if(timestamp){
 				sqlQueryObject.addSelectAvgTimestampField(column, alias);
 			}

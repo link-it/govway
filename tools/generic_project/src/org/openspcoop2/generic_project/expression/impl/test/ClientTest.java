@@ -1605,6 +1605,51 @@ public class ClientTest {
 			}
 			System.out.println("- test group by con AVG Date (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 			
+			
+			// AVG_DOUBLE
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			if(paginated){
+				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
+			}else{
+				groupByExpr = ClientTest.newExpressionImplForBook();
+			}
+			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
+			groupByExpr.sortOrder(SortOrder.ASC);
+			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().AUTHOR);
+			FunctionField ffAvgDouble = new FunctionField(Book.model().VERSION.NUMBER,Function.AVG_DOUBLE,"avgNumber");
+			if(paginated){
+				((IPaginatedExpression)groupByExpr).limit(10).offset(2);
+				((PaginatedExpressionSQL)groupByExpr).addField(sqlQueryObject, ffAvgDouble, true);
+			}
+			else{
+				((ExpressionSQL)groupByExpr).addField(sqlQueryObject, ffAvgDouble, true);
+			}
+			System.out.println("- test group by con AVG_DOUBLE (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
+						
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			if(paginated){
+				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
+			}else{
+				groupByExpr = ClientTest.newExpressionImplForBook();
+			}
+			groupByExpr.equals(Book.model().ENUM_STRING, EnumerationString.AMMINISTRATIVO);
+			groupByExpr.sortOrder(SortOrder.ASC);
+			groupByExpr.addOrder(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
+			groupByExpr.addGroupBy(Book.model().AUTHOR);
+			FunctionField ffAVGDateDouble = new FunctionField(Book.model().VERSION.DATE,Function.AVG_DOUBLE,"avgDate");
+			if(paginated){
+				((IPaginatedExpression)groupByExpr).limit(10).offset(2);
+				((PaginatedExpressionSQL)groupByExpr).addField(sqlQueryObject, ffAVGDateDouble, true);
+			}
+			else{
+				((ExpressionSQL)groupByExpr).addField(sqlQueryObject, ffAVGDateDouble, true);
+			}
+			System.out.println("- test group by con AVG_DOUBLE Date (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
+			
 			// MAX
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
@@ -1727,6 +1772,14 @@ public class ClientTest {
 				((ExpressionSQL)groupByExpr).addField(sqlQueryObject, ffAvg, true);
 			}
 			
+			ffAvgDouble = new FunctionField(Book.model().VERSION.NUMBER,Function.AVG_DOUBLE,"avgDouble");
+			if(paginated){
+				((PaginatedExpressionSQL)groupByExpr).addField(sqlQueryObject, ffAvgDouble, true);
+			}
+			else{
+				((ExpressionSQL)groupByExpr).addField(sqlQueryObject, ffAvgDouble, true);
+			}
+			
 			ffMax = new FunctionField(Book.model().VERSION.NUMBER,Function.MAX,"maxNumber");
 			if(paginated){
 				((PaginatedExpressionSQL)groupByExpr).addField(sqlQueryObject, ffMax, true);
@@ -1735,7 +1788,7 @@ public class ClientTest {
 				((ExpressionSQL)groupByExpr).addField(sqlQueryObject, ffMax, true);
 			}
 			
-			System.out.println("- test group by con SUM / AVG / MAX (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
+			System.out.println("- test group by con SUM / AVG / AVG_DOUBLE / MAX (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 			
 			
 			// MIN (con valore custom)
