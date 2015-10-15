@@ -1,3 +1,10 @@
+2015-10-15  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-426
+	Astratti i concetti di Logging (Tracce, Diagnostici, Transazione, Dump) in una API utilizzabile in vari progetti.
+	L'api è disponibile all'interno del package org.openspcoop2.utils.logger
+
 2015-10-02  Andrea Poli <apoli@link.it>
 
 	* [GenericProject]
