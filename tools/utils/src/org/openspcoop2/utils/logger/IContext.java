@@ -29,4 +29,6 @@ package org.openspcoop2.utils.logger;
  */
 public interface IContext {
 
+	public String getIdTransaction();
+	
 }

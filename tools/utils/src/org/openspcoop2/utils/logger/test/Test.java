@@ -58,7 +58,7 @@ public class Test {
 		
 		LoggerFactory.initialize(Log4JLogger.class.getName(),
 				"/org/openspcoop2/utils/logger/test/example.msgDiagnostici.properties",
-				true,
+				false,
 				"/org/openspcoop2/utils/logger/test/example.log4j.properties");
 		
 		//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
@@ -72,7 +72,7 @@ public class Test {
 		logger.log("Prova altro log con messaggio inserito qua con function",LowSeverity.DEBUG_MEDIUM,"core");
 		
 		logger.log("000002");
-		logger.log("core.inizializzazione"); // non funziona bene.
+		logger.log("core.inizializzazione"); 
 		
 		logger.log("001001","21 Ottobre 2015","GovPay");
 		

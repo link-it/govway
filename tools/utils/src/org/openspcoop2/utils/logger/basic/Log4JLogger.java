@@ -137,7 +137,7 @@ public class Log4JLogger extends AbstractBasicLogger  {
 		SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
 		
 		StringBuffer showContext = new StringBuffer();
-		showContext.append("<").append(this.getIdTransaction()).append(">\n");
+		showContext.append("<").append(this.getContext().getIdTransaction()).append(">\n");
 		
 		ProxyContext context = (ProxyContext) contextParam;
 		
@@ -343,8 +343,8 @@ public class Log4JLogger extends AbstractBasicLogger  {
 			return;
 		}
 		
-		if(this.getIdTransaction()!=null){
-			out.append("<").append(this.getIdTransaction()).append(">");
+		if(this.getContext().getIdTransaction()!=null){
+			out.append("<").append(this.getContext().getIdTransaction()).append(">");
 			out.append(" \n");
 		}
 		
@@ -487,8 +487,8 @@ public class Log4JLogger extends AbstractBasicLogger  {
 		
 		StringBuffer out = new StringBuffer();
 		
-		if(this.getIdTransaction()!=null){
-			out.append("<").append(this.getIdTransaction()).append(">");
+		if(this.getContext().getIdTransaction()!=null){
+			out.append("<").append(this.getContext().getIdTransaction()).append(">");
 			out.append(" \n");
 		}
 		

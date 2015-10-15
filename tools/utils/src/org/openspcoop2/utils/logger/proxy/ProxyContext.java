@@ -31,11 +31,22 @@ import org.openspcoop2.utils.logger.IContext;
  */
 public class ProxyContext implements IContext {
 
+	private String idTransaction;
+		
 	private Transaction transaction;
 	
 	private Request request;
 	
 	private Response response;
+	
+	public ProxyContext(String idTransaction){
+		this.idTransaction = idTransaction;
+	}
+	
+	@Override
+	public String getIdTransaction(){
+		return this.idTransaction;
+	}
 	
 	public Transaction getTransaction() {
 		if(this.transaction == null){

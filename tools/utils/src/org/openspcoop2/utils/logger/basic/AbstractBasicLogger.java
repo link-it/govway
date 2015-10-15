@@ -59,7 +59,7 @@ public abstract class AbstractBasicLogger implements ILogger {
 			org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator g = new UniversallyUniqueIdentifierGenerator();
 			this.idTransaction = g.newID().toString();
 			
-			this.context = new ProxyContext();
+			this.context = new ProxyContext(this.idTransaction);
 			
 			this.throwExceptionPlaceholderFailedResolution = throwExceptionPlaceholderFailedResolution;
 			
@@ -70,10 +70,6 @@ public abstract class AbstractBasicLogger implements ILogger {
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
-	}
-
-	public String getIdTransaction() {
-		return this.idTransaction;
 	}
 	
 	@Override
