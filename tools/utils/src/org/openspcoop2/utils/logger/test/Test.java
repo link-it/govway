@@ -45,6 +45,13 @@ import org.openspcoop2.utils.logger.proxy.Server;
 import org.openspcoop2.utils.logger.proxy.ServerEndpointType;
 import org.openspcoop2.utils.logger.proxy.Service;
 
+/**
+ * Test
+ *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class Test {
 
 	public static void main(String[] args) throws Exception {
