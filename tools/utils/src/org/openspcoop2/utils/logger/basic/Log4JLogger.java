@@ -60,6 +60,21 @@ public class Log4JLogger extends AbstractBasicLogger  {
 		super(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution);
 		this.init(resourceLogProperties);
 	}
+	
+	public Log4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		super(diagnosticProperties,throwExceptionPlaceholderFailedResolution);
+		this.init(resourceLogProperties);
+	}
+
+	public Log4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		super(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution);
+		this.init(resourceLogProperties);
+	}
+
+	public Log4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		super(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution);
+		this.init(resourceLogProperties);
+	}
 
 	private Logger logTransaction;
 	private Logger logDiagnostic;
@@ -91,6 +106,21 @@ public class Log4JLogger extends AbstractBasicLogger  {
 			}
 			Properties p = new Properties();
 			p.load(is);
+			this.init(p);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				if(is!=null){
+					is.close();
+				}
+			}catch(Exception eClose){}
+		}
+	}
+	
+	private void init(Properties p) throws UtilsException{
+		try{
 			PropertyConfigurator.configure(p);
 			
 			this.logTransaction = Logger.getLogger("transaction");
@@ -115,13 +145,6 @@ public class Log4JLogger extends AbstractBasicLogger  {
 			
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
-		}
-		finally{
-			try{
-				if(is!=null){
-					is.close();
-				}
-			}catch(Exception eClose){}
 		}
 	}
 	
