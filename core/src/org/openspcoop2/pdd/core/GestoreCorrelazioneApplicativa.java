@@ -176,7 +176,7 @@ public class GestoreCorrelazioneApplicativa {
 		}catch(Exception e){
 			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 					getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
-			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 		}
 
 		// XPathExpressionEngine
@@ -232,7 +232,7 @@ public class GestoreCorrelazioneApplicativa {
 			}catch(Exception e){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 						getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
-				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 			}
 			if(nodeInEsame instanceof Text){
 				continue;
@@ -314,7 +314,7 @@ public class GestoreCorrelazioneApplicativa {
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione urlBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
-								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
 							}
@@ -340,7 +340,7 @@ public class GestoreCorrelazioneApplicativa {
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione contentBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
-								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
 								this.log.info("[AccettaIdentificazioneFallita] Identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione contentBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
@@ -413,7 +413,7 @@ public class GestoreCorrelazioneApplicativa {
 				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
 				this.log.error("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage());
-				throw new GestoreMessaggiException("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage());
+				throw new GestoreMessaggiException("Verifica correlazione IDApplicativo - ID non riuscita: "+er.getMessage(),er);
 			}
 	
 			if(this.idBustaCorrelato!=null)
@@ -457,6 +457,9 @@ public class GestoreCorrelazioneApplicativa {
 		/** Fase di identificazione dell'id di correlazione */
 		NodeList nList = null;
 		try{
+			if(envelope==null){
+				throw new Exception("Envelope non presente nel messaggio Soap");
+			}
 			if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
 				throw new Exception("Body applicativo non presente nel messaggio Soap");
 			}
@@ -467,7 +470,7 @@ public class GestoreCorrelazioneApplicativa {
 		}catch(Exception e){
 			this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 					getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
-			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 		}
 
 		
@@ -521,7 +524,7 @@ public class GestoreCorrelazioneApplicativa {
 			}catch(Exception e){
 				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 						getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
-				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 			}
 			if(nodeInEsame instanceof Text){
 				continue;
@@ -615,7 +618,7 @@ public class GestoreCorrelazioneApplicativa {
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 										getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione contentBased (Pattern:"+elemento.getPattern()+"): "+e.getMessage());
-								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 							}else{
 								correlazioneNonRiuscitaDaAccettare = true;
 							}
@@ -682,7 +685,7 @@ public class GestoreCorrelazioneApplicativa {
 			}catch(Exception e){
 				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
-				throw new GestoreMessaggiException("Scadenza impostata per la correlazione applicativa non corretta: "+e.getMessage());
+				throw new GestoreMessaggiException("Scadenza impostata per la correlazione applicativa non corretta: "+e.getMessage(),e);
 			}
 		}
 		// E' stata introdotta l'ora di registrazione per gestire le scadenze null
@@ -736,7 +739,7 @@ public class GestoreCorrelazioneApplicativa {
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
 			this.log.error("Correlazione IDApplicativo - ID non riuscita: "+er.getMessage());
-			throw new GestoreMessaggiException("Correlazione IDApplicativo - ID non riuscita: "+er.getMessage());
+			throw new GestoreMessaggiException("Correlazione IDApplicativo - ID non riuscita: "+er.getMessage(),er);
 		}
 
 	}
@@ -831,7 +834,7 @@ public class GestoreCorrelazioneApplicativa {
 					pstmtMsgScaduti.close();
 			} catch(Exception er) {}
 			this.log.error(errorMsg);
-			throw new GestoreMessaggiException(errorMsg);
+			throw new GestoreMessaggiException(errorMsg,e);
 		}	
 	}
 	
@@ -929,7 +932,7 @@ public class GestoreCorrelazioneApplicativa {
 					pstmtMsgScaduti.close();
 			} catch(Exception er) {}
 			this.log.error(errorMsg);
-			throw new GestoreMessaggiException(errorMsg);
+			throw new GestoreMessaggiException(errorMsg,e);
 		}	
 	}
 
@@ -975,7 +978,7 @@ public class GestoreCorrelazioneApplicativa {
 					pstmtReadMSG.close();
 			} catch(Exception er) {}
 			this.log.error(errorMsg);
-			throw new GestoreMessaggiException(errorMsg);
+			throw new GestoreMessaggiException(errorMsg,e);
 		}	
 
 	}
@@ -1007,7 +1010,7 @@ public class GestoreCorrelazioneApplicativa {
 					pstmtDeleteMSG.close();
 			} catch(Exception er) {}
 			this.log.error(errorMsg);
-			throw new GestoreMessaggiException(errorMsg);
+			throw new GestoreMessaggiException(errorMsg,e);
 		}	
 
 	}
