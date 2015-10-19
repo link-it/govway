@@ -37,11 +37,14 @@ public class LoggerFactory {
 	private static Object [] parameters = null;
 	private static Class<?> [] parameterTypes = null;
 	
-	@SuppressWarnings("unchecked")
 	public static void initialize(String implementationClassName, Object ... pars) throws UtilsException, ClassNotFoundException{
 		Class<?> c = Class.forName(implementationClassName);
+		initialize(c, pars);
+	}
+	@SuppressWarnings("unchecked")
+	public static void initialize(Class<?> implementationClass, Object ... pars) throws UtilsException {
 		try{
-			loggerImpl = (Class<ILogger>)c;
+			loggerImpl = (Class<ILogger>)implementationClass;
 			parameters = pars;
 			if(parameters!=null){
 				parameterTypes = new Class<?>[parameters.length];
@@ -49,15 +52,6 @@ public class LoggerFactory {
 					parameterTypes[i] = parameters[i].getClass();
 				}
 			}
-		}catch(Exception e){
-			throw new UtilsException("Expected class assignable from "+ILogger.class.getName()+". Found: "+c.getName()+" . Error: "+e.getMessage(),e);
-		}
-	}
-	@SuppressWarnings("unchecked")
-	public static void initialize(Class<?> implementationClass, Object ... pars) throws UtilsException {
-		try{
-			loggerImpl = (Class<ILogger>)implementationClass;
-			parameters = pars;
 		}catch(Exception e){
 			throw new UtilsException("Expected class assignable from "+ILogger.class.getName()+". Found: "+implementationClass.getName()+" . Error: "+e.getMessage(),e);
 		}

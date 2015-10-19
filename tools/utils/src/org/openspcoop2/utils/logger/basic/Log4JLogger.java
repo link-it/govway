@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.Attachment;
@@ -76,10 +77,10 @@ public class Log4JLogger extends AbstractBasicLogger  {
 		this.init(resourceLogProperties);
 	}
 
-	private Logger logTransaction;
-	private Logger logDiagnostic;
-	private Logger logDump;
-	private Logger logEvent;
+	protected Logger logTransaction;
+	protected Logger logDiagnostic;
+	protected Logger logDump;
+	protected Logger logEvent;
 	
 	private static Severity diagnosticSeverity = Severity.DEBUG_HIGH;
 	public static void setDiagnosticSeverity(Severity logSeverity) {
@@ -500,9 +501,12 @@ public class Log4JLogger extends AbstractBasicLogger  {
 		showMsg.append(diagnostic.getMessage());
 		showMsg.append("\n");
 
-		this.logDiagnostic.log(SeverityLog4J.getSeverityLog4J(diagnostic.getSeverity()), showMsg.toString());
+		this.logDiagnostic.log(this.convertToPriority(diagnostic.getSeverity()), showMsg.toString());
 
-
+	}
+	
+	protected Priority convertToPriority(Severity severity){
+		return SeverityLog4J.getSeverityLog4J(severity);
 	}
 
 	@Override
