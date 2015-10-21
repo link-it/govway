@@ -50,7 +50,7 @@
 		<!--
 		<new-connection-sql>SELECT 1</new-connection-sql>
 		<validation>
-			<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
+			<!-- <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/> -->
 			<exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter"/>
 			<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
 			<validate-on-match>true</validate-on-match>
@@ -61,7 +61,7 @@
 		<!--
 		<new-connection-sql>SELECT 1</new-connection-sql>
 		<validation>
-			<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker"/>
+			<!-- <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker"/> -->
 			<exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter"/>
 			<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
 			<validate-on-match>true</validate-on-match>
@@ -93,7 +93,7 @@
 		<!--
 		<new-connection-sql>SELECT 1</new-connection-sql>
 		<validation>
-			<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"/>
+			<!-- <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"/> -->
 			<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
 			<validate-on-match>true</validate-on-match>
 		</validation>
@@ -103,7 +103,7 @@
 		<!--
 		<new-connection-sql>SELECT 1 from SYSIBM.SYSDUMMY1</new-connection-sql>
 		<validation>
-			<valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker"/>
+			<!-- <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker"/> -->
 			<stale-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2StaleConnectionChecker"/>
 			<exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2ExceptionSorter"/>
 			<check-valid-connection-sql>SELECT 1 from SYSIBM.SYSDUMMY1</check-valid-connection-sql>
