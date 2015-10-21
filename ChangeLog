@@ -1,3 +1,20 @@
+2015-10-21  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-428
+	Quando veniva registrata una nuova versione di un accordo di servizio parte comune, 
+	non era possibile attivarla attraverso un accordo di servizio parte specifica 
+	senza prima eliminare la parte specifica che implementava la vecchia versione.
+	L'attivazione di una nuova parte specifica che implementava la nuova versione della parte comune non era possibile 
+	soprattuto se il nome del port-type rimane invariato poichè non è permesso creare più di un servizio 
+	con stesso tipo e nome erogato dallo stesso soggetto identificato anch'esso con tipo e nome.
+	Per continuare a soddisfare il vincolo di unicità tipo/nome servizio e tipo/nome soggetto,
+	ma poter gestire il versionamento degli accordi di servizio parte comune, 
+	è stata aggiunta la possibilità di modificare la versione della parte comune implementata da un accordo di servizio parte specifica. 
+	Con questa nuova funzionalità si potrà censire tutte le versioni dell'accordo di servizio parte comune sul registro 
+	e modificare di volta in volta la parte specifica aggiornandola rispetto all'ultima versione della parte comune 
+	(o ritornando indietro ad una precedente versione).
+
 2015-10-15  Andrea Poli <apoli@link.it>
 
 	* [Utils]
