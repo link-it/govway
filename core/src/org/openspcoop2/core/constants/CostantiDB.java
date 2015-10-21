@@ -124,7 +124,13 @@ public final class CostantiDB {
     
     /*DIAGNOSTICA*/
     public final static String MSG_DIAGNOSTICI = "msgdiagnostici";
+    public final static String MSG_DIAGNOSTICI_SEQUENCE = "seq_msgdiagnostici";
+    public final static String MSG_DIAGNOSTICI_TABLE_FOR_ID = "msgdiagnostici_init_seq";
+    
+    /*DIAGNOSTICA CORRELAZIONE*/
     public final static String MSG_DIAGNOSTICI_CORRELAZIONE = "msgdiag_correlazione";
+    public final static String MSG_DIAGNOSTICI_CORRELAZIONE_SEQUENCE = "seq_msgdiag_correlazione";
+    public final static String MSG_DIAGNOSTICI_CORRELAZIONE_TABLE_FOR_ID = "msgdiag_correlazione_init_seq";
     public final static String MSG_DIAGNOSTICI_CORRELAZIONE_SA = "msgdiag_correlazione_sa";
     public final static String MSG_CORR_INDEX = "MSG_CORR_INDEX";
     

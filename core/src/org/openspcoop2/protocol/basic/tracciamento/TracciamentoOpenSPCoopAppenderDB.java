@@ -467,6 +467,7 @@ public class TracciamentoOpenSPCoopAppenderDB implements ITracciamentoOpenSPCoop
 			if(idtraccia<=0){
 				throw new Exception("ID autoincrementale non ottenuto");
 			}
+			traccia.setId(idtraccia);
 
 			
 			String gdoColumnName = "";
@@ -625,8 +626,6 @@ public class TracciamentoOpenSPCoopAppenderDB implements ITracciamentoOpenSPCoop
 	public String getTipoDatabase() {
 		return this.tipoDatabase;
 	}
-
-
 
 	public void setTipoDatabase(String tipoDatabase) {
 		this.tipoDatabase = tipoDatabase;
