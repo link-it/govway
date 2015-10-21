@@ -1632,7 +1632,9 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
 			String statoPackage,String oldStato,String nome_aps,String versione,
-			List<String> versioni,boolean validazioneDocumenti,String nomePA,String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto) throws Exception{
+			List<String> versioni,boolean validazioneDocumenti,String nomePA,
+			String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto,
+			List<AccordoServizioParteComune> asCompatibili) throws Exception{
 
 		String[] tipiLabel = new String[tipi.size()];
 		for (int i = 0; i < tipi.size(); i++) {
@@ -1699,19 +1701,55 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				de.setSelected(accordo);
 			dati.addElement(de);
 		}else{
+			if(!modificaAbilitata || (asCompatibili==null || asCompatibili.size()<=1)){
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
+				de.setValue(accordo);
+				dati.addElement(de);
+			}
+				
+			IDAccordo idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
+			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
-			de.setValue(accordo);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO);
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE);
 			de.setType(DataElementType.TEXT);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO_LABEL );
-			de.setValue(uriAccordo);
+			de.setName("param_"+AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE );
+			de.setValue(idAccordoParteComune.getSoggettoReferente().toString());
 			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME);
+			de.setType(DataElementType.TEXT);
+			de.setName("param_"+AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME );
+			de.setValue(idAccordoParteComune.getNome());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE);
+			if(!modificaAbilitata || (asCompatibili==null || asCompatibili.size()<=1)){
+				de.setType(DataElementType.TEXT);
+				de.setName("param_"+AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE );
+				de.setValue(idAccordoParteComune.getVersione());
+			}
+			else{
+				String [] accordiCompatibiliList = new String[asCompatibili.size()];
+				String [] accordiCompatibiliLabelList = new String[asCompatibili.size()];
+				for (int i = 0; i < asCompatibili.size(); i++) {
+					accordiCompatibiliList[i] = asCompatibili.get(i).getId() + "";
+					accordiCompatibiliLabelList[i] = asCompatibili.get(i).getVersione();
+				}
+				de.setType(DataElementType.SELECT);
+				de.setValues(accordiCompatibiliList);
+				de.setLabels(accordiCompatibiliLabelList);
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
+				de.setPostBack(true);
+				de.setSelected(accordo);
+				de.setValue(accordo);
+			}
+			dati.addElement(de);
+			
 		}
 
 		//Servizio (portType) 

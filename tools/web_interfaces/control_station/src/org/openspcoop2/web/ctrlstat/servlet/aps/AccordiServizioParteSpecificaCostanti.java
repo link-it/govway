@@ -231,6 +231,9 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO = "Accordo";
+	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE = "Soggetto Referente";
+	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE = "Versione";
 	public final static String LABEL_PARAMETRO_APS_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APS_PROVIDER = "Nome";
 	public final static String LABEL_PARAMETRO_APS_PROVIDER_FRUITORE = "Soggetto Fruitore";

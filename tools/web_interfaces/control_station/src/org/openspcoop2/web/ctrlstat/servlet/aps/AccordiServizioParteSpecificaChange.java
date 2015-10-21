@@ -316,6 +316,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				portType = asps.getPortType();
 			}
 
+			// Lista di Accordi Compatibili
+			List<AccordoServizioParteComune> asParteComuneCompatibili = null;
+			try{
+				asParteComuneCompatibili = apsCore.findAccordiParteComuneBySoggettoAndNome(as.getNome(), 
+						new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome()));
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante la ricerca degli accordi parte comune compatibili", e);
+			}
+			
 			// Versione
 			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
@@ -605,7 +614,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,nome_aps
 							,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,null,protocollo,generaPACheckSoggetto);
+							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
 
 					dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  null,
 							url,nome, tipo, user, password, initcont, urlpgk,
@@ -675,7 +684,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "", TipoOperazione.CHANGE, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,nome_aps,versione,versioniProtocollo,validazioneDocumenti,
-						null,null,null,protocollo,generaPACheckSoggetto);
+						null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
 
 				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, null, 
 						url, nome,
@@ -880,7 +889,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "", TipoOperazione.CHANGE, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,nome_aps,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,null,protocollo,generaPACheckSoggetto);
+							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
 
 					dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url,

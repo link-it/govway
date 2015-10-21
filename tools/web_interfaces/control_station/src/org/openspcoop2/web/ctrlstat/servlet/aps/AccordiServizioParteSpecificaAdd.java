@@ -721,7 +721,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
-						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto);
+						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
 				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 						"", "",
@@ -784,7 +784,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.servcorr, this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
-						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto);
+						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
 				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 						this.url, this.nome, this.tipo, this.user,
@@ -905,7 +905,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
-							this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto);
+							this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
 					dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 							this.url, this.nome, this.tipo, this.user,

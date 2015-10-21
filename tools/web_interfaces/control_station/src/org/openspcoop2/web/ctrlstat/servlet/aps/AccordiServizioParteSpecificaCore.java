@@ -49,8 +49,10 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -281,6 +283,51 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
+	
+	public List<AccordoServizioParteComune> findAccordiParteComuneBySoggettoAndNome(String nomeAccordoParteComune,IDSoggetto idSoggetto) throws DriverRegistroServiziException {
+		String nomeMetodo = "findAccordiParteComuneBySoggettoAndNome(" + nomeAccordoParteComune + ", "+idSoggetto.toString()+")";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			IDriverRegistroServiziGet driverRegistro = null;
+			if(this.isRegistroServiziLocale()){
+				driverRegistro = driver.getDriverRegistroServiziDB();
+			}
+			else{
+				driverRegistro = GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log);
+			}
+
+			FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
+			filtroRicerca.setNomeAccordo(nomeAccordoParteComune);
+			filtroRicerca.setTipoSoggettoReferente(idSoggetto.getTipo());
+			filtroRicerca.setNomeSoggettoReferente(idSoggetto.getNome());
+			
+			List<IDAccordo> idAccordi = null;
+			List<AccordoServizioParteComune> accordi = new ArrayList<AccordoServizioParteComune>();
+			try{
+				idAccordi = driverRegistro.getAllIdAccordiServizioParteComune(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound dnf){}
+			if(idAccordi!=null && idAccordi.size()>0){
+				// se long
+				for (IDAccordo idAccordo : idAccordi) {
+					accordi.add(driverRegistro.getAccordoServizioParteComune(idAccordo));
+				}
+			}
+
+			return accordi;
+
+		}  catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 	
 	
 	public List<AccordoServizioParteSpecifica> serviziByAccordoFilterList(IDAccordo idAccordo) throws DriverRegistroServiziException {

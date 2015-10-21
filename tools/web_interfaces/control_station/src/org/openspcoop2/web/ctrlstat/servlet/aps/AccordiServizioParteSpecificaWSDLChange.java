@@ -486,7 +486,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,
 					nome_aps, versione, versioniProtocollo,this.validazioneDocumenti,
-					null,null,null,protocollo,true);
+					null,null,null,protocollo,true,null);
 
 			dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,
