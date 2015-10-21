@@ -27,6 +27,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.soap.SOAPEnvelope;
 
@@ -164,19 +166,36 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		/** Fase di identificazione dell'id di correlazione */
-		NodeList nList = null;
-		try{
-			if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
-				throw new Exception("Body applicativo non presente nel messaggio Soap");
+		boolean checkBody = false;
+		if(correlazioneApplicativa.sizeElementoList()>1){
+			checkBody = true;
+		}
+		else{
+			if(correlazioneApplicativa.sizeElementoList()>0){
+				CorrelazioneApplicativaElemento elemento = correlazioneApplicativa.getElemento(0);
+				if( (elemento.getNome()!=null) && !"".equals(elemento.getNome()) ){
+					checkBody = true;
+				}
 			}
-			nList = envelope.getBody().getChildNodes();
-			if(nList==null || nList.getLength()==0){
-				throw new Exception("Elementi del Body non presenti?");
+		}
+		NodeList nListSoapBody = null;
+		if(checkBody){
+			try{
+				if(envelope==null){
+					throw new Exception("Envelope non presente nel messaggio Soap");
+				}
+				if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
+					throw new Exception("Body applicativo non presente nel messaggio Soap");
+				}
+				nListSoapBody = envelope.getBody().getChildNodes();
+				if(nListSoapBody==null || nListSoapBody.getLength()==0){
+					throw new Exception("Elementi del Body non presenti?");
+				}
+			}catch(Exception e){
+				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+						getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
+				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 			}
-		}catch(Exception e){
-			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-					getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
-			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 		}
 
 		// XPathExpressionEngine
@@ -212,35 +231,52 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo posizione ultimo nodo "buono"
 		int posizioneUltimoNodo = -1;
-		for (int elem=0; elem<nList.getLength(); elem++){
-			Node nodeInEsame =  nList.item(elem);
-			if(nodeInEsame instanceof Text){
-				continue;
+		if(checkBody){
+			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+				Node nodeInEsame =  nListSoapBody.item(elem);
+				if(nodeInEsame instanceof Text){
+					continue;
+				}
+				posizioneUltimoNodo = elem;
 			}
-			posizioneUltimoNodo = elem;
+		}
+		else{
+			posizioneUltimoNodo = 0;
 		}
 		
-		for (int elem=0; elem<nList.getLength(); elem++){
+		// Calcolo nomi
+		List<String> nomiPresentiBody = new ArrayList<String>();
+		if(checkBody){
+			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+				String elementName = null;
+				Node nodeInEsame =  nListSoapBody.item(elem);
+				try{
+					elementName = nodeInEsame.getLocalName();
+				}catch(Exception e){
+					this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+							getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
+					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
+				}
+				if(nodeInEsame instanceof Text){
+					continue;
+				}
+				if(elementName==null){
+					continue;
+				}
+				nomiPresentiBody.add(elementName);
+			}
+		}
+		else{
+			nomiPresentiBody.add("PresenteSoloRegola*");
+		}
+		
+		for (int elem=0; elem<nomiPresentiBody.size(); elem++){
 
+			String elementName = nomiPresentiBody.get(elem);
+			
 			if(findCorrelazione)
 				break;
-
-			String elementName = null;
-			Node nodeInEsame =  nList.item(elem);
-			try{
-				elementName = nodeInEsame.getLocalName();
-			}catch(Exception e){
-				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-						getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
-				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
-			}
-			if(nodeInEsame instanceof Text){
-				continue;
-			}
-			if(elementName==null){
-				continue;
-			}
-
+			
 			for(int i=0; i<c.size(); i++){
 				
 				CorrelazioneApplicativaElemento elemento = c.get(i);
@@ -455,22 +491,36 @@ public class GestoreCorrelazioneApplicativa {
 		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.XPathExpressionEngine();
 		
 		/** Fase di identificazione dell'id di correlazione */
-		NodeList nList = null;
-		try{
-			if(envelope==null){
-				throw new Exception("Envelope non presente nel messaggio Soap");
+		boolean checkBody = false;
+		if(correlazioneApplicativa.sizeElementoList()>1){
+			checkBody = true;
+		}
+		else{
+			if(correlazioneApplicativa.sizeElementoList()>0){
+				CorrelazioneApplicativaRispostaElemento elemento = correlazioneApplicativa.getElemento(0);
+				if( (elemento.getNome()!=null) && !"".equals(elemento.getNome()) ){
+					checkBody = true;
+				}
 			}
-			if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
-				throw new Exception("Body applicativo non presente nel messaggio Soap");
+		}
+		NodeList nListSoapBody = null;
+		if(checkBody){
+			try{
+				if(envelope==null){
+					throw new Exception("Envelope non presente nel messaggio Soap");
+				}
+				if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
+					throw new Exception("Body applicativo non presente nel messaggio Soap");
+				}
+				nListSoapBody = envelope.getBody().getChildNodes();
+				if(nListSoapBody==null || nListSoapBody.getLength()==0){
+					throw new Exception("Elementi del Body non presenti?");
+				}
+			}catch(Exception e){
+				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+						getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
+				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 			}
-			nList = envelope.getBody().getChildNodes();
-			if(nList==null || nList.getLength()==0){
-				throw new Exception("Elementi del Body non presenti?");
-			}
-		}catch(Exception e){
-			this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-					getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
-			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 		}
 
 		
@@ -504,34 +554,52 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo posizione ultimo nodo "buono"
 		int posizioneUltimoNodo = -1;
-		for (int elem=0; elem<nList.getLength(); elem++){
-			Node nodeInEsame =  nList.item(elem);
-			if(nodeInEsame instanceof Text){
-				continue;
+		if(checkBody){
+			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+				Node nodeInEsame =  nListSoapBody.item(elem);
+				if(nodeInEsame instanceof Text){
+					continue;
+				}
+				posizioneUltimoNodo = elem;
 			}
-			posizioneUltimoNodo = elem;
+		}
+		else{
+			posizioneUltimoNodo = 0;
 		}
 		
-		for (int elem=0; elem<nList.getLength(); elem++){
+		// Calcolo nomi
+		List<String> nomiPresentiBody = new ArrayList<String>();
+		if(checkBody){
+			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+				String elementName = null;
+				Node nodeInEsame =  nListSoapBody.item(elem);
+				try{
+					elementName = nodeInEsame.getLocalName();
+				}catch(Exception e){
+					this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+							getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
+					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
+				}
+				if(nodeInEsame instanceof Text){
+					continue;
+				}
+				if(elementName==null){
+					continue;
+				}
+				nomiPresentiBody.add(elementName);
+			}
+		}
+		else{
+			nomiPresentiBody.add("PresenteSoloRegola*");
+		}
+		
+		
+		for (int elem=0; elem<nomiPresentiBody.size(); elem++){
+
+			String elementName = nomiPresentiBody.get(elem);
 
 			if(findCorrelazione)
 				break;
-
-			String elementName = null;
-			Node nodeInEsame =  nList.item(elem);
-			try{
-				elementName = nodeInEsame.getLocalName();
-			}catch(Exception e){
-				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-						getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
-				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
-			}
-			if(nodeInEsame instanceof Text){
-				continue;
-			}
-			if(elementName==null){
-				continue;
-			}
 
 			for(int i=0; i<c.size(); i++){
 				

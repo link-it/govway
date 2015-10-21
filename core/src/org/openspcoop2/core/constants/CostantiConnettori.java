@@ -129,4 +129,5 @@ public class CostantiConnettori {
     public static final String CONNETTORE_STRESS_TEST_SLEEP = "sleep";
     public static final String CONNETTORE_STRESS_TEST_SLEEP_MAX = "sleepMax";
     public static final String CONNETTORE_STRESS_TEST_SLEEP_MIN = "sleepMin";
+    public static final String CONNETTORE_STRESS_TEST_HEADER_APPLICATIVO = "addHeader";
 }

@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
+import org.openspcoop2.utils.date.DateManager;
 
 
 
@@ -72,6 +73,11 @@ public class ConnettoreStresstest extends ConnettoreBase {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
+	private static final String HEADER_APPLICATIVO = "<thdr:headerApplicativo xmlns:thdr=\"http://example.org/test\" tipo=\"TEST\" soapenv:actor=\"http://example.org/test/actor\">\n"+
+													 "<identificativoDominio>ITALIA</identificativoDominio>\n"+
+													 "<thdr:identificatore>RISP@SERIAL@</thdr:identificatore>\n"+
+													 "</thdr:headerApplicativo>";
+	
 	private static final String SOAP_ENVELOPE_RISPOSTA = 
 		"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
 		"	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Header>@HDR@</soapenv:Header>";
@@ -130,10 +136,18 @@ public class ConnettoreStresstest extends ConnettoreBase {
 		this.busta = request.getBusta();
 		if(this.busta!=null)
 			this.idMessaggio=this.busta.getID();
+		
 		// - Debug mode
 		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
 			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
 				this.debug = true;
+		}
+		
+		// - Header Applicativo nella risposta
+		boolean headerApplicativoRisposta = false;
+		if(this.properties.get(CostantiConnettori.CONNETTORE_STRESS_TEST_HEADER_APPLICATIVO)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_STRESS_TEST_HEADER_APPLICATIVO).trim()))
+				headerApplicativoRisposta = true;
 		}
 	
 		// Logger
@@ -268,6 +282,10 @@ public class ConnettoreStresstest extends ConnettoreBase {
     			}
     		}
 			String protocolHeader = this.buildProtocolHeader(request);
+			if(headerApplicativoRisposta){
+				String hdrApplicativo = HEADER_APPLICATIVO.replace("@SERIAL@", DateManager.getTimeMillis()+"");
+				protocolHeader = hdrApplicativo + "\n" + protocolHeader;
+			}
 			String messaggio = SOAP_ENVELOPE_RISPOSTA.replace("@HDR@", protocolHeader) + SOAP_ENVELOPE_RISPOSTA_END;
 			byte [] messaggioArray = messaggio.getBytes();
 			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11,messaggioArray,notifierInputStreamParams);
