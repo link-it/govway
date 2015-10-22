@@ -140,11 +140,16 @@ public class Dump {
 		this.msgDiagErroreDump = new MsgDiagnostico(dominio,modulo,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		// Protocol Factory Manager
+		String protocol = null;
 		try{
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocol = this.protocolFactory.getProtocol();
 			this.msgDiagErroreDump.setPddContext(pddContext, this.protocolFactory);
 		}catch (Exception e) {
 			throw new TracciamentoException("Errore durante l'inizializzazione del ProtocolFactoryManager...",e);
+		}
+		if(this.dominio==null){
+			this.dominio=OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocol);
 		}
 	}
 

@@ -718,7 +718,14 @@ public class RicezioneContenutiApplicativi {
 		
 		/* ------------ Controllo inizializzazione OpenSPCoop ------------------ */
 		if (OpenSPCoop2Startup.initialize == false) {
-			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  Inizializzazione di OpenSPCoop non correttamente effettuata");
+			String msgErrore = "Inizializzazione di OpenSPCoop non correttamente effettuata";
+			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore);
+			try{
+				// provo ad emetter un diagnostico
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazionePdD");
+				}
+			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),null)));
@@ -726,9 +733,14 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		if (TimerMonitoraggioRisorse.risorseDisponibili == false) {
-			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
-					+ "]  Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage(),
-					TimerMonitoraggioRisorse.risorsaNonDisponibile);
+			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage();
+			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore,TimerMonitoraggioRisorse.risorsaNonDisponibile);
+			try{
+				// provo ad emetter un diagnostico
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorsePdD");
+				}
+			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI),null)));
@@ -736,8 +748,14 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		if (TimerThreshold.freeSpace == false) {
-			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
-							+ "]  Non sono disponibili abbastanza risorse per la gestione della richiesta");
+			String msgErrore = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
+			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore);
+			try{
+				// provo ad emetter un diagnostico
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorsePdD");
+				}
+			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO),null)));
@@ -745,9 +763,15 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		if (Tracciamento.tracciamentoDisponibile == false) {
+			String msgErrore = "Tracciatura non disponibile: "+ Tracciamento.motivoMalfunzionamentoTracciamento.getMessage();
 			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
-					+ "]  Tracciatura non disponibile: "+ Tracciamento.motivoMalfunzionamentoTracciamento.getMessage(),
-					Tracciamento.motivoMalfunzionamentoTracciamento);
+					+ "]  "+msgErrore,Tracciamento.motivoMalfunzionamentoTracciamento);
+			try{
+				// provo ad emetter un diagnostico
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Tracciamento");
+				}
+			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE),null)));
@@ -755,9 +779,15 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		if (MsgDiagnostico.gestoreDiagnosticaDisponibile == false) {
+			String msgErrore = "Sistema di diagnostica non disponibile: "+ MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage();
 			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
-					+ "]  Sistema di diagnostica non disponibile: "+ MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage(),
-					MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+					+ "]  "+msgErrore,MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
+			try{
+				// provo ad emetter un diagnostico lo stesso (molto probabilmente non ci riuscirà essendo proprio la risorsa diagnostica non disponibile)
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Diagnostica");
+				}
+			}catch(Throwable t){logCore.debug("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE),null)));
@@ -765,9 +795,15 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		if (Dump.sistemaDumpDisponibile == false) {
+			String msgErrore = "Sistema di dump dei contenuti applicativi non disponibile: "+ Dump.motivoMalfunzionamentoDump.getMessage();
 			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
-					+ "]  Sistema di dump dei contenuti applicativi non disponibile: "+ Dump.motivoMalfunzionamentoDump.getMessage(),
-					Dump.motivoMalfunzionamentoDump);
+					+ "]  "+msgErrore,Dump.motivoMalfunzionamentoDump);
+			try{
+				// provo ad emetter un diagnostico
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Dump");
+				}
+			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE),null)));
@@ -778,8 +814,15 @@ public class RicezioneContenutiApplicativi {
 		try{
 			configurazionePdDReader.verificaConsistenzaConfigurazione();	
 		}catch(Exception e){
+			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione PdD";
 			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
-					+ "]  Riscontrato errore durante la verifica della consistenza della configurazione PdD",e);
+					+ "]  "+msgErrore,e);
+			try{
+				// provo ad emetter un diagnostico
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazionePdD");
+				}
+			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),null)));
@@ -790,8 +833,15 @@ public class RicezioneContenutiApplicativi {
 		try{
 			registroServiziReader.verificaConsistenzaRegistroServizi();
 		}catch(Exception e){
+			String msgErrore = "Riscontrato errore durante la verifica del registro dei servizi";
 			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
-					+ "]  Riscontrato errore durante la verifica del registro dei servizi",e);
+					+ "]  "+msgErrore,e);
+			try{
+				// provo ad emetter un diagnostico
+				if(this.msgContext.getMsgDiagnostico()!=null){
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckRegistroServizi");
+				}
+			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),null)));

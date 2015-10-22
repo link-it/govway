@@ -456,6 +456,26 @@ public class RicezioneContenutiApplicativiSOAP {
 			}
 			
 			
+			try{
+				// Se non sono stati recuperati i dati delle url, provo a recuperarli
+				URLProtocolContext urlProtocolContext = context.getUrlProtocolContext();
+				if(urlProtocolContext==null){
+					urlProtocolContext = req.getURLProtocolContext();
+				}
+				if(urlProtocolContext!=null){
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlProtocolContext.getUrlInvocazione_formBased());
+				}
+			}catch(Throwable t){}
+			try{
+				Credenziali credenziali = context.getCredenziali();
+				if(credenziali==null){
+					credenziali = req.getCredenziali();
+				}
+				if(credenziali!=null){
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CREDENZIALI_INVOCAZIONE, credenziali.toString());
+				}
+			}catch(Throwable t){}
+				
 			
 			// *** GB ***
 			try{
