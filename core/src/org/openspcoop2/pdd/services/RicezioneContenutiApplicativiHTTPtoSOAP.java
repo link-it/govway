@@ -699,6 +699,16 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				
 				erroreConsegnaRisposta = e;
 				
+				if(esito!=null){
+					if(Esito.OK.equals(esito)){
+						// non è ok, essendo andato in errore il flush
+						esito = Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+					}
+				}
+				else{
+					// non dovrebbe mai essere null
+				}
+				
 			}
 			
 		}

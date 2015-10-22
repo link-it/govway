@@ -21,6 +21,8 @@
 
 package org.openspcoop2.pdd.services.connector;
 
+import org.openspcoop2.utils.Utilities;
+
 /**	
  * Contiene la definizione di una eccezione lanciata dai NodeReceiver e NodeSender
  *
@@ -32,7 +34,7 @@ package org.openspcoop2.pdd.services.connector;
 
 public class ConnectorException extends Exception {
 
-	 /**
+	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
@@ -45,11 +47,43 @@ public class ConnectorException extends Exception {
 	
 	public ConnectorException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public ConnectorException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
+	}
+	
+	private String getInnerMessage(){
+		try{
+			 if(Utilities.existsInnerException(this, java.net.SocketException.class)){
+				 Throwable t = Utilities.getInnerException(this, java.net.SocketException.class);
+				 if(t!=null){
+					 String msg = t.getMessage();
+					 if(msg!=null && !"".equals(msg) && !"null".equals(msg)){
+						 return msg;
+					 }
+				 }
+			 }
+		}catch(Throwable t){
+			t.getMessage(); // per debug
+		}
+		return null;
+	}
+	
+	 @Override
+	public String getMessage() {
+		String msg = this.getInnerMessage();
+		if(msg!=null){
+			return msg;
+		}
+		return super.getMessage();
+	}
+	@Override
+	public String toString() {
+		String msg = this.getInnerMessage();
+		if(msg!=null){
+			return msg;
+		}
+		return super.toString();
 	}
 }
