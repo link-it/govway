@@ -1,3 +1,14 @@
+2015-10-22  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-430
+	L'informazione diagnostica riportata quando la connessione client non risulta più disponibile non era chiara:
+	"org.openspcoop2.pdd.services.connector.ConnectorException".
+	L'informazione è stata maggiormente dettagliata con la seguente informazione diagnostica prelevata (se presente) 
+	dall'eccezione java.net.SocketException: "Broken pipe"
+	Inoltre l'esito della transazione fornito al PostOutHandler è adesso sempre 'Errore5xx', 
+	invece dell'errato 'OK' che veniva precedentemente ritornato.
+
 2015-10-21  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
