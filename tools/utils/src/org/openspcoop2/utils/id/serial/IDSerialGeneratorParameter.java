@@ -25,8 +25,8 @@ package org.openspcoop2.utils.id.serial;
  * IDSerialGenerator
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class IDSerialGeneratorParameter {
 
