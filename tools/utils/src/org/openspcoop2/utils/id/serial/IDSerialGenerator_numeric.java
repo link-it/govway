@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.utils;
+package org.openspcoop2.utils.id.serial;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -27,38 +27,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import org.apache.log4j.Logger;
-import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
-import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.id.ApacheGeneratorConfiguration;
-import org.openspcoop2.utils.id.ApacheIdentifierGenerator;
-import org.openspcoop2.utils.id.apache.serial.EnumTypeGenerator;
 
 /**
- * IDSerialGenerator_alphanumeric
+ * IDSerialGenerator_numeric
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
-public class IDSerialGenerator_alphanumeric {
+public class IDSerialGenerator_numeric {
 
-	public static String generate(Connection conDB,IDSerialGeneratorParameter param,ConfigurazionePdD config) throws ProtocolException{
+	public static String generate(Connection conDB,IDSerialGeneratorParameter param,Logger log) throws UtilsException{
 		
-		ApacheGeneratorConfiguration generatorConfig = new ApacheGeneratorConfiguration();
-		generatorConfig.setEnableLowerCaseLetter(true);
-		generatorConfig.setEnableUpperCaseLetter(true);
-		generatorConfig.setWrap(param.isWrap());
-		generatorConfig.setType(EnumTypeGenerator.ALPHANUMERIC);
+		long attesaAttivaJDBC = param.getSerializableTimeWaitMs();
+		int checkIntervalloJDBC = param.getSerializableNextIntervalTimeMs();
+		String protocollo = param.getProtocollo();
 		
-		
-		long attesaAttivaJDBC = config.getAttesaAttivaJDBC();
-		int checkIntervalloJDBC = config.getCheckIntervalJDBC();
-		String protocollo = param.getProtocolFactory().getProtocol();
-		Logger log = config.getLog();
-		
-		String progressivoTmp = null;
+		long counterTmp = -1;
 		
 		boolean idBuildOK = false;
 
@@ -70,36 +57,58 @@ public class IDSerialGenerator_alphanumeric {
 		
 		int iteration = 0;
 		
-		String table = CostantiDB.TABELLA_ID_AS_STRING;
-		if(param.getInformazioneAssociataAlProgressivo()!=null){
-			table = CostantiDB.TABELLA_ID_RELATIVO_AS_STRING;
+		String table = param.getTableName();
+		if(table==null){
+			if(param.getInformazioneAssociataAlProgressivo()!=null){
+				table = Constants.TABELLA_ID_RELATIVO_AS_LONG;
+			}
+			else{
+				table = Constants.TABELLA_ID_AS_LONG;
+			}
+		}
+		
+		String columnInfoAssociata = param.getColumnRelativeInfo();
+		if(columnInfoAssociata==null){
+			columnInfoAssociata = Constants.TABELLA_ID_COLONNA_INFO_ASSOCIATA;
+		}
+		
+		String columnPrg = param.getColumnPrg();
+		if(columnPrg==null){
+			columnPrg = Constants.TABELLA_ID_COLONNA_COUNTER;
+		}
+		
+		String columnProtocollo = param.getColumnProtocol();
+		if(columnProtocollo==null){
+			columnProtocollo = Constants.TABELLA_ID_COLONNA_PROTOCOLLO;
 		}
 		
 		String columnCondition = "";
 		String columnValueCondition = "";
 		String condition = "";
 		if(param.getInformazioneAssociataAlProgressivo()!=null){
-			condition = " AND "+CostantiDB.TABELLA_ID_COLONNA_INFO_ASSOCIATA+"=?";
-			columnCondition = ","+CostantiDB.TABELLA_ID_COLONNA_INFO_ASSOCIATA;
+			condition = " AND "+columnInfoAssociata+"=?";
+			columnCondition = ","+columnInfoAssociata;
 			columnValueCondition = ",?";
 		}
 		
-		while(idBuildOK==false && DateManager.getTimeMillis() < scadenzaWhile){
+		boolean maxValueAndWrapDisabled = false;
+		
+		while(maxValueAndWrapDisabled==false && idBuildOK==false && DateManager.getTimeMillis() < scadenzaWhile){
 
 			iteration++;
 			
 			//log.info("ancoraImbustamento interval["+checkInterval+"]   secondi "+(scadenzaWhile-DateManager.getTimeMillis())/1000);
 
-			progressivoTmp = null;
+			counterTmp = -1;
 			PreparedStatement pstmt = null;
 			PreparedStatement pstmtInsert = null;
 			ResultSet rs = null;
 			try{
 				// Lettura attuale valore
 				StringBuffer query = new StringBuffer();
-				query.append("SELECT "+CostantiDB.TABELLA_ID_COLONNA_PROGRESSIVO+" FROM ");
+				query.append("SELECT "+columnPrg+" FROM ");
 				query.append(table);
-				query.append(" WHERE "+CostantiDB.TABELLA_ID_COLONNA_PROTOCOLLO+"=?");
+				query.append(" WHERE "+columnProtocollo+"=?");
 				query.append(condition);
 				query.append(" FOR UPDATE");
 				//System.out.println("SELECT ["+query.toString()+"]");
@@ -112,35 +121,36 @@ public class IDSerialGenerator_alphanumeric {
 				if(rs == null) {
 					pstmt.close();
 					log.error("Creazione serial non riuscita: ResultSet is null?");
-					throw new ProtocolException("Creazione serial non riuscita: ResultSet is null?");		
+					throw new UtilsException("Creazione serial non riuscita: ResultSet is null?");		
 				}
 				boolean exist = rs.next();
 
 				// incremento se esiste
 				if(exist){
-					progressivoTmp = rs.getString(CostantiDB.TABELLA_ID_COLONNA_PROGRESSIVO);
-					ApacheIdentifierGenerator generator = new ApacheIdentifierGenerator();
-					generatorConfig.setInitialStringValue(progressivoTmp);
-					generator.initialize(generatorConfig);
-					progressivoTmp = generator.newID().getAsString();
+					counterTmp = rs.getLong(columnPrg);
+					if ((counterTmp + 1) > param.getMaxValue()) {
+						if(param.isWrap()){
+							counterTmp = 0;
+						}else{
+							maxValueAndWrapDisabled = true;
+							throw new Exception("Max Value of identifier has been reached");
+						}
+					} 
+					counterTmp++;
 				}		
 				rs.close();
 				pstmt.close();
 
 				if(exist==false){
-					// First Value
-					ApacheIdentifierGenerator generator = new ApacheIdentifierGenerator();
-					generatorConfig.setSize(param.getSize());
-					generator.initialize(generatorConfig);
-					progressivoTmp = generator.newID().getAsString();
+					counterTmp = 1;
 					// CREO PRIMO COUNT!
 					StringBuffer queryInsert = new StringBuffer();
-					queryInsert.append("INSERT INTO "+table+" ("+CostantiDB.TABELLA_ID_COLONNA_PROGRESSIVO+","+CostantiDB.TABELLA_ID_COLONNA_PROTOCOLLO+columnCondition+") ");
+					queryInsert.append("INSERT INTO "+table+" ("+columnPrg+","+columnProtocollo+columnCondition+") ");
 					queryInsert.append(" VALUES ( ? , ? "+columnValueCondition+")");
 					//System.out.println("INSERT ["+queryInsert.toString()+"]");
 					pstmtInsert = conDB.prepareStatement(queryInsert
 							.toString());
-					pstmtInsert.setString(1, progressivoTmp);
+					pstmtInsert.setLong(1, 1);
 					pstmtInsert.setString(2, protocollo);
 					if(param.getInformazioneAssociataAlProgressivo()!=null){
 						pstmtInsert.setString(3, param.getInformazioneAssociataAlProgressivo());
@@ -152,11 +162,11 @@ public class IDSerialGenerator_alphanumeric {
 					StringBuffer queryUpdate = new StringBuffer();
 					queryUpdate.append("UPDATE ");
 					queryUpdate.append(table);
-					queryUpdate.append(" SET "+CostantiDB.TABELLA_ID_COLONNA_PROGRESSIVO+" = ? WHERE "+CostantiDB.TABELLA_ID_COLONNA_PROTOCOLLO+"=?"+condition);
+					queryUpdate.append(" SET "+columnPrg+" = ? WHERE "+columnProtocollo+"=?"+condition);
 					//System.out.println("UPDATE ["+queryInsert.toString()+"]");
 					pstmtInsert = conDB.prepareStatement(queryUpdate
 							.toString());
-					pstmtInsert.setString(1, progressivoTmp);
+					pstmtInsert.setLong(1, counterTmp);
 					pstmtInsert.setString(2, protocollo);
 					if(param.getInformazioneAssociataAlProgressivo()!=null){
 						pstmtInsert.setString(3, param.getInformazioneAssociataAlProgressivo());
@@ -225,13 +235,19 @@ public class IDSerialGenerator_alphanumeric {
 			}
 		} catch(Exception er) {}
 		
-		if(idBuildOK==false || progressivoTmp==null){
+		if(maxValueAndWrapDisabled){
+			String msgError = "Max Value ["+param.getMaxValue()+"] of identifier has been reached";
+			log.error(msgError+": "+out.toString()); // in out è presente l'intero stackTrace
+			throw new UtilsException(msgError);	
+		}
+		
+		if(idBuildOK==false || counterTmp<=0){
 			String msgError = "Creazione serial non riuscita: l'accesso serializable non ha permesso la creazione del numero sequenziale";
-			config.getLog().error(msgError+": "+out.toString()); // in out è presente l'intero stackTrace
-			throw new ProtocolException(msgError);	
+			log.error(msgError+": "+out.toString()); // in out è presente l'intero stackTrace
+			throw new UtilsException(msgError);	
 		}
 
-		return progressivoTmp;
+		return counterTmp+"";
 	}
 	
 }

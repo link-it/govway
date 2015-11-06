@@ -47,7 +47,11 @@ public class ApacheIdentifierGenerator implements IUniqueIdentifierGenerator {
 	
 	@Override
 	public IUniqueIdentifier newID() throws UniqueIdentifierException {
-		return new BaseUniqueIdentifier(this.identifierGenerator.nextIdentifier());
+		try{
+			return new BaseUniqueIdentifier(this.identifierGenerator.nextIdentifier());
+		}catch(Exception e){
+			throw new UniqueIdentifierException(e.getMessage(),e);
+		}
 	}
 
 	@Override

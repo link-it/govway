@@ -108,7 +108,7 @@ public class LongGenerator extends AbstractLongIdentifierGenerator implements Se
     }
     
     @Override
-	public Long nextLongIdentifier() {
+	public Long nextLongIdentifier() throws MaxReachedException {
         long value = 0;
         if (this.wrapping) {
             synchronized (this) {
@@ -117,7 +117,7 @@ public class LongGenerator extends AbstractLongIdentifierGenerator implements Se
         } else {
             synchronized (this) {
                 if (this.count == Long.MAX_VALUE) {
-                    throw new IllegalStateException
+                    throw new MaxReachedException
                     ("The maximum number of identifiers has been reached");
                 }
                 value = this.count++;

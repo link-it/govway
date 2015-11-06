@@ -161,13 +161,13 @@ public class PrefixedLeftPaddedNumericGenerator extends AbstractStringIdentifier
     }
 
     @Override
-	public String nextStringIdentifier() {
+	public String nextStringIdentifier() throws MaxReachedException {
         for (int i = this.count.length - 1; i >= 0; i--) {
             switch (this.count[i]) {
                 case NINE_CHAR:  // 9
                 	this.count[i] = '0';
                     if (i == 0 && !this.wrap) {
-                        throw new IllegalStateException
+                        throw new MaxReachedException
                         ("The maximum number of identifiers has been reached");
                     }
                     break;

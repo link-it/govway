@@ -327,7 +327,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 	}
 
 	@Override
-	public synchronized String nextStringIdentifier() {
+	public synchronized String nextStringIdentifier() throws MaxReachedException {
 		
 		this.nonAncoraUtilizzato = false;
 		
@@ -354,7 +354,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 			else if(this.lowerChar && this.count[i] == lowerEndChar){
 				if (i == 0 && !this.wrapping) {
 					if(!this.upperChar){
-						throw new IllegalStateException
+						throw new MaxReachedException
 						("The maximum number of identifiers has been reached");
 					}
 				}
@@ -368,7 +368,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 			}
 			else if(this.upperChar && this.count[i] == upperEndChar){
 				if (i == 0 && !this.wrapping) {
-					throw new IllegalStateException
+					throw new MaxReachedException
 					("The maximum number of identifiers has been reached");
 				}
 				this.count[i] = this.START_DIGIT;

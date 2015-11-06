@@ -133,7 +133,7 @@ public class NumericGenerator extends AbstractStringIdentifierGenerator implemen
     }
 
     @Override
-	public String nextStringIdentifier() {
+	public String nextStringIdentifier() throws MaxReachedException {
         long value = 0;
         if (this.wrapping) {
             synchronized (this) {
@@ -142,7 +142,7 @@ public class NumericGenerator extends AbstractStringIdentifierGenerator implemen
         } else {
             synchronized (this) {
                 if (this.count == Long.MAX_VALUE) {
-                    throw new IllegalStateException
+                    throw new MaxReachedException
                     ("The maximum number of identifiers has been reached");
                 }
                 value = this.count++;

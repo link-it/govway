@@ -39,6 +39,8 @@
  */
 package org.openspcoop2.utils.id.apache;
 
+import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
+
 /**
  * <code>StringIdentifierGenerator</code> defines a simple interface for
  * String based identifier generation.
@@ -65,7 +67,7 @@ public interface StringIdentifierGenerator extends IdentifierGenerator {
      *
      * @return the next String identifier in sequence
      */
-    String nextStringIdentifier();
+    String nextStringIdentifier() throws MaxReachedException;
 
     /**
      * Returns the maximum length (number or characters) for an identifier

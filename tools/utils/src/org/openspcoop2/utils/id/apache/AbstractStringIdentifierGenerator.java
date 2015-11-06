@@ -39,6 +39,8 @@
  */
 package org.openspcoop2.utils.id.apache;
 
+import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
+
 /**
  * Abstract superclass for StringIdentifierGenerator implementations.
  *
@@ -95,7 +97,7 @@ public abstract class AbstractStringIdentifierGenerator implements StringIdentif
     }
 
     @Override
-	public abstract String nextStringIdentifier();
+	public abstract String nextStringIdentifier() throws MaxReachedException;
 
     /**
      * Returns the maximum length (number or characters) for an identifier
@@ -128,7 +130,7 @@ public abstract class AbstractStringIdentifierGenerator implements StringIdentif
     }
 
     @Override
-	public Object nextIdentifier() {
+	public Object nextIdentifier() throws MaxReachedException {
         return nextStringIdentifier();
     }
 }

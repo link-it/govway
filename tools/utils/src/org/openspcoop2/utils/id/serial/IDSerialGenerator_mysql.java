@@ -18,43 +18,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.utils;
+package org.openspcoop2.utils.id.serial;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
 
-import org.openspcoop2.core.constants.CostantiDB;
+import org.apache.log4j.Logger;
 
 /**
  * IDSerialGenerator_mysql
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 10491 $, $Date: 2015-01-13 10:33:50 +0100 (Tue, 13 Jan 2015) $
  */
 public class IDSerialGenerator_mysql {
 
-	public static String generate(Connection conDB,IDSerialGeneratorParameter param){
+	public static String generate(Connection conDB,IDSerialGeneratorParameter param, Logger log){
 		
 		Statement stmtUpdate = null;
 		String identificativoUnivoco = null;
 		try{
+			String protocollo = param.getProtocollo();
+			
 			// Incremento
 			stmtUpdate= conDB.createStatement();
 			
-			String table = CostantiDB.TABELLA_ID_AS_LONG;
-			if(param.getInformazioneAssociataAlProgressivo()!=null){
-				table = CostantiDB.TABELLA_ID_RELATIVO_AS_LONG;
+			String table = param.getTableName();
+			if(table==null){
+				if(param.getInformazioneAssociataAlProgressivo()!=null){
+					table = Constants.TABELLA_ID_RELATIVO_AS_LONG;
+				}
+				else{
+					table = Constants.TABELLA_ID_AS_LONG;
+				}
 			}
 			
-			String condition = " WHERE "+CostantiDB.TABELLA_ID_COLONNA_PROTOCOLLO+"='"+param.getProtocolFactory().getProtocol()+"'";
-			if(param.getInformazioneAssociataAlProgressivo()!=null){
-				condition = " AND "+CostantiDB.TABELLA_ID_COLONNA_INFO_ASSOCIATA+"='"+param.getInformazioneAssociataAlProgressivo()+"'";
+			String columnInfoAssociata = param.getColumnRelativeInfo();
+			if(columnInfoAssociata==null){
+				columnInfoAssociata = Constants.TABELLA_ID_COLONNA_INFO_ASSOCIATA;
 			}
 			
-			stmtUpdate.executeUpdate("UPDATE " + table  + " SET "+CostantiDB.TABELLA_ID_COLONNA_COUNTER+
-					" = LAST_INSERT_ID("+CostantiDB.TABELLA_ID_COLONNA_COUNTER+"+1)"+condition );
+			String columnPrg = param.getColumnPrg();
+			if(columnPrg==null){
+				columnPrg = Constants.TABELLA_ID_COLONNA_COUNTER;
+			}
+			
+			String columnProtocollo = param.getColumnProtocol();
+			if(columnProtocollo==null){
+				columnProtocollo = Constants.TABELLA_ID_COLONNA_PROTOCOLLO;
+			}
+
+			String condition = " WHERE "+columnProtocollo+"='"+protocollo+"'";
+			if(param.getInformazioneAssociataAlProgressivo()!=null){
+				condition = " AND "+columnInfoAssociata+"='"+param.getInformazioneAssociataAlProgressivo()+"'";
+			}
+			
+			stmtUpdate.executeUpdate("UPDATE " + table  + " SET "+columnPrg+
+					" = LAST_INSERT_ID("+columnPrg+"+1)"+condition );
 							
 			/*			
 			if (stmtUpdate instanceof com.mysql.jdbc.Statement){

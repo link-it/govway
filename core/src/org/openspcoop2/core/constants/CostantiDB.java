@@ -36,15 +36,15 @@ public final class CostantiDB {
     /** TABELLE*/
 	
 	/*ID GENERATOR*/
-	public static final String TABELLA_ID_AS_LONG = "ID_MESSAGGIO";
-	public static final String TABELLA_ID_RELATIVO_AS_LONG = "ID_MESSAGGIO_RELATIVO";
-	public static final String TABELLA_ID_AS_STRING = "ID_MESSAGGIO_PRG";
-	public static final String TABELLA_ID_RELATIVO_AS_STRING = "ID_MESSAGGIO_RELATIVO_PRG";
+	public static final String TABELLA_ID_AS_LONG = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_AS_LONG;
+	public static final String TABELLA_ID_RELATIVO_AS_LONG = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_RELATIVO_AS_LONG;
+	public static final String TABELLA_ID_AS_STRING = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_AS_STRING;
+	public static final String TABELLA_ID_RELATIVO_AS_STRING = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_RELATIVO_AS_STRING;
 	
-	public static final String TABELLA_ID_COLONNA_COUNTER = "COUNTER";
-	public static final String TABELLA_ID_COLONNA_PROTOCOLLO = "PROTOCOLLO";
-	public static final String TABELLA_ID_COLONNA_PROGRESSIVO = "PROGRESSIVO";
-	public static final String TABELLA_ID_COLONNA_INFO_ASSOCIATA = "INFO_ASSOCIATA";
+	public static final String TABELLA_ID_COLONNA_COUNTER = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_COUNTER;
+	public static final String TABELLA_ID_COLONNA_PROTOCOLLO = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_PROTOCOLLO;
+	public static final String TABELLA_ID_COLONNA_PROGRESSIVO = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_PROGRESSIVO;
+	public static final String TABELLA_ID_COLONNA_INFO_ASSOCIATA = org.openspcoop2.utils.id.serial.Constants.TABELLA_ID_COLONNA_INFO_ASSOCIATA;
 	
     /*COMMONS*/
     public static final String CONNETTORI = "connettori";

@@ -107,7 +107,7 @@ public class PrefixedNumericGenerator extends NumericGenerator {
     }
 
     @Override
-	public String nextStringIdentifier() {
+	public String nextStringIdentifier() throws MaxReachedException {
         StringBuffer sb = new StringBuffer(this.prefix);
         sb.append(super.nextStringIdentifier());
         return sb.toString();

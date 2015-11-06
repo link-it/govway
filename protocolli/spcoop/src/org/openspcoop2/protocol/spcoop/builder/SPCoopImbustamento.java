@@ -46,6 +46,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -66,10 +67,10 @@ import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSemantica;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
 import org.openspcoop2.protocol.utils.IDSerialGenerator;
-import org.openspcoop2.protocol.utils.IDSerialGeneratorParameter;
-import org.openspcoop2.protocol.utils.IDSerialGeneratorType;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
 
 
 /**
@@ -189,8 +190,14 @@ public class SPCoopImbustamento {
 		IDSerialGenerator serialGenerator = null;
 		IDSerialGeneratorParameter serialGeneratorParameter = null;
 		if( SPCoopCostanti.IDENTIFICATIVO_EGOV_SERIALE_STATIC.equals(this.spcoopProperties.getTipoSeriale_IdentificativoBusta())==false ){
-			serialGenerator = new IDSerialGenerator(state);
-			serialGeneratorParameter = new IDSerialGeneratorParameter(this.factory);
+			
+			ConfigurazionePdD config = this.factory.getConfigurazionePdD();
+			
+			serialGenerator = new IDSerialGenerator(config.getLog(),state);
+			
+			serialGeneratorParameter = new IDSerialGeneratorParameter(this.factory.getProtocol());
+			serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());
+			serialGeneratorParameter.setSerializableNextIntervalTimeMs(config.getCheckIntervalJDBC());
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGeneratorParameter.setMaxValue(new Long(SPCoopImbustamento.maxSeriale));
 			serialGeneratorParameter.setWrap(true);

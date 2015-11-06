@@ -39,6 +39,8 @@
  */
 package org.openspcoop2.utils.id.apache;
 
+import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
+
 /**
  * <code>LongIdentifier</code> defines a simple interface for
  * Long based identifier generation.
@@ -59,7 +61,7 @@ public interface LongIdentifierGenerator extends IdentifierGenerator {
      *
      * @return the next Long identifier in sequence
      */
-    Long nextLongIdentifier();
+    Long nextLongIdentifier() throws MaxReachedException;
 
     /**
      * Returns the maximum value of an identifier from this generator.

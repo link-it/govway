@@ -37,12 +37,13 @@ import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFatture;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioTrasmissioneFatture;
 import org.openspcoop2.protocol.sdi.validator.SDIValidatoreNomeFile;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.utils.IDSerialGenerator;
-import org.openspcoop2.protocol.utils.IDSerialGeneratorParameter;
-import org.openspcoop2.protocol.utils.IDSerialGeneratorType;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XMLUtils;
@@ -188,8 +189,13 @@ public class SDIUtils {
 		// *  - Il Progressivo univoco deve essere una stringa alfanumerica di lunghezza massima 3 caratteri e 
 		// *  con valori ammessi [a-z], [A-Z], [0-9] che identifica univocamente ogni notifica / ricevuta relativa al file inviato.
 		
-		IDSerialGenerator serialGenerator = new IDSerialGenerator(state);
-		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(factory);
+		ConfigurazionePdD config = factory.getConfigurazionePdD();
+		
+		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(), state);
+		
+		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(factory.getProtocol());
+		serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());
+		serialGeneratorParameter.setSerializableNextIntervalTimeMs(config.getCheckIntervalJDBC());
 		serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 		serialGeneratorParameter.setWrap(false);
 		serialGeneratorParameter.setSize(3);
@@ -215,8 +221,13 @@ public class SDIUtils {
 		}
 		String idPaeseIdCodice = idPaeseTrasmittente+idCodiceTrasmittente;
 		
-		IDSerialGenerator serialGenerator = new IDSerialGenerator(state);
-		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(factory);
+		ConfigurazionePdD config = factory.getConfigurazionePdD();
+		
+		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(),state);
+		
+		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(factory.getProtocol());
+		serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());
+		serialGeneratorParameter.setSerializableNextIntervalTimeMs(config.getCheckIntervalJDBC());
 		serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 		serialGeneratorParameter.setWrap(false);
 		serialGeneratorParameter.setSize(5);

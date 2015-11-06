@@ -39,6 +39,8 @@
  */
 package org.openspcoop2.utils.id.apache;
 
+import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
+
 /**
  * <code>IdentifierGenerator</code> defines a simple interface for
  * identifier generation.
@@ -59,5 +61,5 @@ public interface IdentifierGenerator {
      *
      * @return the next identifier in sequence
      */
-    Object nextIdentifier();
+    Object nextIdentifier() throws MaxReachedException;
 }

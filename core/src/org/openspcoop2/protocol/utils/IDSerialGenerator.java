@@ -27,11 +27,11 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
 
 /**
  * IDSerialGenerator
@@ -72,7 +72,9 @@ public class IDSerialGenerator {
 
 
 	private IState state;
-	public IDSerialGenerator(IState state){
+	private Logger log;
+	public IDSerialGenerator(Logger log, IState state){
+		this.log = log;
 		this.state = state;
 	}
 
@@ -87,11 +89,6 @@ public class IDSerialGenerator {
 		}
 	}
 	public String buildID(IDSerialGeneratorParameter param) throws ProtocolException {
-
-		IDSerialGeneratorType tipo = param.getTipo();
-		IProtocolFactory pf = param.getProtocolFactory();
-		ConfigurazionePdD config = pf.getConfigurazionePdD();
-		Logger log = config.getLog();
 
 		// Check connessione
 		Connection conDB = null;
@@ -119,77 +116,24 @@ public class IDSerialGenerator {
 		}
 
 		String identificativoUnivoco = null;
-		int oldTransactionIsolation = -1;
 		try{
 
-			if ( IDSerialGeneratorType.MYSQL.equals(tipo) ) {
-
-				try{
-					oldTransactionIsolation = conDB.getTransactionIsolation();
-					conDB.setAutoCommit(true);
-				} catch(Exception er) {
-					log.error("Creazione serial ["+tipo.name()+"] non riuscita (impostazione transazione): "+er.getMessage());
-					throw new ProtocolException("Creazione serial ["+tipo.name()+"] non riuscita (impostazione transazione): "+er.getMessage());		
-				}
-
-				identificativoUnivoco = IDSerialGenerator_mysql.generate(conDB, param);
-			} 
-
-			else if ( IDSerialGeneratorType.ALFANUMERICO.equals(tipo) || IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) ) {
-
-				// DEFAULT: numeric
-				try{				
-					oldTransactionIsolation = conDB.getTransactionIsolation();
-					//System.out.println("SET TRANSACTION_SERIALIZABLE ("+conDB.getTransactionIsolation()+","+conDB.getAutoCommit()+")");
-					// Il rollback, non servirebbe, pero le WrappedConnection di JBoss hanno un bug, per cui alcune risorse non vengono rilasciate.
-					// Con il rollback tali risorse vengono rilasciate, e poi effettivamente la ConnectionSottostante emette una eccezione.
-					try{
-						conDB.rollback();
-					}catch(Exception e){
-						//System.out.println("ROLLBACK ERROR: "+e.getMessage());
-					}
-					conDB.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-					conDB.setAutoCommit(false);
-				} catch(Exception er) {
-					log.error("Creazione serial non riuscita (impostazione transazione): "+er.getMessage(),er);
-					throw new ProtocolException("Creazione serial non riuscita (impostazione transazione): "+er.getMessage(),er);		
-				}
-
-				if ( IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) )
-					identificativoUnivoco = IDSerialGenerator_numeric.generate(conDB, param, config);
-				else
-					identificativoUnivoco = IDSerialGenerator_alphanumeric.generate(conDB, param, config);
-
-			}
-
-			else {
-
-				throw new ProtocolException("Tipo di generazione ["+tipo+"] non supportata");
-
-			}
-
+			org.openspcoop2.utils.id.serial.IDSerialGenerator generator = new org.openspcoop2.utils.id.serial.IDSerialGenerator();
+			identificativoUnivoco = generator.buildID(param, conDB, this.log);
 			return identificativoUnivoco;
+		}
+		catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
 		}
 		finally{
 
-			// Ripristino Transazione
 			try{
-				conDB.setTransactionIsolation(oldTransactionIsolation);
-				conDB.setAutoCommit(true);
-			} catch(Exception er) {
-				//System.out.println("ERROR UNSET:"+er.getMessage());
-				log.error("Creazione serial non riuscita (ripristino transazione): "+er.getMessage());
-				throw new ProtocolException("Creazione serial non riuscita (ripristino transazione): "+er.getMessage());
-			}finally{
-
-				try{
-					if(conDBFromDatasource)
-						IDSerialGenerator.releaseConnectionPdD(conDB);	
-				}catch(Exception e){
-					throw new ProtocolException("Rilascio connessione non riuscito: "+e.getMessage(),e);
-				}
-
+				if(conDBFromDatasource)
+					IDSerialGenerator.releaseConnectionPdD(conDB);	
+			}catch(Exception e){
+				throw new ProtocolException("Rilascio connessione non riuscito: "+e.getMessage(),e);
 			}
+
 		}
 
 	}

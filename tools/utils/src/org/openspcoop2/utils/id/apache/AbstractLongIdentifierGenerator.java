@@ -39,6 +39,8 @@
  */
 package org.openspcoop2.utils.id.apache;
 
+import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
+
 /**
  * Abstract superclass for LongIdentifierGenerator implementations.
  *
@@ -89,10 +91,10 @@ public abstract class AbstractLongIdentifierGenerator implements LongIdentifierG
     }
 
     @Override
-	public Object nextIdentifier() {
+	public Object nextIdentifier() throws MaxReachedException {
         return this.nextLongIdentifier();
     }
 
     @Override
-	public abstract Long nextLongIdentifier();
+	public abstract Long nextLongIdentifier() throws MaxReachedException;
 }

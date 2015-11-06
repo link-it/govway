@@ -162,7 +162,7 @@ public class TimeBasedAlphanumericIdentifierGenerator extends AbstractStringIden
     }
 
     @Override
-	public String nextStringIdentifier() {
+	public String nextStringIdentifier() throws MaxReachedException {
         long now;
         synchronized (this) {
             now = Calendar.getInstance(UTC).getTime().getTime(); // JDK 1.3 compatibility
@@ -181,7 +181,7 @@ public class TimeBasedAlphanumericIdentifierGenerator extends AbstractStringIden
         final String postfix = counter > 0
                                           ? Long.toString(counter, ALPHA_NUMERIC_CHARSET_SIZE) : "";
         if (postfix.length() > this.postfixSize) {
-            throw new IllegalStateException(
+            throw new MaxReachedException(
                     "The maximum number of identifiers in this millisecond has been reached");
         }
         // ensure, that no negative value is used and values stay increasing

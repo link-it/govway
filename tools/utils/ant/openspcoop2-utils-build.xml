@@ -154,13 +154,15 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.apache" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.apache.serial" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.serial" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.serial.sql" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/id"/>
 					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-id"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
-					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
-					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.sql"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/id"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.id"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
 					<param name="dist" value="${dist_utils}"/>
