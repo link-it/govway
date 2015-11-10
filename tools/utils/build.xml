@@ -148,6 +148,10 @@
         		<arg value="${url}" /> <!-- opzionale -->
         		<arg value="${username}" /> <!-- opzionale -->
         		<arg value="${password}" /> <!-- opzionale -->
+        		<arg value="${threads}" /> <!-- opzionale -->
+        		<arg value="${idsForThread}" /> <!-- opzionale -->
+        		<arg value="${debug}" /> <!-- opzionale -->
+        		<arg value="${timeWaitMs}" /> <!-- opzionale -->
                 <classpath>
                 		<path refid="classpath_run_dist" />
                 </classpath>

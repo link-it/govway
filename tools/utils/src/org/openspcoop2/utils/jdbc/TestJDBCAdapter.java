@@ -77,7 +77,7 @@ public class TestJDBCAdapter {
 		 * hsql
 		 * CREATE TABLE prova_bytes (
 		 *      descrizione VARCHAR(255) NOT NULL,
-		 * 		contenuto VARBINARY(16384) NOT NULL
+		 * 		contenuto VARBINARY(16777215) NOT NULL
 		 * );
 		 * ---------------------------
 		 * 

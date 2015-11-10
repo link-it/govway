@@ -46,9 +46,9 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
  */
 public class ClientTest {
 
-	static final int ID_GENERATI_PER_THREAD = 100;
-	static final int THREADS = 5;
-	static final boolean DEBUG = false;
+	static int ID_GENERATI_PER_THREAD = 100;
+	static int THREADS = 10;
+	static boolean DEBUG = false;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -63,6 +63,7 @@ public class ClientTest {
 		String driver = null;
 		String userName = null;
 		String password = null;
+		int timeWaitMs = 60000;
 
 		switch (tipoDatabase) {
 		case POSTGRESQL:
@@ -84,6 +85,7 @@ public class ClientTest {
 			password = "prova";
 			break;
 		case HSQL:
+			// !!NOTA: SELECT FOR UPDATE is fixed in HSQLDB 2.3.3.
 			url = "jdbc:hsqldb:hsql://localhost:9001/";
 			driver = "org.hsqldb.jdbcDriver";
 			userName = "sa";
@@ -122,6 +124,46 @@ public class ClientTest {
 				password = passwordCustom;
 			}
 		}
+		if(args.length>4){
+			String numThreads = args[4].trim();
+			if(!"${threads}".equals(numThreads)){
+				try{
+					THREADS = Integer.parseInt(numThreads);
+				}catch(Exception e){
+					throw new Exception("Parameter 'threads' with wrong format (value:"+numThreads+"): "+e.getMessage(),e);
+				}
+			}
+		}
+		if(args.length>5){
+			String numIdsForThread = args[5].trim();
+			if(!"${idsForThread}".equals(numIdsForThread)){
+				try{
+					ID_GENERATI_PER_THREAD = Integer.parseInt(numIdsForThread);
+				}catch(Exception e){
+					throw new Exception("Parameter 'idsForThread' with wrong format (value:"+numIdsForThread+"): "+e.getMessage(),e);
+				}
+			}
+		}
+		if(args.length>6){
+			String debugParam = args[6].trim();
+			if(!"${debug}".equals(debugParam)){
+				try{
+					DEBUG = Boolean.parseBoolean(debugParam);
+				}catch(Exception e){
+					throw new Exception("Parameter 'debug' with wrong format (value:"+debugParam+"): "+e.getMessage(),e);
+				}
+			}
+		}
+		if(args.length>7){
+			String timeWait = args[7].trim();
+			if(!"${timeWaitMs}".equals(timeWait)){
+				try{
+					timeWaitMs = Integer.parseInt(timeWait);
+				}catch(Exception e){
+					throw new Exception("Parameter 'timeWaitMs' with wrong format (value:"+timeWait+"): "+e.getMessage(),e);
+				}
+			}
+		}
 
 		
 		Class.forName(driver).newInstance();
@@ -147,7 +189,7 @@ public class ClientTest {
 			IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter("ApplicationContext");
 			
 			// Tempo di attesa jdbc
-			//serialGeneratorParameter.setSerializableTimeWaitMs(60000);
+			serialGeneratorParameter.setSerializableTimeWaitMs(timeWaitMs);
 			//serialGeneratorParameter.setSerializableNextIntervalTimeMs(100);
 			
 				
@@ -266,7 +308,7 @@ public class ClientTest {
 			serialGeneratorParameter.setSize(1);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo(null); // annullo il precedente assegnamento
 			System.out.println("\n\n==========================================");
-			System.out.println("Test 8. Progressivo alfanumerico con size 1");
+			System.out.println("Test 7. Progressivo alfanumerico con size 1");
 			foundError = false;
 			try{
 				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
@@ -290,7 +332,7 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setSize(1);
 			System.out.println("\n\n==========================================");
-			System.out.println("Test 9. Progressivo numerico con size 1 e wrap");
+			System.out.println("Test 8. Progressivo numerico con size 1 e wrap");
 			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
 			printInfos(infoStat);
 			

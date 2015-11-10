@@ -259,6 +259,10 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 	private String getSQL(boolean delete,boolean update,boolean conditions,boolean union) throws SQLQueryObjectException {	
 		StringBuffer bf = new StringBuffer();
 
+		if(this.selectForUpdate){
+			this.checkSelectForUpdate(update, delete, union);
+		}
+		
 		if(update==false && conditions==false){
 						
 			// From
@@ -600,7 +604,7 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 				}
 			}
 				 */
-
+				
 			}else{
 
 				// Offset non presente
@@ -688,6 +692,11 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 						}
 					}
 				}
+				
+				// ForUpdate
+				if(this.selectForUpdate){
+					bf.append(" FOR UPDATE ");
+				}
 			}
 		}else{
 
@@ -719,6 +728,11 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 				}
 
 			}
+			
+			// ForUpdate
+			if(this.selectForUpdate){
+				bf.append(" FOR UPDATE ");
+			}
 		}
 
 		return bf.toString();
@@ -732,6 +746,10 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 		// Controllo parametro su cui effettuare la UNION
 		this.checkUnionField(false,sqlQueryObject);
 
+		if(this.selectForUpdate){
+			this.checkSelectForUpdate(false, false, true);
+		}
+		
 		StringBuffer bf = new StringBuffer();
 
 		// Non ha senso, la union fa gia la distinct, a meno di usare la unionAll ma in quel caso non si vuole la distinct
@@ -811,6 +829,14 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 
 			for(int i=0; i<sqlQueryObject.length; i++){
 
+				if(((DB2QueryObject)sqlQueryObject[i]).selectForUpdate){
+					try{
+						((DB2QueryObject)sqlQueryObject[i]).checkSelectForUpdate(false, false, true);
+					}catch(Exception e){
+						throw new SQLQueryObjectException("Parametro SqlQueryObject["+i+"] non valido: "+e.getMessage());
+					}
+				}
+				
 				if(i>0){
 					bf.append(" UNION ");
 					if(unionAll){
@@ -918,6 +944,14 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 
 			for(int i=0; i<sqlQueryObject.length; i++){
 
+				if(((DB2QueryObject)sqlQueryObject[i]).selectForUpdate){
+					try{
+						((DB2QueryObject)sqlQueryObject[i]).checkSelectForUpdate(false, false, true);
+					}catch(Exception e){
+						throw new SQLQueryObjectException("Parametro SqlQueryObject["+i+"] non valido: "+e.getMessage());
+					}
+				}
+				
 				if(i>0){
 					bf.append(" UNION ");
 					if(unionAll){
