@@ -89,6 +89,7 @@ import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.MapReader;
@@ -849,6 +850,7 @@ public class ControlStationCore {
 			configPdD.setConfigurationDir(ConsoleProperties.getInstance().getConfDirectory());
 			configPdD.setAttesaAttivaJDBC(this.jdbcSerializableAttesaAttiva);
 			configPdD.setCheckIntervalJDBC(this.jdbcSerializableCheck);
+			configPdD.setTipoDatabase(TipiDatabase.toEnumConstant(DatasourceProperties.getInstance().getTipoDatabase()));
 			ProtocolFactoryManager.initialize(ControlStationCore.log, configPdD, this.protocolloDefault);
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 			if(this.protocolloDefault==null){

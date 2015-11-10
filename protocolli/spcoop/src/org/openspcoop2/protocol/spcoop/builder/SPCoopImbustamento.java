@@ -193,7 +193,7 @@ public class SPCoopImbustamento {
 			
 			ConfigurazionePdD config = this.factory.getConfigurazionePdD();
 			
-			serialGenerator = new IDSerialGenerator(config.getLog(),state);
+			serialGenerator = new IDSerialGenerator(config.getLog(),state,config.getTipoDatabase());
 			
 			serialGeneratorParameter = new IDSerialGeneratorParameter(this.factory.getProtocol());
 			serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());

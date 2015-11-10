@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
 
@@ -73,9 +74,11 @@ public class IDSerialGenerator {
 
 	private IState state;
 	private Logger log;
-	public IDSerialGenerator(Logger log, IState state){
+	private TipiDatabase tipoDatabase;
+	public IDSerialGenerator(Logger log, IState state, TipiDatabase tipoDatabase){
 		this.log = log;
 		this.state = state;
+		this.tipoDatabase = tipoDatabase;
 	}
 
 	public long buildIDAsNumber(IDSerialGeneratorParameter param) throws ProtocolException {
@@ -119,7 +122,7 @@ public class IDSerialGenerator {
 		try{
 
 			org.openspcoop2.utils.id.serial.IDSerialGenerator generator = new org.openspcoop2.utils.id.serial.IDSerialGenerator();
-			identificativoUnivoco = generator.buildID(param, conDB, this.log);
+			identificativoUnivoco = generator.buildID(param, conDB, this.tipoDatabase, this.log);
 			return identificativoUnivoco;
 		}
 		catch(Exception e){

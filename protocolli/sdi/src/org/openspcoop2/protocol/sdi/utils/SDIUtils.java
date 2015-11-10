@@ -191,7 +191,7 @@ public class SDIUtils {
 		
 		ConfigurazionePdD config = factory.getConfigurazionePdD();
 		
-		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(), state);
+		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(), state, config.getTipoDatabase());
 		
 		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(factory.getProtocol());
 		serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());
@@ -223,7 +223,7 @@ public class SDIUtils {
 		
 		ConfigurazionePdD config = factory.getConfigurazionePdD();
 		
-		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(),state);
+		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(),state, config.getTipoDatabase());
 		
 		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(factory.getProtocol());
 		serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());

@@ -22,6 +22,7 @@
 package org.openspcoop2.protocol.sdk;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -39,7 +40,14 @@ public class ConfigurazionePdD {
 	private Loader loader;
 	private Logger log;
 	private String configurationDir;
+	private TipiDatabase tipoDatabase;
 	
+	public TipiDatabase getTipoDatabase() {
+		return this.tipoDatabase;
+	}
+	public void setTipoDatabase(TipiDatabase tipoDatabase) {
+		this.tipoDatabase = tipoDatabase;
+	}
 	public String getConfigurationDir() {
 		return this.configurationDir;
 	}

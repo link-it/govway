@@ -87,6 +87,7 @@ import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
@@ -770,6 +771,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				configPdD.setLoader(loader);
 				configPdD.setAttesaAttivaJDBC(propertiesReader.getGestioneSerializableDB_AttesaAttiva());
 				configPdD.setCheckIntervalJDBC(propertiesReader.getGestioneSerializableDB_CheckInterval());
+				configPdD.setTipoDatabase(TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType()));
 				configPdD.setLog(logCore);
 				ProtocolFactoryManager.initialize(OpenSPCoop2Startup.log, configPdD, propertiesReader.getDefaultProtocolName());
 				// forzo update logger. (viene caricato dopo il log della console)
