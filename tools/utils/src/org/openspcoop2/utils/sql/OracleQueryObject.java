@@ -327,6 +327,10 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	private String getSQL(boolean delete,boolean update,boolean conditions,boolean union) throws SQLQueryObjectException {
 		StringBuffer bf = new StringBuffer();
 		
+		if(this.selectForUpdate){
+			this.checkSelectForUpdate(update, delete, union);
+		}
+		
 		if(update==false && conditions==false){
 			// From
 			bf.append(" FROM ");
@@ -467,6 +471,11 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 							bf.append(it.next());
 						}
 					}
+					
+					// ForUpdate (Non si può utilizzarlo con offset o limit in oracle)
+//					if(this.selectForUpdate){
+//						bf.append(" FOR UPDATE ");
+//					}
 				
 				}else{
 					
@@ -805,6 +814,11 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 						}
 					}
 				}
+				
+				// ForUpdate
+				if(this.selectForUpdate){
+					bf.append(" FOR UPDATE ");
+				}
 			}
 			
 		}else{
@@ -836,6 +850,11 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 					bf.append(")");
 				}
 				
+			}
+			
+			// ForUpdate
+			if(this.selectForUpdate){
+				bf.append(" FOR UPDATE ");
 			}
 		}
 		
@@ -873,6 +892,10 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 				
 		// Controllo parametro su cui effettuare la UNION
 		this.checkUnionField(false,sqlQueryObject);
+		
+		if(this.selectForUpdate){
+			this.checkSelectForUpdate(false, false, true);
+		}
 		
 		StringBuffer bf = new StringBuffer();
 		
@@ -990,6 +1013,14 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			
 			for(int i=0; i<sqlQueryObject.length; i++){
 				
+				if(((OracleQueryObject)sqlQueryObject[i]).selectForUpdate){
+					try{
+						((OracleQueryObject)sqlQueryObject[i]).checkSelectForUpdate(false, false, true);
+					}catch(Exception e){
+						throw new SQLQueryObjectException("Parametro SqlQueryObject["+i+"] non valido: "+e.getMessage());
+					}
+				}
+				
 				if(i>0){
 					bf.append(" UNION ");
 					if(unionAll){
@@ -1071,6 +1102,14 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			bf.append(" ( ");
 			
 			for(int i=0; i<sqlQueryObject.length; i++){
+				
+				if(((OracleQueryObject)sqlQueryObject[i]).selectForUpdate){
+					try{
+						((OracleQueryObject)sqlQueryObject[i]).checkSelectForUpdate(false, false, true);
+					}catch(Exception e){
+						throw new SQLQueryObjectException("Parametro SqlQueryObject["+i+"] non valido: "+e.getMessage());
+					}
+				}
 				
 				if(i>0){
 					bf.append(" UNION ");

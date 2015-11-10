@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class IDSerialGenerator_mysql {
 
-	public static String generate(Connection conDB,IDSerialGeneratorParameter param, Logger log){
+	public static String generate(Connection conDB,IDSerialGeneratorParameter param, Logger log, InfoStatistics infoStatistics){
 		
 		Statement stmtUpdate = null;
 		String identificativoUnivoco = null;

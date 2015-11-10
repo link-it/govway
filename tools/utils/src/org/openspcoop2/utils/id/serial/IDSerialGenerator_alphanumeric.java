@@ -27,6 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -34,6 +35,8 @@ import org.openspcoop2.utils.id.ApacheGeneratorConfiguration;
 import org.openspcoop2.utils.id.ApacheIdentifierGenerator;
 import org.openspcoop2.utils.id.apache.serial.EnumTypeGenerator;
 import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 
 /**
  * IDSerialGenerator_alphanumeric
@@ -44,7 +47,8 @@ import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
  */
 public class IDSerialGenerator_alphanumeric {
 
-	public static String generate(Connection conDB,IDSerialGeneratorParameter param,Logger log) throws UtilsException{
+	public static String generate(Connection conDB,TipiDatabase tipoDatabase,
+			IDSerialGeneratorParameter param,Logger log,InfoStatistics infoStatistics) throws UtilsException{
 		
 		ApacheGeneratorConfiguration generatorConfig = new ApacheGeneratorConfiguration();
 		generatorConfig.setEnableLowerCaseLetter(true);
@@ -95,14 +99,14 @@ public class IDSerialGenerator_alphanumeric {
 		}
 		
 		
-		String columnCondition = "";
-		String columnValueCondition = "";
-		String condition = "";
-		if(param.getInformazioneAssociataAlProgressivo()!=null){
-			condition = " AND "+columnInfoAssociata+"=?";
-			columnCondition = ","+columnInfoAssociata;
-			columnValueCondition = ",?";
-		}
+//		String columnCondition = "";
+//		String columnValueCondition = "";
+//		String condition = "";
+//		if(param.getInformazioneAssociataAlProgressivo()!=null){
+//			condition = " AND "+columnInfoAssociata+"=?";
+//			columnCondition = ","+columnInfoAssociata;
+//			columnValueCondition = ",?";
+//		}
 		
 		boolean maxValueAndWrapDisabled = false;
 		
@@ -118,12 +122,23 @@ public class IDSerialGenerator_alphanumeric {
 			ResultSet rs = null;
 			try{
 				// Lettura attuale valore
+				ISQLQueryObject sqlGet = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+				sqlGet.addSelectField(columnPrg);
+				sqlGet.addFromTable(table);
+				sqlGet.setANDLogicOperator(true);
+				sqlGet.addWhereCondition(columnProtocollo+"=?");
+				if(param.getInformazioneAssociataAlProgressivo()!=null){
+					sqlGet.addWhereCondition(columnInfoAssociata+"=?");
+				}
+				sqlGet.setSelectForUpdate(true);
+				
 				StringBuffer query = new StringBuffer();
-				query.append("SELECT "+columnPrg+" FROM ");
-				query.append(table);
-				query.append(" WHERE "+columnProtocollo+"=?");
-				query.append(condition);
-				query.append(" FOR UPDATE");
+//				query.append("SELECT "+columnPrg+" FROM ");
+//				query.append(table);
+//				query.append(" WHERE "+columnProtocollo+"=?");
+//				query.append(condition);
+//				query.append(" FOR UPDATE");
+				query.append(sqlGet.createSQLQuery());
 				//System.out.println("SELECT ["+query.toString()+"]");
 				pstmt = conDB.prepareStatement(query.toString());
 				pstmt.setString(1, protocollo);
@@ -157,8 +172,16 @@ public class IDSerialGenerator_alphanumeric {
 					progressivoTmp = generator.newID().getAsString();
 					// CREO PRIMO COUNT!
 					StringBuffer queryInsert = new StringBuffer();
-					queryInsert.append("INSERT INTO "+table+" ("+columnPrg+","+columnProtocollo+columnCondition+") ");
-					queryInsert.append(" VALUES ( ? , ? "+columnValueCondition+")");
+					ISQLQueryObject sqlInsert = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+					sqlInsert.addInsertTable(table);
+					sqlInsert.addInsertField(columnPrg, "?");
+					sqlInsert.addInsertField(columnProtocollo, "?");
+					if(param.getInformazioneAssociataAlProgressivo()!=null){
+						sqlInsert.addInsertField(columnInfoAssociata, "?");
+					}
+//					queryInsert.append("INSERT INTO "+table+" ("+columnPrg+","+columnProtocollo+columnCondition+") ");
+//					queryInsert.append(" VALUES ( ? , ? "+columnValueCondition+")");
+					queryInsert.append(sqlInsert.createSQLInsert());
 					//System.out.println("INSERT ["+queryInsert.toString()+"]");
 					pstmtInsert = conDB.prepareStatement(queryInsert
 							.toString());
@@ -172,9 +195,17 @@ public class IDSerialGenerator_alphanumeric {
 				}else{
 					// Incremento!
 					StringBuffer queryUpdate = new StringBuffer();
-					queryUpdate.append("UPDATE ");
-					queryUpdate.append(table);
-					queryUpdate.append(" SET "+columnPrg+" = ? WHERE "+columnProtocollo+"=?"+condition);
+					ISQLQueryObject sqlUpdate = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+					sqlUpdate.addUpdateTable(table);
+					sqlUpdate.addUpdateField(columnPrg, "?");
+					sqlUpdate.addWhereCondition(columnProtocollo+"=?");
+					if(param.getInformazioneAssociataAlProgressivo()!=null){
+						sqlUpdate.addWhereCondition(columnInfoAssociata+"=?");
+					}
+//					queryUpdate.append("UPDATE ");
+//					queryUpdate.append(table);
+//					queryUpdate.append(" SET "+columnPrg+" = ? WHERE "+columnProtocollo+"=?"+condition);
+					queryUpdate.append(sqlUpdate.createSQLUpdate());
 					//System.out.println("UPDATE ["+queryInsert.toString()+"]");
 					pstmtInsert = conDB.prepareStatement(queryUpdate
 							.toString());
@@ -197,6 +228,10 @@ public class IDSerialGenerator_alphanumeric {
 				ps.append("********* Exception Iteration ["+iteration+"] **********\n");
 				e.printStackTrace(ps);
 				ps.append("\n\n");
+				
+				if(infoStatistics!=null){
+					infoStatistics.addErrorSerializableAccess(e);
+				}
 				
 				if(e!=null && Utilities.existsInnerException(e, MaxReachedException.class)){
 					maxValueAndWrapDisabled = true;

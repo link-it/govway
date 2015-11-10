@@ -24,6 +24,7 @@ package org.openspcoop2.utils.id.serial;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -35,17 +36,24 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class IDSerialGenerator {
 
-	public long buildIDAsNumber(IDSerialGeneratorParameter param, Connection con, Logger log) throws UtilsException {
+	private InfoStatistics infoStatistics;
+	public IDSerialGenerator(InfoStatistics infoStatistics){
+		this.infoStatistics = infoStatistics;
+	}
+	public IDSerialGenerator(){
+	}
+	
+	public long buildIDAsNumber(IDSerialGeneratorParameter param, Connection con, TipiDatabase tipoDatabase, Logger log) throws UtilsException {
 		try{
 			if(IDSerialGeneratorType.ALFANUMERICO.equals(param)){
 				throw new UtilsException("IDSerialGeneratorType["+param.getTipo()+"] prevede anche caratteri alfanumerici");
 			}
-			return Long.parseLong(this.buildID(param,con,log));
+			return Long.parseLong(this.buildID(param,con,tipoDatabase,log));
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	public String buildID(IDSerialGeneratorParameter param, Connection con, Logger log) throws UtilsException {
+	public String buildID(IDSerialGeneratorParameter param, Connection con, TipiDatabase tipoDatabase, Logger log) throws UtilsException {
 
 		IDSerialGeneratorType tipo = param.getTipo();
 
@@ -63,19 +71,21 @@ public class IDSerialGenerator {
 
 		String identificativoUnivoco = null;
 		int oldTransactionIsolation = -1;
+		boolean oldAutoCommit = false;
 		try{
 
 			if ( IDSerialGeneratorType.MYSQL.equals(tipo) ) {
 
 				try{
 					oldTransactionIsolation = con.getTransactionIsolation();
+					oldAutoCommit = con.getAutoCommit();
 					con.setAutoCommit(true);
 				} catch(Exception er) {
 					log.error("Creazione serial ["+tipo.name()+"] non riuscita (impostazione transazione): "+er.getMessage());
 					throw new UtilsException("Creazione serial ["+tipo.name()+"] non riuscita (impostazione transazione): "+er.getMessage());		
 				}
 
-				identificativoUnivoco = IDSerialGenerator_mysql.generate(con, param, log);
+				identificativoUnivoco = IDSerialGenerator_mysql.generate(con, param, log, this.infoStatistics);
 			} 
 
 			else if ( IDSerialGeneratorType.ALFANUMERICO.equals(tipo) || IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) ) {
@@ -83,6 +93,7 @@ public class IDSerialGenerator {
 				// DEFAULT: numeric
 				try{				
 					oldTransactionIsolation = con.getTransactionIsolation();
+					oldAutoCommit = con.getAutoCommit();
 					//System.out.println("SET TRANSACTION_SERIALIZABLE ("+conDB.getTransactionIsolation()+","+conDB.getAutoCommit()+")");
 					// Il rollback, non servirebbe, pero le WrappedConnection di JBoss hanno un bug, per cui alcune risorse non vengono rilasciate.
 					// Con il rollback tali risorse vengono rilasciate, e poi effettivamente la ConnectionSottostante emette una eccezione.
@@ -91,7 +102,11 @@ public class IDSerialGenerator {
 					}catch(Exception e){
 						//System.out.println("ROLLBACK ERROR: "+e.getMessage());
 					}
-					con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+					if(TipiDatabase.SQLSERVER.equals(tipoDatabase)){
+						con.setTransactionIsolation(4096); //4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT
+					}else{
+						con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+					}
 					con.setAutoCommit(false);
 				} catch(Exception er) {
 					log.error("Creazione serial non riuscita (impostazione transazione): "+er.getMessage(),er);
@@ -99,9 +114,9 @@ public class IDSerialGenerator {
 				}
 
 				if ( IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) )
-					identificativoUnivoco = IDSerialGenerator_numeric.generate(con, param, log);
+					identificativoUnivoco = IDSerialGenerator_numeric.generate(con, tipoDatabase, param, log, this.infoStatistics);
 				else
-					identificativoUnivoco = IDSerialGenerator_alphanumeric.generate(con, param, log);
+					identificativoUnivoco = IDSerialGenerator_alphanumeric.generate(con, tipoDatabase, param, log, this.infoStatistics);
 
 			}
 
@@ -118,7 +133,7 @@ public class IDSerialGenerator {
 			// Ripristino Transazione
 			try{
 				con.setTransactionIsolation(oldTransactionIsolation);
-				con.setAutoCommit(true);
+				con.setAutoCommit(oldAutoCommit);
 			} catch(Exception er) {
 				//System.out.println("ERROR UNSET:"+er.getMessage());
 				log.error("Creazione serial non riuscita (ripristino transazione): "+er.getMessage());

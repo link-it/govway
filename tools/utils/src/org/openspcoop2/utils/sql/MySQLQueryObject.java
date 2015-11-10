@@ -262,6 +262,10 @@ public class MySQLQueryObject extends SQLQueryObjectCore{
 	private String getSQL(boolean delete,boolean update,boolean conditions,boolean union) throws SQLQueryObjectException {
 		StringBuffer bf = new StringBuffer();
 		
+		if(this.selectForUpdate){
+			this.checkSelectForUpdate(update, delete, union);
+		}
+		
 		if(update==false && conditions==false){
 			// From
 			bf.append(" FROM ");
@@ -378,6 +382,10 @@ public class MySQLQueryObject extends SQLQueryObjectCore{
 			bf.append(this.offset);
 		}
 			
+		// ForUpdate
+		if(this.selectForUpdate){
+			bf.append(" FOR UPDATE ");
+		}
 		
 		return bf.toString();
 	}
@@ -417,6 +425,10 @@ public class MySQLQueryObject extends SQLQueryObjectCore{
 		// Controllo parametro su cui effettuare la UNION
 		this.checkUnionField(false,sqlQueryObject);
 		
+		if(this.selectForUpdate){
+			this.checkSelectForUpdate(false, false, true);
+		}
+		
 		StringBuffer bf = new StringBuffer();
 		
 		bf.append("SELECT ");
@@ -449,6 +461,14 @@ public class MySQLQueryObject extends SQLQueryObjectCore{
 		bf.append(" FROM ( ");
 		
 		for(int i=0; i<sqlQueryObject.length; i++){
+			
+			if(((MySQLQueryObject)sqlQueryObject[i]).selectForUpdate){
+				try{
+					((MySQLQueryObject)sqlQueryObject[i]).checkSelectForUpdate(false, false, true);
+				}catch(Exception e){
+					throw new SQLQueryObjectException("Parametro SqlQueryObject["+i+"] non valido: "+e.getMessage());
+				}
+			}
 			
 			if(i>0){
 				bf.append(" UNION ");

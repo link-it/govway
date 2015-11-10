@@ -89,6 +89,9 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	/** Offset */
 	int offset = -1;
 
+	/** SelectForUpdate */
+	boolean selectForUpdate = false;
+	
 	/* UPDATE */
 	/** Vector di Field per l'update */
 	Vector<String> updateFieldsName = new Vector<String>();
@@ -1794,6 +1797,44 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	}
 
 
+	
+	// SELECT FOR UPDATE
+	
+	@Override
+	public void setSelectForUpdate(boolean selectForUpdate) throws SQLQueryObjectException {
+		this.selectForUpdate = selectForUpdate;
+	}
+	
+	protected void checkSelectForUpdate(boolean update,boolean delete, boolean union) throws SQLQueryObjectException{
+		if(this.selectForUpdate){
+			String tipo = null;
+			if(update){
+				tipo = "UPDATE";
+			}
+			else if(delete){
+				tipo = "DELETE";
+			}
+			else if(union){
+				tipo = "UNION";
+			}
+			else if(this.getGroupByConditions().size()>0){
+				tipo = "GROUP BY";
+			}
+			else if(this.isSelectDistinct()){
+				tipo = "DISTINCT";
+			}
+			else if(this.limit>=0){
+				tipo = "LIMIT";
+			}
+			else if(this.offset>=0){
+				tipo = "OFFSET";
+			}
+			if(tipo!=null)
+				throw new SQLQueryObjectException("Utilizzo dell'opzione 'FOR UPDATE' non permesso con il comando "+tipo);
+		}
+	}
+	
+	
 
 	// GENERAZIONE SQL
 

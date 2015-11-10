@@ -765,6 +765,14 @@ public interface ISQLQueryObject {
 	
 	
 	
+	
+	// SELECT FOR UPDATE
+	
+	public void setSelectForUpdate(boolean selectForUpdate) throws SQLQueryObjectException;
+	
+	
+	
+	
 	// GENERAZIONE SQL
 	
 	/**

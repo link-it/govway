@@ -400,64 +400,76 @@ public class ClientTest {
 			}
 
 
-			// step3. Test UnixTime
-			// a. verifico con msgdiagnostici dove e' stato inserita la data applicativamente
-			testUnixTime_engine(tipoDatabase, "msgdiagnostici",con);
-			// b. verifico con tracce dove la data e' stata generata tramite current_timestamp
-			testUnixTime_engine(tipoDatabase, "tracce",con);		
+			for (int i = 0; i < 2; i++) {
+				
+				boolean selectForUpdate = false;
+				if(i==1){
+					selectForUpdate = true;
+				}
+				
+				System.out.println("\n\n@@@ SELECT FOR UPDATE: "+selectForUpdate);
+				
 			
 			
-			// step4 . Test fromTable
-			testFromTable_engine(tipoDatabase, "msgdiagnostici", con);
-			
-			
-			// step5. Test escape char like
-			testLikeEscapeChar_engine(tipoDatabase,  "msgdiagnostici", con);
-			
-			
-			// step6. Test query
-			test0_engine(tipoDatabase, con);
-			
-			
-			// step7. Test query complesse senza distinct
-			test1_engine(tipoDatabase, false, con);
-			
-			
-			// step8. Test query complesse con distinct
-			test1_engine(tipoDatabase, true, con);
-			
-			
-			// step9. Test query con unionAll senza count
-			testUnion_engine(tipoDatabase, false, true, con);
-			
-			
-			// step10. Test query con unionAll con count
-			testUnion_engine(tipoDatabase, true, true, con);
-			
-			
-			// step11. Test query con union senza count
-			testUnion_engine(tipoDatabase, false, false, con);
-			
-			
-			// step12. Test query con union con count
-			testUnion_engine(tipoDatabase, true, false, con);
-			
-			
-			// step13. Test query con unionAllWithGroupBy senza count
-			testUnionWithGroupBy_engine(tipoDatabase, false, true, con);
-			
-			
-			// step14. Test query con unionAllWithGroupBy con count
-			testUnionWithGroupBy_engine(tipoDatabase, true, true, con);	
-			
-			
-			// step15. Test query con unionWithGroupBy senza count
-			testUnionWithGroupBy_engine(tipoDatabase, false, false, con);
-			
-			
-			// step16. Test query con unionWithGroupBy con count
-			testUnionWithGroupBy_engine(tipoDatabase, true, false, con);			
+				// step3. Test UnixTime
+				// a. verifico con msgdiagnostici dove e' stato inserita la data applicativamente
+				testUnixTime_engine(tipoDatabase, "msgdiagnostici",con,selectForUpdate);
+				// b. verifico con tracce dove la data e' stata generata tramite current_timestamp
+				testUnixTime_engine(tipoDatabase, "tracce",con,selectForUpdate);		
+				
+				
+				// step4 . Test fromTable
+				testFromTable_engine(tipoDatabase, "msgdiagnostici", con,selectForUpdate);
+				
+				
+				// step5. Test escape char like
+				testLikeEscapeChar_engine(tipoDatabase,  "msgdiagnostici", con,selectForUpdate);
+				
+				
+				// step6. Test query
+				test0_engine(tipoDatabase, con,selectForUpdate);
+				
+				
+				// step7. Test query complesse senza distinct
+				test1_engine(tipoDatabase, false, con,selectForUpdate);
+				
+				
+				// step8. Test query complesse con distinct
+				test1_engine(tipoDatabase, true, con,selectForUpdate);
+				
+				
+				// step9. Test query con unionAll senza count
+				testUnion_engine(tipoDatabase, false, true, con,selectForUpdate);
+				
+				
+				// step10. Test query con unionAll con count
+				testUnion_engine(tipoDatabase, true, true, con,selectForUpdate);
+				
+				
+				// step11. Test query con union senza count
+				testUnion_engine(tipoDatabase, false, false, con,selectForUpdate);
+				
+				
+				// step12. Test query con union con count
+				testUnion_engine(tipoDatabase, true, false, con,selectForUpdate);
+				
+				
+				// step13. Test query con unionAllWithGroupBy senza count
+				testUnionWithGroupBy_engine(tipoDatabase, false, true, con,selectForUpdate);
+				
+				
+				// step14. Test query con unionAllWithGroupBy con count
+				testUnionWithGroupBy_engine(tipoDatabase, true, true, con,selectForUpdate);	
+				
+				
+				// step15. Test query con unionWithGroupBy senza count
+				testUnionWithGroupBy_engine(tipoDatabase, false, false, con,selectForUpdate);
+				
+				
+				// step16. Test query con unionWithGroupBy con count
+				testUnionWithGroupBy_engine(tipoDatabase, true, false, con,selectForUpdate);			
 
+			}
 			
 		}finally{
 			try{
@@ -475,19 +487,25 @@ public class ClientTest {
 	}
 
 
+	private static SQLQueryObjectCore createSQLQueryObjectCore(TipiDatabase tipo, boolean selectForUpdate) throws Exception{
+		SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+		if(selectForUpdate){
+			sqlQueryObject.setSelectForUpdate(true);
+		}
+		return sqlQueryObject;
+	}
 
 
 
 
-
-	private static void testUnixTime_engine(TipiDatabase tipo, String table, Connection con) throws Exception {
-		Statement stmtQuery = null;
+	private static void testUnixTime_engine(TipiDatabase tipo, String table, Connection con, boolean selectForUpdate) throws Exception {
+		PreparedStatement stmtQuery = null;
 		ResultSet rs = null;
 		try{
 			
 			// TEST 1.
 			
-			SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 			
 			sqlQueryObject.addFromTable(table);
 			sqlQueryObject.addSelectField("descrizione");
@@ -500,8 +518,8 @@ public class ClientTest {
 			String testUnixTime = sqlQueryObject.createSQLQuery();
 			System.out.println("\ntest1-"+table+" unixtime:\n\t"+testUnixTime);
 			try{
-				stmtQuery = con.createStatement();
-				rs = stmtQuery.executeQuery(testUnixTime);
+				stmtQuery = con.prepareStatement(testUnixTime);
+				rs = stmtQuery.executeQuery();
 				int index = 0;
 				if(rs.next()){
 					long timeStampValue = rs.getTimestamp("gdo").getTime();
@@ -533,7 +551,7 @@ public class ClientTest {
 			
 			// TEST 2.
 			
-			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
 			
 			sqlQueryObject.addFromTable(table);
 			sqlQueryObject.addSelectField("descrizione");
@@ -546,8 +564,8 @@ public class ClientTest {
 			testUnixTime = sqlQueryObject.createSQLQuery();
 			System.out.println("\ntest2-"+table+" unixtime:\n\t"+testUnixTime);
 			try{
-				stmtQuery = con.createStatement();
-				rs = stmtQuery.executeQuery(testUnixTime);
+				stmtQuery = con.prepareStatement(testUnixTime);
+				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
 					System.out.println("riga["+(index++)+"]="+rs.getString("descrizione")+
@@ -567,7 +585,7 @@ public class ClientTest {
 			
 			// TEST 3.
 			
-			sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,selectForUpdate);
 			
 			String format = "yyyy-MM-dd_HH:mm:ss.SSS";
 			SimpleDateFormat dateformat = new SimpleDateFormat (format);
@@ -584,8 +602,8 @@ public class ClientTest {
 			System.out.println("\ntest3-"+table+" unixtime:\n\t"+testUnixTime);
 			long oldLatenza = 0;
 			try{
-				stmtQuery = con.createStatement();
-				rs = stmtQuery.executeQuery(testUnixTime);
+				stmtQuery = con.prepareStatement(testUnixTime);
+				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
 					long latenza = rs.getLong("latenza");
@@ -623,14 +641,14 @@ public class ClientTest {
 	
 	
 	
-	private static void testFromTable_engine(TipiDatabase tipo, String table, Connection con) throws Exception {
+	private static void testFromTable_engine(TipiDatabase tipo, String table, Connection con, boolean selectForUpdate) throws Exception {
 		Statement stmtQuery = null;
 		ResultSet rs = null;
 		try{
 			
 			// TEST 1.
 			
-			SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 			
 			sqlQueryObject.addFromTable(table);
 			sqlQueryObject.addSelectField("descrizione");
@@ -639,7 +657,7 @@ public class ClientTest {
 			sqlQueryObject.addOrderBy("gdo");
 			sqlQueryObject.setSortType(true);
 			
-			SQLQueryObjectCore sqlQueryObjectExternal = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			SQLQueryObjectCore sqlQueryObjectExternal = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false);
 			sqlQueryObjectExternal.addFromTable(sqlQueryObject);
 			
 			String test = sqlQueryObjectExternal.createSQLQuery();
@@ -676,14 +694,14 @@ public class ClientTest {
 	
 	
 	
-	private static void testLikeEscapeChar_engine(TipiDatabase tipo, String table, Connection con) throws Exception {
+	private static void testLikeEscapeChar_engine(TipiDatabase tipo, String table, Connection con, boolean selectForUpdate) throws Exception {
 		Statement stmtQuery = null;
 		ResultSet rs = null;
 		try{
 			
 			// TEST 1.
 			
-			SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
+			SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 			
 			sqlQueryObject.addFromTable(table);
 			sqlQueryObject.addSelectField("descrizione");
@@ -727,7 +745,7 @@ public class ClientTest {
 
 
 
-	private static void test0_engine(TipiDatabase tipo, Connection con) throws Exception {
+	private static void test0_engine(TipiDatabase tipo, Connection con, boolean selectForUpdate) throws Exception {
 
 		Statement stmtQuery = null;
 		ResultSet rs = null;
@@ -735,7 +753,7 @@ public class ClientTest {
 			
 			// TEST 1.
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
 
 			sqlQueryObject.addFromTable("tracce");
 			sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
@@ -814,7 +832,7 @@ public class ClientTest {
 
 
 
-	private static void test1_engine(TipiDatabase tipo, boolean distinct, Connection con) throws Exception {
+	private static void test1_engine(TipiDatabase tipo, boolean distinct, Connection con, boolean selectForUpdate) throws Exception {
 
 
 		Statement stmtQuery = null;
@@ -825,7 +843,7 @@ public class ClientTest {
 			
 			System.out.println("\n\na. ** Query normale");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,(selectForUpdate && !distinct)); // distinct non supporta forUpdate
 
 			sqlQueryObject.addFromTable("tracce");
 
@@ -892,7 +910,7 @@ public class ClientTest {
 			
 			System.out.println("\n\nb. ** Query con limit/offset");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
 			sqlQueryObject.addFromTable("tracce");
 
@@ -967,7 +985,7 @@ public class ClientTest {
 			
 			System.out.println("\n\nc. ** Query con limit");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
 			sqlQueryObject.addFromTable("tracce");
 
@@ -1041,7 +1059,7 @@ public class ClientTest {
 			
 			System.out.println("\n\nd. ** Query con offset");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
 			sqlQueryObject.addFromTable("tracce");
 
@@ -1137,7 +1155,7 @@ public class ClientTest {
 			
 			System.out.println("\n\ne. ** Query groupBy");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);  // forUpdate non permesso in group by
 
 			sqlQueryObject.addFromTable("tracce");
 
@@ -1220,7 +1238,7 @@ public class ClientTest {
 			
 			System.out.println("\n\nf. ** Query groupBy con limit/offset");
 		
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);  // forUpdate non permesso in group by
 		
 			sqlQueryObject.addFromTable("tracce");
 		
@@ -1306,7 +1324,7 @@ public class ClientTest {
 
 			System.out.println("\n\ng. ** Query con select*");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,(selectForUpdate && !distinct));
 
 			sqlQueryObject.addFromTable("tracce");
 
@@ -1380,7 +1398,7 @@ public class ClientTest {
 			
 			System.out.println("\n\nh. ** Query con select* e offset/limit");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
 			sqlQueryObject.addFromTable("tracce");
 
@@ -1468,7 +1486,7 @@ public class ClientTest {
 			
 			System.out.println("\n\ni. ** Query con select* e offset/limit e alias");
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
 			sqlQueryObject.addFromTable("tracce","tr");
 
@@ -1581,9 +1599,30 @@ public class ClientTest {
 		sqlQueryObject.setLimit(limit);
 		sqlQueryObject.setOffset(0);
 
+		// selectForUpdate non permesso in group by
+		sqlQueryObject.setSelectForUpdate(false);
+		
 		return sqlQueryObject;
 	}
-	private static void testUnion_engine(TipiDatabase tipo, boolean count, boolean unionAll, Connection con) throws Exception {
+	private static ISQLQueryObject prepareForUnionSelectForUpdate(ISQLQueryObject sqlQueryObject,int limit) throws SQLQueryObjectException {
+
+		sqlQueryObject.addFromTable("tracce");
+
+		sqlQueryObject.addSelectField("mittente");
+		sqlQueryObject.addSelectField("destinatario");
+
+		sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
+
+		sqlQueryObject.addOrderBy("mittente");
+		sqlQueryObject.addOrderBy("destinatario",false);
+		sqlQueryObject.setSortType(true);
+
+		sqlQueryObject.setLimit(limit);
+		sqlQueryObject.setOffset(0);
+
+		return sqlQueryObject;
+	}
+	private static void testUnion_engine(TipiDatabase tipo, boolean count, boolean unionAll, Connection con, boolean selectForUpdate) throws Exception {
 
 
 		Statement stmtQuery = null;
@@ -1594,10 +1633,10 @@ public class ClientTest {
 			System.out.println("\n\na. ** Query Union (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
-			ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-			ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+			ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // selectForUpdate non permesso in union
 
 			sqlQueryObject.addSelectAliasField("mittente", "mit");
 			sqlQueryObject.addSelectField("cont");
@@ -1714,10 +1753,10 @@ public class ClientTest {
 				System.out.println("\n\nb. ** Query Union OffSetLimit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
-				ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-				ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+				ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 	
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // selectForUpdate non permesso in union
 	
 				sqlQueryObject.addSelectAliasField("mittente", "mit");
 				sqlQueryObject.addSelectField("cont");
@@ -1809,10 +1848,10 @@ public class ClientTest {
 				System.out.println("\n\nc. ** Query Union OffSet (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
-				ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-				ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+				ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 	
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // selectForUpdate non permesso in union
 	
 				sqlQueryObject.addSelectAliasField("mittente", "mit");
 				sqlQueryObject.addSelectField("cont");
@@ -1907,10 +1946,10 @@ public class ClientTest {
 				System.out.println("\n\nd. ** Query Union Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
-				ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-				ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+				ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 	
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // selectForUpdate non permesso in union
 	
 				sqlQueryObject.addSelectAliasField("mittente", "mit");
 				sqlQueryObject.addSelectField("cont");
@@ -2008,10 +2047,10 @@ public class ClientTest {
 			System.out.println("\n\ne. ** Query Union con select* (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
-			ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-			ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+			ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // selectForUpdate non permesso in union
 
 			if(count==false){
 				sqlQueryObject.addOrderBy("mittente");
@@ -2128,10 +2167,10 @@ public class ClientTest {
 			System.out.println("\n\nf. ** Query Union con select* e LimitOffset (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
-			ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-			ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+			ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // selectForUpdate non permesso in union
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("destinatario",false);
@@ -2157,7 +2196,7 @@ public class ClientTest {
 			// TEST 7.
 			System.out.println("\n\ng. ** Query Union con select* e Offset (unionCount:"+count+" unionAll:"+unionAll+")");
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("destinatario",false);
@@ -2182,7 +2221,7 @@ public class ClientTest {
 			// TEST 8.
 			System.out.println("\n\nh. ** Query Union con select* e Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 									
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("destinatario",false);
@@ -2206,6 +2245,106 @@ public class ClientTest {
 		
 		
 		
+		if(selectForUpdate){
+			boolean findError = false;
+			try{
+				
+				// TEST 9.
+				System.out.println("\n\ni. ** Query Union per test SelectForUpdate (unionCount:"+count+" unionAll:"+unionAll+")");
+				
+				int limit = 5;
+				ISQLQueryObject prepare1 = prepareForUnionSelectForUpdate(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+				ISQLQueryObject prepare2 = prepareForUnionSelectForUpdate(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+	
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // selectForUpdate non permesso in union
+	
+				sqlQueryObject.addSelectAliasField("mittente", "mit");
+				sqlQueryObject.addSelectAliasField("destinatario", "dest");
+	
+				if(count==false){
+					sqlQueryObject.addOrderBy("mittente");
+					sqlQueryObject.addOrderBy("destinatario",false);
+					sqlQueryObject.setSortType(true);
+				}
+	
+				@SuppressWarnings("unused")
+				String test = null;
+				if(count){
+					test = sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2);
+				}else{
+					test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
+				}
+//				System.out.println("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
+//				try{
+//					stmtQuery = con.createStatement();
+//					rs = stmtQuery.executeQuery(test);
+//
+//					int index = 0;
+//					if(rs.next()){
+//						if(count){
+//							long cont = rs.getLong("aliasUnion");
+//							System.out.println("riga["+(index++)+"]= ["+cont+"]");
+//							if(unionAll){
+//								if(cont!=(limit*2)){
+//									throw new Exception("Expected "+(limit*2)+", found "+cont);
+//								}
+//							}
+//							else{
+//								if(cont!=(limit)){
+//									throw new Exception("Expected "+(limit)+", found "+cont);
+//								}
+//							}
+//						}
+//						else{
+//							String mit = rs.getString("mit");
+//							String dest = rs.getString("dest");
+//							System.out.println("riga["+(index++)+"]= ("+mit+"):("+dest+")");
+//							while(rs.next()){
+//								mit = rs.getString("mit");
+//								dest = rs.getString("dest");
+//								System.out.println("riga["+(index++)+"]= ("+mit+"):("+dest+")");		
+//							}
+//						}
+//					}
+//					else{
+//						throw new Exception("Test failed"); 
+//					}
+//					
+//					if(count){
+//						if(index!=1){
+//							throw new Exception("Test failed (expected "+1+" rows, found:"+(index)+")"); 
+//						}
+//					}else{
+//						if(unionAll){
+//							if(index!=(limit*2)){
+//								throw new Exception("Test failed (expected "+(limit*2)+" rows, found:"+(index)+")"); 
+//							}
+//						}
+//						else{
+//							if(index!=(limit)){
+//								throw new Exception("Test failed (expected "+(limit)+" rows, found:"+(index)+")"); 
+//							}
+//						}	
+//					}
+//					
+//					rs.close();
+//					stmtQuery.close();
+				
+			}catch(Exception e){
+				findError = true;
+				System.out.println("ERRORE ATTESO: "+e.getMessage());
+			}finally{
+				try{
+					rs.close();
+				}catch(Exception eClose){}
+				try{
+					stmtQuery.close();
+				}catch(Exception eClose){}
+			}
+			if(findError==false){
+				throw new Exception("Atteso errore utilizzo select for update non permesso in union");
+			}
+		}
 	}
 	
 
@@ -2217,7 +2356,7 @@ public class ClientTest {
 	
 	
 	
-	private static void testUnionWithGroupBy_engine(TipiDatabase tipo, boolean count, boolean unionAll, Connection con) throws Exception {
+	private static void testUnionWithGroupBy_engine(TipiDatabase tipo, boolean count, boolean unionAll, Connection con, boolean selectForUpdate) throws Exception {
 
 
 		Statement stmtQuery = null;
@@ -2228,10 +2367,10 @@ public class ClientTest {
 			System.out.println("\n\na. ** Query UnionGroupBy (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
-			ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-			ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+			ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
 			sqlQueryObject.addSelectAliasField("mittente", "mit");
 			sqlQueryObject.addSelectSumField("cont", "contRisultatoGroupBy");
@@ -2366,10 +2505,10 @@ public class ClientTest {
 				System.out.println("\n\nb. ** Query UnionGroupBy OffSetLimit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
-				ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-				ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+				ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 	
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 	
 				sqlQueryObject.addSelectAliasField("mittente", "mit");
 				sqlQueryObject.addSelectSumField("cont", "contRisultatoGroupBy");
@@ -2493,10 +2632,10 @@ public class ClientTest {
 				System.out.println("\n\nc. ** Query UnionGroupBy  OffSet (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
-				ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-				ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+				ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 	
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 	
 				sqlQueryObject.addSelectAliasField("mittente", "mit");
 				sqlQueryObject.addSelectSumField("cont", "contRisultatoGroupBy");
@@ -2618,10 +2757,10 @@ public class ClientTest {
 				System.out.println("\n\nd. ** Query UnionGroupBy Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
-				ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-				ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+				ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 	
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+				ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 	
 				sqlQueryObject.addSelectAliasField("mittente", "mit");
 				sqlQueryObject.addSelectSumField("cont", "contRisultatoGroupBy");
@@ -2743,10 +2882,10 @@ public class ClientTest {
 			System.out.println("\n\ne. ** Query UnionGroupBy con select* (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
-			ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-			ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+			ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
 			if(count==false){
 				sqlQueryObject.addOrderBy("mittente");
@@ -2783,10 +2922,10 @@ public class ClientTest {
 			System.out.println("\n\nf. ** Query UnionGroupBy con select* e LimitOffset (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
-			ISQLQueryObject prepare1 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
-			ISQLQueryObject prepare2 = prepareForUnion(SQLObjectFactory.createSQLQueryObject(tipo),limit);
+			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
+			ISQLQueryObject prepare2 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("destinatario",false);
@@ -2815,7 +2954,7 @@ public class ClientTest {
 			// TEST 7.
 			System.out.println("\n\ng. ** Query UnionGroupBy con select* e Offset (unionCount:"+count+" unionAll:"+unionAll+")");
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("destinatario",false);
@@ -2843,7 +2982,7 @@ public class ClientTest {
 			// TEST 8.
 			System.out.println("\n\nh. ** Query UnionGroupBy con select* e Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 									
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
 			sqlQueryObject.addOrderBy("mittente");
 			sqlQueryObject.addOrderBy("destinatario",false);

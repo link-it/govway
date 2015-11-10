@@ -46,6 +46,10 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
  */
 public class ClientTest {
 
+	static final int ID_GENERATI_PER_THREAD = 100;
+	static final int THREADS = 5;
+	static final boolean DEBUG = false;
+	
 	public static void main(String[] args) throws Exception {
 		
 		TipiDatabase tipoDatabase = null;
@@ -120,28 +124,25 @@ public class ClientTest {
 		}
 
 		
-		boolean DEBUG = false;
-
 		Class.forName(driver).newInstance();
 		Connection con = null;
 		List<Connection> conThreads = new ArrayList<Connection>();
-		int numThreads = 10;
 		Statement stmtDelete = null;
 		PreparedStatement stmtInsert = null;
 		try{
 			con = DriverManager.getConnection(url, userName, password);
 
-
-			clear(con, stmtDelete);
+			InfoStatistics infoStat = new InfoStatistics();
+			clear(infoStat, con, stmtDelete);
 			
-			for (int i = 0; i < numThreads; i++) {
+			for (int i = 0; i < THREADS; i++) {
 				conThreads.add(DriverManager.getConnection(url, userName, password));
 			}
 			
 			
 			Logger log = Logger.getLogger(ClientTest.class);
 			
-			IDSerialGenerator serialGenerator = new IDSerialGenerator();
+			IDSerialGenerator serialGenerator = new IDSerialGenerator(infoStat);
 			
 			IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter("ApplicationContext");
 			
@@ -157,13 +158,14 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(false);			
 			System.out.println("\n\n==========================================");
 			System.out.println("Test 1. Progressivo numerico");
-			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
 			
 			
 			/** TEST N.2 PROGRESSIVO con MAX */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGeneratorParameter.setWrap(false);
@@ -172,7 +174,7 @@ public class ClientTest {
 			System.out.println("Test 2. Progressivo numerico con max 10");
 			boolean foundError = false;
 			try{
-				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
 				System.out.println("Errore Atteso: "+e.getMessage());
@@ -180,26 +182,28 @@ public class ClientTest {
 			if(foundError==false){
 				throw new Exception("Atteso errore di max value, errore non rilevato");
 			}
+			printInfos(infoStat);
+			
 			
 			/** TEST N.3 PROGRESSIVO con MAX e Wrap */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setMaxValue(10l);
 			System.out.println("\n\n==========================================");
 			System.out.println("Test 3. Progressivo numerico con max 10 e wrap");
-			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG);
-			
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
 			
 			
 			
 			/** TEST N.4 PROGRESSIVO (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGeneratorParameter.setWrap(false);
@@ -207,13 +211,14 @@ public class ClientTest {
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
 			System.out.println("\n\n==========================================");
 			System.out.println("Test 4. Progressivo numerico (InfoAssociata)");
-			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
 			
 			
 			/** TEST N.5 PROGRESSIVO con MAX (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGeneratorParameter.setWrap(false);
@@ -223,7 +228,7 @@ public class ClientTest {
 			System.out.println("Test 5. Progressivo numerico con max 10 (InfoAssociata)");
 			foundError = false;
 			try{
-				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
 				System.out.println("Errore Atteso: "+e.getMessage());
@@ -231,12 +236,13 @@ public class ClientTest {
 			if(foundError==false){
 				throw new Exception("Atteso errore di max value, errore non rilevato");
 			}
+			printInfos(infoStat);
+			
 			
 			/** TEST N.6 PROGRESSIVO con MAX e Wrap (InfoAssociata)  */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
-
+			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGeneratorParameter.setWrap(true);
@@ -244,8 +250,8 @@ public class ClientTest {
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
 			System.out.println("\n\n==========================================");
 			System.out.println("Test 6. Progressivo numerico con max 10 e wrap");
-			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG);
-			
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
 			
 			
 			
@@ -253,7 +259,7 @@ public class ClientTest {
 			/** TEST N.7 PROGRESSIVO con MAX */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 	
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGeneratorParameter.setWrap(false);
@@ -263,7 +269,7 @@ public class ClientTest {
 			System.out.println("Test 8. Progressivo alfanumerico con size 1");
 			foundError = false;
 			try{
-				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
 				System.out.println("Errore Atteso: "+e.getMessage());
@@ -271,25 +277,28 @@ public class ClientTest {
 			if(foundError==false){
 				throw new Exception("Atteso errore di max value, errore non rilevato");
 			}
+			printInfos(infoStat);
+			
+			
 			
 			/** TEST N.8 PROGRESSIVO con MAX e Wrap */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setSize(1);
 			System.out.println("\n\n==========================================");
 			System.out.println("Test 9. Progressivo numerico con size 1 e wrap");
-			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG);
-			
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
+			printInfos(infoStat);
 			
 			
 			/** TEST N.9 PROGRESSIVO con MAX (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 		
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGeneratorParameter.setWrap(false);
@@ -299,7 +308,7 @@ public class ClientTest {
 			System.out.println("Test 9. Progressivo alfanumerico con size 1 (InfoAssociata)");
 			foundError = false;
 			try{
-				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
 				System.out.println("Errore Atteso: "+e.getMessage());
@@ -307,11 +316,14 @@ public class ClientTest {
 			if(foundError==false){
 				throw new Exception("Atteso errore di max value, errore non rilevato");
 			}
+			printInfos(infoStat);
+			
+			
 			
 			/** TEST N.10 PROGRESSIVO con MAX e Wrap (InfoAssociata) */
 			
 			ClientTestThread.reset();
-			clear(con, stmtDelete);
+			clear(infoStat, con, stmtDelete);
 		
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
 			serialGeneratorParameter.setWrap(true);
@@ -319,8 +331,8 @@ public class ClientTest {
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("InfoAssociata");
 			System.out.println("\n\n==========================================");
 			System.out.println("Test 10. Progressivo numerico con size 1 e wrap (InfoAssociata)");
-			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG);
-
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
+			printInfos(infoStat);
 			
 			
 		}finally{
@@ -333,7 +345,7 @@ public class ClientTest {
 			try{
 				con.close();
 			}catch(Exception eClose){}
-			for (int i = 0; i < numThreads; i++) {
+			for (int i = 0; i < THREADS; i++) {
 				try{
 					conThreads.get(i).close();
 				}catch(Exception eClose){}
@@ -343,30 +355,41 @@ public class ClientTest {
 
 	}
 
-	public static void clear(Connection con, Statement stmtDelete) throws Exception{
-		String delete = "delete from id_messaggio_relativo";
+	private static void printInfos(InfoStatistics infoStat){
+		System.out.println("Numero di errori 'access serializable': "+infoStat.getErrorSerializableAccess());
+		for (int i=0; i<infoStat.getExceptionOccurs().size(); i++) {
+			Exception e = infoStat.getExceptionOccurs().get(i);
+			System.out.println("Errore-"+(i+1)+" (occurs:"+infoStat.getNumber(e)+"): "+e.getMessage());
+		}
+	}
+	
+	private static void clear(InfoStatistics infoStat, Connection con, Statement stmtDelete) throws Exception{
+		
+		infoStat.clear();
+		
+		String delete = "delete from "+Constants.TABELLA_ID_RELATIVO_AS_LONG;
 		stmtDelete = con.createStatement();
 		stmtDelete.execute(delete);
 		stmtDelete.close();
 		
-		delete = "delete from id_messaggio";
+		delete = "delete from "+Constants.TABELLA_ID_AS_LONG;
 		stmtDelete = con.createStatement();
 		stmtDelete.execute(delete);
 		stmtDelete.close();
 		
-		delete = "delete from id_messaggio_prg";
+		delete = "delete from "+Constants.TABELLA_ID_AS_STRING;
 		stmtDelete = con.createStatement();
 		stmtDelete.execute(delete);
 		stmtDelete.close();
 		
-		delete = "delete from id_messaggio_relativo_prg";
+		delete = "delete from "+Constants.TABELLA_ID_RELATIVO_AS_STRING;
 		stmtDelete = con.createStatement();
 		stmtDelete.execute(delete);
 		stmtDelete.close();
 	}
 	
 	public static void test(IDSerialGenerator serialGenerator, IDSerialGeneratorParameter param,
-			List<Connection> conThreads, Logger log, boolean isNumber, boolean debug) throws Exception{
+			List<Connection> conThreads, Logger log, boolean isNumber, boolean debug, TipiDatabase tipoDatabase) throws Exception{
 		
 		ExecutorService threadsPool = Executors.newFixedThreadPool(conThreads.size());
 		Hashtable<String, ClientTestThread> threads = new Hashtable<String, ClientTestThread>();
@@ -376,7 +399,7 @@ public class ClientTest {
 		
 			for (int i = 0; i < conThreads.size(); i++) {
 				
-				ClientTestThread c = new ClientTestThread(serialGenerator, param, conThreads.get(i), log, isNumber,i,debug);
+				ClientTestThread c = new ClientTestThread(serialGenerator, param, conThreads.get(i), log, isNumber,i,debug, tipoDatabase);
 				threadsPool.execute(c);
 				if(debug)
 					System.out.println("Lanciato thread "+i);
@@ -483,6 +506,7 @@ class ClientTestThread implements Runnable{
 	private List<String> valoriGenerati;
 	private int index;
 	private boolean debug;
+	private TipiDatabase tipoDatabase;
 	public List<String> getValoriGenerati() {
 		return this.valoriGenerati;
 	}
@@ -499,7 +523,7 @@ class ClientTestThread implements Runnable{
 	}
 
 	public ClientTestThread(IDSerialGenerator serialGenerator, IDSerialGeneratorParameter param, Connection con, Logger log,
-			boolean isNumber, int index, boolean debug){
+			boolean isNumber, int index, boolean debug, TipiDatabase tipoDatabase){
 		this.serialGenerator = serialGenerator;
 		this.param = param;
 		this.con = con;
@@ -508,6 +532,7 @@ class ClientTestThread implements Runnable{
 		this.valoriGenerati = new ArrayList<String>();
 		this.index = index;
 		this.debug = debug;
+		this.tipoDatabase = tipoDatabase;
 	}
 	
 	@Override
@@ -522,8 +547,7 @@ class ClientTestThread implements Runnable{
 				rilevaValoriDuplicati = true;
 			}
 	
-			int limit = 100;
-			for (; i < limit; i++) {
+			for (; i < ClientTest.ID_GENERATI_PER_THREAD; i++) {
 				if(this.debug){
 					if(i%10==0){
 						System.out.println("[Thread-"+this.index+"] Generati "+i+" ids");
@@ -531,11 +555,11 @@ class ClientTestThread implements Runnable{
 				}
 				v = null;
 				if(this.isNumber){
-					long l = this.serialGenerator.buildIDAsNumber(this.param, this.con, this.log);
+					long l = this.serialGenerator.buildIDAsNumber(this.param, this.con, this.tipoDatabase, this.log);
 					v = l + "";
 				}
 				else{
-					v = this.serialGenerator.buildID(this.param, this.con, this.log);
+					v = this.serialGenerator.buildID(this.param, this.con, this.tipoDatabase, this.log);
 					if(!RegularExpressionEngine.isMatch((v+""),"^[a-zA-Z0-9]*$")){
 						throw new UtilsException("Deve essere fornito [a-zA-Z0-9] trovato ["+v+"]");
 					}
