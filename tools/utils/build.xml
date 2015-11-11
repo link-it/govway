@@ -30,6 +30,8 @@
 	<path id="classpath_compile" >
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
+			<exclude name="**/javax/javax.sql.jar"/>
+			<exclude name="**/jbossas/**/*.jar"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
 		</fileset>
@@ -63,6 +65,26 @@
 	<target name="build_openspcoop2_utils_jar" depends="compile_openspcoop2_utils"/>
 	<target name="clean" depends="clean_utils"/>
 	
+	
+	
+	<!-- Creazione del modulo WAR per il test dei datasource -->
+	<target name="warTestDS" depends="clean,build" description="Crea la struttura del modulo WAR per l'esempio del package datasource">
+		<war destfile="${dist_utils}/ExampleDS.war" webxml="${src_utils}/org/openspcoop2/utils/datasource/test/web.xml">
+			<classes dir="${src_utils}/org/openspcoop2/utils/datasource/test">
+				<include name="*.properties"/>
+			</classes>
+			<lib dir="${dist_utils}">
+				<include name="openspcoop2_utils_*.jar"/>
+			</lib>
+			<!--
+			<lib dir="${libs}/cxf">
+				<include name="${cxf_jar}"/>
+				<include name="saaj-impl-1.3.19.jar"/>
+			</lib>
+			-->
+		</war>
+
+	</target>
 	
 	
 	<!-- Test -->

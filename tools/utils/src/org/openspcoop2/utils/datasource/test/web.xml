@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <display-name>Esempio</display-name>
+  <description>Semplice applicazione di esempio</description>
+
+	<listener>
+		<listener-class>org.openspcoop2.utils.datasource.test.ExampleServletInitListener</listener-class>
+	</listener>
+
+
+	<servlet>
+    	<servlet-name>Example</servlet-name>
+    	<servlet-class>org.openspcoop2.utils.datasource.test.ExampleService</servlet-class>
+	</servlet>
+	<servlet-mapping>
+    	<servlet-name>Example</servlet-name>
+    	<url-pattern>/example</url-pattern>
+	</servlet-mapping>
+
+
+</web-app>
