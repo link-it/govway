@@ -70,7 +70,7 @@ public class IntegrationManagerFilter implements Filter {
 			while(parameters.hasMoreElements()){
 				String key = (String) parameters.nextElement();
 				String value = httpReq.getParameter(key);
-				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
+				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value) || "IntegrationManager.wsdl".equals(value) ) ){
 					// richiesta del wsdl
 					if(op2Properties!=null && op2Properties.isGenerazioneWsdlIntegrationManagerEnabled()==false){
 						httpRes.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(IDService.INTEGRATION_MANAGER_SOAP)));
