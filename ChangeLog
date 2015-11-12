@@ -1,3 +1,21 @@
+2015-11-12  Andrea Poli <apoli@link.it>
+
+	* [GenericProject, Utils]
+	Aggiunta funzionalità OP-438	
+	Aggiunto all'interfaccia org.openspcoop2.utils.sql.ISQLQueryObject la gestione della clausola "FOR UPDATE" per le select.
+	Esteso il livello DAO nel progetto org.openspcoop2.generic_project per la gestione della clausola "FOR UPDATE" per le select.
+	Realizzato package org.openspcoop2.utils.datasource che wrappa la gestione delle connessioni di un datasource,
+	attraverso una tracciatura delle connessioni allocate e la possibilità di fornire informazioni diagnostiche via jmx console.
+
+2015-11-12  Andrea Poli <apoli@link.it>
+
+	* [GenericProject]
+	Aggiunta funzionalità OP-434 
+	Esteso il livello DAO nel progetto org.openspcoop2.generic_project per poter effettuare l'update di un oggetto 
+	identificandolo tramite l'id fisico invece che tramite quello logico.
+	In questo modo un client che dispone gia' dell'identificativo fisico dell'oggetto non è costretto 
+	ad effettuare una conversazione logico-fisico.
+
 2015-10-22  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
