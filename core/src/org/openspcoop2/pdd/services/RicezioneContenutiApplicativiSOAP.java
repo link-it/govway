@@ -647,9 +647,9 @@ public class RicezioneContenutiApplicativiSOAP {
 				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
 				// e cambiare quindi il content length effettivo.
 				if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi())){
-					res.sendResponse(responseMessage, false);
+					res.sendResponse(responseMessageError, false);
 				} else {
-					res.sendResponse(responseMessage, true);
+					res.sendResponse(responseMessageError, true);
 				}
 																
 			}catch(Exception error){
