@@ -74,6 +74,9 @@ import org.openspcoop2.pdd.services.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiContext;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.ServletUtils;
+import org.openspcoop2.pdd.services.connector.ConnectorUtils;
+import org.openspcoop2.pdd.services.connector.HttpServletConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.HttpServletConnectorOutMessage;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
 import org.openspcoop2.protocol.engine.LetturaParametriBusta;
@@ -86,6 +89,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
+import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
@@ -114,7 +118,8 @@ import org.openspcoop2.utils.resources.Loader;
 		
 public abstract class IntegrationManager implements IntegrationManagerMessageBoxInterface,IntegrationManagerPDInterface {
 
-	public static String ID_MODULO = IDService.INTEGRATION_MANAGER_SOAP.getValue();
+	public final static IDService ID_SERVICE = IDService.INTEGRATION_MANAGER_SOAP;
+	public final static String ID_MODULO = ID_SERVICE.getValue();
 	
 	private OpenSPCoop2Properties propertiesReader;
 	private ClassNameProperties className;
@@ -1587,8 +1592,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 		
 		// PddContext
-		PdDContext pddContext = new PdDContext();
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,context.getPddContext()); 
+		PdDContext pddContext = context.getPddContext();
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,pddContext); 
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO, idInvocazionePerRiferimento);
@@ -1612,8 +1617,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
 			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
-			transportContext.put(PreInRequestContext.SERVLET_REQUEST, getHttpServletRequest());
-			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, getHttpServletResponse());
+			HttpServletConnectorInMessage httpIn = null;
+			try{
+				httpIn = new HttpServletConnectorInMessage(getHttpServletRequest(), ID_SERVICE, ID_MODULO);
+				transportContext.put(PreInRequestContext.SERVLET_REQUEST, httpIn);
+			}catch(Exception e){
+				ConnectorUtils.getErrorLog().error("HttpServletConnectorInMessage init error: "+e.getMessage(),e);
+				//throw new ServletException(e.getMessage(),e);
+			}
+			HttpServletConnectorOutMessage httpOut = null;
+			try{
+				httpOut = new HttpServletConnectorOutMessage(protocolFactory, getHttpServletResponse(), ID_SERVICE, ID_MODULO);
+				transportContext.put(PreInRequestContext.SERVLET_RESPONSE, httpOut);
+			}catch(Exception e){
+				ConnectorUtils.getErrorLog().error("HttpServletConnectorOutMessage init error: "+e.getMessage(),e);
+				//throw new ServletException(e.getMessage(),e);
+			}
 			preInRequestContext.setTransportContext(transportContext);	
 			preInRequestContext.setLogCore(logCore);
 			
@@ -1857,7 +1876,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context);
 			gestoreRichiesta.process(req);
 			msgResponse = context.getMessageResponse();
-			msgDiag = context.getMsgDiagnostico();
+			if(context.getMsgDiagnostico()!=null){
+				msgDiag = context.getMsgDiagnostico();
+			}
 
 			
 			// Raccolgo l'eventuale header di integrazione
@@ -1897,12 +1918,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					try{	
 						// Potenziale MsgErroreApplicativo
 						SOAPFault fault = msgResponse.getSOAPBody().getFault();
-						if(fault.getFaultActor()!=null && fault.getFaultActor().equals(context.getProprietaErroreAppl().getFaultActor())){
+						ProprietaErroreApplicativo pea = context.getProprietaErroreAppl();
+						if(pea!=null && fault.getFaultActor()!=null && fault.getFaultActor().equals(pea.getFaultActor())){
 							String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
 							if(context.getProprietaErroreAppl().getFaultPrefixCode()!=null){
 								prefix = context.getProprietaErroreAppl().getFaultPrefixCode();
 							}
-							if(this.propertiesReader.isErroreApplicativoIntoDetails()){
+							if(this.propertiesReader.isErroreApplicativoIntoDetails() && fault.getDetail()!=null){
 								exc = ServicesUtils.mapXMLIntoProtocolException(protocolFactory,fault.getDetail().getFirstChild(),
 										prefix);
 							}else{

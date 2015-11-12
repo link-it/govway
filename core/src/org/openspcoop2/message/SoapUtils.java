@@ -919,6 +919,22 @@ public class SoapUtils {
 				}
 			}
 			
+			// TODO: gestire come parametro la soap Action: OP-437
+			String soapAction = null;
+			if(message.getMimeHeaders()!=null){
+				String [] hdrs = message.getMimeHeaders().getHeader(Costanti.SOAP_ACTION);
+				if(hdrs!=null && hdrs.length>0){
+					soapAction = hdrs[0];
+				}
+			}
+			if(soapAction==null){
+				soapAction="\"OpenSPCoop\"";
+				message.setProperty(Costanti.SOAP_ACTION, soapAction);
+				if(message.getMimeHeaders()!=null){
+					message.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION, soapAction);
+				}
+			}
+			
 			return message;
 			
 		}catch(Exception e){

@@ -231,6 +231,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	 * 
 	 */
 	private boolean sendByVM(IProtocolFactory pFactory){
+		
+		String oldIdTransazione = null;
 		try{
 			
 			DirectVMProtocolInfo directVMProtocolInfo = new DirectVMProtocolInfo();
@@ -247,6 +249,9 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			if(pddContextPreserve!=null){
 				if("true".equalsIgnoreCase(pddContextPreserve.trim())){
 					newPddContext = this.getPddContext();
+					if(newPddContext.containsKey(Costanti.CLUSTER_ID)){
+						oldIdTransazione = (String) newPddContext.removeObject(Costanti.CLUSTER_ID);
+					}
 				}
 			}
 			
@@ -271,6 +276,15 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			this.propertiesTrasportoRisposta = outMessage.getHeaders();
 			this.codice = outMessage.getResponseStatus();
 			
+			
+			try{
+				if(oldIdTransazione!=null){
+					this.getPddContext().addObject(Costanti.CLUSTER_ID, oldIdTransazione);
+					oldIdTransazione = null;
+				}
+			}catch(Exception e){
+				this.logger.error("Errore avvenuto durante il ripristino del cluster id: "+e.getMessage(),e);
+			}
 			
 			
 			
@@ -306,6 +320,15 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			this.errore = "Errore avvenuto durante la consegna SOAP: "+this.readExceptionMessageFromException(e);
 			return false;
 		}	
+		finally{
+			try{
+				if(oldIdTransazione!=null){
+					this.getPddContext().addObject(Costanti.CLUSTER_ID, oldIdTransazione);
+				}
+			}catch(Exception e){
+				this.logger.error("Errore avvenuto durante il ripristino del cluster id: "+e.getMessage(),e);
+			}
+		}
     }
     
 	public abstract boolean validate(ConnettoreMsg request);
