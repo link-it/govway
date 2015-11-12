@@ -40,7 +40,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IJDBCServiceCRUDWithoutId<T,SM>  extends IJDBCServiceCRUD_DB<T,SM>  {
+public interface IJDBCServiceCRUDWithoutId<T,SM>  extends IJDBCServiceCRUD_DBNoSingleObject<T,SM>  {
 
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException,NotImplementedException,ServiceException,Exception;
 	

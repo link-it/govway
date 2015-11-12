@@ -798,7 +798,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		this.distinct = value;
 
 	}
-	protected boolean isSelectDistinct() throws SQLQueryObjectException{
+	public boolean isSelectDistinct() throws SQLQueryObjectException{
 		if(this.distinct){
 			if(this.fields.size()<=0){
 				throw new SQLQueryObjectException("Per usare la select distinct devono essere indicati dei select field");
@@ -1716,7 +1716,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return this;
 	}
 
-	protected Vector<String> getGroupByConditions() throws SQLQueryObjectException{
+	public Vector<String> getGroupByConditions() throws SQLQueryObjectException{
 		if(this.groupBy!=null && this.groupBy.size()>0){
 			if(this.fields.size()<=0){
 				throw new SQLQueryObjectException("Non e' possibile utilizzare condizioni di group by se non sono stati indicati select field");
@@ -1786,6 +1786,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		this.limit = limit;
 	}
 
+	public int getLimit() {
+		return this.limit;
+	}
+
 	/**
 	 * Aggiunge un offset per i risultati ritornati
 	 * 
@@ -1796,9 +1800,16 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		this.offset = offset;
 	}
 
+	public int getOffset() {
+		return this.offset;
+	}
 
 	
 	// SELECT FOR UPDATE
+	
+	public boolean isSelectForUpdate() {
+		return this.selectForUpdate;
+	}
 	
 	@Override
 	public void setSelectForUpdate(boolean selectForUpdate) throws SQLQueryObjectException {
@@ -1854,18 +1865,18 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			return "Oggetto non corretto: "+e.getMessage();
 		}
 	}
-
-	@Override
-	public String toString(boolean delete){
-		try{
-			if(delete)
-				return this.createSQLDelete();
-			else
-				return this.createSQLQuery();
-		}catch(Exception e){
-			return "Oggetto non corretto: "+e.getMessage();
-		}
-	}
+//
+//	@Override
+//	public String toString(boolean delete){
+//		try{
+//			if(delete)
+//				return this.createSQLDelete();
+//			else
+//				return this.createSQLQuery();
+//		}catch(Exception e){
+//			return "Oggetto non corretto: "+e.getMessage();
+//		}
+//	}
 
 	protected void checkUnionField(boolean count,ISQLQueryObject... sqlQueryObject)throws SQLQueryObjectException{
 

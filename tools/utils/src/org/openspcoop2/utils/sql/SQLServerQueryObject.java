@@ -732,6 +732,12 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 			// UPDATE, conditions
 
+			// Non genero per le condizioni, per update viene sollevata eccezione prima
+			// For Update
+//			if(this.selectForUpdate){
+//				bf.append(" WITH (ROWLOCK) ");
+//			}
+			
 			// Condizioni di Where
 			if(this.conditions.size()>0){
 

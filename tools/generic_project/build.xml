@@ -36,7 +36,8 @@
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
-		<fileset dir="${openspcoop2}/core/dist" >
+		<!-- <fileset dir="${openspcoop2}/core/dist" > -->
+		<fileset dir="${dist_genericProject}" >
 			<include name="openspcoop2_utils_*.jar"/> <!-- Deve dipendere solo da utils per evitare dipendenze cicliche -->
 		</fileset>
 	</path>	

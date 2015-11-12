@@ -40,7 +40,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IJPAServiceCRUDWithId<T,K,SM>  extends IJPAServiceCRUD_DB<T,SM> {
+public interface IJPAServiceCRUDWithId<T,K,SM>  extends IJPAServiceCRUD_DBNoSingleObject<T,SM> {
 
 	public void update(Logger log,EntityManager em,K oldId, T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException,NotImplementedException,ServiceException,Exception;
 	

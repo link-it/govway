@@ -27,6 +27,6 @@ package org.openspcoop2.generic_project.dao;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IDBServiceCRUDWithoutId<T> extends IDBServiceCRUD,IServiceCRUDWithoutId<T>  {
+public interface IDBServiceCRUDWithoutId<T> extends IDBServiceCRUDNoSingleObject<T>,IServiceCRUDWithoutId<T>  {
 	
 }

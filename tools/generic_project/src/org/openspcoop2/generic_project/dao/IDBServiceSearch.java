@@ -53,4 +53,8 @@ public interface IDBServiceSearch<T> {
 	
 	public InUse inUse(long tableId) throws ServiceException,NotFoundException,NotImplementedException;
 	
+	public void enableSelectForUpdate() throws ServiceException,NotImplementedException;
+	
+	public void disableSelectForUpdate() throws ServiceException,NotImplementedException;
+	
 }

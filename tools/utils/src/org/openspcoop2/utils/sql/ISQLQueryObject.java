@@ -782,13 +782,13 @@ public interface ISQLQueryObject {
 	 */
 	public String createSQLQuery() throws SQLQueryObjectException;	
 	
-	/**
-	 * Genera la Stringa SQL
-	 *  
-	 * @param delete genera una stringa SQL adatta per una delete
-	 * @return Stringa SQL
-	 */
-	public String toString(boolean delete);
+//	/**
+//	 * Genera la Stringa SQL
+//	 *  
+//	 * @param delete genera una stringa SQL adatta per una delete
+//	 * @return Stringa SQL
+//	 */
+//	public String toString(boolean delete);
 	
 	
 	/**

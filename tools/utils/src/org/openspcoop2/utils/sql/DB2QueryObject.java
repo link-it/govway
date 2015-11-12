@@ -729,10 +729,11 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 
 			}
 			
+			// Non genero per le condizioni, per update viene sollevata eccezione prima
 			// ForUpdate
-			if(this.selectForUpdate){
-				bf.append(" FOR UPDATE ");
-			}
+//			if(this.selectForUpdate){
+//				bf.append(" FOR UPDATE ");
+//			}
 		}
 
 		return bf.toString();

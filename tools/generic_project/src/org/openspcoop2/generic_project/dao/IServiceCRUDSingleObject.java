@@ -70,4 +70,6 @@ public interface IServiceCRUDSingleObject<T>  {
 	
 	public void delete(T obj) throws ServiceException,NotImplementedException;
 	
+	public void delete() throws ServiceException,NotImplementedException;
+	
 }

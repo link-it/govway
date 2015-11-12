@@ -380,8 +380,10 @@ public class PostgreSQLQueryObject extends SQLQueryObjectCore{
 		}
 		
 		// ForUpdate
-		if(this.selectForUpdate){
-			bf.append(" FOR UPDATE ");
+		if(conditions==false){
+			if(this.selectForUpdate){
+				bf.append(" FOR UPDATE ");
+			}
 		}
 		
 		return bf.toString();

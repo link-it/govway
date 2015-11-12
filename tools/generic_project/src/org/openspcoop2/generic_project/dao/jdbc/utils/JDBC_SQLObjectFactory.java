@@ -18,15 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.dao;
+
+package org.openspcoop2.generic_project.dao.jdbc.utils;
+
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
- * IDBServiceCRUDWithId
+ * JDBC_SQLObjectFactory
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IDBServiceCRUDWithId<T,K>  extends IDBServiceCRUDNoSingleObject<T>,IServiceCRUDWithId<T, K> {
+public class JDBC_SQLObjectFactory {
 
+	private boolean selectForUpdate = false;
+	
+	public boolean isSelectForUpdate() {
+		return this.selectForUpdate;
+	}
+
+	public void setSelectForUpdate(boolean selectForUpdate) {
+		this.selectForUpdate = selectForUpdate;
+	}
+
+	public ISQLQueryObject createSQLQueryObject(TipiDatabase tipoDatabase) throws SQLQueryObjectException{
+		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+		sqlQueryObject.setSelectForUpdate(this.selectForUpdate);
+		return new JDBC_SQLQueryObject(sqlQueryObject);
+	}
 }
+	
+

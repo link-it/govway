@@ -146,11 +146,11 @@ public class ClientTest {
 		}
 		if(args.length>6){
 			String debugParam = args[6].trim();
-			if(!"${debug}".equals(debugParam)){
+			if(!"${printDebug}".equals(debugParam)){
 				try{
 					DEBUG = Boolean.parseBoolean(debugParam);
 				}catch(Exception e){
-					throw new Exception("Parameter 'debug' with wrong format (value:"+debugParam+"): "+e.getMessage(),e);
+					throw new Exception("Parameter 'printDebug' with wrong format (value:"+debugParam+"): "+e.getMessage(),e);
 				}
 			}
 		}
@@ -164,7 +164,6 @@ public class ClientTest {
 				}
 			}
 		}
-
 		
 		Class.forName(driver).newInstance();
 		Connection con = null;

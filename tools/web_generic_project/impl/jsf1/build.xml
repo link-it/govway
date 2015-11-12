@@ -39,8 +39,11 @@
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
-		<fileset dir="${openspcoop2}/core/dist" >
+		<!-- <fileset dir="${openspcoop2}/core/dist" > -->
+		<fileset dir="${dist_webGenericProjectImplJsf1}" >
 			<include name="openspcoop2_utils_*.jar"/> <!-- Deve dipendere solo da utils per evitare dipendenze cicliche -->
+			<include name="openspcoop2_generic-project_*.jar"/> <!-- Deve dipendere solo da genericProject per evitare dipendenze cicliche -->
+			<include name="openspcoop2_web-generic-project_*.jar"/> <!-- Deve dipendere solo da webGenericProject per evitare dipendenze cicliche -->
 		</fileset>
 	</path>	
 
