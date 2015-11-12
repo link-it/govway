@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.IExtendedInfo;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -258,6 +259,8 @@ public class OpenSPCoop2Properties {
 			// Versione
 			this.getVersione();
 			this.getDetails();
+			// openspcoop home
+			this.getCheckOpenSPCoopHome();
 
 			// Loader
 			Loader loaderOpenSPCoop = null;
@@ -1886,6 +1889,89 @@ public class OpenSPCoop2Properties {
 		}
 		return OpenSPCoop2Properties.getPddDetailsForServices;
 	}
+	
+	private static StatoFunzionalitaConWarning getCheckOpenSPCoopHome = null;
+	public StatoFunzionalitaConWarning getCheckOpenSPCoopHome() {	
+		if(OpenSPCoop2Properties.getCheckOpenSPCoopHome==null){
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkHomeProperty");
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getCheckOpenSPCoopHome = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString(v);
+					if(OpenSPCoop2Properties.getCheckOpenSPCoopHome==null){
+						throw new Exception("Valore inatteso: "+v);
+					}
+				}else{
+					OpenSPCoop2Properties.getCheckOpenSPCoopHome = StatoFunzionalitaConWarning.DISABILITATO;
+				}
+			}catch(java.lang.Exception e) {
+				e.printStackTrace(System.out);
+				OpenSPCoop2Properties.getCheckOpenSPCoopHome = StatoFunzionalitaConWarning.DISABILITATO;
+			}    
+		}
+		return OpenSPCoop2Properties.getCheckOpenSPCoopHome;
+	}
+	
+	public void checkOpenSPCoopHome() throws Exception{
+		if(!StatoFunzionalitaConWarning.DISABILITATO.equals(this.getCheckOpenSPCoopHome())){
+			Exception e = null;
+			boolean foundSystem = false;
+			try{
+				String dir = System.getProperty(CostantiPdD.OPENSPCOOP2_LOCAL_HOME);
+				if(dir==null || "".equals(dir)){
+					throw new Exception("Variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non trovata");
+				}
+				foundSystem = true;
+				File fDir = new File(dir);
+				if(fDir.exists()==false){
+					throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non esiste");
+				}
+				if(fDir.isDirectory()==false){
+					throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è una directory");
+				}
+				if(fDir.canRead()==false){
+					throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile java ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è accessibile in lettura");
+				}
+			}catch(Exception eTh){
+				e = eTh;
+			}
+			try{
+				// NOTA: nel caricamento la variabile di sistema vince sulla variabile java
+				String dir = System.getenv(CostantiPdD.OPENSPCOOP2_LOCAL_HOME);
+				if(dir==null || "".equals(dir)){
+					if(!foundSystem){
+						throw new Exception("Ne variabile java ne variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] trovata");
+					}
+				}
+				else{
+					File fDir = new File(dir);
+					if(fDir.exists()==false){
+						throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non esiste");
+					}
+					if(fDir.isDirectory()==false){
+						throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è una directory");
+					}
+					if(fDir.canRead()==false){
+						throw new Exception("File ["+fDir.getAbsolutePath()+"] indicato nella variabile di sistema ["+CostantiPdD.OPENSPCOOP2_LOCAL_HOME+"] non è accessibile in lettura");
+					}
+					// trovata.
+					// annullo una eventuale eccezione di sistema
+					e = null;
+				}
+			}catch(Exception eTh){
+				if(e==null)
+					e = eTh;
+				else{
+					e = new Exception(e.getMessage()+" - "+eTh.getMessage(),eTh);
+				}
+			}
+			if(e!=null){
+				throw e;
+			}
+		}
+	}
+	
 	
 
 

@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.message.MailcapActivationReader;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -284,6 +285,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+			try{
+				propertiesReader.checkOpenSPCoopHome();
+			}catch(Exception e){
+				this.logError(e.getMessage(),e);
+				if(StatoFunzionalitaConWarning.ABILITATO.equals(propertiesReader.getCheckOpenSPCoopHome())){
+					return;
+				}
+			}
 			classNameReader.refreshLocalProperties(classNameP,propertiesReader.getRootDirectory()); // prima della validazione
 			if(o!=null){
 				if(propertiesReader.validaConfigurazione((java.lang.ClassLoader)o[0]) == false){
