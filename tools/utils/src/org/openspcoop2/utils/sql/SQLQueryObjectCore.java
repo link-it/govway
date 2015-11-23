@@ -1001,7 +1001,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				throw new SQLQueryObjectException("Alias "+alias+" del field "+nomeField+" non utilizzabile tra i select fields. La presenza del select field '*' non permette di inserirne altri");
 			}
 			if(this.fieldNames.contains(alias))
-				throw new SQLQueryObjectException("Alias "+alias+" gia inserito tra i select fields");
+				throw new SQLQueryObjectAlreadyExistsException("Alias "+alias+" gia inserito tra i select fields");
 		}else{
 			if("*".equals(nomeField)==false){
 				if(this.fields.contains("*")){
@@ -1009,7 +1009,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				}
 			}
 			if(this.fields.contains(nomeField))
-				throw new SQLQueryObjectException("Field "+nomeField+" gia inserito tra i select fields");
+				throw new SQLQueryObjectAlreadyExistsException("Field "+nomeField+" gia inserito tra i select fields");
 		}
 		if(nomeTabella!=null && (!"".equals(nomeTabella))){
 

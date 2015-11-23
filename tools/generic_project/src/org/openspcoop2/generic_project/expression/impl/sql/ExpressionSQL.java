@@ -53,6 +53,7 @@ import org.openspcoop2.generic_project.expression.impl.OrderedField;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLQueryObjectAlreadyExistsException;
 import org.openspcoop2.utils.sql.SQLQueryObjectCore;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
@@ -510,8 +511,12 @@ public class ExpressionSQL extends ExpressionImpl {
 		//System.out.println("ADD ["+tableName+"]");
 		return tableName;
 	}
-		
+	
 	protected static void addField_engine(ISQLQueryObject sqlQueryObject, ISQLFieldConverter sqlFieldConverter, Object field, String aliasField, boolean appendTablePrefix)throws ExpressionException{
+		addField_engine(sqlQueryObject, sqlFieldConverter, field, aliasField, appendTablePrefix, true);
+	}
+	protected static void addField_engine(ISQLQueryObject sqlQueryObject, ISQLFieldConverter sqlFieldConverter, Object field, String aliasField, boolean appendTablePrefix,
+			boolean ignoreAlreadyExistsException)throws ExpressionException{
 		try{		
 					
 			if(field == null){
@@ -619,12 +624,26 @@ public class ExpressionSQL extends ExpressionImpl {
 				throw new ExpressionException("Field unknown type: "+field.getClass().getName());
 			}
 		
-		}catch(Exception e){
+		}
+		catch(SQLQueryObjectAlreadyExistsException e){
+			if(!ignoreAlreadyExistsException){
+				throw new ExpressionException(e.getMessage(),e);
+			}
+			else{
+//				System.out.println("ALREADY EXISTS: "+e.getMessage());
+//				e.printStackTrace(System.out);
+			}
+		}
+		catch(Exception e){
 			throw new ExpressionException(e.getMessage(),e);
 		}
 	}
 	
 	protected static void addAliasField_engine(ISQLQueryObject sqlQueryObject, ISQLFieldConverter sqlFieldConverter, Object field, String aliasField, boolean appendTablePrefix)throws ExpressionException{
+		addAliasField_engine(sqlQueryObject, sqlFieldConverter, field, aliasField, appendTablePrefix, true);
+	}
+	protected static void addAliasField_engine(ISQLQueryObject sqlQueryObject, ISQLFieldConverter sqlFieldConverter, Object field, String aliasField, boolean appendTablePrefix,
+			boolean ignoreAlreadyExistsException)throws ExpressionException{
 		try{		
 					
 			if(field == null){
@@ -668,7 +687,17 @@ public class ExpressionSQL extends ExpressionImpl {
 				throw new ExpressionException("Field unknown type: "+field.getClass().getName());
 			}
 		
-		}catch(Exception e){
+		}
+		catch(SQLQueryObjectAlreadyExistsException e){
+			if(!ignoreAlreadyExistsException){
+				throw new ExpressionException(e.getMessage(),e);
+			}
+			else{
+//				System.out.println("ALREADY EXISTS: "+e.getMessage());
+//				e.printStackTrace(System.out);
+			}
+		}
+		catch(Exception e){
 			throw new ExpressionException(e.getMessage(),e);
 		}
 	}
