@@ -1076,7 +1076,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(tabella==null || "".equals(tabella))
 			throw new SQLQueryObjectException("Tabella is null or empty string");
 		if(this.tableNames.contains(tabella))
-			throw new SQLQueryObjectException("Tabella "+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
+			throw new SQLQueryObjectAlreadyExistsException("Tabella "+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
 		this.tableNames.add(tabella);
 		this.tables.add(tabella);
 		return this;
@@ -1096,7 +1096,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(alias==null || "".equals(alias))
 			throw new SQLQueryObjectException("Alias tabella is null or empty string");
 		if(this.tableNames.contains(alias))
-			throw new SQLQueryObjectException("Tabella "+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
+			throw new SQLQueryObjectAlreadyExistsException("Tabella "+tabella+" gia' esistente tra le tabella su cui effettuare la ricerca");
 		this.tableNames.add(alias);
 		//this.tables.add(tabella+" as "+alias);
 		this.tables.add(tabella+this.getDefaultAliasTableKeyword()+alias);

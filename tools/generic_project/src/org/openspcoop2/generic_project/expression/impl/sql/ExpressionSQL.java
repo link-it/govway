@@ -410,6 +410,11 @@ public class ExpressionSQL extends ExpressionImpl {
 	
 	protected static void sqlFrom(ISQLQueryObject sqlQueryObject,List<IField> fields,ISQLFieldConverter sqlFieldConverter,String tableNamePrincipale,
 			List<Object> fieldsManuallyAdd, List<OrderedField> orderByFields, List<IField> groupByFields) throws ExpressionException{
+		sqlFrom(sqlQueryObject, fields, sqlFieldConverter, tableNamePrincipale, fieldsManuallyAdd, orderByFields, groupByFields, true);
+	}
+	protected static void sqlFrom(ISQLQueryObject sqlQueryObject,List<IField> fields,ISQLFieldConverter sqlFieldConverter,String tableNamePrincipale,
+			List<Object> fieldsManuallyAdd, List<OrderedField> orderByFields, List<IField> groupByFields,
+			boolean ignoreAlreadyExistsException) throws ExpressionException{
 		try{
 			List<String> tables = new ArrayList<String>();
 			
@@ -475,13 +480,24 @@ public class ExpressionSQL extends ExpressionImpl {
 					// la tabella "" puo' essere usato come workaround per le funzioni es. unixTimestamp in CustomField
 					continue;
 				}
-				if(tableName.contains(_PREFIX_ALIASFIELD)){
-					String originalTableName = tableName.split(_PREFIX_ALIASFIELD)[0];
-					String aliasTable = tableName.split(_PREFIX_ALIASFIELD)[1];
-					sqlQueryObject.addFromTable(originalTableName, aliasTable);
+				try{
+					if(tableName.contains(_PREFIX_ALIASFIELD)){
+						String originalTableName = tableName.split(_PREFIX_ALIASFIELD)[0];
+						String aliasTable = tableName.split(_PREFIX_ALIASFIELD)[1];
+						sqlQueryObject.addFromTable(originalTableName, aliasTable);
+					}
+					else{
+						sqlQueryObject.addFromTable(tableName);
+					}
 				}
-				else{
-					sqlQueryObject.addFromTable(tableName);
+				catch(SQLQueryObjectAlreadyExistsException alreadyExists){
+					if(!ignoreAlreadyExistsException){
+						throw new ExpressionException(alreadyExists.getMessage(),alreadyExists);
+					}
+					else{
+//						System.out.println("ALREADY EXISTS: "+alreadyExists.getMessage());
+//						alreadyExists.printStackTrace(System.out);
+					}
 				}
 			}
 		}catch(Exception e){
