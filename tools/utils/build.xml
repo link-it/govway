@@ -77,13 +77,28 @@
 				<include name="openspcoop2_utils_*.jar"/>
 			</lib>
 			<!--
-			<lib dir="${libs}/cxf">
+			<lib dir="${required_lib}/cxf">
 				<include name="${cxf_jar}"/>
 				<include name="saaj-impl-1.3.19.jar"/>
 			</lib>
 			-->
 		</war>
-
+	</target>
+	
+	<!-- Creazione del modulo WAR per il test della cache -->
+	<target name="warTestCache" depends="clean,build" description="Crea la struttura del modulo WAR per l'esempio del package cache">
+		<war destfile="${dist_utils}/ExampleCache.war" webxml="${src_utils}/org/openspcoop2/utils/cache/test/web.xml">
+			<classes dir="${src_utils}/org/openspcoop2/utils/cache/test">
+				<include name="*.ccf"/>
+			</classes>
+			<lib dir="${dist_utils}">
+				<include name="openspcoop2_utils_*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/shared">
+				<include name="jcs-1.3.jar"/>
+				<include name="concurrent-1.0.jar"/>
+			</lib>
+		</war>
 	</target>
 	
 	
