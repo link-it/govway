@@ -96,7 +96,7 @@ public abstract class AbstractCacheWrapper {
 				try{
 					dimensione = cacheSize.intValue();
 					msg = "Cache size ("+this.cacheName+"): "+dimensione;
-					this.log.info(msg);
+					this.log.debug(msg);
 					this.cache.setCacheSize(dimensione);
 				}catch(Exception error){
 					throw new UtilsException("Cache size parameter wrong ("+this.cacheName+"): "+error.getMessage());
@@ -104,7 +104,7 @@ public abstract class AbstractCacheWrapper {
 			}
 			if( cacheAlgorithm != null ){
 				msg = "Cache algorithm ("+this.cacheName+"): "+cacheAlgorithm.name();
-				this.log.info(msg);
+				this.log.debug(msg);
 				this.cache.setCacheAlgoritm(cacheAlgorithm);
 			}
 			
@@ -118,7 +118,7 @@ public abstract class AbstractCacheWrapper {
 				try{
 					itemIdleTime = itemIdleTimeSeconds.intValue();
 					msg = "Cache 'IdleTime' attribute ("+this.cacheName+"): "+itemIdleTimeSeconds;
-					this.log.info(msg);
+					this.log.debug(msg);
 					this.cache.setItemIdleTime(itemIdleTime);
 				}catch(Exception error){
 					throw new UtilsException("Cache 'IdleTime' attribute wrong ("+this.cacheName+"): "+error.getMessage());
@@ -129,7 +129,7 @@ public abstract class AbstractCacheWrapper {
 				try{
 					itemLifeSecond = itemLifeTimeSeconds.intValue();
 					msg = "Cache 'LifeTime' attribute ("+this.cacheName+"): "+itemLifeSecond;
-					this.log.info(msg);
+					this.log.debug(msg);
 					this.cache.setItemLifeTime(itemLifeSecond);
 				}catch(Exception error){
 					throw new UtilsException("Cache 'LifeTime' attribute wrong ("+this.cacheName+"): "+error.getMessage());
@@ -274,11 +274,11 @@ public abstract class AbstractCacheWrapper {
 			
 			if(debug){
 				if(this.cache!=null){
-					this.log.info("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
-					this.log.info("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
+					this.log.debug("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
+					this.log.debug("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
 				}
 				else{
-					this.log.info("@"+keyCache+"@ CACHE DISABLED");	
+					this.log.debug("@"+keyCache+"@ CACHE DISABLED");	
 				}
 			}
 
@@ -289,11 +289,11 @@ public abstract class AbstractCacheWrapper {
 				if(response != null){
 					if(response.getObject()!=null){
 						if(debug){
-							this.log.info("@"+keyCache+"@ Object (type:"+response.getObject().getClass().getName()+") (method:"+methodName+") found in cache.");
+							this.log.debug("@"+keyCache+"@ Object (type:"+response.getObject().getClass().getName()+") (method:"+methodName+") found in cache.");
 						}
 						return response.getObject();
 					}else if(response.getException()!=null){
-						this.log.info("@"+keyCache+"@ Exception (type:"+response.getException().getClass().getName()+") (method:"+methodName+") found in cache.");
+						this.log.debug("@"+keyCache+"@ Exception (type:"+response.getException().getClass().getName()+") (method:"+methodName+") found in cache.");
 						throwException = true;
 						throw (Throwable) response.getException();
 					}else{
@@ -304,7 +304,7 @@ public abstract class AbstractCacheWrapper {
 
 			// Effettuo le query
 			if(debug){
-				this.log.info("@"+keyCache+"@ search object (method:"+methodName+") with driver...");
+				this.log.debug("@"+keyCache+"@ search object (method:"+methodName+") with driver...");
 			}
 			try{
 				obj = getObject(driverParam, debug, methodName, arguments);
@@ -318,11 +318,11 @@ public abstract class AbstractCacheWrapper {
 			}
 			if(cachableException!=null){
 				if(debug){
-					this.log.info("@"+keyCache+"@ Driver throw CachableException: "+cachableException.getClass().getName());
+					this.log.debug("@"+keyCache+"@ Driver throw CachableException: "+cachableException.getClass().getName());
 				}
 			}else if(obj!=null){
 				if(debug){
-					this.log.info("@"+keyCache+"@ Driver return Object: "+obj.getClass().getName());
+					this.log.debug("@"+keyCache+"@ Driver return Object: "+obj.getClass().getName());
 				}
 			}else{
 				throw new Exception("Method ("+methodName+") return null value");
@@ -334,11 +334,11 @@ public abstract class AbstractCacheWrapper {
 			if( this.cache!=null ){ 	
 				if(cachableException!=null){
 					if(debug){
-						this.log.info("@"+keyCache+"@ Add Exception in cache");
+						this.log.debug("@"+keyCache+"@ Add Exception in cache");
 					}
 				}else if(obj!=null){
 					if(debug){
-						this.log.info("@"+keyCache+"@ Add Object in cache");
+						this.log.debug("@"+keyCache+"@ Add Object in cache");
 					}
 				}else{
 					throw new Exception("Method ("+methodName+") return null value");
