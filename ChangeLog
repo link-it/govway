@@ -1,3 +1,15 @@
+2015-11-24  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloTrasparente]
+	Aggiunta funzionalità OP-443
+	Reso parametrico la generazione degli identificativi della richiesta e della risposta sul protocollo trasparente.
+	La proprietà 'org.openspcoop2.protocol.trasparente.id.uuid' nel file trasparente.properties pilota tale gestione.
+	In caso la proprietà sia abilitata vegnono generati sempre nuovi UUID.
+	Altrimenti gli identificativi vengono generati come:
+	    richiesta: yyyyMMddHHmmssSSS-uuidDellaTransazione
+	    risposta: yyyyMMddHHmmssSSS-uuidDellaTransazione-response
+	Il default è impostato per la generazione di identificativi come nuovi UUID.
+
 2015-11-12  Andrea Poli <apoli@link.it>
 
 	* [GenericProject, Utils]
