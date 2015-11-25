@@ -67,8 +67,8 @@ public class CacheJMXUtils {
 			}
 			if(gestoreRisorse==null){
 				initGestoreRisorseJMX(log);
-				gestoreRisorse.registerMBean(cache.getClass(), jmxDomain, jmxType, jmxName);
 			}
+			gestoreRisorse.registerMBean(cache.getClass(), jmxDomain, jmxType, jmxName);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
