@@ -89,11 +89,33 @@ public class ExampleService extends HttpServlet {
 			Object name = ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, key, method, surname, age);
 			log.info(prefix+"Name: "+name);
 			
-			// Simulazione metodo isTest
+			// Duplico in cache
+			ExampleServletInitListener.configManager.duplicateObjectCache(key, method, key+"NEW", method+"NEW", DEBUG, false);
+			name = ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, key+"NEW", method+"NEW", surname, age);
+			log.info(prefix+"NameDuplicate: "+name);
+			
+			// Simulazione metodo eccezione cachable
 			method = "isTest";
 			key = "EXCEPTION";
 			try{
 				ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, key, method, "EXCEPTION");
+			}catch(ExampleExceptionNotFound notFound){
+				log.info(prefix+"Eccezione attesa: "+notFound.getClass().getName());
+			}	
+			
+			// Simulazione metodo eccezione not cachable
+			method = "isTest";
+			key = "GENERIC_EXCEPTION";
+			try{
+				ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, key, method, "GENERIC_EXCEPTION");
+			}catch(Exception e){
+				log.info(prefix+"altra eccezione: "+e.getClass().getName());
+			}	
+			
+			// Simulazione metodo che ritorna null
+			method = "isTest";
+			try{
+				ExampleServletInitListener.configManager.getObjectCache(con, DEBUG, null, method, "NULL");
 			}catch(ExampleExceptionNotFound notFound){
 				log.info(prefix+"Eccezione attesa: "+notFound.getClass().getName());
 			}	

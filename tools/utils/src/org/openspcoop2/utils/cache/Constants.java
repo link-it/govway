@@ -44,6 +44,7 @@ public class Constants {
 	public final static String CACHE_METHOD_NAME_DISABILITA = "disableCache";
 	public final static String CACHE_METHOD_NAME_LIST_KEYS = "listKeysCache";
 	public final static String CACHE_METHOD_NAME_GET_OBJECT = "getObjectCache";
+	public final static String CACHE_METHOD_NAME_REMOVE_OBJECT = "removeObjectCache";
 	
 	/** Messaggi */
 	public final static String MSG_OPERAZIONE_NON_EFFETTUATA = "Operation failed: ";
@@ -111,6 +112,15 @@ public class Constants {
 	// get Object Cache
 	public final static MBeanOperationInfo MBEAN_OPERATION_GET_OBJECT_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_GET_OBJECT,"Retrieve the object in cache with key parameter",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("key",String.class.getName(),"cache key"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+	
+	// remove Object Cache
+	public final static MBeanOperationInfo MBEAN_OPERATION_REMOVE_OBJECT_CACHE 
+		= new MBeanOperationInfo(CACHE_METHOD_NAME_REMOVE_OBJECT,"Remove the object in cache with key parameter",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("key",String.class.getName(),"cache key"),
 			},

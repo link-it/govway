@@ -219,6 +219,19 @@ public abstract class AbstractCacheJmx extends NotificationBroadcasterSupport im
 			return this.getObjectCache(param1);
 		}
 		
+		if(actionName.equals(Constants.CACHE_METHOD_NAME_REMOVE_OBJECT)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+Constants.CACHE_METHOD_NAME_REMOVE_OBJECT+"] Parameter size uncorrect: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.removeObjectCache(param1);
+		}
+		
 		throw new UnsupportedOperationException("Operation "+actionName+" unknown");
 	}
 	
@@ -257,6 +270,9 @@ public abstract class AbstractCacheJmx extends NotificationBroadcasterSupport im
 		// MetaData per l'operazione getObjectCache
 		MBeanOperationInfo getObjectCacheOP = Constants.MBEAN_OPERATION_GET_OBJECT_CACHE;
 		
+		// MetaData per l'operazione removeObjectCache
+		MBeanOperationInfo removeObjectCacheOP = Constants.MBEAN_OPERATION_REMOVE_OBJECT_CACHE;
+		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","New Instance of MBean",null);
 
@@ -267,7 +283,7 @@ public abstract class AbstractCacheJmx extends NotificationBroadcasterSupport im
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 		
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP};
+		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP,removeObjectCacheOP};
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -356,6 +372,17 @@ public abstract class AbstractCacheJmx extends NotificationBroadcasterSupport im
 			if(this.getCacheWrapper().isCacheEnabled()==false)
 				throw new Exception("Cache disabled");
 			return this.getCacheWrapper().getObjectCache(key);
+		}catch(Throwable e){
+			this.getCacheWrapper().getLog().error(Constants.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return Constants.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String removeObjectCache(String key){
+		try{
+			if(this.getCacheWrapper().isCacheEnabled()==false)
+				throw new Exception("Cache disabled");
+			return this.getCacheWrapper().removeObjectCache(key);
 		}catch(Throwable e){
 			this.getCacheWrapper().getLog().error(Constants.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return Constants.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

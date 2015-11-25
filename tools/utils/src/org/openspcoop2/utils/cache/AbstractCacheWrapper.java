@@ -247,6 +247,23 @@ public abstract class AbstractCacheWrapper {
 			throw new UtilsException("Cache disabled");
 		}
 	}
+	public String removeObjectCache(String key) throws UtilsException{
+		if(this.cache!=null){
+			try{
+				Object o = this.cache.get(key);
+				if(o!=null){
+					this.cache.remove(key);
+					return "Object with key ["+key+"] deleted";
+				}else{
+					return "Object with key ["+key+"] not exists";
+				}
+			}catch(Exception e){
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}else{
+			throw new UtilsException("Cache disabled");
+		}
+	}
 	
 	
 	
@@ -257,54 +274,65 @@ public abstract class AbstractCacheWrapper {
 	public abstract Object getDriver(Object param) throws UtilsException;
 	public abstract boolean isCachableException(Throwable e);
 	
-	public synchronized Object getObjectCache(Object driverParam,boolean debug,String keyCacheParam,String methodName,Object... arguments) throws Throwable{
+	private String buildKeyCache(String keyCacheParam,String methodName){
+		if(keyCacheParam!=null && !"".equals(keyCacheParam))
+			return methodName + "." + keyCacheParam;
+		else
+			return methodName;
+	}
+	
+	public void duplicateObjectCache(String oldKeyCacheParam,String oldMethodName, 
+			String newKeyCacheParam,String newMethodName,
+			boolean debug,boolean throwExceptionIfNotExists) throws UtilsException{
+		
+		if(this.cache==null){
+			throw new UtilsException("Cache disabled");
+		}
+		
+		synchronized(this.cache){
+			
+//			if(debug){
+//				this.log.debug("@"+keyCache+"@ Cache info: "+this.cache.toString());
+//				this.log.debug("@"+keyCache+"@ Keys: \n\t"+this.cache.printKeys("\n\t"));
+//			}
+			
+			String oldKey = this.buildKeyCache(oldKeyCacheParam, oldMethodName);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(oldKey);
+			if(response != null){
+				String newKey = this.buildKeyCache(newKeyCacheParam, newMethodName);
+				this.cache.remove(newKey);
+				this.cache.put(newKey,response);
+				this.log.debug("@"+newKey+"@ Entry add");
+			}
+			else{
+				if(debug){
+					this.log.debug("@"+oldKey+"@ Entry not exists");
+				}
+				if(throwExceptionIfNotExists){
+					throw new UtilsException("Entry with key ["+oldKey+"] not exists");
+				}
+			}
+		}
+		
+	}
+	
+	public Object getObjectCache(Object driverParam,boolean debug,String keyCacheParam,String methodName,Object... arguments) throws Throwable{
 				
 		
 		Throwable cachableException = null;
+		Throwable notCachableException = null;
 		Object obj = null;
 		boolean throwException = false;
 		
-		if(keyCacheParam == null)
-			throw new UtilsException("["+methodName+"]: KeyCache undefined");	
 		if(methodName == null)
-			throw new UtilsException("["+keyCacheParam+"]: MethodName undefined");	
-		String keyCache = methodName + "_" + keyCacheParam;
+			throw new UtilsException("MethodName undefined");
 		
-		try{
-			
+		String keyCache = null;
+		
+		if(this.cache==null){
 			if(debug){
-				if(this.cache!=null){
-					this.log.debug("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
-					this.log.debug("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
-				}
-				else{
-					this.log.debug("@"+keyCache+"@ CACHE DISABLED");	
-				}
-			}
-
-			// se e' attiva una cache provo ad utilizzarla
-			if(this.cache!=null){
-				org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						if(debug){
-							this.log.debug("@"+keyCache+"@ Object (type:"+response.getObject().getClass().getName()+") (method:"+methodName+") found in cache.");
-						}
-						return response.getObject();
-					}else if(response.getException()!=null){
-						this.log.debug("@"+keyCache+"@ Exception (type:"+response.getException().getClass().getName()+") (method:"+methodName+") found in cache.");
-						throwException = true;
-						throw (Throwable) response.getException();
-					}else{
-						this.log.error("@"+keyCache+"@ Found entry in cache with key ["+keyCache+"] (method:"+methodName+") without object and exception???");
-					}
-				}
-			}
-
-			// Effettuo le query
-			if(debug){
-				this.log.debug("@"+keyCache+"@ search object (method:"+methodName+") with driver...");
+				this.log.debug("@method:"+methodName+"@ (Cache Disabled) search object with driver...");
 			}
 			try{
 				obj = getObject(driverParam, debug, methodName, arguments);
@@ -313,60 +341,141 @@ public abstract class AbstractCacheWrapper {
 					cachableException = e;
 				}
 				else{
-					throw e;
+					notCachableException = e;
 				}
 			}
-			if(cachableException!=null){
-				if(debug){
-					this.log.debug("@"+keyCache+"@ Driver throw CachableException: "+cachableException.getClass().getName());
-				}
-			}else if(obj!=null){
-				if(debug){
-					this.log.debug("@"+keyCache+"@ Driver return Object: "+obj.getClass().getName());
-				}
-			}else{
-				throw new Exception("Method ("+methodName+") return null value");
-			}
+		}
+		else{
+		
+			synchronized(this.cache){
 			
+				try{
 					
-			// Aggiungo la risposta in cache (se esiste una cache)	
-			// Se ho una eccezione aggiungo in cache solo una not found
-			if( this.cache!=null ){ 	
-				if(cachableException!=null){
+//					if(keyCacheParam == null)
+//						throw new UtilsException("["+methodName+"]: KeyCache undefined");	
+					keyCache = this.buildKeyCache(keyCacheParam, methodName);
+					
+//					if(debug){
+//						this.log.debug("@"+keyCache+"@ Cache info: "+this.cache.toString());
+//						this.log.debug("@"+keyCache+"@ Keys: \n\t"+this.cache.printKeys("\n\t"));
+//					}
+		
+					// se e' attiva una cache provo ad utilizzarla
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							if(debug){
+								this.log.debug("@"+keyCache+"@ Object (type:"+response.getObject().getClass().getName()+") (method:"+methodName+") found in cache.");
+							}
+							return response.getObject();
+						}
+						else if(response.isObjectNull()){
+							if(debug){
+								this.log.debug("@"+keyCache+"@ Response null (method:"+methodName+") found in cache.");
+							}
+							return null;
+						}
+						else if(response.getException()!=null){
+							this.log.debug("@"+keyCache+"@ Exception (type:"+response.getException().getClass().getName()+") (method:"+methodName+") found in cache.");
+							throwException = true;
+							throw (Throwable) response.getException();
+						}else{
+							this.log.error("@"+keyCache+"@ Found entry in cache with key ["+keyCache+"] (method:"+methodName+") without object and exception???");
+						}
+					}
+		
+					// Effettuo le query
 					if(debug){
-						this.log.debug("@"+keyCache+"@ Add Exception in cache");
+						this.log.debug("@"+keyCache+"@ search object (method:"+methodName+") with driver...");
 					}
-				}else if(obj!=null){
-					if(debug){
-						this.log.debug("@"+keyCache+"@ Add Object in cache");
+					boolean nullObject = false;
+					boolean cacheble = false;
+					try{
+						obj = getObject(driverParam, debug, methodName, arguments);
+						nullObject = true;
+						cacheble = true;
+					}catch(Throwable e){
+						if(this.isCachableException(e)){
+							cachableException = e;
+							cacheble = true;
+						}
+						else{
+							notCachableException = e;
+						}
 					}
-				}else{
-					throw new Exception("Method ("+methodName+") return null value");
+					
+							
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Se ho una eccezione aggiungo in cache solo una not found
+					if( cacheble ){ 	
+						try{	
+							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+							if(cachableException!=null){
+								if(debug){
+									this.log.debug("@"+keyCache+"@ Add Exception in cache");
+								}
+								responseCache.setException(cachableException);
+							}else if(obj!=null){
+								if(debug){
+									this.log.debug("@"+keyCache+"@ Add Object in cache");
+								}
+								responseCache.setObject((java.io.Serializable)obj);
+							}else if(nullObject){
+								if(debug){
+									this.log.debug("@"+keyCache+"@ Add Null Response in cache");
+								}
+								responseCache.setObjectNull(true);
+							}
+							this.cache.put(keyCache,responseCache);
+						}catch(UtilsException e){
+							this.log.error("@"+keyCache+"@ error occurs during insert in cache: "+e.getMessage(),e);
+						}
+					}
+		
+				}catch(Throwable e){
+					if(throwException == false){
+						this.log.error("@"+keyCache+"@ Error occurs: "+e.getMessage(),e);
+						throw new UtilsException(e.getMessage(),e);
+					}
+					else{
+						cachableException = e;
+					}
 				}
-				try{	
-					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-					if(cachableException!=null){
-						responseCache.setException(cachableException);
-					}else{
-						responseCache.setObject((java.io.Serializable)obj);
-					}
-					this.cache.put(keyCache,responseCache);
-				}catch(UtilsException e){
-					this.log.error("@"+keyCache+"@ error occurs during insert in cache: "+e.getMessage(),e);
-				}
-			}
-
-		}catch(Throwable e){
-			if(throwException == false){
-				this.log.error("@"+keyCache+"@ Error occurs: "+e.getMessage(),e);
-				throw new UtilsException(e.getMessage(),e);
+				
 			}
 		}
 		
+		String cacheMsg = "";
+		if(this.cache!=null && keyCache!=null){
+			cacheMsg = "@key:"+keyCache+"@";
+		}
+		else{
+			cacheMsg = "@method:"+methodName+"@";
+		}
 		if(cachableException!=null){
+			if(debug){
+				this.log.debug(cacheMsg+" throw CachableException: "+cachableException.getClass().getName());
+			}
 			throw cachableException;
-		}else
+		}
+		else if(notCachableException!=null){
+			if(debug){
+				this.log.debug(cacheMsg+" throw NotCachableException: "+notCachableException.getClass().getName());
+			}
+			throw notCachableException;
+		}
+		else if(obj!=null){
+			if(debug){
+				this.log.debug(cacheMsg+" return Object: "+obj.getClass().getName());
+			}
 			return obj;
+		}else{
+			if(debug){
+				this.log.debug(cacheMsg+" return null response");
+			}
+			return null;
+		}
 	}
 	
 	private Object getObject(Object driverParam,boolean debug,String methodName,Object... arguments) throws Throwable{

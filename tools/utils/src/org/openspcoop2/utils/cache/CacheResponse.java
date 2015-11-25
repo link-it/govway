@@ -51,6 +51,8 @@ public class CacheResponse implements java.io.Serializable {
 
 	/** Object Response. */
 	private java.io.Serializable object;
+	/** Object Response null */
+	private boolean objectNull = false;
 	/** Exception Response. */
 	private java.io.Serializable exception;
 
@@ -93,7 +95,9 @@ public class CacheResponse implements java.io.Serializable {
 	public void setException(java.io.Serializable exception) {
 		this.exception = exception;
 	}
-
+	public void setObjectNull(boolean objectNull) {
+		this.objectNull = objectNull;
+	}
 
 
 
@@ -111,7 +115,9 @@ public class CacheResponse implements java.io.Serializable {
 	public java.io.Serializable getException() {
 		return this.exception;
 	}
-
+	public boolean isObjectNull() {
+		return this.objectNull;
+	}
 
 
 
@@ -120,6 +126,9 @@ public class CacheResponse implements java.io.Serializable {
 	public String toString(){
 		if(this.object!=null){
 			return "OBJECT: \n"+this.object.toString();
+		}
+		else if(this.objectNull){
+			return "CACHED NULL VALUE";
 		}
 		else if(this.exception!=null){
 			try{

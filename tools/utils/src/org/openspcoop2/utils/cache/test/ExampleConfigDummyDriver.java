@@ -23,6 +23,7 @@ package org.openspcoop2.utils.cache.test;
 
 import java.sql.Connection;
 
+
 /**
  * ExampleConfigDummyDriver
  *
@@ -50,10 +51,16 @@ public class ExampleConfigDummyDriver {
 		
 	}
 	
-	public boolean isTest(String param) throws ExampleExceptionNotFound{
+	public Boolean isTest(String param) throws Exception{
 		if(param!=null){
 			if(param.equals("EXCEPTION")){
 				throw new ExampleExceptionNotFound();
+			}
+			else if(param.equals("GENERIC_EXCEPTION")){
+				throw new Exception("Altra eccezione");
+			}
+			else if(param.equals("NULL")){
+				return null;
 			}else{
 				return true;
 			}
