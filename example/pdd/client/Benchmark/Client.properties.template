@@ -52,8 +52,21 @@ openspcoop2.http10=false
 #...
 #openspcoop2.header.nomeHeaderN=ValoreHeaderN
 
+# Accepted Return Code
+#openspcoop2.acceptedReturnCode=200,202
+
+# Random Time
+#openspcoop2.randomTimeIntervalBeforeInvoke=false
+#openspcoop2.randomTimeIntervalBeforeInvoke.minIntervalMS=300
+#openspcoop2.randomTimeIntervalBeforeInvoke.maxIntervalMS=1000
+#openspcoop2.randomTimeIntervalBeforeInvoke.sleepEveryMessage=false
+
 # Utilizza tutti i files presenti nella directory per inviarli come SOAP With Attachments
-#openspcoop2.attachmentDirectory=attachtments
+#openspcoop2.attachmentDirectory=attachments
+
+# FileBodyTemplate (Possibilità di generare un messaggio dinamico)
+# Non è utilizzabile in combinazione con l'utilizzo di una busta (in tal caso aggiungere l'id dinamico nell'header).
+#file.isTemplate=false
 
 # SOAPHeader contenente una busta (es. EGov)
 # NOTA: Se si usa questa opzione, il file indicato nella proprietà 'file' deve essere solamente il contenuto da inserire nel SOAP-Body

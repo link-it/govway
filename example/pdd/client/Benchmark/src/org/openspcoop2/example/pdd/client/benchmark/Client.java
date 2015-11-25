@@ -167,7 +167,7 @@ public class Client {
         
         // File
         config.setPayloadFile(new File(xmlFile2Send));
-        
+                
         // SOAPAction
         config.setSoapAction(soapActon);
         
@@ -197,6 +197,38 @@ public class Client {
         	config.setBustaFileHeader(f);
         }
         
+        // FileBodyTemplate (Possibilità di generare un messaggio dinamico)
+        // Non è utilizzabile in combinazione con l'utilizzo di una busta (in tal caso aggiungere l'id dinamico nell'header).
+        String bodyTemplate = Client.getProperty(reader, "file.isTemplate", false);
+        if(bodyTemplate!=null){
+        	config.setPayloadFileTemplate(Boolean.parseBoolean(bodyTemplate));
+        }
+        
+        // Accepted Return Code
+        String acceptedReturnCode = Client.getProperty(reader, "openspcoop2.acceptedReturnCode", false);
+        if(acceptedReturnCode!=null){
+        	List<Integer> acceptedReturnCodes = new ArrayList<Integer>();
+        	String [] tmp = acceptedReturnCode.split(",");
+        	for (int i = 0; i < tmp.length; i++) {
+        		acceptedReturnCodes.add(Integer.parseInt(tmp[i].trim()));
+			}
+        	config.setAcceptedReturnCode(acceptedReturnCodes);
+        }
+
+        // Random Time
+        String randomInterval = Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke", false);
+        if(randomInterval!=null){
+        	boolean randomIntervalEnabled = Boolean.parseBoolean(randomInterval);
+        	if(randomIntervalEnabled){
+        		config.setSleepMinBeforeRun(Integer.parseInt(Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke.minIntervalMS", true)));
+        		config.setSleepMaxBeforeRun(Integer.parseInt(Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke.maxIntervalMS", true)));
+        		String randomIntervalEveryMessage = Client.getProperty(reader, "openspcoop2.randomTimeIntervalBeforeInvoke.sleepEveryMessage", false);
+                if(randomIntervalEveryMessage!=null){
+                	config.setSleepBeforeEveryMessage(Boolean.parseBoolean(randomIntervalEveryMessage));
+                }
+        	}
+        }
+
         
         List<String> headers = new ArrayList<String>();
         
