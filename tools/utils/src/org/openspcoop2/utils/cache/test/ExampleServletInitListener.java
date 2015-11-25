@@ -57,7 +57,7 @@ public class ExampleServletInitListener implements ServletContextListener {
 		try{
 			
 			configManager = new ExampleConfigCacheWrapper(true, Logger.getLogger(ExampleServletInitListener.class));
-			CacheJMXUtils.register(new ExampleConfigCacheJmx());
+			CacheJMXUtils.register(Logger.getLogger(ExampleServletInitListener.class),new ExampleConfigCacheJmx());
 
 		}catch(Exception e){}
 				

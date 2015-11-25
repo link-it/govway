@@ -21,6 +21,7 @@
 
 package org.openspcoop2.utils.cache;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.CostantiJMX;
 import org.openspcoop2.utils.resources.RisorseJMXException;
@@ -39,21 +40,21 @@ public class CacheJMXUtils {
 	
 	private static org.openspcoop2.utils.resources.GestoreRisorseJMX gestoreRisorse = null;
 	
-	private static synchronized void initGestoreRisorseJMX() throws RisorseJMXException{
+	private static synchronized void initGestoreRisorseJMX(Logger log) throws RisorseJMXException{
 		if(gestoreRisorse==null)
-			gestoreRisorse = new org.openspcoop2.utils.resources.GestoreRisorseJMX();
+			gestoreRisorse = new org.openspcoop2.utils.resources.GestoreRisorseJMX(log);
 	}
 	
-	public static void register(AbstractCacheJmx cache) throws UtilsException{
-		register(cache, null, null, cache.getCacheWrapper().getCacheName());
+	public static void register(Logger log,AbstractCacheJmx cache) throws UtilsException{
+		register(log, cache, null, null, cache.getCacheWrapper().getCacheName());
 	}
-	public static void register(AbstractCacheJmx cache, String jmxName) throws UtilsException{
-		register(cache, null, null, jmxName);
+	public static void register(Logger log,AbstractCacheJmx cache, String jmxName) throws UtilsException{
+		register(log,cache, null, null, jmxName);
 	}
-	public static void register(AbstractCacheJmx cache,String jmxDomain, String jmxName) throws UtilsException{
-		register(cache, jmxDomain, null, jmxName);
+	public static void register(Logger log,AbstractCacheJmx cache,String jmxDomain, String jmxName) throws UtilsException{
+		register(log,cache, jmxDomain, null, jmxName);
 	}
-	public static void register(AbstractCacheJmx cache,String jmxDomain,String jmxType, String jmxName) throws UtilsException{
+	public static void register(Logger log,AbstractCacheJmx cache,String jmxDomain,String jmxType, String jmxName) throws UtilsException{
 		try{
 			if(jmxName==null){
 				throw new Exception("JmxName undefined");
@@ -65,7 +66,7 @@ public class CacheJMXUtils {
 				jmxType = JMX_TYPE;
 			}
 			if(gestoreRisorse==null){
-				initGestoreRisorseJMX();
+				initGestoreRisorseJMX(log);
 				gestoreRisorse.registerMBean(cache.getClass(), jmxDomain, jmxType, jmxName);
 			}
 		}catch(Exception e){
