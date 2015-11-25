@@ -21,8 +21,11 @@
 
 package org.openspcoop2.protocol.trasparente.builder;
 
+import java.util.Date;
+
 import javax.xml.soap.SOAPElement;
 
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -30,6 +33,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
 
 /**
  * Classe che implementa, in base al protocollo Trasparente, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -40,8 +44,10 @@ import org.openspcoop2.protocol.sdk.state.IState;
  */
 public class TrasparenteBustaBuilder extends BustaBuilder {
 
+	private TrasparenteProperties trasparenteProperties;
 	public TrasparenteBustaBuilder(IProtocolFactory factory) throws ProtocolException {
 		super(factory);
+		this.trasparenteProperties = TrasparenteProperties.getInstance(factory.getLogger());
 	}
 
 	@Override
@@ -89,4 +95,18 @@ public class TrasparenteBustaBuilder extends BustaBuilder {
 		
 		return null;
 	}
+	
+	
+	@Override
+	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta) throws ProtocolException {
+		return newID(state, idSoggetto, idTransazione, isRichiesta, this.trasparenteProperties.generateIDasUUID());
+	}
+	
+	
+	@Override
+	public Date extractDateFromID(String id) throws ProtocolException {
+		return extractDateFromID(id, this.trasparenteProperties.generateIDasUUID());
+		
+	}
+	
 }

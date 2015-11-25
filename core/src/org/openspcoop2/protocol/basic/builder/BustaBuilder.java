@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 
 /**	
@@ -92,53 +93,79 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 	}
 
 	private final static String dateformatPattern = "yyyyMMddHHmmssSSS"; // utile per il filtro duplicati
-	
+	private final static UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
 	
 	@Override
 	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta) throws ProtocolException {
+		return newID(state, idSoggetto, idTransazione, isRichiesta, true);
+	}
+	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta, boolean generateIDasUUID) throws ProtocolException {
 		
-		String id = idTransazione;
+		if(generateIDasUUID){
+			
+			try{
+				synchronized (uuidGenerator) {
+					return uuidGenerator.newID().getAsString();	
+				}
+			}catch(Exception e){
+				throw new ProtocolException(e.getMessage());
+			}
+			
+		}
+		else{
 		
-//		try {
-//			XMLGregorianCalendar cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
-//			id = id + "_T_" + cal.getSecond() + cal.getMillisecond();
-//		} catch (DatatypeConfigurationException e) {
-//			throw new ProtocolException(e);
-//		}
-		
-		Date now = DateManager.getDate();
-		
-		// NOTA: La data nell'identificativo e' utile quando l'id viene usato in un filtro duplicati
-		// 		 Per avere un insieme di identificativi in ordine raggruppate per date. (aiuta l'indice sulla base dati)
-		//		 Essendo questa una classe di base si preferisce aggiungere la data. 
-		//		 Se non la si vuole nel protocollo trasparente reimplementare questo metodo nel protocollo trasparente eliminando la data
-		//		 Anche il metodo extractDate dovra' a quel punto essere reimplementato ritornando null
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
-		
-		if(isRichiesta)
-//			return id+ "-request";
-			return dateFormat.format(now)+"-"+id;
-		else
-			return dateFormat.format(now)+"-"+id + "-response";
+			String id = idTransazione;
+			
+	//		try {
+	//			XMLGregorianCalendar cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
+	//			id = id + "_T_" + cal.getSecond() + cal.getMillisecond();
+	//		} catch (DatatypeConfigurationException e) {
+	//			throw new ProtocolException(e);
+	//		}
+			
+			Date now = DateManager.getDate();
+			
+			// NOTA: La data nell'identificativo e' utile quando l'id viene usato in un filtro duplicati
+			// 		 Per avere un insieme di identificativi in ordine raggruppate per date. (aiuta l'indice sulla base dati)
+			//		 Essendo questa una classe di base si preferisce aggiungere la data. 
+			//		 Se non la si vuole nel protocollo trasparente reimplementare questo metodo nel protocollo trasparente eliminando la data
+			//		 Anche il metodo extractDate dovra' a quel punto essere reimplementato ritornando null
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
+			
+			if(isRichiesta)
+	//			return id+ "-request";
+				return dateFormat.format(now)+"-"+id;
+			else
+				return dateFormat.format(now)+"-"+id + "-response";
+			
+		}
 	}
 
 	@Override
 	public Date extractDateFromID(String id) throws ProtocolException {
+		return this.extractDateFromID(id, true);
+	}
+	public Date extractDateFromID(String id, boolean generateIDasUUID) throws ProtocolException {
 		if(id==null){
 			throw new ProtocolException("ID non fornito");
 		}
-		if(id.contains("-")==false){
-			throw new ProtocolException("ID fornito ["+id+"] non e' corretto (missing '-')");
+		if(generateIDasUUID == false){
+			if(id.contains("-")==false){
+				throw new ProtocolException("ID fornito ["+id+"] non e' corretto (missing '-')");
+			}
+			String [] split = id.split("-");
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
+			
+			try{
+				return dateFormat.parse(split[0].trim());
+			}catch(Exception e){
+				throw new ProtocolException("ID fornito ["+id+"] non e' corretto: "+e.getMessage());
+			}
 		}
-		String [] split = id.split("-");
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
-		
-		try{
-			return dateFormat.parse(split[0].trim());
-		}catch(Exception e){
-			throw new ProtocolException("ID fornito ["+id+"] non e' corretto: "+e.getMessage());
+		else{
+			return null;
 		}
 	}
 	

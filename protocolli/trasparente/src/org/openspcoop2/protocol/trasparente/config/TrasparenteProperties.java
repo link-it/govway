@@ -126,7 +126,7 @@ public class TrasparenteProperties {
 	public void validaConfigurazione(Loader loader) throws ProtocolException  {	
 		try{  
 
-			//getExample();
+			generateIDasUUID();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo trasparente, "+e.getMessage();
@@ -142,31 +142,31 @@ public class TrasparenteProperties {
 	 * @return Valore della property
 	 * 
 	 */
-	private static String example = null;
-	public String getExample(){
-		if(TrasparenteProperties.example==null){
+	private static Boolean generateIDasUUID = null;
+	public Boolean generateIDasUUID(){
+		if(TrasparenteProperties.generateIDasUUID==null){
 			
-			String defaultValue = "Sconosciuto";
-			String propertyName = "org.openspcoop2.protocol.trasparente.nome";
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.trasparente.id.uuid";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
-					TrasparenteProperties.example = value;
+					TrasparenteProperties.generateIDasUUID = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
-					TrasparenteProperties.example = defaultValue;
+					TrasparenteProperties.generateIDasUUID = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
-				TrasparenteProperties.example = defaultValue;
+				TrasparenteProperties.generateIDasUUID = defaultValue;
 			}
 		}
 
-		return TrasparenteProperties.example;
+		return TrasparenteProperties.generateIDasUUID;
 	}
 
 }
