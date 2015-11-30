@@ -1,3 +1,28 @@
+2015-11-30  Andrea Poli <apoli@link.it>
+
+	* [Pdd,InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-441
+	Il core della PdD utilizza come livello di serializzazione sul database, 
+	per quanto concerne il database sqlserver, il livello 'TRANSACTION_SNAPSHOT'.
+	Aggiunto allo script SQL generato dal setup per il database 'sqlserver' le seguenti due istruzioni:
+	ALTER DATABASE <database> SET ALLOW_SNAPSHOT_ISOLATION ON
+	ALTER DATABASE <database> SET READ_COMMITTED_SNAPSHOT ON;
+
+2015-11-30  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug OP-445
+	Risolto potenziale deadlock sulla connessione necessaria per accedere al RegistroServizi e Configurazione.
+	L'installer della versione binaria produceva un archivio OpenSPCoop2.ear che utilizzava per l'accesso alla configurazione
+	ed al registro dei servizi lo stesso datasource utilizzato per l'accesso alla basedati di runtime.
+	Questa configurazione poteva provocare situazioni di deadlock quando simultanei accessi alla PdD invocano servizi non ancora configurati nelle cache interne.
+	Questo poichè ogni invocazione di servizio necessita di una connessione per il database runtime e poi
+	(mantenendo attiva quella per il runtime) ne richiede altre per leggere i dati dal registro dei servizi e dalla configurazione.
+	La soluzione corretta (inclusa nel fix) è invece quella di utilizzare il datasource della configurazione
+	(generato dall'installer con nome jndi org.openspcoop2.dataSource.pddConsole).
+	In questa maniera, nell'esempio riportato di sopra, alcune invocazioni potranno ottenere errore poichè non disporranno di connessioni
+	per accedere alla configurazione o al registro, ma non avverranno situazioni di deadlock.
+
 2015-11-24  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloTrasparente]
