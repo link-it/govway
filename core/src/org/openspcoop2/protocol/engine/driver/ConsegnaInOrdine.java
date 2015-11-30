@@ -41,6 +41,8 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 
 /**
  * Sono inclusi i metodi per la gestione della consegna in ordine (sequenza).
@@ -453,20 +455,20 @@ public class ConsegnaInOrdine  {
 						// busta da controllare
 
 						StringBuffer query = new StringBuffer();
-//						if(Configurazione.getSqlQueryObjectType()!=null){
-//							ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());
-//							sqlQueryObject.addSelectField("SEQUENZA_ATTESA");
-//							sqlQueryObject.addFromTable(Costanti.SEQUENZA_DA_RICEVERE);
-//							sqlQueryObject.addWhereCondition("ID_COLLABORAZIONE=?");
-//							sqlQueryObject.setANDLogicOperator(true);
-//							// TODO FOR UPDATE
-//							query.append(sqlQueryObject.createSQLQuery());
-//						}
-//						else{
-						query.append("SELECT SEQUENZA_ATTESA FROM ");
-						query.append(Costanti.SEQUENZA_DA_RICEVERE);
-						query.append(" WHERE ID_COLLABORAZIONE=? FOR UPDATE");
-//						}
+						if(Configurazione.getSqlQueryObjectType()!=null){
+							ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());
+							sqlQueryObject.addSelectField("SEQUENZA_ATTESA");
+							sqlQueryObject.addFromTable(Costanti.SEQUENZA_DA_RICEVERE);
+							sqlQueryObject.addWhereCondition("ID_COLLABORAZIONE=?");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.setSelectForUpdate(true);
+							query.append(sqlQueryObject.createSQLQuery());
+						}
+						else{
+							query.append("SELECT SEQUENZA_ATTESA FROM ");
+							query.append(Costanti.SEQUENZA_DA_RICEVERE);
+							query.append(" WHERE ID_COLLABORAZIONE=? FOR UPDATE");
+						}
 						pstmt =  connectionDB.prepareStatement(query.toString());
 						pstmt.setString(1,busta.getCollaborazione());
 

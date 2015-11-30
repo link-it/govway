@@ -43,6 +43,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
  * Connection
@@ -114,13 +115,8 @@ public class Connection implements java.sql.Connection {
 	
 	@Override
 	public void setTransactionIsolation(int level) throws SQLException {
-		// Per SQLServer è meglio utilizzare il livello snapshot
 		if(java.sql.Connection.TRANSACTION_SERIALIZABLE == level){
-			if(TipiDatabase.SQLSERVER.equals(this.tipoDatabase)){
-				this.connection.setTransactionIsolation(4096); //4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT
-			}else{
-				this.connection.setTransactionIsolation(level);
-			}
+			JDBCUtilities.setTransactionIsolationSerializable(this.tipoDatabase, this.connection);
 		}
 		else{
 			this.connection.setTransactionIsolation(level);

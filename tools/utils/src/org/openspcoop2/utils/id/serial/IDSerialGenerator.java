@@ -26,6 +26,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
  * IDSerialGenerator
@@ -94,7 +95,7 @@ public class IDSerialGenerator {
 				try{				
 					oldTransactionIsolation = con.getTransactionIsolation();
 					oldAutoCommit = con.getAutoCommit();
-					//System.out.println("SET TRANSACTION_SERIALIZABLE ("+conDB.getTransactionIsolation()+","+conDB.getAutoCommit()+")");
+					//System.out.println("SET TRANSACTION SERIALIZABLE ("+conDB.getTransactionIsolation()+","+conDB.getAutoCommit()+")");
 					// Il rollback, non servirebbe, pero le WrappedConnection di JBoss hanno un bug, per cui alcune risorse non vengono rilasciate.
 					// Con il rollback tali risorse vengono rilasciate, e poi effettivamente la ConnectionSottostante emette una eccezione.
 					try{
@@ -102,11 +103,7 @@ public class IDSerialGenerator {
 					}catch(Exception e){
 						//System.out.println("ROLLBACK ERROR: "+e.getMessage());
 					}
-					if(TipiDatabase.SQLSERVER.equals(tipoDatabase)){
-						con.setTransactionIsolation(4096); //4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT
-					}else{
-						con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-					}
+					JDBCUtilities.setTransactionIsolationSerializable(tipoDatabase, con);
 					con.setAutoCommit(false);
 				} catch(Exception er) {
 					log.error("Creazione serial non riuscita (impostazione transazione): "+er.getMessage(),er);
