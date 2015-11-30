@@ -22,12 +22,14 @@
 
 package org.openspcoop2.utils.jdbc;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -139,4 +141,37 @@ public class JDBCUtilities {
 			pstmt.setString(index,null);
 	}
 	
+	
+	private static int SQL_SERVER_TRANSACTION_SNAPSHOT = 4096;
+	
+	public static boolean isTransactionIsolationNone(int transactionIsolationLevel){
+		return transactionIsolationLevel == java.sql.Connection.TRANSACTION_NONE;
+	}
+	public static boolean isTransactionIsolationReadUncommitted(int transactionIsolationLevel){
+		return transactionIsolationLevel == java.sql.Connection.TRANSACTION_READ_UNCOMMITTED;
+	}
+	public static boolean isTransactionIsolationReadCommitted(int transactionIsolationLevel){
+		return transactionIsolationLevel == java.sql.Connection.TRANSACTION_READ_COMMITTED;
+	}
+	public static boolean isTransactionIsolationRepeatableRead(int transactionIsolationLevel){
+		return transactionIsolationLevel == java.sql.Connection.TRANSACTION_REPEATABLE_READ;
+	}
+	public static boolean isTransactionIsolationSerializable(int transactionIsolationLevel){
+		return transactionIsolationLevel == java.sql.Connection.TRANSACTION_SERIALIZABLE;
+	}
+	public static boolean isTransactionIsolationSqlServerSnapshot(int transactionIsolationLevel){
+		return transactionIsolationLevel == SQL_SERVER_TRANSACTION_SNAPSHOT;
+	}
+	
+	public static void setTransactionIsolationSerializable(String tipoDatabase,Connection connection) throws SQLException{
+		setTransactionIsolationSerializable(TipiDatabase.toEnumConstant(tipoDatabase), connection);
+	}
+	public static void setTransactionIsolationSerializable(TipiDatabase tipoDatabase,Connection connection) throws SQLException{
+		if(tipoDatabase!=null && TipiDatabase.SQLSERVER.equals(tipoDatabase)){ 
+			connection.setTransactionIsolation(SQL_SERVER_TRANSACTION_SNAPSHOT); //4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT }
+		}
+		else{ 
+			connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); 
+		} 
+	}
 }

@@ -82,6 +82,7 @@ import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -1963,7 +1964,7 @@ public class GestoreMessaggi  {
 				try{
 					oldTransactionIsolation = connectionDB.getTransactionIsolation();
 					connectionDB.setAutoCommit(false);
-					connectionDB.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+					JDBCUtilities.setTransactionIsolationSerializable(this.propertiesReader.getDatabaseType(), connectionDB);
 				} catch(Exception er) {
 					String errorMsg = "GESTORE_MESSAGGI, Errore getProprietario Messaggio(setIsolation) "+this.tipo+"/"+this.idBusta+": "+er.getMessage();		
 					this.log.error(errorMsg,er);
@@ -3880,7 +3881,7 @@ public class GestoreMessaggi  {
 			try{
 				oldTransactionIsolation = connectionDB.getTransactionIsolation();
 				connectionDB.setAutoCommit(false);
-				connectionDB.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				JDBCUtilities.setTransactionIsolationSerializable(this.propertiesReader.getDatabaseType(), connectionDB);
 			} catch(Exception er) {
 				String errorMsg = "GESTORE_MESSAGGI, error  eliminaDestinatarioMessaggio (setIsolation)"+this.idBusta+"/"+servizioApplicativo+": "+er.getMessage();		
 				this.log.error(errorMsg,er);

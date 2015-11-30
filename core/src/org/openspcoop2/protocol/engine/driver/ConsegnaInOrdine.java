@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
  * Sono inclusi i metodi per la gestione della consegna in ordine (sequenza).
@@ -424,7 +425,7 @@ public class ConsegnaInOrdine  {
 			try{
 				oldTransactionIsolation = connectionDB.getTransactionIsolation();
 				connectionDB.setAutoCommit(false);
-				connectionDB.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				JDBCUtilities.setTransactionIsolationSerializable(Configurazione.getSqlQueryObjectType(), connectionDB);
 			} catch(Exception er) {
 				String errorMsg = "ConsegnaInOrdine, errore durante isConsegnaInOrdine(setIsolation): "+er.getMessage();		
 				this.log.error(errorMsg,er);
@@ -452,9 +453,20 @@ public class ConsegnaInOrdine  {
 						// busta da controllare
 
 						StringBuffer query = new StringBuffer();
+//						if(Configurazione.getSqlQueryObjectType()!=null){
+//							ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());
+//							sqlQueryObject.addSelectField("SEQUENZA_ATTESA");
+//							sqlQueryObject.addFromTable(Costanti.SEQUENZA_DA_RICEVERE);
+//							sqlQueryObject.addWhereCondition("ID_COLLABORAZIONE=?");
+//							sqlQueryObject.setANDLogicOperator(true);
+//							// TODO FOR UPDATE
+//							query.append(sqlQueryObject.createSQLQuery());
+//						}
+//						else{
 						query.append("SELECT SEQUENZA_ATTESA FROM ");
 						query.append(Costanti.SEQUENZA_DA_RICEVERE);
 						query.append(" WHERE ID_COLLABORAZIONE=? FOR UPDATE");
+//						}
 						pstmt =  connectionDB.prepareStatement(query.toString());
 						pstmt.setString(1,busta.getCollaborazione());
 

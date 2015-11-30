@@ -262,6 +262,17 @@
 			</fileset>
 		</copy>
 		
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="sqlserver"/>
+			<then>
+				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes">
+<![CDATA[-- Livello Isolamento
+ALTER DATABASE @DATABASE@ SET ALLOW_SNAPSHOT_ISOLATION ON
+ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
+				</concat>
+			</then>
+		</if>
+		
 		<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
@@ -353,6 +364,7 @@
 		<antcall target="sql_settings">
 		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
 		</antcall>
+		
 	</target>
 	
 	<target name="setup_datasource" depends="_setup_datasource"/>

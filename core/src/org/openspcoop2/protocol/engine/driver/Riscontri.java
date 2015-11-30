@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -311,7 +312,7 @@ public class Riscontri  {
 		try{
 			oldTransactionIsolation =connectionDB.getTransactionIsolation();
 			connectionDB.setAutoCommit(false);
-			connectionDB.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			JDBCUtilities.setTransactionIsolationSerializable(Configurazione.getSqlQueryObjectType(), connectionDB);
 		} catch(Exception er) {
 			String errorMsg = "RISCONTRI, Errore durante la validazioneRiscontroRicevuto(setIsolation): "+er.getMessage();		
 			this.log.error(errorMsg,er);

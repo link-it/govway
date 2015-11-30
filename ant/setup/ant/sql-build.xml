@@ -51,6 +51,12 @@
 			<param name="token" value="@NOME_SOGGETTO@"/>
 			<param name="value" value="${antinstaller_nomesoggetto}"/>
 		</antcall>
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@DATABASE@"/>
+			<param name="value" value="${antinstaller_dbname}"/>
+		</antcall>
 	
 	</target>
 	

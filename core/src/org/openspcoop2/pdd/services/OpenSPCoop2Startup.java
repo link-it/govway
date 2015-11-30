@@ -93,6 +93,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
 
@@ -533,16 +534,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 
-			if(DBManager.getTransactionIsolationLevel() == java.sql.Connection.TRANSACTION_NONE)
+			if( JDBCUtilities.isTransactionIsolationNone(DBManager.getTransactionIsolationLevel()) )
 				OpenSPCoop2Startup.log.info("Database TransactionLevel is NONE");
-			else if(DBManager.getTransactionIsolationLevel() == java.sql.Connection.TRANSACTION_READ_COMMITTED)
+			else if(JDBCUtilities.isTransactionIsolationReadCommitted(DBManager.getTransactionIsolationLevel()) )
 				OpenSPCoop2Startup.log.info("Database TransactionLevel is READ_COMMITTED");
-			else if(DBManager.getTransactionIsolationLevel() == java.sql.Connection.TRANSACTION_READ_UNCOMMITTED)
+			else if(JDBCUtilities.isTransactionIsolationReadUncommitted(DBManager.getTransactionIsolationLevel()) )
 				OpenSPCoop2Startup.log.info("Database TransactionLevel is READ_UNCOMMITTED");
-			else if(DBManager.getTransactionIsolationLevel() == java.sql.Connection.TRANSACTION_REPEATABLE_READ)
+			else if(JDBCUtilities.isTransactionIsolationRepeatableRead(DBManager.getTransactionIsolationLevel()) )
 				OpenSPCoop2Startup.log.info("Database TransactionLevel is REPEATABLE_READ");
-			else if(DBManager.getTransactionIsolationLevel() == java.sql.Connection.TRANSACTION_SERIALIZABLE)
+			else if(JDBCUtilities.isTransactionIsolationSerializable(DBManager.getTransactionIsolationLevel()) )
 				OpenSPCoop2Startup.log.info("Database TransactionLevel is SERIALIZABLE");
+			else if(JDBCUtilities.isTransactionIsolationSqlServerSnapshot(DBManager.getTransactionIsolationLevel()) )
+				OpenSPCoop2Startup.log.info("Database TransactionLevel is SQLSERVER SNAPSHOT");
 			else {
 				OpenSPCoop2Startup.log.fatal("TransactionLevel associato alla connessione non conosciuto");
 				//			msgDiag.logStartupError("TransactionLevel associato alla connessione non conosciuto","DatabaseManager");

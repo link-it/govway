@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -2675,7 +2676,7 @@ public class ProfiloDiCollaborazione {
 			try{
 				oldTransactionIsolation = connectionDB.getTransactionIsolation();
 				connectionDB.setAutoCommit(false);
-				connectionDB.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				JDBCUtilities.setTransactionIsolationSerializable(Configurazione.getSqlQueryObjectType(), connectionDB);
 			} catch(Exception er) {
 				String errorMsg = "PROFILO_DI_COLLABORAZIONE_ASINCRONO, Errore durante la getBusteAsincronePerUlterioreInoltro(setIsolation): "+er.getMessage();		
 				this.log.error(errorMsg,er);
@@ -3100,7 +3101,7 @@ public class ProfiloDiCollaborazione {
 			try{
 				oldTransactionIsolation = connectionDB.getTransactionIsolation();
 				connectionDB.setAutoCommit(false);
-				connectionDB.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				JDBCUtilities.setTransactionIsolationSerializable(Configurazione.getSqlQueryObjectType(), connectionDB);
 			} catch(Exception er) {
 				String errorMsg = "PROFILO_DI_COLLABORAZIONE_ASINCRONO, Errore durante la validazioneRicevutaAsincrona "+idRicevuta+"(setIsolation): "+er.getMessage();		
 				this.log.error(errorMsg,er);
