@@ -15,11 +15,14 @@
 			<param name="value" value="${antinstaller_tipo_database}"/>
 		</antcall>
 		
+		<!-- BugFix OP-445 -->
+		<!--
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.dataSource.pddConsole"/>
 			<param name="value" value="org.openspcoop2.dataSource"/>
 		</antcall>
+		-->
 		
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
