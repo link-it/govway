@@ -229,7 +229,7 @@ public class ConfigurazionePdD  {
 	 * @param accessoConfigurazione Informazioni per accedere alla configurazione della PdD OpenSPCoop.
 	 */
 	public ConfigurazionePdD(AccessoConfigurazionePdD accessoConfigurazione,Logger alog,Logger alogConsole,Properties localProperties, 
-			String jndiNameDatasourcePdD, boolean forceDisableCache)throws DriverConfigurazioneException{
+			String jndiNameDatasourcePdD, boolean forceDisableCache, boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverConfigurazioneException{
 
 		try{ 
 			// Inizializzo OpenSPCoopProperties
@@ -258,7 +258,8 @@ public class ConfigurazionePdD  {
 			// inizializzazione DB
 			else if(CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(accessoConfigurazione.getTipo())){			
 				this.driverConfigurazionePdD = new DriverConfigurazioneDB(accessoConfigurazione.getLocation(),accessoConfigurazione.getContext(),
-						this.log,accessoConfigurazione.getTipoDatabase(),accessoConfigurazione.isCondivisioneDatabasePddRegistro());
+						this.log,accessoConfigurazione.getTipoDatabase(),accessoConfigurazione.isCondivisioneDatabasePddRegistro(),
+						useOp2UtilsDatasource, bindJMX);
 				if(this.driverConfigurazionePdD ==null || ((DriverConfigurazioneDB)this.driverConfigurazionePdD).create==false){
 					throw new DriverConfigurazioneException("Riscontrato errore durante l'inizializzazione della configurazione di tipo "+
 							accessoConfigurazione.getTipo()+" con location: "+accessoConfigurazione.getLocation());

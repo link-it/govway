@@ -1502,6 +1502,9 @@ public class OpenSPCoop2Properties {
 			this.getAPIServicesWhiteListRequestHeaderList();
 			this.getAPIServicesWhiteListResponseHeaderList();
 			
+			// Datasource Wrapped
+			this.isDSOp2UtilsEnabled();
+			
 			// NotifierInputStreamCallback
 			String notifierClass = null;
 			try{
@@ -9873,6 +9876,30 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getAPIServicesWhiteListResponseHeaderList;
 	}
 	
+	
+	
+	/* -------------Datasource Wrapped  ---------------------*/
+	
+	private static Boolean isDSOp2UtilsEnabled = null;
+	public boolean isDSOp2UtilsEnabled() {	
+		if(OpenSPCoop2Properties.isDSOp2UtilsEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.datasource.useDSUtils");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.datasource.useDSUtils' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isDSOp2UtilsEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.datasource.useDSUtils': "+e.getMessage());
+				OpenSPCoop2Properties.isDSOp2UtilsEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isDSOp2UtilsEnabled;
+	}
 	
 	
 	

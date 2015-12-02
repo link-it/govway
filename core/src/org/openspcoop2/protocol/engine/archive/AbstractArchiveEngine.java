@@ -116,7 +116,7 @@ public abstract class AbstractArchiveEngine {
 	public boolean isPddInUso(String nomePortaDominio, List<String> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection();
+			con = this.driverRegistroServizi.getConnection("archive.isPddInUso");
 			return DBOggettiInUsoUtils.isPddInUso(con, this.driverRegistroServizi.getTipoDB(), nomePortaDominio, whereIsInUso);
 		}
 		catch(Exception e){
@@ -160,7 +160,7 @@ public abstract class AbstractArchiveEngine {
 	public boolean isSoggettoRegistroInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection();
+			con = this.driverRegistroServizi.getConnection("archive.isSoggettoRegistroInUso");
 			return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.driverRegistroServizi.getTipoDB(), idSoggetto, whereIsInUso);
 		}
 		catch(Exception e){
@@ -204,7 +204,7 @@ public abstract class AbstractArchiveEngine {
 	public boolean isSoggettoConfigurazioneInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
 		Connection con = null;
 		try{
-			con = this.driverConfigurazione.getConnection();
+			con = this.driverConfigurazione.getConnection("archive.isSoggettoConfigurazioneInUso");
 			return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.driverConfigurazione.getTipoDB(), idSoggetto, whereIsInUso);
 		}
 		catch(Exception e){
@@ -249,7 +249,7 @@ public abstract class AbstractArchiveEngine {
 			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
 		Connection con = null;
 		try{
-			con = this.driverConfigurazione.getConnection();
+			con = this.driverConfigurazione.getConnection("archive.isServizioApplicativoInUso");
 			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.driverConfigurazione.getTipoDB(), idServizioApplicativo, whereIsInUso, true);
 		}
 		catch(Exception e){
@@ -302,7 +302,7 @@ public abstract class AbstractArchiveEngine {
 			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection();
+			con = this.driverRegistroServizi.getConnection("archive.isAccordoCooperazioneInUso");
 			return DBOggettiInUsoUtils.isAccordoCooperazioneInUso(con, this.driverRegistroServizi.getTipoDB(), idAccordo, whereIsInUso);
 		}
 		catch(Exception e){
@@ -354,7 +354,7 @@ public abstract class AbstractArchiveEngine {
 			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection();
+			con = this.driverRegistroServizi.getConnection("archive.isAccordoServizioParteComuneInUso");
 			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.driverRegistroServizi.getTipoDB(), idAccordo, whereIsInUso);
 		}
 		catch(Exception e){
@@ -437,7 +437,7 @@ public abstract class AbstractArchiveEngine {
 			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection();
+			con = this.driverRegistroServizi.getConnection("archive.isAccordoServizioParteSpecificaInUso");
 			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.driverRegistroServizi.getTipoDB(), idAccordo, whereIsInUso, null);
 		}
 		catch(Exception e){
@@ -454,7 +454,7 @@ public abstract class AbstractArchiveEngine {
 			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection();
+			con = this.driverRegistroServizi.getConnection("archive.isAccordoServizioParteSpecificaInUso");
 			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.driverRegistroServizi.getTipoDB(), idServizio, whereIsInUso, null);
 		}
 		catch(Exception e){

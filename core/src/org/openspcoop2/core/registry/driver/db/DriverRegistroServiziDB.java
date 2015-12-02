@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -52,6 +51,7 @@ import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
@@ -104,6 +104,10 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsAlreadyExistsException;
+import org.openspcoop2.utils.datasource.DataSourceFactory;
+import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -155,6 +159,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 
 
+
+
+	
+
 	/* ******** COSTRUTTORI e METODI DI RELOAD ******** */
 
 	/**
@@ -166,9 +174,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * 
 	 */
 	public DriverRegistroServiziDB(String nomeDataSource, Properties prop,String tipoDB) {
-		this(nomeDataSource,prop,null,tipoDB);
+		this(nomeDataSource,prop,null,tipoDB,false,false);
 	}
 	public DriverRegistroServiziDB(String nomeDataSource, Properties prop,Logger alog,String tipoDB){
+		this(nomeDataSource,prop,alog,tipoDB,false,false);
+	}
+	public DriverRegistroServiziDB(String nomeDataSource, Properties prop,Logger alog,String tipoDB, 
+			boolean useOp2UtilsDatasource, boolean bindJMX){
 
 		try {
 			//PropertyConfigurator.configure(DriverRegistroServiziDB.class.getResource("/tracer.log4j.properties"));
@@ -180,12 +192,24 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			this.log.info("Inizializzo DriverRegistroServiziDB..");
-			InitialContext initCtx = new InitialContext(prop);
-			this.datasource = (DataSource) initCtx.lookup(nomeDataSource);
+			if(useOp2UtilsDatasource){
+				DataSourceParams dsParams = Costanti.getDataSourceParamsPdD(bindJMX, tipoDB);
+				try{
+					this.datasource = DataSourceFactory.newInstance(nomeDataSource, prop, dsParams);
+				}catch(UtilsAlreadyExistsException exists){
+					this.datasource = DataSourceFactory.getInstance(nomeDataSource); 
+					if(this.datasource==null){
+						throw new Exception("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
+					}
+				}
+			}
+			else{
+				GestoreJNDI gestoreJNDI = new GestoreJNDI(prop);
+				this.datasource = (DataSource) gestoreJNDI.lookup(nomeDataSource);
+			}
 			if (this.datasource != null)
 				this.create = true;
-			initCtx.close();
-		} catch (javax.naming.NamingException ne) {
+		} catch (Exception ne) {
 			this.log.error("Eccezione acquisendo il datasource: "+ne.getMessage(),ne);
 			this.create = false;
 		}
@@ -243,15 +267,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 	
 	
 	
-	public Connection getConnection() throws DriverRegistroServiziException{
+	public Connection getConnection(String methodName) throws DriverRegistroServiziException{
 		Connection con = null;
 		
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource(methodName);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getConnection] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getConnection] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -271,6 +295,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
+	private Connection getConnectionFromDatasource(String methodName) throws Exception{
+		if(this.datasource instanceof org.openspcoop2.utils.datasource.DataSource){
+			return ((org.openspcoop2.utils.datasource.DataSource)this.datasource).getWrappedConnection(null, "DriverRegistroServizi."+methodName);
+		}
+		else{
+			return this.datasource.getConnection();
+		}
+	}
 
 	
 	public List<List<Object>> readCustom(ISQLQueryObject sqlQueryObject, List<Class<?>> returnTypes, List<JDBCObject> paramTypes) throws DriverRegistroServiziException
@@ -281,7 +313,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("readCustom");
 			else
 				con = this.globalConnection;
 		
@@ -345,7 +377,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAccordoCooperazione(idAccordo)");
 			else
 				con = this.globalConnection;
 
@@ -531,7 +563,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoCooperazione] SQLException :" + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoCooperazione] Exception :" + se.getMessage(),se);
 		} finally {
 
 			try{
@@ -590,7 +622,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				con = conParam;
 			}
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getIdAccordoCooperazione(longId)");
 			else
 				con = this.globalConnection;
 
@@ -686,7 +718,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				con = conParam;
 			}
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAccordoCooperazione(longId)");
 			else
 				con = this.globalConnection;
 
@@ -763,7 +795,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdAccordiCooperazione");
 			else
 				con = this.globalConnection;
 
@@ -894,10 +926,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("createAccordoCooperazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoCooperazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoCooperazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -948,10 +980,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection connection;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoCooperazione");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::createAccordoServizio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::createAccordoServizio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -966,7 +998,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				return true;
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			if (this.atomica) {
 				try {
@@ -995,10 +1027,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("updateAccordoCooperazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoCooperazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoCooperazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1060,10 +1092,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("deleteAccordoCooperazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteAccordoCooperazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteAccordoCooperazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1146,7 +1178,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAccordoServizioParteComune(idAccordo)");
 			else
 				con = this.globalConnection;
 
@@ -1404,7 +1436,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteComune] SQLException :" + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteComune] Exception :" + se.getMessage(),se);
 		} finally {
 
 			try{
@@ -1440,7 +1472,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(conParam!=null)
 				con = conParam;
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("readPortTypes");
 			else
 				con = this.globalConnection;
 
@@ -1513,7 +1545,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPortTypes] SQLException :" + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPortTypes] Exception :" + se.getMessage(),se);
 		} finally {
 
 			try{
@@ -1549,7 +1581,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(conParam!=null)
 				con = conParam;
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("readAzioniPortTypes");
 			else
 				con = this.globalConnection;
 
@@ -1651,7 +1683,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readAzioniPortTypes] SQLException :" + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readAzioniPortTypes] Exception :" + se.getMessage(),se);
 		} finally {
 
 			try{
@@ -1687,7 +1719,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(conParam!=null)
 				con = conParam;
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("readMessagesAzioniPortTypes");
 			else
 				con = this.globalConnection;
 
@@ -1769,7 +1801,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readMessagesAzioniPortTypes] SQLException :" + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readMessagesAzioniPortTypes] Exception :" + se.getMessage(),se);
 		} finally {
 
 			try{
@@ -1805,7 +1837,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(conParam!=null)
 				con = conParam;
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("readAccordoServizioComposto");
 			else
 				con = this.globalConnection;
 
@@ -1892,7 +1924,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPortTypes] SQLException :" + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPortTypes] Exception :" + se.getMessage(),se);
 		} finally {
 
 			try{
@@ -1951,7 +1983,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdAccordiServizioParteComune");
 			else
 				con = this.globalConnection;
 
@@ -2169,10 +2201,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("createAccordoServizioParteComune");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::createAccordoServizioParteComune] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::createAccordoServizioParteComune] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2346,7 +2378,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoServizioParteComune] SQLException [" + se.getMessage() + "].",se);
 		} catch (DriverRegistroServiziException e) {
 			error = true;
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}catch (Exception e) {
 			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoServizioParteComune] Exception [" + e.getMessage() + "].",e);
@@ -2390,10 +2422,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection connection;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComune(idAccordo)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComune] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComune] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -2416,7 +2448,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				return true;
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			if (this.atomica) {
 				try {
@@ -2440,10 +2472,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection connection;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComune(longId)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComune] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComune] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2467,7 +2499,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				return false;
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			if (this.atomica) {
 				try {
@@ -2495,10 +2527,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection connection;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneAzione(nome,idAccordo)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2508,7 +2540,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 			return existsAccordoServizioParteComuneAzione(nome, DBUtils.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB));
 		}catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			if (this.atomica) {
 				try {
@@ -2538,10 +2570,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneAzione(nome,longId)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2567,7 +2599,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.close();
 		} catch (Exception e) {
 			exist = false;
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -2604,10 +2636,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneAzione(longId)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2630,7 +2662,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.close();
 		} catch (Exception e) {
 			exist = false;
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -2657,10 +2689,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection connection;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComunePorttype(nome,idAccordo)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttype] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttype] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2670,7 +2702,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 			return existsAccordoServizioParteComunePorttype(nome, DBUtils.getIdAccordoServizioParteComune(idAccordo, connection, this.tipoDB));
 		}catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			if (this.atomica) {
 				try {
@@ -2698,10 +2730,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneOperation(longId)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneOperation] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneOperation] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2724,7 +2756,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.close();
 		} catch (Exception e) {
 			exist = false;
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -2764,10 +2796,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComunePorttype(nome,longId)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttype] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttype] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2793,7 +2825,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.close();
 		} catch (Exception e) {
 			exist = false;
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -2827,10 +2859,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection connection;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComunePorttypeOperation(nome,idPortType)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttypeOperation] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttypeOperation] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2841,7 +2873,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			long idAccordo = DBUtils.getIdAccordoServizioParteComune(idPortType.getIdAccordo(), connection, this.tipoDB);
 			return existsAccordoServizioParteComunePorttypeOperation(nome, DBUtils.getIdPortType(idAccordo,idPortType.getNome(), connection));
 		}catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			if (this.atomica) {
 				try {
@@ -2870,10 +2902,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComunePorttypeOperation(nome,longId)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttypeOperation] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttypeOperation] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -2899,7 +2931,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.close();
 		} catch (Exception e) {
 			exist = false;
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -2977,10 +3009,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("updateAccordoServizioParteComune");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::createAccordoServizio] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::createAccordoServizio] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -3337,10 +3369,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("updatePortType");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::updatePortType] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::updatePortType] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -3533,10 +3565,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("deleteAccordoServizioParteComune");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::deleteAccordoServizioParteComune] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::deleteAccordoServizioParteComune] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3727,10 +3759,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getPortaDominio(nome)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getPortaDominio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getPortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3824,7 +3856,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdPorteDominio");
 			else
 				con = this.globalConnection;
 
@@ -3928,10 +3960,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("createPortaDominio");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createPortaDominio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createPortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3992,10 +4024,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsPortaDominio");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsPortaDominio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsPortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4059,10 +4091,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("updatePortaDominio");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updatePortaDominio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updatePortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4129,10 +4161,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("updateTipoPortaDominio");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updatePortaDominio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updatePortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4206,10 +4238,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("deletePortaDominio");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deletePortaDominio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deletePortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4283,10 +4315,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getSoggetto(idSoggetto)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4421,7 +4453,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdSoggetti");
 			else
 				con = this.globalConnection;
 
@@ -4532,10 +4564,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("createSoggetto");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4599,10 +4631,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			throw new DriverRegistroServiziException("Parametro Tipo non valido");
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsSoggetto(idSoggetto)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4657,10 +4689,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsSoggetto(longId)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4714,10 +4746,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsSoggetto(codiceIPA)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4774,10 +4806,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getSoggetto(codiceIPA)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4846,10 +4878,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getCodiceIPA(idSoggetto)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4921,10 +4953,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("updateSoggetto");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5096,10 +5128,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("deleteSoggetto");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5149,10 +5181,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getSoggettiWithSuperuser");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziException::getSoggettiWithSuperuser] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziException::getSoggettiWithSuperuser] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5286,7 +5318,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdServizi");
 			else
 				con = this.globalConnection;
 
@@ -5473,7 +5505,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdAccordiServizioParteSpecifica");
 			else
 				con = this.globalConnection;
 
@@ -5657,7 +5689,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdServiziWithSoggettoErogatore");
 			else
 				con = this.globalConnection;
 
@@ -5726,10 +5758,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("createAccordoServizioParteSpecifica");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoServizioParteSpecifica] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createAccordoServizioParteSpecifica] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5795,10 +5827,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsAccordoServizioParteSpecifica");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -5856,10 +5888,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsServizioWithTipoAndNome");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -5918,10 +5950,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsAccordoServizioParteSpecifica(longId)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsAccordoServizioParteSpecifica] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsAccordoServizioParteSpecifica] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -5978,10 +6010,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection connection;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteSpecifica(idAccordo)");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteSpecifica] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteSpecifica] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6002,7 +6034,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				return true;
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			if (this.atomica) {
 				try {
@@ -6040,10 +6072,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getIDAccordoServizioParteSpecifica");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6150,10 +6182,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("_getServizioWithSoggettoAccordoServCorrPT");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioWithSoggettoAccordoServCorr] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioWithSoggettoAccordoServCorr] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -6188,7 +6220,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -6249,10 +6281,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("getServizioFruitore");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioWithSoggettoAccordoServCorr] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioWithSoggettoAccordoServCorr] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -6300,7 +6332,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -6338,10 +6370,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("getServizioFruitoreSoggettoFruitoreID");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioFruitoreSoggettoFruitoreID] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioFruitoreSoggettoFruitoreID] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -6363,7 +6395,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -6401,10 +6433,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("getServizioFruitoreServizioID");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioFruitoreServizioID] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioFruitoreServizioID] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -6426,7 +6458,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -6460,10 +6492,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("updateAccordoServizioParteSpecifica");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizioParteSpecifica] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizioParteSpecifica] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6519,10 +6551,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("deleteAccordoServizioParteSpecifica");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteAccordoServizioParteSpecifica] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteAccordoServizioParteSpecifica] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6582,10 +6614,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("existsSoggettoServiziWithoutConnettore");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -6949,10 +6981,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection con = null;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getPropertiesConnettore");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getPropertiesConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getPropertiesConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7038,9 +7070,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 		else if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] SQLException accedendo al datasource :" + e.getMessage());
+				con = this.getConnectionFromDatasource("getAccordoServizioParteSpecifica");
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -7503,8 +7535,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		} catch (DriverRegistroServiziNotFound e) {
 			throw e;
 		}catch (Exception se) {
-			this.log.debug("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] SqlException:"+se.getMessage());
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] SqlException:" + se.getMessage(),se);
+			this.log.debug("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] Exception:"+se.getMessage());
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteSpecifica] Exception:" + se.getMessage(),se);
 
 		} finally {
 			try{
@@ -7549,10 +7581,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiAzioniList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7724,10 +7756,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiAzioniList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7900,10 +7932,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("serviziList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8084,10 +8116,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("servizioWithSoggettoFruitore");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8188,10 +8220,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiListEngine");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8407,10 +8439,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiCooperazioneList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8573,10 +8605,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiCoopPartecipantiList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8723,10 +8755,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiCoopWithSoggettoPartecipante");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8802,10 +8834,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiServizio_serviziComponentiConSoggettoErogatore");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8887,10 +8919,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiServizio_serviziComponenti");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8977,10 +9009,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiServizioWithAccordoCooperazione");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9068,10 +9100,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiErogatoriList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9276,7 +9308,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAccordoErogatoreFruitore");
 			else
 				con = this.globalConnection;
 
@@ -9360,7 +9392,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getErogatoreFruitore");
 			else
 				con = this.globalConnection;
 
@@ -9430,7 +9462,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdAccordiWithSoggettoReferente");
 			else
 				con = this.globalConnection;
 
@@ -9507,10 +9539,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiErogatoriFruitoriList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9662,10 +9694,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("serviziFruitoriList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -9807,10 +9839,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getServizioFruitore");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -9896,10 +9928,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isAccordoInUso");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -9935,10 +9967,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isInUso(accordoParteComune)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10034,10 +10066,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isServizioInUso");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10106,10 +10138,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isAccordoCooperazioneInUso");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10163,10 +10195,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isSoggettoInUso");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10388,10 +10420,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isInUso(soggetto)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10561,10 +10593,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isAzioneInUso");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -10627,10 +10659,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("deleteAzione");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -10705,7 +10737,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				con = conParam;
 			}
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getIdAccordoServizioParteComune(longId)");
 			else
 				con = this.globalConnection;
 
@@ -10801,7 +10833,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				con = conParam;
 			}
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAccordoServizioParteComune(longId)");
 			else
 				con = this.globalConnection;
 
@@ -10896,10 +10928,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("soggettiRegistroList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11104,10 +11136,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 		else if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getIdSoggetto(longId)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getIdSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getIdSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11195,10 +11227,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 		else if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getSoggetto(longId)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11330,7 +11362,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				con = conParam;
 			}
 			else if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getIdAccordoServizioParteSpecifica(longId)");
 			else
 				con = this.globalConnection;
 
@@ -11421,10 +11453,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 		else if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAccordoServizioParteSpecifica(longId)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizio] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11512,10 +11544,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("reset");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::reset] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::reset] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11692,10 +11724,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("resetCtrlstat");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::resetCtrlstat] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::resetCtrlstat] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11892,11 +11924,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 			return idServizio;
 
 		} catch (CoreException e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} catch (SQLException e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 			//Chiudo statement and resultset
 			try{
@@ -11916,10 +11948,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getTipi");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException(e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
 
 			}
 
@@ -11978,10 +12010,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getTipoById");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException(e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
 
 			}
 
@@ -12060,10 +12092,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("serviziFruitoriList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12213,10 +12245,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("serviziSoggettoList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12296,10 +12328,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ArrayList<AccordoServizioParteSpecifica> lista = new ArrayList<AccordoServizioParteSpecifica>();
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("serviziWithIdAccordoList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12372,10 +12404,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("getIdServizioFruitore");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getIdServizioFruitore] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getIdServizioFruitore] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12400,7 +12432,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -12435,10 +12467,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getServiziFruitoriWithServizio");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12530,10 +12562,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getServiziByIdErogatoreAndFilters");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12642,10 +12674,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getServiziByFruitore");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12716,10 +12748,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getSoggettiWithServizioNotFruitori");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12814,10 +12846,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiPorttypeList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12984,10 +13016,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiPorttypeList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13151,10 +13183,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiAllegatiList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13274,10 +13306,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiComponentiList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13439,10 +13471,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiCoopAllegatiList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13562,10 +13594,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiPorttypeOperationList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13760,10 +13792,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiPorttypeOperationList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13924,10 +13956,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiPorttypeOperationMessagePartList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14086,10 +14118,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isCorrelata");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14171,10 +14203,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isOperationCorrelata");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14259,10 +14291,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isOperationCorrelata(nomePortType,id,azione,idAzione,check)");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14405,7 +14437,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			Connection con = null;
 			Statement stmtTest = null;
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isAlive");
 				if(con == null)
 					throw new Exception("Connessione is null");
 				// test:
@@ -14462,10 +14494,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("soggettiServizioList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -14562,10 +14594,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("soggettiServizioList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -14866,10 +14898,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("createConnettore");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14926,10 +14958,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("updateConnettore");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14986,10 +15018,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("deleteConnettore");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15063,10 +15095,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("porteDominioList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15216,12 +15248,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isPddInUso");
 
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				throw new DriverRegistroServiziException(
 						"[DriverRegistroServiziDB::" + nomeMetodo
-						+ "] SQLException accedendo al datasource :"
+						+ "] Exception accedendo al datasource :"
 						+ e.getMessage(), e);
 
 			}
@@ -15301,12 +15333,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("pddSoggettiList");
 
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				throw new DriverRegistroServiziException(
 						"[DriverRegistroServiziDB::" + nomeMetodo
-						+ "] SQLException accedendo al datasource :"
+						+ "] Exception accedendo al datasource :"
 						+ e.getMessage(), e);
 
 			}
@@ -15492,10 +15524,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdSoggettiErogatori");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -15576,10 +15608,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getPortType");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -15687,10 +15719,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getIdServiziWithPortType");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -15775,10 +15807,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getIdServiziWithAccordo");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -15864,10 +15896,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("isUnicaAzioneInAccordi");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -15956,10 +15988,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.datasource.getConnection();
+				connection = this.getConnectionFromDatasource("existsDocumento");
 				connection.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsDocumento] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsDocumento] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -15991,7 +16023,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.close();
 		} catch (Exception e) {
 			exist = false;
-			throw new DriverRegistroServiziException(e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -16021,10 +16053,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getDocumento");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -16061,10 +16093,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getDocumento");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(), e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
 
 			}
 
@@ -16111,10 +16143,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("serviziAllegatiList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -16733,10 +16765,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiCompatibiliList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -16902,10 +16934,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("accordiPorttypeCompatibiliList");
 
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -17065,10 +17097,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("porteDominioWithSubject");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -17156,10 +17188,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("fruzioniWithClientAuthAbilitato");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -17241,7 +17273,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("createServizioApplicativoAutorizzato");
 			else
 				con = this.globalConnection;
 
@@ -17305,7 +17337,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("deleteServizioApplicativoAutorizzato");
 			else
 				con = this.globalConnection;
 
@@ -17379,7 +17411,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = this.getConnectionFromDatasource("getAllIdServiziApplicativiAutorizzati");
 			else
 				con = this.globalConnection;
 

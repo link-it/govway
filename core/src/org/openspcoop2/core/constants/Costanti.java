@@ -23,6 +23,10 @@ package org.openspcoop2.core.constants;
 
 import java.text.SimpleDateFormat;
 
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.resources.CostantiJMX;
+
 /**
  * Costanti 
  *
@@ -68,6 +72,16 @@ public class Costanti {
 	
 	public final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = "undefined";
 	
+	private final static String JMX_NAME_DATASOURCE_PDD = "DatasourcePdD";
+	public static DataSourceParams getDataSourceParamsPdD(boolean bindJMX,String tipoDB){
+		DataSourceParams dsParams = new DataSourceParams();
+		dsParams.setBindJmx(bindJMX);
+		dsParams.setWrapOriginalMethods(true); // per poter usare anche getConnection e getConnection(String,String)
+		dsParams.setDatabaseType(TipiDatabase.toEnumConstant(tipoDB));
+		dsParams.setJmxDomain(CostantiJMX.JMX_DOMINIO);
+		dsParams.setJmxName(Costanti.JMX_NAME_DATASOURCE_PDD);
+		return dsParams;
+	}
 	
 	public final static String WEB_NEW_LINE = "<br/>";
 }

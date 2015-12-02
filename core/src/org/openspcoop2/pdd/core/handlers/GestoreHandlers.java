@@ -420,6 +420,11 @@ public class GestoreHandlers  {
 				try{
 					GestoreHandlers.initHandlers[i].invoke(context);
 				}catch(Exception e){
+					
+					if(log!=null){
+						log.error("InitHandler["+GestoreHandlers.tipiInitHandlers[i]+"]",e);
+					}
+					
 					// Sollevo l'eccezione
 					HandlerException ex = new HandlerException(e.getMessage(),e);
 					ex.setIdentitaHandler("InitHandler["+GestoreHandlers.initHandlers[i]+"]");

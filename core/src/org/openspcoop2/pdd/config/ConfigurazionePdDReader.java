@@ -249,10 +249,12 @@ public class ConfigurazionePdDReader {
 	 * @return true se l'inizializzazione ha successo, false altrimenti.
 	 */
 	public static boolean initialize(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
-			String jndiNameDatasourcePdD, boolean forceDisableCache){
+			String jndiNameDatasourcePdD, boolean forceDisableCache,
+			boolean useOp2UtilsDatasource, boolean bindJMX){
 
 		try {
-			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache);	
+			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD, 
+					forceDisableCache, useOp2UtilsDatasource, bindJMX);	
 			return ConfigurazionePdDReader.initialize;
 		}
 		catch(Exception e) {
@@ -300,13 +302,15 @@ public class ConfigurazionePdDReader {
 	 * @param accessoConfigurazione Informazioni per accedere alla configurazione della PdD OpenSPCoop.
 	 */
 	public ConfigurazionePdDReader(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
-			String jndiNameDatasourcePdD, boolean forceDisableCache)throws DriverConfigurazioneException{
+			String jndiNameDatasourcePdD, boolean forceDisableCache,
+			boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverConfigurazioneException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
 			else
 				this.log = Logger.getLogger(ConfigurazionePdDReader.class);
-			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache);
+			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
+					useOp2UtilsDatasource, bindJMX);
 
 			// OpenSPCoop Properties
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();

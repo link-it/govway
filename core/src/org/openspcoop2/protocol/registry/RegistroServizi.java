@@ -226,7 +226,8 @@ public class RegistroServizi  {
 	 * @param accessoRegistro Informazioni per accedere al registro Servizi.
 	 */
 	public RegistroServizi(AccessoRegistro accessoRegistro,Logger alog,
-			Logger alogConsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, String jndiNameDatasourcePdD)throws DriverRegistroServiziException{
+			Logger alogConsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverRegistroServiziException{
 
 		try{ 
 			this.driverRegistroServizi = new java.util.Hashtable<String,IDriverRegistroServiziGet>();
@@ -331,7 +332,8 @@ public class RegistroServizi  {
 
 				// inizializzazione DB
 				else if(CostantiConfigurazione.REGISTRO_DB.equals(registro.getTipo())){
-					driver = new DriverRegistroServiziDB(path,null,this.log,registro.getTipoDatabase());
+					driver = new DriverRegistroServiziDB(path,null,this.log,registro.getTipoDatabase(),
+							useOp2UtilsDatasource,bindJMX);
 					this.mappingNomeRegistroToTipiDatabase.put(nomeRegistro, registro.getTipoDatabase());
 					this.mappingNomeRegistroToUseConnectionPdD.put(nomeRegistro, path.equals(jndiNameDatasourcePdD));
 					if( ((DriverRegistroServiziDB)driver).create ){

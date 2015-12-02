@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import javax.naming.RefAddr;
 
+import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.RisorseJMXException;
@@ -108,7 +109,7 @@ public class DataSourceFactory {
 	
 	// **** Metodi per la creazione ***
 	
-	public static org.openspcoop2.utils.datasource.DataSource newInstance(String jndiName,Properties jndiContext, DataSourceParams params) throws UtilsException{
+	public static org.openspcoop2.utils.datasource.DataSource newInstance(String jndiName,Properties jndiContext, DataSourceParams params) throws UtilsException, UtilsAlreadyExistsException{
 		if(jndiContext==null){
 			jndiContext = new Properties();
 		}
@@ -153,11 +154,11 @@ public class DataSourceFactory {
 		return newInstance(datasource, params, jndiName);
 	}
 
-	public static org.openspcoop2.utils.datasource.DataSource newInstance(javax.sql.DataSource datasource, DataSourceParams params) throws UtilsException{
+	public static org.openspcoop2.utils.datasource.DataSource newInstance(javax.sql.DataSource datasource, DataSourceParams params) throws UtilsException, UtilsAlreadyExistsException{
 		return newInstance(datasource, params, null);
 	}
 	
-	public static synchronized DataSource newInstance(javax.sql.DataSource datasource, DataSourceParams params, String jndiName) throws UtilsException{
+	public static synchronized DataSource newInstance(javax.sql.DataSource datasource, DataSourceParams params, String jndiName) throws UtilsException, UtilsAlreadyExistsException{
 		
 		if(params==null){
 			throw new UtilsException("Parameters undefined");
@@ -168,13 +169,13 @@ public class DataSourceFactory {
 		try{
 			if(params.getApplicativeId()!=null){
 				if(mapApplicativeIDtoUUID.containsKey(params.getApplicativeId())){
-					throw new UtilsException("Datasource with applicative id ["+params.getApplicativeId()+"] already exists");
+					throw new UtilsAlreadyExistsException("Datasource with applicative id ["+params.getApplicativeId()+"] already exists");
 				}
 			}
 			
 			if(jndiName!=null){
 				if(mapJndiNametoUUID.containsKey(jndiName)){
-					throw new UtilsException("Datasource with jndiName ["+jndiName+"] already exists");
+					throw new UtilsAlreadyExistsException("Datasource with jndiName ["+jndiName+"] already exists");
 				}
 			}
 			
@@ -198,7 +199,11 @@ public class DataSourceFactory {
 			}
 			
 			return ds;
-		}catch(Exception e){
+		}
+		catch(UtilsAlreadyExistsException e){
+			throw e;
+		}
+		catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 		

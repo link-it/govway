@@ -40,7 +40,7 @@ public class DataSourceParams {
 	private boolean bindJmx = true;
 	private String jmxDomain = "org.openspcoop2.utils";
 	private String jmxType = CostantiJMX.JMX_TYPE;
-	private String jmxName = "datasources";
+	private String jmxName = "Datasources";
 	
 	public TipiDatabase getDatabaseType() {
 		return this.databaseType;

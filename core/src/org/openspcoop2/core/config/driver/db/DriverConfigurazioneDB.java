@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -133,6 +132,7 @@ import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneSearch;
 import org.openspcoop2.core.config.driver.IExtendedInfo;
 import org.openspcoop2.core.config.driver.TipologiaServizioApplicativo;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -143,6 +143,10 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsAlreadyExistsException;
+import org.openspcoop2.utils.datasource.DataSourceFactory;
+import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -197,6 +201,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	/** Tabella soggetti */
 	String tabellaSoggetti = CostantiDB.SOGGETTI;
 
+
+	
 	/* ******** COSTRUTTORI e METODI DI RELOAD ******** */
 
 	public DriverConfigurazioneDB() {
@@ -220,10 +226,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		this(nomeDataSource,context,alog,tipoDB,false);
 	}
 	public DriverConfigurazioneDB(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDB, boolean tabellaSoggettiPDD) {
-		initDriverConfigurazioneDB(nomeDataSource, context, alog, tipoDB, tabellaSoggettiPDD);
+		initDriverConfigurazioneDB(nomeDataSource, context, alog, tipoDB, tabellaSoggettiPDD, false, false);
+	}
+	public DriverConfigurazioneDB(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDB, boolean tabellaSoggettiPDD,
+			boolean useOp2UtilsDatasource, boolean bindJMX) {
+		initDriverConfigurazioneDB(nomeDataSource, context, alog, tipoDB, tabellaSoggettiPDD, useOp2UtilsDatasource, bindJMX);
 	}
 
-	public void initDriverConfigurazioneDB(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDB, boolean tabellaSoggettiPDD) {
+	public void initDriverConfigurazioneDB(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDB, 
+			boolean tabellaSoggettiPDD, boolean useOp2UtilsDatasource, boolean bindJMX) {
 		try {
 			//PropertyConfigurator.configure(DriverConfigurazioneDB.class.getResource("/tracer.log4j.properties"));
 
@@ -234,12 +245,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				DriverConfigurazioneDB_LIB.initStaticLogger(this.log);
 			}
 
-			InitialContext initCtx = new InitialContext(context);
-			this.datasource = (DataSource) initCtx.lookup(nomeDataSource);
+			if(useOp2UtilsDatasource){
+				DataSourceParams dsParams = Costanti.getDataSourceParamsPdD(bindJMX, tipoDB);
+				try{
+					this.datasource = DataSourceFactory.newInstance(nomeDataSource, context, dsParams);
+				}catch(UtilsAlreadyExistsException exists){
+					this.datasource = DataSourceFactory.getInstance(nomeDataSource); 
+					if(this.datasource==null){
+						throw new Exception("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
+					}
+				}
+			}
+			else{
+				GestoreJNDI gestoreJNDI = new GestoreJNDI(context);
+				this.datasource = (DataSource) gestoreJNDI.lookup(nomeDataSource);
+			}
 			if (this.datasource != null)
 				this.create = true;
-			initCtx.close();
-		} catch (javax.naming.NamingException ne) {
+		} catch (Exception ne) {
 			this.create = false;
 			this.log.error("Impossibile recuperare il context: " + ne.getMessage());
 		}
@@ -305,15 +328,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	
 	
-	public Connection getConnection() throws DriverConfigurazioneException{
+	public Connection getConnection(String methodName) throws DriverConfigurazioneException{
 		Connection con = null;
 		
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(methodName);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConnection] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConnection] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -332,7 +355,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 	
-	
+	private Connection getConnectionFromDatasource(String methodName) throws Exception{
+		if(this.datasource instanceof org.openspcoop2.utils.datasource.DataSource){
+			return ((org.openspcoop2.utils.datasource.DataSource)this.datasource).getWrappedConnection(null, "DriverConfigurazione."+methodName);
+		}
+		else{
+			return this.datasource.getConnection();
+		}
+	}
+
 	
 	
 	public List<List<Object>> readCustom(ISQLQueryObject sqlQueryObject, List<Class<?>> returnTypes, List<JDBCObject> paramTypes) throws DriverConfigurazioneException
@@ -343,7 +374,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("readCustom");
 			else
 				con = this.globalConnection;
 		
@@ -388,10 +419,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 		else if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getIdSoggetto(longId)");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("DriverConfigurazioneDB::getIdSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("DriverConfigurazioneDB::getIdSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -500,10 +531,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		long idSoggetto= -1;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getSoggetto(idSoggetto)");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -561,10 +592,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createSoggetto");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -622,10 +653,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateSoggetto");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -684,10 +715,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteSoggetto");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -754,10 +785,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getSoggetto(location)");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -868,10 +899,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createConnettore");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -928,10 +959,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateConnettore");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -988,10 +1019,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteConnettore");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1053,10 +1084,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getRouter");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getRouter] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getRouter] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1127,10 +1158,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getSoggettiWithSuperuser");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggettiWithSuperuser] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggettiWithSuperuser] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1208,10 +1239,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		String sqlQuery = "";
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getSoggettiVirtuali");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1347,10 +1378,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		long idPortaDelegata = 0;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getPortaDelegata(idPortaDelegata)");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1495,10 +1526,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createPortaDelegata");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createPortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createPortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1555,10 +1586,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updatePortaDelegata");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updatePortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updatePortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1616,10 +1647,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deletePortaDelegata");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deletePortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deletePortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -1766,10 +1797,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getPortaApplicativa(idPortaApplicativa)");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -2051,10 +2082,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createPortaApplicativa");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createPortaApplicativa] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createPortaApplicativa] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -2111,10 +2142,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updatePortaApplicativa");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updatePortaApplicativa] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updatePortaApplicativa] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -2171,10 +2202,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deletePortaApplicativa");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deletePortaApplicativa] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deletePortaApplicativa] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -2266,10 +2297,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getPorteApplicative_SoggettiVirtuali");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicative_SoggettiVirtuali] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicative_SoggettiVirtuali] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -2698,10 +2729,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getServizioApplicativo");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3097,10 +3128,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createServizioApplicativo");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createServizioApplicativo] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3160,10 +3191,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateServizioApplicativo");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateServizioApplicativo] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3223,10 +3254,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteServizioApplicativo");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteServizioApplicativo] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3283,10 +3314,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getRoutingTable");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getRoutingTable] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getRoutingTable] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3484,10 +3515,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createRoutingTable");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRoutingTable] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRoutingTable] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3536,10 +3567,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateRoutingTable");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRoutingTable] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createRoutingTable] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3588,10 +3619,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteRoutingTable");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteRoutingTable] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteRoutingTable] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3651,10 +3682,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("routingList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -3804,10 +3835,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getAccessoRegistro");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3953,10 +3984,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createAccessoRegistro");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4000,10 +4031,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateAccessoRegistro");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4047,10 +4078,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteAccessoRegistro");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4101,10 +4132,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getAccessoConfigurazione");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoConfigurazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4189,10 +4220,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createAccessoConfigurazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoConfigurazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4236,10 +4267,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateAccessoConfigurazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoConfigurazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4283,10 +4314,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteAccessoConfigurazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoConfigurazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoConfigurazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4338,10 +4369,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getAccessoDatiAutorizzazione");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutorizzazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4426,10 +4457,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createAccessoDatiAutorizzazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoDatiAutorizzazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4473,10 +4504,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateAccessoDatiAutorizzazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoDatiAutorizzazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4520,10 +4551,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteAccessoDatiAutorizzazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoDatiAutorizzazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoDatiAutorizzazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4607,10 +4638,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getGestioneErrore("+cooperazione+")");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("["+tipoOperazione+"] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("["+tipoOperazione+"] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4699,9 +4730,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[getServiziAttiviPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("getStatoServiziPdD");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getServiziAttiviPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 		} else
@@ -4886,10 +4917,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createStatoServiziPdD");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createServiziAttiviPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createServiziAttiviPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4940,10 +4971,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateStatoServiziPdD");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateServiziAttiviPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateServiziAttiviPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -4995,10 +5026,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteStatoServiziPdD");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteServiziAttiviPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteServiziAttiviPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5061,10 +5092,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("systemPropertyList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5193,9 +5224,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[getSystemPropertiesPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("getSystemPropertiesPdD");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getSystemPropertiesPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 		} else
@@ -5287,10 +5318,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createSystemPropertiesPdD");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createServiziAttiviPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createServiziAttiviPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5341,10 +5372,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateSystemPropertiesPdD");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSystemPropertiesPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateSystemPropertiesPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5396,10 +5427,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteSystemPropertiesPdD");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteSystemPropertiesPdD] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteSystemPropertiesPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5464,10 +5495,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getConfigurazioneGenerale");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConfigurazioneGenerale] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConfigurazioneGenerale] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5845,10 +5876,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createConfigurazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createConfigurazioneGenerale] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createConfigurazioneGenerale] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5893,10 +5924,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateConfigurazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateConfigurazioneGenerale] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateConfigurazioneGenerale] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5941,10 +5972,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteConfigurazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteConfigurazioneGenerale] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteConfigurazioneGenerale] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5998,10 +6029,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createAccessoRegistro");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6052,10 +6083,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateAccessoRegistro");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6106,10 +6137,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteAccessoRegistro");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6162,10 +6193,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createGestioneErroreComponenteCooperazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createGestioneErroreComponenteCooperazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createGestioneErroreComponenteCooperazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6232,10 +6263,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateGestioneErroreComponenteCooperazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateGestioneErroreComponenteCooperazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateGestioneErroreComponenteCooperazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6286,10 +6317,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteGestioneErroreComponenteCooperazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteGestioneErroreComponenteCooperazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteGestioneErroreComponenteCooperazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6340,10 +6371,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("createGestioneErroreComponenteIntegrazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createGestioneErroreComponenteIntegrazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createGestioneErroreComponenteIntegrazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6410,10 +6441,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("updateGestioneErroreComponenteIntegrazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateGestioneErroreComponenteIntegrazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateGestioneErroreComponenteIntegrazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6464,10 +6495,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("deleteGestioneErroreComponenteIntegrazione");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteGestioneErroreComponenteIntegrazione] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteGestioneErroreComponenteIntegrazione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6532,10 +6563,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6675,10 +6706,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6831,10 +6862,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppPropList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -6971,10 +7002,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppServizioApplicativoList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7138,10 +7169,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppMessageSecurityRequestList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7280,10 +7311,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppMessageSecurityResponseList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7423,10 +7454,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7566,10 +7597,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7707,10 +7738,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateWithLocationList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7783,10 +7814,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateWithSoggettoErogatoreList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7859,10 +7890,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateWithTipoNomeErogatoreList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -7938,10 +7969,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppWithTipoNomeServizio");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8019,10 +8050,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteAppWithIdServizio");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8107,10 +8138,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateServizioApplicativoList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8275,10 +8306,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateMessageSecurityRequestList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8418,10 +8449,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateMessageSecurityResponseList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8560,10 +8591,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteDelegateCorrelazioneApplicativaList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -8708,10 +8739,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = (Connection) this.datasource.getConnection();
+				con = (Connection) getConnectionFromDatasource("porteDelegateCorrelazioneApplicativaRispostaList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -8854,10 +8885,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("porteApplicativeCorrelazioneApplicativaList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -9001,10 +9032,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = (Connection) this.datasource.getConnection();
+				con = (Connection) getConnectionFromDatasource("porteApplicativeCorrelazioneApplicativaRispostaList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -9153,10 +9184,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = (Connection) this.datasource.getConnection();
+				con = (Connection) getConnectionFromDatasource("getPorteApplicative");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -9277,10 +9308,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("servizioApplicativoList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9421,10 +9452,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("servizioApplicativoList(idSoggetto)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9474,10 +9505,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("servizioApplicativoWithCredenzialiList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9558,10 +9589,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("servizioApplicativoWithCredenzialiList(subject)");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9659,10 +9690,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("registriList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -9794,10 +9825,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("soggettiList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9953,10 +9984,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("soggettiWithServiziList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -10067,10 +10098,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("soggettiServizioApplicativoList");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10157,10 +10188,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10258,10 +10289,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10407,10 +10438,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -10538,10 +10569,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		String sqlQuery = "";
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getServizi_SoggettiVirtuali");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -10635,9 +10666,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 		else if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("getSoggetto(longId)");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 			}
 
 		} else
@@ -10771,10 +10802,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 		else if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getPortaApplicativa(longId)");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11334,10 +11365,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 		else  if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getPortaDelegata(longId)");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -11905,10 +11936,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("reset");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::reset] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::reset] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12133,10 +12164,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("resetCtrlstat");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::resetCtrlstat] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::resetCtrlstat] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12285,9 +12316,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaServizioApplicativo] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("existsPortaApplicativaServizioApplicativo");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaServizioApplicativo] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12341,9 +12372,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaSoggetto] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("existsPortaApplicativaSoggetto");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaSoggetto] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12398,9 +12429,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithServizio] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("getPorteApplicativeWithServizio");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithServizio] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12465,9 +12496,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithSoggettoAndServizio] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("getPortaApplicativaWithSoggettoAndServizio");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithSoggettoAndServizio] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12549,9 +12580,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("getPortaApplicativaAzione");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12619,9 +12650,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("existsPortaApplicativaAzione");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12685,9 +12716,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataServizioApplicativo] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("existsPortaDelegataServizioApplicativo");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataServizioApplicativo] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12741,9 +12772,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataSoggetto] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("existsPortaDelegataSoggetto");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataSoggetto] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12798,9 +12829,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("getPorteDelegateWithServizio");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12862,9 +12893,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("getPorteDelegateWithServizio");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12920,9 +12951,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServiziApplicativiWithIdErogatore] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("getServiziApplicativiWithIdErogatore");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServiziApplicativiWithIdErogatore] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -12977,9 +13008,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("getPortaDelegataAzione");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -13047,9 +13078,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataAzione] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("existsPortaDelegataAzione");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataAzione] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -13123,9 +13154,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("existsServizioApplicativo");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createAccessoRegistro] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13162,9 +13193,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("getIdServizioApplicativo");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13199,9 +13230,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsServizioApplicativoSoggetto] SQLException accedendo al datasource :" + e.getMessage());
+				con = getConnectionFromDatasource("existsServizioApplicativoSoggetto");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsServizioApplicativoSoggetto] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -13257,9 +13288,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("existsSoggetto");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13298,9 +13329,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		ResultSet risultato=null;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::isServizioApplicativoInUso] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("isServizioApplicativoInUso");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::isServizioApplicativoInUso] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13377,9 +13408,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		ResultSet risultato=null;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::isServizioApplicativoInUso] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("isInUso(servizioApplicativo)");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::isServizioApplicativoInUso] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13505,7 +13536,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			Connection con = null;
 			Statement stmtTest = null;
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("isAlive");
 				if(con == null)
 					throw new Exception("Connessione is null");
 				// test:
@@ -13568,9 +13599,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("getPortaApplicativa");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13624,9 +13655,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("existsPortaApplicativa");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13674,10 +13705,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -13842,10 +13873,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -13909,10 +13940,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
+				con = getConnectionFromDatasource("getPorteApplicativaByIdProprietario");
+			} catch (Exception e) {
 				throw new DriverConfigurazioneException(
-						"[DriverConfigurazioneDB::getPorteApplicativaByIdProprietario] SQLException accedendo al datasource :"
+						"[DriverConfigurazioneDB::getPorteApplicativaByIdProprietario] Exception accedendo al datasource :"
 								+ e.getMessage());
 
 			}
@@ -13973,10 +14004,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
+				con = getConnectionFromDatasource("getPorteApplicative(idServizio)");
+			} catch (Exception e) {
 				throw new DriverConfigurazioneException(
-						"[DriverConfigurazioneDB::getPorteApplicative] SQLException accedendo al datasource :"
+						"[DriverConfigurazioneDB::getPorteApplicative] Exception accedendo al datasource :"
 								+ e.getMessage());
 
 			}
@@ -14066,10 +14097,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
+				con = getConnectionFromDatasource("getPorteDelegate(idServizio,fruitore)");
+			} catch (Exception e) {
 				throw new DriverConfigurazioneException(
-						"[DriverConfigurazioneDB::getPorteDelegate] SQLException accedendo al datasource :"
+						"[DriverConfigurazioneDB::getPorteDelegate] Exception accedendo al datasource :"
 								+ e.getMessage());
 
 			}
@@ -14199,9 +14230,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("existsPortaDelegata");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14237,9 +14268,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegata] SQLException accedendo al datasource :" + e.getMessage(),e);
+				con = getConnectionFromDatasource("getPortaDelegata");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14378,10 +14409,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -14585,10 +14616,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -14812,10 +14843,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
 
 			}
 
@@ -15047,10 +15078,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15119,10 +15150,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15193,10 +15224,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15267,10 +15298,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15367,10 +15398,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = (Connection) this.datasource.getConnection();
+				con = (Connection) getConnectionFromDatasource("getPorteApplicativeBySoggettoVirtuale");
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeBySoggettoVirtuale] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeBySoggettoVirtuale] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15451,10 +15482,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		Connection con = null;
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getPropertiesConnettore");
 
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverRegistroServiziDB::getPropertiesConnettore] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverRegistroServiziDB::getPropertiesConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15498,7 +15529,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getAllIdSoggetti");
 			else
 				con = this.globalConnection;
 
@@ -15610,7 +15641,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getAllIdPorteDelegate");
 			else
 				con = this.globalConnection;
 
@@ -15776,7 +15807,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getAllIdPorteApplicative");
 			else
 				con = this.globalConnection;
 
@@ -15937,7 +15968,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource("getAllIdServiziApplicativi");
 			else
 				con = this.globalConnection;
 
@@ -16063,10 +16094,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -16218,10 +16249,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -16373,10 +16404,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -16528,10 +16559,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = this.datasource.getConnection();
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
-			} catch (SQLException e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage(),e);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 

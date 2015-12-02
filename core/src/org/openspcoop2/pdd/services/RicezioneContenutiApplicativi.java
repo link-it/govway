@@ -895,6 +895,8 @@ public class RicezioneContenutiApplicativi {
 
 		// --------- OPENSPCOOPSTATE ---------
 		OpenSPCoopState openspcoopstate = null;
+		try{ // finally in fondo, vedi  #try-finally-openspcoopstate#
+			
 		msgDiag.mediumDebug("Inizializzazione connessione al database...");
 		try {
 			openspcoopstate = new OpenSPCoopStateful();
@@ -3228,6 +3230,18 @@ public class RicezioneContenutiApplicativi {
 		gestioneRisposta(parametriGestioneRisposta);
 		msgDiag.mediumDebug("Lavoro Terminato.");
 
+		}finally{ // try vedi  #try-finally-openspcoopstate#
+			try{
+				if(openspcoopstate!=null){
+					openspcoopstate.forceFinallyReleaseResource();
+				}
+			}catch(Exception e){
+				if(msgDiag!=null)
+					msgDiag.logErroreGenerico(e, "Rilascio risorsa");
+				else
+					logCore.error("Rilascio risorsa: "+e.getMessage(),e);	
+			}
+		}
 	}
 
 	

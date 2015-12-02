@@ -905,6 +905,7 @@ public class RicezioneBuste {
 
 		// OPENSPCOOPSTATE 
 		OpenSPCoopState openspcoopstate = null;
+		try{ // finally in fondo, vedi  #try-finally-openspcoopstate#
 
 		// Messaggio di libreria 
 		SbustamentoMessage sbustamentoMSG = new SbustamentoMessage();
@@ -5204,6 +5205,20 @@ public class RicezioneBuste {
 			openspcoopstate.releaseResource();
 			return;
 		}
+		
+		}finally{ // try vedi  #try-finally-openspcoopstate#
+			try{
+				if(openspcoopstate!=null){
+					openspcoopstate.forceFinallyReleaseResource();
+				}
+			}catch(Exception e){
+				if(msgDiag!=null)
+					msgDiag.logErroreGenerico(e, "Rilascio risorsa");
+				else
+					logCore.error("Rilascio risorsa: "+e.getMessage(),e);	
+			}
+		}
+		
 	}
 
 	private void setCredenziali(Credenziali credenziali,MsgDiagnostico msgDiag){

@@ -190,11 +190,13 @@ public class RegistroServiziReader {
 	 * @return true se l'inizializzazione ha successo, false altrimenti.
 	 */
 	public static boolean initialize(AccessoRegistro accessoRegistro,Logger aLog,Logger aLogconsole,
-			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, String jndiNameDatasourcePdD){
+			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX){
 
 		try {
 			RegistroServiziReader.registroServiziReader = 
-				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,jndiNameDatasourcePdD);	
+				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
+						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX);	
 			return RegistroServiziReader.initialize;
 		}
 		catch(Exception e) {
@@ -240,13 +242,15 @@ public class RegistroServiziReader {
 	 * @param accessoRegistro Informazioni per accedere al registro Servizi.
 	 */
 	public RegistroServiziReader(AccessoRegistro accessoRegistro,Logger aLog,
-			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, String jndiNameDatasourcePdD)throws DriverRegistroServiziException{
+			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverRegistroServiziException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
 			else
 				this.log = Logger.getLogger(RegistroServiziReader.class);
-			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,jndiNameDatasourcePdD);
+			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
+					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX);
 			RegistroServiziReader.initialize = true;
 		}catch(Exception e){
 			RegistroServiziReader.initialize = false;

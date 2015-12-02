@@ -625,7 +625,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,
-					propertiesReader.getJNDIName_DataSource(), false);
+					propertiesReader.getJNDIName_DataSource(), false,
+					propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate());
 			if(isInitializeConfig == false){
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;
@@ -921,7 +922,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			boolean isInitializeRegistro = 
 				RegistroServiziReader.initialize(accessoRegistro,
 						logCore,OpenSPCoop2Startup.log,propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(),
-						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource());
+						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource(),
+						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate());
 			if(isInitializeRegistro == false){
 				msgDiag.logStartupError("Inizializzazione fallita","Accesso registro/i dei servizi");
 				return;

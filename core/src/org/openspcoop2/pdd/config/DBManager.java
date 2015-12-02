@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.config;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -72,6 +73,8 @@ public class DBManager implements IMonitoraggioRisorsa {
 	/** Stato di inizializzazione del manager */
 	private static boolean initialized = false;
 
+	private static final String DATE_FORMAT = "yyyy-MM-dd_HH:mm:ss.SSS";
+	
 	public static String[] getStatoRisorse() throws Exception{	
 		Object[] o = DBManager.risorseInGestione.values().toArray(new Resource[0]);
 		if(o==null)
@@ -87,7 +90,8 @@ public class DBManager implements IMonitoraggioRisorsa {
 			if(rr.getIdTransazione()!=null){
 				r[i] = r[i] +"."+rr.getIdTransazione();
 			}
-			r[i] = r[i] +" ("+rr.getDate().toString()+")";
+			SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // SimpleDateFormat non e' thread-safe
+			r[i] = r[i] +" ("+dateformat.format(rr.getDate())+")";
 		}
 		return r;
 		

@@ -238,7 +238,14 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 		return !this.connessioneInizializzata;
 	}
 	
-	
+	public void forceFinallyReleaseResource() {
+		if(this.connessioneInizializzata){
+			this.useConnection = true; // force
+			//System.out.println("Force close ...");
+			this.releaseResource();
+		}
+	}
+
 	
 	
 	
