@@ -38,7 +38,14 @@ public class IDSerialGeneratorParameter {
 	private Integer size = null;
 
 	private long serializableTimeWaitMs = 60000; // tempo massimo di attesa in millisecondi
-	private int serializableNextIntervalTimeMs = 100; // nuovo tentativo ogni 100 millisecondi
+	private int serializableNextIntervalTimeMs = 100; // nuovo tentativo ogni 100 millisecondi (random 0-100)
+	
+	// E' possibile attivare anche il next interval time ms increment mode.
+	// Se abilitato il nuovo tenntativo viene effettuato nell'intervallo (0 - (serializableNextIntervalTimeMs+(serializableNextIntervalTimeMsIncrement*iterazione))) 
+	// fino ad un massimo intervallo destro di maxSerializableNextIntervalTimeMs
+	private boolean serializableNextIntervalTimeMsIncrementMode = true;
+	private int serializableNextIntervalTimeMsIncrement = 200;
+	private int maxSerializableNextIntervalTimeMs = 2000;
 	
 	private String tableName;
 	private String columnPrg;
@@ -112,6 +119,25 @@ public class IDSerialGeneratorParameter {
 	}
 	public void setSerializableNextIntervalTimeMs(int serializableNextIntervalTimeMs) {
 		this.serializableNextIntervalTimeMs = serializableNextIntervalTimeMs;
+	}
+	
+	public boolean isSerializableNextIntervalTimeMsIncrementMode() {
+		return this.serializableNextIntervalTimeMsIncrementMode;
+	}
+	public void setSerializableNextIntervalTimeMsIncrementMode(boolean serializableNextIntervalTimeMsIncrementMode) {
+		this.serializableNextIntervalTimeMsIncrementMode = serializableNextIntervalTimeMsIncrementMode;
+	}
+	public int getSerializableNextIntervalTimeMsIncrement() {
+		return this.serializableNextIntervalTimeMsIncrement;
+	}
+	public void setSerializableNextIntervalTimeMsIncrement(int serializableNextIntervalTimeMsIncrement) {
+		this.serializableNextIntervalTimeMsIncrement = serializableNextIntervalTimeMsIncrement;
+	}
+	public int getMaxSerializableNextIntervalTimeMs() {
+		return this.maxSerializableNextIntervalTimeMs;
+	}
+	public void setMaxSerializableNextIntervalTimeMs(int maxSerializableNextIntervalTimeMs) {
+		this.maxSerializableNextIntervalTimeMs = maxSerializableNextIntervalTimeMs;
 	}
 	
 	public String getTableName() {

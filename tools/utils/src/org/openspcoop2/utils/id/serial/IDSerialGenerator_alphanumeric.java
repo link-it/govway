@@ -25,6 +25,8 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
@@ -72,6 +74,8 @@ public class IDSerialGenerator_alphanumeric {
 		PrintStream ps = new PrintStream(out);
 		
 		int iteration = 0;
+		
+		List<String> messageException = new ArrayList<String>();
 		
 		String table = param.getTableName();
 		if(table==null){
@@ -224,9 +228,19 @@ public class IDSerialGenerator_alphanumeric {
 				// ID Costruito
 				idBuildOK = true;
 
-			} catch(Exception e) {
+			} catch(Throwable e) {
 				ps.append("********* Exception Iteration ["+iteration+"] **********\n");
-				e.printStackTrace(ps);
+				String msg = e.getMessage(); // per evitare out of memory
+				if(msg==null){
+					msg = "NULL-MESSAGE";
+				}
+				if(messageException.contains(msg)){
+					ps.append("Message already occurs: "+msg);
+				}
+				else{
+					e.printStackTrace(ps);
+					messageException.add(msg);
+				}
 				ps.append("\n\n");
 				
 				if(infoStatistics!=null){
@@ -259,8 +273,17 @@ public class IDSerialGenerator_alphanumeric {
 			if(idBuildOK == false){
 				// Per aiutare ad evitare conflitti
 				try{
-					Thread.sleep((new java.util.Random())
-							.nextInt(checkIntervalloJDBC)); // random
+					int intervalloDestro = checkIntervalloJDBC;
+					if(param.isSerializableNextIntervalTimeMsIncrementMode()){
+						intervalloDestro = intervalloDestro + (iteration*param.getSerializableNextIntervalTimeMsIncrement());
+						if(intervalloDestro>param.getMaxSerializableNextIntervalTimeMs()){
+							intervalloDestro = param.getMaxSerializableNextIntervalTimeMs();
+						}
+					}
+					
+					int sleep = (new java.util.Random()).nextInt(intervalloDestro);
+					//System.out.println("Sleep: "+sleep);
+					Thread.sleep(sleep); // random
 				}catch(Exception eRandom){}
 			}
 		}

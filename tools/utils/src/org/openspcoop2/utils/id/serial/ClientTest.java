@@ -399,7 +399,7 @@ public class ClientTest {
 	private static void printInfos(InfoStatistics infoStat){
 		System.out.println("Numero di errori 'access serializable': "+infoStat.getErrorSerializableAccess());
 		for (int i=0; i<infoStat.getExceptionOccurs().size(); i++) {
-			Exception e = infoStat.getExceptionOccurs().get(i);
+			Throwable e = infoStat.getExceptionOccurs().get(i);
 			System.out.println("Errore-"+(i+1)+" (occurs:"+infoStat.getNumber(e)+"): "+e.getMessage());
 		}
 	}

@@ -35,21 +35,21 @@ import java.util.List;
 public class InfoStatistics {
 
 	private int errorSerializableAccess = 0;
-	private List<Exception> exceptionOccurs = new ArrayList<Exception>();
+	private List<Throwable> exceptionOccurs = new ArrayList<Throwable>();
 	private List<String> _exceptionOccursDistincts = new ArrayList<String>();
 	private Hashtable<String, Integer> _occurs = new Hashtable<String, Integer>(); 
 	
 	public int getErrorSerializableAccess() {
 		return this.errorSerializableAccess;
 	}
-	public List<Exception> getExceptionOccurs() {
+	public List<Throwable> getExceptionOccurs() {
 		return this.exceptionOccurs;
 	}
-	public int getNumber(Exception e){
+	public int getNumber(Throwable e){
 		return this._occurs.get(e.getMessage());
 	}
 	
-	protected synchronized void addErrorSerializableAccess(Exception e){
+	protected synchronized void addErrorSerializableAccess(Throwable e){
 		String msg = e.getMessage();
 		this.errorSerializableAccess++;
 		if(this._exceptionOccursDistincts.contains(msg)==false){
