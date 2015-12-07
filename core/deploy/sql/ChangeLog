@@ -1,3 +1,10 @@
+2015-12-07  Andrea Poli <apoli@link.it>
+
+	Modificata PK sulle tabelle 'ID_MESSAGGIO', 'ID_MESSAGGIO_RELATIVO', 'ID_MESSAGGIO_PRG' e 'ID_MESSAGGIO_RELATIVO_PRG'
+	alter table id_messaggio_relativo drop constraint pk_id_messaggio_relativo;
+	delete from id_messaggio_relativo;
+	alter table id_messaggio_relativo add constraint pk_id_messaggio_relativo primary key (protocollo,info_associata);
+
 2015-04-24  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonna 'ora_registrazione' alle tabelle 'ID_MESSAGGIO_RELATIVO', 'ID_MESSAGGIO_PRG' e 'ID_MESSAGGIO_RELATIVO_PRG'
