@@ -195,7 +195,9 @@ public class ClientTest {
 			
 			/** TEST N.1 PROGRESSIVO */
 			
+			//serialGeneratorParameter.setSizeBuffer(20);
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);			
 			System.out.println("\n\n==========================================");
 			System.out.println("Test 1. Progressivo numerico");
@@ -209,6 +211,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setMaxValue(10l);
 			System.out.println("\n\n==========================================");
@@ -232,6 +235,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setMaxValue(10l);
 			System.out.println("\n\n==========================================");
@@ -247,6 +251,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setMaxValue(Long.MAX_VALUE);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
@@ -262,6 +267,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setMaxValue(10l);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
@@ -286,6 +292,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setMaxValue(10l);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
@@ -303,6 +310,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 	
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setSize(1);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo(null); // annullo il precedente assegnamento
@@ -328,6 +336,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setSize(1);
 			System.out.println("\n\n==========================================");
@@ -342,6 +351,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 		
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setSize(1);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("InfoAssociata");
@@ -367,6 +377,7 @@ public class ClientTest {
 			clear(infoStat, con, stmtDelete);
 		
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.ALFANUMERICO);
+			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setSize(1);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("InfoAssociata");

@@ -49,6 +49,28 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class IDSerialGenerator_alphanumeric {
 
+	private static List<String> buffer = new ArrayList<String>();
+	private static String nextValue(){
+		synchronized(buffer){
+			if(buffer.size()<=0){
+				return null;
+			}
+			else{
+				return buffer.remove(0);
+			}
+		}
+	}
+	private static void putAll(List<String> valuesGenerated){
+		synchronized(buffer){
+			buffer.addAll(valuesGenerated);	
+		}
+	}
+	protected static void clearBuffer(){
+		synchronized(buffer){
+			buffer.clear();
+		}
+	}
+	
 	public static String generate(Connection conDB,TipiDatabase tipoDatabase,
 			IDSerialGeneratorParameter param,Logger log,InfoStatistics infoStatistics) throws UtilsException{
 		
@@ -114,9 +136,20 @@ public class IDSerialGenerator_alphanumeric {
 		
 		boolean maxValueAndWrapDisabled = false;
 		
+		List<String> valuesGenerated = new ArrayList<String>();
+		
 		while(maxValueAndWrapDisabled==false && idBuildOK==false && DateManager.getTimeMillis() < scadenzaWhile){
 
 			iteration++;
+			
+			// Prima provo ad utilizzare il buffer (può darsi che un altro thread l'abbia riempito)
+			if(param.getSizeBuffer()>1){
+				String valueFromBuffer = nextValue();
+				if(valueFromBuffer!=null){
+					//System.out.println("GET ["+valueFromBuffer+"] FROM BUFFER");
+					return valueFromBuffer;
+				}
+			}
 			
 			//log.info("ancoraImbustamento interval["+checkInterval+"]   secondi "+(scadenzaWhile-DateManager.getTimeMillis())/1000);
 
@@ -160,10 +193,22 @@ public class IDSerialGenerator_alphanumeric {
 				// incremento se esiste
 				if(exist){
 					progressivoTmp = rs.getString(columnPrg);
-					ApacheIdentifierGenerator generator = new ApacheIdentifierGenerator();
-					generatorConfig.setInitialStringValue(progressivoTmp);
-					generator.initialize(generatorConfig);
-					progressivoTmp = generator.newID().getAsString();
+					for (int i = 0; i < param.getSizeBuffer(); i++) {
+						try{
+							ApacheIdentifierGenerator generator = new ApacheIdentifierGenerator();
+							generatorConfig.setInitialStringValue(progressivoTmp);
+							generator.initialize(generatorConfig);
+							progressivoTmp = generator.newID().getAsString();
+							valuesGenerated.add(progressivoTmp);
+						}catch(Exception eMaxRaggiunto){
+							if(valuesGenerated.size()<=0){
+								throw eMaxRaggiunto;
+							}
+							else{
+								break; // utilizzo gli identificativi che ho generato fino ad ora.
+							}
+						}
+					}
 				}		
 				rs.close();
 				pstmt.close();
@@ -196,6 +241,9 @@ public class IDSerialGenerator_alphanumeric {
 					}
 					pstmtInsert.execute();
 					pstmtInsert.close();
+					
+					valuesGenerated.add(progressivoTmp);
+					
 				}else{
 					// Incremento!
 					StringBuffer queryUpdate = new StringBuffer();
@@ -321,7 +369,16 @@ public class IDSerialGenerator_alphanumeric {
 			throw new UtilsException(msgError);	
 		}
 
-		return progressivoTmp;
+		String vRet = valuesGenerated.remove(0);
+		
+		if(valuesGenerated.size()>0){
+			putAll(valuesGenerated);
+		}
+		
+		//System.out.println("GET ["+vRet+"] AND SET BUFFER AT SIZE ["+valuesGenerated.size()+"]");
+		
+		return vRet;
+		
 	}
 	
 }

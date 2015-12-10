@@ -52,6 +52,8 @@ public class IDSerialGeneratorParameter {
 	private String columnProtocol;
 	private String columnRelativeInfo;
 	
+	private int sizeBuffer = 1;
+	
 	public IDSerialGeneratorParameter(){
 	}
 	public IDSerialGeneratorParameter(String protocollo){
@@ -163,5 +165,12 @@ public class IDSerialGeneratorParameter {
 	}
 	public void setColumnRelativeInfo(String columnRelativeInfo) {
 		this.columnRelativeInfo = columnRelativeInfo;
+	}
+	
+	public int getSizeBuffer() {
+		return this.sizeBuffer;
+	}
+	public void setSizeBuffer(int sizeBuffer) {
+		this.sizeBuffer = sizeBuffer;
 	}
 }

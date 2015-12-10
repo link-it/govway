@@ -44,6 +44,16 @@ public class IDSerialGenerator {
 	public IDSerialGenerator(){
 	}
 	
+	public void clearBuffer(IDSerialGeneratorParameter param) {
+		IDSerialGeneratorType tipo = param.getTipo();
+		if ( IDSerialGeneratorType.ALFANUMERICO.equals(tipo) || IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) ) {
+			if ( IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) )
+				IDSerialGenerator_numeric.clearBuffer();
+			else
+				IDSerialGenerator_alphanumeric.clearBuffer();
+		}
+	}
+	
 	public long buildIDAsNumber(IDSerialGeneratorParameter param, Connection con, TipiDatabase tipoDatabase, Logger log) throws UtilsException {
 		try{
 			if(IDSerialGeneratorType.ALFANUMERICO.equals(param)){

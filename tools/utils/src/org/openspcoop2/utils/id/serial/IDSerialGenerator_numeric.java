@@ -44,9 +44,31 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class IDSerialGenerator_numeric {
 
+	private static List<String> buffer = new ArrayList<String>();
+	private static String nextValue(){
+		synchronized(buffer){
+			if(buffer.size()<=0){
+				return null;
+			}
+			else{
+				return buffer.remove(0);
+			}
+		}
+	}
+	private static void putAll(List<String> valuesGenerated){
+		synchronized(buffer){
+			buffer.addAll(valuesGenerated);	
+		}
+	}
+	protected static void clearBuffer(){
+		synchronized(buffer){
+			buffer.clear();
+		}
+	}
+	
 	public static String generate(Connection conDB,TipiDatabase tipoDatabase,
 			IDSerialGeneratorParameter param,Logger log, InfoStatistics infoStatistics) throws UtilsException{
-		
+				
 		long attesaAttivaJDBC = param.getSerializableTimeWaitMs();
 		int checkIntervalloJDBC = param.getSerializableNextIntervalTimeMs();
 		String protocollo = param.getProtocollo();
@@ -101,9 +123,20 @@ public class IDSerialGenerator_numeric {
 		
 		boolean maxValueAndWrapDisabled = false;
 		
+		List<String> valuesGenerated = new ArrayList<String>();
+		
 		while(maxValueAndWrapDisabled==false && idBuildOK==false && DateManager.getTimeMillis() < scadenzaWhile){
 
 			iteration++;
+
+			// Prima provo ad utilizzare il buffer (può darsi che un altro thread l'abbia riempito)
+			if(param.getSizeBuffer()>1){
+				String valueFromBuffer = nextValue();
+				if(valueFromBuffer!=null){
+					//System.out.println("GET ["+valueFromBuffer+"] FROM BUFFER");
+					return valueFromBuffer;
+				}
+			}
 			
 			//log.info("ancoraImbustamento interval["+checkInterval+"]   secondi "+(scadenzaWhile-DateManager.getTimeMillis())/1000);
 
@@ -143,19 +176,27 @@ public class IDSerialGenerator_numeric {
 					throw new UtilsException("Creazione serial non riuscita: ResultSet is null?");		
 				}
 				boolean exist = rs.next();
-
+				
 				// incremento se esiste
 				if(exist){
 					counterTmp = rs.getLong(columnPrg);
-					if ((counterTmp + 1) > param.getMaxValue()) {
-						if(param.isWrap()){
-							counterTmp = 0;
-						}else{
-							maxValueAndWrapDisabled = true;
-							throw new Exception("Max Value of identifier has been reached");
-						}
-					} 
-					counterTmp++;
+					for (int i = 0; i < param.getSizeBuffer(); i++) {
+						if ((counterTmp + 1) > param.getMaxValue()) {
+							if(param.isWrap()){
+								counterTmp = 0;
+							}else{
+								if(valuesGenerated.size()<=0){
+									maxValueAndWrapDisabled = true;
+									throw new Exception("Max Value of identifier has been reached");
+								}
+								else{
+									break; // utilizzo gli identificativi che ho generato fino ad ora.
+								}
+							}
+						} 
+						counterTmp++;
+						valuesGenerated.add(counterTmp+"");
+					}
 				}		
 				rs.close();
 				pstmt.close();
@@ -184,6 +225,9 @@ public class IDSerialGenerator_numeric {
 					}
 					pstmtInsert.execute();
 					pstmtInsert.close();
+					
+					valuesGenerated.add(counterTmp+"");
+					
 				}else{
 					// Incremento!
 					StringBuffer queryUpdate = new StringBuffer();
@@ -305,7 +349,15 @@ public class IDSerialGenerator_numeric {
 			throw new UtilsException(msgError);	
 		}
 
-		return counterTmp+"";
+		String vRet = valuesGenerated.remove(0);
+		
+		if(valuesGenerated.size()>0){
+			putAll(valuesGenerated);
+		}
+		
+		//System.out.println("GET ["+vRet+"] AND SET BUFFER AT SIZE ["+valuesGenerated.size()+"]");
+		
+		return vRet;
 	}
 	
 }
