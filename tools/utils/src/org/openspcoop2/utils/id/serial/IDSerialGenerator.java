@@ -44,13 +44,16 @@ public class IDSerialGenerator {
 	public IDSerialGenerator(){
 	}
 	
+	public void clearBuffer() {
+		IDSerialGeneratorBuffer.clearBuffer();
+	}
 	public void clearBuffer(IDSerialGeneratorParameter param) {
 		IDSerialGeneratorType tipo = param.getTipo();
 		if ( IDSerialGeneratorType.ALFANUMERICO.equals(tipo) || IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) ) {
 			if ( IDSerialGeneratorType.NUMERIC.equals(tipo) || IDSerialGeneratorType.DEFAULT.equals(tipo) )
-				IDSerialGenerator_numeric.clearBuffer();
+				IDSerialGeneratorBuffer.clearBuffer(IDSerialGenerator_numeric.class);
 			else
-				IDSerialGenerator_alphanumeric.clearBuffer();
+				IDSerialGeneratorBuffer.clearBuffer(IDSerialGenerator_alphanumeric.class);
 		}
 	}
 	

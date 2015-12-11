@@ -48,28 +48,6 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * @version $Rev$, $Date$
  */
 public class IDSerialGenerator_alphanumeric {
-
-	private static List<String> buffer = new ArrayList<String>();
-	private static String nextValue(){
-		synchronized(buffer){
-			if(buffer.size()<=0){
-				return null;
-			}
-			else{
-				return buffer.remove(0);
-			}
-		}
-	}
-	private static void putAll(List<String> valuesGenerated){
-		synchronized(buffer){
-			buffer.addAll(valuesGenerated);	
-		}
-	}
-	protected static void clearBuffer(){
-		synchronized(buffer){
-			buffer.clear();
-		}
-	}
 	
 	public static String generate(Connection conDB,TipiDatabase tipoDatabase,
 			IDSerialGeneratorParameter param,Logger log,InfoStatistics infoStatistics) throws UtilsException{
@@ -146,7 +124,7 @@ public class IDSerialGenerator_alphanumeric {
 			
 			// Prima provo ad utilizzare il buffer (può darsi che un altro thread l'abbia riempito)
 			if(param.getSizeBuffer()>1){
-				String valueFromBuffer = nextValue();
+				String valueFromBuffer = IDSerialGeneratorBuffer.nextValue(IDSerialGenerator_alphanumeric.class,param.getInformazioneAssociataAlProgressivo());
 				if(valueFromBuffer!=null){
 					//System.out.println("GET ["+valueFromBuffer+"] FROM BUFFER");
 					return valueFromBuffer;
@@ -374,7 +352,7 @@ public class IDSerialGenerator_alphanumeric {
 		String vRet = valuesGenerated.remove(0);
 		
 		if(valuesGenerated.size()>0){
-			putAll(valuesGenerated);
+			IDSerialGeneratorBuffer.putAll(valuesGenerated,IDSerialGenerator_alphanumeric.class,param.getInformazioneAssociataAlProgressivo());
 		}
 		
 		//System.out.println("GET ["+vRet+"] AND SET BUFFER AT SIZE ["+valuesGenerated.size()+"]");
