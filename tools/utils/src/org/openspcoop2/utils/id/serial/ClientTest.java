@@ -64,6 +64,7 @@ public class ClientTest {
 		String userName = null;
 		String password = null;
 		int timeWaitMs = 60000;
+		int sizeBuffer = 1;
 
 		switch (tipoDatabase) {
 		case POSTGRESQL:
@@ -164,6 +165,16 @@ public class ClientTest {
 				}
 			}
 		}
+		if(args.length>8){
+			String sizeBufferParam = args[8].trim();
+			if(!"${sizeBuffer}".equals(sizeBufferParam)){
+				try{
+					sizeBuffer = Integer.parseInt(sizeBufferParam);
+				}catch(Exception e){
+					throw new Exception("Parameter 'sizeBuffer' with wrong format (value:"+sizeBufferParam+"): "+e.getMessage(),e);
+				}
+			}
+		}
 		
 		Class.forName(driver).newInstance();
 		Connection con = null;
@@ -190,12 +201,11 @@ public class ClientTest {
 			// Tempo di attesa jdbc
 			serialGeneratorParameter.setSerializableTimeWaitMs(timeWaitMs);
 			//serialGeneratorParameter.setSerializableNextIntervalTimeMs(100);
-			
+			serialGeneratorParameter.setSizeBuffer(sizeBuffer);
 				
 			
 			/** TEST N.1 PROGRESSIVO */
 			
-			//serialGeneratorParameter.setSizeBuffer(20);
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);			

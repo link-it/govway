@@ -127,6 +127,8 @@ public class IDSerialGenerator_numeric {
 		
 		while(maxValueAndWrapDisabled==false && idBuildOK==false && DateManager.getTimeMillis() < scadenzaWhile){
 
+			valuesGenerated = new ArrayList<String>();
+			
 			iteration++;
 
 			// Prima provo ad utilizzare il buffer (può darsi che un altro thread l'abbia riempito)

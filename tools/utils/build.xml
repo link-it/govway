@@ -189,6 +189,7 @@
         		<arg value="${idsForThread}" /> <!-- opzionale -->
         		<arg value="${printDebug}" /> <!-- opzionale -->
         		<arg value="${timeWaitMs}" /> <!-- opzionale -->
+        		<arg value="${sizeBuffer}" /> <!-- opzionale -->
                 <classpath>
                 		<path refid="classpath_run_dist" />
                 </classpath>
