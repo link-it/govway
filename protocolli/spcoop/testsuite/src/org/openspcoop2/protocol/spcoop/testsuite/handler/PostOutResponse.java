@@ -27,7 +27,7 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseHandler;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 
 /**
  * Libreria per handler testsuite
@@ -90,8 +90,8 @@ public class PostOutResponse implements PostOutResponseHandler {
 			if(test.getEsito()==null){
 				throw new HandlerException("Esito da verificare is null ???");
 			}
-			if(!context.getEsito().equals(test.getEsito())){
-				throw new HandlerException("Esito della Porta di Dominio ["+context.getEsito().name()+"] diverso da quello atteso per il test ["+test.getEsito().name()+"]");
+			if(!context.getEsito().getName().equals(test.getEsito())){
+				throw new HandlerException("Esito della Porta di Dominio ["+context.getEsito().getName().name()+"] diverso da quello atteso per il test ["+test.getEsito().name()+"]");
 			}
 			
 			// Dimensioni
@@ -101,7 +101,7 @@ public class PostOutResponse implements PostOutResponseHandler {
 				Utilities.verificaLunghezza(context.getInputResponseMessageSize(), "InputResponseMessage", !test.isRispostaVuotaPD_PA());	
 				Utilities.verificaLunghezza(context.getOutputResponseMessageSize(), "OutputResponseMessage", !test.isRispostaVuotaSA_PD());
 			}else{
-				if(Esito.OK.equals(test.getEsito()) && test.getEgovContext()!=null && org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(test.getEgovContext().getScenarioCooperazione())){
+				if(EsitoTransazioneName.OK.equals(test.getEsito()) && test.getEgovContext()!=null && org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(test.getEgovContext().getScenarioCooperazione())){
 					// Puo' essere o non essere presente la InputResponse a seconda se viene ritornato o meno un messaggio
 				}else{
 					Utilities.verificaLunghezza(context.getInputResponseMessageSize(), "InputResponseMessage" , !test.isRispostaVuotaPA_SA());

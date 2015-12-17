@@ -24,7 +24,7 @@ package org.openspcoop2.pdd.core.handlers;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 
 
 /**
@@ -42,7 +42,7 @@ public class PostOutResponseContext extends OutResponseContext {
 	}
 	
 	/** Esito */
-	private Esito esito;
+	private EsitoTransazione esito;
 	
 	/** ReturnCode */
 	private int returnCode;
@@ -56,11 +56,11 @@ public class PostOutResponseContext extends OutResponseContext {
 	private Long inputResponseMessageSize;
 	private Long outputResponseMessageSize;
 	
-	public Esito getEsito() {
+	public EsitoTransazione getEsito() {
 		return this.esito;
 	}
 
-	public void setEsito(Esito esito) {
+	public void setEsito(EsitoTransazione esito) {
 		this.esito = esito;
 	}
 

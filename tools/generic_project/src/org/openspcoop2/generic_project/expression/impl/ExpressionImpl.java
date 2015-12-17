@@ -1076,7 +1076,7 @@ public class ExpressionImpl implements IExpression {
 		while (fieldsIt.hasNext()) {
 			IField field = fieldsIt.next();
 			Object value = propertyNameValues.get(field);
-			newConjunctionExpr.addXMLExpression(getComparatorExpression(field,value,c));
+			newConjunctionExpr.addExpression(getComparatorExpression(field,value,c));
 		}
 		this.conjunctionWithInternalInstance(newConjunctionExpr);
 		this.expressionEngine.setNot(this.notOperator);
@@ -1128,7 +1128,7 @@ public class ExpressionImpl implements IExpression {
 		cExp.setAndConjunction(and);
 		for (int i = 0; i < expressions.length; i++) {
 			ExpressionImpl xmlExpression = (ExpressionImpl) expressions[i];
-			cExp.addXMLExpression(xmlExpression.expressionEngine);
+			cExp.addExpression(xmlExpression.expressionEngine);
 		}	
 		if(this.expressionEngine==null){
 			this.expressionEngine = cExp;
@@ -1143,7 +1143,7 @@ public class ExpressionImpl implements IExpression {
 		if(this.expressionEngine!=null){
 			if(! (this.expressionEngine instanceof ConjunctionExpressionImpl) ){
 				// se non e' una congiunzione e' una singola operazione.
-				newConjunctionExpr.addXMLExpression(this.expressionEngine);
+				newConjunctionExpr.addExpression(this.expressionEngine);
 			}else{
 				// se e' una congiunzione verifico che al suo interno vi siano solo semplici operazioni e non altre congiunzioni e che l'operatore utilizzato sia quello di default.
 				// se cosi' e' evito di creare una struttura simile alla seguente: ((A & B) & C)
@@ -1165,15 +1165,15 @@ public class ExpressionImpl implements IExpression {
 				if(simpleConjunction){
 					for (Iterator<AbstractBaseExpressionImpl> iterator = cTest.getLista().iterator(); iterator.hasNext();) {
 						AbstractBaseExpressionImpl expr = iterator.next();
-						expr.setNot(false);
-						newConjunctionExpr.addXMLExpression(expr);
+						// Perchè ??? expr.setNot(false); Se si setta sempre a false una operazione scritta come and().not(expr).and().equals(a,2) resetta il not.
+						newConjunctionExpr.addExpression(expr);
 					}
 				}else{
-					newConjunctionExpr.addXMLExpression(cTest);
+					newConjunctionExpr.addExpression(cTest);
 				}
 			}
 		}
-		newConjunctionExpr.addXMLExpression(newExpr);
+		newConjunctionExpr.addExpression(newExpr);
 		this.expressionEngine = newConjunctionExpr;
 		this.expressionEngine.setNot(this.notOperator);
 	}

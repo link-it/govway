@@ -169,4 +169,10 @@ public class CostantiTestSuite {
 	/** Pulsante di 'Invia' */
 	public static final String BOTTONE_INVIA = "Invia";
 	
+	public static final String TABLE_TRANSAZIONI = "transazioni";
+	public static final String TABLE_TRANSAZIONI_ID_MESSAGGIO_RICHIESTA = "id_messaggio_richiesta";
+	public static final String TABLE_TRANSAZIONI_DUPLICATI_RICHIESTA = "duplicati_richiesta";
+	public static final String TABLE_TRANSAZIONI_ID_MESSAGGIO_RISPOSTA = "id_messaggio_risposta";
+	public static final String TABLE_TRANSAZIONI_DUPLICATI_RISPOSTA = "duplicati_risposta";
+	
 }

@@ -53,6 +53,7 @@ public class Costanti {
 	public final static String STATELESS = "STATELESS";
 	public final static String DATA_PRESA_IN_CARICO = "DATA_PRESA_IN_CARICO";
 	public final static String ERRORE_UTILIZZO_CONNETTORE = "ERRORE_UTILIZZO_CONNETTORE";
+	public final static String ERRORE_SOAP_FAULT_SERVER = "ERRORE_SOAP_FAULT_SERVER";
 	public final static String URL_INVOCAZIONE = "URL_INVOCAZIONE";
 	public final static String CREDENZIALI_INVOCAZIONE = "CREDENZIALI_INVOCAZIONE";
 	public final static String [] CONTEXT_OBJECT = 
@@ -62,6 +63,7 @@ public class Costanti {
 			Costanti.HEADER_TRASPORTO,Costanti.TIPO_OPERAZIONE_IM,
 			Costanti.STATELESS,Costanti.DATA_PRESA_IN_CARICO,
 			Costanti.ERRORE_UTILIZZO_CONNETTORE,
+			Costanti.ERRORE_SOAP_FAULT_SERVER,
 			Costanti.URL_INVOCAZIONE,
 			Costanti.CREDENZIALI_INVOCAZIONE};
     

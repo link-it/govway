@@ -1214,7 +1214,7 @@ public class RicezioneContenutiApplicativi {
 				return;
 			}
 
-			servizioApplicativo = auth.getServizioApplicativo();
+			servizioApplicativo = auth.getServizioApplicativo().getNome();
 		}
 		// Identita' errore
 		msgDiag.setPorta(idPD.getLocationPD());

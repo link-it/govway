@@ -42,12 +42,14 @@ import org.openspcoop2.message.OpenSPCoop2MessageException;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.services.connector.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.ConnectorOutMessage;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.Utilities;
@@ -65,6 +67,31 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class ServletUtils {
 
+	public static InformazioniErroriInfrastrutturali readInformazioniErroriInfrastrutturali(PdDContext pddContext){
+		
+		InformazioniErroriInfrastrutturali informazioniErrori = new InformazioniErroriInfrastrutturali();
+		
+		boolean erroreUtilizzoConnettore = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE);
+			if(o!=null && (o instanceof Boolean)){
+				erroreUtilizzoConnettore = (Boolean) o;
+			}
+		}
+		informazioniErrori.setErroreUtilizzoConnettore(erroreUtilizzoConnettore);
+
+		boolean erroreSOAPFaultServerPortaDelegata = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOAP_FAULT_SERVER);
+			if(o!=null && (o instanceof Boolean)){
+				erroreSOAPFaultServerPortaDelegata = (Boolean) o;
+			}
+		}
+		informazioniErrori.setRicevutoSoapFaultServerPortaDelegata(erroreSOAPFaultServerPortaDelegata);
+		
+		return informazioniErrori;
+	}
+	
 
 	public static boolean isContentTypeSupported(SOAPVersion soapVersion, IProtocolFactory protocolFactory) throws ProtocolException {
 		if(soapVersion==null)

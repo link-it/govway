@@ -1152,4 +1152,15 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 
 	
 	
+	@Override
+	public boolean isUseTransazioni(){
+		try{
+			return "true".equals(this.reader.getProperty("org.openspcoop2.testsuite.useTransazioni").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.useTransazioni':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return false;
+		}
+	}
+	
 }

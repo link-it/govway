@@ -686,10 +686,14 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			// Prima controllo un eventuale location fornito. Poi controllo il nome della porta delegata.
 			if(pd.getLocation()!=null){
 				if(pd.getLocation().equals(location)){
+					pd.setTipoSoggettoProprietario(soggetto.getTipo());
+					pd.setNomeSoggettoProprietario(soggetto.getNome());
 					return pd;
 				}
 			}
 			else if(location.equals(pd.getNome())){
+				pd.setTipoSoggettoProprietario(soggetto.getTipo());
+				pd.setNomeSoggettoProprietario(soggetto.getNome());
 				return pd;
 			}
 		}  
@@ -939,6 +943,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				// ricerca di una porta applicativa senza azione
 				if(azione==null){
 					if(pa.getAzione() == null){
+						pa.setTipoSoggettoProprietario(soggetto.getTipo());
+						pa.setNomeSoggettoProprietario(soggetto.getNome());
 						return pa;
 					}
 				}
@@ -946,9 +952,13 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				else{
 					if(pa.getAzione() == null){
 						paSenzaAzione = pa; // potenziale porta applicativa che mappa solo il servizio (se non esiste)
+						paSenzaAzione.setTipoSoggettoProprietario(soggetto.getTipo());
+						paSenzaAzione.setNomeSoggettoProprietario(soggetto.getNome());
 						continue;
 					}
 					if(azione.equals(pa.getAzione().getNome())){
+						pa.setTipoSoggettoProprietario(soggetto.getTipo());
+						pa.setNomeSoggettoProprietario(soggetto.getNome());
 						return pa;
 					}
 				}
@@ -989,7 +999,10 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		
 		for(int i=0; i<soggetto.sizePortaApplicativaList(); i++){
 			if (nomePorta.equals(soggetto.getPortaApplicativa(i).getNome())){
-				return soggetto.getPortaApplicativa(i);
+				PortaApplicativa pa = soggetto.getPortaApplicativa(i);
+				pa.setTipoSoggettoProprietario(soggetto.getTipo());
+				pa.setNomeSoggettoProprietario(soggetto.getNome());
+				return pa;
 			}
 		}
 		
@@ -1275,6 +1288,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				ServizioApplicativo sa =  pd.getServizioApplicativo(j);
 				if( servizioApplicativo.equals(sa.getNome()) ) {
 					if( sa.getInvocazionePorta()!=null ){
+						sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
+						sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
 						return sa;
 					}else{
 						break; // nella porta delegata e' presente solo il puntatore.
@@ -1293,8 +1308,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				throw new DriverConfigurazioneException("[getServizioApplicativo(RichiestaDelegata)] Soggetto fruitore non esistente");
 			for(int j=0; j<soggettoProprietario.sizeServizioApplicativoList(); j++){
 				ServizioApplicativo sa = soggettoProprietario.getServizioApplicativo(j);
-				if( servizioApplicativo.equals(sa.getNome()) )
+				if( servizioApplicativo.equals(sa.getNome()) ){
+					sa.setTipoSoggettoProprietario(soggettoProprietario.getTipo());
+					sa.setNomeSoggettoProprietario(soggettoProprietario.getNome());
 					return sa;
+				}
 			}
 		}
 		// Ricerca in ogni soggetto se uguale a null
@@ -1303,8 +1321,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
 				for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
 					ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
-					if( servizioApplicativo.equals(sa.getNome()) )
+					if( servizioApplicativo.equals(sa.getNome()) ){
+						sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+						sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 						return sa;
+					}
 				}
 			}
 		}
@@ -1337,6 +1358,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				ServizioApplicativo sa =  pa.getServizioApplicativo(j);
 				if( servizioApplicativo.equals(sa.getNome()) ) {
 					if( sa.getInvocazioneServizio() !=null ){
+						sa.setTipoSoggettoProprietario(pa.getTipoSoggettoProprietario());
+						sa.setNomeSoggettoProprietario(pa.getNomeSoggettoProprietario());
 						return sa;
 					}else{
 						break; // nella porta applicativa e' presente solo il puntatore.
@@ -1353,8 +1376,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			throw new DriverConfigurazioneException("[getServizioApplicativo(RichiestaApplicativa)] Soggetto Erogatore non esistente");
 		for(int j=0; j<soggettoProprietario.sizeServizioApplicativoList(); j++){
 			ServizioApplicativo sa = soggettoProprietario.getServizioApplicativo(j);
-			if( servizioApplicativo.equals(sa.getNome()) )
+			if( servizioApplicativo.equals(sa.getNome()) ){
+				sa.setTipoSoggettoProprietario(soggettoProprietario.getTipo());
+				sa.setNomeSoggettoProprietario(soggettoProprietario.getNome());
 				return sa;
+			}
 		}
 
 		throw new DriverConfigurazioneNotFound("[getServizioApplicativo(RichiestaApplicativa)] Servizio applicativo non esistente");
@@ -1388,6 +1414,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 									CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
 								if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
 										(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
+									sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
+									sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
 									return sa;
 								}
 							}
@@ -1413,6 +1441,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 									CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
 								if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
 										(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
+									sa.setTipoSoggettoProprietario(soggetto.getTipo());
+									sa.setNomeSoggettoProprietario(soggetto.getNome());
 									return sa;
 								}
 							}
@@ -1433,6 +1463,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 									CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
 								if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
 										(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
+									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 									return sa;
 								}
 							}
@@ -1458,6 +1490,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
 							if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
 									(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
+								sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+								sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 								return sa;
 							}
 						}
@@ -1498,6 +1532,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								try{
 									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+										sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
+										sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
 										return sa;
 									}	
 								}catch(Exception e){
@@ -1509,6 +1545,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								try{
 									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+										sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
+										sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
 										return sa;
 									}	
 								}catch(Exception e){
@@ -1538,6 +1576,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								try{
 									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+										sa.setTipoSoggettoProprietario(soggetto.getTipo());
+										sa.setNomeSoggettoProprietario(soggetto.getNome());
 										return sa;
 									}	
 								}catch(Exception e){
@@ -1549,6 +1589,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								try{
 									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+										sa.setTipoSoggettoProprietario(soggetto.getTipo());
+										sa.setNomeSoggettoProprietario(soggetto.getNome());
 										return sa;
 									}	
 								}catch(Exception e){
@@ -1573,6 +1615,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								try{
 									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+										sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+										sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 										return sa;
 									}	
 								}catch(Exception e){
@@ -1584,6 +1628,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								try{
 									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+										sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+										sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 										return sa;
 									}	
 								}catch(Exception e){
@@ -1613,6 +1659,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							try{
 								//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 									return sa;
 								}	
 							}catch(Exception e){
@@ -1624,6 +1672,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							try{
 								//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
 								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 									return sa;
 								}	
 							}catch(Exception e){
@@ -1663,6 +1713,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		for(int j=0; j<soggettoProprietario.sizeServizioApplicativoList(); j++){
 			ServizioApplicativo sa = soggettoProprietario.getServizioApplicativo(j);
 			if(idServizioApplicativo.getNome().equals(sa.getNome())){
+				sa.setTipoSoggettoProprietario(soggettoProprietario.getTipo());
+				sa.setNomeSoggettoProprietario(soggettoProprietario.getNome());
 				return sa;
 			}
 		}
@@ -1688,6 +1740,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
 					ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
 					if(sa.getNome().equals(nomeServizioApplicativo)){
+						sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+						sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 						return sa;
 					}
 				}

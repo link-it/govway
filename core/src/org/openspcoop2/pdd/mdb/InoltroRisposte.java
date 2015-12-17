@@ -86,9 +86,9 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.Trasmissione;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
-import org.openspcoop2.protocol.sdk.constants.Esito;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -753,7 +753,7 @@ public class InoltroRisposte extends GenericLib{
 			
 			OutResponseContext outResponseContext = new OutResponseContext(this.log,protocolFactory);
 		
-			Esito esitoHandler = null;
+			EsitoTransazione esitoHandler = null;
 			if(inoltroSegnalazioneErrore==false){
 				
 				// Informazioni sul messaggio
@@ -818,7 +818,7 @@ public class InoltroRisposte extends GenericLib{
 				// Prendo messaggio rielaborato
 				responseMessage = outResponseContext.getMessaggio();
 				if(responseMessage!=null){
-					esitoHandler = protocolFactory.createEsitoBuilder().getEsito(responseMessage, false);			
+					esitoHandler = protocolFactory.createEsitoBuilder().getEsito(null,responseMessage, null);			
 					
 				}
 			}

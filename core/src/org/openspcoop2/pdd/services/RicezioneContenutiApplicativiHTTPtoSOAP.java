@@ -62,9 +62,11 @@ import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
+import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
@@ -515,16 +517,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			}
 		}
 		
-		boolean erroreUtilizzoConnettore = false;
-		if(pddContext!=null){
-			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE);
-			if(o!=null && (o instanceof Boolean)){
-				erroreUtilizzoConnettore = (Boolean) o;
-			}
-		}
+		InformazioniErroriInfrastrutturali informazioniErrori = ServletUtils.readInformazioniErroriInfrastrutturali(pddContext);
 		
 		SOAPBody body = null;
-		Esito esito = null;
+		EsitoTransazione esito = null;
 		String descrizioneSoapFault = "";
 		int statoServletResponse = 200;
 		Exception erroreConsegnaRisposta = null; 
@@ -545,7 +541,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				String contentTypeRisposta = null;
 				byte[] risposta = null;
 				body = responseMessage.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(responseMessage, context.getProprietaErroreAppl(),erroreUtilizzoConnettore);
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori);
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500; // cmq e' un errore come l'errore applicativo
 					String msgError = SoapUtils.toString(body.getFault(), false);
@@ -605,14 +601,19 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
-				esito = Esito.OK; // carico-vuoto
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori);
+				// carico-vuoto
 			}
 			
 		}catch(Exception e){
 			logCore.error("ErroreGenerale",e);
 			erroreConsegnaRisposta = e;
 			
-			esito = Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+			try{
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
+			}catch(Exception eBuildError){
+				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+			}
 			
 			// Genero risposta con errore
 			try{
@@ -700,9 +701,13 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				erroreConsegnaRisposta = e;
 				
 				if(esito!=null){
-					if(Esito.OK.equals(esito)){
+					if(EsitoTransazioneName.OK.equals(esito.getName())){
 						// non è ok, essendo andato in errore il flush
-						esito = Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+						try{
+							esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
+						}catch(Exception eBuildError){
+							esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+						}
 					}
 				}
 				else{
@@ -753,7 +758,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				if(erroreConsegnaRisposta==null){
 					postOutResponseContext.setEsito(esito);
 				}else{
-					postOutResponseContext.setEsito(Esito.ERRORE_PROCESSAMENTO_PDD_5XX);
+					try{
+						esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
+					}catch(Exception eBuildError){
+						esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+					}
+					postOutResponseContext.setEsito(esito);
 				}
 				postOutResponseContext.setReturnCode(statoServletResponse);
 				postOutResponseContext.setPropertiesRispostaTrasporto(context.getHeaderIntegrazioneRisposta());

@@ -129,6 +129,8 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.engine.driver.History;
+import org.openspcoop2.protocol.engine.driver.IFiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
@@ -3823,7 +3825,10 @@ public class RicezioneBuste {
 										if(this.msgContext.isGestioneRisposta()){
 											this.msgContext.setMessageResponse(this.generaRisposta_msgGiaRicevuto(!this.msgContext.isForzaFiltroDuplicati_msgGiaInProcessamento(),
 													bustaRichiesta,infoIntegrazione, msgDiag, openspcoopstate, logCore, configurazionePdDReader,propertiesReader,
-													versioneProtocollo,ruoloBustaRicevuta,implementazionePdDMittente,protocolFactory));
+													versioneProtocollo,ruoloBustaRicevuta,implementazionePdDMittente,protocolFactory,
+													identitaPdD,idTransazione,loader,oneWayVersione11,implementazionePdDMittente,
+													tracciamento,messageSecurityContext,
+													correlazioneApplicativa));
 										}
 										openspcoopstate.releaseResource();
 										return;
@@ -6127,21 +6132,23 @@ public class RicezioneBuste {
 
 
 	private OpenSPCoop2Message generaRisposta_msgGiaRicevuto(boolean printMsg,Busta bustaRichiesta,Integrazione integrazione,MsgDiagnostico msgDiag,
-			IOpenSPCoopState openspcoopstate,Logger log,ConfigurazionePdDManager config,OpenSPCoop2Properties properties, String profiloGestione,
-			RuoloBusta ruoloBustaRicevuta,String implementazionePdDMittente,IProtocolFactory protocolFactory) throws ProtocolException{
+			OpenSPCoopState openspcoopstate,Logger log,ConfigurazionePdDManager config,OpenSPCoop2Properties properties, String profiloGestione,
+			RuoloBusta ruoloBustaRicevuta,String implementazionePdDMittente,IProtocolFactory protocolFactory,
+			IDSoggetto identitaPdD,String idTransazione,Loader loader, boolean oneWayVersione11,
+			String implementazionePdDSoggettoMittente,
+			Tracciamento tracciamento,MessageSecurityContext messageSecurityContext,
+			String idCorrelazioneApplicativa) throws ProtocolException, TracciamentoException{
 
 		RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopstate.getStatoRichiesta(), true,protocolFactory);
+		History historyBuste = new History(openspcoopstate.getStatoRichiesta(), log);
 		SOAPVersion versioneSoap = (SOAPVersion) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
 		Busta bustaHTTPReply = null;
-		if(printMsg){
-			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"ricezioneBustaDuplicata");
-		}
 		
-		IProtocolVersionManager imbustamentoModule = 
+		IProtocolVersionManager protocolManager = 
 				ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO)).createProtocolVersionManager(profiloGestione);
 		
 		boolean consegnaAffidabile = false;
-		switch (imbustamentoModule.getConsegnaAffidabile(bustaRichiesta.getProfiloDiCollaborazione())) {
+		switch (protocolManager.getConsegnaAffidabile(bustaRichiesta.getProfiloDiCollaborazione())) {
 		case ABILITATA:
 			consegnaAffidabile = true;
 			break;
@@ -6153,6 +6160,36 @@ public class RicezioneBuste {
 			break;
 		}
 		
+		// Aggiorno duplicati
+		try{
+			IFiltroDuplicati gestoreFiltroDuplicati = Sbustamento.getGestoreFiltroDuplicati(properties, loader, 
+					openspcoopstate, this.msgContext.getPddContext(), historyBuste, repositoryBuste, oneWayVersione11);
+			gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRichiesta.getID()); // lo invoco lo stesso per eventuali implementazioni che utilzzano il worflow
+			// Aggiorno duplicati
+			if(printMsg){
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"ricezioneBustaDuplicata.count");
+			}
+			gestoreFiltroDuplicati.incrementaNumeroDuplicati(protocolFactory,bustaRichiesta.getID());
+			openspcoopstate.commit();
+		}catch(Exception e){
+			log.error("Aggiornamento numero duplicati per busta ["+bustaRichiesta.getID()+"] non riuscito: "+e.getMessage(),e);
+		}
+		if(printMsg){
+			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"ricezioneBustaDuplicata");
+		}
+		
+		Imbustamento imbustatore = new Imbustamento(log, protocolFactory);
+		
+		/* 
+		 * 1) duplicato in caso di oneWay: se confermaRicezione=true e la gestione dei riscontri e' attiva, re-invio un riscontro
+		 * 1b) duplicato in caso di oneWay: se confermaRicezione=false o cmq la gestione dei riscontri non è attiva, genero Errore se indicato da file property, altrimenti ritorno http 202
+		 * 2) duplicati in caso sincrono: genero un msg Errore
+		 * 3) duplicati in caso asincrono: rigenero la ricevuta
+		 */
+		
+		boolean http200 = true;
+		
+		// 1) 
 		if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
 				consegnaAffidabile){
 			msgDiag.logPersonalizzato("generazioneRiscontro");
@@ -6161,14 +6198,51 @@ public class RicezioneBuste {
 			TipoOraRegistrazione tipoOraRegistrazione = properties.getTipoTempoBusta(implementazionePdDMittente);
 			bustaHTTPReply = bustaRichiesta.invertiBusta(tipoOraRegistrazione,protocolFactory.createTraduttore().toString(tipoOraRegistrazione));
 
+			String id_busta_risposta = 
+					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+							properties.getGestioneSerializableDB_AttesaAttiva(),
+							properties.getGestioneSerializableDB_CheckInterval(),
+							Boolean.FALSE);
+			bustaHTTPReply.setID(id_busta_risposta);
+			
 			Riscontro r = new Riscontro();
-			r.setID(bustaHTTPReply.getID());
+			r.setID(bustaRichiesta.getID());
 			r.setOraRegistrazione(DateManager.getDate());
 			r.setTipoOraRegistrazione(properties.getTipoTempoBusta(implementazionePdDMittente));
 			bustaHTTPReply.addRiscontro(r);
 
 		}
-
+		// 1b) 
+		else if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
+				( (properties.isGestioneRiscontri(implementazionePdDMittente)==false) || (bustaRichiesta.isConfermaRicezione()==false) )  && 
+				( protocolManager.isGenerazioneErroreMessaggioOnewayDuplicato() || properties.isGenerazioneErroreProtocolloFiltroDuplicati(implementazionePdDMittente))){
+			http200 = false;
+			
+			String id_busta_risposta = 
+					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+							properties.getGestioneSerializableDB_AttesaAttiva(),
+							properties.getGestioneSerializableDB_CheckInterval(),
+							Boolean.FALSE);
+			Vector<Eccezione> v = new Vector<Eccezione>();
+			v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));
+			bustaHTTPReply = imbustatore.buildMessaggioErroreProtocollo_Validazione(v,bustaRichiesta,id_busta_risposta,
+					properties.getTipoTempoBusta(implementazionePdDSoggettoMittente));	
+			if( !( identitaPdD.getNome().equals(bustaHTTPReply.getMittente()) && 
+					identitaPdD.getTipo().equals(bustaHTTPReply.getTipoMittente()) ) ){
+				// Il mittente della busta che sara' spedita e' il router
+				bustaHTTPReply.setMittente(identitaPdD.getNome());
+				bustaHTTPReply.setTipoMittente(identitaPdD.getTipo());
+				bustaHTTPReply.setIdentificativoPortaMittente(identitaPdD.getCodicePorta());
+				bustaHTTPReply.setIndirizzoMittente(null);
+			}		
+			
+		}
+		// 2)
+		//else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())){
+		// non ci si entra mai in questo caso. Il metodo non viene mai chiamato nel caso di sincrono
+		//}
+		
+		// 3
 		else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
 				org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())){
 
@@ -6205,25 +6279,77 @@ public class RicezioneBuste {
 				bustaHTTPReply.setRiferimentoMessaggio(bustaRichiesta.getID());
 				// (per gli asincroni devono sempre essere presenti)
 				if( properties.isGestioneElementoCollaborazione(implementazionePdDMittente))
-					bustaHTTPReply.setCollaborazione(bustaRichiesta.getCollaborazione());							
+					bustaHTTPReply.setCollaborazione(bustaRichiesta.getCollaborazione());		
+				
+				String id_busta_risposta = 
+						imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+								properties.getGestioneSerializableDB_AttesaAttiva(),
+								properties.getGestioneSerializableDB_CheckInterval(),
+								Boolean.FALSE);
+				bustaHTTPReply.setID(id_busta_risposta);
 			}
 		}
-
-		// Aggiorno duplicati
-		try{
-			repositoryBuste.aggiornaDuplicatiIntoInBox(bustaRichiesta.getID());
-			openspcoopstate.commit();
-		}catch(Exception e){
-			log.error("Aggiornamento numero duplicati per busta ["+bustaRichiesta.getID()+"] non riuscito: "+e.getMessage());
+		// 4
+		else{
+			if( protocolManager.isGenerazioneErroreMessaggioOnewayDuplicato() || properties.isGenerazioneErroreProtocolloFiltroDuplicati(implementazionePdDMittente)){
+				http200 = false;
+				
+				String id_busta_risposta = 
+						imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+								properties.getGestioneSerializableDB_AttesaAttiva(),
+								properties.getGestioneSerializableDB_CheckInterval(),
+								Boolean.FALSE);
+				Vector<Eccezione> v = new Vector<Eccezione>();
+				v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));
+				bustaHTTPReply = imbustatore.buildMessaggioErroreProtocollo_Validazione(v,bustaRichiesta,id_busta_risposta,
+						properties.getTipoTempoBusta(implementazionePdDSoggettoMittente));	
+				if( !( identitaPdD.getNome().equals(bustaHTTPReply.getMittente()) && 
+						identitaPdD.getTipo().equals(bustaHTTPReply.getTipoMittente()) ) ){
+					// Il mittente della busta che sara' spedita e' il router
+					bustaHTTPReply.setMittente(identitaPdD.getNome());
+					bustaHTTPReply.setTipoMittente(identitaPdD.getTipo());
+					bustaHTTPReply.setIdentificativoPortaMittente(identitaPdD.getCodicePorta());
+					bustaHTTPReply.setIndirizzoMittente(null);
+				}		
+			}
 		}
 
 		if(bustaHTTPReply==null){
 			return SoapUtils.build_Soap_Empty(versioneSoap);
 		}else{
-			Imbustamento imbustatore = new Imbustamento(log, protocolFactory);
-			OpenSPCoop2Message msg = SoapUtils.build_Soap_Empty(versioneSoap);
+						
+			OpenSPCoop2Message msg = null;
+			if(http200){
+				msg = SoapUtils.build_Soap_Empty(versioneSoap);
+			}
+			else{
+				msg = imbustatore.buildSoapMsgErroreProtocollo_Validazione(versioneSoap, properties.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
+			}
 			imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),msg,bustaHTTPReply,integrazione,
 					false,false,false,null);
+			
+			
+			//			Tracciamento Busta Ritornata: cambiata nel metodo msgErroreProcessamento
+			if(this.msgContext.isTracciamentoAbilitato()){
+				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
+						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioInviato();
+				SecurityInfo securityInfoResponse  = null;
+//				boolean functionAsRouter = false; // In questo caso dovrebbe essere sempre false?
+//				if(functionAsRouter){
+//					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+//						IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica();
+//						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),msg);
+//					}
+//				}
+				Validatore v = new Validatore(msg,openspcoopstate.getStatoRichiesta(),
+						log, protocolFactory);
+				tracciamento.registraRisposta(msg,securityInfoResponse,
+						v.getHeaderProtocollo_senzaControlli(), bustaHTTPReply,esitoTraccia,
+						Tracciamento.createLocationString(false,this.msgContext.getFromLocation()),
+						idCorrelazioneApplicativa,
+						null);
+			}
+			
 			return msg;
 		}
 	}

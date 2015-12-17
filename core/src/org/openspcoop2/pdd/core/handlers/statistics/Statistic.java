@@ -22,7 +22,7 @@
 package org.openspcoop2.pdd.core.handlers.statistics;
 
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 
 /**
  * Statistic
@@ -35,7 +35,7 @@ public class Statistic {
 
 	private TipoPdD tipoPdD;
 	
-	private Esito esito;
+	private EsitoTransazione esito;
 	
 	private long timeMillisIngressoRichiesta = -1;
 	private long timeMillisUscitaRichiesta = -1;
@@ -53,10 +53,10 @@ public class Statistic {
 	public void setTipoPdD(TipoPdD tipoPdD) {
 		this.tipoPdD = tipoPdD;
 	}
-	public Esito getEsito() {
+	public EsitoTransazione getEsito() {
 		return this.esito;
 	}
-	public void setEsito(Esito esito) {
+	public void setEsito(EsitoTransazione esito) {
 		this.esito = esito;
 	}
 	public long getTimeMillisIngressoRichiesta() {

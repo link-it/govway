@@ -168,13 +168,23 @@ public class Client {
 		
 		// NOTA: gestire un eventuale nuovo a.s. anche nella classe  org.openspcoop2.utils.resources.GestoreRisorseJMX
 		try{
+			if(username!=null && password!=null){
+				System.out.println("Use credential ["+username+"] ["+password+"]");
+			}
+			
 			MBeanServerConnection mconn = null;
 			if(args[0].equals("jboss7") ||
 					args[0].equals("jboss8") ||
 					args[0].equals("wildfly8") ||
 					args[0].startsWith("tomcat")){
-				JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);       
-				JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, null);       
+				JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);  
+				Hashtable<String, Object> env = null;
+				if(username!=null && password!=null){
+					String[] creds = {username, password};
+					env = new Hashtable<String, Object>();
+					env.put(JMXConnector.CREDENTIALS, creds);
+				}
+				JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);             
 				mconn = jmxConnector.getMBeanServerConnection();
 			}
 			else{

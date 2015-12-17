@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -225,7 +226,7 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 		
 		if(checkMsgInProcessamento && stateful && is500) {
 			if(data.getVerificatoreMessaggi().existsMessaggioInProcessamento(id, this.getTipoMessaggio())) {
-				data.getVerificatoreMessaggi().deleteMessage(id, this.getTipoMessaggio());
+				data.getVerificatoreMessaggi().deleteMessage(id, this.getTipoMessaggio(),Utilities.testSuiteProperties.isUseTransazioni());
 			} else {
 				Reporter.log("Atteso messaggio in processamento per il messaggio con id: " +id);
 				Assert.fail("Atteso messaggio in processamento per il messaggio con id: " +id);

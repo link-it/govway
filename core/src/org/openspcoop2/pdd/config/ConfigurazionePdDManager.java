@@ -55,6 +55,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -440,19 +441,19 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getServizioApplicativo(this.getConnection(), idPA, serv);
 	}
 	
-	public String autenticazioneHTTP(IDSoggetto aSoggetto,String location, String aUser,String aPassword) throws DriverConfigurazioneException{ 
+	public IDServizioApplicativo autenticazioneHTTP(IDSoggetto aSoggetto,String location, String aUser,String aPassword) throws DriverConfigurazioneException{ 
 		return this.configurazionePdDReader.autenticazioneHTTP(this.getConnection(), aSoggetto, location, aUser, aPassword);
 	}
 	
-	public String autenticazioneHTTP(String aUser,String aPassword) throws DriverConfigurazioneException{ 
+	public IDServizioApplicativo autenticazioneHTTP(String aUser,String aPassword) throws DriverConfigurazioneException{ 
 		return this.configurazionePdDReader.autenticazioneHTTP(this.getConnection(), aUser, aPassword);
 	}
 	
-	public String autenticazioneHTTPS(IDSoggetto aSoggetto,String location, String aSubject) throws DriverConfigurazioneException{ 
+	public IDServizioApplicativo autenticazioneHTTPS(IDSoggetto aSoggetto,String location, String aSubject) throws DriverConfigurazioneException{ 
 		return this.configurazionePdDReader.autenticazioneHTTPS(this.getConnection(), aSoggetto, location, aSubject);
 	}
 	
-	public String autenticazioneHTTPS(String aSubject) throws DriverConfigurazioneException{ 
+	public IDServizioApplicativo autenticazioneHTTPS(String aSubject) throws DriverConfigurazioneException{ 
 		return this.configurazionePdDReader.autenticazioneHTTPS(this.getConnection(), aSubject);
 	}
 	

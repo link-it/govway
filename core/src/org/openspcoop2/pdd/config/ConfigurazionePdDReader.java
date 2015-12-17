@@ -82,6 +82,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -2493,7 +2494,7 @@ public class ConfigurazionePdDReader {
 	 * @return Il nome del servizio applicativo che include le credenziali passate come parametro. 
 	 * 
 	 */
-	protected String autenticazioneHTTP(Connection connectionPdD,IDSoggetto aSoggetto,String location, String aUser,String aPassword) throws DriverConfigurazioneException{ 
+	protected IDServizioApplicativo autenticazioneHTTP(Connection connectionPdD,IDSoggetto aSoggetto,String location, String aUser,String aPassword) throws DriverConfigurazioneException{ 
 
 		ServizioApplicativo servizioApplicativo = null;
 		try{
@@ -2505,12 +2506,18 @@ public class ConfigurazionePdDReader {
 			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
-		if(servizioApplicativo!=null)
-			return servizioApplicativo.getNome();
+		if(servizioApplicativo!=null){
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo.getNome());
+			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
+				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
+			}
+			return idSA;
+		}
 		else
 			return null;
 	}
-	protected String autenticazioneHTTP(Connection connectionPdD,String aUser,String aPassword) throws DriverConfigurazioneException{ 
+	protected IDServizioApplicativo autenticazioneHTTP(Connection connectionPdD,String aUser,String aPassword) throws DriverConfigurazioneException{ 
 
 		ServizioApplicativo servizioApplicativo = null;
 		try{
@@ -2519,8 +2526,14 @@ public class ConfigurazionePdDReader {
 			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
 
-		if(servizioApplicativo!=null)
-			return servizioApplicativo.getNome();
+		if(servizioApplicativo!=null){
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo.getNome());
+			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
+				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
+			}
+			return idSA;
+		}
 		else
 			return null;
 	}
@@ -2534,7 +2547,7 @@ public class ConfigurazionePdDReader {
 	 * @return Il nome del servizio applicativo che include le credenziali passate come parametro. 
 	 * 
 	 */
-	protected String autenticazioneHTTPS(Connection connectionPdD,IDSoggetto aSoggetto,String location, String aSubject) throws DriverConfigurazioneException{ 
+	protected IDServizioApplicativo autenticazioneHTTPS(Connection connectionPdD,IDSoggetto aSoggetto,String location, String aSubject) throws DriverConfigurazioneException{ 
 
 		ServizioApplicativo servizioApplicativo = null;
 		try{
@@ -2546,13 +2559,19 @@ public class ConfigurazionePdDReader {
 			//this.log.debug("autenticazioneHTTPS (not found): "+e.getMessage());
 		}
 
-		if(servizioApplicativo!=null)
-			return servizioApplicativo.getNome();
+		if(servizioApplicativo!=null){
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo.getNome());
+			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
+				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
+			}
+			return idSA;
+		}
 		else
 			return null;
 	}
 	
-	protected String autenticazioneHTTPS(Connection connectionPdD,String aSubject) throws DriverConfigurazioneException{ 
+	protected IDServizioApplicativo autenticazioneHTTPS(Connection connectionPdD,String aSubject) throws DriverConfigurazioneException{ 
 
 		ServizioApplicativo servizioApplicativo = null;
 		try{
@@ -2561,8 +2580,14 @@ public class ConfigurazionePdDReader {
 			//this.log.debug("autenticazioneHTTPS (not found): "+e.getMessage());
 		}
 
-		if(servizioApplicativo!=null)
-			return servizioApplicativo.getNome();
+		if(servizioApplicativo!=null){
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo.getNome());
+			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
+				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
+			}
+			return idSA;
+		}
 		else
 			return null;
 	}

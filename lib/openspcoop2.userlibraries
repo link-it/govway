@@ -110,6 +110,9 @@
         <archive path="/op2_2.3.dev/lib/shared/activation-1.1.1.jar"/>
         <archive path="/op2_2.3.dev/lib/shared/aspectjrt-1.7.3.jar"/>
 	<archive path="/op2_2.3.dev/lib/shared/freemarker-2.3.23.jar"/>
+	<archive path="/op2_2.2.dev/lib/shared/saxon9he.jar"/>
+	<archive path="/op2_2.2.dev/lib/shared/saxon9-xqj.jar"/>
+	<archive path="/op2_2.2.dev/lib/shared/xmlunit-1.6.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_2.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_2.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>

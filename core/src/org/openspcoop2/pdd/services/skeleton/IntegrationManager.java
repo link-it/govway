@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.SOAPVersion;
@@ -88,20 +89,22 @@ import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
+import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
-import org.openspcoop2.protocol.sdk.constants.Esito;
-import org.openspcoop2.protocol.sdk.constants.EsitoIM;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.IUniqueIdentifier;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.resources.TransportRequestContext;
 
 		
 /**
@@ -312,7 +315,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	 * @return il nome del Servizio Applicativo invocante
 	 * 
 	 */
-	private String autenticazione(IProtocolFactory protocolFactory,MsgDiagnostico msgDiag,InfoConnettoreIngresso infoConnettoreIngresso,
+	private IDServizioApplicativo autenticazione(IProtocolFactory protocolFactory,MsgDiagnostico msgDiag,InfoConnettoreIngresso infoConnettoreIngresso,
 			ConfigurazionePdDManager configPdDManager,PdDContext pddContext) throws IntegrationManagerException {
 		
 		Credenziali credenziali = infoConnettoreIngresso.getCredenziali();
@@ -333,7 +336,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 		msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenzialiFornite);
 
-		String servizio_applicativo = null;	    
+		IDServizioApplicativo servizio_applicativo = null;	    
 		String [] tipoAutenticazione = configPdDManager.getIntegrationManagerAuthentication();
 		if(tipoAutenticazione==null || tipoAutenticazione.length<1){
 			msgDiag.logPersonalizzato("autenticazioneNonImpostata");
@@ -398,9 +401,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 		}
 		
-		msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizio_applicativo);
-		msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizio_applicativo);
-		msgDiag.setServizioApplicativo(servizio_applicativo);
+		msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizio_applicativo.getNome());
+		msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizio_applicativo.getNome());
+		msgDiag.setServizioApplicativo(servizio_applicativo.getNome());
+		if(servizio_applicativo.getIdSoggettoProprietario()!=null){
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, servizio_applicativo.getIdSoggettoProprietario().getTipo());
+			msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, servizio_applicativo.getIdSoggettoProprietario().getNome());
+			msgDiag.setFruitore(servizio_applicativo.getIdSoggettoProprietario());
+		}
 		return  servizio_applicativo;
 	}
 
@@ -468,6 +476,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		return msgDiag;
 	}
 	
+	private EsitoTransazione getEsitoTransazione(IProtocolFactory pf,IntegrationManagerRequestContext imRequestContext, EsitoTransazioneName name) throws ProtocolException{
+		TransportRequestContext t = null;
+		if(imRequestContext!=null && imRequestContext.getConnettore()!=null){
+			t = imRequestContext.getConnettore().getUrlProtocolContext();
+		}
+		return pf.createEsitoBuilder().getEsito(t,name);
+	}
 	
 
 
@@ -506,6 +521,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		MsgDiagnostico msgDiag = getMsgDiagnostico();
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		
+		IDServizioApplicativo id_servizio_applicativo = null;
 		String servizio_applicativo = null;
 		OpenSPCoopStateful stato = null;
 		
@@ -552,6 +568,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		/* ------------  Gestione Operazione ------------- */
 		IntegrationManagerResponseContext imResponseContext = 
 			new IntegrationManagerResponseContext(dataRichiestaOperazione,tipoOperazione,pddContext,logCore,protocolFactory);
+		if(imRequestContext!=null){
+			imResponseContext.setConnettore(imRequestContext.getConnettore());
+		}
 		
 		try{
 			
@@ -565,8 +584,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 						
 			// Autenticazione Servizio Applicativo
-			servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			imResponseContext.setNomeServizioApplicativo(servizio_applicativo);
+			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			servizio_applicativo = id_servizio_applicativo.getNome();
+			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String tipoServizioLog = "";
 			String servizioLog = "";
 			String azioneLog = "";
@@ -605,21 +625,27 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				listResponse.addAll(ids);
 			}
 
-			imResponseContext.setEsito(EsitoIM.OK);
+			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
 			
 			return listResponse;
 
 		}catch(Exception e){
 			
-			imResponseContext.setEsito(EsitoIM.ERRORE_GENERICO);
-			if(e instanceof IntegrationManagerException){
-				IntegrationManagerException exc = (IntegrationManagerException) e;
-				if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
-						CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.AUTENTICAZIONE_FALLITA);
-				}else if(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.MESSAGGI_NON_PRESENTI);
+			try{
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+	
+				if(e instanceof IntegrationManagerException){
+					IntegrationManagerException exc = (IntegrationManagerException) e;
+					if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
+							CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.AUTENTICAZIONE_FALLITA));
+					}else if(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.MESSAGGI_NON_PRESENTI));
+					}
 				}
+			}catch(Exception eInteral){
+				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
 			// Controllo Eccezioni
@@ -790,6 +816,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RISPOSTA, idMessaggio);
 		}
 		
+		IDServizioApplicativo id_servizio_applicativo = null;
 		String servizio_applicativo = null;
 		OpenSPCoopStateful stato = null;
 		// PddContext
@@ -830,6 +857,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		/* ------------  Gestione Operazione ------------- */
 		IntegrationManagerResponseContext imResponseContext = 
 			new IntegrationManagerResponseContext(dataRichiestaOperazione,tipoOperazione,pddContext,logCore,protocolFactory);
+		if(imRequestContext!=null){
+			imResponseContext.setConnettore(imRequestContext.getConnettore());
+		}
 		imResponseContext.setIdMessaggio(idMessaggio);
 		try{
 
@@ -843,8 +873,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			imResponseContext.setNomeServizioApplicativo(servizio_applicativo);
+			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			servizio_applicativo = id_servizio_applicativo.getNome();
+			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String param = "ServizioApplicativo["+servizio_applicativo+"] ID["+idMessaggio+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
@@ -989,24 +1020,30 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE),servizio_applicativo);
 			}
 
-			imResponseContext.setEsito(EsitoIM.OK);
+			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
 			imResponseContext.setDimensioneMessaggioBytes(new Long(msgReturn.getMessage().length));
 			
 			return msgReturn;
 
 		}catch(Exception e){
 			
-			imResponseContext.setEsito(EsitoIM.ERRORE_GENERICO);
-			if(e instanceof IntegrationManagerException){
-				IntegrationManagerException exc = (IntegrationManagerException) e;
-				if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
-						CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.AUTENTICAZIONE_FALLITA);
-				}else if(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.MESSAGGIO_NON_TROVATO);
-				}else if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.AUTORIZZAZIONE_FALLITA);
+			try{
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+				
+				if(e instanceof IntegrationManagerException){
+					IntegrationManagerException exc = (IntegrationManagerException) e;
+					if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
+							CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.AUTENTICAZIONE_FALLITA));
+					}else if(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.MESSAGGIO_NON_TROVATO));
+					}else if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.AUTORIZZAZIONE_FALLITA));
+					}
 				}
+			}catch(Exception eInteral){
+				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
 			// Controllo Eccezioni
@@ -1127,6 +1164,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 		
 		GestoreMessaggi gestoreMessaggi = null;
+		IDServizioApplicativo id_servizio_applicativo = null;
 		String servizio_applicativo = null;
 		OpenSPCoopStateful stato = null;
 		// PddContext
@@ -1168,6 +1206,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		/* ------------  Gestione Operazione ------------- */
 		IntegrationManagerResponseContext imResponseContext = 
 			new IntegrationManagerResponseContext(dataRichiestaOperazione,tipoOperazione,pddContext,logCore,protocolFactory);
+		if(imRequestContext!=null){
+			imResponseContext.setConnettore(imRequestContext.getConnettore());
+		}
 		imResponseContext.setIdMessaggio(idMessaggio);
 		try{	
 
@@ -1181,8 +1222,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			imResponseContext.setNomeServizioApplicativo(servizio_applicativo);
+			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			servizio_applicativo = id_servizio_applicativo.getNome();
+			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String param = "ServizioApplicativo["+servizio_applicativo+"] ID["+idMessaggio+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
@@ -1227,21 +1269,27 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),servizio_applicativo);
 			}
 
-			imResponseContext.setEsito(EsitoIM.OK);
+			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
 			
 		}catch(Exception e){
 			
-			imResponseContext.setEsito(EsitoIM.ERRORE_GENERICO);
-			if(e instanceof IntegrationManagerException){
-				IntegrationManagerException exc = (IntegrationManagerException) e;
-				if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
-						CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.AUTENTICAZIONE_FALLITA);
-				}else if(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.MESSAGGIO_NON_TROVATO);
-				}else if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.AUTORIZZAZIONE_FALLITA);
+			try{
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+				
+				if(e instanceof IntegrationManagerException){
+					IntegrationManagerException exc = (IntegrationManagerException) e;
+					if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
+							CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.AUTENTICAZIONE_FALLITA));
+					}else if(CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.MESSAGGIO_NON_TROVATO));
+					}else if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.AUTORIZZAZIONE_FALLITA));
+					}
 				}
+			}catch(Exception eInteral){
+				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
 			// Controllo Eccezioni
@@ -1355,6 +1403,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		MsgDiagnostico msgDiag = getMsgDiagnostico();
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		
+		IDServizioApplicativo id_servizio_applicativo = null;
 		String servizio_applicativo = null;
 		OpenSPCoopStateful stato = null;
 		// PddContext
@@ -1395,6 +1444,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		/* ------------  Gestione Operazione ------------- */
 		IntegrationManagerResponseContext imResponseContext = 
 			new IntegrationManagerResponseContext(dataRichiestaOperazione,tipoOperazione,pddContext,logCore,protocolFactory);
+		if(imRequestContext!=null){
+			imResponseContext.setConnettore(imRequestContext.getConnettore());
+		}
 		try{
 
 			// init stato
@@ -1407,8 +1459,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.gestioneCredenziali(protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
 			
 			// Autenticazione Servizio Applicativo
-			servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
-			imResponseContext.setNomeServizioApplicativo(servizio_applicativo);
+			id_servizio_applicativo = autenticazione(protocolFactory,msgDiag,imRequestContext.getConnettore(),configPdDManager,pddContext);
+			servizio_applicativo = id_servizio_applicativo.getNome();
+			imResponseContext.setServizioApplicativo(id_servizio_applicativo);
 			String param = "ServizioApplicativo["+servizio_applicativo+"]";
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
@@ -1461,22 +1514,28 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}
 			}
 			
-			imResponseContext.setEsito(EsitoIM.OK);
+			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
 
 
 		}catch(Exception e){
 			
-			imResponseContext.setEsito(EsitoIM.ERRORE_GENERICO);
-			if(e instanceof IntegrationManagerException){
-				IntegrationManagerException exc = (IntegrationManagerException) e;
-				if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
-						CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.AUTENTICAZIONE_FALLITA);
-				}else if(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.MESSAGGI_NON_PRESENTI);
-				}else if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione())){
-					imResponseContext.setEsito(EsitoIM.AUTORIZZAZIONE_FALLITA);
+			try{
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+				
+				if(e instanceof IntegrationManagerException){
+					IntegrationManagerException exc = (IntegrationManagerException) e;
+					if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione()) ||
+							CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.AUTENTICAZIONE_FALLITA));
+					}else if(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.MESSAGGI_NON_PRESENTI));
+					}else if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(exc.getCodiceErroreIntegrazione())){
+						imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.AUTORIZZAZIONE_FALLITA));
+					}
 				}
+			}catch(Exception eInteral){
+				logCore.error("Errore durante la generazione dell'esito: "+eInteral.getMessage(),eInteral);
+				imResponseContext.setEsito(EsitoTransazione.ESITO_TRANSAZIONE_ERROR);
 			}
 			
 			// Controllo Eccezioni
@@ -1600,12 +1659,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, portaDelegata);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 		
-		Esito esito = null;
+		EsitoTransazione esito = null;
 		String errore = null;
 		OpenSPCoop2Message msgRequest = null;
 		OpenSPCoop2Message msgResponse = null;
 		IntegrationManagerMessage msgReturn = null;
 		String descrizioneSoapFault = "";
+		URLProtocolContext urlProtocolContext = null;
 		try{
 
 			
@@ -1753,7 +1813,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			
 			// Parametri della porta delegata invocata
-			URLProtocolContext urlProtocolContext = new URLProtocolContext();
+			urlProtocolContext = new URLProtocolContext();
 			urlProtocolContext.setFunctionParameters(portaDelegata);
 			urlProtocolContext.setRequestURI(portaDelegata);
 			urlProtocolContext.setFunction(URLProtocolContext.IntegrationManager_FUNCTION);
@@ -1904,10 +1964,12 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				protocolHeaderInfoResponse.setAzione(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)));
 			}
 
+			InformazioniErroriInfrastrutturali informazioniErrori = ServletUtils.readInformazioniErroriInfrastrutturali(context.getPddContext());
+			
 			//	IntepretazioneRisposta
 			if(msgResponse!=null){
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(msgResponse, context.getProprietaErroreAppl(), false);			
+				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, context.getProprietaErroreAppl(), informazioniErrori);			
 				
 				if(msgResponse.getSOAPBody().hasFault()){
 
@@ -1966,7 +2028,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				*/
 				msgReturn = new IntegrationManagerMessage();
 				
-				esito = Esito.OK;
+				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, context.getProprietaErroreAppl(), informazioniErrori);	
+				// ok oneway
 				
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"integrationManager.consegnaRispostaApplicativaVuota");
 			}	    
@@ -1985,7 +2048,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				
 				if(esito==null){
 					// Altrimenti l'esito era settato
-					esito = Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+					try{
+						esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext,EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
+					}catch(Exception eBuildError){
+						esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+					}
 				}
 				
 				IntegrationManagerException eSPC = (IntegrationManagerException)e;
@@ -2002,7 +2069,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				throw eSPC;
 			}else{
 				msgDiag.logErroreGenerico(e,"invocaPortaDelegata("+tipoOperazione+")");
-				esito = Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+				try{
+					esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext,EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
+				}catch(Exception eBuildError){
+					esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+				}
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA,errore);
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"integrationManager.consegnaRispostaApplicativaFallita");

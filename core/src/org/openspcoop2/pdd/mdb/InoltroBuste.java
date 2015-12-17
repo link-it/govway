@@ -3601,6 +3601,10 @@ public class InoltroBuste extends GenericLib{
 			/* ------- Gestione punto 4 (SoapFault senza una busta associata) -------- */
 			else{
 
+				// Nei casi di soapFault con una busta non rientreremo in questo caso.
+				// Nel protocollo trasparente si rientra cmq di sopra poichè viene sempre ritornato 'true' in presenzaBustaRisposta
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOAP_FAULT_SERVER, true);
+				
 				// Fault registrato prima comunque
 //				if(fault!=null && faultLogged==false){	
 //					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));

@@ -180,8 +180,14 @@ public class RisorseEsterne {
 					as = "tomcat";
 				}
 				
-				JMXServiceURL serviceURL = new JMXServiceURL(this.unitsTestsuiteProperties.getJMXServiceURL(as));       
-				JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, null);       
+				JMXServiceURL serviceURL = new JMXServiceURL(this.unitsTestsuiteProperties.getJMXServiceURL(as));   
+				Hashtable<String, Object> env = null;
+				if(this.unitsTestsuiteProperties.getJMXUsername()!=null && this.unitsTestsuiteProperties.getJMXPassword()!=null){
+					String[] creds = {this.unitsTestsuiteProperties.getJMXUsername(), this.unitsTestsuiteProperties.getJMXPassword()};
+					env = new Hashtable<String, Object>();
+					env.put(JMXConnector.CREDENTIALS, creds);
+				}
+				JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
 				jmxconn = jmxConnector.getMBeanServerConnection();	
 			}else{
 				Hashtable<String, Object> env = new Hashtable<String, Object>();

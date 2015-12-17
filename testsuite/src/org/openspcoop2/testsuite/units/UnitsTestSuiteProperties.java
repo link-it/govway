@@ -156,4 +156,6 @@ public interface UnitsTestSuiteProperties {
 	
 	public boolean isSoapEngineCxf();
 	
+	public boolean isUseTransazioni();
+	
 }

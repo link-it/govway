@@ -46,7 +46,7 @@ public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 		super(objectFormatter);
 	}
 	
-	public void addXMLExpression(AbstractBaseExpressionImpl xml){
+	public void addExpression(AbstractBaseExpressionImpl xml){
 		this.lista.add(xml);
 	}
 	

@@ -162,8 +162,21 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 	public void setOutResponseHeader(HeaderIntegrazione integrazione,
 			OutResponsePAMessage outResponsePAMessage) throws HeaderIntegrazioneException{
 		
-		// nop;
-		
+		try{
+			if( 
+					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+					||
+					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+				){
+				this.utilities.setResponseTransportProperties(null, outResponsePAMessage.getProprietaTrasporto());
+			}
+			else{
+				this.gestoreIntegrazioneOpenSPCoopV2.setOutResponseHeader(integrazione, outResponsePAMessage);
+			}
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);
+		}
+	
 	}
 
 }

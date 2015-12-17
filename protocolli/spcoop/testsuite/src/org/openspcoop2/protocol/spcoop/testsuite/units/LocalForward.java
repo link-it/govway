@@ -1629,7 +1629,7 @@ public class LocalForward {
 			//System.out.println("A:"+motivoErroreProcessamento);
 			Assert.assertTrue(motivoErroreProcessamento!=null && motivoErroreProcessamento.contains("Errore avvenuto durante la consegna HTTP: Connection refused"));
 			
-			dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX");
+			dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX", Utilities.testSuiteProperties.isUseTransazioni());
 			
 			msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
 			

@@ -25,6 +25,7 @@ package org.openspcoop2.message;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.apache.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 
 
@@ -281,6 +282,57 @@ public class AttachmentsUtils {
 			return null;
 		}
 
+	}
+	
+	public static SOAPVersion getSOAPVersion(Logger log, byte [] xml){
+//		if(messageWithAttachment(xml)){
+//			String s = new String(xml);
+//			if(s.contains(Costanti.SOAP_ENVELOPE_NAMESPACE)){
+//				return SOAPVersion.SOAP11;
+//			}
+//			else if(s.contains(Costanti.SOAP12_ENVELOPE_NAMESPACE)){
+//				return SOAPVersion.SOAP12;
+//			}
+//		}
+//		else{
+//			try{
+//				org.w3c.dom.Element e = XMLUtils.getInstance().newElement(xml);
+//				if(e.getLocalName()!=null && "Envelope".equals(e.getLocalName())){
+//					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(e.getNamespaceURI())){
+//						return SOAPVersion.SOAP11;
+//					}
+//					else if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(e.getNamespaceURI())){
+//						return SOAPVersion.SOAP12;
+//					}
+//				}		
+//			}catch(Exception e){
+//				if(log!=null){
+//					log.error(e.getMessage(),e);
+//				}
+//			}
+//		}
+		// La posizione dovrebbe garantirmi il giusto namespace
+		// Nel caso all'interno del body viene usato l'altro.
+		String s = new String(xml);
+		if( (s.contains("<Envelope") || s.contains(":Envelope") ) ){
+			int indexOfSoap11 = s.indexOf(Costanti.SOAP_ENVELOPE_NAMESPACE);
+			int indexOfSoap12 = s.indexOf(Costanti.SOAP12_ENVELOPE_NAMESPACE);
+			if(indexOfSoap11>0 && indexOfSoap12>0){
+				if(indexOfSoap11<indexOfSoap12){
+					return SOAPVersion.SOAP11;
+				}
+				else{
+					return SOAPVersion.SOAP12;
+				}
+			}
+			else if(indexOfSoap11>0){
+				return SOAPVersion.SOAP11;
+			}
+			else if(indexOfSoap12>0){
+				return SOAPVersion.SOAP12;
+			}
+		}
+		return null;
 	}
 
 

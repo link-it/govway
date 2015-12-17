@@ -438,6 +438,11 @@ public class RiconoscimentoProfiloGestione {
 	@DataProvider (name="EGovCollaborazioneAsincronoSimmetricoTEST1")
 	public Object[][] testEGovCollaborazioneAsincronoSimmetricoTEST1()throws Exception{
 		String id=this.repositoryCollaborazioneAsincronoSimmetricoTEST1.getNext();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
 				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
@@ -500,7 +505,7 @@ public class RiconoscimentoProfiloGestione {
 			}
 			
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 
 		}catch(Exception e){
 			throw e;
@@ -627,7 +632,7 @@ public class RiconoscimentoProfiloGestione {
 			}
 			
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 
 		}catch(Exception e){
 			throw e;
@@ -755,7 +760,7 @@ public class RiconoscimentoProfiloGestione {
 			}
 			
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 
 		}catch(Exception e){
 			throw e;

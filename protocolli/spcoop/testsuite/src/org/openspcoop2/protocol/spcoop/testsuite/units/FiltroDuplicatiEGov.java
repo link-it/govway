@@ -259,8 +259,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -370,8 +372,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -504,8 +508,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -622,8 +628,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -748,8 +756,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -861,8 +871,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -972,8 +984,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1085,8 +1099,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1254,8 +1270,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1283,7 +1301,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -1373,8 +1391,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1397,7 +1417,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -1526,8 +1546,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1555,7 +1577,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -1645,8 +1667,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1669,7 +1693,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -1818,8 +1842,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1849,7 +1875,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -1939,8 +1965,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -1965,7 +1993,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2092,8 +2120,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -2123,7 +2153,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2213,8 +2243,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -2239,7 +2271,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2389,8 +2421,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -2418,7 +2452,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2508,8 +2542,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -2532,7 +2568,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2661,8 +2697,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -2690,7 +2728,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2780,8 +2818,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -2804,7 +2844,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2953,8 +2993,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -2984,7 +3026,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -3074,8 +3116,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -3100,7 +3144,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -3227,8 +3271,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -3258,7 +3304,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -3348,8 +3394,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -3374,7 +3422,7 @@ public class FiltroDuplicatiEGov {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE_LINEE_GUIDA_11, null, 
 					CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11, null));
 			Reporter.log("Elimino utilizzo profilo di collaborazione per id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -3474,8 +3522,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -3583,8 +3633,10 @@ public class FiltroDuplicatiEGov {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
-			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA);
+			Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni()));
+			long duplicati = data.getVerificatoreMessaggi().getNumeroDuplicatiRicevuti(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+					Utilities.testSuiteProperties.isUseTransazioni());
 			Reporter.log("Controllo numero duplicati attesi = 3 per  id: " +id+" , trovati: "+duplicati);
 			Assert.assertEquals(3, duplicati);
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);

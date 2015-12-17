@@ -26,8 +26,10 @@ import javax.xml.soap.SOAPBody;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -42,12 +44,12 @@ import org.w3c.dom.NodeList;
  */
 public class SPCoopEsitoBuilder extends EsitoBuilder {
 
-	public SPCoopEsitoBuilder(IProtocolFactory protocolFactory) {
+	public SPCoopEsitoBuilder(IProtocolFactory protocolFactory) throws ProtocolException {
 		super(protocolFactory);
 	}
 	
 	@Override
-	public Esito getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body){
+	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext) throws ProtocolException{
 		Node childNode = body.getFirstChild();
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){
@@ -79,20 +81,20 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 														value = value.substring(prefixFaultCode.length());
 														int valueInt = Integer.parseInt(value);
 														if(valueInt>=400 && valueInt<=499){
-															return Esito.ERRORE_PROCESSAMENTO_PDD_4XX;
+															return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
 														}else if(valueInt>=500 && valueInt<=599){
-															return Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
+															return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 														}else{
-															return Esito.ERRORE_GENERICO;
+															return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_GENERICO, tipoContext);
 														}
 													}else{
-														return Esito.ERRORE_GENERICO; // ???
+														return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_GENERICO, tipoContext); // ???
 													}
 												}
 											}
 										}
 										else if(SPCoopCostanti.ECCEZIONE_VALIDAZIONE_BUSTA_SPCOOP.equals(tipoEccezione.getLocalName())){
-											return Esito.ERRORE_PROTOCOLLO;
+											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
 										}
 									}
 								}
@@ -102,7 +104,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 				}
 			}
 		}
-		return Esito.OK;
+		return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK, tipoContext);
 	}
 
 }

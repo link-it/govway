@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.manifest.utils.XMLUtils;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.MapReader;
 
@@ -58,11 +59,15 @@ public class ProtocolFactoryManager {
 	public synchronized static void initialize(Logger log,ConfigurazionePdD configPdD,String protocolDefault) throws ProtocolException {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocolDefault,false);
+			// Inizializzo anche Esiti.properties
+			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader());
 		}
 	}
 	public synchronized static void initializeSingleProtocol(Logger log,ConfigurazionePdD configPdD,String protocol) throws ProtocolException {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocol,true);
+			// Inizializzo anche Esiti.properties
+			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader());
 		}
 	}
 	public static ProtocolFactoryManager getInstance() throws ProtocolException {

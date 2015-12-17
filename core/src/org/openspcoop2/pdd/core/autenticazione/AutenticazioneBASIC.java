@@ -24,10 +24,12 @@
 package org.openspcoop2.pdd.core.autenticazione;
 
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -45,8 +47,8 @@ import org.openspcoop2.protocol.sdk.state.IState;
 public class AutenticazioneBASIC extends AbstractCore implements IAutenticazione{
 
 
-	/* ---- Nome Servizio Applicativo --- */
-	private String servizioApplicativo;
+	/* ---- Servizio Applicativo --- */
+	private IDServizioApplicativo servizioApplicativo;
 
 	/* ---- Eventuale errore --- */
 	private ErroreIntegrazione errore;
@@ -87,10 +89,25 @@ public class AutenticazioneBASIC extends AbstractCore implements IAutenticazione
 			this.exception = e;
 			return false;
 		}
+		
 		if(this.servizioApplicativo == null){
 			//this.msgError = CostantiPdD.MSG_402_AUTENTICAZIONE_FALLITA + " username["+user+"] password["+password+"]";
 			this.errore = ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallita("Credenziali fornite non corrette",user,password);
 			return false;
+		}
+		else{
+			if(this.servizioApplicativo.getIdSoggettoProprietario()!=null && this.servizioApplicativo.getIdSoggettoProprietario().getCodicePorta()==null){
+				try{
+					this.servizioApplicativo.getIdSoggettoProprietario().setCodicePorta(RegistroServiziManager.getInstance(state).
+							getDominio(this.servizioApplicativo.getIdSoggettoProprietario(), null, this.getProtocolFactory()));
+				}catch(Exception e){
+					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita (Identificazione dominio del soggetto)",e);
+					this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+					this.exception = e;
+					return false;
+				}
+			}
 		}
 
 		return true;
@@ -126,27 +143,41 @@ public class AutenticazioneBASIC extends AbstractCore implements IAutenticazione
 			this.exception = e;
 			return false;
 		}
+		
 		if(this.servizioApplicativo == null){
 			//this.msgError = CostantiPdD.MSG_402_AUTENTICAZIONE_FALLITA + " username["+user+"] password["+password+"]";
 			this.errore = ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallita("Credenziali fornite non corrette",user,password);
 			return false;
+		}
+		else{
+			if(this.servizioApplicativo.getIdSoggettoProprietario()!=null && this.servizioApplicativo.getIdSoggettoProprietario().getCodicePorta()==null){
+				try{
+					this.servizioApplicativo.getIdSoggettoProprietario().setCodicePorta(RegistroServiziManager.getInstance(state).
+							getDominio(this.servizioApplicativo.getIdSoggettoProprietario(), null, this.getProtocolFactory()));
+				}catch(Exception e){
+					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita (Identificazione dominio del soggetto)",e);
+					this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+					this.exception = e;
+					return false;
+				}
+			}
 		}
 
 		return true;
     }
 	
 	/**
-	 * Ritorna il nome del servizio applicativo che ha invocato la porta delegata. 
+	 * Ritorna il servizio applicativo che ha invocato la porta delegata. 
 	 *
 	 * @return servizio applicativo.
 	 * 
 	 */
 	@Override
-	public String getServizioApplicativo(){
+	public IDServizioApplicativo getServizioApplicativo(){
 		return this.servizioApplicativo;
 	}
-
-
+	
 	/**
 	 * In caso di avvenuto errore, questo metodo ritorna il motivo dell'errore.
 	 *

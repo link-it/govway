@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.core.autenticazione;
 
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.core.ICore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
@@ -57,12 +58,12 @@ public interface IAutenticazione extends ICore {
     public boolean process(InfoConnettoreIngresso infoConnettoreIngresso,IState state);
     
     /**
-     * Ritorna il nome del servizio applicativo autenticato. 
+     * Ritorna il servizio applicativo autenticato. 
      *
      * @return servizio applicativo.
      * 
      */
-    public String getServizioApplicativo();
+    public IDServizioApplicativo getServizioApplicativo();
 
     /**
      * In caso di avvenuto errore, questo metodo ritorna il motivo dell'errore.

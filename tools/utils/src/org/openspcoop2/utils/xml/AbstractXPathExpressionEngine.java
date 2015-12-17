@@ -66,7 +66,7 @@ public abstract class AbstractXPathExpressionEngine {
 	}
 	
 	
-	private static Logger logger = Logger.getLogger(XPathExpressionEngine.class);
+	private static Logger logger = Logger.getLogger(AbstractXPathExpressionEngine.class);
 	public static void setLogger(Logger logger) {
 		AbstractXPathExpressionEngine.logger = logger;
 	}

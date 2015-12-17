@@ -38,6 +38,7 @@ import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -82,6 +83,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.Loader;
 
 
 /**
@@ -866,21 +868,8 @@ public class Sbustamento extends GenericLib{
 				try{
 					
 					// Istanzio gestore filtro duplicati
-					String gestoreFiltroDuplicatiType = this.propertiesReader.getGestoreFiltroDuplicatiRepositoryBuste();
-					ClassNameProperties prop = ClassNameProperties.getInstance();
-					String gestoreFiltroDuplicatiClass = prop.getFiltroDuplicati(gestoreFiltroDuplicatiType);
-					if(gestoreFiltroDuplicatiClass == null){
-						throw new Exception("GestoreFiltroDuplicati non registrato ("+gestoreFiltroDuplicatiType+")");
-					}
-					IFiltroDuplicati gestoreFiltroDuplicati = (IFiltroDuplicati) this.loader.newInstance(gestoreFiltroDuplicatiClass);
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONNECTION_PDD, ((OpenSPCoopState)openspcoopstate).getConnectionDB() );
-					gestoreFiltroDuplicati.init(pddContext);
-					if(gestoreFiltroDuplicati instanceof FiltroDuplicati){
-						((FiltroDuplicati)gestoreFiltroDuplicati).setHistoryBuste(historyBuste);
-						((FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryBuste(repositoryBuste);
-						((FiltroDuplicati)gestoreFiltroDuplicati).setGestioneStateless((openspcoopstate instanceof OpenSPCoopStateless) && (oneWayVersione11==false));
-						((FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryIntervalloScadenzaMessaggi(this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
-					}
+					IFiltroDuplicati gestoreFiltroDuplicati = getGestoreFiltroDuplicati(this.propertiesReader, this.loader, 
+							openspcoopstate, pddContext, historyBuste, repositoryBuste, oneWayVersione11);
 					boolean bustaDuplicata = gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRichiesta.getID());
 					
 					// BUSTA GIA' PRECEDENTEMENTE RICEVUTA
@@ -2349,4 +2338,25 @@ public class Sbustamento extends GenericLib{
 
 	}
 
+	
+	public static IFiltroDuplicati getGestoreFiltroDuplicati(OpenSPCoop2Properties propertiesReader,Loader loader, 
+			IOpenSPCoopState openspcoopstate,PdDContext pddContext, History historyBuste, RepositoryBuste repositoryBuste, boolean oneWayVersione11) throws Exception{
+		// Istanzio gestore filtro duplicati
+		String gestoreFiltroDuplicatiType = propertiesReader.getGestoreFiltroDuplicatiRepositoryBuste();
+		ClassNameProperties prop = ClassNameProperties.getInstance();
+		String gestoreFiltroDuplicatiClass = prop.getFiltroDuplicati(gestoreFiltroDuplicatiType);
+		if(gestoreFiltroDuplicatiClass == null){
+			throw new Exception("GestoreFiltroDuplicati non registrato ("+gestoreFiltroDuplicatiType+")");
+		}
+		IFiltroDuplicati gestoreFiltroDuplicati = (IFiltroDuplicati) loader.newInstance(gestoreFiltroDuplicatiClass);
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONNECTION_PDD, ((OpenSPCoopState)openspcoopstate).getConnectionDB() );
+		gestoreFiltroDuplicati.init(pddContext);
+		if(gestoreFiltroDuplicati instanceof FiltroDuplicati){
+			((FiltroDuplicati)gestoreFiltroDuplicati).setHistoryBuste(historyBuste);
+			((FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryBuste(repositoryBuste);
+			((FiltroDuplicati)gestoreFiltroDuplicati).setGestioneStateless((openspcoopstate instanceof OpenSPCoopStateless) && (oneWayVersione11==false));
+			((FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryIntervalloScadenzaMessaggi(propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+		}
+		return gestoreFiltroDuplicati;
+	}
 }

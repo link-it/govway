@@ -267,10 +267,10 @@ public class CooperazioneConErrori {
 						}
 						
 						if(param.isEliminaMessaggioFruitore()){
-							dbComponentFruitore.getVerificatoreMessaggi().deleteMessage(id, "OUTBOX");
+							dbComponentFruitore.getVerificatoreMessaggi().deleteMessage(id, "OUTBOX", Utilities.testSuiteProperties.isUseTransazioni());
 						}
 						if(param.isEliminaMessaggioErogatore()){
-							dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX");
+							dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX", Utilities.testSuiteProperties.isUseTransazioni());
 						}
 						
 						repository.setIndex(0);
@@ -304,10 +304,10 @@ public class CooperazioneConErrori {
 					try{
 						if(id!=null){
 							if(param.isEliminaMessaggioFruitore()){
-								dbComponentFruitore.getVerificatoreMessaggi().deleteMessage(id, "OUTBOX");
+								dbComponentFruitore.getVerificatoreMessaggi().deleteMessage(id, "OUTBOX", Utilities.testSuiteProperties.isUseTransazioni());
 							}
 							if(param.isEliminaMessaggioErogatore()){
-								dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX");
+								dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX", Utilities.testSuiteProperties.isUseTransazioni());
 							}
 							repository.setIndex(0);
 						}
@@ -1385,7 +1385,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_ASINCRONA_AZIONE_CONNETTORE_ERRATO_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				else if(i==3){
 					// Test Asincrono Simmetrico modalita sincrona
@@ -1400,7 +1400,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_SINCRONA_AZIONE_CONNETTORE_ERRATO_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				else if(i==4){
 					// Test Asincrono Asimmetrico modalita asincrona
@@ -1415,7 +1415,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_ASINCRONA_AZIONE_CONNETTORE_ERRATO_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				else if(i==5){
 					// Test Asincrono Asimmetrico modalita sincrona
@@ -1430,7 +1430,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_SINCRONA_AZIONE_CONNETTORE_ERRATO_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==6){
@@ -1474,7 +1474,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_ASINCRONA_AZIONE_CONNETTORE_ERRATO_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==9){
@@ -1490,7 +1490,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_SINCRONA_AZIONE_CONNETTORE_ERRATO_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==10){
@@ -1506,7 +1506,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_ASINCRONA_AZIONE_CONNETTORE_ERRATO_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==11){
@@ -1522,7 +1522,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_SINCRONA_AZIONE_CONNETTORE_ERRATO_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA==false)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 			}
 		}catch(Exception e){
@@ -1773,9 +1773,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_ASINCRONA_AZIONE_SOAP_FAULT_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				else if(i==3){
 					// Test Asincrono Simmetrico modalita sincrona
@@ -1790,9 +1790,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_SINCRONA_AZIONE_SOAP_FAULT_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				else if(i==4){
 					// Test Asincrono Asimmetrico modalita asincrona
@@ -1807,9 +1807,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_ASINCRONA_AZIONE_SOAP_FAULT_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				else if(i==5){
 					// Test Asincrono Asimmetrico modalita sincrona
@@ -1824,9 +1824,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_SINCRONA_AZIONE_SOAP_FAULT_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==6){
@@ -1866,9 +1866,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_ASINCRONA_AZIONE_SOAP_FAULT_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==9){
@@ -1884,9 +1884,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_SINCRONA_AZIONE_SOAP_FAULT_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==10){
@@ -1902,9 +1902,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_ASINCRONA_AZIONE_SOAP_FAULT_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==11){
@@ -1920,9 +1920,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_SINCRONA_AZIONE_SOAP_FAULT_SA_STATELESS, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					if(isPA)
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
 					else
-						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+						data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 			}
 		}catch(Exception e){
@@ -3183,8 +3183,8 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_ASINCRONA_AZIONE_CONNETTORE_ERRATO_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==3){
@@ -3200,8 +3200,8 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_MOD_ASINCRONA_AZIONE_SOAP_FAULT_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null);
 					
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 			}
@@ -3347,8 +3347,8 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_ASINCRONA_AZIONE_CONNETTORE_ERRATO_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 				else if(i==3){
@@ -3364,8 +3364,8 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_MOD_ASINCRONA_AZIONE_SOAP_FAULT_SA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null);
 					
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX);
-					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.OUTBOX, Utilities.testSuiteProperties.isUseTransazioni());
+					data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 				}
 				
 			}

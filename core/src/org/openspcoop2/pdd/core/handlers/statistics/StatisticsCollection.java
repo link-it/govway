@@ -21,8 +21,12 @@
 
 package org.openspcoop2.pdd.core.handlers.statistics;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -41,6 +45,35 @@ public class StatisticsCollection {
 
 	private static final long SOGLIA_DIMENSIONE = Long.MAX_VALUE-100000;
 	private static final int SOGLIA_TEMPORALE = 1000*60*30; // statistiche relative all'ultima mezz'ora.
+	
+	private static EsitiProperties esitiProperties = null;
+	private static synchronized void initEsitiProperties(){
+		if(esitiProperties==null){
+			try{
+				esitiProperties = EsitiProperties.getInstance(Logger.getLogger(StatisticsCollection.class));
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+	}
+	private static boolean isEsitoOk(EsitoTransazione esito){
+		try{
+			if(esitiProperties==null){
+				initEsitiProperties();
+			}
+			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk();
+			for (Integer esitoOk : esitiOk) {
+				if(esitoOk == esito.getCode()){
+					return true;
+				}
+			}
+			return false;
+		}catch(Exception e){
+			// non sono previsti errori
+			throw new RuntimeException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	/* ***** UPDATE STATO ******* */
@@ -79,7 +112,7 @@ public class StatisticsCollection {
 		}
 		
 		// Latenze
-		if(Esito.OK.equals(stat.getEsito())){
+		if(isEsitoOk(stat.getEsito())){
 			
 			long latenzaTotale = -1;
 			if(stat.getTimeMillisUscitaRisposta()>0 && stat.getTimeMillisIngressoRichiesta()>0)
@@ -297,11 +330,10 @@ public class StatisticsCollection {
 		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_in_response = new StatisticSize();
 		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_out_response = new StatisticSize();
 	}
-	
-	
-	private static void incrementCount(Esito esito,StatisticCount statCount){
+		
+	private static void incrementCount(EsitoTransazione esito,StatisticCount statCount){
 		statCount.numeroTransazioni++;
-		if(Esito.OK.equals(esito)){
+		if(isEsitoOk(esito)){
 			statCount.numeroTransazioni_esitoOK++;
 		}else{
 			statCount.numeroTransazioni_esitoErrore++;

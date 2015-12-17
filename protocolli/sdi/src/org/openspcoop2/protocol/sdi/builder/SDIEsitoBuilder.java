@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.sdi.builder;
 
 import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
  * Classe che implementa, in base al protocollo SdI, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IEsitoBuilder}
@@ -33,7 +34,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class SDIEsitoBuilder extends EsitoBuilder {
 
-	public SDIEsitoBuilder(IProtocolFactory protocolFactory) {
+	public SDIEsitoBuilder(IProtocolFactory protocolFactory) throws ProtocolException {
 		super(protocolFactory);
 	}
 	

@@ -133,7 +133,8 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -187,7 +188,8 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -230,11 +232,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -280,11 +284,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -353,11 +359,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -389,11 +397,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -472,11 +482,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -510,11 +522,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -581,11 +595,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -620,11 +636,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -695,11 +713,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -736,11 +756,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -801,11 +823,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -835,11 +859,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -897,11 +923,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -933,11 +961,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -985,11 +1015,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1019,11 +1051,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1074,11 +1108,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1110,11 +1146,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1188,7 +1226,8 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1242,11 +1281,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1277,11 +1318,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1326,11 +1369,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1361,11 +1406,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1470,7 +1517,8 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){
@@ -1525,11 +1573,13 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 			
 			if(checkServizioApplicativo){
 				Reporter.log("Controllo che la busta di richiesta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RICHIESTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			else{
 				Reporter.log("Controllo che la busta di risposta sia registrata nell'history (id "+id+")");
-				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA));
+				Assert.assertTrue(data.getVerificatoreMessaggi().isBustaRegistrataHistory(Costanti.INBOX, id, CONTROLLO_REGISTRAZIONE_HISTORY_BUSTE_RISPOSTA,
+						Utilities.testSuiteProperties.isUseTransazioni()));
 			}
 			
 		}catch(Exception e){

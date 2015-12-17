@@ -31,7 +31,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 
 /**
@@ -50,7 +50,7 @@ public class TestContext implements Serializable {
 	
 	private Properties forwardProperties;
 	private boolean generaErroreVerificaInstallazioneArchivioTest;
-	private Esito esito;
+	private EsitoTransazioneName esito;
 	private Integer returnCodePDReq;
 	private Integer returnCodePDRes;
 	private Integer returnCodePAReq;
@@ -129,7 +129,7 @@ public class TestContext implements Serializable {
 		// Esito
 		Object oEsito = getProperty(p,Costanti.TEST_CONTEXT_ESITO);
 		if( (oEsito!=null) && (oEsito instanceof String) ){
-			Esito e = Esito.toEnumConstant((String)oEsito);
+			EsitoTransazioneName e = EsitoTransazioneName.convertoTo((String)oEsito);
 			if(e==null){
 				throw new HandlerException("Esito richiesto dalla testsuite ["+(String)oEsito+"] non gestito dalla Porta di Dominio");
 			}
@@ -254,7 +254,7 @@ public class TestContext implements Serializable {
 		p.setProperty(Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_PA_PD, this.rispostaVuotaPA_PD+"");
 		
 		if(this.esito!=null){
-			p.setProperty(Costanti.TEST_CONTEXT_ESITO, Esito.OK.toString());
+			p.setProperty(Costanti.TEST_CONTEXT_ESITO, EsitoTransazioneName.OK.toString());
 		}
 		if(this.returnCodePDReq!=null){
 			p.setProperty(Costanti.TEST_CONTEXT_DELEGATA_REQUEST_RETURN_CODE, this.returnCodePDReq+"");
@@ -343,11 +343,11 @@ public class TestContext implements Serializable {
 		}
 	}
 	
-	public Esito getEsito() {
+	public EsitoTransazioneName getEsito() {
 		return this.esito;
 	}
 
-	public void setEsito(Esito esito) {
+	public void setEsito(EsitoTransazioneName esito) {
 		this.esito = esito;
 	}
 

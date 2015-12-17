@@ -34,7 +34,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
-import org.openspcoop2.protocol.sdk.constants.Esito;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
@@ -229,7 +229,7 @@ public class Handlers {
 			
 			TestContext test = new TestContext();
 			test.setDataInizioTest(DateManager.getDate());
-			test.setEsito(Esito.OK);
+			test.setEsito(EsitoTransazioneName.OK);
 			test.setRispostaVuotaSA_PD(false); // header di integrazione OpenSPCoop
 			test.setRispostaVuotaPD_PA(true);
 			test.setRispostaVuotaPA_SA(false); // testsuite ritorna l'echo :-( Implementare poi un vero test vuoto
@@ -369,7 +369,7 @@ public class Handlers {
 			
 			TestContext test = new TestContext();
 			test.setDataInizioTest(DateManager.getDate());
-			test.setEsito(Esito.OK);
+			test.setEsito(EsitoTransazioneName.OK);
 			test.setRispostaVuotaSA_PD(false); // header di integrazione OpenSPCoop
 			test.setRispostaVuotaPD_PA(true);
 			test.setRispostaVuotaPA_SA(false); // testsuite ritorna l'echo :-( Implementare poi un vero test vuoto
@@ -504,7 +504,7 @@ public class Handlers {
 			
 			TestContext test = new TestContext();
 			test.setDataInizioTest(DateManager.getDate());
-			test.setEsito(Esito.OK);
+			test.setEsito(EsitoTransazioneName.OK);
 			test.setRispostaVuotaSA_PD(true); 
 			test.setRispostaVuotaPD_PA(true);
 			test.setRispostaVuotaPA_SA(true);
@@ -637,7 +637,7 @@ public class Handlers {
 			
 			TestContext test = new TestContext();
 			test.setDataInizioTest(DateManager.getDate());
-			test.setEsito(Esito.OK);
+			test.setEsito(EsitoTransazioneName.OK);
 			test.setRispostaVuotaSA_PD(false); 
 			test.setRispostaVuotaPD_PA(false);
 			test.setRispostaVuotaPA_SA(false); 
@@ -777,7 +777,7 @@ public class Handlers {
 			
 			TestContext test = new TestContext();
 			test.setDataInizioTest(DateManager.getDate());
-			test.setEsito(Esito.OK);
+			test.setEsito(EsitoTransazioneName.OK);
 			test.setRispostaVuotaSA_PD(false); 
 			test.setRispostaVuotaPD_PA(false);
 			test.setRispostaVuotaPA_SA(false); 

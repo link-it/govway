@@ -405,7 +405,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			
 
 
 			

@@ -1344,7 +1344,7 @@ public class RichiesteApplicativeScorrette {
 		}catch(IntegrationManagerException e){
 			verificaSPCoopException_413(e);
 			
-			db.getVerificatoreMessaggi().deleteMessage(idEGov, "INBOX");
+			db.getVerificatoreMessaggi().deleteMessage(idEGov, "INBOX", Utilities.testSuiteProperties.isUseTransazioni());
 		}finally{
 			try{
 				db.close();

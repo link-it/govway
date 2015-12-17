@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
+import org.openspcoop2.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 
@@ -198,16 +199,16 @@ public class VerificatoreMessaggi {
 	}
 
 	
-	public void deleteMessage(String id,String tipo) throws FatalTestSuiteException {
-		deleteMessage_engine(id, tipo, false, null);
+	public void deleteMessage(String id,String tipo,boolean useTransazioni) throws FatalTestSuiteException {
+		deleteMessage_engine(id, tipo, false, null, useTransazioni);
 	}
-	public void deleteMessageByRiferimentoMessaggio(String id,String tipo) throws FatalTestSuiteException {
-		deleteMessage_engine(id, tipo, true, null);
+	public void deleteMessageByRiferimentoMessaggio(String id,String tipo,boolean useTransazioni) throws FatalTestSuiteException {
+		deleteMessage_engine(id, tipo, true, null, useTransazioni);
 	}
-	public void deleteMessageByRiferimentoMessaggio(String id,String tipo,boolean orderByOraRegistrazioneASC) throws FatalTestSuiteException {
-		deleteMessage_engine(id, tipo, true, orderByOraRegistrazioneASC);
+	public void deleteMessageByRiferimentoMessaggio(String id,String tipo,boolean orderByOraRegistrazioneASC,boolean useTransazioni) throws FatalTestSuiteException {
+		deleteMessage_engine(id, tipo, true, orderByOraRegistrazioneASC, useTransazioni);
 	}
-	private void deleteMessage_engine(String id,String tipo,boolean rifMsg,Boolean orderByOraRegistrazioneASC) throws FatalTestSuiteException {
+	private void deleteMessage_engine(String id,String tipo,boolean rifMsg,Boolean orderByOraRegistrazioneASC,boolean useTransazioni) throws FatalTestSuiteException {
 		PreparedStatement prep = null;
 		ResultSet rs = null;
 		try {
@@ -253,16 +254,29 @@ public class VerificatoreMessaggi {
 			prep.executeUpdate();
 			prep.close();
 
-			prep = this.con
-					.prepareStatement("UPDATE "+Costanti.REPOSITORY+
-							" SET "+Costanti.REPOSITORY_COLUMN_USE_PROFILO+"=?,"+Costanti.REPOSITORY_COLUMN_USE_PDD+
-							"=? where "+Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO+"=? AND "+Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-			prep.setInt(1,0);
-			prep.setInt(2,0);
-			prep.setString(3,idMessaggio);
-			prep.setString(4,tipo);
-			prep.executeUpdate();
-			prep.close();
+			if(useTransazioni){
+				prep = this.con
+						.prepareStatement("UPDATE "+Costanti.REPOSITORY+
+								" SET "+Costanti.REPOSITORY_COLUMN_USE_REPOSITORY_ACCESS+"=? where "+
+									Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO+"=? AND "+Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+				prep.setInt(1,0);
+				prep.setString(2,idMessaggio);
+				prep.setString(3,tipo);
+				prep.executeUpdate();
+				prep.close();
+			}
+			else{
+				prep = this.con
+						.prepareStatement("UPDATE "+Costanti.REPOSITORY+
+								" SET "+Costanti.REPOSITORY_COLUMN_USE_PROFILO+"=?,"+Costanti.REPOSITORY_COLUMN_USE_PDD+
+								"=? where "+Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO+"=? AND "+Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+				prep.setInt(1,0);
+				prep.setInt(2,0);
+				prep.setString(3,idMessaggio);
+				prep.setString(4,tipo);
+				prep.executeUpdate();
+				prep.close();
+			}
 
 			if(Costanti.OUTBOX.equals(tipo)){
 				prep = this.con
@@ -299,12 +313,19 @@ public class VerificatoreMessaggi {
 		}
 	}
 
-	public void deleteUtilizzoProfiloCollaborazione(String id,String tipo) throws FatalTestSuiteException {
+	public void deleteUtilizzoProfiloCollaborazione(String id,String tipo, boolean useTransazioni) throws FatalTestSuiteException {
 		PreparedStatement prep = null;
 		try {
-			prep = this.con
-					.prepareStatement("UPDATE "+Costanti.REPOSITORY+
-							" SET "+Costanti.REPOSITORY_COLUMN_USE_PROFILO+"=? where "+Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO+"=? AND "+Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+			if(useTransazioni){
+				prep = this.con
+						.prepareStatement("UPDATE "+Costanti.REPOSITORY+
+								" SET "+Costanti.REPOSITORY_COLUMN_USE_REPOSITORY_ACCESS+"=? where "+Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO+"=? AND "+Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+			}
+			else{
+				prep = this.con
+						.prepareStatement("UPDATE "+Costanti.REPOSITORY+
+								" SET "+Costanti.REPOSITORY_COLUMN_USE_PROFILO+"=? where "+Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO+"=? AND "+Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+			}
 			prep.setInt(1,0);
 			prep.setString(2,id);
 			prep.setString(3,tipo);
@@ -683,32 +704,64 @@ public class VerificatoreMessaggi {
 	
 	/* ----------------------- REPOSITORY --------------------------- */
 	
-	public long getNumeroDuplicatiRicevuti(String tipoMessaggio,String idMessaggio,boolean richiesta)
+	public long getNumeroDuplicatiRicevuti(String tipoMessaggio,String idMessaggio,boolean richiesta,boolean useTransazioni)
 			throws FatalTestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
 		try {
-			String campo = Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO;
-			if(!richiesta)
-				campo = Costanti.REPOSITORY_COLUMN_RIFERIMENTO_MESSAGGIO;
-
-			pstmt = this.con
-					.prepareStatement("select "+Costanti.REPOSITORY_COLUMN_DUPLICATI+" from "+Costanti.REPOSITORY+
-							" where "+campo+"=? AND "+
-							Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-			pstmt.setString(1, idMessaggio);
-			pstmt.setString(2, tipoMessaggio);
-
-			res = pstmt.executeQuery();
-
-			if (res.next()) {
-
-				long dup = res.getLong("duplicati");
-				return dup;
+			if(useTransazioni){
+				if(richiesta){
+					pstmt = this.con
+							.prepareStatement("select "+CostantiTestSuite.TABLE_TRANSAZIONI_DUPLICATI_RICHIESTA+" from "+
+									CostantiTestSuite.TABLE_TRANSAZIONI+" where "+CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RICHIESTA+
+										"=? AND "+CostantiTestSuite.TABLE_TRANSAZIONI_DUPLICATI_RICHIESTA+">0");
+				}
+				else{
+					pstmt = this.con
+							.prepareStatement("select "+CostantiTestSuite.TABLE_TRANSAZIONI_DUPLICATI_RISPOSTA+" from "+
+									CostantiTestSuite.TABLE_TRANSAZIONI+" where "+CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RISPOSTA
+										+"=? AND "+CostantiTestSuite.TABLE_TRANSAZIONI_DUPLICATI_RISPOSTA+">0");
+				}
+				pstmt.setString(1, idMessaggio);
+				res = pstmt.executeQuery();
+				if (res.next()) {
+					if(richiesta){
+						long dup = res.getLong(CostantiTestSuite.TABLE_TRANSAZIONI_DUPLICATI_RICHIESTA);
+						return dup;
+					}
+					else{
+						long dup = res.getLong(CostantiTestSuite.TABLE_TRANSAZIONI_DUPLICATI_RISPOSTA);
+						return dup;
+					}
+				}
+				else{
+					return 0;
+				}
 			}
 			else{
-				return 0;
+			
+				String campo = Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO;
+				if(!richiesta)
+					campo = Costanti.REPOSITORY_COLUMN_RIFERIMENTO_MESSAGGIO;
+	
+				pstmt = this.con
+						.prepareStatement("select "+Costanti.REPOSITORY_COLUMN_DUPLICATI+" from "+Costanti.REPOSITORY+
+								" where "+campo+"=? AND "+
+								Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+				pstmt.setString(1, idMessaggio);
+				pstmt.setString(2, tipoMessaggio);
+	
+				res = pstmt.executeQuery();
+	
+				if (res.next()) {
+	
+					long dup = res.getLong("duplicati");
+					return dup;
+				}
+				else{
+					return 0;
+				}
 			}
 
 
@@ -726,33 +779,63 @@ public class VerificatoreMessaggi {
 
 	}
 
-	public boolean isBustaRegistrataHistory(String tipoMessaggio,String idMessaggio,boolean richiesta)
+	public boolean isBustaRegistrataHistory(String tipoMessaggio,String idMessaggio,boolean richiesta,boolean useTransazioni)
 			throws FatalTestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
 		try {
 
-			String campo = Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO;
-			if(!richiesta)
-				campo = Costanti.REPOSITORY_COLUMN_RIFERIMENTO_MESSAGGIO;
-
-			pstmt = this.con
-					.prepareStatement("select "+Costanti.REPOSITORY_COLUMN_USE_HISTORY+" from "+Costanti.REPOSITORY+
-							" where "+campo+"=? AND "+
-							Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
-			pstmt.setString(1, idMessaggio);
-			pstmt.setString(2, tipoMessaggio);
-
-			res = pstmt.executeQuery();
-			
-			if (res.next()) {
-				//System.out.println("TROVATO");
-				int history = res.getInt("history");	
-				return 1 == history;
+			if(useTransazioni){
+				if(richiesta){
+					pstmt = this.con
+							.prepareStatement("select "+CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RICHIESTA+" from "+
+									CostantiTestSuite.TABLE_TRANSAZIONI+" where "+CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RICHIESTA+"=?");
+				}
+				else{
+					pstmt = this.con
+							.prepareStatement("select "+CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RISPOSTA+" from "+
+									CostantiTestSuite.TABLE_TRANSAZIONI+" where "+CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RICHIESTA+"=?");
+				}
+				pstmt.setString(1, idMessaggio);
+				res = pstmt.executeQuery();
+				if (res.next()) {
+					//System.out.println("TROVATO");
+					if(richiesta){
+						String s = res.getString(CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RICHIESTA);	
+						return s!=null;
+					}
+					else{
+						String s = res.getString(CostantiTestSuite.TABLE_TRANSAZIONI_ID_MESSAGGIO_RISPOSTA);	
+						return s!=null;
+					}
+				}
+				else{
+					return false;
+				}
 			}
 			else{
-				return false;
+			
+				String campo = Costanti.REPOSITORY_COLUMN_ID_MESSAGGIO;
+				if(!richiesta)
+					campo = Costanti.REPOSITORY_COLUMN_RIFERIMENTO_MESSAGGIO;
+	
+				pstmt = this.con
+						.prepareStatement("select "+Costanti.REPOSITORY_COLUMN_USE_HISTORY+" from "+Costanti.REPOSITORY+
+								" where "+campo+"=? AND "+
+								Costanti.REPOSITORY_COLUMN_TIPO_MESSAGGIO+"=?");
+				pstmt.setString(1, idMessaggio);
+				pstmt.setString(2, tipoMessaggio);
+	
+				res = pstmt.executeQuery();
+				if (res.next()) {
+					//System.out.println("TROVATO");
+					int history = res.getInt("history");	
+					return (1 == history);
+				}
+				else{
+					return false;
+				}
 			}
 
 

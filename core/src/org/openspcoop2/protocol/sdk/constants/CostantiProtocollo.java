@@ -32,6 +32,14 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public class CostantiProtocollo {
     
+	/** Esiti properties */
+    public final static String OPENSPCOOP2_ESITI_LOCAL_PATH = "esiti_local.properties";
+    public final static String OPENSPCOOP2_ESITI_PROPERTIES = "OPENSPCOOP2_ESITI_PROPERTIES";
+    
+    /** Context */
+    public final static String ESITO_TRANSACTION_CONTEXT_STANDARD = "standard";
+    public final static String ESITO_TRANSACTION_CONTEXT_SISTEMA = "sistema";
+    
     /** Definisce un tipo di FaultCode (errore nell'intestazione) */
     public static final String FAULT_CODE_CLIENT = "Client";
     /** Definisce un tipo di FaultCode (errore nel processamento) */

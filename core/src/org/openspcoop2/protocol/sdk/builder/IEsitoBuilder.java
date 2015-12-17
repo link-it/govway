@@ -23,8 +23,9 @@ package org.openspcoop2.protocol.sdk.builder;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.resources.TransportRequestContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.constants.Esito;
 
 /**
  * IEsitoBuilder.
@@ -42,8 +43,10 @@ public interface IEsitoBuilder {
 		
 	public IProtocolFactory getProtocolFactory();
 	
-	public Esito getEsito(OpenSPCoop2Message message,boolean erroreUtilizzoConnettore) throws ProtocolException;
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, EsitoTransazioneName name); // non deve lanciare eccezione //throws ProtocolException;
+	
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali) throws ProtocolException;
 		
-	public Esito getEsito(OpenSPCoop2Message message,ProprietaErroreApplicativo erroreApplicativo,boolean erroreUtilizzoConnettore) throws ProtocolException;
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,ProprietaErroreApplicativo erroreApplicativo,InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali) throws ProtocolException;
 
 }

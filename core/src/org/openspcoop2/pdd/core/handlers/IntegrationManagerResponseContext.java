@@ -25,10 +25,11 @@ package org.openspcoop2.pdd.core.handlers;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.services.skeleton.Operazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.constants.EsitoIM;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 
 /**
  * Informazioni di consultazione del servizio di IntegrationManager
@@ -38,16 +39,16 @@ import org.openspcoop2.protocol.sdk.constants.EsitoIM;
  * @version $Rev$, $Date$
  */
 
-public class IntegrationManagerResponseContext extends IntegrationManagerBaseContext {
-
-	/** Nome del servizio applicativo fruitore */
-	private String nomeServizioApplicativo;
+public class IntegrationManagerResponseContext extends IntegrationManagerRequestContext {
+	
+	/** Servizio applicativo fruitore */
+	private IDServizioApplicativo servizioApplicativo;
 	
 	/** Dimensione dell'eventuale messaggio ritornato in bytes */
 	private Long dimensioneMessaggioBytes;
 
 	/** Esito */
-	private EsitoIM esito;
+	private EsitoTransazione esito;
 	
 	/** Tempo di completamento dell'operazione */
 	private Date dataCompletamentoOperazione;
@@ -58,11 +59,11 @@ public class IntegrationManagerResponseContext extends IntegrationManagerBaseCon
 		super(dataRichiestaOperazione,tipoOperazione,pddContext,logger,protocolFactory);
 	}
 
-	public String getNomeServizioApplicativo() {
-		return this.nomeServizioApplicativo;
+	public IDServizioApplicativo getServizioApplicativo() {
+		return this.servizioApplicativo;
 	}
-	public void setNomeServizioApplicativo(String nomeServizioApplicativo) {
-		this.nomeServizioApplicativo = nomeServizioApplicativo;
+	public void setServizioApplicativo(IDServizioApplicativo nomeServizioApplicativo) {
+		this.servizioApplicativo = nomeServizioApplicativo;
 	}
 	public Long getDimensioneMessaggioBytes() {
 		return this.dimensioneMessaggioBytes;
@@ -70,10 +71,10 @@ public class IntegrationManagerResponseContext extends IntegrationManagerBaseCon
 	public void setDimensioneMessaggioBytes(Long dimensioneMessaggioBytes) {
 		this.dimensioneMessaggioBytes = dimensioneMessaggioBytes;
 	}
-	public EsitoIM getEsito() {
+	public EsitoTransazione getEsito() {
 		return this.esito;
 	}
-	public void setEsito(EsitoIM esito) {
+	public void setEsito(EsitoTransazione esito) {
 		this.esito = esito;
 	}
 	public Date getDataCompletamentoOperazione() {

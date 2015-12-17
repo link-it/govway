@@ -2555,7 +2555,7 @@ public class BusteEGov11LineeGuida11 {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerTutteLeEccezioni(id, CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE.toString()));
 
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2715,7 +2715,7 @@ public class BusteEGov11LineeGuida11 {
 					SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE_TIPO_SERVIZIO_CORRELATO.toString()));
 			
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -2879,7 +2879,7 @@ public class BusteEGov11LineeGuida11 {
 					SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE_SERVIZIO_CORRELATO.toString()));
 			
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -3054,7 +3054,7 @@ public class BusteEGov11LineeGuida11 {
 					SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE_TIPO_SERVIZIO_CORRELATO.toString()));
 			
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;
@@ -3342,7 +3342,7 @@ public class BusteEGov11LineeGuida11 {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().existsListaEccezioni(id)==false);
 
 			Reporter.log("Elimino utilizzo da parte del profilo di gestione, id: " +id);
-			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX);
+			data.getVerificatoreMessaggi().deleteUtilizzoProfiloCollaborazione(id, Costanti.INBOX, Utilities.testSuiteProperties.isUseTransazioni());
 			
 		}catch(Exception e){
 			throw e;

@@ -58,9 +58,9 @@ public class CostantiPdD {
 	prima della lettura del vero codice della porta di dominio dalla configurazione di OpenSPCoop. */
     public final static String OPENSPCOOP2 = org.openspcoop2.utils.Costanti.OPENSPCOOP2;
     
-    public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+    public final static String OPENSPCOOP2_LOCAL_HOME = org.openspcoop2.utils.Costanti.OPENSPCOOP2_LOCAL_HOME;
     
-    public final static String OPENSPCOOP2_LOOKUP = "OPENSPCOOP2_LOOKUP";
+    public final static String OPENSPCOOP2_LOOKUP = org.openspcoop2.utils.Costanti.OPENSPCOOP2_LOOKUP;
     
     public final static String OPENSPCOOP2_LOADER = "OPENSPCOOP2_LOADER";
     public final static String OPENSPCOOP2_LOADER_PROPERTIES = "OPENSPCOOP2_LOADER_PROPERTIES";

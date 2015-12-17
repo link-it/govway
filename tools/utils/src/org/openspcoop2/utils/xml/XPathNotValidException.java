@@ -24,7 +24,7 @@
 package org.openspcoop2.utils.xml;
 
 /**	
- * Contiene la definizione di una eccezione lanciata dalle classi del package org.openspcoop.utils.regexp
+ * Contiene la definizione di una eccezione lanciata dalle classi del package org.openspcoop2.utils.xml.XPath*
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
