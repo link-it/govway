@@ -29,8 +29,8 @@ import java.io.Serializable;
  * Contiene i possibili esiti
  *
  * @author apoli@link.it
- * @author $Author: apoli $
- * @version $Rev: 10971 $, $Date: 2015-05-18 17:45:30 +0200 (Mon, 18 May 2015) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public enum EsitoTransazioneName implements Serializable{

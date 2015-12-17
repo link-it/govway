@@ -1,3 +1,14 @@
+2015-12-17  Andrea Poli <apoli@link.it>
+
+	* [Utils,Pdd]
+	Aggiunta funzionalità OP-448
+	Aggiunto all'interno del package org.openspcoop2.utils.xml le funzionalità di:
+	- Confronto tra due xml: XMLDiff
+	- Valutazione di XQuery: XQueryEngine
+	L'implementazione dell'XMLDiff  utilizza la libreria http://www.xmlunit.org
+	L'implementazione del motore di valutazione di espressioni XQuery utilizza la libreria http://saxon.sourceforge.net
+	Migliorata infine la gestione degli esiti con possibilità di aggiungere esiti custom
+
 2015-11-30  Andrea Poli <apoli@link.it>
 
 	* [Pdd,InstallerVersioneBinaria]
