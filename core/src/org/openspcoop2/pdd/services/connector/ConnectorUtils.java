@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.api.constants.MethodType;
+import org.openspcoop2.message.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -161,6 +162,12 @@ public class ConnectorUtils {
 		}
 		if(htmlMessage){
 			versione = StringEscapeUtils.escapeHtml(versione);
+			if(response!=null)
+				response.setContentType(Costanti.CONTENT_TYPE_HTML);
+		}
+		else{
+			if(response!=null)
+				response.setContentType(Costanti.CONTENT_TYPE_PLAIN);
 		}
 
 		

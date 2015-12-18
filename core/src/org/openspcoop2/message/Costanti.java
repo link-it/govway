@@ -47,6 +47,7 @@ public class Costanti {
 	public final static String CONTENT_TYPE_ZIP = "application/zip";
 	public final static String CONTENT_TYPE_APPLICATION_XOP_XML = "application/xop+xml";
 	public final static String CONTENT_TYPE_HTML = "text/html";
+	public final static String CONTENT_TYPE_PLAIN = "text/plain";
 	
 	public final static String CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP = "application/openspcoop2";
 	
