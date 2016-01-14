@@ -214,6 +214,7 @@ public class IDSerialGenerator_numeric {
 					ISQLQueryObject sqlUpdate = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 					sqlUpdate.addUpdateTable(table);
 					sqlUpdate.addUpdateField(columnPrg, "?");
+					sqlUpdate.setANDLogicOperator(true);
 					sqlUpdate.addWhereCondition(columnProtocollo+"=?");
 					if(param.getInformazioneAssociataAlProgressivo()!=null){
 						sqlUpdate.addWhereCondition(columnInfoAssociata+"=?");
