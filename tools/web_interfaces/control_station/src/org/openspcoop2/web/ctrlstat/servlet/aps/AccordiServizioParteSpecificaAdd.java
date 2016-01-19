@@ -657,28 +657,58 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				if(this.portType!=null && !"".equals(this.portType) && !"-".equals(this.portType)){
 
-					if(this.nome_aps==null || "".equals(this.nome_aps)){
-						this.nome_aps = this.portType;
+					boolean ptValid = true;
+					
+					if(ptList!=null && ptList.length>0){
+						// controllo che l'attuale port Type sia tra quelli presenti nell'accordo.
+						boolean found = false;
+						for (String portType : ptList) {
+							if(portType.equals(this.portType)){
+								found = true;
+								break;
+							}
+						}
+						if(!found){
+							ptValid = false;
+						}
+						
 					}
-					else if(this.nome_aps.equals(this.oldPortType)){
-						this.nome_aps = this.portType;
+					
+					if(ptValid){
+					
+						if(this.nome_aps==null || "".equals(this.nome_aps)){
+							this.nome_aps = this.portType;
+						}
+						else if(this.nome_aps.equals(this.oldPortType)){
+							this.nome_aps = this.portType;
+						}
+	
+						if(this.nomeservizio==null || "".equals(this.nomeservizio)){
+							this.nomeservizio = this.portType;
+						}
+						else if(this.nomeservizio.equals(this.oldPortType)){
+							this.nomeservizio = this.portType;
+						}
+	
+						if(this.nomePA==null || "".equals(this.nomePA)){
+							this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
+						}
+						else if(this.nomePA.equals(this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.oldPortType)){
+							this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
+						}
+	
+						this.oldPortType = this.portType;
+						
 					}
-
-					if(this.nomeservizio==null || "".equals(this.nomeservizio)){
-						this.nomeservizio = this.portType;
+					else{
+						
+						this.nome_aps = null;
+						this.nomeservizio = null;
+						this.nomePA = null;
+						this.portType = null;
+						this.oldPortType = null;
+						
 					}
-					else if(this.nomeservizio.equals(this.oldPortType)){
-						this.nomeservizio = this.portType;
-					}
-
-					if(this.nomePA==null || "".equals(this.nomePA)){
-						this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
-					}
-					else if(this.nomePA.equals(this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.oldPortType)){
-						this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
-					}
-
-					this.oldPortType = this.portType;
 				}
 
 
