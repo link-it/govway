@@ -37,7 +37,6 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
-import org.openspcoop2.web.ctrlstat.core.Search;
 
 /**
  * PddCore
@@ -378,12 +377,22 @@ public class PddCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			List<PdDControlStation> list = driver.pddList(null, new Search());
-			for (PdDControlStation pddControlStation : list) {
-				if(pddControlStation.getTipo()!=null && PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
-					return pddControlStation.getNome();
+			// Bug: Le porte di dominio in pddList hanno il limit a 20 !!
+			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.Search());
+//			for (PdDControlStation pddControlStation : list) {
+//				if(pddControlStation.getTipo()!=null && PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
+//					return pddControlStation.getNome();
+//				}
+//			}
+			
+			FiltroRicerca filtro = new FiltroRicerca();
+			filtro.setTipo(PddTipologia.OPERATIVO.toString());
+			try{
+				List<String> nomi = driver.getDriverRegistroServiziDB().getAllIdPorteDominio(filtro);
+				if(nomi!=null && nomi.size()>0){
+					return nomi.get(0); // dovrebbe esisterne solo una
 				}
-			}
+			}catch(DriverRegistroServiziNotFound notFound){}
 
 			throw new Exception("Non e' stata trovata una porta di dominio con tipo '"+PddTipologia.OPERATIVO.toString()+"'");
 			
