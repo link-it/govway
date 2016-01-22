@@ -1,3 +1,24 @@
+2015-12-19  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-454
+	Il problema non permetteva l'eliminazione di un'accordo di servizio parte specifica 
+	se il tipo di database era Oracle.
+
+2015-12-19  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-453
+	Sono stati risolti alcuni problemi presenti sulla console di gestione:
+	- Non era possibile eliminare le azioni definite in un servizio di un accordo parte comune.
+	  Se si selezionava una azione e poi "Rimuovi selezionati", l'azione rimaneva presente senza segnalare alcun problema.
+	- Durante la creazione di un accordo parte specifica, se non viene indicato un servizio applicativo erogatore
+	  viene adesso indicato un messaggio di errore. Il workflow di creazione di un accordo parte specifica erogato da un soggetto operativo sulla PdD,
+	  richiede una creazione precedente del servizio applicativo erogatore.
+	- La funzionalità 'importa', in presenza di più di 20 porte di dominio, generava un errore non riuscendo a trovare la PdD operativa.
+	- Corretto il problema che si presentava durante la generazione automatica della Porta Applicativa, alla creazione di un accordo parte specifica,
+	  quando veniva prima scelto un servizio e poi cambiato accordo parte comune. Il nome della Porta Applicativa generato non era corretto.
+
 2015-12-17  Andrea Poli <apoli@link.it>
 
 	* [Utils,Pdd]
