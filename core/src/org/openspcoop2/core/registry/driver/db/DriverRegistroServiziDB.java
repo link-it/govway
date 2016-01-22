@@ -3388,6 +3388,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 			//Prendo l'accordo per gestire il caso di "usa profilo accordo"
 			AccordoServizioParteComune as = getAccordoServizioParteComune(portType.getIdAccordo(), connection);
 
+			if(portType.getId()==null || portType.getId()<=0){
+				for (PortType ptCheck : as.getPortTypeList()) {
+					if(ptCheck.getNome().equals(portType.getNome())){
+						portType.setId(ptCheck.getId());
+					}
+				}
+			}
+			if(portType.getId()==null || portType.getId()<=0){
+				throw new Exception("Id PortType undefined");
+			}
+			
 			//TODO possibile ottimizzazione
 			//la lista contiene tutte e sole le azioni necessarie
 			//prima cancello le azioni e poi reinserisco quelle nuove
@@ -3399,19 +3410,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 //			stm.setLong(1, portType.getId());
 //			int n=stm.executeUpdate();
 //			stm.close();
-			Operation azione = null;
-			int n = 0;
-			for (int i = 0; i < portType.sizeAzioneList(); i++) {
-				azione = portType.getAzione(i);
-				
-				n += DriverRegistroServiziDB_LIB.CRUDAzionePortType(CostantiDB.DELETE,as,portType,azione, connection, portType.getId());
-			}
 			
-			this.log.debug("Cancellate "+n+" azioni del port type ["+portType.getId()+"]");
-
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI);
+			sqlQueryObject.addWhereCondition("id_port_type=?");
+			String updateString = sqlQueryObject.createSQLDelete();
+			stm = connection.prepareStatement(updateString);
+			stm.setLong(1, portType.getId());
+			int n=stm.executeUpdate();
+			stm.close();
+			this.log.debug("Cancellate "+n+" azioni associate al portType "+portType.getNome()+ " dell'accordo: "+as.getNome());
+			
 //			Operation azione = null;
 			for (int i = 0; i < portType.sizeAzioneList(); i++) {
-				azione = portType.getAzione(i);
+				Operation azione = portType.getAzione(i);
 				
 				
 				DriverRegistroServiziDB_LIB.CRUDAzionePortType(CostantiDB.CREATE,as,portType,azione, connection, portType.getId());

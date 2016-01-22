@@ -794,6 +794,32 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
 					this.httpsalgoritmokey, this.tipoconn,this.nome_aps,this.versione,this.validazioneDocumenti,this.nomePA,null,this.autenticazioneHttp);
+			
+			if(isOk){
+				if(this.nomePA!=null && !"".equals(this.nomePA) && !"-".equals(this.nomePA)){
+					if(this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA)){
+						if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+							if(saSoggetti==null || saSoggetti.length==0 || (saSoggetti.length==1 && "-".equals(saSoggetti[0]))){
+								pd.setMessage("Prima di poter definire un accordo parte specifica deve essere creato un servizio applicativo erogato dal soggetto "+this.tipoSoggettoErogatore+"/"+this.nomeSoggettoErogatore);
+							}
+							else{
+								pd.setMessage("Non e' possibile creare l'accordo parte specifica senza selezionare un servizio applicativo erogatore");
+							}
+						}
+						else{
+							if(saSoggetti==null || saSoggetti.length==0 || (saSoggetti.length==1 && "-".equals(saSoggetti[0]))){
+								pd.setMessage("Prima di poter definire un accordo parte specifica deve essere creato un servizio applicativo erogato dal soggetto "+
+										this.tipoSoggettoErogatore+"/"+this.nomeSoggettoErogatore+ " od il alternativa non indicare un nome di porta applicativa (non verrà creata)");
+							}
+							else{
+								pd.setMessage("Non e' possibile creare l'accordo parte specifica senza selezionare un servizio applicativo erogatore. In alternativa non indicare un nome di porta applicativa (non verrà creata)");
+							}
+						}
+						isOk = false;
+					}
+				}
+			}
+			
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();

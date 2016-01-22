@@ -1048,7 +1048,9 @@ public class DBOggettiInUsoUtils  {
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 			sqlQueryObject.setSelectDistinct(true);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI + ".nome");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI + ".versione");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI + ".id_referente");
 			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPONENTI+".id_servizio_composto = "+CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo = "+CostantiDB.ACCORDI+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPONENTI+".id_servizio_componente = ?");
