@@ -951,6 +951,15 @@ public class ConnettoreHTTP extends ConnettoreBase {
 						htmlRicevuto = bout.toString();
 					}
 					
+					if(this.debug){
+						if(htmlRicevuto!=null && !"".equals(htmlRicevuto)){
+							this.logger.info("Messaggio ricevuto (ContentType:"+tipoRisposta+") :\n"+htmlRicevuto,false);
+						}
+						else{
+							this.logger.info("Messaggio ricevuto (ContentType:"+tipoRisposta+") senza contenuto nell'http-reply",false);
+						}
+					}
+					
 					if(htmlRicevuto!=null && !"".equals(htmlRicevuto))
 						this.errore = tipoLetturaRisposta +"\nhttp response: "+htmlRicevuto;
 					else
