@@ -86,7 +86,7 @@
 	<archive path="/op2_2.3.dev/lib/reports/jcommon-1.0.23.jar"/>
 	<archive path="/op2_2.3.dev/lib/reports/jdtcore-3.1.0.jar"/>
 	<archive path="/op2_2.3.dev/lib/reports/jfreechart-1.0.19.jar"/>
-	<archive path="/op2_2.2.dev/lib/reports/poi-3.10.1.jar"/>
+	<archive path="/op2_2.3.dev/lib/reports/poi-3.10.1.jar"/>
 	<!-- security -->
         <archive path="/op2_2.3.dev/lib/security/xmlsec-1.5.4.jar"/>
         <archive path="/op2_2.3.dev/lib/security/wss4j-1.6.10.jar"/>
