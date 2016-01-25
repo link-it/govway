@@ -8637,13 +8637,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObjectSoggetti.addFromTable(CostantiDB.SOGGETTI);
 				sqlQueryObjectSoggetti.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE_PARTECIPANTI);
 				sqlQueryObjectSoggetti.addSelectCountField("*", "cont");
-				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
-
 				sqlQueryObjectSoggetti.addWhereCondition(true,
 						sqlQueryObjectSoggetti.getWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true),
-						CostantiDB.ACCORDI_COOPERAZIONE_PARTECIPANTI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+							CostantiDB.ACCORDI_COOPERAZIONE_PARTECIPANTI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
 				sqlQueryObjectSoggetti.addWhereCondition(CostantiDB.ACCORDI_COOPERAZIONE_PARTECIPANTI+".id_accordo_cooperazione=?");
-
 				sqlQueryObjectSoggetti.setANDLogicOperator(true);
 				queryString = sqlQueryObjectSoggetti.createSQLQuery();
 			}else {

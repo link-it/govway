@@ -88,7 +88,9 @@ public final class PorteApplicativeProprietaProtocolloList extends Action {
 	
 			porteApplicativeHelper.preparePorteAppPropList(nomePorta, ricerca, lista);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO, 
 					ForwardParams.LIST());

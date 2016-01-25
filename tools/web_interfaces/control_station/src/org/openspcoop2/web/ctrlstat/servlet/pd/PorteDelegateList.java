@@ -107,6 +107,7 @@ public final class PorteDelegateList extends Action {
 
 			porteDelegateHelper.preparePorteDelegateList(ricerca, lista);
 
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			// Forward control to the specified success URI

@@ -889,23 +889,46 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		return dati;
 	}
 
-	public void prepareAccordiCoopPartecipantiList(AccordoCooperazione ac,List<IDSoggetto> lista)
+	public void prepareAccordiCoopPartecipantiList(AccordoCooperazione ac,List<IDSoggetto> lista, ISearch ricerca)
 			throws Exception {
 		try {
 			String id = this.request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			ServletUtils.addListElementIntoSession(this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI,
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id));
+			
+			int idLista = Liste.ACCORDI_COOP_PARTECIPANTI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
-
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 			this.pd.setSearchDescription("");
 			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + this.idAccordoCooperazioneFactory.getUriFromAccordo(ac), null));
+			if (search.equals("")) {
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + this.idAccordoCooperazioneFactory.getUriFromAccordo(ac), null));
+			}
+			else{
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + this.idAccordoCooperazioneFactory.getUriFromAccordo(ac), 
+						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				this.pd.setSearch("on");
+				this.pd.setSearchDescription("Soggetti Partecipanti contenenti la stringa '" + search + "'");
+			}
+			
+			
 			// setto le label delle colonne
 			String[] labels = { AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE };
 			this.pd.setLabels(labels);

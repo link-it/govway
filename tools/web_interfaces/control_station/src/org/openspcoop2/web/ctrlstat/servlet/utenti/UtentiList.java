@@ -85,6 +85,7 @@ public final class UtentiList extends Action {
 	
 			utentiHelper.prepareUtentiList(ricerca, lista, utentiCore.isSinglePdD());
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.LIST());

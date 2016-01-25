@@ -3064,13 +3064,21 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				if(TipologiaErogazione.DISABILITATO.equals(sa.getTipologiaErogazione()) &&
 						TipologiaFruizione.DISABILITATO.equals(sa.getTipologiaFruizione())){
-					if(sa.getInvocazioneServizio()!=null && sa.getInvocazioneServizio().getConnettore()!=null &&
-							sa.getInvocazioneServizio().getConnettore().getTipo()!=null &&
-							!TipiConnettore.DISABILITATO.getNome().equals(sa.getInvocazioneServizio().getConnettore().getTipo())){
-						sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
-					}
-					else if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0){
+					
+					// TipologiaFruizione: cerco di comprenderlo dalla configurazione del sa
+					if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0){
 						sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
+					}
+
+					// TipologiaErogazione: cerco di comprenderlo dalla configurazione del sa
+					if(sa.getInvocazioneServizio()!=null){
+						if(StatoFunzionalita.ABILITATO.equals(sa.getInvocazioneServizio().getGetMessage())){
+							sa.setTipologiaErogazione(TipologiaErogazione.MESSAGE_BOX.getValue());
+						}
+						else if(sa.getInvocazioneServizio().getConnettore()!=null && 
+								!TipiConnettore.DISABILITATO.getNome().equals(sa.getInvocazioneServizio().getConnettore().getTipo())){
+							sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+						}
 					}
 						
 				}

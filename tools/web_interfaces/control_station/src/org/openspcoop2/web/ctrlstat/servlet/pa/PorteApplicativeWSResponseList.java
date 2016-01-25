@@ -89,7 +89,9 @@ public final class PorteApplicativeWSResponseList extends Action {
 	
 			porteApplicativeHelper.preparePorteAppMessageSecurityResponseList(nomePorta, ricerca, lista);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE, 
 					ForwardParams.LIST());

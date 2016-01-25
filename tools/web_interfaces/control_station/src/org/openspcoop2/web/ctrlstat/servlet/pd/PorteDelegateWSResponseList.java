@@ -88,6 +88,7 @@ public final class PorteDelegateWSResponseList extends Action {
 	
 			porteDelegateHelper.preparePorteDelegateMessageSecurityResponseList(nomePorta, ricerca, lista);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 	
 			// Forward control to the specified success URI

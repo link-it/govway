@@ -120,7 +120,7 @@ public final class AccordiCooperazionePartecipantiDel extends Action {
 			
 			List<IDSoggetto> lista = acCore.accordiCoopPartecipantiList(ac.getId(),ricerca);
 
-			acHelper.prepareAccordiCoopPartecipantiList(ac,lista );
+			acHelper.prepareAccordiCoopPartecipantiList(ac,lista,ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

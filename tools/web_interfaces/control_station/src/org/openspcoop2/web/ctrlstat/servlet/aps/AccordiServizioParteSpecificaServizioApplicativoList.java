@@ -89,7 +89,9 @@ public final class AccordiServizioParteSpecificaServizioApplicativoList extends 
 	
 			apsHelper.prepareServiziServizioApplicativoList(lista, ricerca);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_SERVIZI_APPLICATIVI, 
 					ForwardParams.LIST());

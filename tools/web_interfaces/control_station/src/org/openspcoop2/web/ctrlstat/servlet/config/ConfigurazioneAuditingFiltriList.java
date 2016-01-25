@@ -94,8 +94,8 @@ public final class ConfigurazioneAuditingFiltriList extends Action {
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI,
 					ForwardParams.LIST());

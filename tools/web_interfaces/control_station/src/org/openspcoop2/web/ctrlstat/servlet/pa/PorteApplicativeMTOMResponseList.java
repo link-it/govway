@@ -83,6 +83,7 @@ public class PorteApplicativeMTOMResponseList extends Action {
 	
 			porteApplicativeHelper.preparePorteApplicativeMTOMResponseList(nomePorta, ricerca, lista);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 	
 			// Forward control to the specified success URI

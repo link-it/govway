@@ -1231,11 +1231,9 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			List<String> labels = new ArrayList<String>();
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			labels.add(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
 			if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
 				labels.add(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
-			}
-			else{
-				labels.add(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
 			}
 			if(supportAsincroni){
 				labels.add(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
@@ -1290,6 +1288,10 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 						}
 					}
 
+					de = new DataElement();
+					de.setValue(this.getTipologia(sa));
+					e.addElement(de);
+					
 					if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
 						de = new DataElement();
 						// se la pdd e' esterna non e' possibile modificare il
@@ -1321,11 +1323,6 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 								}
 							}
 						}
-						e.addElement(de);
-					}
-					else{
-						de = new DataElement();
-						de.setValue(this.getTipologia(sa));
 						e.addElement(de);
 					}
 
@@ -1430,7 +1427,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			
 			if(sa.getInvocazioneServizio()!=null){
 				if(StatoFunzionalita.ABILITATO.equals(sa.getInvocazioneServizio().getGetMessage())){
-					tipologiaErogazione = TipologiaErogazione.TRASPARENTE;
+					tipologiaErogazione = TipologiaErogazione.MESSAGE_BOX;
 				}
 				else if(sa.getInvocazioneServizio().getConnettore()!=null && 
 						!TipiConnettore.DISABILITATO.getNome().equals(sa.getInvocazioneServizio().getConnettore().getTipo())){

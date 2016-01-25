@@ -108,7 +108,9 @@ public final class PorteApplicativeList extends Action {
 
 			porteApplicativeHelper.preparePorteAppList(ricerca, lista);
 
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
 					ForwardParams.LIST());

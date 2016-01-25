@@ -90,6 +90,7 @@ public final class PddSoggettiList extends Action {
 	
 			pddHelper.preparePddSoggettiList(pdd.getNome(), Integer.parseInt(id), lista, ricerca);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 	
 			// Forward control to the specified success URI

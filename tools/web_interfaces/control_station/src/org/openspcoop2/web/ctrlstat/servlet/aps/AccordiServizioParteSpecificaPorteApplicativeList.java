@@ -104,7 +104,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 	
 			apsHelper.prepareServiziPorteAppList(lista, id, ricerca);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE, 
 					ForwardParams.LIST());

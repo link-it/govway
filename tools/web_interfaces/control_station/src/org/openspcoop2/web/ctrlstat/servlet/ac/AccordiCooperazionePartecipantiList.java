@@ -32,6 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -89,11 +90,16 @@ public final class AccordiCooperazionePartecipantiList extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
+			int idLista = Liste.ACCORDI_COOP_PARTECIPANTI;
+
+			ricerca = acHelper.checkSearchParameters(idLista, ricerca);
+			
 			// Preparo la lista
 			List<IDSoggetto> lista = acCore.accordiCoopPartecipantiList(ac.getId(),ricerca);
 			
-			acHelper.prepareAccordiCoopPartecipantiList(ac,lista);
+			acHelper.prepareAccordiCoopPartecipantiList(ac,lista,ricerca);
 
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI , ForwardParams.LIST());

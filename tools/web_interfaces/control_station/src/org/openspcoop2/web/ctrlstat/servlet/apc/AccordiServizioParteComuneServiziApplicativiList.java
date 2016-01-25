@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 */
 
 /**
@@ -135,6 +136,7 @@ public final class AccordiServizioParteComuneServiziApplicativiList extends Acti
 			// Chiudo la connessione al DB
 			dbM.releaseConnection(con);
 	
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			session.setAttribute("GeneralData", gd);
 			session.setAttribute("PageData", pd);
 	

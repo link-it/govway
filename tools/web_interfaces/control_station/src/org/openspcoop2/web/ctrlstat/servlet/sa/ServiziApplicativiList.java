@@ -120,6 +120,7 @@ public final class ServiziApplicativiList extends Action {
 
 			saHelper.prepareServizioApplicativoList(ricerca, lista);
 
+			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForward(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.LIST());
