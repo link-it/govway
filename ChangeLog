@@ -1,3 +1,16 @@
+2016-01-25  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-458
+	Sono stati risolte le seguenti problematiche:
+	- Nella configurazione avanzata non veniva riportata la tipologia del servizio applicativo nell'elenco
+	- Se si migrava una configurazione esistente, dove l'informazione sulla tipologia non esisteva, 
+	  il riconoscimento automatico presente nel driver non funzionava correttamente qualora fossero presenti 
+	  sia informazioni di fruizione che di erogazione. 
+	  Veniva associata solamente la prima tipologia riscontrata invece che entrambe.
+	- La funzionalità di ricerca all'interno dell'elenco dei servizi applicativi (in presenza di un numero maggiore di 10 elementi) 
+	  non memorizzava l'ultima ricerca effettuata, in caso l'operazione di filtro avvenisse come prima operazione effettuata dopo il login.
+
 2015-12-19  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
