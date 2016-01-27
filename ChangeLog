@@ -1,3 +1,14 @@
+2016-01-27  Andrea Poli <apoli@link.it>
+
+	* [GenericProject]
+	Risolto Bug OP-13
+	Risolto NullPointer quando venivano messe in congiunzione due IExpression in cui una delle due era solamente inizializzata.
+	Esempio:
+	IExpression exp = this.getService().newExpression();
+	IExpression expConCondizione = this.getService().newExpression();
+	expConCondizione.equals(Message.model().ID, filter.getId());
+	expConCondizione.and(exp); // lanciava nullPointer
+
 2016-01-26  Andrea Poli <apoli@link.it>
 
 	* [PddConsole, Utils]
