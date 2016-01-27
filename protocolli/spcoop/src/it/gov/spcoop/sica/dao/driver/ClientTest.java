@@ -236,7 +236,7 @@ public class ClientTest {
 			java.util.Properties loggerProperties = new java.util.Properties();
 			loggerProperties.load(RegistroServizi.class.getResourceAsStream("/logger.log4j.properties"));
 			PropertyConfigurator.configure(loggerProperties);
-			Logger log = Logger.getLogger("openspcoop.core");
+			Logger log = Logger.getLogger("openspcoop2.core");
 			
 			XMLUtils xmlSICAUtilities = new XMLUtils(context,log);
 			

@@ -15,8 +15,8 @@
 	</taskdef>
 	
 
-	<!-- Compilazione della libreria 'org.openspcoop.core.*' -->
-	<target name="compile_openspcoop2_core" description="compila la libreria org.openspcoop.core.*">
+	<!-- Compilazione della libreria 'org.openspcoop2.core.*' -->
+	<target name="compile_openspcoop2_core" description="compila la libreria org.openspcoop2.core.*">
 
 		<if>
 			<istrue value="${buildCore}"/>

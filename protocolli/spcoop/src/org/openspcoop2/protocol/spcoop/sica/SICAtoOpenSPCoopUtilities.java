@@ -650,6 +650,11 @@ public class SICAtoOpenSPCoopUtilities {
 	public static org.openspcoop2.core.registry.AccordoCooperazione accordoCooperazione_sicaToOpenspcoop(it.gov.spcoop.sica.dao.AccordoCooperazione accordoCooperazioneSICA,
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
 			Logger log) throws SICAToOpenSPCoopUtilitiesException{
+		
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
+		
 		org.openspcoop2.core.registry.AccordoCooperazione accCooperazioneOpenspcoop = new org.openspcoop2.core.registry.AccordoCooperazione();
 		
 		/* Metadati presenti nel Manifest dell'Accordo di Cooperazione. */
@@ -763,6 +768,10 @@ public class SICAtoOpenSPCoopUtilities {
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 				
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
+		
 		boolean includiInfoRegistroGenerale = sicaToOpenspcoopContext.isSICAClient_includiInfoRegistroGenerale();
 				
 		it.gov.spcoop.sica.dao.AccordoCooperazione accCooperazioneSICA = 
@@ -901,6 +910,10 @@ public class SICAtoOpenSPCoopUtilities {
 	public static org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizioParteComune_sicaToOpenspcoop(it.gov.spcoop.sica.dao.AccordoServizioParteComune accordoServizioSICA,
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
+		
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
 		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
 		boolean prettyDocument = sicaToOpenspcoopContext.isWSDL_XSD_prettyDocuments();
@@ -1124,7 +1137,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Correggo eventuali import/include malformati in maniera conforme alla struttura del package CNIPA
 		if(verificaCorreggiLocationWSDL){
 			try{
-				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 				registroOpenSPCoopUtilities.updateLocation(accServizioOpenspcoop,false,prettyDocument);
 			}catch(Exception e){
 				throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.setImportLocation error: "+e.getMessage(),e);
@@ -1141,6 +1154,10 @@ public class SICAtoOpenSPCoopUtilities {
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
+		
 		boolean documentoSpecificaEGOV_asClientSICA = sicaToOpenspcoopContext.isInformazioniEGov_wscp();
 		boolean documentoSpecificaEGOV_asSpecificaSemiformale = sicaToOpenspcoopContext.isInformazioniEGov_specificaSemiformale();
 		boolean documentoSpecificaEGOV_asClientSICADisabled_namespaceCNIPA = sicaToOpenspcoopContext.isInformazioniEGov_wscpDisabled_namespaceCnipa();
@@ -1154,7 +1171,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Correggo eventuali import/include malformati in maniera conforme alla struttura del package CNIPA
 		if(verificaCorreggiLocationWSDL){
 			try{
-				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 				registroOpenSPCoopUtilities.updateLocation(accordoServizioOpenspcoop,true,prettyDocument);
 			}catch(Exception e){
 				throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.setImportLocation error: "+e.getMessage(),e);
@@ -1456,6 +1473,10 @@ public class SICAtoOpenSPCoopUtilities {
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,String Servizio,
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
+		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
 		boolean prettyDocument = sicaToOpenspcoopContext.isWSDL_XSD_prettyDocuments();
 		boolean eliminaInformazioniASParteComuneWSDL = sicaToOpenspcoopContext.isWSDL_XSD_accordiParteSpecifica_gestioneParteComune();
@@ -1509,14 +1530,14 @@ public class SICAtoOpenSPCoopUtilities {
 				byte[] doc = accordoServizioSICA.getPortiAccessoErogatore().getContenuto();
 				if(eliminaInformazioniASParteComuneWSDL){
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						doc = registroOpenSPCoopUtilities.eliminaASParteComune(doc,true);
 					}catch(Exception e){
 						throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.eliminaASParteComune error: "+e.getMessage(),e);
 					}
 				}else if(sicaToOpenspcoopAggiuntaImportParteComune){
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						doc = registroOpenSPCoopUtilities.aggiungiImportASParteComune(doc,true);
 					}catch(Exception e){
 						throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.aggiungiImportASParteComune error: "+e.getMessage(),e);
@@ -1566,14 +1587,14 @@ public class SICAtoOpenSPCoopUtilities {
 				byte[] doc = accordoServizioSICA.getPortiAccessoFruitore().getContenuto();
 				if(eliminaInformazioniASParteComuneWSDL){
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						doc = registroOpenSPCoopUtilities.eliminaASParteComune(doc,false);
 					}catch(Exception e){
 						throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.eliminaASParteComune error: "+e.getMessage(),e);
 					}
 				}else if(sicaToOpenspcoopAggiuntaImportParteComune){
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						doc = registroOpenSPCoopUtilities.aggiungiImportASParteComune(doc,false);
 					}catch(Exception e){
 						throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.aggiungiImportASParteComune error: "+e.getMessage(),e);
@@ -1765,13 +1786,13 @@ public class SICAtoOpenSPCoopUtilities {
 			try{
 				url = SICAtoOpenSPCoopUtilities.readConnettoreFromWsdlImplementativo(aspsOpenSPCoop.getByteWsdlImplementativoErogatore());
 			}catch(Exception e){
-				Logger.getLogger("openspcoop.core").info("Lettura WsdlLocation non riuscita (ImplementativoErogatore): "+e.getMessage(),e);
+				log.info("Lettura WsdlLocation non riuscita (ImplementativoErogatore): "+e.getMessage(),e);
 			}
 		}else if(aspsOpenSPCoop.getByteWsdlImplementativoFruitore()!=null){
 			try{
 				url = SICAtoOpenSPCoopUtilities.readConnettoreFromWsdlImplementativo(aspsOpenSPCoop.getByteWsdlImplementativoFruitore());
 			}catch(Exception e){
-				Logger.getLogger("openspcoop.core").info("Lettura WsdlLocation non riuscita (ImplementativoFruitore): "+e.getMessage(),e);
+				log.info("Lettura WsdlLocation non riuscita (ImplementativoFruitore): "+e.getMessage(),e);
 			}
 		}
 		Connettore connettore = new Connettore();
@@ -1801,7 +1822,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Correggo eventuali import/include malformati in maniera conforme alla struttura del package CNIPA
 		if(verificaCorreggiLocationWSDL){
 			try{
-				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 				registroOpenSPCoopUtilities.updateLocation(aspsOpenSPCoop,false,prettyDocument);
 			}catch(Exception e){
 				//throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.setImportLocation error: "+e.getMessage(),e);
@@ -1823,6 +1844,10 @@ public class SICAtoOpenSPCoopUtilities {
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
+		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
 		boolean prettyDocument = sicaToOpenspcoopContext.isWSDL_XSD_prettyDocuments();
 		boolean includiInfoRegistroGenerale = sicaToOpenspcoopContext.isSICAClient_includiInfoRegistroGenerale();
@@ -1838,7 +1863,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Correggo eventuali import/include malformati in maniera conforme alla struttura del package CNIPA
 		if(verificaCorreggiLocationWSDL){
 			try{
-				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 				registroOpenSPCoopUtilities.updateLocation(aspsOpenspcoop,true,prettyDocument);
 			}catch(Exception e){
 				throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.setImportLocation error: "+e.getMessage(),e);
@@ -1923,18 +1948,18 @@ public class SICAtoOpenSPCoopUtilities {
 				if(parteComuneDaIncludereWSDLImplementativo!=null){
 					// Includo parte comune
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						Definition wsdl = registroOpenSPCoopUtilities.buildWsdlFromObjects(parteComuneDaIncludereWSDLImplementativo, wsdlImplementativoErogatore, true);
 						DefinitionWrapper wsdlOpenSPCoop = new DefinitionWrapper(wsdl,xmlUtils);
 						wsdlImplementativoErogatore = wsdlOpenSPCoop.toByteArray();
 					}catch(Exception e){
-						Logger.getLogger("openspcoop.core").info("Inserimento parte comune nel wsdl non riuscito (ImplementativoErogatore): "+e.getMessage(),e);
+						log.info("Inserimento parte comune nel wsdl non riuscito (ImplementativoErogatore): "+e.getMessage(),e);
 					}
 				}
 				else if(openspcoopToSicaEliminazioneImportParteComune){
 					// Elimino import parte comune
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						wsdlImplementativoErogatore = registroOpenSPCoopUtilities.eliminaImportASParteComune(wsdlImplementativoErogatore);
 					}catch(Exception e){
 						throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.eliminaImportASParteComune error: "+e.getMessage(),e);
@@ -1946,7 +1971,7 @@ public class SICAtoOpenSPCoopUtilities {
 						wsdlImplementativoErogatore = SICAtoOpenSPCoopUtilities.saveConnettoreIntoWsdlImplementativo(wsdlImplementativoErogatore, 
 								urlConnettore);
 					}catch(Exception e){
-						Logger.getLogger("openspcoop.core").info("Impostazione WsdlLocation non riuscita (ImplementativoErogatore): "+e.getMessage(),e);
+						log.info("Impostazione WsdlLocation non riuscita (ImplementativoErogatore): "+e.getMessage(),e);
 					}
 				}	
 			}
@@ -1974,18 +1999,18 @@ public class SICAtoOpenSPCoopUtilities {
 				if(parteComuneDaIncludereWSDLImplementativo!=null){
 					// Includo parte comune
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						Definition wsdl = registroOpenSPCoopUtilities.buildWsdlFromObjects(parteComuneDaIncludereWSDLImplementativo, wsdlImplementativoFruitore, false);
 						DefinitionWrapper wsdlOpenSPCoop = new DefinitionWrapper(wsdl,xmlUtils);
 						wsdlImplementativoFruitore = wsdlOpenSPCoop.toByteArray();
 					}catch(Exception e){
-						Logger.getLogger("openspcoop.core").info("Inserimento parte comune nel wsdl non riuscito (ImplementativoFruitore): "+e.getMessage(),e);
+						log.info("Inserimento parte comune nel wsdl non riuscito (ImplementativoFruitore): "+e.getMessage(),e);
 					}
 				}
 				else if(openspcoopToSicaEliminazioneImportParteComune){
 					// Elimino import parte comune
 					try{
-						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+						RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 						wsdlImplementativoFruitore = registroOpenSPCoopUtilities.eliminaImportASParteComune(wsdlImplementativoFruitore);
 					}catch(Exception e){
 						throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.eliminaImportASParteComune error: "+e.getMessage(),e);
@@ -1997,7 +2022,7 @@ public class SICAtoOpenSPCoopUtilities {
 						wsdlImplementativoFruitore = SICAtoOpenSPCoopUtilities.saveConnettoreIntoWsdlImplementativo(wsdlImplementativoFruitore, 
 								urlConnettore);
 					}catch(Exception e){
-						Logger.getLogger("openspcoop.core").info("Impostazione WsdlLocation non riuscita (ImplementativoFruitore): "+e.getMessage(),e);
+						log.info("Impostazione WsdlLocation non riuscita (ImplementativoFruitore): "+e.getMessage(),e);
 					}
 				}
 			}
@@ -2141,6 +2166,10 @@ public class SICAtoOpenSPCoopUtilities {
 	public static org.openspcoop2.core.registry.AccordoServizioParteComune accordoServizioComposto_sicaToOpenspcoop(it.gov.spcoop.sica.dao.AccordoServizioComposto accordoServizioSICA,
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
+		
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
 		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
 		boolean prettyDocument = sicaToOpenspcoopContext.isWSDL_XSD_prettyDocuments();
@@ -2426,7 +2455,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Correggo eventuali import/include malformati in maniera conforme alla struttura del package CNIPA
 		if(verificaCorreggiLocationWSDL){
 			try{
-				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 				registroOpenSPCoopUtilities.updateLocation(accServizioOpenspcoop,false,prettyDocument);
 			}catch(Exception e){
 				throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.setImportLocation error: "+e.getMessage(),e);
@@ -2444,6 +2473,10 @@ public class SICAtoOpenSPCoopUtilities {
 			SICAtoOpenSPCoopContext sicaToOpenspcoopContext,
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
+		if(log==null){
+			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+		}
+		
 		boolean documentoSpecificaEGOV_asClientSICA = sicaToOpenspcoopContext.isInformazioniEGov_wscp();
 		boolean documentoSpecificaEGOV_asSpecificaSemiformale = sicaToOpenspcoopContext.isInformazioniEGov_specificaSemiformale();
 		boolean documentoSpecificaEGOV_asClientSICADisabled_namespaceCNIPA = sicaToOpenspcoopContext.isInformazioniEGov_wscpDisabled_namespaceCnipa();
@@ -2457,7 +2490,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Correggo eventuali import/include malformati in maniera conforme alla struttura del package CNIPA
 		if(verificaCorreggiLocationWSDL){
 			try{
-				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(Logger.getLogger("openspcoop.core"));
+				RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(log);
 				registroOpenSPCoopUtilities.updateLocation(accordoServizioOpenspcoop,true,prettyDocument);
 			}catch(Exception e){
 				throw new SICAToOpenSPCoopUtilitiesException("RegistroOpenSPCoopUtilities.setImportLocation error: "+e.getMessage(),e);

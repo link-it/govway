@@ -1371,7 +1371,7 @@ public class RegistroServiziReader {
 	 *
 	 * @param nomeConnettore Connettore richiesto.
 	 * @param nomeRegistro nome del registro su cui effettuare la ricerca (null per effettuare una ricerca su tutti i registri)
-	 * @return l'oggetto di tipo {@link org.openspcoop.core.registry.IConnettore} se la ricerca nel registro ha successo,
+	 * @return l'oggetto di tipo {@link org.openspcoop2.core.config.Connettore} se la ricerca nel registro ha successo,
 	 *         null altrimenti.
 	 */
 	private org.openspcoop2.core.config.Connettore getConnettore(IDSoggetto idSoggetto, String nomeConnettore,String nomeRegistro) {
@@ -1402,7 +1402,7 @@ public class RegistroServiziReader {
 	 * @param idService Identificatore del Servizio di tipo {@link org.openspcoop2.core.id.IDServizio}.
 	 * @param nomeConnettore Connettore richiesto.
 	 * @param nomeRegistro nome del registro su cui effettuare la ricerca (null per effettuare una ricerca su tutti i registri)
-	 * @return l'oggetto di tipo {@link org.openspcoop.core.registry.IConnettore} se la ricerca nel registro ha successo,
+	 * @return l'oggetto di tipo {@link org.openspcoop2.core.config.Connettore} se la ricerca nel registro ha successo,
 	 *         null altrimenti.
 	 */
 	private org.openspcoop2.core.config.Connettore getConnettore(IDServizio idService, String nomeConnettore,String nomeRegistro){

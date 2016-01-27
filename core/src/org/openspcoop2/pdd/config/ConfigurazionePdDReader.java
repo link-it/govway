@@ -4083,10 +4083,10 @@ public class ConfigurazionePdDReader {
 						System.out.println("TRACCIAMENTO DUMP ["+configurazione.getTracciamento().getDump()+"]");
 						for(int i=0;i<configurazione.getTracciamento().sizeOpenspcoopAppenderList();i++){
 							System.out.println("TRACCIAMENTO APPENDER ["+i+"] tipo["+configurazione.getTracciamento().getOpenspcoopAppender(i).getTipo()+"]");
-							org.openspcoop.core.config.OpenspcoopAppenderProperty [] properties = configurazione.getTracciamento().getOpenspcoopAppender(i).getPropertyList();
+							List<org.openspcoop2.core.config.Property> properties = configurazione.getTracciamento().getOpenspcoopAppender(i).getPropertyList();
 							if(properties!=null){
-								for (int j = 0; j < properties.length; j++) {
-									System.out.println("TRACCIAMENTO APPENDER ["+i+"] NOME["+properties[j].getNome()+"]=VALORE["+properties[j].getValore()+"]");
+								for (int j = 0; j < properties.size(); j++) {
+									System.out.println("TRACCIAMENTO APPENDER ["+i+"] NOME["+properties.get(j).getNome()+"]=VALORE["+properties.get(j).getValore()+"]");
 								}
 							}
 						}
