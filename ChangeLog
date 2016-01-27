@@ -1,3 +1,19 @@
+2016-01-26  Andrea Poli <apoli@link.it>
+
+	* [PddConsole, Utils]
+	Risolto Bug OP-460
+	In caso di creazione di un accordo parte comune tramite un wsdl che contiene una definizione di binding con un port-type non esistente,
+	vengono creati due servizi, uno corrispondente al port-type originale, uno corrispondente al port-type inesistente indicato nel binding.
+	Questo comportamente anomalo succede se si procede con il caricamento, disabilitato la validazione.
+	L'errore è dovuto alla libreria javax.wsdl.Definition, metodo getAllPortTypes(). 
+	Questo metodo ritorna anche i port types definiti nel binding ma non realmente definiti come port type. 
+	L'errore non è superabile a meno di cambiare libreria di base e/o fixare wsdl4j.
+	Come detto però il wsdl non verrebbe caricato con validazione attiva nella console poichè viene sollevata una eccezione
+	dove viene indicato la mancanza di un messaggio per una operation. Questo errore a sua volta non è corretto 
+	ma è scaturito dall'errore precedente di port-type indicato nel binding non presente. 
+	Per questo motivo è stato aggiunto un dettaglio all'errore sollevato in cui viene indicato di verificare anche il binding.
+	Conclusione: il problema non è risolvibile. E' stato comunque migliorata la segnalazione di errore se è attiva la validazione.
+
 2016-01-25  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
