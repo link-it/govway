@@ -512,6 +512,8 @@ public class ClientTest {
 		
 		ClientTest.constructorExpression(author);
 		
+		ClientTest.conjunctionNull(author);
+		
 		ClientTest.empty(author);
 		
 		ClientTest.mixed(author);
@@ -1910,6 +1912,28 @@ public class ClientTest {
 		}
 		
 	}
+	
+	public static void conjunctionNull(Author author) throws ExpressionNotImplementedException, ExpressionException{
+		
+		System.out.println("\n **************** conjunctionNull ************************* ");
+		
+		IExpression exp = ClientTest.newExpressionImplForAuthor();
+		System.out.println("- test expression empty: "+ClientTest.toString(exp));
+
+		IExpression expValorizzata = ClientTest.newExpressionImplForAuthor();
+		expValorizzata.equals(Author.model().AGE,3);
+		System.out.println("- test expression valorizzata: "+ClientTest.toString(expValorizzata));
+
+		expValorizzata.and(exp);
+		System.out.println("- test expression valorizzata con aggiunta exp vuota: "+ClientTest.toString(expValorizzata));
+		
+		IExpression expValorizzata2 = ClientTest.newExpressionImplForAuthor();
+		expValorizzata2.equals(Author.model().AGE,6);
+		expValorizzata.and(exp,expValorizzata2);
+		System.out.println("- test expression valorizzata con aggiunta exp valorizzata e exp vuota: "+ClientTest.toString(expValorizzata));
+	
+	}
+	
 	
 	
 	public static void empty(Author author) throws ExpressionNotImplementedException, ExpressionException{

@@ -146,18 +146,18 @@ public class MsgDiagnosticiProperties {
 
 
 	/*---------- Inizializzazione (Usata da PddInterceptor) -------------*/
-	public static boolean initialize(){
-
-		try {
-			if(MsgDiagnosticiProperties.msgDiagnosticiProperties == null){
-				_initialize(null,null);
-			}
-			return true;
-		}
-		catch(Exception e) {
-			return false;
-		}
-	}
+//	public static boolean initialize(){
+//
+//		try {
+//			if(MsgDiagnosticiProperties.msgDiagnosticiProperties == null){
+//				_initialize(null,null);
+//			}
+//			return true;
+//		}
+//		catch(Exception e) {
+//			return false;
+//		}
+//	}
 
 	
 

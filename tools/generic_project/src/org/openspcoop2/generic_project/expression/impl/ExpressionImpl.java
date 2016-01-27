@@ -1126,16 +1126,22 @@ public class ExpressionImpl implements IExpression {
 	protected void buildConjunctionExpression(boolean and,IExpression... expressions) throws ExpressionException {
 		ConjunctionExpressionImpl cExp = getConjunctionExpression();
 		cExp.setAndConjunction(and);
+		boolean add = false;
 		for (int i = 0; i < expressions.length; i++) {
 			ExpressionImpl xmlExpression = (ExpressionImpl) expressions[i];
-			cExp.addExpression(xmlExpression.expressionEngine);
-		}	
-		if(this.expressionEngine==null){
-			this.expressionEngine = cExp;
-		}else{
-			conjunctionWithInternalInstance(cExp);
+			if(xmlExpression.expressionEngine!=null){
+				cExp.addExpression(xmlExpression.expressionEngine);
+				add = true;
+			}
 		}
-		this.expressionEngine.setNot(this.notOperator);
+		if(add){
+			if(this.expressionEngine==null){
+				this.expressionEngine = cExp;
+			}else{
+				conjunctionWithInternalInstance(cExp);
+			}
+			this.expressionEngine.setNot(this.notOperator);
+		}
 	}
 	protected void conjunctionWithInternalInstance(AbstractBaseExpressionImpl newExpr) throws ExpressionException {
 		ConjunctionExpressionImpl newConjunctionExpr = getConjunctionExpression();
