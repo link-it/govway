@@ -868,15 +868,23 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 				Input input = op.getInput();
 				Output output = op.getOutput();
 				
+				String bindingWarning = "";
+				try{
+					java.util.Map<?,?> bindings = this.getAllBindings();
+					if(bindings!=null && bindings.size()>0){
+						bindingWarning = " (Verificare che il problema non sia dovuto a errori ereditati da una definizione del binding non corretta (es. port-type indicato nel binding inesistente))";
+					}
+				}catch(Throwable e){}
+				
 				// INPUT
 				if(input==null){
-					throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un input per l'operation "+op.getName()+" (Port type "+key+")");
+					throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un input per l'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
 				}
 				if(input.getMessage()==null){
-					throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un input message per l'operation "+op.getName()+" (Port type "+key+")");
+					throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un input message per l'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
 				}
 				if(input.getMessage().getQName()==null){
-					throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un input message (QName) per l'operation "+op.getName()+" (Port type "+key+")");
+					throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un input message (QName) per l'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
 				}
 				QName messageInput = input.getMessage().getQName();
 				itMessages = messages.keySet().iterator();
@@ -898,16 +906,16 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 					}
 				}
 				if(!findMessageInput){
-					throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageInput+")  all'input dell'operation "+op.getName()+" (Port type "+key+")");
+					throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageInput+")  all'input dell'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
 				}
 				
 				// OUTPUT
 				if(output!=null){
 					if(output.getMessage()==null){
-						throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un output message per l'operation "+op.getName()+" (Port type "+key+")");
+						throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un output message per l'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
 					}
 					if(output.getMessage().getQName()==null){
-						throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un output message (QName) per l'operation "+op.getName()+" (Port type "+key+")");
+						throw new org.openspcoop2.utils.wsdl.WSDLException("Non e' stato definito un output message (QName) per l'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
 					}
 					
 					QName messageOutput = input.getMessage().getQName();
@@ -930,7 +938,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 						}
 					}
 					if(!findMessageOutput){
-						throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageOutput+") all'output dell'operation "+op.getName()+" (Port type "+key+")");
+						throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageOutput+") all'output dell'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
 					}
 				}
 			}
