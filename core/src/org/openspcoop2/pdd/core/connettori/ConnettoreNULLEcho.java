@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.Riscontro;
+import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
@@ -127,6 +128,23 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
 				this.debug = true;
 		}
+		
+		boolean generaTrasmissione = false;
+		if(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE).trim()))
+				generaTrasmissione = true;
+		}
+		boolean generaTrasmissioneInvertita = false;
+		if(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_INVERTITA)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_INVERTITA).trim()))
+				generaTrasmissioneInvertita = true;
+		}
+		boolean generaTrasmissioneAndataRitorno = false;
+		if(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_ANDATA_RITORNO)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_ANDATA_RITORNO).trim()))
+				generaTrasmissioneAndataRitorno = true;
+		}
+		
 	
 		// Logger
 		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
@@ -340,6 +358,52 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 						throw e;
 					}
 					bustaRisposta.setID(idBustaRisposta);
+					
+					if(generaTrasmissioneAndataRitorno){
+						Trasmissione t = new Trasmissione();
+						t.setTipoOrigine(busta.getTipoMittente());
+						t.setOrigine(busta.getMittente());
+						t.setIdentificativoPortaOrigine(busta.getIdentificativoPortaMittente());
+						t.setIndirizzoOrigine(busta.getIndirizzoMittente());
+						
+						t.setTipoDestinazione(busta.getTipoDestinatario());
+						t.setDestinazione(busta.getDestinatario());
+						t.setIdentificativoPortaDestinazione(busta.getIdentificativoPortaDestinatario());
+						t.setIndirizzoDestinazione(busta.getIndirizzoDestinatario());
+						
+						t.setOraRegistrazione(busta.getOraRegistrazione());
+						t.setTempo(busta.getTipoOraRegistrazione(), busta.getTipoOraRegistrazioneValue());
+						bustaRisposta.addTrasmissione(t);
+					}
+					if(generaTrasmissione || generaTrasmissioneInvertita || generaTrasmissioneAndataRitorno){
+						Trasmissione t = new Trasmissione();
+						if(generaTrasmissione || generaTrasmissioneAndataRitorno){
+							t.setTipoOrigine(bustaRisposta.getTipoMittente());
+							t.setOrigine(bustaRisposta.getMittente());
+							t.setIdentificativoPortaOrigine(bustaRisposta.getIdentificativoPortaMittente());
+							t.setIndirizzoOrigine(bustaRisposta.getIndirizzoMittente());
+							
+							t.setTipoDestinazione(bustaRisposta.getTipoDestinatario());
+							t.setDestinazione(bustaRisposta.getDestinatario());
+							t.setIdentificativoPortaDestinazione(bustaRisposta.getIdentificativoPortaDestinatario());
+							t.setIndirizzoDestinazione(bustaRisposta.getIndirizzoDestinatario());
+						}
+						if(generaTrasmissioneInvertita){
+							// invertita
+							t.setTipoOrigine(bustaRisposta.getTipoDestinatario());
+							t.setOrigine(bustaRisposta.getDestinatario());
+							t.setIdentificativoPortaOrigine(bustaRisposta.getIdentificativoPortaDestinatario());
+							t.setIndirizzoOrigine(bustaRisposta.getIndirizzoDestinatario());
+							
+							t.setTipoDestinazione(bustaRisposta.getTipoMittente());
+							t.setDestinazione(bustaRisposta.getMittente());
+							t.setIdentificativoPortaDestinazione(bustaRisposta.getIdentificativoPortaMittente());
+							t.setIndirizzoDestinazione(bustaRisposta.getIndirizzoMittente());
+						}
+						t.setOraRegistrazione(bustaRisposta.getOraRegistrazione());
+						t.setTempo(bustaRisposta.getTipoOraRegistrazione(), bustaRisposta.getTipoOraRegistrazioneValue());
+						bustaRisposta.addTrasmissione(t);
+					}
 								
 					// imbustamento nuova busta
 					Integrazione integrazione = new Integrazione();
