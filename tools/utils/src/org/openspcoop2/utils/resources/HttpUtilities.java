@@ -62,7 +62,6 @@ public class HttpUtilities {
 	public final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
 	public final static String HEADER_ATTACH_FILE = "attachment; filename=";
 	
-	
 	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName) throws UtilsException{
 		
 		// setto content-type e header per gestire il download lato client
@@ -85,7 +84,14 @@ public class HttpUtilities {
 			mimeType = HEADER_X_DOWNLOAD;
 		}
 		
-		response.setContentType(mimeType);
+		setOutputFile(response, noCache, fileName, mimeType);
+	}
+	
+	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName, String mimeType) throws UtilsException{
+				
+		if(mimeType!=null){
+			response.setContentType(mimeType);
+		}
 
 		response.setHeader(HEADER_CONTENT_DISPOSITION, (new StringBuilder()).append(HEADER_ATTACH_FILE+"\"").append(fileName).append("\"").toString());
 		
