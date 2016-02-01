@@ -192,12 +192,6 @@ public class ArchiviCostanti {
 	public final static String LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO = "Il servizio implementato ("+
 			LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO_KEY+") non risulta registrato nell'accordo di servizio parte comune (o composto) riferito<br>Selezionare uno dei servizi esistenti";
 	
-	/* LABEL HEADER */
-	
-	public final static String HEADER_X_DOWNLOAD = "application/x-download";
-	public final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
-	public final static String HEADER_ATTACH_FILE = "attachment; filename=";
-	
 	
 	/* PARAMETRI */
 	

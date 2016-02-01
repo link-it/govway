@@ -28,6 +28,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -55,6 +57,54 @@ public class HttpUtilities {
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
+	
+	public final static String HEADER_X_DOWNLOAD = "application/x-download";
+	public final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+	public final static String HEADER_ATTACH_FILE = "attachment; filename=";
+	
+	
+	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName) throws UtilsException{
+		
+		// setto content-type e header per gestire il download lato client
+		String mimeType = null;
+		if(fileName.contains(".")){
+			String ext = null;
+			try{
+				ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+			}catch(Exception e){}
+			MimeTypes mimeTypes = MimeTypes.getInstance();
+			if(ext!=null && mimeTypes.existsExtension(ext)){
+				mimeType = mimeTypes.getMimeType(ext);
+				//System.out.println("CUSTOM ["+mimeType+"]");		
+			}
+			else{
+				mimeType = HEADER_X_DOWNLOAD;
+			}
+		}
+		else{
+			mimeType = HEADER_X_DOWNLOAD;
+		}
+		
+		response.setContentType(mimeType);
+
+		response.setHeader(HEADER_CONTENT_DISPOSITION, (new StringBuilder()).append(HEADER_ATTACH_FILE+"\"").append(fileName).append("\"").toString());
+		
+		// no cache
+		if(noCache){
+			setNoCache(response);
+		}
+		
+	}
+	
+	
+	
+	public static void setNoCache(HttpServletResponse response) throws UtilsException{
+		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+		response.setDateHeader("Expires", 0); // Proxies.
+	}
+	
+	
 	
 	public static void setChunkedStreamingMode(HttpURLConnection httpConn, int chunkLength, String httpMethod, String contentType) throws UtilsException{
 		

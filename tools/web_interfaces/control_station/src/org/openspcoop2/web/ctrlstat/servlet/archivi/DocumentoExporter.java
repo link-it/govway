@@ -36,7 +36,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.protocol.basic.Costanti;
-import org.openspcoop2.utils.resources.MimeTypes;
+import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -217,25 +217,8 @@ public class DocumentoExporter extends HttpServlet {
 				
 			}
 		
-			// setto content-type e header per gestire il download lato client
-			String mimeType = null;
-			if(fileName.contains(".")){
-				String ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
-				MimeTypes mimeTypes = MimeTypes.getInstance();
-				if(mimeTypes.existsExtension(ext)){
-					mimeType = mimeTypes.getMimeType(ext);
-					//System.out.println("CUSTOM ["+mimeType+"]");		
-				}
-				else{
-					mimeType = ArchiviCostanti.HEADER_X_DOWNLOAD;
-				}
-			}
-			else{
-				mimeType = ArchiviCostanti.HEADER_X_DOWNLOAD;
-			}
-			
-			response.setContentType(mimeType);
-			response.setHeader(ArchiviCostanti.HEADER_CONTENT_DISPOSITION, ArchiviCostanti.HEADER_ATTACH_FILE + fileName);
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, fileName);
 	
 			OutputStream out = response.getOutputStream();	
 			out.write(docBytes);

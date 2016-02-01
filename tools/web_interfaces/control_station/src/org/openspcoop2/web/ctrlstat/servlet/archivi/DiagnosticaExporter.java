@@ -52,7 +52,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundExce
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.utils.resources.MimeTypes;
+import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -94,7 +94,7 @@ public class DiagnosticaExporter extends HttpServlet {
 	 */
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		String filename = "esportazione_diagnostica.zip";
+		String filename = "Diagnostici.zip";
 
 		ControlStationCore.logDebug("Ricevuta Richiesta di esportazione...");
 		Enumeration<?> en = request.getParameterNames();
@@ -106,22 +106,12 @@ public class DiagnosticaExporter extends HttpServlet {
 		}
 		ControlStationCore.logDebug("-----------------");
 
-		// setto content-type e header per gestire il download lato client
-		//response.setContentType(ArchiviCostanti.HEADER_X_DOWNLOAD);
+		// Setto Proprietà Export File
 		try{
-			MimeTypes mimeTypes = MimeTypes.getInstance();
-			String mimeType = null;
-			if(mimeTypes.existsExtension("zip")){
-				mimeType = mimeTypes.getMimeType("zip");		
-			}
-			else{
-				mimeType = ArchiviCostanti.HEADER_X_DOWNLOAD;
-			}
-			response.setContentType(mimeType);
+			HttpUtilities.setOutputFile(response, true, filename);
 		}catch(Exception e){
 			throw new ServletException(e.getMessage(),e);
 		}
-		response.setHeader(ArchiviCostanti.HEADER_CONTENT_DISPOSITION, ArchiviCostanti.HEADER_ATTACH_FILE + filename);
 
 		OutputStream out = response.getOutputStream();
 		// String res="";

@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openspcoop2.utils.resources.MimeTypes;
+import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 
 /**
@@ -80,20 +80,8 @@ public class ResocontoExporter extends HttpServlet {
 			}
 			String contenuto = (String) valore;
 			
-			
-			// setto content-type e header per gestire il download lato client
-			MimeTypes mimeTypes = MimeTypes.getInstance();
-			String mimeType = null;
-			if(mimeTypes.existsExtension("txt")){
-				mimeType = mimeTypes.getMimeType("txt");
-				//System.out.println("CUSTOM ["+mimeType+"]");		
-			}
-			else{
-				mimeType = ArchiviCostanti.HEADER_X_DOWNLOAD;
-			}
-			
-			response.setContentType(mimeType);
-			response.setHeader(ArchiviCostanti.HEADER_CONTENT_DISPOSITION, ArchiviCostanti.HEADER_ATTACH_FILE + "Resoconto.txt");
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, "Resoconto.txt");
 	
 			OutputStream out = response.getOutputStream();	
 			out.write(contenuto.getBytes());

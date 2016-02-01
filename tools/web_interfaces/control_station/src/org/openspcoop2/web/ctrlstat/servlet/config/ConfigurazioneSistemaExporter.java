@@ -34,9 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
-import org.openspcoop2.utils.resources.MimeTypes;
+import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 
 /**
  * Questa servlet si occupa di esportare le tracce in formato xml zippandole
@@ -90,21 +89,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
-			// setto content-type e header per gestire il download lato client
-			MimeTypes mimeTypes = MimeTypes.getInstance();
-			String mimeType = null;
-			String ext = "txt";
-			if(mimeTypes.existsExtension(ext)){
-				mimeType = mimeTypes.getMimeType(ext);
-				//System.out.println("CUSTOM ["+mimeType+"]");		
-			}
-			else{
-				mimeType = ArchiviCostanti.HEADER_X_DOWNLOAD;
-			}
-			
-			response.setContentType(mimeType);
-			response.setHeader(ArchiviCostanti.HEADER_CONTENT_DISPOSITION, ArchiviCostanti.HEADER_ATTACH_FILE + "configurazioneSistema.txt");
-	
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, "ConfigurazioneSistema.txt");
+				
 			OutputStream out = response.getOutputStream();	
 			out.write(getInformazioniStatoPorta(alias, confCore).getBytes());
 			out.flush();

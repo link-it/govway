@@ -835,10 +835,12 @@ public class ZIPUtils  {
 				}
 				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 					if(versioneAccordo!=null){
-						String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getVersione(),false);
-						if(aspc.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
-							throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-									aspc.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+						if(aspc.getVersione()!=null && !"".equals(aspc.getVersione())){
+							String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getVersione(),false);
+							if(aspc.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
+								throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
+										aspc.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+							}
 						}
 					}
 					aspc.setVersione(versioneAccordo);
@@ -981,10 +983,12 @@ public class ZIPUtils  {
 				}
 				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 					if(versioneAccordo!=null){
-						String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getVersione(),false);
-						if(asps.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
-							throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-									asps.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+						if(asps.getVersione()!=null && !"".equals(asps.getVersione())){
+							String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getVersione(),false);
+							if(asps.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
+								throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
+										asps.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+							}
 						}
 					}
 					asps.setVersione(versioneAccordo);
@@ -1241,10 +1245,12 @@ public class ZIPUtils  {
 				}
 				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 					if(versioneAccordo!=null){
-						String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getVersione(),false);
-						if(ac.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
-							throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-									ac.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+						if(ac.getVersione()!=null && !"".equals(ac.getVersione())){
+							String convertVersion = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getVersione(),false);
+							if(ac.getVersione()!=null && !convertVersion.equals(versioneAccordo)){
+								throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
+										ac.getVersione()+"] (fileSystemName:"+convertVersion+") differente da quella indicato ["+versioneAccordo+"] nella directory che contiene la definizione");
+							}
 						}
 					}
 					ac.setVersione(versioneAccordo);

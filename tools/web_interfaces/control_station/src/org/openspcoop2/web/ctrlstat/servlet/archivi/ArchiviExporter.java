@@ -43,7 +43,7 @@ import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.archive.MappingModeTypesExtensions;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
-import org.openspcoop2.utils.resources.MimeTypes;
+import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -209,7 +209,7 @@ public class ArchiviExporter extends HttpServlet {
 			case SOGGETTO:
 				identificativi = exporterUtils.getIdsSoggetti(objToExport);
 				if(identificativi.size()>1){
-					fileName = "soggetti."+ext;
+					fileName = "Soggetti."+ext;
 				}else{
 					IDSoggetto idSoggetto = ((IDSoggetto)identificativi.get(0));
 					fileName = idSoggetto.getTipo()+idSoggetto.getNome()+"."+extSingleArchive;
@@ -219,7 +219,7 @@ public class ArchiviExporter extends HttpServlet {
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
 				identificativi = exporterUtils.getIdsAccordiServizioParteComune(objToExport);
 				if(identificativi.size()>1){
-					fileName = "accordiServizioParteComune."+ext;
+					fileName = "AccordiServizioParteComune."+ext;
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
@@ -239,7 +239,7 @@ public class ArchiviExporter extends HttpServlet {
 			case ACCORDO_SERVIZIO_COMPOSTO:
 				identificativi = exporterUtils.getIdsAccordiServizioComposti(objToExport);
 				if(identificativi.size()>1){
-					fileName = "accordiServizioComposto."+ext;
+					fileName = "AccordiServizioComposto."+ext;
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
@@ -259,7 +259,7 @@ public class ArchiviExporter extends HttpServlet {
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
 				if(identificativi.size()>1){
-					fileName = "accordiServizioParteSpecifica."+ext;
+					fileName = "AccordiServizioParteSpecifica."+ext;
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
@@ -277,7 +277,7 @@ public class ArchiviExporter extends HttpServlet {
 			case ACCORDO_COOPERAZIONE:
 				identificativi = exporterUtils.getIdsAccordiCooperazione(objToExport);
 				if(identificativi.size()>1){
-					fileName = "accordiCooperazione."+ext;
+					fileName = "AccordiCooperazione."+ext;
 				}
 				else{
 					IDAccordoCooperazioneWithSoggetto idAccordo = ((IDAccordoCooperazioneWithSoggetto)identificativi.get(0));
@@ -294,7 +294,7 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			default:
 				// altri tipi che non prevedono la lista degli identificativi: e' la configurazione
-				fileName = "openspcoop."+extSingleArchive;
+				fileName = "ConfigurazioneOpenspcoop."+extSingleArchive;
 				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
 			}
 			
@@ -302,25 +302,10 @@ public class ArchiviExporter extends HttpServlet {
 			// Costruisco l'archivio da esportare
 			Archive archive = archiviCore.readArchiveForExport(userLogin, archiviHelper.smista(), 
 					tipoEsportazione, identificativi, cascadeConfig);
-			
-		
-			// setto content-type e header per gestire il download lato client
-			try{
-				MimeTypes mimeTypes = MimeTypes.getInstance();
-				String mimeType = null;
-				if(mimeTypes.existsExtension(ext)){
-					mimeType = mimeTypes.getMimeType(ext);		
-				}
-				else{
-					mimeType = ArchiviCostanti.HEADER_X_DOWNLOAD;
-				}
-				response.setContentType(mimeType);
-			}catch(Exception e){
-				throw new ServletException(e.getMessage(),e);
-			}
-			response.setHeader(ArchiviCostanti.HEADER_CONTENT_DISPOSITION, ArchiviCostanti.HEADER_ATTACH_FILE + fileName);
-			
-			
+					
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, fileName);
+								
 			// export
 			OutputStream out = response.getOutputStream();
 			// archiviCore.export(userLogin, archiviHelper.smista(), protocollo, archive, out, exportModeObject);
