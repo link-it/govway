@@ -1249,7 +1249,7 @@ text/html html htm
 # text/javascript obsoleted by application/javascript
 text/n3  n3
 text/parityfec
-text/plain txt asc text pm el c h cc hh cxx hxx f90
+text/plain txt asc text pm el c h cc hh cxx hxx f90 properties
 text/prs.fallenstein.rst rst
 text/prs.lines.tag tag dsc
 text/RED
