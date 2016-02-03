@@ -1148,6 +1148,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD)) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
 				int numProp = 0;
 				try {
 					if (servletChiamante.equals(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE)) {

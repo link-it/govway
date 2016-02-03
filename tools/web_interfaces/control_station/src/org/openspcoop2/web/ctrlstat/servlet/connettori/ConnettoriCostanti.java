@@ -124,6 +124,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_VALORE = "valore";
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_TIPO_ACCORDO = "tipoAccordo";
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_ID_PROVIDER = "provider";
+	public final static String PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA = "proprietaConnettoreCustom";
 	
 	
 	/* LABEL PARAMETRI */
