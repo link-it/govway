@@ -73,7 +73,7 @@ function CheckDati() {
 };
 
 </script>
-
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
 <script type="text/javascript" src="js/webapps.js"></script>
 </head>

@@ -41,6 +41,7 @@ GeneralData gd = (GeneralData) session.getValue(gdString);
 <head>
 
 <title><%= gd.getTitle() %></title>
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
 <script type="text/javascript" src="js/webapps.js"></script>
 </head>
