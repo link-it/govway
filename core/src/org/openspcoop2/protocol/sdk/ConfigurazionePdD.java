@@ -21,6 +21,8 @@
 
 package org.openspcoop2.protocol.sdk;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.Loader;
@@ -33,12 +35,17 @@ import org.openspcoop2.utils.resources.Loader;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConfigurazionePdD {
+public class ConfigurazionePdD implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private long attesaAttivaJDBC;
 	private int checkIntervalJDBC;
-	private Loader loader;
-	private Logger log;
+	private transient Loader loader;
+	private transient Logger log;
 	private String configurationDir;
 	private TipiDatabase tipoDatabase;
 	

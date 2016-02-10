@@ -21,6 +21,8 @@
 
 package org.openspcoop2.utils.mail;
 
+import java.io.Serializable;
+
 /**
  * SenderType
  *
@@ -28,7 +30,7 @@ package org.openspcoop2.utils.mail;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum SenderType {
+public enum SenderType implements Serializable {
 
 	COMMONS_NET, COMMONS_MAIL;
 	
