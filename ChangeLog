@@ -1,3 +1,11 @@
+2016-03-02  Andrea Poli <apoli@link.it>
+
+	* [BackwardCompatibility OpenSPCoop-v1]
+	Risolto Bug OP-467
+	Su porte applicative e delegate configurate per inserire l'header di integrazione in modalita backwardcompatiblity, 
+	l'header veniva inserito privo di valori con implementazione differente da CXF di SAAJ. 
+	Questo succedeva per un uso non corretto delle primitive SAAJ di creazione degli header SOAP.
+
 2016-02-02  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole]
