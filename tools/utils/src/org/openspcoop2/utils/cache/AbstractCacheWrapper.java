@@ -274,6 +274,11 @@ public abstract class AbstractCacheWrapper {
 	public abstract Object getDriver(Object param) throws UtilsException;
 	public abstract boolean isCachableException(Throwable e);
 	
+	// Serve per poter sapere quale sia la chiave ed usarla nei metodi soprastanti
+	public String getKeyCache(String keyCacheParam,String methodName){
+		return this.buildKeyCache(keyCacheParam, methodName); 
+	}
+	
 	private String buildKeyCache(String keyCacheParam,String methodName){
 		if(keyCacheParam!=null && !"".equals(keyCacheParam))
 			return methodName + "." + keyCacheParam;
