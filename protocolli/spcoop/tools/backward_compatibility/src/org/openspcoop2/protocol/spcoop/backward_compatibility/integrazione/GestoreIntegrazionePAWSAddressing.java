@@ -187,23 +187,23 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						
 						// To
 						SOAPHeaderElement wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio());
-						message.getSOAPHeader().addChildElement(wsaTO);
+						message.addHeaderElement(message.getSOAPHeader(), wsaTO);
 						
 						// Action
 						if(hBusta.getAzione()!=null){
 							SOAPHeaderElement wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio(),hBusta.getAzione());
-							message.getSOAPHeader().addChildElement(wsaAction);
+							message.addHeaderElement(message.getSOAPHeader(), wsaAction);
 						}
 					}
 					
 					if(hBusta.getMittente()!=null){
 						SOAPHeaderElement wsaFROM = UtilitiesIntegrazioneWSAddressing.buildWSAFrom(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),integrazione.getServizioApplicativo(),hBusta.getTipoMittente(),hBusta.getMittente());
-						message.getSOAPHeader().addChildElement(wsaFROM);
+						message.addHeaderElement(message.getSOAPHeader(), wsaFROM);
 					}
 						
 					if(hBusta.getID()!=null){
 						SOAPHeaderElement wsaID = UtilitiesIntegrazioneWSAddressing.buildWSAID(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getID());
-						message.getSOAPHeader().addChildElement(wsaID);
+						message.addHeaderElement(message.getSOAPHeader(), wsaID);
 					}
 					
 					if(hBusta.getRiferimentoMessaggio()!=null || hBusta.getIdCollaborazione()!=null){
@@ -212,7 +212,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 							rif = hBusta.getIdCollaborazione();
 						}
 						SOAPHeaderElement wsaRelatesTo = UtilitiesIntegrazioneWSAddressing.buildWSARelatesTo(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),rif);
-						message.getSOAPHeader().addChildElement(wsaRelatesTo);
+						message.addHeaderElement(message.getSOAPHeader(), wsaRelatesTo);
 					}
 				}
 				

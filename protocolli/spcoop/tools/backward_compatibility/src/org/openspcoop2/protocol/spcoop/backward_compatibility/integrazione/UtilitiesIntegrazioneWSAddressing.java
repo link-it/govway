@@ -522,7 +522,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 				}
 				else{
 					wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(message,actorIntegrazione,hBusta.getTipoDestinatario(), hBusta.getDestinatario(), hBusta.getTipoServizio() , hBusta.getServizio());
-					header.addChildElement(wsaTO);
+					//header.addChildElement(wsaTO);
+					message.addHeaderElement(header, wsaTO);
 				}
 				
 				
@@ -534,7 +535,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 					}
 					else{
 						wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(message,actorIntegrazione,hBusta.getTipoDestinatario(), hBusta.getDestinatario(), hBusta.getTipoServizio() , hBusta.getServizio(),hBusta.getAzione());
-						header.addChildElement(wsaTO);
+						//header.addChildElement(wsaTO);
+						message.addHeaderElement(header, wsaTO);
 					}
 				}
 			}
@@ -556,7 +558,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 				}
 				else{
 					wsaFROM = UtilitiesIntegrazioneWSAddressing.buildWSAFrom(message,actorIntegrazione,integrazione.getServizioApplicativo(),hBusta.getTipoMittente(),hBusta.getMittente());
-					header.addChildElement(wsaFROM);
+					//header.addChildElement(wsaFROM);
+					message.addHeaderElement(header, wsaFROM);
 				}
 			}
 				
@@ -567,7 +570,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 				}
 				else{
 					wsaID = UtilitiesIntegrazioneWSAddressing.buildWSAID(message,actorIntegrazione,hBusta.getID());
-					header.addChildElement(wsaID);
+					//header.addChildElement(wsaID);
+					message.addHeaderElement(header, wsaID);
 				}
 			}
 			
@@ -582,7 +586,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 				}
 				else{
 					wsaRelatesTo = UtilitiesIntegrazioneWSAddressing.buildWSARelatesTo(message,actorIntegrazione,rif);
-					header.addChildElement(wsaRelatesTo);
+					//header.addChildElement(wsaRelatesTo);
+					message.addHeaderElement(header, wsaRelatesTo);
 				}
 			}
 		}

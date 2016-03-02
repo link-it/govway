@@ -258,12 +258,14 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 						this.backwardCompatibilityProperties.getHeaderSoapPrefixIntegrazione(), // prefix
 						this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(), // namespace
 						this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(), // actor
-						outResponsePDMessage.getMessage().getVersioneSoap());
+						outResponsePDMessage.getMessage());
 				//System.out.println((new org.openspcoop.dao.message.OpenSPCoopMessageFactory().createMessage().getAsString(header)));
 				if(outResponsePDMessage.getMessage().getSOAPHeader() == null){
 					outResponsePDMessage.getMessage().getSOAPPart().getEnvelope().addHeader();
 				}
-				outResponsePDMessage.getMessage().getSOAPHeader().addChildElement(header);
+				//outResponsePDMessage.getMessage().getSOAPHeader().addChildElement(header);
+				outResponsePDMessage.getMessage().addHeaderElement(outResponsePDMessage.getMessage().getSOAPHeader(), header);
+						
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.setOutResponseHeader(integrazione, outResponsePDMessage);

@@ -34,8 +34,6 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -553,7 +551,7 @@ public class UtilitiesIntegrazione {
 		}
 		
 		// creo header da nuovo
-		SOAPHeaderElement headerIntegrazioneNEW = this.buildHeader(integrazione, nomeElemento, prefix, namespace, actorIntegrazione, message.getVersioneSoap());	
+		SOAPHeaderElement headerIntegrazioneNEW = this.buildHeader(integrazione, nomeElemento, prefix, namespace, actorIntegrazione, message);	
 		
 		// Riaggiungo eventuali elementi interni
 		while(v.size()>0){
@@ -565,18 +563,26 @@ public class UtilitiesIntegrazione {
 		//System.out.println("OTTENGO ["+headerIntegrazioneNEW.getAsString()+"]");
 		
 		// aggiungo header element al SOAP Header
-		header.addChildElement(headerIntegrazioneNEW);
+		//header.addChildElement(headerIntegrazioneNEW);
+		message.addHeaderElement(header, headerIntegrazioneNEW);
 
 	}
 	
 	public SOAPHeaderElement buildHeader(HeaderIntegrazione integrazione,String nomeElemento,
-			String prefix,String namespace, String actor, SOAPVersion soapVersion) throws HeaderIntegrazioneException{
+			String prefix,String namespace, String actor, 
+			//SOAPVersion soapVersion,
+			OpenSPCoop2Message m) throws HeaderIntegrazioneException{
 
 		try{
-			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			
-			OpenSPCoop2Message m = mf.createMessage(soapVersion);
-			SOAPHeaderElement header = m.getSOAPHeader().addHeaderElement(new QName(namespace,nomeElemento,prefix));
+//			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
+//			
+//			OpenSPCoop2Message m = mf.createMessage(soapVersion);
+			//SOAPHeaderElement header = m.getSOAPHeader().addHeaderElement(new QName(namespace,nomeElemento,prefix));
+			SOAPHeader soapHeader = m.getSOAPHeader();
+			if(soapHeader==null){
+				soapHeader = m.getSOAPPart().getEnvelope().addHeader();
+			}
+			SOAPHeaderElement header = m.newSOAPHeaderElement(soapHeader, new QName(namespace,nomeElemento,prefix));
 
 			header.setActor(actor);
 			header.setMustUnderstand(false);
