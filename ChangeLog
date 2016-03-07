@@ -1,3 +1,12 @@
+2016-03-07  Andrea Poli <apoli@link.it>
+
+	* [GenericProject,Utils]
+	Risolto Bug OP-469
+	Risolto problema che provocava un errore quando un field veniva aggiunto due volte nei fields che devono essere recuperati da una select.
+	L'errore generato era simile al seguente:
+	ERROR it.govpay.orm.dao.jdbc.JDBCServiceManager - org.openspcoop2.generic_project.exception.ServiceException: 
+	Indice di colonna, X, è maggiore del numero di colonne Y.
+
 2016-03-02  Andrea Poli <apoli@link.it>
 
 	* [BackwardCompatibility OpenSPCoop-v1]
