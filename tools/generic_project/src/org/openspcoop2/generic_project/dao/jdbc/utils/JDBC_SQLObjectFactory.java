@@ -24,6 +24,7 @@ package org.openspcoop2.generic_project.dao.jdbc.utils;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectCore;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
@@ -48,7 +49,8 @@ public class JDBC_SQLObjectFactory {
 	public ISQLQueryObject createSQLQueryObject(TipiDatabase tipoDatabase) throws SQLQueryObjectException{
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		sqlQueryObject.setSelectForUpdate(this.selectForUpdate);
-		return new JDBC_SQLQueryObject(sqlQueryObject);
+		((SQLQueryObjectCore)sqlQueryObject).setForceSelectForUpdateDisabledForNotQueryMethod(true);
+		return sqlQueryObject;
 	}
 }
 	

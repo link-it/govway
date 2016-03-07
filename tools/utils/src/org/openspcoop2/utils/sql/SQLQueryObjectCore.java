@@ -108,19 +108,12 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
 	/* TipoDatabase */
 	private TipiDatabase tipoDatabase;
-	public SQLQueryObjectCore(TipiDatabase tipoDatabase){
-		this.tipoDatabase = tipoDatabase;
-	}
 
 	/* preCheck */
 	private boolean precheckQuery = true;
 	public void setPrecheckQuery(boolean precheckQuery) {
 		this.precheckQuery = precheckQuery;
 	}
-
-
-
-
 
 	// Increment
 	private int serial = 0;
@@ -129,7 +122,19 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return this.serial;
 	}
 
+	// Force to false SelectForUpdate in CRUD Method
+	private boolean forceSelectForUpdateDisabledForNotQueryMethod = false; // viene usato nel progetto generic forzato a true per JDBC_SQLObjectFactory
+	public void setForceSelectForUpdateDisabledForNotQueryMethod(boolean forceSelectForUpdateDisabledForNotQueryMethod) {
+		this.forceSelectForUpdateDisabledForNotQueryMethod = forceSelectForUpdateDisabledForNotQueryMethod;
+	}
 
+
+	// COSTRUTTORE
+	public SQLQueryObjectCore(TipiDatabase tipoDatabase){
+		this.tipoDatabase = tipoDatabase;
+	}
+	
+	
 
 
 
@@ -142,12 +147,14 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			return;
 		}
 
+		// Check Offset
 		if(this.offset>=0){
 			if(this.orderBy.size()==0){
 				throw new SQLQueryObjectException("Condizioni di OrderBy richieste");
 			}
 		}
 		
+		// Check GroupBy
 		if(this.groupBy.size()>0){
 
 			// verifico che tutte le condizioni di order by siano presente anche nei field di group by
@@ -185,6 +192,22 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				if(!exists){
 					throw new SQLQueryObjectException("La colonna "+groupBy+" utilizzata nella condizione di GROUP BY deve essere anche selezionato come select field");
 				}
+			}
+		}
+		
+		// Check Select For Update
+		if(this.selectForUpdate){
+			if(this.groupBy!=null && this.groupBy.size()>0){
+				throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' se viene utilizzata la condizione di GROUP BY");
+			}
+			else if(this.distinct){
+				throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' se viene utilizzata la clausola DISTINCT");
+			}
+			else if(this.limit>=0){
+				throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' se viene utilizzata la clausola LIMIT");
+			}
+			else if(this.offset>=0){
+				throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' se viene utilizzata la clausola OFFSET");
 			}
 		}
 	}
@@ -1865,18 +1888,6 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			return "Oggetto non corretto: "+e.getMessage();
 		}
 	}
-//
-//	@Override
-//	public String toString(boolean delete){
-//		try{
-//			if(delete)
-//				return this.createSQLDelete();
-//			else
-//				return this.createSQLQuery();
-//		}catch(Exception e){
-//			return "Oggetto non corretto: "+e.getMessage();
-//		}
-//	}
 
 	protected void checkUnionField(boolean count,ISQLQueryObject... sqlQueryObject)throws SQLQueryObjectException{
 
@@ -1963,6 +1974,11 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 				}
 			}
 		}
+		
+		// Check Select For Update
+		if(this.selectForUpdate){
+			throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' con la UNION");
+		}
 	}
 
 
@@ -2003,6 +2019,36 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		}
 		return this;
 	}
+	
+	@Override
+	public String createSQLUpdate() throws SQLQueryObjectException{
+		
+		if(this.updateTable==null)
+			throw new SQLQueryObjectException("Nome Tabella per l'aggiornamento non definito");
+		if(this.updateFieldsName.size()<=0)
+			throw new SQLQueryObjectException("Nessuna coppia nome/valore da aggiornare presente");
+		if(this.updateFieldsName.size()!= this.updateFieldsValue.size()){
+			throw new SQLQueryObjectException("FieldsName.size["+this.updateFieldsName.size()+"] <> FieldsValue.size["+this.updateFieldsValue.size()+"]");
+		}
+		
+		if(this.forceSelectForUpdateDisabledForNotQueryMethod){
+			
+			// Per permettere di usare l'oggetto sqlQueryObject con più comandi
+			boolean oldValueSelectForUpdate = this.selectForUpdate;
+			try{
+				this.selectForUpdate = false;
+				return this._createSQLUpdate();
+			}finally{
+				this.selectForUpdate = oldValueSelectForUpdate;
+			}
+			
+		}
+		else{
+			return this._createSQLUpdate();
+		}
+	}
+	
+	protected abstract String _createSQLUpdate() throws SQLQueryObjectException;
 
 
 
@@ -2052,6 +2098,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public String createSQLInsert() throws SQLQueryObjectException{
+		
 		if(this.insertTable==null)
 			throw new SQLQueryObjectException("Nome Tabella per l'inserimento non definito");
 		if(this.insertFieldsName.size()<=0)
@@ -2060,6 +2107,25 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			throw new SQLQueryObjectException("FieldsName.size <> FieldsValue.size");
 		}
 
+		if(this.forceSelectForUpdateDisabledForNotQueryMethod){
+		
+			// Per permettere di usare l'oggetto sqlQueryObject con più comandi
+			boolean oldValueSelectForUpdate = this.selectForUpdate;
+			try{
+				this.selectForUpdate = false;
+				return this._createSQLInsert();
+			}finally{
+				this.selectForUpdate = oldValueSelectForUpdate;
+			}
+			
+		}
+		else{
+			return this._createSQLInsert();
+		}
+		
+
+	}
+	private String _createSQLInsert() throws SQLQueryObjectException{
 		StringBuffer bf = new StringBuffer();
 		bf.append("INSERT INTO ");
 		bf.append(this.insertTable);
@@ -2097,7 +2163,41 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		this.addFromTable(tabella);
 		return this;
 	}
-	protected void checkDeleteTable(String tabella) throws SQLQueryObjectException{
+	
+	@Override
+	public String createSQLDelete() throws SQLQueryObjectException {
+
+		// Table dove effettuare la ricerca 'FromTable'
+		if(this.tables.size()==0){
+			throw new SQLQueryObjectException("Non e' possibile creare un comando di delete senza aver definito le tabelle su cui apportare l'eliminazione dei dati");
+		}else{
+			Iterator<String> it = this.tables.iterator();
+			while(it.hasNext()){
+				String table = it.next();
+				checkDeleteTable(table);
+			}
+		}
+
+		if(this.forceSelectForUpdateDisabledForNotQueryMethod){
+			
+			// Per permettere di usare l'oggetto sqlQueryObject con più comandi
+			boolean oldValueSelectForUpdate = this.selectForUpdate;
+			try{
+				this.selectForUpdate = false;
+				return this._createSQLDelete();
+			}finally{
+				this.selectForUpdate = oldValueSelectForUpdate;
+			}
+			
+		}
+		else{
+			return this._createSQLDelete();
+		}
+	}
+	
+	protected abstract String _createSQLDelete() throws SQLQueryObjectException;
+	
+	private void checkDeleteTable(String tabella) throws SQLQueryObjectException{
 		// Controllo quelli standard (da fare per impostare il controllo in ogni classe)
 		if(tabella.contains(" as ") || tabella.contains(" ")){
 			throw new SQLQueryObjectException("Non e' possibile utilizzare tabelle definite tramite alias in caso di delete");
@@ -2111,9 +2211,39 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	/* ---------------- WHERE CONDITIONS ------------------ */
+	
+	@Override
+	public String createSQLConditions() throws SQLQueryObjectException{
+		
+		if(this.conditions==null)
+			throw new SQLQueryObjectException("Condizioni non definite");
+		if(this.conditions.size()<=0)
+			throw new SQLQueryObjectException("Nessuna condizione presente");
+		
+		if(this.forceSelectForUpdateDisabledForNotQueryMethod){
+			
+			// Per permettere di usare l'oggetto sqlQueryObject con più comandi
+			boolean oldValueSelectForUpdate = this.selectForUpdate;
+			try{
+				this.selectForUpdate = false;
+				return this._createSQLConditions();
+			}finally{
+				this.selectForUpdate = oldValueSelectForUpdate;
+			}
+			
+		}
+		else{
+			return this._createSQLConditions();
+		}
+	}
 
-
-
+	protected abstract String _createSQLConditions() throws SQLQueryObjectException;
 
 
 

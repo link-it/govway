@@ -66,6 +66,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.ExpressionSQL;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLQueryObjectCore;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
@@ -387,6 +388,53 @@ public class JDBCUtilities {
 		return returnField;
 	}
 	
+	private static List<Object> eliminaDuplicati(Collection<Object> returnField){
+		List<Object> listSenzaDuplicati = new ArrayList<Object>();
+		for (Object o : returnField) {
+			if(o instanceof IField){
+				IField field = (IField) o;
+				
+				boolean found = false;
+				for (Object check : listSenzaDuplicati) {
+					if(check instanceof IField){
+						IField iFieldCheck = (IField) check;
+						if(iFieldCheck.equals(field)){
+							// gia esiste
+							found = true;
+							break;
+						}
+					}
+				}
+				
+				if(!found){
+					listSenzaDuplicati.add(o);
+				}
+			}
+			else if(o instanceof FunctionField){
+				
+				FunctionField field = (FunctionField) o;
+				
+				boolean found = false;
+				for (Object check : listSenzaDuplicati) {
+					if(check instanceof FunctionField){
+						FunctionField functionFieldCheck = (FunctionField) check;
+						if(functionFieldCheck.equals(field)){
+							// gia esiste
+							found = true;
+							break;
+						}
+					}
+				}
+				
+				if(!found){
+					listSenzaDuplicati.add(o);
+				}
+			
+			}
+		}
+		return listSenzaDuplicati;
+	}
+	
 	private static List<Class<?>> readClassTypes(Collection<Object> returnField){
 		List<Class<?>> returnClassTypes = new ArrayList<Class<?>>();
 		for (Object o : returnField) {
@@ -529,6 +577,11 @@ public class JDBCUtilities {
 			Logger log, ISQLFieldConverter sqlFieldConverter,IField ... field) throws SQLQueryObjectException, ExpressionException{
 		ISQLQueryObject sqlQueryObjectDistinct = null;
 		if(distinct){
+			
+			if(((SQLQueryObjectCore)sqlQueryObject).isSelectForUpdate()){
+				throw new SQLQueryObjectException("Non è possibile abilitare il comando 'selectForUpdate' se viene utilizzata la clausola DISTINCT");
+			}
+			
 			sqlQueryObjectDistinct = sqlQueryObject.newSQLQueryObject();
 			JDBCPaginatedExpression paginatedExpressionTmp = new JDBCPaginatedExpression(sqlFieldConverter);
 			org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.setAliasFields(sqlQueryObjectDistinct,paginatedExpressionTmp,false,field);
@@ -596,6 +649,8 @@ public class JDBCUtilities {
 		if(listaParams.size()>0){
 			params = listaParams.toArray(new JDBCObject[1]);
 		}
+		
+		returnField = eliminaDuplicati(returnField);
 		
 		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.readClassTypes(returnField);
 		List<List<String>> returnClassAliases = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.readAliases(returnField);

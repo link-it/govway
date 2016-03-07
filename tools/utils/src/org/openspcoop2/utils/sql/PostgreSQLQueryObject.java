@@ -238,20 +238,9 @@ public class PostgreSQLQueryObject extends SQLQueryObjectCore{
 	 * @return SQL per una operazione di Delete
 	 */
 	@Override
-	public String createSQLDelete() throws SQLQueryObjectException{
+	public String _createSQLDelete() throws SQLQueryObjectException{
 		StringBuffer bf = new StringBuffer();
-		
-		// Table dove effettuare la ricerca 'FromTable'
-		if(this.tables.size()==0){
-			throw new SQLQueryObjectException("Non e' possibile creare un comando di delete senza aver definito le tabelle su cui apportare l'eliminazione dei dati");
-		}else{
-			Iterator<String> it = this.tables.iterator();
-			while(it.hasNext()){
-				String table = it.next();
-				checkDeleteTable(table);
-			}
-		}
-		
+				
 		bf.append("DELETE ");
 		
 		bf.append(getSQL(true,false,false,false));
@@ -599,15 +588,8 @@ public class PostgreSQLQueryObject extends SQLQueryObjectCore{
 	 * @return SQL per una operazione di Update
 	 */
 	@Override
-	public String createSQLUpdate() throws SQLQueryObjectException{
-		if(this.updateTable==null)
-			throw new SQLQueryObjectException("Nome Tabella per l'aggiornamento non definito");
-		if(this.updateFieldsName.size()<=0)
-			throw new SQLQueryObjectException("Nessuna coppia nome/valore da aggiornare presente");
-		if(this.updateFieldsName.size()!= this.updateFieldsValue.size()){
-			throw new SQLQueryObjectException("FieldsName.size <> FieldsValue.size");
-		}
-		
+	public String _createSQLUpdate() throws SQLQueryObjectException{
+
 		StringBuffer bf = new StringBuffer();
 		bf.append("UPDATE ");
 		bf.append(this.updateTable);
@@ -637,11 +619,7 @@ public class PostgreSQLQueryObject extends SQLQueryObjectCore{
 	 * @return SQL Query
 	 */
 	@Override
-	public String createSQLConditions() throws SQLQueryObjectException{
-		if(this.conditions==null)
-			throw new SQLQueryObjectException("Condizioni non definite");
-		if(this.conditions.size()<=0)
-			throw new SQLQueryObjectException("Nessuna condizione presente");
+	public String _createSQLConditions() throws SQLQueryObjectException{
 		
 		StringBuffer bf = new StringBuffer();
 		bf.append(getSQL(false,false,true,false));
