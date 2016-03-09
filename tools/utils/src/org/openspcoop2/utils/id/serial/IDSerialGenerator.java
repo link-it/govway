@@ -83,22 +83,31 @@ public class IDSerialGenerator {
 			throw new UtilsException("Test Connessione non riuscito: "+e.getMessage(),e);
 		}
 
+		boolean originalConnectionAutocommit = false;
+		boolean autoCommitModificato = false;
+		try{
+			originalConnectionAutocommit = con.getAutoCommit();
+		}catch(Exception e){
+			throw new UtilsException("Verifica AutoCommit Connessione non riuscito: "+e.getMessage(),e); 
+		}
+		
+		int originalConnectionTransactionIsolation = -1;
+		boolean transactionIsolationModificato = false;
+		try{
+			originalConnectionTransactionIsolation = con.getTransactionIsolation();
+		}catch(Exception e){
+			throw new UtilsException("Lettura livello di isolamento transazione della Connessione non riuscito: "+e.getMessage(),e); 
+		}
+		
 		String identificativoUnivoco = null;
-		int oldTransactionIsolation = -1;
-		boolean oldAutoCommit = false;
 		try{
 
 			if ( IDSerialGeneratorType.MYSQL.equals(tipo) ) {
 
-				try{
-					oldTransactionIsolation = con.getTransactionIsolation();
-					oldAutoCommit = con.getAutoCommit();
-					con.setAutoCommit(true);
-				} catch(Exception er) {
-					log.error("Creazione serial ["+tipo.name()+"] non riuscita (impostazione transazione): "+er.getMessage());
-					throw new UtilsException("Creazione serial ["+tipo.name()+"] non riuscita (impostazione transazione): "+er.getMessage());		
+				if(originalConnectionAutocommit==false){
+					throw new UtilsException("Creazione serial ["+tipo.name()+"] non riuscita (Connessione fornita in autocommit a false)");		
 				}
-
+				
 				identificativoUnivoco = IDSerialGenerator_mysql.generate(con, param, log, this.infoStatistics);
 			} 
 
@@ -106,8 +115,7 @@ public class IDSerialGenerator {
 
 				// DEFAULT: numeric
 				try{				
-					oldTransactionIsolation = con.getTransactionIsolation();
-					oldAutoCommit = con.getAutoCommit();
+
 					//System.out.println("SET TRANSACTION SERIALIZABLE ("+conDB.getTransactionIsolation()+","+conDB.getAutoCommit()+")");
 					// Il rollback, non servirebbe, pero le WrappedConnection di JBoss hanno un bug, per cui alcune risorse non vengono rilasciate.
 					// Con il rollback tali risorse vengono rilasciate, e poi effettivamente la ConnectionSottostante emette una eccezione.
@@ -116,8 +124,15 @@ public class IDSerialGenerator {
 					}catch(Exception e){
 						//System.out.println("ROLLBACK ERROR: "+e.getMessage());
 					}
+					
 					JDBCUtilities.setTransactionIsolationSerializable(tipoDatabase, con);
-					con.setAutoCommit(false);
+					transactionIsolationModificato = true;
+					
+					if(originalConnectionAutocommit){
+						con.setAutoCommit(false);
+						autoCommitModificato = true;
+					}
+					
 				} catch(Exception er) {
 					log.error("Creazione serial non riuscita (impostazione transazione): "+er.getMessage(),er);
 					throw new UtilsException("Creazione serial non riuscita (impostazione transazione): "+er.getMessage(),er);		
@@ -142,8 +157,12 @@ public class IDSerialGenerator {
 
 			// Ripristino Transazione
 			try{
-				con.setTransactionIsolation(oldTransactionIsolation);
-				con.setAutoCommit(oldAutoCommit);
+				if(transactionIsolationModificato){
+					con.setTransactionIsolation(originalConnectionTransactionIsolation);
+				}
+				if(autoCommitModificato){
+					con.setAutoCommit(originalConnectionAutocommit);
+				}
 			} catch(Exception er) {
 				//System.out.println("ERROR UNSET:"+er.getMessage());
 				log.error("Creazione serial non riuscita (ripristino transazione): "+er.getMessage());
