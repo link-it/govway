@@ -90,6 +90,9 @@ public class IDSerialGenerator {
 		}catch(Exception e){
 			throw new UtilsException("Verifica AutoCommit Connessione non riuscito: "+e.getMessage(),e); 
 		}
+		if(originalConnectionAutocommit==false){
+			throw new UtilsException("Creazione serial ["+tipo.name()+"] non riuscita (Non e' possibile fornire una connessione con autocommit disabilitato poiche' l'utility ha necessita' di effettuare operazioni di commit/rollback)");		
+		}
 		
 		int originalConnectionTransactionIsolation = -1;
 		boolean transactionIsolationModificato = false;
@@ -103,10 +106,6 @@ public class IDSerialGenerator {
 		try{
 
 			if ( IDSerialGeneratorType.MYSQL.equals(tipo) ) {
-
-				if(originalConnectionAutocommit==false){
-					throw new UtilsException("Creazione serial ["+tipo.name()+"] non riuscita (Connessione fornita in autocommit a false)");		
-				}
 				
 				identificativoUnivoco = IDSerialGenerator_mysql.generate(con, param, log, this.infoStatistics);
 			} 
