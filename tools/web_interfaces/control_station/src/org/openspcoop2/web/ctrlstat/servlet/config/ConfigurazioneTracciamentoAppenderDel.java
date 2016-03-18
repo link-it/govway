@@ -122,6 +122,8 @@ public final class ConfigurazioneTracciamentoAppenderDel extends Action {
 
 			confHelper.prepareTracciamentoAppenderList(t.getOpenspcoopAppenderList());
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 

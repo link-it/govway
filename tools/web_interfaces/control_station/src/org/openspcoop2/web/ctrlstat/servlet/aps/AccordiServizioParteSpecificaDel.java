@@ -61,6 +61,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
@@ -229,7 +230,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 						if(extendedServlet!=null){
 							List<IExtendedBean> listExt = null;
 							try{
-								listExt = extendedServlet.extendedBeanList(paGenerataAutomcaticamente);
+								listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,apsHelper,apsCore,paGenerataAutomcaticamente);
 							}catch(Exception e){
 								ControlStationCore.logError(e.getMessage(), e);
 							}

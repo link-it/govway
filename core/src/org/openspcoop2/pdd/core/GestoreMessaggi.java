@@ -273,6 +273,17 @@ public class GestoreMessaggi  {
 			throw new GestoreMessaggiException("Cache non abilitata");
 		}
 	}
+	public static void removeObjectCache(String key) throws GestoreMessaggiException{
+		if(GestoreMessaggi.cacheMappingGestoreMessaggi!=null){
+			try{
+				GestoreMessaggi.cacheMappingGestoreMessaggi.remove(key);
+			}catch(Exception e){
+				throw new GestoreMessaggiException(e.getMessage(),e);
+			}
+		}else{
+			throw new GestoreMessaggiException("Cache non abilitata");
+		}
+	}
 
 
 

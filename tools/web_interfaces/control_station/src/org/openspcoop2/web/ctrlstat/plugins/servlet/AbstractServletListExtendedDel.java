@@ -48,6 +48,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
  * AbstractServletListExtendedDel
@@ -85,37 +86,63 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 			
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleCore);
+			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper,consoleCore);
 			
 			Object object = this.getObject(consoleCore,request);
 			
 			DBManager dbManager = null;
 			Connection con = null;
 			List<WrapperExtendedBean> listDati = new ArrayList<WrapperExtendedBean>();
+			StringBuffer bfInUseTotal = new StringBuffer();
 			try{
 				dbManager = DBManager.getInstance();
 				con = dbManager.getConnection();
 				
 				for (int i = 0; i < idsToRemove.size(); i++) {
 
-					IExtendedBean extendedBean = extendedServlet.getExtendedBean(con, idsToRemove.get(i));
+					StringBuffer bfInUse = new StringBuffer();
+					boolean inUse = extendedServlet.inUse(con, idsToRemove.get(i), bfInUse);
+					if(inUse){
+						
+						if(bfInUseTotal.length()>0){
+							bfInUseTotal.append("<br/>");
+						}
+						bfInUseTotal.append("- "+bfInUse.toString());
+						
+					}
+					else{
 					
-					WrapperExtendedBean wrapper = new WrapperExtendedBean();
-					wrapper.setExtendedBean(extendedBean);
-					wrapper.setExtendedServlet(extendedServlet);
-					wrapper.setOriginalBean(object);
-					wrapper.setManageOriginalBean(false);
-					listDati.add(wrapper);
+						IExtendedBean extendedBean = extendedServlet.getExtendedBean(con, idsToRemove.get(i));
+						
+						WrapperExtendedBean wrapper = new WrapperExtendedBean();
+						wrapper.setExtendedBean(extendedBean);
+						wrapper.setExtendedServlet(extendedServlet);
+						wrapper.setOriginalBean(object);
+						wrapper.setManageOriginalBean(false);
+						listDati.add(wrapper);
 					
+					}
+						
 				}
 				
 			}finally{
 				dbManager.releaseConnection(con);
 			}
 			
+			String msgErrore = "";
+			if(bfInUseTotal.length()>0){
+				if(listDati.size()>0){
+					msgErrore = "Non è stato possibile completare l'eliminazione di tutti gli elementi selezionati:<br/>"+bfInUseTotal.toString();
+				}
+				else{
+					msgErrore = "Non è stato possibile eliminare gli elementi selezionati:<br/>"+bfInUseTotal.toString();
+				}
+			}
 			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			consoleCore.performDeleteOperation(userLogin, consoleHelper.smista(), (Object[]) listDati.toArray(new WrapperExtendedBean[1]));
+			if(listDati.size()>0){
+				String userLogin = ServletUtils.getUserLoginFromSession(session);
+				consoleCore.performDeleteOperation(userLogin, consoleHelper.smista(), (Object[]) listDati.toArray(new WrapperExtendedBean[1]));
+			}
 
 			// Preparo il menu
 			consoleHelper.makeMenu();
@@ -126,11 +153,31 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-			ExtendedList extendedList = extendedServlet.extendedBeanList(object, limit, offset, search);
+			ExtendedList extendedList = extendedServlet.extendedBeanList(TipoOperazione.DEL, consoleHelper, consoleCore,
+					object, limit, offset, search);
 			ricerca.setNumEntries(idLista,extendedList.getSize());
 
-			this.prepareList(consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request);
+			this.prepareList(TipoOperazione.DEL, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request,
+					this.getUrlExtendedFather(consoleHelper, request));
 
+			String msgCompletato = extendedServlet.getTestoModificaEffettuata(TipoOperazione.DEL, consoleHelper);
+			if(msgCompletato!=null && !"".equals(msgCompletato)){
+				if(msgErrore!=null && !"".equals(msgErrore)){
+					if(listDati.size()>0){
+						msgCompletato = msgCompletato+"<br/><br/>"+msgErrore;
+					}
+					else{
+						msgCompletato = msgErrore;
+					}
+				}
+			}
+			else{
+				msgCompletato = msgErrore;
+			}
+			if(msgCompletato!=null && !"".equals(msgCompletato)){
+				pd.setMessage(msgCompletato);
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			// Forward control to the specified success URI

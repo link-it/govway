@@ -52,6 +52,7 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
@@ -6899,6 +6900,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 				}
 			}
+			
+			// Extended Info
+			this.readPropertiesConnettoreExtendedInfo(idConnettore,connettore,connection);
+			
 			return connettore;
 		} catch (SQLException sqle) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getConnettore] SQLException : " + sqle.getMessage(),sqle);
@@ -6969,6 +6974,69 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch (Exception sqle) {
 
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPropertiesConnettoreCustom] Exception : " + sqle.getMessage(),sqle);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+		}
+	}
+	
+	protected void readPropertiesConnettoreExtendedInfo(long idConnettore, Connettore connettore, Connection connection) throws DriverRegistroServiziException {
+
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_CUSTOM);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_connettore = ?");
+			sqlQueryObject.addWhereLikeCondition("name", CostantiConnettori.CONNETTORE_EXTENDED_PREFIX+"%");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idConnettore);
+
+			DriverRegistroServiziDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+
+			rs = stm.executeQuery();
+
+			while (rs.next()) {
+				String nome = rs.getString("name");
+				String valore = rs.getString("value");
+
+				// Le proprietà sono già state inserite in caso di connettore custom
+				boolean found = false;
+				for (int i = 0; i < connettore.sizePropertyList(); i++) {
+					if(nome.equals(connettore.getProperty(i).getNome())){
+						// already exists
+						found = true;
+						break;
+					}
+				}
+				if(found){
+					continue; // è gia stato aggiunto.
+				}
+				
+				Property prop = new Property();
+				prop.setNome(nome);
+				prop.setValore(valore);
+				connettore.addProperty(prop);
+			}
+
+			rs.close();
+			stm.close();
+
+		} catch (SQLException sqle) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPropertiesConnettoreExtendedInfo] SQLException : " + sqle.getMessage(),sqle);
+		}catch (Exception sqle) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readPropertiesConnettoreExtendedInfo] Exception : " + sqle.getMessage(),sqle);
 		} finally {
 			//Chiudo statement and resultset
 			try{

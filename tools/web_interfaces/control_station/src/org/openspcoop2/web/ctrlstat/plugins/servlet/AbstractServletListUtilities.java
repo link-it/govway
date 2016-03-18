@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.plugins.servlet;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -33,6 +34,7 @@ import org.apache.struts.action.Action;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -40,6 +42,7 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 
 /**
@@ -51,11 +54,13 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  */
 public abstract class AbstractServletListUtilities extends Action {
 
+	protected abstract UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception;
+	
 	protected abstract ConsoleHelper getConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) throws Exception;
 	
 	protected abstract ControlStationCore getConsoleCore() throws Exception;
 	
-	protected abstract IExtendedListServlet getExtendedServlet(ControlStationCore core) throws Exception;
+	protected abstract IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper,ControlStationCore core) throws Exception;
 	
 	protected abstract Object getObject(ControlStationCore core, HttpServletRequest request) throws Exception;
 	
@@ -69,8 +74,8 @@ public abstract class AbstractServletListUtilities extends Action {
 	
 	protected abstract UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception;
 	
-	protected void prepareList(ConsoleHelper consoleHelper, Search ricerca, Object object, IExtendedListServlet extendedServlet, List<IExtendedBean> lista,
-			Logger log, HttpServletRequest request)
+	protected void prepareList(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, Search ricerca, Object object, IExtendedListServlet extendedServlet, List<IExtendedBean> lista,
+			Logger log, HttpServletRequest request, UrlParameters extendedFather)
 			throws Exception {
 		try {
 
@@ -78,8 +83,34 @@ public abstract class AbstractServletListUtilities extends Action {
 			PageData pd = consoleHelper.getPd();
 			ControlStationCore consoleCore = consoleHelper.getCore();
 			
+			List<Parameter> newLista = new ArrayList<Parameter>();
+			
+			Parameter[] pSession = this.getParameterList(request,session);
+			if(pSession!=null && pSession.length>0){
+				for (int i = 0; i < pSession.length; i++) {
+					newLista.add(pSession[i]);
+				}
+			}
+			
+			List<Parameter> p = extendedServlet.getParameterForListElementIntoSession(tipoOperazione,consoleHelper);
+			if(p!=null && p.size()>0){
+				for (Parameter parameter : p) {
+					newLista.add(parameter);
+				}
+			}
+			
+			String tmp = consoleHelper.getRequest().getParameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
+			if(tmp!=null && !"".equals(tmp)){
+				newLista.add(new Parameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID, tmp));
+			}
+			
+			Parameter[] pTmp = null;
+			if(newLista.size()>0){
+				pTmp = newLista.toArray(new Parameter[1]);
+			}
+			
 			ServletUtils.addListElementIntoSession(session, this.getObjectName(),
-					this.getParameterList(request,session));
+					pTmp);
 
 			int idLista = this.getIdList();
 			int limit = ricerca.getPageSize(idLista);
@@ -90,15 +121,46 @@ public abstract class AbstractServletListUtilities extends Action {
 			pd.setPageSize(limit);
 			pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			// setto la barra del titolo
+			// setto la barra del titolo 1
 			List<Parameter> lstParam = this.getTitle(object,request, session);
-
+			List<Parameter> listP = new ArrayList<Parameter>();
+			if(extendedFather.sizeParameter()>0){
+				listP.addAll(extendedFather.getParameter());
+			}
+			String uniqueId = consoleHelper.getRequest().getParameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
+			if(uniqueId!=null && !"".equals(uniqueId)){
+				listP.add(new Parameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID, uniqueId));
+			}
+			List<Parameter> listPTitleDynamic = extendedServlet.getListTitleUrlParameters(tipoOperazione, consoleHelper);
+			if(listPTitleDynamic!=null && listPTitleDynamic.size()>0){
+				listP.addAll(listPTitleDynamic);
+			}
+			Parameter [] pLinkTitle = null;
+			if(listP.size()>0){
+				pLinkTitle = listP.toArray(new Parameter[1]);
+			}
+			String title1 = extendedServlet.getListTitle(tipoOperazione,consoleHelper);
+			
+			String urlTitolo1 = extendedServlet.getListTitleUrl(tipoOperazione, consoleHelper);
+			if(urlTitolo1==null || "".equals(urlTitolo1)){
+				urlTitolo1 = extendedFather.getUrl();
+			}
+			
+			// Titolo 2
+			String title2 = extendedServlet.getListItemTitle(tipoOperazione,consoleHelper);
+			
 			if(search.equals("")){
 				pd.setSearchDescription("");
-				lstParam.add(new Parameter(extendedServlet.getListTitle(), null));
+				lstParam.add(new Parameter(title1, urlTitolo1,pLinkTitle));
+				if(title2!=null){
+					lstParam.add(new Parameter(title2, null));
+				}
 			}
 			else{
-				lstParam.add(new Parameter(extendedServlet.getListTitle(), null));
+				lstParam.add(new Parameter(title1, urlTitolo1,pLinkTitle));
+				if(title2!=null){
+					lstParam.add(new Parameter(title2, null));
+				}
 				lstParam.add(new Parameter(AbstractServletCostanti.RISULTATI_RICERCA, null));
 			}
 
@@ -111,7 +173,7 @@ public abstract class AbstractServletListUtilities extends Action {
 			}
 
 			// setto le label delle colonne
-			String[] labels = extendedServlet.getColumnLabels();
+			String[] labels = extendedServlet.getColumnLabels(tipoOperazione, consoleHelper, consoleCore, object);
 			pd.setLabels(labels);
 
 			// preparo i dati
@@ -124,7 +186,7 @@ public abstract class AbstractServletListUtilities extends Action {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
-					extendedServlet.addDatiToList(e, consoleHelper, consoleCore, object, extendendBean, 
+					extendedServlet.addDatiToList(e, tipoOperazione, consoleHelper, consoleCore, object, extendendBean, 
 							this.getUrlExtendedChange(consoleHelper, request));
 										
 					dati.addElement(e);
@@ -139,4 +201,37 @@ public abstract class AbstractServletListUtilities extends Action {
 		}
 	}
 	
+	protected void setFormTitle(Object object,HttpServletRequest request,HttpSession session,ConsoleHelper consoleHelper,
+			IExtendedListServlet extendedServlet,IExtendedBean extendedBean,PageData pd,TipoOperazione tipoOperazione,UrlParameters extendedList) throws Exception{
+		List<Parameter> lstParam = this.getTitle(object,request,session);
+		
+		List<Parameter> listP = new ArrayList<Parameter>();
+		if(extendedList.sizeParameter()>0){
+			listP.addAll(extendedList.getParameter());
+		}
+		String uniqueId = consoleHelper.getRequest().getParameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
+		if(uniqueId!=null && !"".equals(uniqueId)){
+			listP.add(new Parameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID, uniqueId));
+		}
+		List<Parameter> listPTitleDynamic = extendedServlet.getFormTitleUrlParameters(tipoOperazione, consoleHelper);
+		if(listPTitleDynamic!=null && listPTitleDynamic.size()>0){
+			listP.addAll(listPTitleDynamic);
+		}
+		
+		Parameter [] p = null;
+		if(listP.size()>0){
+			p = listP.toArray(new Parameter[1]);
+		}
+		
+		String urlTitolo1 = extendedServlet.getFormTitleUrl(tipoOperazione, consoleHelper);
+		if(urlTitolo1==null || "".equals(urlTitolo1)){
+			urlTitolo1 = extendedList.getUrl();
+		}
+		
+		lstParam.add(new Parameter(extendedServlet.getFormTitle(tipoOperazione, consoleHelper),urlTitolo1,p));
+		
+		lstParam.add(new Parameter(extendedServlet.getFormItemTitle(tipoOperazione, consoleHelper,extendedBean), null));
+
+		ServletUtils.setPageDataTitle(pd, lstParam);
+	}
 }

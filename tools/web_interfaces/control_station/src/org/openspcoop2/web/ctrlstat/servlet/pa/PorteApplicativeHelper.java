@@ -1355,7 +1355,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			if(this.core.isRegistroServiziLocale())
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
-				listaLabel.add(extendedServletList.getListTitle());
+				listaLabel.add(extendedServletList.getListTitle(this));
 			}
 			
 			String[] labels = listaLabel.toArray(new String[listaLabel.size()]);

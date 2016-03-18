@@ -193,6 +193,19 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			return this.getObjectCache(param1);
 		}
 		
+		if(actionName.equals(JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			return this.removeObjectCache(param1);
+		}
+		
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -238,6 +251,9 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 		// MetaData per l'operazione getObjectCache
 		MBeanOperationInfo getObjectCacheOP = JMXUtils.MBEAN_OPERATION_GET_OBJECT_CACHE;
 		
+		// MetaData per l'operazione removeObjectCache
+		MBeanOperationInfo removeObjectCacheOP = JMXUtils.MBEAN_OPERATION_REMOVE_OBJECT_CACHE;
+		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
@@ -248,7 +264,7 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 		
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP};
+		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP,removeObjectCacheOP};
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -351,6 +367,18 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			return GestoreMessaggi.getObjectCache(key);
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String removeObjectCache(String key){
+		try{
+			if(this.cacheAbilitata==false)
+				throw new Exception("Cache non abilitata");
+			GestoreMessaggi.removeObjectCache(key);
+			return JMXUtils.MSG_RIMOZIONE_CACHE_EFFETTUATA;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

@@ -1071,10 +1071,15 @@ public class AuditHelper {
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO);
-			de.setUrl(
-					AuditCostanti.SERVLET_NAME_AUDITING_DETTAGLIO_INFO, paramsOgg);
+			if(op.getObjectDetails()!=null && !"".equals(op.getObjectDetails())){
+				de.setUrl(
+						AuditCostanti.SERVLET_NAME_AUDITING_DETTAGLIO_INFO, paramsOgg);
+				de.setType(DataElementType.LINK);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+			}
 			de.setValue(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO);
-			de.setType(DataElementType.LINK);
 			dati.addElement(de);
 
 			int size = params != null ? params.length +1 : 1;

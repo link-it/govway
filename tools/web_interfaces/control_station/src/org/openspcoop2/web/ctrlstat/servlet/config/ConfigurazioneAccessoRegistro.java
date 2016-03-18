@@ -177,7 +177,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 			pd.setDati(dati);
 			
-			pd.setMessage("Configurazione Registro modificata con successo");
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

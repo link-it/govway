@@ -55,6 +55,9 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -213,6 +216,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Prendo nome e tipo del fruitore dal db
 			Fruitore servFru = apsCore.getServizioFruitore(idServizioFruitoreInt);
 
+			Boolean isConnettoreCustomUltimaImmagineSalvata = servFru.getConnettore().getCustom();
+			
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(servFru.getConnettore(), ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
+							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
+			
 			// Prendo il soggetto erogatore del servizio
 			String tipoSoggettoErogatore = servizio.getTipoSoggettoErogatore();
 			String nomesoggettoErogatore = servizio.getNomeSoggettoErogatore();
@@ -464,7 +473,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
 								idSoggettoErogatoreDelServizio, null, null, null, null,
-								oldStatoPackage, true);
+								oldStatoPackage, true,
+								isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 					}else{
 						//spostato nell'helper
 					}
@@ -492,7 +502,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
-					tipoconn,clientAuth,validazioneDocumenti,backToStato,autenticazioneHttp);
+					tipoconn,clientAuth,validazioneDocumenti,backToStato,autenticazioneHttp,
+					listExtendedConnettore);
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -534,7 +545,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
 							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
 							idSoggettoErogatoreDelServizio, null, null, null, null,
-							oldStatoPackage, true);
+							oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				}else{
 					//spostato nell'helper
 				}
@@ -644,7 +656,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						httpskeystore, httpspwdprivatekeytrust,
 						httpspathkey, httpstipokey,
 						httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey);
+						httpsalgoritmokey,
+						listExtendedConnettore);
 			}
 			else{
 				connettoreNew = connettore;
@@ -737,7 +750,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								httpspwdprivatekey, httpsalgoritmokey,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
 								idSoggettoErogatoreDelServizio, null, null, null, null,
-								oldStatoPackage, true);
+								oldStatoPackage, true,
+								isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 					}else{
 						//spostato nell'helper
 					}

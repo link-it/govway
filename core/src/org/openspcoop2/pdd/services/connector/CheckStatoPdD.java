@@ -123,8 +123,17 @@ public class CheckStatoPdD extends HttpServlet {
 				}
 			}
 			else if(methodName!=null){
+				
+				String paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE);
+				Object [] params = null;
+				String [] signatures = null;
+				if(paramValue!=null && !"".equals(paramValue)){
+					params = new Object[] {paramValue};
+					signatures = new String[] {String.class.getName()};
+				}
+				
 				try{
-					Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.invoke(resourceName, methodName, null, null);
+					Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.invoke(resourceName, methodName, params, signatures);
 					res.getOutputStream().write(value.toString().getBytes());	
 				}catch(Exception e){
 					String msg = "Invocazione metodo ["+methodName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();

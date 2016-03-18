@@ -1728,6 +1728,44 @@ public class RicezioneBuste {
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false)");
 			}
+			
+			/* ----------- Scenario Cooperazione ------------ */
+			if(ruoloBustaRicevuta!=null){
+				try{
+					String scenarioCooperazione = null;
+					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+						scenarioCooperazione = Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO;
+					}
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+						scenarioCooperazione = Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
+					}
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+						if(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())){
+							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO;
+						}
+						else if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
+							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA;
+						}
+						else{
+							// sono ricevute asincrone
+						}
+					}
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+						if(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())){
+							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO;
+						}
+						else if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
+							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING;
+						}
+						else{
+							// sono ricevute asincrone
+						}
+					}
+					this.msgContext.getProtocol().setScenarioCooperazione(scenarioCooperazione);
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e,"setScenarioCooperazione");
+				}
+			}
 
 		}
 

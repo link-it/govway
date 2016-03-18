@@ -34,6 +34,8 @@ public interface IExtendedBean {
 	
 	public String getParsingError();
 	
+	public String getOldHumanId();
+	
 	public String getHumanId();
 	
 	public Long getLongId();

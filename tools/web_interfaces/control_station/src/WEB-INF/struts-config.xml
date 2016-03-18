@@ -1381,6 +1381,33 @@
             <forward name="configurazioneGeneraleExtendedError" path="/jsplib/info.jsp"/>
         </action>
     
+       	<!--  Configurazione Extended List -->
+    
+    	<action path="/configurazioneGeneraleListExtendedAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneListExtendedAdd" 
+    		scope="request" validate="true">
+            <forward name="configurazioneGeneraleListExtendedAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneGeneraleListExtendedList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneListExtendedList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneGeneraleListExtendedList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneGeneraleListExtendedChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneListExtendedChange" 
+        	scope="request" validate="true">
+            <forward name="configurazioneGeneraleListExtendedChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneGeneraleListExtendedDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneListExtendedDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneGeneraleListExtendedDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneGeneraleListExtendedError" path="/jsplib/info.jsp"/>
+        </action>
+    
     	<!--  Configurazione Diagnostici (Appender) -->
     
     	<action path="/configurazioneDiagnosticaAppenderAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDiagnosticaAppenderAdd" 

@@ -130,6 +130,8 @@ public final class ConfigurazioneRouteDel extends Action {
 
 			confHelper.prepareRoutingList(ricerca, lista);
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 

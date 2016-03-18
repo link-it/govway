@@ -55,6 +55,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
  * serviziFruitoriDel
@@ -166,7 +167,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 					if(extendedServlet!=null){
 						List<IExtendedBean> listExt = null;
 						try{
-							listExt = extendedServlet.extendedBeanList(mypd);
+							listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,apsHelper,apsCore,mypd);
 						}catch(Exception e){
 							ControlStationCore.logError(e.getMessage(), e);
 						}

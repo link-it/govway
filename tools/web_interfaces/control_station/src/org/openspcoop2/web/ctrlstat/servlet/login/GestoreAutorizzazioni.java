@@ -266,6 +266,7 @@ public class GestoreAutorizzazioni {
 		this.servletConfigurazione.addAll(AuditCostanti.SERVLET_AUDIT_FILTRI);
 		if(this.singlePdD){
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_GENERALE);
+			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_GENERALE_LIST_EXTENDED);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DIAGNOSTICA_APPENDER);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE);

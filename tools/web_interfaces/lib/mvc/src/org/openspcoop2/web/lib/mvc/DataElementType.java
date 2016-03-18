@@ -30,9 +30,14 @@ package org.openspcoop2.web.lib.mvc;
  */
 public enum DataElementType {
 
-	HIDDEN("hidden"),TEXT("text"),TEXT_EDIT("textedit"),TEXT_AREA_NO_EDIT("textarea-noedit"),
+	HIDDEN("hidden"),
+	TEXT("text"),TEXT_EDIT("textedit"),
+	TEXT_AREA("textarea"),TEXT_AREA_NO_EDIT("textarea-noedit"),
 	SELECT("select"),TITLE("title"),
-	CRYPT("crypt"),CHECKBOX("checkbox"),LINK("link"),FILE("file"),
+	CRYPT("crypt"),
+	CHECKBOX("checkbox"),
+	LINK("link"),
+	FILE("file"),
 	NOTE("note");
 	
 	private String value;

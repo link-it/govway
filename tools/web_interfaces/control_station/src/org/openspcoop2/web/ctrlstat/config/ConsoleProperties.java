@@ -676,8 +676,46 @@ public class ConsoleProperties {
 	
 	/* ---- Plugins ------ */
 	
+	public String getExtendedInfoDriverConfigurazione() throws UtilsException{
+		return this.readProperty(false, "extendedInfo.configurazione");
+	}
+	public String getExtendedInfoDriverPortaDelegata() throws UtilsException{
+		return this.readProperty(false, "extendedInfo.portaDelegata");
+	}
+	public String getExtendedInfoDriverPortaApplicativa() throws UtilsException{
+		return this.readProperty(false, "extendedInfo.portaApplicativa");
+	}
+	
+	public String[] getPlugins_Menu() throws UtilsException{
+		String p = this.readProperty(false, "plugins.menu");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+			}
+			return tmp;
+		}
+		return null;
+	}
+	
 	public String[] getPlugins_Configurazione() throws UtilsException{
 		String p = this.readProperty(false, "plugins.configurazione");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+			}
+			return tmp;
+		}
+		return null;
+	}
+	
+	public String getPlugins_ConfigurazioneList() throws UtilsException{
+		return this.readProperty(false, "plugins.configurazione.list");
+	}
+	
+	public String[] getPlugins_Connettore() throws UtilsException{
+		String p = this.readProperty(false, "plugins.connettore");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
 			for (int i = 0; i < tmp.length; i++) {

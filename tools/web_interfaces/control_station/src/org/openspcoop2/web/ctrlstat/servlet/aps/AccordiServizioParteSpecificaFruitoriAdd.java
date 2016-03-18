@@ -23,12 +23,16 @@
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
+import javax.mail.internet.ContentType;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.ServletInputStream;
@@ -64,12 +68,16 @@ import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -118,6 +126,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	private String correlato = null;
 	private String autenticazioneHttp;
 	private String servizioApplicativo;
+	private Properties parametersPOST;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -140,6 +149,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 
+			this.parametersPOST = null;
+			
 			this.editMode = null;
 
 			this.id = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
@@ -252,6 +263,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			int idInt = Integer.parseInt(this.id);
 
+			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
+			
+			Connettore conTmp = null;
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsCore, 
+							request, session, this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
+			
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden
 			PageData oldPD = ServletUtils.getPageDataFromSession(session);
@@ -485,15 +503,18 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 						dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
-								"", "",
-								tipoJms, "", "", "", "", "", "", tipoSendas,
+								this.url, this.nome,
+								tipoJms, this.user,
+								this.password, this.initcont, this.urlpgk,
+								this.provurl, this.connfact, tipoSendas,
 								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
 								this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
 								this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
 								this.httpspwdprivatekeytrust, this.httpspathkey,
 								this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
 								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
-								null, null, null, null, null, null, true);
+								null, null, null, null, null, null, true,
+								isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 					}else{
 						//spostato dentro l'helper
 					}
@@ -521,7 +542,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey, this.tipoconn,this.clientAuth,this.validazioneDocumenti,null,this.autenticazioneHttp);
+					this.httpsalgoritmokey, this.tipoconn,this.clientAuth,this.validazioneDocumenti,null,this.autenticazioneHttp,
+					listExtendedConnettore);
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -566,7 +588,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.httpspathkey, this.httpstipokey,
 							this.httpspwdkey, this.httpspwdprivatekey,
 							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
-							null, null, null, null, null, null, true);
+							null, null, null, null, null, null, true,
+							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				}else{
 					//spostato dentro l'helper
 				}
@@ -608,7 +631,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey);
+					this.httpsalgoritmokey,
+					listExtendedConnettore);
 
 			Fruitore fruitore = new Fruitore();
 			fruitore.setId(new Long(idProv));
@@ -690,7 +714,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.httpspwdkey, this.httpspwdprivatekey,
 								this.httpsalgoritmokey, this.tipoconn, 
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
-								null, null, null, null, null, null, true);
+								null, null, null, null, null, null, true,
+								isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 					}else{
 						//spostato dentro l'helper
 					}
@@ -837,8 +862,54 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 	public void decodeRequest(HttpServletRequest request,ConnettoriHelper connettoriHelper) throws Exception {
 		try {
+			
+			String ct = request.getContentType();
+			String boundary = null;
+			ContentType contentType = new ContentType(ct);
+			if(contentType.getParameterList()!=null){
+				Enumeration<?> enNames = contentType.getParameterList().getNames();
+				while (enNames.hasMoreElements()) {
+					Object object = (Object) enNames.nextElement();
+					if(object instanceof String){
+						if("boundary".equals(object)){
+							boundary = contentType.getParameterList().get((String)object);
+						}
+						//System.out.println("["+object+"]["+object.getClass().getName()+"]=["+contentType.getParameterList().get((String)object)+"]");
+					}
+				}
+			}
+			
 			ServletInputStream in = request.getInputStream();
-			BufferedReader dis = new BufferedReader(new InputStreamReader(in));
+			byte [] post = Utilities.getAsByteArray(in);
+			
+			ByteArrayInputStream bin = new ByteArrayInputStream(post);
+			this.parametersPOST = new Properties();
+			BufferedReader dis = new BufferedReader(new InputStreamReader(bin));
+			String key = dis.readLine();
+			while (key != null) {
+				
+				if(boundary==null){
+					// suppongo che il primo sia il boundary
+					boundary = key;
+					key = dis.readLine();
+					continue;
+				}
+				
+				if(key.endsWith(boundary)){
+					key = dis.readLine();
+					continue;
+				}
+				
+				dis.readLine();
+				String value = dis.readLine();
+				if(key!=null && value!=null)
+					this.parametersPOST.put(key, value);
+				key = dis.readLine();
+			}
+			bin.close();
+			
+			bin = new ByteArrayInputStream(post);
+			dis = new BufferedReader(new InputStreamReader(bin));
 			String line = dis.readLine();
 			while (line != null) {
 				if (line.indexOf("\""+Costanti.DATA_ELEMENT_EDIT_MODE_NAME+"\"") != -1) {
@@ -1052,7 +1123,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			}
 
 			this.endpointtype = connettoriHelper.readEndPointType(this.endpointtype,this.endpointtype_check, this.endpointtype_ssl);
-
+			
+			bin.close();
 			in.close();
 		} catch (IOException ioe) {
 			throw new Exception(ioe);

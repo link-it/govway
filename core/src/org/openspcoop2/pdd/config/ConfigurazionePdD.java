@@ -212,6 +212,17 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("Cache non abilitata");
 		}
 	}
+	public void removeObjectCache(String key) throws DriverConfigurazioneException{
+		if(this.cache!=null){
+			try{
+				this.cache.remove(key);
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new DriverConfigurazioneException("Cache non abilitata");
+		}
+	}
 	
 	
 	
@@ -467,15 +478,22 @@ public class ConfigurazionePdD  {
 	/**
 	 * Si occupa di effettuare una ricerca nella configurazione
 	 *
-	 * @param methodName Nome del metodo da invocare
+	 * @param methodNameParam Nome del metodo da invocare
 	 * @param arguments Argomenti da passare al metodo
 	 * @return l'oggetto se trovato, null altrimenti.
 	 * 
 	 */
-	public Object getObject(String methodName,
+	public Object getObject(String methodNameParam,
 			Connection connectionPdD,
 			Object... arguments) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
+		String methodName = null;
+		if("getConfigurazioneWithOnlyExtendedInfo".equals(methodNameParam)){
+			methodName = "getConfigurazioneGenerale";
+		}
+		else{
+			methodName = methodNameParam+"";
+		}
 		
 		// Effettuo le query nella mia gerarchia di registri.
 		Object obj = null;
@@ -568,6 +586,20 @@ public class ConfigurazionePdD  {
 				}
 			}catch(Exception e){
 				this.log.debug("Refresh nella configurazione locale non riuscita (metodo ["+methodName+"]): "+e.getMessage());
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+			
+			try{
+				if("getConfigurazioneWithOnlyExtendedInfo".equals(methodNameParam)){
+					Configurazione config = (Configurazione) obj;
+					Configurazione c = new Configurazione();
+					for (Object object : config.getExtendedInfoList()) {
+						c.addExtendedInfo(object);
+					}
+					obj = c;
+				}
+			}catch(Exception e){
+				this.log.debug("Aggiornamento Configurazione Extended non riuscita (metodo ["+methodNameParam+"]): "+e.getMessage());
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
 		}
@@ -1947,6 +1979,83 @@ public class ConfigurazionePdD  {
 		if(this.driverConfigurazionePdD instanceof DriverConfigurazioneDB){
 			((DriverConfigurazioneDB)this.driverConfigurazionePdD).updateSystemPropertiesPdD(systemProperties);
 		}
-	} 
+	}
+	
+
+	public Configurazione getConfigurazioneWithOnlyExtendedInfo(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getConfigurazioneWithOnlyExtendedInfo";
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((Configurazione) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		Configurazione c = null;
+		if(this.cache!=null){
+			c = (Configurazione) this.getObjectCache(key,"getConfigurazioneWithOnlyExtendedInfo",connectionPdD);
+		}else{
+			c = (Configurazione) this.getObject("getConfigurazioneWithOnlyExtendedInfo",connectionPdD);
+		}
+		
+		if(c!=null){
+			return c;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getConfigurazioneWithOnlyExtendedInfo] Configurazione Generale non trovata");
+		}
+	}
+	
+	public static final String prefixKey_getSingleExtendedInfoConfigurazione = "getSingleExtendedInfoConfigurazione_";
+	
+	public Object getSingleExtendedInfoConfigurazione(String id, Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = prefixKey_getSingleExtendedInfoConfigurazione+id;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return response.getObject();
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		Object c = null;
+		Configurazione configurazioneGenerale = this.getConfigurazioneGenerale(connectionPdD);
+		if(this.cache!=null){
+			c = this.getObjectCache(key,"getConfigurazioneExtended",connectionPdD, configurazioneGenerale, id);
+		}else{
+			c = this.getObject("getConfigurazioneExtended",connectionPdD, configurazioneGenerale, id);
+		}
+		
+		if(c!=null){
+			return c;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getSingleExtendedInfoConfigurazione] Configurazione Generale non trovata");
+		}
+		
+	}
 	
 }

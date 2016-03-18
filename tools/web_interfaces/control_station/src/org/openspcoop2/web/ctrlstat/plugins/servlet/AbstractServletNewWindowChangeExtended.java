@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
@@ -97,7 +98,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedFormServlet extendedServlet = this.getExtendedServlet(consoleCore,request.getParameter(ID_UNIQUE_FORM));
+			IExtendedFormServlet extendedServlet = this.getExtendedServlet(consoleCore,request.getParameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID));
 			
 			// Preparo il menu
 			consoleHelper.makeMenu();
@@ -107,7 +108,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitle(object,request,session);
-			lstParam.add(new Parameter(extendedServlet.getFormTitle(), null));
+			lstParam.add(new Parameter(extendedServlet.getFormTitle(TipoOperazione.CHANGE, consoleHelper), null));
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			IExtendedBean extendedBean = null;
@@ -121,7 +122,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 				dbManager.releaseConnection(con);
 			}
 			
-			extendedBean = extendedServlet.readHttpParameters(object, extendedBean, request);
+			extendedBean = extendedServlet.readHttpParameters(object, TipoOperazione.CHANGE, extendedBean, request);
 
 
 			if (!ServletUtils.isEditModeInProgress(request)) {
@@ -144,7 +145,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 					DataElement de = new DataElement();
 					de.setValue(extendedServlet.getUniqueID());
 					de.setType(DataElementType.HIDDEN);
-					de.setName(ID_UNIQUE_FORM);
+					de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
 					dati.addElement(de);
 					
 					extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
@@ -168,17 +169,19 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 				Vector<DataElement> dati = new Vector<DataElement>();
 
+				String testModificaEffettuata = extendedServlet.getTestoModificaEffettuata(TipoOperazione.CHANGE, consoleHelper); // questa chiamata fatta prima della addDati consente di informare la addDati che la gestione è terminata
+				
 				DataElement de = new DataElement();
 				de.setValue(extendedServlet.getUniqueID());
 				de.setType(DataElementType.HIDDEN);
-				de.setName(ID_UNIQUE_FORM);
+				de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
 				dati.addElement(de);
 				
 				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
 				pd.setDati(dati);
 				
-				pd.setMessage(extendedServlet.getTestoModificaEffettuata());
+				pd.setMessage(testModificaEffettuata);
 				
 				pd.disableEditMode();
 				
@@ -199,7 +202,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 			DataElement de = new DataElement();
 			de.setValue(extendedServlet.getUniqueID());
 			de.setType(DataElementType.HIDDEN);
-			de.setName(ID_UNIQUE_FORM);
+			de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
 			dati.addElement(de);
 			
 			extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
@@ -226,7 +229,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 		DataElement de = new DataElement();
 		de.setValue(extendedServlet.getUniqueID());
 		de.setType(DataElementType.HIDDEN);
-		de.setName(ID_UNIQUE_FORM);
+		de.setName(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
 		dati.addElement(de);
 		
 		String servletNameWithId = new String(servletName);
@@ -236,11 +239,10 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 		else{
 			servletNameWithId = servletNameWithId + "?";
 		}
-		servletNameWithId = servletNameWithId + ID_UNIQUE_FORM + "=" + extendedServlet.getUniqueID();
+		servletNameWithId = servletNameWithId + CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID + "=" + extendedServlet.getUniqueID();
 		
 		extendedServlet.addToDatiNewWindow(dati, consoleHelper, core, originalObject, extendedBean, servletNameWithId);
 		
 	}
 	
-	private static final String ID_UNIQUE_FORM = "ExtendedFormUniqueId";
 }

@@ -144,6 +144,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_APPLICA_MTOM_RICHIESTA = "applicaMTOMReq";
 	public final static String PARAMETRO_APPLICA_MTOM_RISPOSTA = "applicaMTOMRes";
 	public final static String PARAMETRO_USAIDSOGG = "usaidsogg";
+	public final static String PARAMETRO_EXTENDED_FORM_ID = "extendedFormUniqueId";
 	
 	
 	/** DEFAULT VALUES **/

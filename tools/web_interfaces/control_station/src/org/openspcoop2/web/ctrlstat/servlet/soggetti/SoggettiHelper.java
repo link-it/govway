@@ -42,6 +42,7 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -852,7 +853,7 @@ public class SoggettiHelper extends ConsoleHelper {
 
 
 
-	public boolean soggettiEndPointCheckData(TipoOperazione tipoOp) throws Exception {
+	public boolean soggettiEndPointCheckData(TipoOperazione tipoOp,List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 		try {
 			String id = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 			int idInt = 0;
@@ -862,7 +863,7 @@ public class SoggettiHelper extends ConsoleHelper {
 			//String endpointtype = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			String endpointtype = this.connettoriHelper.readEndPointType();
 
-			if (!this.connettoriHelper.endPointCheckData()) {
+			if (!this.connettoriHelper.endPointCheckData(listExtendedConnettore)) {
 				return false;
 			}
 

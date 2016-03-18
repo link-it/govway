@@ -217,6 +217,8 @@ public final class ConfigurazioneTracciamentoAppenderPropertiesChange extends Ac
 
 			confHelper.prepareTracciamentoAppenderPropList(oa, oa.getPropertyList());
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,

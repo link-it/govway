@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -42,6 +43,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.utils.ConfigurazionePdDUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -286,6 +288,13 @@ public class ZIPUtils  {
 			ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione(ID_CORRELAZIONE_DEFAULT);
 			idCorrelazione.setDescrizione(zip.getName()); // come descrizione viene usato il nome dell'archivio zip
 			
+			// ExtendedInfoManager
+			ExtendedInfoManager extendedInfoManager = ExtendedInfoManager.getInstance();
+			Hashtable<String, PortaDelegata> mapKeyForExtendedInfo_portaDelegata = new Hashtable<String, PortaDelegata>();
+			boolean existsExtendsConfigForPortaDelegata = extendedInfoManager.newInstanceExtendedInfoPortaDelegata()!=null;
+			Hashtable<String, PortaApplicativa> mapKeyForExtendedInfo_portaApplicativa = new Hashtable<String, PortaApplicativa>();
+			boolean existsExtendsConfigForPortaApplicativa = extendedInfoManager.newInstanceExtendedInfoPortaApplicativa()!=null;
+			
 			String rootDir = null;
 			
 			Iterator<ZipEntry> it = ZipUtilities.entries(zip, true);
@@ -325,8 +334,13 @@ public class ZIPUtils  {
 						// ********** configurazione ****************
 						if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR+File.separatorChar)) ){
 							byte[] xml = placeholder.replace(content);
-							bin = new ByteArrayInputStream(xml);
-							this.readConfigurazione(archivio, bin, xml, entryName, validationDocuments);
+							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_EXTENDED_DIR+File.separatorChar)){
+								this.readConfigurazioneExtended(archivio, bin, xml, entryName, validationDocuments, extendedInfoManager);
+							}
+							else{
+								bin = new ByteArrayInputStream(xml);
+								this.readConfigurazione(archivio, bin, xml, entryName, validationDocuments);
+							}
 						}
 						
 						// ********** pdd ****************
@@ -415,12 +429,34 @@ public class ZIPUtils  {
 									
 									// ------------ porta delegata --------------------
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_PORTE_DELEGATE_DIR+File.separatorChar)) ){
-										this.readPortaDelegata(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+										if(nomeFile.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_EXTENDED_DIR+File.separatorChar)){
+											String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
+											PortaDelegata pd = mapKeyForExtendedInfo_portaDelegata.get(key);
+											this.readPortaDelegataExtended(pd, bin, xml, entryName, validationDocuments, extendedInfoManager);
+										}
+										else{
+											PortaDelegata pd = this.readPortaDelegata(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+											if(existsExtendsConfigForPortaDelegata){
+												String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
+												mapKeyForExtendedInfo_portaDelegata.put(key, pd);
+											}
+										}
 									}
 									
 									// ------------ porta applicativa --------------------
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_PORTE_APPLICATIVE_DIR+File.separatorChar)) ){
-										this.readPortaApplicativa(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+										if(nomeFile.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_EXTENDED_DIR+File.separatorChar)){
+											String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
+											PortaApplicativa pa = mapKeyForExtendedInfo_portaApplicativa.get(key);
+											this.readPortaApplicativaExtended(pa, bin, xml, entryName, validationDocuments, extendedInfoManager);
+										}
+										else{
+											PortaApplicativa pa = this.readPortaApplicativa(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+											if(existsExtendsConfigForPortaApplicativa){
+												String key = this.getKeyPortaForExtendedInfo(tipoNomeSoggetto, nomeFile);
+												mapKeyForExtendedInfo_portaApplicativa.put(key, pa);
+											}
+										}
 									}
 									
 									// ------------ accordi -------------------
@@ -553,6 +589,21 @@ public class ZIPUtils  {
 		}
 	}
 	
+	private String getKeyPortaForExtendedInfo(String tipoNomeSoggetto, String nomeFile){
+		String nomePortaSuFileSystem = nomeFile.substring(nomeFile.lastIndexOf(File.separatorChar)); 
+		if(nomePortaSuFileSystem.endsWith(".xml")){
+			nomePortaSuFileSystem = nomePortaSuFileSystem.substring(0,nomePortaSuFileSystem.length()-4);
+		}
+		else if(nomePortaSuFileSystem.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_EXTENDED_FILE_EXT)){
+			nomePortaSuFileSystem = nomeFile.substring(0,nomeFile.lastIndexOf(File.separatorChar)); 
+			if(nomePortaSuFileSystem.contains(File.separatorChar+"")){
+				nomePortaSuFileSystem = nomePortaSuFileSystem.substring(nomePortaSuFileSystem.lastIndexOf(File.separatorChar)); 
+			}
+		}
+		String key = tipoNomeSoggetto + nomePortaSuFileSystem;
+		return key;
+	}
+	
 	public void finalize(Archive archivio,boolean validationDocuments) throws ProtocolException{
 		// nop
 	}
@@ -574,6 +625,22 @@ public class ZIPUtils  {
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readConfigurazioneExtended(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments,ExtendedInfoManager extendedInfoManager) throws ProtocolException{
+		try{
+			if(archivio.getConfigurazionePdD()==null){
+				//throw new Exception("Non è possibile indicare una configurazione estesa senza indicare anche la configurazione generale");
+				// Caso speciale dove è presente solo l'extended info
+				archivio.setConfigurazionePdD(new Configurazione());
+			}
+			Object o = extendedInfoManager.newInstanceExtendedInfoConfigurazione().deserialize(this.log, archivio.getConfigurazionePdD(), xml);
+			archivio.getConfigurazionePdD().addExtendedInfo(o);
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione-extended) non valida: "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -736,7 +803,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	public void readPortaDelegata(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public PortaDelegata readPortaDelegata(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
@@ -754,6 +821,7 @@ public class ZIPUtils  {
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una porta con key ["+key+"]");
 			}
 			archivio.getPorteDelegate().add(key,new ArchivePortaDelegata(pd,idCorrelazione,true));
+			return pd;
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-delegata) non valida rispetto allo schema (ConfigurazionePdD): "
@@ -761,7 +829,21 @@ public class ZIPUtils  {
 		}
 	}
 	
-	public void readPortaApplicativa(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public void readPortaDelegataExtended(PortaDelegata pd,InputStream bin,byte[]xml,String entryName,boolean validationDocuments,ExtendedInfoManager extendedInfoManager) throws ProtocolException{
+		try{
+			if(pd==null){
+				throw new Exception("Non è possibile indicare una configurazione estesa senza indicare anche la definizione della porta delegata");
+			}
+			Object o = extendedInfoManager.newInstanceExtendedInfoPortaDelegata().deserialize(this.log, pd, xml);
+			pd.addExtendedInfo(o);
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-delegata-extended) non valida: "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public PortaApplicativa readPortaApplicativa(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
@@ -776,9 +858,24 @@ public class ZIPUtils  {
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una porta con key ["+key+"]");
 			}
 			archivio.getPorteApplicative().add(key,new ArchivePortaApplicativa(pa,idCorrelazione,true));
+			return pa;
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-applicativa) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readPortaApplicativaExtended(PortaApplicativa pa,InputStream bin,byte[]xml,String entryName,boolean validationDocuments,ExtendedInfoManager extendedInfoManager) throws ProtocolException{
+		try{
+			if(pa==null){
+				throw new Exception("Non è possibile indicare una configurazione estesa senza indicare anche la definizione della porta applicativa");
+			}
+			Object o = extendedInfoManager.newInstanceExtendedInfoPortaApplicativa().deserialize(this.log, pa, xml);
+			pa.addExtendedInfo(o);
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-applicativa-extended) non valida: "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

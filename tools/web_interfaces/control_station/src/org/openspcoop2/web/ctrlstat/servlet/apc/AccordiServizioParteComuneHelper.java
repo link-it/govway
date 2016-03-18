@@ -65,6 +65,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -3915,7 +3916,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 
 
 	// Controlla i dati del connettore del servizio
-	boolean accordiErogatoriCheckData() throws Exception {
+	boolean accordiErogatoriCheckData(List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 		try {
 			// String id = this.request.getParameter("id");
 			// int idInt = 0;
@@ -3928,7 +3929,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 			// String tiposervizio = this.request.getParameter("tiposervizio");
 			String endpointtype = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_ENDPOINT_TYPE);
 
-			if (!this.connettoriHelper.endPointCheckData()) {
+			if (!this.connettoriHelper.endPointCheckData(listExtendedConnettore)) {
 				return false;
 			}
 

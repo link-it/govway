@@ -86,7 +86,13 @@ public class PropertyFilter implements net.sf.json.util.PropertyFilter{
 			FilteredObject oggettoFiltrato = new FilteredObject();
 			
 			// Identificatore unico risorsa
-			String id = this.idBuilder.toID(source,name);
+			String id = null;
+			try{
+				id = this.idBuilder.toID(source,name);
+			}catch(Exception e){
+				// id non esistente per l'oggetto source
+				return;
+			}
 			if(this.filter.existsFilteredObject(id)){
 				// La libreria di serializzazione invoca piu' volte il solito oggetto
 				return;

@@ -50,6 +50,9 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -196,6 +199,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				soggLong = Long.parseLong(provider);
 			}
 
+			Boolean isConnettoreCustomUltimaImmagineSalvata = connra.getCustom();
+			
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connra, ConnettoreServletType.SERVIZIO_APPLICATIVO_RISPOSTA_ASINCRONA, saCore, 
+							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
+			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
 			if(ServletUtils.isEditModeInProgress(request)){
@@ -397,7 +406,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
 						nomeservizioApplicativo, idsil, null, null, null,
-						null, null, true);
+						null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider);
 
@@ -410,7 +420,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoEndPointCheckData();
+			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(listExtendedConnettore);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -449,7 +459,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
 						nomeservizioApplicativo, idsil, null, null, null,
-						null, null, true);
+						null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider);
 
@@ -530,7 +541,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpskeystore, httpspwdprivatekeytrust,
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey);
+					httpsalgoritmokey,
+					listExtendedConnettore);
 			ra.setConnettore(connra);
 			sa.setRispostaAsincrona(ra);
 

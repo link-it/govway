@@ -30,10 +30,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.connector.ConnectorUtils;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
 
@@ -70,14 +74,38 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP extends HttpServlet {
 
 	@Override public void doPost(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
+		WrapperHttpServletRequest httpReqWrapper = null;
 		try{
-			WrapperHttpServletRequest httpReqWrapper = new WrapperHttpServletRequest(req,this.backwardCompatibilityProperties);
+			httpReqWrapper = new WrapperHttpServletRequest(req,this.backwardCompatibilityProperties);
 			PdDContext pddContext = new PdDContext();
 			pddContext.addObject(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY, Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY);
 			httpReqWrapper.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP, pddContext);
 			//System.out.println("getRequestURI=["+httpReqWrapper.getRequestURI()+"]");
 			//System.out.println("getRequestURL=["+httpReqWrapper.getRequestURL()+"]");
 			//System.out.println("getServletPath=["+httpReqWrapper.getServletPath()+"]");
+		}catch(Exception e){
+			try{
+				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+				if(log==null){
+					log = Logger.getLogger(RicezioneContenutiApplicativiHTTPtoSOAP.class);
+				}
+				log.error(e.getMessage(), e);
+			}catch(Exception eLog){}
+			// NOTA: L'unica eccezione generata è quella di protocollo non inizializzato
+			boolean generateErrorMessage = false;
+			try{
+				OpenSPCoop2Properties prop = OpenSPCoop2Properties.getInstance();
+				generateErrorMessage = prop.isGenerazioneErroreProtocolloNonSupportato();
+			}catch(Exception eRead){}
+			if(generateErrorMessage){
+				ConnectorUtils.generateErrorMessage(IDService.PORTA_DELEGATA_XML_TO_SOAP, MethodType.POST, req, res, e.getMessage(), false, true);
+			}
+			else{
+				res.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeProtocolUnsupported(IDService.PORTA_DELEGATA_XML_TO_SOAP)));
+			}
+			return;
+		}
+		try{
 			this.ricezioneContenutiApplicativiHTTPtoSOAP.doPost(httpReqWrapper, res);
 		}catch(Exception e){
 			throw new ServletException(e.getMessage(),e);
@@ -87,14 +115,38 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP extends HttpServlet {
 	
 	private void dispatch(HttpServletRequest req, HttpServletResponse res, MethodType method)
 	throws ServletException, IOException {
+		WrapperHttpServletRequest httpReqWrapper = null;
 		try{
-			WrapperHttpServletRequest httpReqWrapper = new WrapperHttpServletRequest(req,this.backwardCompatibilityProperties);
+			httpReqWrapper = new WrapperHttpServletRequest(req,this.backwardCompatibilityProperties);
 			PdDContext pddContext = new PdDContext();
 			pddContext.addObject(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY, Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY);
 			httpReqWrapper.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP, pddContext);
 			//System.out.println("getRequestURI=["+httpReqWrapper.getRequestURI()+"]");
 			//System.out.println("getRequestURL=["+httpReqWrapper.getRequestURL()+"]");
 			//System.out.println("getServletPath=["+httpReqWrapper.getServletPath()+"]");
+		}catch(Exception e){
+			try{
+				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+				if(log==null){
+					log = Logger.getLogger(RicezioneContenutiApplicativiHTTPtoSOAP.class);
+				}
+				log.error(e.getMessage(), e);
+			}catch(Exception eLog){}
+			// NOTA: L'unica eccezione generata è quella di protocollo non inizializzato
+			boolean generateErrorMessage = false;
+			try{
+				OpenSPCoop2Properties prop = OpenSPCoop2Properties.getInstance();
+				generateErrorMessage = prop.isGenerazioneErroreProtocolloNonSupportato();
+			}catch(Exception eRead){}
+			if(generateErrorMessage){
+				ConnectorUtils.generateErrorMessage(IDService.PORTA_DELEGATA_XML_TO_SOAP, MethodType.POST, req, res, e.getMessage(), false, true);
+			}
+			else{
+				res.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeProtocolUnsupported(IDService.PORTA_DELEGATA_XML_TO_SOAP)));
+			}
+			return;
+		}
+		try{
 			this.ricezioneContenutiApplicativiHTTPtoSOAP.engine(httpReqWrapper, res,method);
 		}catch(Exception e){
 			throw new ServletException(e.getMessage(),e);

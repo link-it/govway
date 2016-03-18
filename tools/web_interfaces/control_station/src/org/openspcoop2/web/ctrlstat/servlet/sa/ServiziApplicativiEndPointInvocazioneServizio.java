@@ -53,7 +53,10 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -204,6 +207,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				soggLong = Long.parseLong(provider);
 			}
 
+			Boolean isConnettoreCustomUltimaImmagineSalvata = connis.getCustom();
+			
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_INVOCAZIONE_SERVIZIO, saCore, 
+							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
+			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
 			if(ServletUtils.isEditModeInProgress(request)){
@@ -420,7 +429,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 						nomeservizioApplicativo, idsil, null, null, null,
-						null, null, true);
+						null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider);
 				
@@ -433,7 +443,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoEndPointCheckData();
+			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(listExtendedConnettore);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -472,7 +482,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 						nomeservizioApplicativo, idsil, null, null, null,
-						null, null, true);
+						null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider);
 
@@ -554,7 +565,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					httpskeystore, httpspwdprivatekeytrust,
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey);
+					httpsalgoritmokey,
+					listExtendedConnettore);
 			is.setConnettore(connis);
 			sa.setInvocazioneServizio(is);
 

@@ -62,7 +62,8 @@ public class DataElement {
 	String [] values = null;
 	String [] labels = null;
 	int size, cols, rows, id;
-	boolean affiancato;
+	boolean affiancato; // serve a gestire il successivo elemento se disegnarlo accanto o in verticale (default)
+	boolean labelAffiancata=true; // indica se la label e poi l'elemento sono disegnati uno accanto all'altro in orizzontale (default) oppure in verticale (default per le text-area)
 	String idToRemove;
 	boolean required=false;
 	boolean bold=false;
@@ -93,6 +94,7 @@ public class DataElement {
 		this.cols = 15;
 		this.rows = 5;
 		this.affiancato = false;
+		this.labelAffiancata = true;
 	}
 
 	public void setId(int i) {
@@ -143,6 +145,9 @@ public class DataElement {
 		if("text".equals(this.type)){
 			this.required = false;
 		}*/
+		if(DataElementType.TEXT_AREA.toString().equals(s) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(s)){
+			this.setLabelAffiancata(false);
+		}
 	}
 	public String getType() {
 		return checkNull(this.type);
@@ -319,6 +324,14 @@ public class DataElement {
 
 	public void setBold(boolean bold) {
 		this.bold = bold;
+	}
+	
+	public boolean isLabelAffiancata() {
+		return this.labelAffiancata;
+	}
+
+	public void setLabelAffiancata(boolean labelAffiancata) {
+		this.labelAffiancata = labelAffiancata;
 	}
 	
 	public boolean isPostBack() {

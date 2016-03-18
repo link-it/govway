@@ -167,6 +167,10 @@ public class Costanti {
 	
 	public static final String OPENSPCOOP2_ARCHIVE_INFORMATION_MISSING = "informationMissing.xml";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_EXTENDED_DIR = "extended";
+	public static final String OPENSPCOOP2_ARCHIVE_EXTENDED_FILE_NAME = "extended";
+	public static final String OPENSPCOOP2_ARCHIVE_EXTENDED_FILE_EXT = ".bin";
+	
 	public static final String OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR = "configurazione";
 	public static final String OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_FILE_NAME = "configurazione.xml";
 	

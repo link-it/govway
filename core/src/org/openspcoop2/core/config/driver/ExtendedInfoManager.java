@@ -21,6 +21,7 @@
 
 package org.openspcoop2.core.config.driver;
 
+import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.utils.resources.Loader;
 
 /**

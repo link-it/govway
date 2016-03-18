@@ -197,7 +197,7 @@ public final class ConfigurazioneRouting extends Action {
 
 				pd.setDati(dati);
 				
-				pd.setMessage("Configurazione Tabella di routing modificata con successo");
+				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO);
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

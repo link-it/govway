@@ -25,6 +25,8 @@ import java.sql.Connection;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
 /**
  * IExtendedCoreServlet
  *
@@ -38,8 +40,9 @@ public interface IExtendedCoreServlet {
 	public void performUpdate(Connection connection, Object originalObject, IExtendedBean extendedBean) throws ExtendedException;
 	public void performDelete(Connection connection, Object originalObject, IExtendedBean extendedBean) throws ExtendedException;
 	
-	public IExtendedBean getExtendedBean(Connection connection, String id) throws ExtendedException; 
+	public IExtendedBean getExtendedBean(Connection connection, String id) throws ExtendedException;
+	public boolean inUse(Connection connection, String id, StringBuffer descriptionInUse) throws ExtendedException;
 	
-	IExtendedBean readHttpParameters(Object originalObject, IExtendedBean extendedBean, HttpServletRequest request) throws ExtendedException;
+	IExtendedBean readHttpParameters(Object originalObject, TipoOperazione tipoOperazione, IExtendedBean extendedBean, HttpServletRequest request) throws ExtendedException;
 	public String getId(HttpServletRequest request) throws ExtendedException; 
 }

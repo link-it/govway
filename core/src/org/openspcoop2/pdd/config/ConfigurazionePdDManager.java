@@ -694,7 +694,19 @@ public class ConfigurazionePdDManager {
 		this.configurazionePdDReader.updateSystemPropertiesPdD(systemProperties);
 	}
 	
-	public Object getExtendedInfoConfigurazione() throws DriverConfigurazioneException{
+	public List<Object> getExtendedInfoConfigurazione() throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfoConfigurazione(this.getConnection());
+	}
+	
+	public Object getSingleExtendedInfoConfigurazione(String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getSingleExtendedInfoConfigurazione(id, this.getConnection());
+	}
+	
+	public List<Object> getExtendedInfoConfigurazioneFromCache() throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getExtendedInfoConfigurazioneFromCache(this.getConnection());
+	}
+	
+	public Object getSingleExtendedInfoConfigurazioneFromCache(String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getSingleExtendedInfoConfigurazioneFromCache(id, this.getConnection());
 	}
 }

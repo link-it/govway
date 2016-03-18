@@ -47,6 +47,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
  * porteAppDel
@@ -117,7 +118,7 @@ public final class PorteApplicativeDel extends Action {
 				if(extendedServlet!=null){
 					List<IExtendedBean> listExt = null;
 					try{
-						listExt = extendedServlet.extendedBeanList(pa);
+						listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,porteApplicativeHelper,porteApplicativeCore,pa);
 					}catch(Exception e){
 						ControlStationCore.logError(e.getMessage(), e);
 					}

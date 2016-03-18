@@ -62,7 +62,10 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
@@ -304,6 +307,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 			servizio = asps.getServizio();
 
+			Boolean isConnettoreCustomUltimaImmagineSalvata = servizio.getConnettore().getCustom();
+			
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(servizio.getConnettore(), ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
+							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
+			
 			// Lista port-type associati all'accordo di servizio
 			// se l'accordo e' selezionato allora prendo quello selezionato
 			// altrimenti il primo
@@ -626,7 +635,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpstipokey, httpspwdkey, httpspwdprivatekey,
 							httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
-							null, oldStatoPackage, true);
+							null, oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 					pd.setDati(dati);
 
@@ -659,7 +669,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,nome_aps,versione,validazioneDocumenti,null,backToStato,autenticazioneHttp);
+					httpsalgoritmokey, tipoconn,nome_aps,versione,validazioneDocumenti,null,backToStato,autenticazioneHttp,
+					listExtendedConnettore);
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -696,7 +707,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 						nomeservizio, tiposervizio, null, null, null,
-						null, oldStatoPackage, true);
+						null, oldStatoPackage, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -825,7 +837,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey);
+					httpsalgoritmokey,
+					listExtendedConnettore);
 
 			servizio.setConnettore(newConnettore);
 
@@ -902,7 +915,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpspwdprivatekey, httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null,
-							oldStatoPackage, true);
+							oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 					pd.setDati(dati);
 

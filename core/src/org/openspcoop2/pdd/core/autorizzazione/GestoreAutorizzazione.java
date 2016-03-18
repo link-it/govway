@@ -182,6 +182,17 @@ public class GestoreAutorizzazione {
 			throw new AutorizzazioneException("Cache non abilitata");
 		}
 	}
+	public static void removeObjectCache(String key) throws AutorizzazioneException{
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null){
+			try{
+				GestoreAutorizzazione.cacheAutorizzazione.remove(key);
+			}catch(Exception e){
+				throw new AutorizzazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutorizzazioneException("Cache non abilitata");
+		}
+	}
 	
 
 

@@ -107,7 +107,7 @@ public class AuditCostanti {
 	public final static String LABEL_AUDIT_DOCUMENTI_BINARI = "Documenti binari";
 	public final static String LABEL_AUDIT_MOTIVO_ERRORE = "Motivo errore";
 	public final static String LABEL_AUDIT_DETTAGLIO_OGGETTO = "Dettaglio oggetto";
-	public final static String LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA = "Configurazione Audit modificata con successo<BR>Le modifiche verranno utilizzate dal prossimo accesso alla console";
+	public final static String LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA = "Configurazione Audit modificata con successo<BR><b>Attenzione:</b> Le modifiche verranno utilizzate dal prossimo accesso alla console";
 
 	/* PARAMETRI */
 

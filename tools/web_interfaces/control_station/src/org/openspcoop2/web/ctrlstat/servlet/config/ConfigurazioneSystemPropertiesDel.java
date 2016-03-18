@@ -133,6 +133,8 @@ public final class ConfigurazioneSystemPropertiesDel extends Action {
 
 			confHelper.prepareSystemPropertiesList(ricerca, lista);
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 

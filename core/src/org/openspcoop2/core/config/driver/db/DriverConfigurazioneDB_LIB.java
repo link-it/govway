@@ -33,11 +33,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -121,6 +124,8 @@ import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo
 import org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.utils.TipiDatabase;
@@ -664,6 +669,8 @@ public class DriverConfigurazioneDB_LIB {
 
 		boolean isAbilitato = false;
 
+		Hashtable<String, String> extendedProperties = new Hashtable<String, String>();
+		
 		// setto i dati, se le property non sono presenti il loro valore rimarra
 		// a null e verra settato come tale nel DB
 		String nomeProperty = null;
@@ -710,6 +717,11 @@ public class DriverConfigurazioneDB_LIB {
 			// se endpointype != disabilitato allora lo setto abilitato
 			if (!endpointtype.equalsIgnoreCase(TipiConnettore.DISABILITATO.getNome()))
 				isAbilitato = true;
+			
+			// extendedProperties
+			if(nomeProperty.startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
+				extendedProperties.put(nomeProperty, valoreProperty);
+			}
 
 		}
 
@@ -811,6 +823,37 @@ public class DriverConfigurazioneDB_LIB {
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;
 					
+						if(valoreProperty==null){
+							throw new Exception("Property ["+nomeProperty+"] without value");
+						}
+						
+						stm = connection.prepareStatement(sqlQuery);
+						stm.setString(1, nomeProperty);
+						stm.setString(2, valoreProperty);
+						stm.setLong(3, connettore.getId());
+						stm.executeUpdate();
+						stm.close();
+					}				
+				}
+				else if(extendedProperties.size()>0){
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
+					sqlQueryObject.addInsertField("name", "?");
+					sqlQueryObject.addInsertField("value", "?");
+					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					
+					Enumeration<String> keys = extendedProperties.keys();
+					while (keys.hasMoreElements()) {
+						nomeProperty = (String) keys.nextElement();
+						valoreProperty = extendedProperties.get(nomeProperty);
+						if (valoreProperty != null && valoreProperty.equals(""))
+							valoreProperty = null;
+					
+						if(valoreProperty==null){
+							throw new Exception("Property ["+nomeProperty+"] without value");
+						}
+						
 						stm = connection.prepareStatement(sqlQuery);
 						stm.setString(1, nomeProperty);
 						stm.setString(2, valoreProperty);
@@ -902,6 +945,10 @@ public class DriverConfigurazioneDB_LIB {
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;
 					
+						if(valoreProperty==null){
+							throw new Exception("Property ["+nomeProperty+"] without value");
+						}
+						
 						stm = connection.prepareStatement(sqlQuery);
 						stm.setString(1, nomeProperty);
 						stm.setString(2, valoreProperty);
@@ -909,6 +956,33 @@ public class DriverConfigurazioneDB_LIB {
 						stm.executeUpdate();
 						stm.close();
 					}				
+				}
+				else if(extendedProperties.size()>0){
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
+					sqlQueryObject.addInsertField("name", "?");
+					sqlQueryObject.addInsertField("value", "?");
+					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					
+					Enumeration<String> keys = extendedProperties.keys();
+					while (keys.hasMoreElements()) {
+						nomeProperty = (String) keys.nextElement();
+						valoreProperty = extendedProperties.get(nomeProperty);
+						if (valoreProperty != null && valoreProperty.equals(""))
+							valoreProperty = null;
+					
+						if(valoreProperty==null){
+							throw new Exception("Property ["+nomeProperty+"] without value");
+						}
+						
+						stm = connection.prepareStatement(sqlQuery);
+						stm.setString(1, nomeProperty);
+						stm.setString(2, valoreProperty);
+						stm.setLong(3, idConnettore);
+						stm.executeUpdate();
+						stm.close();
+					}			
 				}
 				
 				break;
@@ -1038,6 +1112,9 @@ public class DriverConfigurazioneDB_LIB {
 		
 		CorrelazioneApplicativa corrApp = aPD.getCorrelazioneApplicativa();
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPD.getCorrelazioneApplicativaRisposta();
+		
+		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
 		
 		ServizioApplicativo servizioApplicativo = null;
 		try {
@@ -1505,6 +1582,17 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " associazioni ServizioApplicativo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 
+				// extendedInfo
+				i=0;
+				if(aPD.sizeExtendedInfoList()>0){
+					if(extInfoConfigurazioneDriver!=null){
+						for (i = 0; i < aPD.sizeExtendedInfoList(); i++) {
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, aPD.getExtendedInfo(i));
+						}
+					}
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
 				break;
 
 			case UPDATE:
@@ -2053,6 +2141,23 @@ public class DriverConfigurazioneDB_LIB {
 
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " associazioni PortaDelegata<->ServizioApplicativo associati alla PortaDelegata[" + idPortaDelegata + "]");
 
+				
+				// extendedInfo
+				if(extInfoConfigurazioneDriver!=null){
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD);
+				}
+				
+				i=0;
+				if(aPD.sizeExtendedInfoList()>0){
+					if(extInfoConfigurazioneDriver!=null){
+						for (i = 0; i < aPD.sizeExtendedInfoList(); i++) {
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, aPD.getExtendedInfo(i));
+						}
+					}
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
 				break;
 
 			case DELETE:
@@ -2165,6 +2270,11 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " correlazione per la rispsota associate alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				// extendedInfo
+				if(extInfoConfigurazioneDriver!=null){
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD);
+				}
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE);
@@ -2886,6 +2996,9 @@ public class DriverConfigurazioneDB_LIB {
 		CorrelazioneApplicativa corrApp = aPA.getCorrelazioneApplicativa();
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPA.getCorrelazioneApplicativaRisposta();
 
+		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
+		
 		try {
 			int n = 0;
 			int i = 0;
@@ -3244,6 +3357,18 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
+				// extendedInfo
+				i=0;
+				if(aPA.sizeExtendedInfoList()>0){
+					if(extInfoConfigurazioneDriver!=null){
+						for (i = 0; i < aPA.sizeExtendedInfoList(); i++) {
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPA, aPA.getExtendedInfo(i));
+						}
+					}
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaApplicativa associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
 				break;
 
 			case UPDATE:
@@ -3697,6 +3822,21 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
+				// extendedInfo
+				if(extInfoConfigurazioneDriver!=null){
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA);
+				}
+				
+				i=0;
+				if(aPA.sizeExtendedInfoList()>0){
+					if(extInfoConfigurazioneDriver!=null){
+						for (i = 0; i < aPA.sizeExtendedInfoList(); i++) {
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, aPA.getExtendedInfo(i));
+						}
+					}
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + i + " associazioni ExtendedInfo<->PortaApplicativa associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+								
 				break;
 
 			case DELETE:
@@ -3829,6 +3969,11 @@ public class DriverConfigurazioneDB_LIB {
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
+				// extendedInfo
+				if(extInfoConfigurazioneDriver!=null){
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA);
+				}
+				
 				// porta applicativa
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE);
@@ -5015,9 +5160,57 @@ public class DriverConfigurazioneDB_LIB {
 	
 	
 	
-	
-
 	public static long CRUDConfigurazioneGenerale(int type, Configurazione config, Connection con) throws DriverConfigurazioneException {
+		
+		if(config.sizeExtendedInfoList()>0 && config.getAccessoConfigurazione()==null && config.getAccessoRegistro()==null &&
+				config.getAccessoDatiAutorizzazione()==null && config.getAttachments()==null &&
+				config.getGestioneErrore()==null && config.getIndirizzoRisposta()==null &&
+				config.getInoltroBusteNonRiscontrate()==null && config.getIntegrationManager()==null &&
+				config.getMessaggiDiagnostici()==null && config.getRisposte()==null &&
+				config.getRoutingTable()==null && config.getStatoServiziPdd()==null &&
+				config.getSystemProperties()==null && config.getTracciamento()==null &&
+				config.getValidazioneBuste()==null && config.getValidazioneContenutiApplicativi()==null){
+			
+			// caso speciale extended info
+			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
+			if(extInfoConfigurazioneDriver!=null){
+			
+				try{
+					switch (type) {
+					case CREATE:
+					case UPDATE:
+						extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
+						
+						
+						if(config.sizeExtendedInfoList()>0){
+							for(int l=0; l<config.sizeExtendedInfoList();l++){
+								extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l));
+							}
+						}
+						break;
+					case DELETE:
+						extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
+						break;
+					}
+				}catch (Exception se) {
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale-Extended] Exception [" + se.getMessage() + "].",se);
+				} 
+				
+			}
+			
+			return -1;
+			
+		}
+		else{
+			
+			return _CRUDConfigurazioneGenerale(type, config, con);
+			
+		}
+		
+	}
+
+	private static long _CRUDConfigurazioneGenerale(int type, Configurazione config, Connection con) throws DriverConfigurazioneException {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
 		PreparedStatement selectStmt = null;
@@ -5152,7 +5345,9 @@ public class DriverConfigurazioneDB_LIB {
 			validazione_contenuti_acceptMtomMessage = DriverConfigurazioneDB_LIB.getValue(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage());
 		}
 
-							
+		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
+									
 		try {
 			switch (type) {
 			case CREATE:
@@ -5456,6 +5651,19 @@ public class DriverConfigurazioneDB_LIB {
 							updateStmt.close();
 						}
 
+					}
+				}
+				
+				// ExtendedInfo
+				if(extInfoConfigurazioneDriver!=null){
+					
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
+					
+					
+					if(config.sizeExtendedInfoList()>0){
+						for(int l=0; l<config.sizeExtendedInfoList();l++){
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l));
+						}
 					}
 				}
 
@@ -5766,10 +5974,26 @@ public class DriverConfigurazioneDB_LIB {
 					}
 				}
 
+				// ExtendedInfo
+				if(extInfoConfigurazioneDriver!=null){
+					
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
+					
+					
+					if(config.sizeExtendedInfoList()>0){
+						for(int l=0; l<config.sizeExtendedInfoList();l++){
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l));
+						}
+					}
+				}
+				
 
 				break;
 
 			case DELETE:
+				
+				extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE);
 				updateQuery = sqlQueryObject.createSQLDelete();
@@ -5960,7 +6184,6 @@ public class DriverConfigurazioneDB_LIB {
 					}else if(endpoint.equals(TipiConnettore.NULLECHO.getNome())){
 						//nessuna proprieta per connettore nullEcho
 					}else if (!endpoint.equals(TipiConnettore.DISABILITATO.getNome())) {
-						
 						if(rs.getLong("custom")==1){
 							// connettore custom
 							DriverConfigurazioneDB_LIB.readPropertiesConnettoreCustom(idConnettore,connettore,connection);
@@ -5974,6 +6197,10 @@ public class DriverConfigurazioneDB_LIB {
 
 				}
 			}
+			
+			// Extended Info
+			DriverConfigurazioneDB_LIB.readPropertiesConnettoreExtendedInfo(idConnettore,connettore,connection);
+			
 			return connettore;
 		} catch (SQLException sqle) {
 
@@ -6029,7 +6256,7 @@ public class DriverConfigurazioneDB_LIB {
 					if(found){
 						continue; // è gia stato aggiunto.
 					}
-				}
+			}
 				
 				Property prop = new Property();
 				prop.setNome(nome);
@@ -6046,6 +6273,69 @@ public class DriverConfigurazioneDB_LIB {
 		}catch (Exception sqle) {
 
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::readPropertiesConnettoreCustom] Exception : " + sqle.getMessage(),sqle);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+		}
+	}
+	
+	protected static void readPropertiesConnettoreExtendedInfo(long idConnettore, Connettore connettore, Connection connection) throws DriverConfigurazioneException {
+
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI_CUSTOM);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_connettore = ?");
+			sqlQueryObject.addWhereLikeCondition("name", CostantiConnettori.CONNETTORE_EXTENDED_PREFIX+"%");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idConnettore);
+
+			DriverConfigurazioneDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+
+			rs = stm.executeQuery();
+
+			while (rs.next()) {
+				String nome = rs.getString("name");
+				String valore = rs.getString("value");
+				
+				// Le proprietà sono già state inserite in caso di connettore custom
+				boolean found = false;
+				for (int i = 0; i < connettore.sizePropertyList(); i++) {
+					if(nome.equals(connettore.getProperty(i).getNome())){
+						// already exists
+						found = true;
+						break;
+					}
+				}
+				if(found){
+					continue; // è gia stato aggiunto.
+				}
+				
+				Property prop = new Property();
+				prop.setNome(nome);
+				prop.setValore(valore);
+				connettore.addProperty(prop);
+			}
+			
+			rs.close();
+			stm.close();
+
+		} catch (SQLException sqle) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::readPropertiesConnettoreExtendedInfo] SQLException : " + sqle.getMessage(),sqle);
+		}catch (Exception sqle) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::readPropertiesConnettoreExtendedInfo] Exception : " + sqle.getMessage(),sqle);
 		} finally {
 			//Chiudo statement and resultset
 			try{

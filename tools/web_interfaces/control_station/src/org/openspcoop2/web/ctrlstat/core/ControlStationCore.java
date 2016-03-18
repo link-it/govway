@@ -91,9 +91,11 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.HttpResponseBody;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
+import org.openspcoop2.utils.resources.TransportUtils;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -108,10 +110,13 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.gestori.GestorePdDInitThread;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedCoreServlet;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedMenu;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
@@ -559,9 +564,23 @@ public class ControlStationCore {
 	}
 	
 	/** Opzioni per Plugins */
+	private List<IExtendedMenu> pluginMenu;
 	private List<IExtendedFormServlet> pluginConfigurazione;
+	private Hashtable<String, IExtendedListServlet> pluginConfigurazioneList = new Hashtable<String, IExtendedListServlet>();
+	private List<IExtendedConnettore> pluginConnettore;
 	private IExtendedListServlet pluginPortaDelegata;
 	private IExtendedListServlet pluginPortaApplicativa;
+	private List<IExtendedMenu> newIExtendedMenu(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		if(className!=null){
+			List<IExtendedMenu> list = new ArrayList<IExtendedMenu>();
+			for (int i = 0; i < className.length; i++) {
+				Class<?> c = Class.forName(className[i]);
+				list.add( (IExtendedMenu) c.newInstance() );
+			}
+			return list;
+		}
+		return null;
+	}
 	private List<IExtendedFormServlet> newIExtendedFormServlet(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		if(className!=null){
 			List<IExtendedFormServlet> list = new ArrayList<IExtendedFormServlet>();
@@ -577,6 +596,17 @@ public class ControlStationCore {
 		if(className!=null){
 			Class<?> c = Class.forName(className);
 			return (IExtendedListServlet) c.newInstance();
+		}
+		return null;
+	}
+	private List<IExtendedConnettore> newIExtendedConnettore(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		if(className!=null){
+			List<IExtendedConnettore> list = new ArrayList<IExtendedConnettore>();
+			for (int i = 0; i < className.length; i++) {
+				Class<?> c = Class.forName(className[i]);
+				list.add( (IExtendedConnettore) c.newInstance() );
+			}
+			return list;
 		}
 		return null;
 	}
@@ -751,9 +781,21 @@ public class ControlStationCore {
 	}
 	
 	public String invokeJMXMethod(Object gestore, String alias, String type, String nomeRisorsa, String nomeMetodo) throws Exception{
+		return invokeJMXMethod(gestore, alias, type, nomeRisorsa, nomeMetodo, null);
+	}
+	public String invokeJMXMethod(Object gestore, String alias, String type, String nomeRisorsa, String nomeMetodo, String parametro) throws Exception{
 		try {
 			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
-				String tmp = (String) ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).invoke(this.getJmxPdD_dominio(alias), type, nomeRisorsa, nomeMetodo, null, null);
+				
+				Object [] params = null;
+				String [] signatures = null;
+				if(parametro!=null && !"".equals(parametro)){
+					params = new Object[] {parametro};
+					signatures = new String[] {String.class.getName()};
+				}
+				
+				String tmp = (String) ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).invoke(this.getJmxPdD_dominio(alias), 
+						type, nomeRisorsa, nomeMetodo, params, signatures);
 				if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
 					throw new Exception(tmp); 
 				}
@@ -763,12 +805,26 @@ public class ControlStationCore {
 				String url = (String) gestore;
 				String username = this.getJmxPdD_remoteAccess_username(alias);
 				String password = this.getJmxPdD_remoteAccess_password(alias);
-				StringBuffer bfUrl = new StringBuffer(url);
-				bfUrl.append("?").
-					append(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME).append("=").append(nomeRisorsa).append("&").
-					append(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME).append("=").append(nomeMetodo);
-				byte [] response = HttpUtilities.requestHTTPFile(bfUrl.toString(), username, password);
-				return new String(response);
+				
+				Properties p = new Properties();
+				p.setProperty(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				p.setProperty(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
+				if(parametro!=null && !"".equals(parametro)){
+					p.setProperty(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE, parametro);
+				}
+				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
+
+				HttpResponseBody response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				if(response.getResultHTTPOperation()!=200){
+					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
+					if(response.getResponse()!=null){
+						error+= " "+new String(response.getResponse());
+					}
+					return error;
+				}
+				else{
+					return new String(response.getResponse());
+				}
 			}
 			else {
 				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
@@ -800,12 +856,23 @@ public class ControlStationCore {
 				String url = (String) gestore;
 				String username = this.getJmxPdD_remoteAccess_username(alias);
 				String password = this.getJmxPdD_remoteAccess_password(alias);
-				StringBuffer bfUrl = new StringBuffer(url);
-				bfUrl.append("?").
-					append(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME).append("=").append(nomeRisorsa).append("&").
-					append(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME).append("=").append(nomeAttributo);
-				byte [] response = HttpUtilities.requestHTTPFile(bfUrl.toString(), username, password);
-				return new String(response);
+				
+				Properties p = new Properties();
+				p.setProperty(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				p.setProperty(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
+				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
+				
+				HttpResponseBody response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				if(response.getResultHTTPOperation()!=200){
+					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
+					if(response.getResponse()!=null){
+						error+= " "+new String(response.getResponse());
+					}
+					return error;
+				}
+				else{
+					return new String(response.getResponse());
+				}
 			}
 			else {
 				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
@@ -984,7 +1051,10 @@ public class ControlStationCore {
 		this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = core.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 		
 		/** Opzioni per Plugins */
+		this.pluginMenu = core.pluginMenu;
 		this.pluginConfigurazione = core.pluginConfigurazione;
+		this.pluginConfigurazioneList = core.pluginConfigurazioneList;
+		this.pluginConnettore = core.pluginConnettore;
 		this.pluginPortaDelegata = core.pluginPortaDelegata;
 		this.pluginPortaApplicativa = core.pluginPortaApplicativa;
 		
@@ -1194,7 +1264,15 @@ public class ControlStationCore {
 			this.utentiConVisioneGlobale.addAll(consoleProperties.getUtentiConVisibilitaGlobale());
 
 			/// Opzioni per Plugins
+			this.pluginMenu = this.newIExtendedMenu(consoleProperties.getPlugins_Menu());
 			this.pluginConfigurazione = this.newIExtendedFormServlet(consoleProperties.getPlugins_Configurazione());
+			for (IExtendedFormServlet formPluginConfigurazione : this.pluginConfigurazione) {
+				IExtendedListServlet listPluginConfigurazione = formPluginConfigurazione.getExtendedInternalList();
+				if(listPluginConfigurazione!=null){
+					this.pluginConfigurazioneList.put(formPluginConfigurazione.getUniqueID(), listPluginConfigurazione);
+				}
+			}
+			this.pluginConnettore = this.newIExtendedConnettore(consoleProperties.getPlugins_Connettore());
 			this.pluginPortaDelegata = this.newIExtendedListServlet(consoleProperties.getPlugins_PortaDelegata());
 			this.pluginPortaApplicativa = this.newIExtendedListServlet(consoleProperties.getPlugins_PortaApplicativa());
 
@@ -4031,8 +4109,24 @@ public class ControlStationCore {
 	}
 
 	
+	public List<IExtendedMenu> getExtendedMenu(){
+		return this.pluginMenu;
+	}
+	
 	public List<IExtendedFormServlet> getExtendedServletConfigurazione(){
 		return this.pluginConfigurazione;
+	}
+	
+	public IExtendedListServlet getExtendedServletConfigurazioneList(ConsoleHelper consoleHelper){
+		String tmp = consoleHelper.getRequest().getParameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID);
+		if(tmp!=null && !"".equals(tmp)){
+			return this.pluginConfigurazioneList.get(tmp);
+		}
+		return null;
+	}
+	
+	public List<IExtendedConnettore> getExtendedConnettore(){
+		return this.pluginConnettore;
 	}
 	
 	public IExtendedListServlet getExtendedServletPortaDelegata(){

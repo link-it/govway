@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.Ruolo;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -84,7 +85,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 	}
 
 	// Controlla i dati dell'invocazione servizio del servizioApplicativo
-	public boolean servizioApplicativoEndPointCheckData()
+	public boolean servizioApplicativoEndPointCheckData(List<ExtendedConnettore> listExtendedConnettore)
 			throws Exception {
 		try{
 			String sbustamento= this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
@@ -175,7 +176,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			 * this.pd.setMessage("Le password non corrispondono"); return false; }
 			 */
 
-			if (!this.connettoriHelper.endPointCheckData()) {
+			if (!this.connettoriHelper.endPointCheckData(listExtendedConnettore)) {
 				return false;
 			}
 
@@ -204,7 +205,9 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn,
-			String connettoreDebug) throws Exception {
+			String connettoreDebug,
+			Boolean isConnettoreCustomUltimaImmagineSalvata,
+			List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 
 		if(ruoloFruitore==null){
 			ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
@@ -701,7 +704,8 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 						nome, id, null, null, null,
-						null, null, true);
+						null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 			}
 		}
 		
@@ -793,7 +797,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 	}
 
 	public boolean servizioApplicativoCheckData(TipoOperazione tipoOperazione, String[] soggettiList, long idProvOld,
-			String ruoloFruitore, String ruoloErogatore)
+			String ruoloFruitore, String ruoloErogatore, List<ExtendedConnettore> listExtendedConnettore)
 			throws Exception {
 		try {
 			
@@ -1114,7 +1118,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			// erogatore
 			if(InterfaceType.STANDARD.equals(user.getInterfaceType())){
 				if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
-					boolean isOk = this.servizioApplicativoEndPointCheckData();
+					boolean isOk = this.servizioApplicativoEndPointCheckData(listExtendedConnettore);
 					if (!isOk) {
 						return false;
 					}

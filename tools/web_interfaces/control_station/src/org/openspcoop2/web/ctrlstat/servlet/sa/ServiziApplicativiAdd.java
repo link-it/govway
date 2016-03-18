@@ -53,8 +53,11 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -174,7 +177,13 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			String endpointtype = connettoriHelper.readEndPointType();
 			if(endpointtype==null){
-				endpointtype = TipiConnettore.DISABILITATO.toString();
+				boolean interfacciaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType());
+				if(interfacciaAvanzata){
+					endpointtype = TipiConnettore.DISABILITATO.toString();
+				}
+				else{
+					endpointtype = TipiConnettore.HTTP.toString();
+				}
 			}
 			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
@@ -226,7 +235,12 @@ public final class ServiziApplicativiAdd extends Action {
 				password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
 			
+			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 			
+			Connettore connisTmp = null;
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connisTmp, ConnettoreServletType.SERVIZIO_APPLICATIVO_ADD, saCore, 
+							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			long soggLong = -1;
 			// se ho fatto la add 
@@ -377,7 +391,8 @@ public final class ServiziApplicativiAdd extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						tipoconn, connettoreDebug);
+						tipoconn, connettoreDebug,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -387,7 +402,8 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoCheckData(TipoOperazione.ADD, soggettiList, -1, ruoloFruitore, ruoloErogatore);
+			boolean isOk = saHelper.servizioApplicativoCheckData(TipoOperazione.ADD, soggettiList, -1, ruoloFruitore, ruoloErogatore,
+					listExtendedConnettore);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -425,7 +441,8 @@ public final class ServiziApplicativiAdd extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
-						tipoconn, connettoreDebug);
+						tipoconn, connettoreDebug,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -583,7 +600,8 @@ public final class ServiziApplicativiAdd extends Action {
 							httpskeystore, httpspwdprivatekeytrust,
 							httpspathkey, httpstipokey,
 							httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey);
+							httpsalgoritmokey,
+							listExtendedConnettore);
 					invServizio.setConnettore(connis);
 				}
 				sa.setInvocazioneServizio(invServizio);

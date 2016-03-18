@@ -234,6 +234,20 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Visualizzazione oggetto presente nella cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
 		}
 	}
+	
+	public static void removeObjectCache(String key) throws DriverConfigurazioneException{
+		try{
+			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
+			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
+				configurazionePdDReader.configurazionePdD.removeObjectCache(key);
+			}
+			else{
+				throw new Exception("ConfigurazionePdD Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Rimozione oggetto presente nella cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+		}
+	}
 
 
 	/*   -------------- Metodi di inizializzazione -----------------  */
@@ -4699,10 +4713,15 @@ public class ConfigurazionePdDReader {
 	
 	
 	
+	// Per la configurazione realizzo due versioni.
+	//
+	// Il metodo 'getExtendedInfoConfigurazione' e 'getSingleExtendedInfoConfigurazione' implementa la logica classica della configurazione della PdD
+	// dove le informazioni sulla policy vengono lette solamente all'avvio della PdD (se la configurazione non è dinamica)
+	//
+	// Il metodo 'getExtendedInfoConfigurazioneFromCache' e 'getSingleExtendedInfoConfigurazioneFromCache' implementa la logica di prelieve sempre dalla cache
 	
-	
-	private static Object getExtendedInfoConfigurazione = null;
-	protected Object getExtendedInfoConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException{
+	private static List<Object> getExtendedInfoConfigurazione = null;
+	protected List<Object> getExtendedInfoConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException{
 
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.getExtendedInfoConfigurazione==null){
 			try{
@@ -4715,7 +4734,7 @@ public class ConfigurazionePdDReader {
 //				}catch(Exception e){
 //					this.log.error("getExtendedInfoConfigurazione",e);
 //				}
-				return configurazione.getExtendedInfo();
+				ConfigurazionePdDReader.getExtendedInfoConfigurazione = configurazione.getExtendedInfoList();
 
 			}catch(Exception e){
 				this.log.error("Errore durante la lettura delle informazioni extra della configurazione: "+e.getMessage(),e);
@@ -4725,6 +4744,71 @@ public class ConfigurazionePdDReader {
 
 		return ConfigurazionePdDReader.getExtendedInfoConfigurazione;
 
+	}
+	
+	private static Hashtable<String, Object> getSingleExtendedInfoConfigurazione = new Hashtable<String, Object>(); 
+	protected Object getSingleExtendedInfoConfigurazione(String id, Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.containsKey(id)==false){
+			try{
+				Object result = null;
+				try{
+					result = this.configurazionePdD.getSingleExtendedInfoConfigurazione(id, connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("getSingleExtendedInfoConfigurazione (not found): "+e.getMessage());
+				}
+//				}catch(Exception e){
+//					this.log.error("getExtendedInfoConfigurazione",e);
+//				}
+				
+				ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.put(id, result);
+
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione: "+e.getMessage(),e);
+				throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione: "+e.getMessage(),e);
+			}
+		}
+
+		return ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.get(id);
+
+	}
+	
+	protected List<Object> getExtendedInfoConfigurazioneFromCache(Connection connectionPdD) throws DriverConfigurazioneException{
+		try{
+			Configurazione configurazione = null;
+			try{
+				configurazione = this.configurazionePdD.getConfigurazioneWithOnlyExtendedInfo(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getConfigurazioneWithOnlyExtendedInfo (not found): "+e.getMessage());
+			}
+//			}catch(Exception e){
+//				this.log.error("getExtendedInfoConfigurazione",e);
+//			}
+			return configurazione.getExtendedInfoList();
+
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni extra della configurazione (via cache): "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra della configurazione  (via cache): "+e.getMessage(),e);
+		}
+	}
+	
+	protected Object getSingleExtendedInfoConfigurazioneFromCache(String id, Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try{
+			Object result = null;
+			try{
+				result = this.configurazionePdD.getSingleExtendedInfoConfigurazione(id, connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getSingleExtendedInfoConfigurazioneFromCache (not found): "+e.getMessage());
+			}
+//			}catch(Exception e){
+//				this.log.error("getExtendedInfoConfigurazione",e);
+//			}
+			return result;
+
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione (via cache): "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione  (via cache): "+e.getMessage(),e);
+		}
 	}
 	
 }

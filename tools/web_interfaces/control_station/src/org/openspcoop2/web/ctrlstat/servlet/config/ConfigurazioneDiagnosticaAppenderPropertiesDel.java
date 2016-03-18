@@ -138,6 +138,8 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesDel extends Action
 			
 			confHelper.prepareDiagnosticaAppenderPropList(oa, oa.getPropertyList());
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 

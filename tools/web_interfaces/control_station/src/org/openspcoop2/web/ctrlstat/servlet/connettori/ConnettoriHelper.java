@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -56,6 +57,9 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettoreConverter;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
@@ -435,7 +439,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7,
-			boolean showSectionTitle) {
+			boolean showSectionTitle,
+			Boolean isConnettoreCustomUltimaImmagineSalvata,
+			List<ExtendedConnettore> listExtendedConnettore) {
 		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
 				objectName,tipoOperazione, httpsurl, httpstipologia, httpshostverify,
@@ -443,7 +449,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 				httpstipokey, httpspwdkey, httpspwdprivatekey,
 				httpsalgoritmokey, tipoconn, servletChiamante, elem1, elem2, elem3,
-				elem4, elem5, elem6, elem7, null, showSectionTitle);
+				elem4, elem5, elem6, elem7, null, showSectionTitle,
+				isConnettoreCustomUltimaImmagineSalvata,listExtendedConnettore);
 	}
 
 	// Controlla i dati del connettore custom
@@ -827,7 +834,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String stato,
-			boolean showSectionTitle) {
+			boolean showSectionTitle,
+			Boolean isConnettoreCustomUltimaImmagineSalvata,
+			List<ExtendedConnettore> listExtendedConnettore) {
 
 
 		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
@@ -1002,6 +1011,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setPostBack(true);
 				dati.addElement(de);
+				
+				// Extended
+				if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+					ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
+				}
 			}	
 			
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
@@ -1013,6 +1027,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, 
 						httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, 
 						httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, stato, this.core, this.getSize(), false, prefix);
+			}
+			
+			// Extended
+			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+				ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
 			}
 
 		} else {
@@ -1136,7 +1155,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 				dati.addElement(de);		
 				//}
 			}
-				
+			
+			// Extended
+			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+				ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
+			}
+			
 			
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
 				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
@@ -1145,7 +1169,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			if (endpointtype != null && endpointtype.equals(TipiConnettore.CUSTOM.toString()) &&
 					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD) &&
-					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD)) {
+					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD) &&
+					(isConnettoreCustomUltimaImmagineSalvata!=null && isConnettoreCustomUltimaImmagineSalvata)) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
@@ -1166,7 +1191,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						org.openspcoop2.core.registry.Connettore connettore = myAccErFru.getConnettore();
 						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
 							for (int i = 0; i < connettore.sizePropertyList(); i++) {
-								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+										connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
 									numProp++;
 								}
 							}
@@ -1184,7 +1210,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						org.openspcoop2.core.registry.Connettore connettore = servizio.getConnettore();
 						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
 							for (int i = 0; i < connettore.sizePropertyList(); i++) {
-								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+										connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
 									numProp++;
 								}
 							}
@@ -1202,7 +1229,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
 						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
 							for (int i = 0; i < connettore.sizePropertyList(); i++) {
-								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+										connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
 									numProp++;
 								}
 							}
@@ -1230,7 +1258,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 							}
 							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
 								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+											connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
 										numProp++;
 									}
 								}
@@ -1245,7 +1274,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 							}
 							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
 								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+											connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
 										numProp++;
 									}
 								}
@@ -1265,7 +1295,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
 						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
 							for (int i = 0; i < connettore.sizePropertyList(); i++) {
-								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false){
+								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+										connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
 									numProp++;
 								}
 							}
@@ -1289,6 +1320,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ConnettoreJMSUtils.addJMSDati(dati, nome, tipoconn, user, password, initcont, urlpgk, 
 						provurl, connfact, sendas, objectName, tipoOperazione, stato,
 						this.core,this.getSize());
+			}
+			
+			// Extended
+			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+				ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
 			}
 		}
 
@@ -1495,7 +1531,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 
 	// Controlla i dati dell'end-point
-	public boolean endPointCheckData() throws Exception {
+	public boolean endPointCheckData(List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 		try {
 
 			//String endpointtype = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
@@ -1547,7 +1583,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn, autenticazioneHttp);
+					httpsalgoritmokey, tipoconn, autenticazioneHttp,
+					listExtendedConnettore);
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -1564,7 +1602,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
-			String tipoconn, String autenticazioneHttp)
+			String tipoconn, String autenticazioneHttp,
+			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try{
 			if (url == null)
@@ -1802,7 +1841,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 				}
 			}
+			
+			
+			try{
+				ServletExtendedConnettoreUtils.checkInfo(listExtendedConnettore);
+			}catch(Exception e){
+				this.pd.setMessage(e.getMessage());
+				return false;
+			}
+			
 			return true;
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -1821,7 +1870,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
-			String httpspwdprivatekey, String httpsalgoritmokey)
+			String httpspwdprivatekey, String httpsalgoritmokey,
+			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
 			
@@ -1911,6 +1961,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				connettore.setPropertyList(cps);
 			}
+			
+			// Extended
+			ExtendedConnettoreConverter.fillExtendedInfoIntoConnettore(listExtendedConnettore, connettore);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -1931,7 +1984,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
-			String httpspwdprivatekey, String httpsalgoritmokey)
+			String httpspwdprivatekey, String httpsalgoritmokey,
+			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
 			
@@ -2006,6 +2060,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				connettore.setPropertyList(cps);
 			}
+			
+			// Extended
+			ExtendedConnettoreConverter.fillExtendedInfoIntoConnettore(listExtendedConnettore, connettore);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

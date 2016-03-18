@@ -38,10 +38,10 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
-import org.openspcoop2.core.config.driver.IExtendedInfo;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;

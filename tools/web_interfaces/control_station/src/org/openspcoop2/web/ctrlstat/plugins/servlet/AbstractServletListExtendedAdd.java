@@ -22,7 +22,6 @@
 
 package org.openspcoop2.web.ctrlstat.plugins.servlet;
 
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +33,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
-import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedList;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -45,7 +45,6 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -61,6 +60,8 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 
 	protected abstract void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper,HttpServletRequest request) throws ExtendedException;
 	
+	protected abstract UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception;
+		
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -80,11 +81,11 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 			
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleCore);
+			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper,consoleCore);
 			
 			Object object = this.getObject(consoleCore,request);
 			
-			IExtendedBean extendedBean = extendedServlet.readHttpParameters(object, null, request);
+			IExtendedBean extendedBean = extendedServlet.readHttpParameters(object, TipoOperazione.ADD, null, request);
 			
 			// Preparo il menu
 			consoleHelper.makeMenu();
@@ -94,9 +95,8 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 			if (ServletUtils.isEditModeInProgress(request)) {
 	
 				// setto la barra del titolo
-				List<Parameter> lstParam = this.getTitle(object,request,session);
-				lstParam.add(new Parameter(extendedServlet.getFormTitle(), null));
-				ServletUtils.setPageDataTitle(pd, lstParam);
+				this.setFormTitle(object, request, session, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.ADD, 
+						this.getUrlExtendedList(consoleHelper, request));
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -127,9 +127,8 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 			if (!isOk) {
 
 				// setto la barra del titolo
-				List<Parameter> lstParam = this.getTitle(object,request,session);
-				lstParam.add(new Parameter(extendedServlet.getFormTitle(), null));
-				ServletUtils.setPageDataTitle(pd, lstParam);
+				this.setFormTitle(object, request, session, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.ADD, 
+						this.getUrlExtendedList(consoleHelper, request));
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -165,11 +164,18 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-			ExtendedList extendedList = extendedServlet.extendedBeanList(object, limit, offset, search);
+			ExtendedList extendedList = extendedServlet.extendedBeanList(TipoOperazione.ADD, consoleHelper, consoleCore,
+					object, limit, offset, search);
 			ricerca.setNumEntries(idLista,extendedList.getSize());
 
-			this.prepareList(consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request);
+			this.prepareList(TipoOperazione.ADD, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request,
+					this.getUrlExtendedFather(consoleHelper, request));
 
+			String msgCompletato = extendedServlet.getTestoModificaEffettuata(TipoOperazione.ADD, consoleHelper);
+			if(msgCompletato!=null && !"".equals(msgCompletato)){
+				pd.setMessage(msgCompletato);
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, 
@@ -181,6 +187,5 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 					ForwardParams.ADD());
 		}  
 	}
-
 
 }

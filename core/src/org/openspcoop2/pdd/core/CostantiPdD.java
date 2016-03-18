@@ -261,6 +261,7 @@ public class CostantiPdD {
     public final static String CHECK_STATO_PDD_METHOD_NAME = "methodName";
     public final static String CHECK_STATO_PDD_ATTRIBUTE_NAME = "attributeName";
     public final static String CHECK_STATO_PDD_RESOURCE_NAME = "resourceName";
+    public final static String CHECK_STATO_PDD_PARAM_VALUE = "paramValue";
     
        
     

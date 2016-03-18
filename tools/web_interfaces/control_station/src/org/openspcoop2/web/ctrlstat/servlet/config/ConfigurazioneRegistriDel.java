@@ -123,6 +123,8 @@ public final class ConfigurazioneRegistriDel extends Action {
 
 			confHelper.prepareRegistriList(ricerca, lista);
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 

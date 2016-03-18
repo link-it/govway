@@ -31,6 +31,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -44,22 +45,36 @@ public interface IExtendedListServlet extends IExtendedCoreServlet {
 
 	public boolean showExtendedInfo(HttpServletRequest request,HttpSession session);
 	
-	public String getFormTitle();
-	public String getFormItemTitle(IExtendedBean extendedBean);
-	public String getListTitle();
+	public String getFormTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
+	public String getFormTitleUrl(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
+	public List<Parameter> getFormTitleUrlParameters(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
+	
+	public String getFormItemTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, IExtendedBean extendedBean);
+	
+	public String getListTitle(ConsoleHelper consoleHelper);
+	
+	public String getListTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
+	public String getListTitleUrl(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
+	public List<Parameter> getListTitleUrlParameters(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
+	
+	public String getListItemTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
 	
 	public void addToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	public void checkDati(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	
-	public void addDatiToList(Vector<DataElement> dati,ConsoleHelper consoleHelper, ControlStationCore core, 
+	public void addDatiToList(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject, IExtendedBean extendedBean, UrlParameters urlExtendedChange);
 	
 	public int sizeList(Object originalObject);
 
-	public ExtendedList extendedBeanList(Object originalObject, int limit, int offset, String search) throws ExtendedException; // ritorna la lista di oggetti extended associati che corrispondono ai criteri di filtro
-	public List<IExtendedBean> extendedBeanList(Object originalObject) throws ExtendedException; // ritorna la lista completa di oggetti extended associati all'oggetto principale
-	public String[] getColumnLabels() throws ExtendedException; 
+	public ExtendedList extendedBeanList(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, Object originalObject, int limit, int offset, String search) throws ExtendedException; // ritorna la lista di oggetti extended associati che corrispondono ai criteri di filtro
+	public List<IExtendedBean> extendedBeanList(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, Object originalObject) throws ExtendedException; // ritorna la lista completa di oggetti extended associati all'oggetto principale
+	public String[] getColumnLabels(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, Object originalObject) throws ExtendedException; 
+	
+	public List<Parameter> getParameterForListElementIntoSession(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
+	
+	public String getTestoModificaEffettuata(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
 
 }

@@ -44,6 +44,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.IDriverWS;
+import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -130,7 +131,6 @@ import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneSearch;
-import org.openspcoop2.core.config.driver.IExtendedInfo;
 import org.openspcoop2.core.config.driver.TipologiaServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -1569,7 +1569,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
-
+	
 	@Override
 	public void updatePortaDelegata(PortaDelegata aPD) throws DriverConfigurazioneException {
 		if (aPD == null)
@@ -2125,7 +2125,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
-
+	
 	@Override
 	public void updatePortaApplicativa(PortaApplicativa aPA) throws DriverConfigurazioneException {
 		if (aPA == null)
@@ -2245,7 +2245,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
-
+	
 	/**
 	 * Restituisce un array di soggetti reali (e associata porta applicativa)
 	 * che possiedono il soggetto SoggettoVirtuale identificato da <var>idPA</var>
@@ -5784,7 +5784,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
 				if(extInfoConfigurazioneDriver!=null){
-					config.setExtendedInfo(extInfoConfigurazioneDriver.getExtendedInfo(con, config, ""));
+					List<Object> list = extInfoConfigurazioneDriver.getAllExtendedInfo(con, this.log, config);
+					if(list!=null && list.size()>0){
+						config.setExtendedInfoList(list);
+					}
 				}
 				
 			} else {
@@ -5875,6 +5878,59 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		return config;
 	}
 
+	
+	public Object getConfigurazioneExtended(Configurazione config, String idExtendedConfiguration) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (SQLException e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConfigurazioneExtended] SQLException accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("getConfigurazioneExtended("+idExtendedConfiguration+")");
+			
+			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
+			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
+			if(extInfoConfigurazioneDriver!=null){
+				
+				Object o = extInfoConfigurazioneDriver.getExtendedInfo(con, this.log, config, idExtendedConfiguration);
+				if(o==null){
+					throw new DriverConfigurazioneNotFound("Oggetto non esistente");
+				}
+				return o;
+				
+			}	
+			
+			throw new DriverConfigurazioneException("Driver non inizializzato");
+
+		} 
+		catch (DriverConfigurazioneNotFound dNot) {
+			throw dNot;
+		}
+		catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getConfigurazioneExtended] Errore: " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 
 
 	@Override
@@ -5925,6 +5981,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
+	
 	@Override
 	public void updateConfigurazione(Configurazione configurazione) throws DriverConfigurazioneException {
 		Connection con = null;
@@ -5973,6 +6030,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
+	
 	@Override
 	public void deleteConfigurazione(Configurazione configurazione) throws DriverConfigurazioneException {
 		Connection con = null;
@@ -6020,6 +6078,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
 
 	// ACCESSO REGISTRO
 
@@ -11309,7 +11368,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
 				if(extInfoConfigurazioneDriver!=null){
-					List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pa);
+					List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, this.log, pa);
 					if(listExtInfo!=null && listExtInfo.size()>0){
 						for (Object object : listExtInfo) {
 							pa.addExtendedInfo(object);
@@ -11879,7 +11938,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
 				if(extInfoConfigurazioneDriver!=null){
-					List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, pd);
+					List<Object> listExtInfo = extInfoConfigurazioneDriver.getAllExtendedInfo(con, this.log, pd);
 					if(listExtInfo!=null && listExtInfo.size()>0){
 						for (Object object : listExtInfo) {
 							pd.addExtendedInfo(object);

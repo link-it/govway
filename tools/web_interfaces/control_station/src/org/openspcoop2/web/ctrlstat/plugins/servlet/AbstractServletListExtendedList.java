@@ -39,6 +39,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
  * AbstractServletListExcendedList
@@ -68,7 +69,7 @@ public abstract class AbstractServletListExtendedList extends AbstractServletLis
 
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleCore);
+			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper,consoleCore);
 			
 			Object object = this.getObject(consoleCore,request);
 			
@@ -84,10 +85,12 @@ public abstract class AbstractServletListExtendedList extends AbstractServletLis
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-			ExtendedList extendedList = extendedServlet.extendedBeanList(object, limit, offset, search);
+			ExtendedList extendedList = extendedServlet.extendedBeanList(TipoOperazione.LIST, consoleHelper, consoleCore,
+					object, limit, offset, search);
 			ricerca.setNumEntries(idLista,extendedList.getSize());
 			
-			this.prepareList(consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request);
+			this.prepareList(TipoOperazione.LIST, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request,
+					this.getUrlExtendedFather(consoleHelper, request));
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

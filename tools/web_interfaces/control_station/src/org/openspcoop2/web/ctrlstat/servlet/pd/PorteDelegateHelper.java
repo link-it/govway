@@ -1969,7 +1969,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA); 
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_BR_RISPOSTA); 
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
-				labelsList.add(extendedServletList.getListTitle());
+				labelsList.add(extendedServletList.getListTitle(this));
 			}
 
 			String[] labels = labelsList.toArray(new String[labelsList.size()]);

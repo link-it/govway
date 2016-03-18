@@ -207,6 +207,17 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziException("Cache non abilitata");
 		}
 	}
+	public void removeObjectCache(String key) throws DriverRegistroServiziException{
+		if(this.cache!=null){
+			try{
+				this.cache.remove(key);
+			}catch(Exception e){
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}else{
+			throw new DriverRegistroServiziException("Cache non abilitata");
+		}
+	}
 
 
 

@@ -52,6 +52,11 @@ public class CostantiConnettori {
     public static final String CONNETTORE_READ_CONNECTION_TIMEOUT = "read-connection-timeout";
 	
     
+    /** EXTENDED PROPERTIES */
+    
+    public final static String CONNETTORE_EXTENDED_PREFIX = "-#ext#-";
+    
+    
     /** HTTP PROPERTIES */
 	
     public static final String CONNETTORE_HTTP_PROXY_TYPE = "proxyType";

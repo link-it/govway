@@ -189,6 +189,8 @@ public final class ConfigurazioneDiagnosticaAppenderChange extends Action {
 
 			confHelper.prepareDiagnosticaAppenderList(md.getOpenspcoopAppenderList());
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,

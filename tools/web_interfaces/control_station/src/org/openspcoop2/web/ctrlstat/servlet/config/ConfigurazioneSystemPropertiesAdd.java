@@ -175,6 +175,8 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 
 			confHelper.prepareSystemPropertiesList(ricerca, lista);
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,

@@ -194,6 +194,8 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesAdd extends Action
 
 			confHelper.prepareDiagnosticaAppenderPropList(oa, oa.getPropertyList());
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,

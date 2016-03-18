@@ -70,7 +70,7 @@ public final class PorteApplicativeExtendedChange extends AbstractServletListExt
 	}
 
 	@Override
-	protected IExtendedListServlet getExtendedServlet(ControlStationCore core)
+	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper,ControlStationCore core)
 			throws Exception {
 		return core.getExtendedServletPortaApplicativa();
 	}
@@ -109,6 +109,12 @@ public final class PorteApplicativeExtendedChange extends AbstractServletListExt
 
 	@Override
 	protected UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper,
+			HttpServletRequest request) throws Exception {
+		return PorteApplicativeExtendedUtilities.getUrlExtendedList(consoleHelper, request);
+	}
+	
+	@Override
+	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper,
 			HttpServletRequest request) throws Exception {
 		return PorteApplicativeExtendedUtilities.getUrlExtendedList(consoleHelper, request);
 	}

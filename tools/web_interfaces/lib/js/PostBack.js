@@ -29,7 +29,7 @@ function postBack(dataElementName) {
 		if (nome.length > 0 && nome != "idhid") {
 		    var tipo = document.form.elements[k].type;
 		    var valore = "";
-		    if (tipo == "text" || tipo == "file" || tipo == "hidden")
+		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea")
 			valore = document.form.elements[k].value;
 		    if (tipo == "select-one") {
 			for (var j=0; j<document.form.elements[k].options.length; j++)
@@ -42,8 +42,7 @@ function postBack(dataElementName) {
 			else
 			    valore = "no";
 		    }
-		    if (tipo == "text" || tipo == "hidden" || tipo == "select-one" ||
-			tipo == "checkbox") {
+		    if (tipo == "text" || tipo == "hidden" || tipo == "select-one" || tipo == "checkbox" || tipo == "textarea") {
 // || (tipo == "file" && valore != "")) {
 			
 			    //if (appendAnd)

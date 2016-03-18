@@ -22,6 +22,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,8 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedMenuItem;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedMenu;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -99,6 +102,9 @@ public class ConsoleHelper {
 	// ELIMINARE RESULT SET!!!!
 
 	protected HttpServletRequest request;
+	public HttpServletRequest getRequest() {
+		return this.request;
+	}
 	protected PageData pd;
 	public PageData getPd() {
 		return this.pd;
@@ -182,6 +188,7 @@ public class ConsoleHelper {
 			Boolean isModalitaAvanzata = u.getInterfaceType().equals(InterfaceType.AVANZATA);
 			Boolean isVisualizzazioneCompattaElementiRegistro = this.core.isShowMenuAggregatoOggettiRegistro();
 
+			List<IExtendedMenu> extendedMenu = this.core.getExtendedMenu();
 
 			Vector<MenuEntry> menu = new Vector<MenuEntry>();
 
@@ -391,6 +398,18 @@ public class ConsoleHelper {
 						totEntries +=2;
 					}
 
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuRegistro(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								totEntries +=list.size();
+							}
+						}
+					}
+					
 					// Creo le entries e le valorizzo
 					entries = new String[totEntries][2];
 
@@ -463,6 +482,22 @@ public class ConsoleHelper {
 						entries[index][1] = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST;
 						index++;
 					}
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuRegistro(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null){
+								for (ExtendedMenuItem extendedMenuItem : list) {
+									entries[index][0] = extendedMenuItem.getLabel();
+									entries[index][1] = extendedMenuItem.getUrl();
+									index++;
+								}
+							}
+						}
+					}
 
 					me.setEntries(entries);
 					menu.addElement(me);
@@ -473,10 +508,12 @@ public class ConsoleHelper {
 
 
 			if (singlePdD) {
+				
 				// SinglePdD=true
 				if (pu.isDiagnostica()) {
 					MenuEntry me = new MenuEntry();
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
+					
 					int totEntries = 2;
 					// Se l'utente ha anche i permessi "auditing", la
 					// sezione reportistica ha una voce in più
@@ -486,6 +523,19 @@ public class ConsoleHelper {
 					// sezione reportistica ha una voce in più
 					if (pu.isCodeMessaggi())
 						totEntries++;
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								totEntries +=list.size();
+							}
+						}
+					}
+					
 					String[][] entries = new String[totEntries][2];
 					int i = 0;
 					entries[i][0] = ArchiviCostanti.LABEL_DIAGNOSTICA;
@@ -505,6 +555,23 @@ public class ConsoleHelper {
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
 					}
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null){								
+								for (ExtendedMenuItem extendedMenuItem : list) {
+									entries[i][0] = extendedMenuItem.getLabel();
+									entries[i][1] = extendedMenuItem.getUrl();
+									i++;
+								}
+							}
+						}
+					}
+					
 					me.setEntries(entries);
 					menu.addElement(me);
 
@@ -540,6 +607,18 @@ public class ConsoleHelper {
 						dimensioneEntries += entriesUtenti.length;
 					}
 
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								dimensioneEntries +=list.size();
+							}
+						}
+					}
+					
 					entries = new String[dimensioneEntries][2];
 
 					int index = 0;
@@ -575,12 +654,30 @@ public class ConsoleHelper {
 					entries[index][0] = AuditCostanti.LABEL_AUDIT;
 					entries[index][1] = AuditCostanti.SERVLET_NAME_AUDIT;
 					index++;
+					
 					//link cambio password
 					if (!pu.isUtenti()) {
 						entries[index][0] = UtentiCostanti.LABEL_UTENTE;
 						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 						index++;
 					}
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null){	
+								for (ExtendedMenuItem extendedMenuItem : list) {
+									entries[index][0] = extendedMenuItem.getLabel();
+									entries[index][1] = extendedMenuItem.getUrl();
+									index++;
+								}
+							}
+						}
+					}
+					
 					me.setEntries(entries);
 					menu.addElement(me);
 
@@ -605,6 +702,18 @@ public class ConsoleHelper {
 						dimensioneEntries += entriesUtenti.length;
 					}
 
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								dimensioneEntries +=list.size();
+							}
+						}
+					}
+					
 					if(dimensioneEntries>0){
 						// Comunque devo permettere di cambiare la password ad ogni utente, se l'utente stesso non puo' gestire gli utenti
 						MenuEntry me = new MenuEntry();
@@ -642,6 +751,23 @@ public class ConsoleHelper {
 							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 							index++;
 						}
+						
+						// Extended Menu
+						if(extendedMenu!=null){
+							for (IExtendedMenu extMenu : extendedMenu) {
+								List<ExtendedMenuItem> list = 
+										extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+												this.core.isRegistroServiziLocale(), singlePdD, pu);
+								if(list!=null){
+									for (ExtendedMenuItem extendedMenuItem : list) {
+										entries[index][0] = extendedMenuItem.getLabel();
+										entries[index][1] = extendedMenuItem.getUrl();
+										index++;
+									}
+								}
+							}
+						}
+						
 						me.setEntries(entries);
 						menu.addElement(me);
 					}
@@ -652,11 +778,31 @@ public class ConsoleHelper {
 					// gestire la reportistica
 					MenuEntry me = new MenuEntry();
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
+					
+					int totEntries = 0;
+					if (pu.isCodeMessaggi() && pu.isAuditing())
+						totEntries = 2;
+					else
+						totEntries = 1;
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								totEntries +=list.size();
+							}
+						}
+					}
+					
 					String[][] entries = null;
 					if (pu.isCodeMessaggi() && pu.isAuditing())
-						entries = new String[2][2];
+						entries = new String[totEntries][2];
 					else
-						entries = new String[1][2];
+						entries = new String[totEntries][2];
+					
 					int i = 0;
 
 					if (pu.isAuditing()) {
@@ -669,6 +815,23 @@ public class ConsoleHelper {
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
 					}
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null){
+								for (ExtendedMenuItem extendedMenuItem : list) {
+									entries[i][0] = extendedMenuItem.getLabel();
+									entries[i][1] = extendedMenuItem.getUrl();
+									i++;
+								}
+							}
+						}
+					}
+					
 					me.setEntries(entries);
 					menu.addElement(me);
 				}
@@ -679,6 +842,7 @@ public class ConsoleHelper {
 
 					MenuEntry me = new MenuEntry();
 					me.setTitle(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE);
+					
 					// Se l'utente ha anche i permessi "utenti", la
 					// configurazione utente la gestisco dopo
 					String[][] entries = null;
@@ -699,6 +863,19 @@ public class ConsoleHelper {
 						entriesUtenti = getVoceMenuUtenti();
 						dimensioneEntries += entriesUtenti.length;
 					}
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								dimensioneEntries +=list.size();
+							}
+						}
+					}
+					
 					entries = new String[dimensioneEntries][2];
 
 					int index = 0;
@@ -736,6 +913,23 @@ public class ConsoleHelper {
 						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 						index++;
 					}
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null){
+								for (ExtendedMenuItem extendedMenuItem : list) {
+									entries[index][0] = extendedMenuItem.getLabel();
+									entries[index][1] = extendedMenuItem.getUrl();
+									index++;
+								}
+							}
+						}
+					}
+					
 					me.setEntries(entries);
 					menu.addElement(me);
 
@@ -760,6 +954,18 @@ public class ConsoleHelper {
 						dimensioneEntries += entriesUtenti.length;
 					}
 
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								dimensioneEntries +=list.size();
+							}
+						}
+					}
+					
 					if(dimensioneEntries>0){
 						// Comunque devo permettere di cambiare la password ad ogni utente, se l'utente stesso non puo' gestire gli utenti
 						MenuEntry me = new MenuEntry();
@@ -797,6 +1003,23 @@ public class ConsoleHelper {
 							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 							index++;
 						}
+						
+						// Extended Menu
+						if(extendedMenu!=null){
+							for (IExtendedMenu extMenu : extendedMenu) {
+								List<ExtendedMenuItem> list = 
+										extMenu.getExtendedItemsMenuConfigurazione(isModalitaAvanzata, 
+												this.core.isRegistroServiziLocale(), singlePdD, pu);
+								if(list!=null){
+									for (ExtendedMenuItem extendedMenuItem : list) {
+										entries[index][0] = extendedMenuItem.getLabel();
+										entries[index][1] = extendedMenuItem.getUrl();
+										index++;
+									}
+								}
+							}
+						}
+						
 						me.setEntries(entries);
 						menu.addElement(me);
 					}
@@ -818,6 +1041,19 @@ public class ConsoleHelper {
 					if (pu.isAuditing()) {
 						size++;
 					}
+					
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null && list.size()>0){
+								size +=list.size();
+							}
+						}
+					}
+					
 					entries = new String[size][2];
 					
 					int i = 0;
@@ -838,6 +1074,22 @@ public class ConsoleHelper {
 						i++;
 					}
 				 
+					// Extended Menu
+					if(extendedMenu!=null){
+						for (IExtendedMenu extMenu : extendedMenu) {
+							List<ExtendedMenuItem> list = 
+									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+											this.core.isRegistroServiziLocale(), singlePdD, pu);
+							if(list!=null){
+								for (ExtendedMenuItem extendedMenuItem : list) {
+									entries[i][0] = extendedMenuItem.getLabel();
+									entries[i][1] = extendedMenuItem.getUrl();
+									i++;
+								}
+							}
+						}
+					}
+					
 					me.setEntries(entries);
 					menu.addElement(me);
 				}

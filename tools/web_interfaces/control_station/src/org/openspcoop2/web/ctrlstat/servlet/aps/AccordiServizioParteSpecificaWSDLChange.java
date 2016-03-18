@@ -52,6 +52,9 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
@@ -228,7 +231,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiWSDLCheckData(pd,this.tipo, this.wsdl, as,this.validazioneDocumenti);
+			boolean isOk = apsHelper.accordiParteSpecificaWSDLCheckData(pd, this.tipo, this.wsdl, asps, as, this.validazioneDocumenti);
 			if (!isOk) {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
@@ -453,6 +456,12 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				}
 			}
 
+			Boolean isConnettoreCustomUltimaImmagineSalvata = connettore.getCustom();
+			
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
+							request, session, true, null);
+			
 			// Lista port-type associati all'accordo di servizio
 			// se l'accordo e' selezionato allora prendo quello selezionato
 			// altrimenti il primo
@@ -497,7 +506,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, this.id,
-					nomeservizio, tiposervizio, null, null, null, null, true);
+					nomeservizio, tiposervizio, null, null, null, null, true,
+					isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 			pd.setDati(dati);
 

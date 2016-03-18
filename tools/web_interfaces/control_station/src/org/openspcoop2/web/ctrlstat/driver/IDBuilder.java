@@ -636,7 +636,15 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// IExtendedBean
 			else if(o instanceof IExtendedBean){
-				return null; // oggetto non modificabile nei dati identificativi
+				IExtendedBean w = (IExtendedBean) o;
+				if(w.getOldHumanId()==null){
+					return null; // non lancio un errore
+				}
+				if(this.prefix){
+					return "[ExtendedBean-"+w.getClass().getSimpleName()+"] "+ w.getOldHumanId();
+				}else{
+					return w.getOldHumanId();
+				}
 			}
 			
 						

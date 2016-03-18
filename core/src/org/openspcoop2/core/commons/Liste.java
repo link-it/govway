@@ -113,27 +113,16 @@ public final class Liste
     public final static int OPERATIONS_INVALIDE = 59;
     public final static int OPERATIONS_RICERCA = 60;
     public final static int OPERATIONS_WAITING = 61;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    
+    public final static int CONFIGURAZIONE_EXTENDED = 62;	
 	
 
-
-
-
+    
+    
 	
 	public static int getTotaleListe()
 	{
-		return 62;
+		return 63;
 	}
 	
 	

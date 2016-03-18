@@ -48,7 +48,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -90,13 +89,12 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
+
 		try {
-			
+
 			this.editMode = null;
-			
+
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			this.id = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			this.tipo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO);
 			this.wsdl = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
@@ -115,7 +113,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 				this.decodeRequestValidazioneDocumenti = false; // init
 				this.decodeRequest(request);
 			}
-					
+
 			if(ServletUtils.isEditModeInProgress(this.editMode) && ServletUtils.isEditModeInProgress(request)){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
@@ -139,7 +137,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
-			
+
 			Fruitore myFru = apsCore.getServizioFruitore(idFru);
 			int idServ = myFru.getIdServizio().intValue();
 			int tmpProv = myFru.getIdSoggetto().intValue();
@@ -170,7 +168,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
-			
+
 			// Mi calcolo IDServizio, che servirà per recuperare il fruitore una
 			// volta che sarà stato rimosso/aggiunto e se ne sarà perso l'id
 			IDServizio ids = new IDServizio(tiposoggetto, nomesoggetto, tiposervizio, nomeservizio);
@@ -182,7 +180,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			// dati
 			if (ServletUtils.isEditModeInProgress(this.editMode) && ServletUtils.isEditModeInProgress(request)) {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
-				
+
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tiposervizio + "/" + nomeservizio, 
@@ -200,7 +198,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle , null));
 				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI + tmpTitle , null));
-				
+
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
@@ -223,10 +221,10 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiWSDLCheckData(pd,this.tipo, this.wsdl, as, this.validazioneDocumenti);
+			boolean isOk = apsHelper.accordiParteSpecificaFruitoreWSDLCheckData(pd, this.tipo, this.wsdl, myFru, asps, as, this.validazioneDocumenti);
 			if (!isOk) {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
-				
+
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tiposervizio + "/" + nomeservizio, 
@@ -244,7 +242,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle , null));
 				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI + tmpTitle , null));
-				
+
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
@@ -252,7 +250,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
+
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
 				dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
@@ -269,23 +267,23 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			// Modifico i dati del wsdl del fruitore nel db
 
-				if (this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE))
-					myFru.setByteWsdlImplementativoErogatore(this.wsdl != null && !this.wsdl.equals("") ? this.wsdl.getBytes() : null);
-				if (this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
-					myFru.setByteWsdlImplementativoFruitore(this.wsdl != null && !this.wsdl.equals("") ? this.wsdl.getBytes() : null);
+			if (this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE))
+				myFru.setByteWsdlImplementativoErogatore(this.wsdl != null && !this.wsdl.equals("") ? this.wsdl.getBytes() : null);
+			if (this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
+				myFru.setByteWsdlImplementativoFruitore(this.wsdl != null && !this.wsdl.equals("") ? this.wsdl.getBytes() : null);
 
-				// Elimino il vecchio fruitore ed aggiungo il nuovo
-				for (int i = 0; i < asps.sizeFruitoreList(); i++) {
-					Fruitore tmpFru = asps.getFruitore(i);
-					if (tmpFru.getId() == myFru.getId()) {
-						asps.removeFruitore(i);
-						break;
-					}
+			// Elimino il vecchio fruitore ed aggiungo il nuovo
+			for (int i = 0; i < asps.sizeFruitoreList(); i++) {
+				Fruitore tmpFru = asps.getFruitore(i);
+				if (tmpFru.getId().longValue() == myFru.getId().longValue()) {
+					asps.removeFruitore(i);
+					break;
 				}
+			}
 
-				asps.addFruitore(myFru);
-				String superUser =  ServletUtils.getUserLoginFromSession(session);
-				apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
+			asps.addFruitore(myFru);
+			String superUser =  ServletUtils.getUserLoginFromSession(session);
+			apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
 
 
 			// Prendo il nuovo id del fruitore
@@ -293,7 +291,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
-			
+
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tiposervizio + "/" + nomeservizio, 
@@ -311,7 +309,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle , null));
 			if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI + tmpTitle , null));
-			
+
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParm );
 
@@ -319,8 +317,8 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
-			
-			 	
+
+
 			dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
 					this.wsdl, this.validazioneDocumenti, myFru, dati,
 					idServ+"", tipologiaDocumentoScaricare);
@@ -328,7 +326,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			pd.setDati(dati);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-			
+
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 		} catch (Exception e) {
@@ -338,7 +336,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 		}  
 	}
 
-	
+
 
 	public void decodeRequest(HttpServletRequest request) throws Exception {
 		try {

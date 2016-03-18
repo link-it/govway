@@ -61,6 +61,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
@@ -129,6 +130,36 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 		return true;
 	}
+	
+	// Controlla i dati dei WSDL degli Accordi e dei Servizi
+	boolean accordiParteSpecificaFruitoreWSDLCheckData(PageData pd,String tipo, String wsdl, 
+			Fruitore fruitore,AccordoServizioParteSpecifica aps, AccordoServizioParteComune apc,boolean validazioneDocumenti) throws Exception {
+
+		if(validazioneDocumenti){
+
+			boolean  validazioneParteSpecifica = false;
+			if (tipo.equals(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE)) {
+				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				fruitore.setByteWsdlImplementativoErogatore(tmp);
+				validazioneParteSpecifica = true;
+			}
+			else if (tipo.equals(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE)) {
+				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				fruitore.setByteWsdlImplementativoFruitore(tmp);
+				validazioneParteSpecifica = true;
+			}
+
+			if(validazioneParteSpecifica){
+				ValidazioneResult result = this.apsCore.validaInterfacciaWsdlParteSpecifica(fruitore, (AccordoServizioParteSpecifica) aps.clone(), apc, this.soggettiCore);
+				if(result.isEsito()==false){
+					pd.setMessage(result.getMessaggioErrore());
+				}
+				return result.isEsito();
+			}
+		}
+
+		return true;
+	}
 
 
 	// Controlla i dati dei Servizi
@@ -150,7 +181,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String nome_aps, String versione,
 			boolean validazioneDocumenti,String nomePA, String backToStato,
-			String autenticazioneHttp)
+			String autenticazioneHttp,
+			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 
 		boolean isModalitaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
@@ -317,7 +349,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,autenticazioneHttp)) {
+					httpsalgoritmokey, tipoconn,autenticazioneHttp,
+					listExtendedConnettore)) {
 				return false;
 			}
 
@@ -559,7 +592,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String clientAuth,
 			boolean validazioneDocumenti, String backToStato,
-			String autenticazioneHttp)
+			String autenticazioneHttp,
+			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
 			// ripristina dello stato solo in modalita change
@@ -633,7 +667,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,autenticazioneHttp)) {
+					httpsalgoritmokey, tipoconn,autenticazioneHttp,
+					listExtendedConnettore)) {
 				return false;
 			}
 

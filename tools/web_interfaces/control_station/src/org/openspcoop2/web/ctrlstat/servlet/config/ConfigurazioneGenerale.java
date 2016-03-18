@@ -161,7 +161,7 @@ public final class ConfigurazioneGenerale extends Action {
 					ei.extended = false;
 					ei.extendedToNewWindow = false;
 					if(extendedServlet!=null && extendedServlet.showExtendedInfoUpdate(request, session)){
-						ei.extendedBean = extendedServlet.readHttpParameters(configurazione, ei.extendedBean, request);
+						ei.extendedBean = extendedServlet.readHttpParameters(configurazione, TipoOperazione.CHANGE,  ei.extendedBean, request);
 						ei.extended = true;
 						ei.extendedToNewWindow = extendedServlet.extendedUpdateToNewWindow(request, session);
 					}
@@ -426,7 +426,7 @@ public final class ConfigurazioneGenerale extends Action {
 
 				pd.setDati(dati);
 
-				pd.setMessage("Configurazione Generale modificata con successo");
+				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO);
 
 				pd.disableEditMode();
 				

@@ -576,6 +576,10 @@ public class EsitoUtils {
 			if(mapIdCorrelazione.size()==1){
 				idCorrelazione = mapIdCorrelazione.values().iterator().next();
 			}
+			else if(mapIdCorrelazione.size()==0){
+				// l'archivio non contiene altri oggetti se non la configurazione
+				idCorrelazione = new ArchiveIdCorrelazione(ZIPUtils.ID_CORRELAZIONE_DEFAULT);
+			}
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).setConfigurazionePdD(configurazione);
 		}
 		

@@ -23,13 +23,17 @@
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
+import javax.mail.internet.ContentType;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.ServletInputStream;
@@ -60,9 +64,13 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
@@ -120,6 +128,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String nomePA, nomeSA = null;
 	private String oldPortType, oldTipoSoggettoErogatore, oldNomeSoggettoErogatore = null;
 	private String autenticazioneHttp;
+	private Properties parametersPOST;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -142,6 +151,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 
+			this.parametersPOST = null;
+			
 			this.editMode = null;
 
 			this.nomeservizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO);
@@ -261,6 +272,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if (this.httpsstatoS != null && this.httpsstatoS.equals(Costanti.CHECK_BOX_ENABLED))
 				this.httpsstato = true;
 
+			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
+			
+			Connettore conTmp = null;
+			List<ExtendedConnettore> listExtendedConnettore = 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsCore, 
+							request, session, this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
@@ -753,16 +771,19 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
-				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
-						"", "",
-						tipoJms, "", "", "", "", "", "", tipoSendas,
+				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
+						this.url, this.nome,
+						tipoJms, this.user,
+						this.password, this.initcont, this.urlpgk,
+						this.provurl, this.connfact, tipoSendas,
 						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
 						this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
 						this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
 						this.httpspwdprivatekeytrust, this.httpspathkey,
 						this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, true);
+						null, null, null, null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -793,7 +814,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey, this.tipoconn,this.nome_aps,this.versione,this.validazioneDocumenti,this.nomePA,null,this.autenticazioneHttp);
+					this.httpsalgoritmokey, this.tipoconn,this.nome_aps,this.versione,this.validazioneDocumenti,this.nomePA,null,this.autenticazioneHttp,
+					listExtendedConnettore);
 			
 			if(isOk){
 				if(this.nomePA!=null && !"".equals(this.nomePA) && !"-".equals(this.nomePA)){
@@ -853,7 +875,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.httpspathkey, this.httpstipokey,
 						this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, true);
+						null, null, null, null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -912,7 +935,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey);
+					this.httpsalgoritmokey,
+					listExtendedConnettore);
 
 			servizio.setConnettore(connettore);
 
@@ -974,7 +998,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.httpspathkey, this.httpstipokey,
 							this.httpspwdkey, this.httpspwdprivatekey,
 							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, true);
+							null, null, null, null, null, true,
+							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 					pd.setDati(dati);
 
@@ -1066,8 +1091,54 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 	public void decodeRequest(HttpServletRequest request,ConnettoriHelper connettoriHelper) throws Exception {
 		try {
+			
+			String ct = request.getContentType();
+			String boundary = null;
+			ContentType contentType = new ContentType(ct);
+			if(contentType.getParameterList()!=null){
+				Enumeration<?> enNames = contentType.getParameterList().getNames();
+				while (enNames.hasMoreElements()) {
+					Object object = (Object) enNames.nextElement();
+					if(object instanceof String){
+						if("boundary".equals(object)){
+							boundary = contentType.getParameterList().get((String)object);
+						}
+						//System.out.println("["+object+"]["+object.getClass().getName()+"]=["+contentType.getParameterList().get((String)object)+"]");
+					}
+				}
+			}
+			
 			ServletInputStream in = request.getInputStream();
-			BufferedReader dis = new BufferedReader(new InputStreamReader(in));
+			byte [] post = Utilities.getAsByteArray(in);
+			
+			ByteArrayInputStream bin = new ByteArrayInputStream(post);
+			this.parametersPOST = new Properties();
+			BufferedReader dis = new BufferedReader(new InputStreamReader(bin));
+			String key = dis.readLine();
+			while (key != null) {
+				
+				if(boundary==null){
+					// suppongo che il primo sia il boundary
+					boundary = key;
+					key = dis.readLine();
+					continue;
+				}
+				
+				if(key.endsWith(boundary)){
+					key = dis.readLine();
+					continue;
+				}
+				
+				dis.readLine();
+				String value = dis.readLine();
+				if(key!=null && value!=null)
+					this.parametersPOST.put(key, value);
+				key = dis.readLine();
+			}
+			bin.close();
+			
+			bin = new ByteArrayInputStream(post);
+			dis = new BufferedReader(new InputStreamReader(bin));
 			String line = dis.readLine();
 			while (line != null) {
 				if (line.indexOf("\""+Costanti.DATA_ELEMENT_EDIT_MODE_NAME+"\"") != -1) {
@@ -1322,7 +1393,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			this.endpointtype = connettoriHelper.readEndPointType(this.endpointtype,this.endpointtype_check, this.endpointtype_ssl);
-
+			
+			bin.close();
 			in.close();
 		} catch (IOException ioe) {
 			throw new Exception(ioe);

@@ -272,27 +272,48 @@ for (int i = 0; i < dati.size(); i++) {
 
 	  } else {
 
-            if (type.equals("textarea")) {
-            	String inputId = "txtA" + i;
-            	
-            	//<td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) % >&nbsp;</td>
-              if (affiancato) {
-		//il precedente elemento non puo' essere affiancato: chiudo la linea e inizio la nuova
-		%></td></tr><tr class=table01pari><%
+            if ( (type.equals("textarea") || type.equals("textarea-noedit")) && de.isLabelAffiancata() ) {
+              String inputId = "txtA" + i;
+	      if (type.equals("textarea-noedit")){
+		inputId = "txtA_ne" + i; 
 	      }
-	      %>
-	      <td colspan=2 height=14 class=history>
-	      	<% if(de.getLabel(elementsRequiredEnabled) != null && !de.getLabel(elementsRequiredEnabled).isEmpty() ){%>
-               		<label for="<%=inputId %>" style="display: block;"><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;</label>
-               <% }	%>
-	      	<textarea id="<%=inputId %>" rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea>
-	      </td><%
-	      
+            	
+	      if (!affiancato) {
+		%><td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;
+		</td>
+		<td><%
+	      }
+	      if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+		if (de.getValue() != null && !de.getValue().equals("")) {
+		  %><%= de.getValue() %><%
+		} else {
+		  if (pd.getMode().equals("view-noeditbutton")) {
+			%><%
+		  }
+		  else{
+		  	%>not defined<%
+		  }
+		}
+	      } else {
+		if (type.equals("textarea")){
+			%><textarea id="<%=inputId %>" rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
+		}else{
+			%><textarea id="<%=inputId %>" readonly rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
+		}
+	      }
+	      if (!de.getAffiancato()) {
+		%></td><%
+	      } else {
+		%>&nbsp;&nbsp;<%
+	      }	      
 
           } else {
 
-            if (type.equals("textarea-noedit")) {
-            	String inputId = "txtA_ne" + i; 
+            if ( (type.equals("textarea") || type.equals("textarea-noedit")) && !de.isLabelAffiancata() ) {
+               String inputId = "txtA" + i;
+	      if (type.equals("textarea-noedit")){
+		inputId = "txtA_ne" + i; 
+	      }
             	// <td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) % >&nbsp;</td>
               if (affiancato) {
                 //il precedente elemento non puo' essere affiancato: chiudo la linea e inizio la nuova
@@ -303,8 +324,12 @@ for (int i = 0; i < dati.size(); i++) {
               <td colspan=2 height=14 class=history>
               <% if(de.getLabel(elementsRequiredEnabled) != null && !de.getLabel(elementsRequiredEnabled).isEmpty() ){%>
                		<label for="<%=inputId %>" style="display: block;"><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;</label>
-               <% }	%>
-              	<textarea id="<%=inputId %>" readonly rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea>
+               <% }	
+		if (type.equals("textarea")){
+			%><textarea id="<%=inputId %>" rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
+		}else{
+			%><textarea id="<%=inputId %>" readonly rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
+		}%>
               </td><%
               
 
@@ -493,15 +518,15 @@ for (int i = 0; i < dati.size(); i++) {
 		  }  //else checkbutton
 		} //else button
 	      } //else select
-            } //else textarea
-            } //else textarea-noedit
+            } //else textarea/textarea-noedit label-affiancata
+            } //else textarea-noedit label-non-affiancata
           } //else crypt
         } //else hidden
       } // else file
     } // else textedit
   } // else text
 
-  if (!de.getAffiancato() || de.getType().equals("link") || de.getType().equals("textarea")) {
+  if (!de.getAffiancato() || de.getType().equals("link") || de.getType().equals("textarea") || de.getType().equals("textarea-noedit")) {
     %></tr><%
     affiancato = false;
   } else {

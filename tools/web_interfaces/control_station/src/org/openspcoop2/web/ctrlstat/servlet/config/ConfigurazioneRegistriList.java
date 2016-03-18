@@ -85,7 +85,7 @@ public final class ConfigurazioneRegistriList extends Action {
 			List<AccessoRegistroRegistro> lista = confCore.registriList(ricerca);
 
 			confHelper.prepareRegistriList(ricerca, lista);
-
+			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 

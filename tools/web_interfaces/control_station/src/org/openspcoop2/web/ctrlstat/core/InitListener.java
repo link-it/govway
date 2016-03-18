@@ -164,7 +164,10 @@ public class InitListener implements ServletContextListener {
 		
 		InitListener.log.info("Inizializzazione ExtendedInfoManager in corso...");
 		try{
-			ExtendedInfoManager.initialize(new Loader(), null, null, null);
+			ExtendedInfoManager.initialize(new Loader(), 
+					consoleProperties.getExtendedInfoDriverConfigurazione(), 
+					consoleProperties.getExtendedInfoDriverPortaDelegata(), 
+					consoleProperties.getExtendedInfoDriverPortaApplicativa());
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}

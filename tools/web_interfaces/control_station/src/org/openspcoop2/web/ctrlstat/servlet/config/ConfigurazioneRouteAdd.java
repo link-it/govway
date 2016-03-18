@@ -223,6 +223,8 @@ public final class ConfigurazioneRouteAdd extends Action {
 
 			confHelper.prepareRoutingList(ricerca, lista);
 
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO);
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,

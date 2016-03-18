@@ -171,6 +171,20 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Visualizzazione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
 		}
 	}
+	
+	public static void removeObjectCache(String key) throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				registroServiziReader.registroServizi.removeObjectCache(key);
+			}
+			else{
+				throw new Exception("RegistroServizi Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Rimozione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
+		}
+	}
 
 
 	/*   -------------- Metodi di inizializzazione -----------------  */

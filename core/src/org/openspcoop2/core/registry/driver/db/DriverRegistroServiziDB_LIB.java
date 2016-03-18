@@ -35,18 +35,20 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.AccordiUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
-import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
@@ -54,6 +56,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -437,6 +440,8 @@ public class DriverRegistroServiziDB_LIB {
 		if (endpointtype == null || endpointtype.trim().equals(""))
 			endpointtype = TipiConnettore.DISABILITATO.getNome();
 
+		Hashtable<String, String> extendedProperties = new Hashtable<String, String>();
+		
 		for (int i = 0; i < connettore.sizePropertyList(); i++) {
 			// prop=connettore.getProperty(i);
 			nomeProperty = connettore.getProperty(i).getNome();
@@ -481,6 +486,10 @@ public class DriverRegistroServiziDB_LIB {
 					sendas = valoreProperty;
 			}
 
+			// extendedProperties
+			if(nomeProperty.startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
+				extendedProperties.put(nomeProperty, valoreProperty);
+			}
 		}
 
 		try {
@@ -591,6 +600,33 @@ public class DriverRegistroServiziDB_LIB {
 						stm.close();
 					}				
 				}
+				else if(extendedProperties.size()>0){
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
+					sqlQueryObject.addInsertField("name", "?");
+					sqlQueryObject.addInsertField("value", "?");
+					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					
+					Enumeration<String> keys = extendedProperties.keys();
+					while (keys.hasMoreElements()) {
+						nomeProperty = (String) keys.nextElement();
+						valoreProperty = extendedProperties.get(nomeProperty);
+						if (valoreProperty != null && valoreProperty.equals(""))
+							valoreProperty = null;
+					
+						if(valoreProperty==null){
+							throw new Exception("Property ["+nomeProperty+"] without value");
+						}
+						
+						stm = connection.prepareStatement(sqlQuery);
+						stm.setString(1, nomeProperty);
+						stm.setString(2, valoreProperty);
+						stm.setLong(3, idConnettore);
+						stm.executeUpdate();
+						stm.close();
+					}				
+				}
 				
 				break;
 
@@ -653,6 +689,7 @@ public class DriverRegistroServiziDB_LIB {
 				
 				
 				// Custom properties
+				
 				// Delete eventuali vecchie properties
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI_CUSTOM);
@@ -662,6 +699,7 @@ public class DriverRegistroServiziDB_LIB {
 				stm.setLong(1, idConnettore);
 				stm.executeUpdate();
 				stm.close();
+				
 				// Aggiungo attuali
 				if(connettore.getCustom()!=null && connettore.getCustom()){					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -688,6 +726,33 @@ public class DriverRegistroServiziDB_LIB {
 						stm.executeUpdate();
 						stm.close();
 					}				
+				}
+				else if(extendedProperties.size()>0){
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI_CUSTOM);
+					sqlQueryObject.addInsertField("name", "?");
+					sqlQueryObject.addInsertField("value", "?");
+					sqlQueryObject.addInsertField("id_connettore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					
+					Enumeration<String> keys = extendedProperties.keys();
+					while (keys.hasMoreElements()) {
+						nomeProperty = (String) keys.nextElement();
+						valoreProperty = extendedProperties.get(nomeProperty);
+						if (valoreProperty != null && valoreProperty.equals(""))
+							valoreProperty = null;
+					
+						if(valoreProperty==null){
+							throw new Exception("Property ["+nomeProperty+"] without value");
+						}
+						
+						stm = connection.prepareStatement(sqlQuery);
+						stm.setString(1, nomeProperty);
+						stm.setString(2, valoreProperty);
+						stm.setLong(3, idConnettore);
+						stm.executeUpdate();
+						stm.close();
+					}			
 				}
 				
 				break;

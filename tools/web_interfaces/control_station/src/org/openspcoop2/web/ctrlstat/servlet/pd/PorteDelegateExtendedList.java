@@ -61,7 +61,7 @@ public final class PorteDelegateExtendedList extends AbstractServletListExtended
 	}
 
 	@Override
-	protected IExtendedListServlet getExtendedServlet(ControlStationCore core)
+	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper,ControlStationCore core)
 			throws Exception {
 		return core.getExtendedServletPortaDelegata();
 	}
@@ -99,5 +99,9 @@ public final class PorteDelegateExtendedList extends AbstractServletListExtended
 		return PorteDelegateExtendedUtilities.getUrlExtendedChange(consoleHelper, request);
 	}
 	
-	
+	@Override
+	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper,
+			HttpServletRequest request) throws Exception {
+		return PorteDelegateExtendedUtilities.getUrlExtendedList(consoleHelper, request);
+	}
 }

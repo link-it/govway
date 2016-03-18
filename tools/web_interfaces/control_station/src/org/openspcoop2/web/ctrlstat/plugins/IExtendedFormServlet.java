@@ -44,7 +44,7 @@ public interface IExtendedFormServlet extends IExtendedCoreServlet {
 	public boolean showExtendedInfoUpdate(HttpServletRequest request,HttpSession session);
 	public boolean extendedUpdateToNewWindow(HttpServletRequest request,HttpSession session); // la gestione dei dati avviene all'interno di una nuova finestra.
 		
-	public String getFormTitle();
+	public String getFormTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
 	
 	public void addToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
@@ -56,8 +56,10 @@ public interface IExtendedFormServlet extends IExtendedCoreServlet {
 	public void checkDati(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, ControlStationCore core, 
 			Object originalObject,IExtendedBean extendedBean) throws ExtendedException;
 	
-	public String getTestoModificaEffettuata();
+	public String getTestoModificaEffettuata(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
 	
 	public String getUniqueID();
+	
+	public IExtendedListServlet getExtendedInternalList(); // dovrebbe essere associato allo uniqueID per gestire liste interne
 	
 }
