@@ -1384,6 +1384,7 @@ public class OpenSPCoop2Properties {
 			this.isGenerazioneActorDefault(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.getActorDefault(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.getPrefixWsuId();
+			this.getExternalPWCallbackPropertyFile();
 			this.isAbilitataCacheMessageSecurityKeystore();
 			this.getDimensioneCacheMessageSecurityKeystore();
 			this.getItemLifeSecondCacheMessageSecurityKeystore();
@@ -8863,6 +8864,33 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.prefixWsuId;
+	}
+	
+	private static String externalPWCallback = null;
+	private static Boolean externalPWCallbackReaded = null;
+	public String getExternalPWCallbackPropertyFile(){
+
+		if(OpenSPCoop2Properties.externalPWCallbackReaded==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.externalPWCallback = value;
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata");
+					OpenSPCoop2Properties.externalPWCallback = null;
+				}
+				OpenSPCoop2Properties.externalPWCallbackReaded = true;
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata, errore:"+e.getMessage());
+				OpenSPCoop2Properties.externalPWCallback = null;
+				OpenSPCoop2Properties.externalPWCallbackReaded = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.externalPWCallback;
 	}
 
 

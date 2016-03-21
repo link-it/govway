@@ -89,6 +89,7 @@ import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.security.utils.ExternalPWCallback;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
@@ -1018,6 +1019,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		
 		
 		
+			
+			/* ----------- Inizializzazione MessageSecurity ------------ */
+			try{
+				String wssPropertiesFileExternalPWCallback = propertiesReader.getExternalPWCallbackPropertyFile();
+				if(wssPropertiesFileExternalPWCallback!=null){
+					ExternalPWCallback.initialize(wssPropertiesFileExternalPWCallback);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione MessageSecurity");
+				return;
+			}
+			
 		
 		
 		
