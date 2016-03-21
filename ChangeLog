@@ -1,3 +1,13 @@
+2016-03-21  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-472
+	Realizzata classe PWCallback WSSecurity che legge la password dinamicamente da un file:
+	org.openspcoop2.security.utils.ExternalPWCallback
+	Il file da utilizzare può essere indicato nel file openspcoop2.properties 
+	tramite la proprietà 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile'.
+	Per default il file di properties atteso è /etc/openspcoop2/wssPassword.properties
+
 2016-03-07  Andrea Poli <apoli@link.it>
 
 	* [GenericProject,Utils]
