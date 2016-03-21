@@ -43,8 +43,8 @@ import org.openspcoop2.web.lib.mvc.Parameter;
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
  * @author Sandra Giangrandi (sandra@link.it)
- * @author $Author: apoli $
- * @version $Rev: 11423 $, $Date: 2016-01-25 16:58:18 +0100 (Mon, 25 Jan 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class ConfigurazioneListExtendedDel extends AbstractServletListExtendedDel {
