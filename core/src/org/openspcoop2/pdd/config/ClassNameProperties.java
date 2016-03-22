@@ -652,6 +652,21 @@ public class ClassNameProperties {
 	
 	
 	
+	
+	/**
+	 * Ritorna una classe estesa la cui interfaccia dipende da quella indicata nel primo, parametro
+	 *
+	 * 
+	 */
+	public String getExtended(String tipologia, String nome){
+		return this.getValue("org.openspcoop2.pdd.extended.", tipologia+"."+nome);
+	}
+	public String[] getExtended(String tipologia) throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.extended."+tipologia+".");
+	}
+	
+	
+	
 
 	private String getValue(String prop,String nome){
 		try{

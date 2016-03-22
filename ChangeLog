@@ -1,3 +1,13 @@
+2016-03-22  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-475
+	Se tramite la pddConsole venivano associate delle regole di message-security sulla richiesta o sulla risposta di una PD o PA, 
+	e successivamente lo stato veniva modificato a disabilitato, l'header WSSecurity veniva comunque generato dalla PdD.
+	L'unica maniera per non far generare l'header era quello di eliminare tutte le proprietà precedentemente inserite, 
+	quando lo stato era ancora abilitato.
+	Adesso invece la PdD riconosce correttamente lo stato 'disabilitato'.
+
 2016-03-21  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
