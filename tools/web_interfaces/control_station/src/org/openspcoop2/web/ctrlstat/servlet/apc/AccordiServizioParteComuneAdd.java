@@ -482,16 +482,17 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// Automapping
 			if(enableAutoMapping){
-				if(as.getByteWsdlConcettuale() != null || as.getByteWsdlLogicoErogatore() != null || as.getByteWsdlLogicoFruitore() != null)
+				if(as.getByteWsdlConcettuale() != null || as.getByteWsdlLogicoErogatore() != null || as.getByteWsdlLogicoFruitore() != null) {
 					apcCore.mappingAutomatico(this.tipoProtocollo, as);
-				try{
-					// Se ho fatto il mapping controllo la validita' di quanto prodotto
-					as.setStatoPackage(StatiAccordo.operativo.toString());
-					boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
-					apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato);
-				}catch(ValidazioneStatoPackageException validazioneException){
-					// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
-					as.setStatoPackage(StatiAccordo.bozza.toString());
+					try{
+						// Se ho fatto il mapping controllo la validita' di quanto prodotto
+						as.setStatoPackage(StatiAccordo.operativo.toString());
+						boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
+						apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato);
+					}catch(ValidazioneStatoPackageException validazioneException){
+						// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
+						as.setStatoPackage(StatiAccordo.bozza.toString());
+					}
 				}
 			}
 

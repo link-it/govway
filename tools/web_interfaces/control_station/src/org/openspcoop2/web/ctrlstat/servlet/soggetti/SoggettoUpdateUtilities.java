@@ -920,7 +920,7 @@ public class SoggettoUpdateUtilities {
 						asps.getFruitore(j).setNome(this.nomeprov);
 					}
 				}			
-				this.oggettiDaAggiornare.add(s);
+				this.oggettiDaAggiornare.add(asps);
 			}
 		}
 	}
