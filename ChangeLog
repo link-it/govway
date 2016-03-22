@@ -1,6 +1,14 @@
 2016-03-22  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
+	Risolto Bug OP-477
+	Risolto problema di lock che causava un degrado delle prestazioni della porta di dominio 
+	quando vengono utilizzati gli header di integrazione soap o wsa; 
+	il problema si presentava anche con gli header in backward compatibility mode 'spcoop'.
+
+2016-03-22  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
 	Risolto Bug OP-475
 	Se tramite la pddConsole venivano associate delle regole di message-security sulla richiesta o sulla risposta di una PD o PA, 
 	e successivamente lo stato veniva modificato a disabilitato, l'header WSSecurity veniva comunque generato dalla PdD.
