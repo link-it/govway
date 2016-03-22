@@ -1414,6 +1414,10 @@ public class ConfigurazionePdDReader {
 		if(pd == null)
             return securityConfig;
 
+		if(pd.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pd.getStatoMessageSecurity())){
+			return securityConfig;
+		}
+		
 		MessageSecurity messageSecurity = pd.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
@@ -1460,6 +1464,10 @@ public class ConfigurazionePdDReader {
 		if(pd == null)
             return securityConfig;
 
+		if(pd.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pd.getStatoMessageSecurity())){
+			return securityConfig;
+		}
+		
 		MessageSecurity messageSecurity = pd.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
@@ -2055,7 +2063,7 @@ public class ConfigurazionePdDReader {
 	 * richiesta associate ad una Porta Applicativa 
 	 *
 	 * @param pa Identificatore di una Porta Applicativa
-	 * @return Le proprieta' MessageSecurity
+	 * @return Le proprieta' MTOM
 	 * 
 	 */
 	protected MTOMProcessorConfig getPA_MTOMProcessorForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
@@ -2107,6 +2115,10 @@ public class ConfigurazionePdDReader {
 		if(pa == null)
             return securityConfig;
 
+		if(pa.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pa.getStatoMessageSecurity())){
+			return securityConfig;
+		}
+		
 		MessageSecurity messageSecurity = pa.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
@@ -2153,6 +2165,10 @@ public class ConfigurazionePdDReader {
 		if(pa == null)
             return securityConfig;
 
+		if(pa.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pa.getStatoMessageSecurity())){
+			return securityConfig;
+		}
+		
 		MessageSecurity messageSecurity = pa.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
