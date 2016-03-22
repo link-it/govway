@@ -25,7 +25,6 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -39,7 +38,6 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
-import org.openspcoop2.utils.xml.XSDResourceResolver;
 
 /**
  * Classe utilizzata per la ricezione di informazioni di integrazione 
@@ -54,9 +52,10 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 
 	/** Utility per l'integrazione */
 	private UtilitiesIntegrazione utilities = null;
-	private ValidatoreXSD validatoreXSD = null;
+	
 	/** BackwardCompatibilityProperties */
 	private BackwardCompatibilityProperties backwardCompatibilityProperties = null;
+	
 	/** GestoreIntegrazionePD Originale */
 	private org.openspcoop2.pdd.core.integrazione.GestoreIntegrazionePDSoap gestoreIntegrazioneOpenSPCoopV2 = null;
 	
@@ -70,13 +69,10 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 			this.log = Logger.getLogger(GestoreIntegrazionePDSoap.class);
 		}
 		try{
-			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
-			xsdResourceResolver.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
-			this.validatoreXSD = new ValidatoreXSD(this.log,xsdResourceResolver,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione-OpenSPCoopV1.xsd"));
 			this.backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance(true);
-			this.utilities = UtilitiesIntegrazione.getInstance(true);
+			this.utilities = UtilitiesIntegrazione.getInstance(this.log,true);
 		}catch(Exception e){
-			this.log.error("integrazione-OpenSPCoopV1.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}
 		
 		try{
@@ -109,7 +105,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 				||
 				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 			){
-				this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione,this.validatoreXSD,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.readInRequestHeader(integrazione, inRequestPDMessage);
@@ -187,7 +183,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 				||
 				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 			){	
-				this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione,this.validatoreXSD,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.readInResponseHeader(integrazione, inResponsePDMessage);

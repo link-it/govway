@@ -50,6 +50,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  */
 public class UtilitiesIntegrazioneWSAddressing {
 
+	// ***** STATIC *****
+	
 	/**
 	 * // NOTA: Tutti i tipi sono assunti come SPC
 	   SOAPHeaderElement wsaTO      ->     http://<nomeSoggettoErogatore>.spcoop.it/servizi/<nomeServizio>
@@ -289,24 +291,37 @@ public class UtilitiesIntegrazioneWSAddressing {
 	
 	
 	
-	public UtilitiesIntegrazioneWSAddressing(){}
-
 	private static UtilitiesIntegrazioneWSAddressing utilitiesIntegrazione = null;
-	static UtilitiesIntegrazioneWSAddressing getInstance(){
+	public static UtilitiesIntegrazioneWSAddressing getInstance(Logger log){
 		if(UtilitiesIntegrazioneWSAddressing.utilitiesIntegrazione==null){
-			UtilitiesIntegrazioneWSAddressing.initialize();
+			UtilitiesIntegrazioneWSAddressing.initialize(log);
 		}
 		return UtilitiesIntegrazioneWSAddressing.utilitiesIntegrazione;
 	}
-
-	private static synchronized void initialize(){
+	private static synchronized void initialize(Logger log){
 		if(UtilitiesIntegrazioneWSAddressing.utilitiesIntegrazione==null)
-			UtilitiesIntegrazioneWSAddressing.utilitiesIntegrazione = new UtilitiesIntegrazioneWSAddressing();
+			UtilitiesIntegrazioneWSAddressing.utilitiesIntegrazione = new UtilitiesIntegrazioneWSAddressing(log);
 	}
 
 
+	
+	
+	
+	
+	// ***** INSTANCE *****
+	
+	private ValidatoreXSD validatoreXSD = null;
+	
+	private UtilitiesIntegrazioneWSAddressing(Logger log){
+		try{
+			this.validatoreXSD = new ValidatoreXSD(log,UtilitiesIntegrazione.class.getResourceAsStream("/ws-addr.xsd"));
+		}catch(Exception e){
+			log.error("ws-addr.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+		}
+	}
+
 	public void readHeader(OpenSPCoop2Message message,HeaderIntegrazione integrazione,
-			ValidatoreXSD validatoreXSD,boolean interpretaIDComeIDBusta,String actorIntegrazione) throws HeaderIntegrazioneException{
+			boolean interpretaIDComeIDBusta,String actorIntegrazione) throws HeaderIntegrazioneException{
 
 		try{
 
@@ -367,11 +382,11 @@ public class UtilitiesIntegrazioneWSAddressing {
 			
 			// ValidazioneXSD
 			log.debug("Validazione XSD...");
-			validaElementoWSA(validatoreXSD,wsaTO,log,message);
-			validaElementoWSA(validatoreXSD,wsaFROM,log,message);
-			validaElementoWSA(validatoreXSD,wsaAction,log,message);
-			validaElementoWSA(validatoreXSD,wsaID,log,message);
-			validaElementoWSA(validatoreXSD,wsaRelatesTo,log,message);
+			validaElementoWSA(this.validatoreXSD,wsaTO,log,message);
+			validaElementoWSA(this.validatoreXSD,wsaFROM,log,message);
+			validaElementoWSA(this.validatoreXSD,wsaAction,log,message);
+			validaElementoWSA(this.validatoreXSD,wsaID,log,message);
+			validaElementoWSA(this.validatoreXSD,wsaRelatesTo,log,message);
 			log.debug("Validazione XSD effettuate");
 			
 			// delete

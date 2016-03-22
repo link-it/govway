@@ -896,7 +896,7 @@ public class RicezioneBuste {
 		
 		// Imposto header di risposta
 		Properties headerRisposta = new Properties();
-		UtilitiesIntegrazione utilitiesHttp = new UtilitiesIntegrazione();
+		UtilitiesIntegrazione utilitiesHttp = UtilitiesIntegrazione.getInstance(logCore);
 		try{
 			utilitiesHttp.setResponseTransportProperties(null, headerRisposta, null);
 		}catch(Exception e){

@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -44,6 +45,7 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.utils.xml.XSDResourceResolver;
 
 
 /**
@@ -55,35 +57,50 @@ import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
  */
 public class UtilitiesIntegrazione {
 
+	
+	// ***** STATIC *****
+	
+	private static UtilitiesIntegrazione utilitiesIntegrazione = null;
+	public static UtilitiesIntegrazione getInstance(Logger log, boolean inizializeIfNotExists) throws OpenSPCoop2ConfigurationException {
+		if(UtilitiesIntegrazione.utilitiesIntegrazione==null){
+			initialize(log, inizializeIfNotExists);
+		}
+		return UtilitiesIntegrazione.utilitiesIntegrazione;
+	}
+	private static synchronized void initialize(Logger log, boolean inizializeIfNotExists) throws OpenSPCoop2ConfigurationException{
+		if(UtilitiesIntegrazione.utilitiesIntegrazione==null)
+			UtilitiesIntegrazione.utilitiesIntegrazione = new UtilitiesIntegrazione(log, inizializeIfNotExists);
+	}
+
+	
+	
+	
+	// ***** INSTANCE *****
+	
 	private java.util.Properties keyValueIntegrazioneTrasporto = null;
 	private java.util.Properties keyValueIntegrazioneUrlBased = null;
 	private java.util.Properties keyValueIntegrazioneSoap = null;
 	private BackwardCompatibilityProperties backwardCompatibilityProperties = null;
 	private OpenSPCoop2Properties openspcoop2Properties = null;
+	private ValidatoreXSD validatoreXSD = null;
 
-	public UtilitiesIntegrazione(boolean inizializeIfNotExists) throws OpenSPCoop2ConfigurationException{
+	private UtilitiesIntegrazione(Logger log, boolean inizializeIfNotExists) throws OpenSPCoop2ConfigurationException{
 		this.backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance(inizializeIfNotExists);
 		this.keyValueIntegrazioneTrasporto = this.backwardCompatibilityProperties.getKeyValue_HeaderIntegrazioneTrasporto();
 		this.keyValueIntegrazioneUrlBased = this.backwardCompatibilityProperties.getKeyValue_HeaderIntegrazioneUrlBased();
 		this.keyValueIntegrazioneSoap = this.backwardCompatibilityProperties.getKeyValue_HeaderIntegrazioneSoap();
 		this.openspcoop2Properties = OpenSPCoop2Properties.getInstance();
+		
+		try{
+			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
+			xsdResourceResolver.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
+			this.validatoreXSD = new ValidatoreXSD(log,xsdResourceResolver,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione-OpenSPCoopV1.xsd"));
+		}catch(Exception e){
+			log.error("integrazione-OpenSPCoopV1.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+		}
 	}
 
-	private static UtilitiesIntegrazione utilitiesIntegrazione = null;
-	public static UtilitiesIntegrazione getInstance() throws OpenSPCoop2ConfigurationException {
-		return getInstance(false);
-	}
-	public static UtilitiesIntegrazione getInstance(boolean inizializeIfNotExists) throws OpenSPCoop2ConfigurationException {
-		if(UtilitiesIntegrazione.utilitiesIntegrazione==null){
-			initialize(inizializeIfNotExists);
-		}
-		return UtilitiesIntegrazione.utilitiesIntegrazione;
-	}
-	
-	public static synchronized void initialize(boolean inizializeIfNotExists) throws OpenSPCoop2ConfigurationException{
-		if(UtilitiesIntegrazione.utilitiesIntegrazione==null)
-			UtilitiesIntegrazione.utilitiesIntegrazione = new UtilitiesIntegrazione(inizializeIfNotExists);
-	}
+
 
 	public void readTransportProperties(java.util.Properties prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
@@ -338,7 +355,7 @@ public class UtilitiesIntegrazione {
 	
 
 	public void readHeader(OpenSPCoop2Message message,HeaderIntegrazione integrazione,
-			ValidatoreXSD validatoreXSD,String actorIntegrazione) throws HeaderIntegrazioneException{
+			String actorIntegrazione) throws HeaderIntegrazioneException{
 		
 		
 		try{
@@ -367,9 +384,9 @@ public class UtilitiesIntegrazione {
 			}
 			
 			// validazione XSD
-			if(validatoreXSD==null)
+			if(this.validatoreXSD==null)
 				throw new Exception("Validatore XSD non istanziato");
-			validatoreXSD.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
+			this.validatoreXSD.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
 
 			
 			// Ricerca tra gli attributi dell'header SOAP

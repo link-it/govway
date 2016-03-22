@@ -25,7 +25,6 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -58,8 +57,6 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 	/** BackwardCompatibilityProperties */
 	private BackwardCompatibilityProperties backwardCompatibilityProperties = null;
 	
-	private ValidatoreXSD validatoreXSD = null;
-	
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
 
@@ -73,11 +70,10 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 			this.log = Logger.getLogger(GestoreIntegrazionePAWSAddressing.class);
 		}
 		try{
-			this.validatoreXSD = new ValidatoreXSD(this.log,UtilitiesIntegrazione.class.getResourceAsStream("/ws-addr.xsd"));
 			this.backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance(true);
-			this.utilities = UtilitiesIntegrazioneWSAddressing.getInstance();
+			this.utilities = UtilitiesIntegrazioneWSAddressing.getInstance(this.log);
 		}catch(Exception e){
-			this.log.error("ws-addr.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazioneWSAddressing: "+e.getMessage(),e);
 		}
 		try{
 			this.gestoreIntegrazioneOpenSPCoopV2 = new org.openspcoop2.pdd.core.integrazione.GestoreIntegrazionePAWSAddressing();
@@ -110,7 +106,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 					||
 					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 				){
-				this.utilities.readHeader(inRequestPAMessage.getMessage(), integrazione, this.validatoreXSD, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.readHeader(inRequestPAMessage.getMessage(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.readInRequestHeader(integrazione, inRequestPAMessage);
@@ -238,7 +234,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 					||
 					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 				){
-				this.utilities.readHeader(inResponsePAMessage.getMessage(), integrazione, this.validatoreXSD, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.readHeader(inResponsePAMessage.getMessage(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.readInResponseHeader(integrazione, inResponsePAMessage);

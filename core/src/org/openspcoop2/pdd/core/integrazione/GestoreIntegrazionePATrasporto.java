@@ -21,7 +21,9 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 
 
@@ -37,7 +39,22 @@ import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGestoreIntegrazionePA{
 
 	/** Utility per l'integrazione */
-	UtilitiesIntegrazione utilities = UtilitiesIntegrazione.getInstance();
+	UtilitiesIntegrazione utilities = null;
+	
+	/** Logger utilizzato per debug. */
+	private Logger log = null;
+	
+	public GestoreIntegrazionePATrasporto(){
+		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		if(this.log==null){
+			this.log = Logger.getLogger(GestoreIntegrazionePATrasporto.class);
+		}
+		try{
+			this.utilities = UtilitiesIntegrazione.getInstance(this.log);
+		}catch(Exception e){
+			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
+		}
+	}
 	
 	
 	// IN - Request

@@ -27,7 +27,6 @@ import javax.servlet.ServletContextListener;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.CodeMapping;
-import org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione.UtilitiesIntegrazione;
 
 /**
  * BackwardCompatibilityStartup
@@ -66,11 +65,12 @@ public class BackwardCompatibilityStartup implements ServletContextListener {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 		
-		try{
-			UtilitiesIntegrazione.initialize(false);
-		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(), e);
-		}
+//		try{
+		// IL LOGGER POTREBBE NON ESSERE INIZIALIZZATO
+//			UtilitiesIntegrazione.initialize(OpenSPCoop2Logger.getLoggerOpenSPCoopCore(),false);
+//		}catch(Exception e){
+//			throw new RuntimeException(e.getMessage(), e);
+//		}
 		
 	}
 

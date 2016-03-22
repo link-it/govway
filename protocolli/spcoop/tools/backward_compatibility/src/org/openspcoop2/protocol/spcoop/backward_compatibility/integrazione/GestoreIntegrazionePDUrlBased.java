@@ -66,10 +66,10 @@ public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGest
 			this.log = Logger.getLogger(GestoreIntegrazionePDUrlBased.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstance(true);
+			this.utilities = UtilitiesIntegrazione.getInstance(this.log,true);
 			this.backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance(true);
 		}catch(Exception e){
-			this.log.error("Errore durante l'inizializzazione: "+e.getMessage(),e);
+			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}
 		try{
 			this.gestoreIntegrazioneOpenSPCoopV2 = new org.openspcoop2.pdd.core.integrazione.GestoreIntegrazionePDUrlBased();

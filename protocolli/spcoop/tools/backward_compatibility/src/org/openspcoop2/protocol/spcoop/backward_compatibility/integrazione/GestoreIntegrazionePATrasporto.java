@@ -68,9 +68,9 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 		}
 		try{
 			this.backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance(true);
-			this.utilities = UtilitiesIntegrazione.getInstance(true);
+			this.utilities = UtilitiesIntegrazione.getInstance(this.log,true);
 		}catch(Exception e){
-			this.log.error("Errore durante l'inizializzazione: "+e.getMessage(),e);
+			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}
 		try{
 			this.gestoreIntegrazioneOpenSPCoopV2 = new org.openspcoop2.pdd.core.integrazione.GestoreIntegrazionePATrasporto();

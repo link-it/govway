@@ -26,7 +26,6 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -42,8 +41,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements IGestoreIntegrazionePDSoap{
 
 	/** Utility per l'integrazione */
-	UtilitiesIntegrazioneWSAddressing utilities = UtilitiesIntegrazioneWSAddressing.getInstance();
-	private ValidatoreXSD validatoreXSD = null;
+	UtilitiesIntegrazioneWSAddressing utilities = null;
+	
 	/** OpenSPCoopProperties */
 	OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 	
@@ -56,10 +55,11 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 		if(this.log==null){
 			this.log = Logger.getLogger(GestoreIntegrazionePDWSAddressing.class);
 		}
+
 		try{
-			this.validatoreXSD = new ValidatoreXSD(this.log,UtilitiesIntegrazione.class.getResourceAsStream("/ws-addr.xsd"));
+			this.utilities = UtilitiesIntegrazioneWSAddressing.getInstance(this.log);
 		}catch(Exception e){
-			this.log.error("ws-addr.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazioneWSAddressing: "+e.getMessage(),e);
 		}
 	}
 	
@@ -70,7 +70,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione, this.validatoreXSD,
+			this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione,
 					UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, 
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
 		}catch(Exception e){
@@ -116,7 +116,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione, this.validatoreXSD,
+			this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione,
 					UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, 
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
 		}catch(Exception e){

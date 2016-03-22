@@ -25,12 +25,10 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
-import org.openspcoop2.utils.xml.XSDResourceResolver;
 
 /**
  * Classe utilizzata per la ricezione di informazioni di integrazione 
@@ -44,8 +42,8 @@ import org.openspcoop2.utils.xml.XSDResourceResolver;
 public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreIntegrazionePDSoap{
 
 	/** Utility per l'integrazione */
-	UtilitiesIntegrazione utilities = UtilitiesIntegrazione.getInstance();
-	private ValidatoreXSD validatoreXSD = null;
+	UtilitiesIntegrazione utilities = null;
+
 	/** OpenSPCoopProperties */
 	OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 	
@@ -59,11 +57,9 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 			this.log = Logger.getLogger(GestoreIntegrazionePDSoap.class);
 		}
 		try{
-			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
-			xsdResourceResolver.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
-			this.validatoreXSD = new ValidatoreXSD(this.log,xsdResourceResolver,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione.xsd"));
+			this.utilities = UtilitiesIntegrazione.getInstance(this.log);
 		}catch(Exception e){
-			this.log.error("Integrazione.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}
 	}
 	
@@ -73,7 +69,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione,this.validatoreXSD,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDSoap, "+e.getMessage(),e);
 		}
@@ -128,7 +124,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione,this.validatoreXSD,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDSoap, "+e.getMessage(),e);
 		}

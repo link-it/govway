@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -40,6 +41,7 @@ import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.xml.XSDResourceResolver;
 
 
 /**
@@ -51,31 +53,53 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  */
 public class UtilitiesIntegrazione {
 
-	private java.util.Properties keyValueIntegrazioneTrasporto = null;
-	private java.util.Properties keyValueIntegrazioneUrlBased = null;
-	private java.util.Properties keyValueIntegrazioneSoap = null;
-	private OpenSPCoop2Properties openspcoopProperties = null;
 
-	public UtilitiesIntegrazione(){
-		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
-		this.keyValueIntegrazioneTrasporto = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneTrasporto();
-		this.keyValueIntegrazioneUrlBased = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneUrlBased();
-		this.keyValueIntegrazioneSoap = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneSoap();
-	}
-
+	// ***** STATIC *****
+	
 	private static UtilitiesIntegrazione utilitiesIntegrazione = null;
-	static UtilitiesIntegrazione getInstance(){
+	public static UtilitiesIntegrazione getInstance(Logger log){
 		if(UtilitiesIntegrazione.utilitiesIntegrazione==null){
-			UtilitiesIntegrazione.initialize();
+			UtilitiesIntegrazione.initialize(log);
 		}
 		return UtilitiesIntegrazione.utilitiesIntegrazione;
 	}
 
-	private static synchronized void initialize(){
-		if(UtilitiesIntegrazione.utilitiesIntegrazione==null)
-			UtilitiesIntegrazione.utilitiesIntegrazione = new UtilitiesIntegrazione();
+	private static synchronized void initialize(Logger log){
+		if(UtilitiesIntegrazione.utilitiesIntegrazione==null){
+			UtilitiesIntegrazione.utilitiesIntegrazione = new UtilitiesIntegrazione(log);
+		}
 	}
 
+	
+	
+	
+	// ***** INSTANCE *****
+
+	private java.util.Properties keyValueIntegrazioneTrasporto = null;
+	private java.util.Properties keyValueIntegrazioneUrlBased = null;
+	private java.util.Properties keyValueIntegrazioneSoap = null;
+	private OpenSPCoop2Properties openspcoopProperties = null;
+	private ValidatoreXSD validatoreXSD = null;
+
+	private UtilitiesIntegrazione(Logger log){
+		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
+		this.keyValueIntegrazioneTrasporto = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneTrasporto();
+		this.keyValueIntegrazioneUrlBased = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneUrlBased();
+		this.keyValueIntegrazioneSoap = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneSoap();
+		
+		try{
+			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
+			xsdResourceResolver.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
+			this.validatoreXSD = new ValidatoreXSD(log,xsdResourceResolver,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione.xsd"));
+		}catch(Exception e){
+			log.error("Integrazione.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
+		}
+	}
+	
+	public ValidatoreXSD getValidatoreXSD() {
+		return this.validatoreXSD;
+	}
+	
 	public void readTransportProperties(java.util.Properties prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		try{
@@ -315,7 +339,7 @@ public class UtilitiesIntegrazione {
 	
 
 	public void readHeader(OpenSPCoop2Message message,HeaderIntegrazione integrazione,
-			ValidatoreXSD validatoreXSD,String actorIntegrazione) throws HeaderIntegrazioneException{
+			String actorIntegrazione) throws HeaderIntegrazioneException{
 		
 		
 		try{
@@ -344,9 +368,9 @@ public class UtilitiesIntegrazione {
 			}
 			
 			// validazione XSD
-			if(validatoreXSD==null)
+			if(this.validatoreXSD==null)
 				throw new Exception("Validatore XSD non istanziato");
-			validatoreXSD.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
+			this.validatoreXSD.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
 
 			
 			// Ricerca tra gli attributi dell'header SOAP

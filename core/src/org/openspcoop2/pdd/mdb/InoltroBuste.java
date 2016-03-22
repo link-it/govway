@@ -1539,7 +1539,7 @@ public class InoltroBuste extends GenericLib{
 			}
 
 			// User-Agent e X-* header
-			UtilitiesIntegrazione httpUtilities = new UtilitiesIntegrazione();
+			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstance(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
 				Properties trasporto = new Properties();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
