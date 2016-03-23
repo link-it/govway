@@ -818,7 +818,8 @@ public class InoltroRisposte extends GenericLib{
 				// Prendo messaggio rielaborato
 				responseMessage = outResponseContext.getMessaggio();
 				if(responseMessage!=null){
-					esitoHandler = protocolFactory.createEsitoBuilder().getEsito(null,responseMessage, null);			
+					esitoHandler = protocolFactory.createEsitoBuilder().getEsito(null,responseMessage, null, 
+							(pddContext!=null ? pddContext.getContext() : null));			
 					
 				}
 			}

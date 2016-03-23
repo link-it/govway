@@ -43,6 +43,10 @@ public class PdDContext implements Serializable {
 	
 	private Hashtable<String, Object> ctx = new Hashtable<String, Object>();
 	
+	public Hashtable<String, Object> getContext() {
+		return this.ctx;
+	}
+
 	public void addObject(String key,Object o){
 		if(key!=null && o!=null)
 			this.ctx.put(key, o);

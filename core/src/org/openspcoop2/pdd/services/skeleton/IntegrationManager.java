@@ -1969,7 +1969,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			//	IntepretazioneRisposta
 			if(msgResponse!=null){
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, context.getProprietaErroreAppl(), informazioniErrori);			
+				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+						context.getProprietaErroreAppl(), informazioniErrori, 
+						(pddContext!=null ? pddContext.getContext() : null));			
 				
 				if(msgResponse.getSOAPBody().hasFault()){
 
@@ -2028,7 +2030,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				*/
 				msgReturn = new IntegrationManagerMessage();
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, context.getProprietaErroreAppl(), informazioniErrori);	
+				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+						context.getProprietaErroreAppl(), informazioniErrori, 
+						(pddContext!=null ? pddContext.getContext() : null));	
 				// ok oneway
 				
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"integrationManager.consegnaRispostaApplicativaVuota");

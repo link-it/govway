@@ -31,7 +31,8 @@ package org.openspcoop2.protocol.utils;
 public enum EsitoIdentificationMode {
 
 	STATIC ("static"),
-	SOAP_FAULT ("soapFault");
+	SOAP_FAULT ("soapFault"),
+	CONTEXT_PROPERTY ("contextProperty");
 
 	private final String valore;
 
@@ -73,6 +74,8 @@ public enum EsitoIdentificationMode {
 			res = EsitoIdentificationMode.STATIC;
 		}else if(EsitoIdentificationMode.SOAP_FAULT.toString().equals(val)){
 			res = EsitoIdentificationMode.SOAP_FAULT;
+		}else if(EsitoIdentificationMode.CONTEXT_PROPERTY.toString().equals(val)){
+			res = EsitoIdentificationMode.CONTEXT_PROPERTY;
 		}
 		return res;
 	}

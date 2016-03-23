@@ -163,6 +163,9 @@ public class EsitiProperties {
 				if(EsitoIdentificationMode.SOAP_FAULT.equals(mode)){
 					getEsitoIdentificationModeSoapFaultList(codeEsito);
 				}
+				else if(EsitoIdentificationMode.CONTEXT_PROPERTY.equals(mode)){
+					getEsitoIdentificationModeContextPropertyList(codeEsito);
+				}
 			}
 				
 			List<Integer> codesOk = getEsitiCodeOk();
@@ -424,6 +427,21 @@ public class EsitiProperties {
 
 		return EsitiProperties.esitiCodeForSoapFaultIdentificationMode;
 	}
+	
+	private static List<Integer> esitiCodeForContextPropertyIdentificationMode = null;
+	public List<Integer> getEsitiCodeForContextPropertyIdentificationMode() throws ProtocolException {
+		if(EsitiProperties.esitiCodeForContextPropertyIdentificationMode == null){
+			EsitiProperties.esitiCodeForContextPropertyIdentificationMode = new ArrayList<Integer>();
+			List<Integer> codes = getEsitiCode();  
+			for (Integer codeEsito : codes) {
+				if(EsitoIdentificationMode.CONTEXT_PROPERTY.equals(this.getEsitoIdentificationMode(codeEsito))){
+					EsitiProperties.esitiCodeForContextPropertyIdentificationMode.add(codeEsito);
+				}
+			}
+		}
+
+		return EsitiProperties.esitiCodeForContextPropertyIdentificationMode;
+	}
 
 	private static List<Integer> esitiCodeOrderLabel = null;
 	public List<Integer> getEsitiCodeOrderLabel() throws ProtocolException {
@@ -577,6 +595,65 @@ public class EsitiProperties {
 		
 			if(l==null){
 				l = new ArrayList<EsitoIdentificationModeSoapFault>();
+			}
+			l.add(esito);
+			
+			index++;
+		}
+			
+		return l;
+	}
+	
+	
+	
+	
+	private static Hashtable<String,List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList= null;
+	public List<EsitoIdentificationModeContextProperty> getEsitoIdentificationModeContextPropertyList(Integer codeEsito) throws ProtocolException {
+		if(esitoIdentificationModeContextPropertyList==null){
+			esitoIdentificationModeContextPropertyList = new Hashtable<String, List<EsitoIdentificationModeContextProperty>>();
+			List<Integer> codes = getEsitiCode();
+			for (Integer code : codes) {
+				try{
+					EsitoIdentificationMode mode = this.getEsitoIdentificationMode(code);
+					if(EsitoIdentificationMode.CONTEXT_PROPERTY.equals(mode)){
+						esitoIdentificationModeContextPropertyList.put(code+"", this._getEsitoIdentificationModeContextPropertyList(code));
+					}
+				}catch(Exception e){
+					throw new ProtocolException("Errore durante la gestione del codice ["+code+"]: "+e.getMessage(),e);
+				}
+			}
+		}
+		return EsitiProperties.esitoIdentificationModeContextPropertyList.get(codeEsito+"");
+	}
+	private List<EsitoIdentificationModeContextProperty> _getEsitoIdentificationModeContextPropertyList(Integer codeEsito) throws ProtocolException {
+			
+		List<EsitoIdentificationModeContextProperty>  l = null;
+		
+		String prefix = "esito."+codeEsito+".mode.contextProperty.";
+		
+		int index = 0;
+		while(index<1000){
+			
+			EsitoIdentificationModeContextProperty esito = new EsitoIdentificationModeContextProperty();
+			
+			esito.setName(this.getOptionalProperty(prefix+index+".name"));
+			
+			esito.setValue(this.getOptionalProperty(prefix+index+".value"));
+
+			if(esito.getName()==null && esito.getValue()==null){
+				if(index==0){
+					// almeno una opzione è obbligatoria in modalità soapFault
+					throw new ProtocolException("Per il codice ["+codeEsito+"] non esiste alcun mapping rispetto alla modalità contextProperty");
+				}
+				break;
+			}
+			
+			if(esito.getName()==null){
+				throw new ProtocolException("Per il codice ["+codeEsito+"] non esiste il mapping rispetto al nome, obbligtorio per la modalità contextProperty");
+			}
+			
+			if(l==null){
+				l = new ArrayList<EsitoIdentificationModeContextProperty>();
 			}
 			l.add(esito);
 			

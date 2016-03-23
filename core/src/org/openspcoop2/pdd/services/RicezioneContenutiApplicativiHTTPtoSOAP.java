@@ -541,7 +541,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				String contentTypeRisposta = null;
 				byte[] risposta = null;
 				body = responseMessage.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori);
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500; // cmq e' un errore come l'errore applicativo
 					String msgError = SoapUtils.toString(body.getFault(), false);
@@ -601,7 +602,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori);
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
 				// carico-vuoto
 			}
 			

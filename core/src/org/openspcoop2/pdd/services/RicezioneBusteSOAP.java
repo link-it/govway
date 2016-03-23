@@ -582,7 +582,8 @@ public class RicezioneBusteSOAP  {
 
 				// http status
 				body = responseMessage.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori);
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500;
 					descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
@@ -602,7 +603,8 @@ public class RicezioneBusteSOAP  {
 				statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori);
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
 				// carico-vuoto
 			}
 			
@@ -641,7 +643,8 @@ public class RicezioneBusteSOAP  {
 				
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				body = responseMessageError.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessageError, proprietaErroreAppl, null);
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessageError, proprietaErroreAppl, null,
+						(pddContext!=null ? pddContext.getContext() : null));
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500;
 					res.setStatus(500);

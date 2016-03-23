@@ -21,6 +21,8 @@
 
 package org.openspcoop2.protocol.sdk.builder;
 
+import java.util.Hashtable;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -45,8 +47,11 @@ public interface IEsitoBuilder {
 	
 	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, EsitoTransazioneName name); // non deve lanciare eccezione //throws ProtocolException;
 	
-	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali) throws ProtocolException;
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context) throws ProtocolException;
 		
-	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,ProprietaErroreApplicativo erroreApplicativo,InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali) throws ProtocolException;
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
+			ProprietaErroreApplicativo erroreApplicativo,
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context) throws ProtocolException;
 
 }

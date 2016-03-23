@@ -21,6 +21,7 @@
 
 package org.openspcoop2.protocol.basic.builder;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.soap.SOAPBody;
@@ -42,6 +43,7 @@ import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
 import org.openspcoop2.utils.resources.TransportRequestContext;
 import org.w3c.dom.Node;
@@ -149,16 +151,19 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 	}
 	
 	@Override
-	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali) throws ProtocolException {
-		return getEsito(transportRequestContext,message,null,informazioniErroriInfrastrutturali);
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context) throws ProtocolException {
+		return getEsito(transportRequestContext,message,null,informazioniErroriInfrastrutturali,context);
 	}
 
 	@Override
 	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
 			ProprietaErroreApplicativo erroreApplicativo,
-			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali)
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context)
 			throws ProtocolException {
 		try{
+			
+					
 			SOAPBody body = null;
 			if(message!=null){
 				body = message.getSOAPBody();
@@ -172,7 +177,35 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 			ITraduttore trasl = this.factory.createTraduttore();
 			
 			String tipoContext = this.getTipoContext(transportRequestContext);
-						
+				
+			// Devo riconoscere eventuali codifiche custom inserite nel contesto
+			if(context!=null){
+				List<Integer> customCodeForContextProperty = this.esitiProperties.getEsitiCodeForContextPropertyIdentificationMode();
+				if(customCodeForContextProperty!=null && customCodeForContextProperty.size()>0){
+					for (Integer customCode : customCodeForContextProperty) {
+						List<EsitoIdentificationModeContextProperty> l = this.esitiProperties.getEsitoIdentificationModeContextPropertyList(customCode);
+						if(l!=null && l.size()>0){
+							for (EsitoIdentificationModeContextProperty esitoIdentificationModeContextProperty : l) {
+								try{
+									Object p = context.get(esitoIdentificationModeContextProperty.getName());
+									if(p!=null && p instanceof String){
+										String pS = (String) p;
+										if(esitoIdentificationModeContextProperty.getValue()==null ||
+												esitoIdentificationModeContextProperty.getValue().equals(pS)){
+											// match
+											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CUSTOM, customCode, tipoContext);
+										}
+									}
+								}catch(Throwable t){
+									this.log.error("Errore durante la comprensione dell'esito: "+t.getMessage(),t);
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			
 			if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
