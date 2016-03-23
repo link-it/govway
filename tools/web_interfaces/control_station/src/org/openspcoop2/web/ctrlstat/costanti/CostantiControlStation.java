@@ -108,8 +108,8 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE = "Attenzione: Configurazione non standard (Utilizzare l'interfaccia avanzata)";
 	public final static String LABEL_STRUMENTI = "Strumenti";
 	public final static String LABEL_LINKIT_WEB = "http://www.link.it";
-	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop2.org";
-	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.openspcoop2.org";
+	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop.org";
+	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.openspcoop.org";
 	public final static String LABEL_PARAMETRO_ID = "Id";
 	public final static String LABEL_PARAMETRO_ID_SOGGETTO = "IdSogg";
 	public final static String LABEL_PARAMETRO_ID_PORTA = "IdPorta";

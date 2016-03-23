@@ -98,8 +98,8 @@ public class Costanti {
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_LINKIT_WEB = "http://www.link.it";
-	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop2.org";
-	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.openspcoop2.org";
+	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop.org";
+	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.openspcoop.org";
 	
 	public final static String LABEL_CONFIGURAZIONI_XML = "Configurazioni XML";
 	public final static String LABEL_TIPOLOGIA_XML = "Tipologia XML";
