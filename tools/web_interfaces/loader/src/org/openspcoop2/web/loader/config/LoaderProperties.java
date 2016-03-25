@@ -219,6 +219,8 @@ public class LoaderProperties {
 		return this.readProperty(true, "loader.language");
 	}
 	
-	
+	public Boolean isUsaConsoleImmagineNomeApplicazione() throws UtilsException{
+		return this.readBooleanProperty(true, "loader.usaImgNomeApplicazione");
+	}
 	
 }

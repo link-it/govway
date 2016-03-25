@@ -40,7 +40,13 @@ GeneralData gd = (GeneralData) session.getValue(gdString);
 
 <tr height=25>
     <td width=130 class=red>&nbsp;</td>
-    <td background=images/wire.gif class=bgtopdx><img src=images/<%= gd.getTitleImg() %> height=25></td>
+    <td background=images/wire.gif class=bgtopdx>
+    	<% if(gd.isUsaTitleImg()) {%>
+    	<img src=images/<%= gd.getTitleImg() %> height=25>
+    	<% } else { %>
+    		<span class="consoleTitle"><%= gd.getTitle() %></span>
+    	<% } %>
+    </td>
     <td width=120>&nbsp;</td>
     </tr>
 

@@ -211,6 +211,8 @@ public class ControlStationCore {
 	private String consoleCSS = null;
 	private String consoleIMGNomeApplicazione = null;
 	private String consoleLanguage = null;
+	private boolean consoleUsaIMGNomeApplicazione = true;
+	
 	public String getConsoleNomeSintesi() {
 		return this.consoleNomeSintesi;
 	}
@@ -225,6 +227,9 @@ public class ControlStationCore {
 	}
 	public String getConsoleLanguage() {
 		return this.consoleLanguage;
+	}
+	public boolean isConsoleUsaIMGNomeApplicazione(){
+		return this.consoleUsaIMGNomeApplicazione;
 	}
 
 
@@ -938,6 +943,7 @@ public class ControlStationCore {
 		this.consoleCSS = core.consoleCSS;
 		this.consoleIMGNomeApplicazione = core.consoleIMGNomeApplicazione;
 		this.consoleLanguage = core.consoleLanguage;
+		this.consoleUsaIMGNomeApplicazione = core.consoleUsaIMGNomeApplicazione;
 
 		/** Tipo del Database */
 		this.tipoDB = core.tipoDB;
@@ -1188,6 +1194,7 @@ public class ControlStationCore {
 			this.consoleCSS = consoleProperties.getConsoleCSS();
 			this.consoleIMGNomeApplicazione = consoleProperties.getConsoleImmagineNomeApplicazione();
 			this.consoleLanguage = consoleProperties.getConsoleLanguage();
+			this.consoleUsaIMGNomeApplicazione = consoleProperties.isUsaConsoleImmagineNomeApplicazione();
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();

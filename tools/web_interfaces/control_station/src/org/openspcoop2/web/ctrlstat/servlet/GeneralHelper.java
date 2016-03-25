@@ -144,6 +144,7 @@ public class GeneralHelper {
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
 		gd.setTitle(this.core.getConsoleNomeEsteso());
+		gd.setUsaTitleImg(this.core.isConsoleUsaIMGNomeApplicazione()); 
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout || displayMonitor) {

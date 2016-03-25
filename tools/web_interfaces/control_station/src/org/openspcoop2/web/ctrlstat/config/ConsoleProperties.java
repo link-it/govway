@@ -259,6 +259,9 @@ public class ConsoleProperties {
 		return this.readProperty(true, "console.language");
 	}
 	
+	public Boolean isUsaConsoleImmagineNomeApplicazione() throws UtilsException{
+		return this.readBooleanProperty(true, "console.usaImgNomeApplicazione");
+	}
 	
 	/* ----- Opzioni Accesso JMX della PdD ------- */
 	

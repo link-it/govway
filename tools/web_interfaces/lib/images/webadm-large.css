@@ -4,6 +4,13 @@ body {
 	margin-left: 0px; 
 }
 
+.consoleTitle{
+	color: #ffffff;
+    font-family: Arial;
+    font-size: 17px;
+    font-weight: bold;
+}
+
 .bgtopsx {
 	background-repeat: no-repeat;
 	background-position: left top;

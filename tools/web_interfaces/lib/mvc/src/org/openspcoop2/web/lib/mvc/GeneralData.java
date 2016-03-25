@@ -44,6 +44,7 @@ public class GeneralData {
 	String language;
 	String title;
 	String titleImg;
+	boolean usaTitleImg;
 	String linkFoot;
 	Vector<?> headerLinks;
 	private String contextName;
@@ -55,6 +56,7 @@ public class GeneralData {
 		this.language = "";
 		this.title = "";
 		this.titleImg = "";
+		this.usaTitleImg = true;
 		this.linkFoot = linkFoot;
 		this.headerLinks = new Vector<Object>();
 	}
@@ -127,5 +129,11 @@ public class GeneralData {
 	}
 	public String getContextName(){
 		return this.contextName;
+	}
+	public boolean isUsaTitleImg() {
+		return this.usaTitleImg;
+	}
+	public void setUsaTitleImg(boolean usaTitleImg) {
+		this.usaTitleImg = usaTitleImg;
 	}
 }

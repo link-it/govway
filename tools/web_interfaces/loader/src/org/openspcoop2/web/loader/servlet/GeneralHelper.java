@@ -108,6 +108,7 @@ public class GeneralHelper {
 		gd.setProduct(this.loaderCore.getLoaderNomeSintesi());
 		gd.setLanguage(this.loaderCore.getLoaderLanguage());
 		gd.setTitle(this.loaderCore.getLoaderNomeEsteso());
+		gd.setUsaTitleImg(this.loaderCore.isLoaderUsaIMGNomeApplicazione()); 
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout || displayMonitor) {
