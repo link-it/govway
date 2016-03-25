@@ -1,3 +1,12 @@
+2016-03-25  Giuliano Pintori <pintori@link.it> 
+
+	* [PddConsole,PddLoader]
+	Aggiunta funzionalità OP-479
+	Aggiunta la possiblità di personalizzare il titolo visualizzato sulle console, 
+	attraverso una proprietà che indica il titolo da visualizzare.
+	Attraverso un'altra proprietà e' possibile scegliere se utilizzare una immagine (il vecchio comportamento) 
+	o il testo indicato nella nuova proprietà.
+
 2016-03-25  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]	
