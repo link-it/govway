@@ -1176,7 +1176,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				info(informazioniStatoPorta.formatStatoPorta(infoConfigSistema.getVersionePdD(), 
 						infoConfigSistema.getVersioneBaseDati(), infoConfigSistema.getDirectoryConfigurazione(), 
 						infoConfigSistema.getVersioneJava(), infoConfigSistema.getInformazioniDatabase(),
-						infoConfigSistema.getPluginProtocols(), informazioniStatoPortaCache.toArray(new InformazioniStatoPortaCache[1])));
+						infoConfigSistema.getPluginProtocols(), 
+						informazioniStatoPortaCache.toArray(new InformazioniStatoPortaCache[1])));
 
 			
 			

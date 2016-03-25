@@ -635,6 +635,11 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = new Hashtable<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
 	private Map<String, String> jmxPdD_cache_type = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_cache_nomeAttributo_cacheAbilitata = new Hashtable<String, String>();
@@ -726,6 +731,21 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA.get(alias);
 	}
 	public List<String> getJmxPdD_caches(String alias) {
 		return this.jmxPdD_caches.get(alias);
@@ -1083,6 +1103,11 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = core.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = core.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols;
+		this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = core.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA;
 		this.jmxPdD_caches = core.jmxPdD_caches;
 		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
 		this.jmxPdD_cache_nomeAttributo_cacheAbilitata = core.jmxPdD_cache_nomeAttributo_cacheAbilitata;
@@ -1365,6 +1390,11 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
+					this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
 					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));
 					this.jmxPdD_cache_nomeAttributo_cacheAbilitata.put(alias, consoleProperties.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));

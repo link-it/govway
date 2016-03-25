@@ -341,6 +341,21 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.pluginProtocols");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaMonitoraggio");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniDB");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniJMS");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPD");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPA");
+	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
 		List<String> list = new ArrayList<String>();
 		String tipo = _getJmxPdD_value(false, alias, "risorseJmxPdd.caches");

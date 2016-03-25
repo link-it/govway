@@ -3347,6 +3347,120 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 		}
 			
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PD (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PA (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
 		return dati;
 	}
 

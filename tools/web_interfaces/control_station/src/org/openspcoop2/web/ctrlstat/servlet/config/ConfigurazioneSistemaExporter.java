@@ -210,6 +210,48 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			}
 		}
 		
-		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, infoDatabase, infoProtocolli, cacheArray);
+		String statoConnessioniDB = null;
+		try{
+			statoConnessioniDB = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
+			statoConnessioniDB = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoConnessioniPD = null;
+		try{
+			statoConnessioniPD = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al servizio PD (jmxResourcePdD): "+e.getMessage(),e);
+			statoConnessioniPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoConnessioniPA = null;
+		try{
+			statoConnessioniPA = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al servizio PA (jmxResourcePdD): "+e.getMessage(),e);
+			statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoConnessioniJMS = null;
+		try{
+			statoConnessioniJMS = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al broker JMS (jmxResourcePdD): "+e.getMessage(),e);
+			statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, infoDatabase, infoProtocolli,
+				statoConnessioniDB, statoConnessioniPD, statoConnessioniPA, statoConnessioniJMS,
+				cacheArray);
 	}
 }

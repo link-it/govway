@@ -35,6 +35,17 @@ public class InformazioniStatoPorta {
 			String confDir, String versioneJava,
 			String infoDatabase, String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
+		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, infoDatabase, infoProtocolli,
+				null,null,null,null,
+				cache);
+	}
+	
+	public String formatStatoPorta(String versionePdD, 
+			String versioneBaseDati,
+			String confDir, String versioneJava,
+			String infoDatabase, String infoProtocolli,
+			String statoConnessioniDB, String statoConnessioniPD, String statoConnessioniPA, String statoConnessioniJMS,
+			InformazioniStatoPortaCache ... cache){
 		
 		StringBuffer bf = new StringBuffer();
 		
@@ -82,6 +93,46 @@ public class InformazioniStatoPorta {
 				bf.append("\n");
 				bf.append("\n");
 			}
+		}
+		
+		if(statoConnessioniDB!=null){
+			bf.append("==============================\n");
+			bf.append("Connessioni Attive al Database\n");
+			bf.append("==============================\n");
+			bf.append("\n");
+			bf.append(statoConnessioniDB);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoConnessioniPD!=null){
+			bf.append("=========================================================\n");
+			bf.append("Connessioni HTTP Attive in uscita dal modulo InoltroBuste\n");
+			bf.append("=========================================================\n");
+			bf.append("\n");
+			bf.append(statoConnessioniPD);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoConnessioniPA!=null){
+			bf.append("=========================================================================\n");
+			bf.append("Connessioni HTTP Attive in uscita dal modulo ConsegnaContenutiApplicativi\n");
+			bf.append("=========================================================================\n");
+			bf.append("\n");
+			bf.append(statoConnessioniPA);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoConnessioniJMS!=null){
+			bf.append("================================\n");
+			bf.append("Connessioni Attive al Broker JMS\n");
+			bf.append("================================\n");
+			bf.append("\n");
+			bf.append(statoConnessioniJMS);
+			bf.append("\n");
+			bf.append("\n");
 		}
 		
 		return bf.toString();

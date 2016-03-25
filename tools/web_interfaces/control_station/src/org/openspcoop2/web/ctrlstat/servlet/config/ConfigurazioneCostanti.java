@@ -303,6 +303,10 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "Informazioni Database";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Protocolli";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE = "Connessioni Attive al Database";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS = "Connessioni Attive al Broker JMS";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "Connessioni HTTP Attive in uscita dal modulo InoltroBuste";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "Connessioni HTTP Attive in uscita dal modulo ConsegnaContenutiApplicativi";
 	
 	
 	/* PARAMETRI */
@@ -372,6 +376,10 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "infoProtocolloContesto_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "ResetCache";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB = "connessioniDB";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS = "connessioniJMS";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD = "connessioniPD";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA = "connessioniPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
 	
@@ -428,6 +436,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "contesti: ";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Reset Cache";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	
 	
