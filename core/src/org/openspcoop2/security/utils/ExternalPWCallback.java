@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop - Implementazione della specifica SPCoop 
- * http://www.openspcoop.org
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2012 Link.it srl (http://link.it). All rights reserved. 
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ import org.openspcoop2.security.SecurityException;
  * Gestore delle password dei certificati scambiati con wssecurity. Le password vengono mantenute in un file di proprietà
  * 	
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 11423 $, $Date: 2016-01-25 16:58:18 +0100 (Mon, 25 Jan 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ExternalPWCallback
     implements CallbackHandler
