@@ -1266,10 +1266,12 @@ public class ControlStationCore {
 			/// Opzioni per Plugins
 			this.pluginMenu = this.newIExtendedMenu(consoleProperties.getPlugins_Menu());
 			this.pluginConfigurazione = this.newIExtendedFormServlet(consoleProperties.getPlugins_Configurazione());
-			for (IExtendedFormServlet formPluginConfigurazione : this.pluginConfigurazione) {
-				IExtendedListServlet listPluginConfigurazione = formPluginConfigurazione.getExtendedInternalList();
-				if(listPluginConfigurazione!=null){
-					this.pluginConfigurazioneList.put(formPluginConfigurazione.getUniqueID(), listPluginConfigurazione);
+			if(this.pluginConfigurazione!=null){
+				for (IExtendedFormServlet formPluginConfigurazione : this.pluginConfigurazione) {
+					IExtendedListServlet listPluginConfigurazione = formPluginConfigurazione.getExtendedInternalList();
+					if(listPluginConfigurazione!=null){
+						this.pluginConfigurazioneList.put(formPluginConfigurazione.getUniqueID(), listPluginConfigurazione);
+					}
 				}
 			}
 			this.pluginConnettore = this.newIExtendedConnettore(consoleProperties.getPlugins_Connettore());
