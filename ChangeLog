@@ -1,3 +1,15 @@
+2016-03-25  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]	
+	Aggiunta funzionalità OP-481
+	Estesa la sezione ConfigurazioneSistema che attualmente visualizza le informazioni sull'ambiente runtime della PdD, 
+	accendendo alle informazioni JMX di ogni singolo nodo, al fine di visualizzare anche le informazioni di Monitoraggio.
+	Vengono adesso fornite anche le seguenti informazioni:
+	- connessioni http in uscita attivate dal modulo InoltroBuste
+	- connessioni http in uscita attivate dal modulo ConsegnaContenutiApplicativi
+	- connessioni attive verso il database
+	- connessioni attive verso il broker jms
+
 2016-03-22  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
