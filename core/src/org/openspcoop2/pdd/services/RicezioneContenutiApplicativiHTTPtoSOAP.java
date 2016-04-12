@@ -67,6 +67,7 @@ import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
@@ -187,6 +188,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			msgDiag.setPddContext(context.getPddContext(),protocolFactory);		
 			pddContext = context.getPddContext();
 			
+			try{
+				msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico di ingresso",e);
+			}
+			
 			if(req instanceof DirectVMConnectorInMessage){
 				DirectVMConnectorInMessage vm = (DirectVMConnectorInMessage) req;
 				if(vm.getDirectVMProtocolInfo()!=null){
@@ -242,6 +249,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			
 			
 			/* ------------ Controllo ContentType -------------------- */
+			
+			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
+			
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION, SOAPVersion.SOAP11);
 			
@@ -297,6 +307,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 
 			String tipoLetturaRisposta = null;
 			try{
+				Utilities.printFreeMemory("RicezioneContenutiApplicativiHTTPtoSOAP - Pre costruzione richiesta");
+				msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.inCorso");
 				inputBody = req.getRequest();
 				if( inputBody == null || inputBody.length<=0 ){
 					throw new Exception("Ricevuto nessun contenuto da imbustare");
@@ -314,6 +326,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 							openSPCoopProperties.isDeleteInstructionTargetMachineXml(), openSPCoopProperties.isFileCacheEnable(), 
 							openSPCoopProperties.getAttachmentRepoDir(), openSPCoopProperties.getFileThreshold());
 				}
+				Utilities.printFreeMemory("RicezioneContenutiApplicativiHTTPtoSOAP - Post costruzione richiesta");
+				requestMessage.setProtocolName(protocolFactory.getProtocol());
+				
 			}catch(Exception e){
 				logCore.error(tipoLetturaRisposta +" con errore: "+e.getMessage(),e);
 				requestMessage=null;
@@ -355,7 +370,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			context.setMessageRequest(requestMessage);
 			context.setUrlProtocolContext(urlProtocolContext);
 			context.setMsgDiagnostico(msgDiag);
-		
+					
+			// Log elaborazione dati completata
+			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
+			
 			// Invocazione...
 			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context);
 			gestoreRichiesta.process(req);
@@ -443,7 +461,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 					urlProtocolContext = req.getURLProtocolContext();
 				}
 				if(urlProtocolContext!=null){
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlProtocolContext.getUrlInvocazione_formBased());
+					String urlInvocazione = urlProtocolContext.getUrlInvocazione_formBased();
+					if(urlProtocolContext.getFunction()!=null){
+						urlInvocazione = "["+urlProtocolContext.getFunction()+"] "+urlInvocazione;
+					}
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlInvocazione);
 				}
 			}catch(Throwable t){}
 			try{

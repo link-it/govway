@@ -98,6 +98,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.IUniqueIdentifier;
@@ -1649,6 +1650,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.logErroreGenerico(e,"invocaPortaDelegata_engine("+tipoOperazione+").newRicezioneContenutiApplicativiContext()");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
 		}
+		context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
+		msgDiag.setPddContext(context.getPddContext(), protocolFactory);
+		try{
+			msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+		}catch(Exception e){
+			logCore.error("Errore generazione diagnostico di ingresso",e);
+		}
 		
 		// PddContext
 		PdDContext pddContext = context.getPddContext();
@@ -1706,7 +1714,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			NotifierInputStreamParams notifierInputStreamParams = preInRequestContext.getNotifierInputStreamParams();
 			context.setNotifierInputStreamParams(notifierInputStreamParams);
 			
-			
+			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
 			
 			
 			
@@ -1773,12 +1781,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			String credenzialiFornite = "";
 			if(credenziali!=null){
 				if (credenziali.getUsername() != null || credenziali.getSubject() != null) {
-					credenzialiFornite = "(";
-					if (credenziali.getUsername() != null)
-						credenzialiFornite = credenzialiFornite + " Basic Username: "+ credenziali.getUsername() + " ";
-					if (credenziali.getSubject() != null)
-						credenzialiFornite = credenzialiFornite + " SSL Subject: "+ credenziali.getSubject() + " ";
-					credenzialiFornite = credenzialiFornite + ") ";
+//					credenzialiFornite = "(";
+//					if (credenziali.getUsername() != null)
+//						credenzialiFornite = credenzialiFornite + " Basic Username: "+ credenziali.getUsername() + " ";
+//					if (credenziali.getSubject() != null)
+//						credenzialiFornite = credenzialiFornite + " SSL Subject: "+ credenziali.getSubject() + " ";
+//					credenzialiFornite = credenzialiFornite + ") ";
+					credenzialiFornite = credenziali.toString();
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenzialiFornite);
 			}
@@ -1824,6 +1833,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 
 			//	Messaggio di richiesta
+			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.inCorso");
+			Utilities.printFreeMemory("IntegrationManager - Pre costruzione richiesta");
 			if(idInvocazionePerRiferimento!=null){
 
 				stato = new OpenSPCoopStateful();
@@ -1874,6 +1885,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					}
 				}
 			}
+			Utilities.printFreeMemory("IntegrationManager - Post costruzione richiesta");
+			msgRequest.setProtocolName(protocolFactory.getProtocol());
 
 
 
@@ -1931,6 +1944,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION, SOAPVersion.SOAP11);
 			// Location
 			context.setFromLocation(ServletUtils.getLocation(req, credenziali));
+			
+			// Log elaborazione dati completata
+			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 			// Invocazione...
 			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context);

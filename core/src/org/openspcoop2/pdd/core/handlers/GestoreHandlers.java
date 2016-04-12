@@ -501,6 +501,30 @@ public class GestoreHandlers  {
 			return tipi;
 		}
 	}	
+	
+	private static void emitDiagnosticInvokeHandlerStart(Object object, MsgDiagnostico msgDiag,Logger log){
+		try{
+			if(object!=null && msgDiag!=null){
+				msgDiag.highDebug("["+object.getClass().getName()+"] invocazione in corso");
+			}
+		}catch(Throwable t){
+			if(log!=null){
+				log.error("Errore durante l'emissione del diagnostico: "+t.getMessage(),t);
+			}
+		}
+	}
+	private static void emitDiagnosticInvokeHandlerEnd(Object object, MsgDiagnostico msgDiag,Logger log){
+		try{
+			if(object!=null && msgDiag!=null){
+				msgDiag.highDebug("["+object.getClass().getName()+"] invocazione terminata");
+			}
+		}catch(Throwable t){
+			if(log!=null){
+				log.error("Errore durante l'emissione del diagnostico: "+t.getMessage(),t);
+			}
+		}
+	}
+	
 	public static void init(InitContext context,MsgDiagnostico msgDiag,Logger log) throws HandlerException{
 		
 		if(GestoreHandlers.initialize==false){
@@ -510,7 +534,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.initHandlers!=null){
 			for(int i=0; i<GestoreHandlers.initHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.initHandlers[i], msgDiag, log);
 					GestoreHandlers.initHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.initHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					
 					if(log!=null){
@@ -568,7 +594,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.preInRequestHandlers!=null){
 			for(int i=0; i<GestoreHandlers.preInRequestHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.preInRequestHandlers[i], msgDiag, log);
 					GestoreHandlers.preInRequestHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.preInRequestHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -603,7 +631,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.inRequestHandlers!=null){
 			for(int i=0; i<GestoreHandlers.inRequestHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.inRequestHandlers[i], msgDiag, log);
 					GestoreHandlers.inRequestHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.inRequestHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -638,7 +668,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.inRequestProtocolHandlers!=null){
 			for(int i=0; i<GestoreHandlers.inRequestProtocolHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.inRequestProtocolHandlers[i], msgDiag, log);
 					GestoreHandlers.inRequestProtocolHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.inRequestProtocolHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -673,7 +705,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.outRequestHandlers!=null){
 			for(int i=0; i<GestoreHandlers.outRequestHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.outRequestHandlers[i], msgDiag, log);
 					GestoreHandlers.outRequestHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.outRequestHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -708,7 +742,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.postOutRequestHandlers!=null){
 			for(int i=0; i<GestoreHandlers.postOutRequestHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.postOutRequestHandlers[i], msgDiag, log);
 					GestoreHandlers.postOutRequestHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.postOutRequestHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -743,7 +779,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.preInResponseHandlers!=null){
 			for(int i=0; i<GestoreHandlers.preInResponseHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.preInResponseHandlers[i], msgDiag, log);
 					GestoreHandlers.preInResponseHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.preInResponseHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -778,7 +816,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.inResponseHandlers!=null){
 			for(int i=0; i<GestoreHandlers.inResponseHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.inResponseHandlers[i], msgDiag, log);
 					GestoreHandlers.inResponseHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.inResponseHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -813,7 +853,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.outResponseHandlers!=null){
 			for(int i=0; i<GestoreHandlers.outResponseHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.outResponseHandlers[i], msgDiag, log);
 					GestoreHandlers.outResponseHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.outResponseHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -848,7 +890,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.postOutResponseHandlers!=null){
 			for(int i=0; i<GestoreHandlers.postOutResponseHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.postOutResponseHandlers[i], msgDiag, log);
 					GestoreHandlers.postOutResponseHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.postOutResponseHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Non sollevo l'eccezione poiche' dove viene chiamato questo handler e' finita la gestione, quindi l'eccezione non causa altri avvenimenti
 					// Registro solamento l'evento
@@ -879,7 +923,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.integrationManagerRequestHandlers!=null){
 			for(int i=0; i<GestoreHandlers.integrationManagerRequestHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.integrationManagerRequestHandlers[i], msgDiag, log);
 					GestoreHandlers.integrationManagerRequestHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.integrationManagerRequestHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
@@ -915,7 +961,9 @@ public class GestoreHandlers  {
 		if(GestoreHandlers.integrationManagerResponseHandlers!=null){
 			for(int i=0; i<GestoreHandlers.integrationManagerResponseHandlers.length; i++){
 				try{
+					emitDiagnosticInvokeHandlerStart(GestoreHandlers.integrationManagerResponseHandlers[i], msgDiag, log);
 					GestoreHandlers.integrationManagerResponseHandlers[i].invoke(context);
+					emitDiagnosticInvokeHandlerEnd(GestoreHandlers.integrationManagerResponseHandlers[i], msgDiag, log);
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;

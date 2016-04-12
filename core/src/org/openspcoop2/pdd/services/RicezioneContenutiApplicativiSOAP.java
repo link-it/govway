@@ -185,6 +185,12 @@ public class RicezioneContenutiApplicativiSOAP {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			pddContext = context.getPddContext();
 			
+			try{
+				msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico di ingresso",e);
+			}
+			
 			if(req instanceof DirectVMConnectorInMessage){
 				DirectVMConnectorInMessage vm = (DirectVMConnectorInMessage) req;
 				if(vm.getDirectVMProtocolInfo()!=null){
@@ -235,6 +241,9 @@ public class RicezioneContenutiApplicativiSOAP {
 			
 			
 			/* ------------ Controllo ContentType -------------------- */
+			
+			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
+			
 			String contentTypeReq = req.getContentType();
 			versioneSoap = ServletUtils.getVersioneSoap(logCore,contentTypeReq);
 			
@@ -296,9 +305,11 @@ public class RicezioneContenutiApplicativiSOAP {
 				String soapAction = req.getSOAPAction(versioneSoap, contentTypeReq);
 				
 				/* ------------ Costruzione Messaggio -------------------- */
-				Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre costruzione richiesta");
+				msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.inCorso");
+				Utilities.printFreeMemory("RicezioneContenutiApplicativi - Pre costruzione richiesta");
 				requestMessage = req.getRequest(notifierInputStreamParams, contentTypeReq);
-				Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Post costruzione richiesta");
+				Utilities.printFreeMemory("RicezioneContenutiApplicativi - Post costruzione richiesta");
+				requestMessage.setProtocolName(protocolFactory.getProtocol());
 				
 				/* ------------ Controllo MustUnderstand -------------------- */
 				String mustUnderstandError = ServletUtils.checkMustUnderstand((SOAPMessage) requestMessage,protocolFactory);
@@ -334,9 +345,11 @@ public class RicezioneContenutiApplicativiSOAP {
 				context.setGestioneRisposta(true); // siamo in una servlet, la risposta deve essere aspettata
 				context.setInvocazionePDPerRiferimento(false); // la PD con questa servlet non effettuera' mai invocazioni per riferimento.
 				context.setMessageRequest(requestMessage);
-				
 				context.setUrlProtocolContext(urlProtocolContext);
 				context.setMsgDiagnostico(msgDiag);
+
+				// Log elaborazione dati completata
+				msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 				// Invocazione...
 				if(mustUnderstandError==null && soapEnvelopeNamespaceVersionMismatch==null){
@@ -465,7 +478,11 @@ public class RicezioneContenutiApplicativiSOAP {
 					urlProtocolContext = req.getURLProtocolContext();
 				}
 				if(urlProtocolContext!=null){
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlProtocolContext.getUrlInvocazione_formBased());
+					String urlInvocazione = urlProtocolContext.getUrlInvocazione_formBased();
+					if(urlProtocolContext.getFunction()!=null){
+						urlInvocazione = "["+urlProtocolContext.getFunction()+"] "+urlInvocazione;
+					}
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlInvocazione);
 				}
 			}catch(Throwable t){}
 			try{

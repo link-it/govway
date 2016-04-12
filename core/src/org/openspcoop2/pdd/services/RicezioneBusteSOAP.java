@@ -180,6 +180,12 @@ public class RicezioneBusteSOAP  {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			pddContext = context.getPddContext();
 			
+			try{
+				msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico di ingresso",e);
+			}
+			
 			protocolErroreBuilder = new Imbustamento(logCore, protocolFactory);
 			
 			if(req instanceof DirectVMConnectorInMessage){
@@ -238,6 +244,9 @@ public class RicezioneBusteSOAP  {
 			
 			
 			/* ------------ Controllo ContentType -------------------- */
+			
+			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
+			
 			String contentTypeReq = req.getContentType();
 			versioneSoap = ServletUtils.getVersioneSoap(logCore,contentTypeReq);
 			
@@ -297,7 +306,10 @@ public class RicezioneBusteSOAP  {
 				String soapAction = req.getSOAPAction(versioneSoap, contentTypeReq);
 				
 				/* ------------ Costruzione Messaggio -------------------- */
+				msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.inCorso");
+				Utilities.printFreeMemory("RicezioneBuste - Pre costruzione richiesta");
 				requestMessage = req.getRequest(notifierInputStreamParams, contentTypeReq);
+				Utilities.printFreeMemory("RicezioneBuste - Post costruzione richiesta");
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
 				
 				/* ------------ Controllo MustUnderstand -------------------- */
@@ -349,6 +361,9 @@ public class RicezioneBusteSOAP  {
 				context.setUrlProtocolContext(urlProtocolContext);
 				context.setMsgDiagnostico(msgDiag);
 	
+				// Log elaborazione dati completata
+				msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
+				
 				// Controllo se c'è stato un errore nel bypass dei MustUnderstand
 				if(mustUnderstandError==null && soapEnvelopeNamespaceVersionMismatch==null){
 					// Processo la richiesta e ottengo la risposta
@@ -482,7 +497,11 @@ public class RicezioneBusteSOAP  {
 					urlProtocolContext = req.getURLProtocolContext();
 				}
 				if(urlProtocolContext!=null){
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlProtocolContext.getUrlInvocazione_formBased());
+					String urlInvocazione = urlProtocolContext.getUrlInvocazione_formBased();
+					if(urlProtocolContext.getFunction()!=null){
+						urlInvocazione = "["+urlProtocolContext.getFunction()+"] "+urlInvocazione;
+					}
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlInvocazione);
 				}
 			}catch(Throwable t){}
 			try{
