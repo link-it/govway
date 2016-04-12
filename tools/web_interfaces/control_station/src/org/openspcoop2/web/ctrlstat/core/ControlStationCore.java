@@ -208,6 +208,7 @@ public class ControlStationCore {
 	/** Impostazioni grafiche */
 	private String consoleNomeSintesi = null;
 	private String consoleNomeEsteso = null;
+	private String consoleNomeEstesoSuffix = null;
 	private String consoleCSS = null;
 	private String consoleIMGNomeApplicazione = null;
 	private String consoleLanguage = null;
@@ -217,7 +218,12 @@ public class ControlStationCore {
 		return this.consoleNomeSintesi;
 	}
 	public String getConsoleNomeEsteso() {
-		return this.consoleNomeEsteso;
+		if(this.consoleNomeEstesoSuffix!=null){
+			return this.consoleNomeEsteso+this.consoleNomeEstesoSuffix;
+		}
+		else{
+			return this.consoleNomeEsteso;
+		}
 	}
 	public String getConsoleCSS() {
 		return this.consoleCSS;
@@ -960,6 +966,7 @@ public class ControlStationCore {
 		/** Impostazioni grafiche */
 		this.consoleNomeSintesi = core.consoleNomeSintesi;
 		this.consoleNomeEsteso = core.consoleNomeEsteso;
+		this.consoleNomeEstesoSuffix = core.consoleNomeEstesoSuffix;
 		this.consoleCSS = core.consoleCSS;
 		this.consoleIMGNomeApplicazione = core.consoleIMGNomeApplicazione;
 		this.consoleLanguage = core.consoleLanguage;
@@ -1216,6 +1223,7 @@ public class ControlStationCore {
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
 			this.consoleNomeEsteso = consoleProperties.getConsoleNomeEsteso();
+			this.consoleNomeEstesoSuffix = consoleProperties.getConsoleNomeEstesoSuffix();
 			this.consoleCSS = consoleProperties.getConsoleCSS();
 			this.consoleIMGNomeApplicazione = consoleProperties.getConsoleImmagineNomeApplicazione();
 			this.consoleLanguage = consoleProperties.getConsoleLanguage();

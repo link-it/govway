@@ -61,6 +61,7 @@ public class LoaderCore{
 	/** Impostazioni grafiche */
 	private String loaderNomeSintesi = null;
 	private String loaderNomeEsteso = null;
+	private String loaderNomeEstesoSuffix = null;
 	private String loaderCSS = null;
 	private String loaderIMGNomeApplicazione = null;
 	private String loaderLanguage = null;
@@ -69,7 +70,12 @@ public class LoaderCore{
 		return this.loaderNomeSintesi;
 	}
 	public String getLoaderNomeEsteso() {
-		return this.loaderNomeEsteso;
+		if(this.loaderNomeEstesoSuffix!=null){
+			return this.loaderNomeEsteso+this.loaderNomeEstesoSuffix;
+		}
+		else{
+			return this.loaderNomeEsteso;
+		}
 	}
 	public String getLoaderCSS() {
 		return this.loaderCSS;
@@ -161,6 +167,7 @@ public class LoaderCore{
 			// Impostazioni grafiche
 			this.loaderNomeSintesi = loaderProperties.getConsoleNomeSintesi();
 			this.loaderNomeEsteso = loaderProperties.getConsoleNomeEsteso();
+			this.loaderNomeEstesoSuffix = loaderProperties.getConsoleNomeEstesoSuffix();
 			this.loaderCSS = loaderProperties.getConsoleCSS();
 			this.loaderIMGNomeApplicazione = loaderProperties.getConsoleImmagineNomeApplicazione();
 			this.loaderLanguage = loaderProperties.getConsoleLanguage();
