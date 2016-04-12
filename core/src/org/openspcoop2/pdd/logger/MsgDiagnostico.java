@@ -27,6 +27,7 @@ package org.openspcoop2.pdd.logger;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -118,9 +119,18 @@ public class MsgDiagnostico {
 	/** Generatore di date casuali*/
 	private GeneratoreCasualeDate generatoreDateCasuali = null;
 	
+	/** Properties da aggiungere ai diagnostici (utili nelle implementazioni handler) */
+	private Hashtable<String,String> properties = new Hashtable<String, String>();		
+	public Hashtable<String, String> getProperties() {
+		return this.properties;
+	}
+
 	/** Keyword per i log personalizzati */
-	private Hashtable<String,String> keywordLogPersonalizzati = new Hashtable<String, String>();
-	
+	private Hashtable<String,String> keywordLogPersonalizzati = new Hashtable<String, String>();	
+	public Hashtable<String, String> getKeywordLogPersonalizzati() {
+		return this.keywordLogPersonalizzati;
+	}
+
 	/** Stati */
 	private List<IState> states = new ArrayList<IState>();
 	
@@ -1872,6 +1882,14 @@ public class MsgDiagnostico {
 						msgDiagnostico.addProperty(key[j], (String)o);
 					}
 				}
+			}
+		}
+		
+		if(this.properties!=null){
+			Enumeration<String> keys = this.properties.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				msgDiagnostico.addProperty(key, this.properties.get(key));
 			}
 		}
 		
