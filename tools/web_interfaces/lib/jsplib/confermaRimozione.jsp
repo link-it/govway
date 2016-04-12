@@ -57,6 +57,7 @@ function Annulla() {
 <title><%= gd.getTitle() %></title>
 <link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
 <script type="text/javascript" src="js/webapps.js"></script>
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
 <table border=0 cellspacing=0 cellpadding=0 width=100%>

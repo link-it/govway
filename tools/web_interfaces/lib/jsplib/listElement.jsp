@@ -232,7 +232,7 @@ function Esporta(tipo) {
 <!--Funzioni di utilita -->
 <script type="text/javascript" src="js/jquery.confirm-1.2.js"></script>
 <script type="text/javascript" src="js/utils.js"></script>
-
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
 <table border=0 cellspacing=0 cellpadding=0 width=100%>

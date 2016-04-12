@@ -52,7 +52,7 @@ function exit() {
   window.close();
 }
 </SCRIPT>
-
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 
 <body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
