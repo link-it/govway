@@ -550,7 +550,7 @@ if (pd.getMode().equals("view")) {
   </tr>
   <%
 } else {
-  if (pd.getMode().equals("view-noeditbutton")) {
+  if (pd.getMode().equals("view-noeditbutton") || pd.getMode().equals("view-nobutton") ) {
     %><tr>
     <td colspan=2 class=table01footerNoButtons><img src=images/spacer.gif></td>
     </tr><%

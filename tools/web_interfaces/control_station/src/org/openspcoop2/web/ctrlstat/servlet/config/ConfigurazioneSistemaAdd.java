@@ -34,6 +34,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
@@ -91,6 +92,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			String nomeCache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE);
 			String nomeMetodo = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO);
 			
+			String nomeParametroPostBack = ServletUtils.getPostBackElementName(request);
+			
 			
 			if(alias==null || "".equals(alias)){
 				
@@ -131,6 +134,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						
 			String descrizioneAlias = confCore.getJmxPdD_descrizione(alias);
 		
+			String messagePerOperazioneEffettuata = null;
+			
 			if(nomeCache!=null && !"".equals(nomeCache) &&
 					nomeMetodo!=null && !"".equals(nomeMetodo)){
 				
@@ -185,7 +190,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 								bf.append("Cache ["+cache+"]: "+result);
 							}
 						}
-						pd.setMessage(bf.toString());
+						messagePerOperazioneEffettuata = bf.toString();
 					
 					}
 				}
@@ -194,13 +199,80 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
 								nomeCache,
 								nomeMetodo);
-						pd.setMessage("Cache ["+nomeCache+"]: "+result);
+						messagePerOperazioneEffettuata = "Cache ["+nomeCache+"]: "+result;
 					}catch(Exception e){
 						String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"]: "+e.getMessage();
 						ControlStationCore.getLog().error(errorMessage,e);
-						pd.setMessage(errorMessage);
+						messagePerOperazioneEffettuata = errorMessage;
 					}
 				}
+			}
+			
+			if(nomeParametroPostBack!=null && !"".equals(nomeParametroPostBack)){
+			
+				String nomeAttributo = null;
+				Object nuovoStato = null;
+				String tipo = null;
+				try{
+					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias);
+						nuovoStato = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+						tipo = "livello di severità dei diagnostici";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias);
+						nuovoStato = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+						tipo = "livello di severità log4j dei diagnostici";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE));
+						tipo = "stato del tracciamento delle buste";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO));
+						tipo = "stato del dump applicativo";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD));
+						tipo = "stato del dump binario della Porta Delegata";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias);
+						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA));
+						tipo = "stato del dump binario della Porta Applicativa";
+					}
+				
+					if(nomeAttributo!=null){
+						confCore.setJMXAttribute(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+							nomeAttributo, 
+							nuovoStato);
+						String tmp = "Configurazione aggiornata con successo ("+tipo+"): "+nuovoStato;
+						tmp += ConfigurazioneCostanti.TEMPORANEE;
+						if(messagePerOperazioneEffettuata!=null){
+							messagePerOperazioneEffettuata+="\n"+tmp;
+						}
+						else{
+							messagePerOperazioneEffettuata = tmp;
+						}
+					}
+				}catch(Exception e){
+					String errorMessage = "Errore durante l'aggiornamento ("+tipo+"): "+e.getMessage();
+					ControlStationCore.getLog().error(errorMessage,e);
+					if(messagePerOperazioneEffettuata!=null){
+						messagePerOperazioneEffettuata+="\n"+errorMessage;
+					}
+					else{
+						messagePerOperazioneEffettuata = errorMessage;
+					}
+				}
+			}
+			
+			if(messagePerOperazioneEffettuata!=null){
+				pd.setMessage(messagePerOperazioneEffettuata);
 			}
 			
 			// setto la barra del titolo
@@ -233,7 +305,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 
 			pd.setDati(dati);
 
-			pd.disableEditMode();
+			// Il livello di log è modificabile!
+			pd.disableOnlyButton();
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

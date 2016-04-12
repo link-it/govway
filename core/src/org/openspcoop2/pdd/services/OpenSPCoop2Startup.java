@@ -67,6 +67,7 @@ import org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema;
 import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
+import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -1175,7 +1176,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			OpenSPCoop2Logger.getLoggerOpenSPCoopConfigurazioneSistema().
 				info(informazioniStatoPorta.formatStatoPorta(infoConfigSistema.getVersionePdD(), 
 						infoConfigSistema.getVersioneBaseDati(), infoConfigSistema.getDirectoryConfigurazione(), 
-						infoConfigSistema.getVersioneJava(), infoConfigSistema.getInformazioniDatabase(),
+						infoConfigSistema.getVersioneJava(), 
+						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici(),true),
+						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici(),true),
+						OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato, OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato, OpenSPCoop2Logger.loggerIntegrationManagerAbilitato,
+						configurazionePdDReader.tracciamentoBuste(), configurazionePdDReader.dumpMessaggi(),
+						configurazionePdDReader.dumpBinarioPD(), configurazionePdDReader.dumpBinarioPA(),
+						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
+						infoConfigSistema.getInformazioniDatabase(),
 						infoConfigSistema.getPluginProtocols(), 
 						informazioniStatoPortaCache.toArray(new InformazioniStatoPortaCache[1])));
 

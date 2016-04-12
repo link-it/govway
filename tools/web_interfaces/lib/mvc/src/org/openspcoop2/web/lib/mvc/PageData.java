@@ -109,6 +109,9 @@ public class PageData {
     public void disableEditMode() {
     	this.mode = Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME;
     }
+    public void disableOnlyButton() {
+    	this.mode = Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON;
+    }
     public String getMode() {
 	return this.mode;
     }

@@ -626,6 +626,14 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.dumpMessaggi(this.getConnection());
 	}
 	
+	public boolean dumpBinarioPD(){
+		return this.configurazionePdDReader.dumpBinarioPD(this.getConnection());
+	}
+	
+	public boolean dumpBinarioPA(){
+		return this.configurazionePdDReader.dumpBinarioPA(this.getConnection());
+	}
+	
 	public boolean tracciamentoBuste(){
 		return this.configurazionePdDReader.tracciamentoBuste(this.getConnection());
 	}

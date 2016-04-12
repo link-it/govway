@@ -1,3 +1,10 @@
+2016-04-11  Andrea Poli <apoli@link.it>
+
+	Aggiunto dump binario delle informazioni transitate su PD e PA
+
+	ALTER TABLE configurazione ADD COLUMN tracciamento_dump_bin_pd VARCHAR(255); 
+	ALTER TABLE configurazione ADD COLUMN tracciamento_dump_bin_pa VARCHAR(255);
+
 2015-12-07  Andrea Poli <apoli@link.it>
 
 	Modificata PK sulle tabelle 'ID_MESSAGGIO', 'ID_MESSAGGIO_RELATIVO', 'ID_MESSAGGIO_PRG' e 'ID_MESSAGGIO_RELATIVO_PRG'

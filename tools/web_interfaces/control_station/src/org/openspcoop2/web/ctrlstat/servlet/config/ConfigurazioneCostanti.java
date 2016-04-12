@@ -266,7 +266,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA = "Propriet&agrave; di Sistema";
 	
-	public final static String LABEL_CONFIGURAZIONE_SISTEMA = "Configurazione di Sistema";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA =  "Runtime"; //"Configurazione di Sistema";
 	
 	public final static String LABEL_CONFIGURAZIONE_DESTINAZIONI = "Destinazioni";
 	public final static String LABEL_CONFIGURAZIONE_ROTTA = "Rotta";
@@ -300,6 +300,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI = "Informazioni Generali";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA = "Informazioni Diagnostica";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO = "Informazioni Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "Informazioni Database";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Protocolli";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
@@ -341,10 +343,18 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_VALIDMAN = "validman";
 	public final static String PARAMETRO_CONFIGURAZIONE_GESTMAN = "gestman";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE = "registrazioneTracce";
-	public final static String PARAMETRO_CONFIGURAZIONE_DUMP = "dump";
+	public final static String PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO = "dump";
+	public final static String PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD = "dumpConnettorePD";
+	public final static String PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA = "dumpConnettorePA";
 	public final static String PARAMETRO_CONFIGURAZIONE_XSD = "xsd";
 	public final static String PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE = "tipo_validazione";
 	public final static String PARAMETRO_CONFIGURAZIONE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA = "statoLog4jDiagnostica";
+	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP = "statoLog4jOpenspcoop";
+	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER = "statoLog4jIntegrationManager";
+	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO = "statoLog4jTracciamento";
+	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP = "statoLog4jDump";
 
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY = "statocacheRegistry";
 	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY = "dimensionecacheRegistry";
@@ -416,7 +426,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_VALIDMAN = "Manifest attachments";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN = "Gestione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE = "Buste";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP = "Dump";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO = "Dump Applicativo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD = "Dump Binario Porta Delegata";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA = "Dump Binario Porta Applicativa";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_XSD = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE = "Stato";
@@ -426,6 +438,12 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Item Life Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "LRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "MRU";
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA = "Log4J (openspcoop2_msgDiagnostico.log)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP = "Log4J (openspcoop2.log)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER = "Log4J (openspcoop2_integrationManager.log)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO = "Log4J (openspcoop2_tracciamento.log)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP = "Log4J (openspcoop2_dump.log)";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "Porta di Dominio";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "Versione PdD";
@@ -441,6 +459,7 @@ public class ConfigurazioneCostanti {
 	
 	
 	public final static String RIAVVIO = "<BR><b>Attenzione:</b> Le modifiche saranno operative al prossimo riavvio della PdD";
+	public final static String TEMPORANEE = "<BR><b>Attenzione:</b> Le modifiche saranno operative fino al prossimo riavvio della PdD";
 	public final static String LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO = "Configurazione Generale modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_REGISTRO+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING+" modificata con successo"+RIAVVIO;

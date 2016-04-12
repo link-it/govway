@@ -5254,11 +5254,17 @@ public class RicezioneBuste {
 				if(openspcoopstate!=null){
 					openspcoopstate.forceFinallyReleaseResource();
 				}
-			}catch(Exception e){
-				if(msgDiag!=null)
-					msgDiag.logErroreGenerico(e, "Rilascio risorsa");
-				else
-					logCore.error("Rilascio risorsa: "+e.getMessage(),e);	
+			}catch(Throwable e){
+				if(msgDiag!=null){
+					try{
+						msgDiag.logErroreGenerico(e, "Rilascio risorsa");
+					}catch(Throwable eLog){
+						logCore.error("Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
+					}
+				}
+				else{
+					logCore.error("Rilascio risorsa: "+e.getMessage(),e);
+				}
 			}
 		}
 		

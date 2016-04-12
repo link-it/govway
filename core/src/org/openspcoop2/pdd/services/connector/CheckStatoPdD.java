@@ -109,18 +109,44 @@ public class CheckStatoPdD extends HttpServlet {
 			}
 			
 			String attributeName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME);
+			String attributeValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_VALUE);
+			String attributeBooleanValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE);
 			String methodName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME);
 			if(attributeName!=null){
-				try{
-					Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.getAttribute(resourceName, attributeName);
-					res.getOutputStream().write(value.toString().getBytes());	
-				}catch(Exception e){
-					String msg = "Lettura attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
-					log.error("[CheckStatoPdD] "+msg,e);
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());	
-					return;
+				if(attributeValue!=null || attributeBooleanValue!=null){
+					try{
+						Object v = attributeValue;
+						if(attributeBooleanValue!=null){
+							v = Boolean.parseBoolean(attributeBooleanValue);
+						}
+						OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.setAttribute(resourceName, attributeName, v);	
+					}catch(Exception e){
+						String msg = "Aggiornamento attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita (valore:"+attributeValue+"): "+e.getMessage();
+						log.error("[CheckStatoPdD] "+msg,e);
+						res.setStatus(500);
+						res.getOutputStream().write(msg.getBytes());	
+						return;
+					}
 				}
+				else{
+					try{
+						Object value = OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.getAttribute(resourceName, attributeName);
+						res.getOutputStream().write(value.toString().getBytes());	
+					}catch(Exception e){
+						String msg = "Lettura attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
+						log.error("[CheckStatoPdD] "+msg,e);
+						res.setStatus(500);
+						res.getOutputStream().write(msg.getBytes());	
+						return;
+					}
+				}
+			}
+			else if(attributeValue!=null){
+				String msg = "Lettura risorsa ["+resourceName+"] non effettuata, fornito un valore di attributo senza aver indicato il nome";
+				log.error("[CheckStatoPdD] "+msg);
+				res.setStatus(500);
+				res.getOutputStream().write(msg.getBytes());
+				return;
 			}
 			else if(methodName!=null){
 				

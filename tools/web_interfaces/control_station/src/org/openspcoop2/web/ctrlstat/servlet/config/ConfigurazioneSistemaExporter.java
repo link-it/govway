@@ -150,6 +150,116 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String livelloSeveritaDiagnostici = null;
+		try{
+			livelloSeveritaDiagnostici = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura del livello di severità dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
+			livelloSeveritaDiagnostici = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String livelloSeveritaDiagnosticiLog4j = null;
+		try{
+			livelloSeveritaDiagnosticiLog4j = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura del livello di severità log4j dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
+			livelloSeveritaDiagnosticiLog4j = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String log4j_diagnostica = null;
+		try{
+			log4j_diagnostica = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
+			log4j_diagnostica = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String log4j_openspcoop = null;
+		try{
+			log4j_openspcoop = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2.log (jmxResourcePdD): "+e.getMessage(),e);
+			log4j_openspcoop = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String log4j_integrationManager = null;
+		try{
+			log4j_integrationManager = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
+			log4j_integrationManager = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String tracciamento = null;
+		try{
+			tracciamento = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del tracciamento buste (jmxResourcePdD): "+e.getMessage(),e);
+			tracciamento = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String dumpApplicativo = null;
+		try{
+			dumpApplicativo = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del dump applicativo (jmxResourcePdD): "+e.getMessage(),e);
+			dumpApplicativo = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String dumpPD = null;
+		try{
+			dumpPD = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del dump binario della Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
+			dumpPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String dumpPA = null;
+		try{
+			dumpPA = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del dump binario della Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
+			dumpPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String log4j_tracciamento = null;
+		try{
+			log4j_tracciamento = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
+			log4j_tracciamento = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String log4j_dump = null;
+		try{
+			log4j_dump = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_dump.log (jmxResourcePdD): "+e.getMessage(),e);
+			log4j_dump = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String infoDatabase = null;
 		try{
 			infoDatabase = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -250,7 +360,12 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, infoDatabase, infoProtocolli,
+		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, 
+				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
+				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
+				"true".equals(tracciamento), "true".equals(dumpApplicativo), "true".equals(dumpPD), "true".equals(dumpPA),
+				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
+				infoDatabase, infoProtocolli,
 				statoConnessioniDB, statoConnessioniPD, statoConnessioniPA, statoConnessioniJMS,
 				cacheArray);
 	}

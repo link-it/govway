@@ -30,6 +30,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -1540,7 +1541,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String validman = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			String gestman = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTMAN);
 			String registrazioneTracce = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-			String dump = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP);
+			String dumpApplicativo = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+			String dumpPD = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+			String dumpPA = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 
 			// Campi obbligatori
 			if (inoltromin.equals("")) {
@@ -1613,9 +1616,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Buste dev'essere abilitato o disabilitato");
 				return false;
 			}
-			if (!dump.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-					!dump.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-				this.pd.setMessage("Dump dev'essere abilitato o disabilitato");
+			if (!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+					!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+				this.pd.setMessage("Dump Applicativo dev'essere abilitato o disabilitato");
+				return false;
+			}
+			if (!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+					!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+				this.pd.setMessage("Dump Binario Porta Delegata dev'essere abilitato o disabilitato");
+				return false;
+			}
+			if (!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+					!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+				this.pd.setMessage("Dump Binario Porta Applicativa dev'essere abilitato o disabilitato");
 				return false;
 			}
 
@@ -2515,8 +2528,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String controllo, String severita, String severita_log4j,
 			String integman, String nomeintegman, String profcoll,
 			String connessione, String utilizzo, String validman,
-			String gestman, String registrazioneTracce, String dump, String xsd,
-			String tipoValidazione, String confPers, Configurazione configurazione,
+			String gestman, String registrazioneTracce, String dumpApplicativo, String dumpPD, String dumpPA,
+			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
 			Vector<DataElement> dati, String applicaMTOM) {
 		DataElement de = new DataElement();
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -2650,11 +2663,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		de = new DataElement();
 		//		de.setLabel("Livello Severita Log4J");
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		de.setValues(tipoMsg);
-		de.setSelected(severita_log4j);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(severita_log4j);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(severita_log4j);
+		}
 		dati.addElement(de);
 
 		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -2688,21 +2707,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() || !InterfaceType.STANDARD.equals(user.getInterfaceType())){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 
 		String[] tipoBuste = { 
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setValues(tipoBuste);
-		de.setSelected(registrazioneTracce);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoBuste);
+			de.setSelected(registrazioneTracce);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(registrazioneTracce);
+		}
 		dati.addElement(de);
 
 		String[] tipoDump = {
@@ -2710,11 +2737,53 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP);
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP);
-		de.setValues(tipoDump);
-		de.setSelected(dump);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoDump);
+			de.setSelected(dumpApplicativo);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(dumpApplicativo);
+		}
+		dati.addElement(de);
+		
+		String[] tipoDumpConnettorePD = {
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		if(!InterfaceType.STANDARD.equals(user.getInterfaceType())){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoDumpConnettorePD);
+			de.setSelected(dumpPD);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(dumpPD);
+		}
+		dati.addElement(de);
+		
+		String[] tipoDumpConnettorePA = {
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		if(!InterfaceType.STANDARD.equals(user.getInterfaceType())){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoDumpConnettorePA);
+			de.setSelected(dumpPA);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(dumpPA);
+		}
 		dati.addElement(de);
 
 		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -2991,6 +3060,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public Vector<DataElement> addConfigurazioneSistema(Vector<DataElement> dati, String alias) throws Exception {
 		
 		DataElement de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(alias);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER,
 				new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER,alias));
@@ -3062,6 +3138,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versionePdD = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
+			if(this.isErroreHttp(versionePdD, "versione della PdD")){
+				// e' un errore
+				versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della versione della PdD (jmxResourcePdD): "+e.getMessage(),e);
 			versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -3080,10 +3160,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versioneBaseDati = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
-			versioneBaseDati = versioneBaseDati.replaceAll("\n", "<br/>");
+			if(this.isErroreHttp(versioneBaseDati, "versione della base dati")){
+				// e' un errore
+				versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			else{
+				versioneBaseDati = versioneBaseDati.replaceAll("\n", "<br/>");
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
 			versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		if(versioneBaseDati!=null){
+			versioneBaseDati = StringEscapeUtils.escapeHtml(versioneBaseDati);
 		}
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
@@ -3099,10 +3188,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			confDir = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
-			confDir = confDir.replaceAll("\n", "<br/>");
+			if(this.isErroreHttp(confDir, "directory di configurazione")){
+				// e' un errore
+				confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			else{
+				confDir = confDir.replaceAll("\n", "<br/>");
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della directory di configurazione (jmxResourcePdD): "+e.getMessage(),e);
 			confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		if(confDir!=null){
+			confDir = StringEscapeUtils.escapeHtml(confDir);
 		}
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
@@ -3118,9 +3216,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versioneJava = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
+			if(this.isErroreHttp(versioneJava, "versione di java")){
+				// e' un errore
+				versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della versione di java (jmxResourcePdD): "+e.getMessage(),e);
 			versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		if(versioneJava!=null){
+			versioneJava = StringEscapeUtils.escapeHtml(versioneJava);
 		}
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
@@ -3129,6 +3234,326 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
 		de.setSize(this.getSize());
 		dati.addElement(de);
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+		try{
+			String livelloSeverita = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
+			
+			String[] tipoMsg = { LogLevels.LIVELLO_OFF, LogLevels.LIVELLO_FATAL, LogLevels.LIVELLO_ERROR_PROTOCOL, LogLevels.LIVELLO_ERROR_INTEGRATION, 
+					LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
+					LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
+					LogLevels.LIVELLO_ALL};
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+			de.setType(DataElementType.SELECT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+			de.setValues(tipoMsg);
+			de.setSelected(livelloSeverita);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		try{
+			String livelloSeverita = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
+			
+			String[] tipoMsg = { LogLevels.LIVELLO_OFF, LogLevels.LIVELLO_FATAL, LogLevels.LIVELLO_ERROR_PROTOCOL, LogLevels.LIVELLO_ERROR_INTEGRATION, 
+					LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
+					LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
+					LogLevels.LIVELLO_ALL};
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+			if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoMsg);
+				de.setSelected(livelloSeverita);
+				de.setPostBack(true);
+			}
+			else{
+				de.setType(DataElementType.TEXT);
+				de.setValue(livelloSeverita);
+			}
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici log4j (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		try{
+			String log4j_diagnostica = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
+			boolean enable = "true".equals(log4j_diagnostica);
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.TEXT);
+			de.setValue(v);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		try{
+			String log4j_openspcoop = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
+			boolean enable = "true".equals(log4j_openspcoop);
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.TEXT);
+			de.setValue(v);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2.log (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		try{
+			String log4j_integrationManager = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
+			boolean enable = "true".equals(log4j_integrationManager);
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.TEXT);
+			de.setValue(v);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+
+		
+		
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoMsg);
+				de.setSelected(v);
+				de.setPostBack(true);
+			}
+			else{
+				de.setType(DataElementType.TEXT);
+				de.setValue(v);
+			}
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul tracciamento (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoMsg);
+				de.setSelected(v);
+				de.setPostBack(true);
+			}
+			else{
+				de.setType(DataElementType.TEXT);
+				de.setValue(v);
+			}
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul dump applicativo (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+			
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+			
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		try{
+			String log4j_tracciamento = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
+			boolean enable = "true".equals(log4j_tracciamento);
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.TEXT);
+			de.setValue(v);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+		try{
+			String log4j_dump = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
+			boolean enable = "true".equals(log4j_dump);
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.TEXT);
+			de.setValue(v);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_dump.log (jmxResourcePdD): "+e.getMessage(),e);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+
 		
 		
 		
@@ -3142,6 +3567,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
+			if(this.isErroreHttp(tmp, "informazioni sul database")){
+				// e' un errore
+				tmp = null;
+			}
 			infoDatabase = tmp.split("\n");
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
@@ -3199,6 +3628,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		}
 		else{
+			boolean addProtocollo = false;
 			Hashtable<String, String> map = new Hashtable<String, String>();
 			for (int i = 0; i < infoProtocolli.length; i++) {
 				
@@ -3223,6 +3653,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			int index = 0;
 			while (protocolli.hasMoreElements()) {
 				String protocollo = (String) protocolli.nextElement();
+				
+				addProtocollo = true;
 				
 				de = new DataElement();
 				de.setLabel(protocollo);
@@ -3249,6 +3681,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				dati.addElement(de);
 				
 				index++;
+			}
+			
+			if(!addProtocollo){
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+				de.setType(DataElementType.NOTE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
 			}
 		}
 		
@@ -3359,6 +3799,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
+			if(this.isErroreHttp(stato, "stato delle connessioni al database")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura dello stato delle connessioni al database (jmxResourcePdD): "+e.getMessage(),e);
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -3387,6 +3831,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
+			if(this.isErroreHttp(stato, "stato delle connessioni http verso le PD")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PD (jmxResourcePdD): "+e.getMessage(),e);
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -3416,6 +3864,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
+			if(this.isErroreHttp(stato, "stato delle connessioni http verso le PA")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura dello stato delle connessioni http verso le PA (jmxResourcePdD): "+e.getMessage(),e);
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -3444,6 +3896,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
+			if(this.isErroreHttp(stato, "stato delle connessioni JMS")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
@@ -3464,4 +3920,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
+	private boolean isErroreHttp(String stato, String risorsa){
+		if(stato!=null && stato.startsWith("[httpCode ")){
+			this.log.error("Errore durante la lettura della risorsa ["+risorsa+"]: "+stato);
+			return true;
+		}
+		return false;
+	}
 }

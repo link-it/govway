@@ -121,7 +121,9 @@ public final class ConfigurazioneGenerale extends Action {
 			String validman = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			String gestman = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTMAN);
 			String registrazioneTracce = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-			String dump = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP);
+			String dumpApplicativo = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+			String dumpPD = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+			String dumpPA = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 			String xsd = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_XSD);
 			String tipoValidazione = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
 			String applicaMTOM = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_APPLICA_MTOM);
@@ -211,7 +213,8 @@ public final class ConfigurazioneGenerale extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
-							connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
+							connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
+							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -324,11 +327,15 @@ public final class ConfigurazioneGenerale extends Action {
 
 				if (newConfigurazione.getTracciamento() != null) {
 					newConfigurazione.getTracciamento().setBuste(StatoFunzionalita.toEnumConstant(registrazioneTracce));
-					newConfigurazione.getTracciamento().setDump(StatoFunzionalita.toEnumConstant(dump));
+					newConfigurazione.getTracciamento().setDump(StatoFunzionalita.toEnumConstant(dumpApplicativo));
+					newConfigurazione.getTracciamento().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
+					newConfigurazione.getTracciamento().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
 				} else {
 					Tracciamento t = new Tracciamento();
 					t.setBuste(StatoFunzionalita.toEnumConstant(registrazioneTracce));
-					t.setDump(StatoFunzionalita.toEnumConstant(dump));
+					t.setDump(StatoFunzionalita.toEnumConstant(dumpApplicativo));
+					t.setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
+					t.setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
 					newConfigurazione.setTracciamento(t);
 				}
 
@@ -395,7 +402,8 @@ public final class ConfigurazioneGenerale extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
-						connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
+						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
+						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -468,7 +476,11 @@ public final class ConfigurazioneGenerale extends Action {
 				if(configurazione.getTracciamento().getBuste()!=null)
 					registrazioneTracce = configurazione.getTracciamento().getBuste().toString();
 				if(configurazione.getTracciamento().getDump()!=null)
-					dump = configurazione.getTracciamento().getDump().toString();
+					dumpApplicativo = configurazione.getTracciamento().getDump().toString();
+				if(configurazione.getTracciamento().getDumpBinarioPortaDelegata()!=null)
+					dumpPD = configurazione.getTracciamento().getDumpBinarioPortaDelegata().toString();
+				if(configurazione.getTracciamento().getDumpBinarioPortaApplicativa()!=null)
+					dumpPA = configurazione.getTracciamento().getDumpBinarioPortaApplicativa().toString();
 				if (configurazione.getValidazioneContenutiApplicativi() != null) {
 					if(configurazione.getValidazioneContenutiApplicativi().getStato()!=null)
 						xsd = configurazione.getValidazioneContenutiApplicativi().getStato().toString();
@@ -516,7 +528,8 @@ public final class ConfigurazioneGenerale extends Action {
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
-					connessione, utilizzo, validman, gestman, registrazioneTracce, dump, xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
+					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
+					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,

@@ -33,9 +33,18 @@ public class InformazioniStatoPorta {
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
 			String confDir, String versioneJava,
+			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
+			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
+			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA,
+			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
-		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, infoDatabase, infoProtocolli,
+		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, 
+				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
+				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
+				tracciamento, dumpApplicativo, dumpPD, dumpPA,
+				log4j_tracciamento, log4j_dump,
+				infoDatabase, infoProtocolli,
 				null,null,null,null,
 				cache);
 	}
@@ -43,6 +52,10 @@ public class InformazioniStatoPorta {
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
 			String confDir, String versioneJava,
+			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
+			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
+			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA, 
+			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoProtocolli,
 			String statoConnessioniDB, String statoConnessioniPD, String statoConnessioniPA, String statoConnessioniJMS,
 			InformazioniStatoPortaCache ... cache){
@@ -63,6 +76,29 @@ public class InformazioniStatoPorta {
 		format(bf, confDir, "Directory Configurazione");
 		bf.append("\n");
 		format(bf, versioneJava, "Versione Java");
+		bf.append("\n");
+		
+		bf.append("===========================\n");
+		bf.append("Informazioni Diagnostica\n");
+		bf.append("===========================\n");
+		bf.append("\n");
+		format(bf, livelloSeveritaDiagnostici, "Severità");
+		format(bf, livelloSeveritaDiagnosticiLog4j, "Severità Log4j");
+		format(bf, log4j_diagnostica ? "abilitato" : "disabilitato", "Log4J openspcoop2_msgDiagnostico.log");
+		format(bf, log4j_openspcoop ? "abilitato" : "disabilitato", "Log4J openspcoop2.log");
+		format(bf, log4j_integrationManager ? "abilitato" : "disabilitato", "Log4J openspcoop2_integrationManager.log");
+		bf.append("\n");
+		
+		bf.append("===========================\n");
+		bf.append("Informazioni Tracciamento\n");
+		bf.append("===========================\n");
+		bf.append("\n");
+		format(bf, tracciamento ? "abilitato" : "disabilitato", "Buste");
+		format(bf, dumpApplicativo ? "abilitato" : "disabilitato", "Dump Applicativo");
+		format(bf, dumpPD ? "abilitato" : "disabilitato", "Dump Binario Porta Delegata");
+		format(bf, dumpPA ? "abilitato" : "disabilitato", "Dump Binario Porta Applicativa");
+		format(bf, log4j_tracciamento ? "abilitato" : "disabilitato", "Log4J openspcoop2_tracciamento.log");
+		format(bf, log4j_dump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
 		bf.append("\n");
 		
 		bf.append("===========================\n");

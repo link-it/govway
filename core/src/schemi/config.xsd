@@ -500,6 +500,8 @@
 		</xsd:sequence>
 		<xsd:attribute name="buste" type="StatoFunzionalita" default="abilitato"/>
 		<xsd:attribute name="dump" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="dump-binario-porta-delegata" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="dump-binario-porta-applicativa" type="StatoFunzionalita" default="disabilitato"/>
 	</xsd:complexType>
 	
 	<!-- Gestione accesso al servizio di Integration Manager -->

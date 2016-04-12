@@ -5673,10 +5673,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				//Tracciamento
 				String tracc_buste = rs.getString("tracciamento_buste");
-				String tracc_dump = rs.getString("tracciamento_dump");
+				String tracc_dump_applicativo = rs.getString("tracciamento_dump");
+				String tracc_dump_pd = rs.getString("tracciamento_dump_bin_pd");
+				String tracc_dump_pa = rs.getString("tracciamento_dump_bin_pa");
 				Tracciamento tracciamento = new Tracciamento();
 				tracciamento.setBuste(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_buste));
-				tracciamento.setDump(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_dump));
+				tracciamento.setDump(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_dump_applicativo));
+				tracciamento.setDumpBinarioPortaDelegata(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_dump_pd));
+				if(tracciamento.getDumpBinarioPortaDelegata()==null){
+					tracciamento.setDumpBinarioPortaDelegata(StatoFunzionalita.DISABILITATO); // default
+				}
+				tracciamento.setDumpBinarioPortaApplicativa(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_dump_pa));
+				if(tracciamento.getDumpBinarioPortaApplicativa()==null){
+					tracciamento.setDumpBinarioPortaApplicativa(StatoFunzionalita.DISABILITATO); // default
+				}
 				//appender tracciamento
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.TRACCIAMENTO_APPENDER);

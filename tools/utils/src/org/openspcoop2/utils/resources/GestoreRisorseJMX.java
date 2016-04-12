@@ -281,6 +281,27 @@ public class GestoreRisorseJMX {
 		}	
 	}
 	
+	public void setAttribute(String nomeRisorsa,String nomeAttributo, Object value)throws RisorseJMXException{
+		this.setAttribute(CostantiJMX.JMX_DOMINIO,CostantiJMX.JMX_TYPE,nomeRisorsa,nomeAttributo,value);
+	}
+	public void setAttribute(String dominio,String tipo,String nomeRisorsa,String nomeAttributo, Object value)throws RisorseJMXException{
+		try{
+			ObjectName name = new ObjectName(dominio,tipo,nomeRisorsa);
+			javax.management.Attribute attribute = new javax.management.Attribute(nomeAttributo, value);
+			if(this.mbeanServerConnection!=null){
+				Class<?> c = Class.forName("javax.management.MBeanServerConnection");
+				Method m = c.getMethod("setAttribute", ObjectName.class, javax.management.Attribute.class);
+				m.invoke(this.mbeanServerConnection, name, nomeAttributo);
+			}
+			else{
+				this.mbeanServer.setAttribute(name, attribute);
+			}
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'aggiornamento dell'attributo ["+nomeAttributo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'aggiornamento dell'attributo ["+nomeAttributo+"] della risorsa ["+nomeRisorsa+"]: "+e.getMessage(),e);
+		}	
+	}
+	
 	
 	public Object invoke(String nomeRisorsa,String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
 		return this.invoke(CostantiJMX.JMX_DOMINIO,CostantiJMX.JMX_TYPE,nomeRisorsa,nomeMetodo,params,signature);

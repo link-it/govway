@@ -245,7 +245,6 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 			this.releaseResource();
 		}
 	}
-
 	
 	
 	

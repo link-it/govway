@@ -128,6 +128,7 @@ public class Costanti {
 	
 	public final static String DATA_ELEMENT_EDIT_MODE_NAME = "edit-mode";
 	public final static String DATA_ELEMENT_EDIT_MODE_DISABLE_NAME = "view-noeditbutton";
+	public final static String DATA_ELEMENT_DISABLE_ONLY_BUTTON = "view-nobutton";
 	
 	public final static String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK = "in_progress_postback";
 	public final static String DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS = "in_progress";

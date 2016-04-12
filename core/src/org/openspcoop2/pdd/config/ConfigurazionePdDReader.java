@@ -4086,6 +4086,79 @@ public class ConfigurazionePdDReader {
 
 		return ConfigurazionePdDReader.dumpMessaggi;
 	}
+	
+	private static Boolean dumpBinarioPD = null;
+	public static Boolean dumpBinarioPDJMX = null;
+	protected boolean dumpBinarioPD(Connection connectionPdD){
+
+		if(ConfigurazionePdDReader.dumpBinarioPDJMX!=null)
+			return ConfigurazionePdDReader.dumpBinarioPDJMX;
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpBinarioPD==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("dumpBinarioPD (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("dumpBinarioPD",e);
+				}
+
+				if(configurazione!=null && configurazione.getTracciamento()!=null){
+					StatoFunzionalita read = configurazione.getTracciamento().getDumpBinarioPortaDelegata();	   
+					if(CostantiConfigurazione.ABILITATO.equals(read))
+						ConfigurazionePdDReader.dumpBinarioPD = true;
+					else
+						ConfigurazionePdDReader.dumpBinarioPD = false;
+				}else{
+					ConfigurazionePdDReader.dumpBinarioPD = false; // default CostantiConfigurazione.DISABILITATO
+				}
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.dumpBinarioPD = false; // default CostantiConfigurazione.DISABILITATO
+			}
+		}
+
+		return ConfigurazionePdDReader.dumpBinarioPD;
+	}
+	
+	
+	private static Boolean dumpBinarioPA = null;
+	public static Boolean dumpBinarioPAJMX = null;
+	protected boolean dumpBinarioPA(Connection connectionPdD){
+
+		if(ConfigurazionePdDReader.dumpBinarioPAJMX!=null)
+			return ConfigurazionePdDReader.dumpBinarioPAJMX;
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpBinarioPA==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("dumpBinarioPA (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("dumpBinarioPA",e);
+				}
+
+				if(configurazione!=null && configurazione.getTracciamento()!=null){
+					StatoFunzionalita read = configurazione.getTracciamento().getDumpBinarioPortaApplicativa();	   
+					if(CostantiConfigurazione.ABILITATO.equals(read))
+						ConfigurazionePdDReader.dumpBinarioPA = true;
+					else
+						ConfigurazionePdDReader.dumpBinarioPA = false;
+				}else{
+					ConfigurazionePdDReader.dumpBinarioPA = false; // default CostantiConfigurazione.DISABILITATO
+				}
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.dumpBinarioPA = false; // default CostantiConfigurazione.DISABILITATO
+			}
+		}
+
+		return ConfigurazionePdDReader.dumpBinarioPA;
+	}
 
 
 	public static Boolean tracciamentoBusteJMX = null;

@@ -296,6 +296,9 @@ public class LogLevels extends org.apache.log4j.Level{
 	 * @return Il livello in stringa se la trasformazione ha successo, false altrimenti.
 	 */
 	public static String toOpenSPCoop2(int valueLivello){
+		return toOpenSPCoop2(valueLivello,false);
+	}
+	public static String toOpenSPCoop2(int valueLivello, boolean includeOffAll){
 		if( valueLivello == LogLevels.SEVERITA_FATAL ){
 			return LogLevels.LIVELLO_FATAL;
 		}  else if( valueLivello == LogLevels.SEVERITA_ERROR_PROTOCOL ){
@@ -313,6 +316,13 @@ public class LogLevels extends org.apache.log4j.Level{
 		} else if( valueLivello == LogLevels.SEVERITA_DEBUG_HIGH ){
 			return LogLevels.LIVELLO_DEBUG_HIGH;
 		} else{
+			if(includeOffAll){
+				if( valueLivello == LogLevels.SEVERITA_ALL ){
+					return LogLevels.LIVELLO_ALL;
+				}  else if( valueLivello == LogLevels.SEVERITA_OFF ){
+					return LogLevels.LIVELLO_OFF;
+				}
+			}
 			return null;
 		}
 	}

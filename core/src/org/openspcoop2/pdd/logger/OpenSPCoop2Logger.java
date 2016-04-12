@@ -70,23 +70,23 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per scrivere i tracciamenti */
 	protected static Logger loggerTracciamento = null;
 	/** Logger log4j utilizzato per scrivere i tracciamenti: impostazione */
-	protected static boolean loggerTracciamentoAbilitato = false;
+	public static boolean loggerTracciamentoAbilitato = false;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici */
 	protected static Logger loggerMsgDiagnostico = null;
 	/** Logger log4j utilizzato per scrivere i msg diagnostici: impostazione */
-	protected static boolean loggerMsgDiagnosticoAbilitato = false;
+	public static boolean loggerMsgDiagnosticoAbilitato = false;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici */
 	protected static Logger loggerOpenSPCoop2 = null;
 	/** Logger log4j utilizzato per scrivere i msg diagnostici 'readable': impostazione */
-	protected static boolean loggerMsgDiagnosticoReadableAbilitato = false;
+	public static boolean loggerMsgDiagnosticoReadableAbilitato = false;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici del servizio di IntegrationManager */
 	protected static Logger loggerIntegrationManager = null;
 	/** Logger log4j utilizzato per scrivere i msg diagnostici 'readable' del servizio di IntegrationManager: impostazione */
-	protected static boolean loggerIntegrationManagerAbilitato = false;
+	public static boolean loggerIntegrationManagerAbilitato = false;
 	/**  Logger log4j utilizzato per effettuare un dump dei messaggi applicativi */
 	protected static Logger loggerDump = null;
 	/** Logger log4j utilizzato per scrivere i dump applicativi: impostazione */
-	protected static boolean loggerDumpAbilitato = false;
+	public static boolean loggerDumpAbilitato = false;
 	/**  Logger log4j utilizzato per segnalare a video errori gravi (FATAL) o di informazione sull'inizializzazione (INFO)*/
 	protected static Logger loggerOpenSPCoopConsole = Logger.getLogger("openspcoop2.startup");
 	/** Logger log4j utilizzato per segnalare a video errori gravi (FATAL) o di informazione sull'inizializzazione (INFO) */

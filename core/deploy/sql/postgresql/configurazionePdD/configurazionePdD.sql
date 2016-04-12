@@ -66,6 +66,8 @@ CREATE TABLE configurazione
 	-- Tracciamento Buste
 	tracciamento_buste VARCHAR(255),
 	tracciamento_dump VARCHAR(255),
+	tracciamento_dump_bin_pd VARCHAR(255),
+	tracciamento_dump_bin_pa VARCHAR(255),
 	-- Autenticazione IntegrationManager
 	auth_integration_manager VARCHAR(255),
 	-- Cache per l'accesso ai registri

@@ -492,6 +492,42 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPA");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaConfigurazionePdD");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.severitaDiagnostici");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.severitaDiagnosticiLog4j");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.tracciamento");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpApplicativo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpBinarioPD");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpBinarioPA");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jDiagnostica(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDiagnostica");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jOpenspcoop(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jOpenspcoop");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jIntegrationManager(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jIntegrationManager");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jTracciamento(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jTracciamento");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDump");
+	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
 		List<String> list = new ArrayList<String>();
 		String tipo = _getJmxPdD_value(false, alias, "risorseJmxPdd.caches");
@@ -611,6 +647,18 @@ public class ConsoleProperties {
 	
 	public Boolean isMenuPortaDelegataVisualizzazioneUrlInvocazione() throws UtilsException{
 		return this.readBooleanProperty(true, "menu.pd.visualizzazioneUrlInvocazione");
+	}
+	
+	public Boolean isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura() throws UtilsException{
+		String p = "menu.configurazione.visualizzazioneDiagnosticaTracciatura.standard";
+		String tmp = this.readProperty(false, p);
+		if(tmp==null){
+			return true; // standard per default
+		}
+		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
+			throw new UtilsException("Property ["+p+"] with uncorrect value ["+tmp+"] (true/value expected)");
+		}
+		return Boolean.parseBoolean(tmp);
 	}
 	
 	public Boolean isElenchiVisualizzaPulsanteAggiungi() throws UtilsException{

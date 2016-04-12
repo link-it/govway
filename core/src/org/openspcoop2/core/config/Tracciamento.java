@@ -45,6 +45,8 @@ import java.util.List;
  * 		&lt;/sequence>
  * 		&lt;attribute name="buste" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="dump" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="dump-binario-porta-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="dump-binario-porta-applicativa" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -170,6 +172,46 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
     this.dump = dump;
   }
 
+  public void set_value_dumpBinarioPortaDelegata(String value) {
+    this.dumpBinarioPortaDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_dumpBinarioPortaDelegata() {
+    if(this.dumpBinarioPortaDelegata == null){
+    	return null;
+    }else{
+    	return this.dumpBinarioPortaDelegata.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getDumpBinarioPortaDelegata() {
+    return this.dumpBinarioPortaDelegata;
+  }
+
+  public void setDumpBinarioPortaDelegata(org.openspcoop2.core.config.constants.StatoFunzionalita dumpBinarioPortaDelegata) {
+    this.dumpBinarioPortaDelegata = dumpBinarioPortaDelegata;
+  }
+
+  public void set_value_dumpBinarioPortaApplicativa(String value) {
+    this.dumpBinarioPortaApplicativa = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_dumpBinarioPortaApplicativa() {
+    if(this.dumpBinarioPortaApplicativa == null){
+    	return null;
+    }else{
+    	return this.dumpBinarioPortaApplicativa.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getDumpBinarioPortaApplicativa() {
+    return this.dumpBinarioPortaApplicativa;
+  }
+
+  public void setDumpBinarioPortaApplicativa(org.openspcoop2.core.config.constants.StatoFunzionalita dumpBinarioPortaApplicativa) {
+    this.dumpBinarioPortaApplicativa = dumpBinarioPortaApplicativa;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -248,5 +290,17 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
 
   @XmlAttribute(name="dump",required=false)
   protected StatoFunzionalita dump = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
+  @XmlTransient
+  protected java.lang.String _value_dumpBinarioPortaDelegata;
+
+  @XmlAttribute(name="dump-binario-porta-delegata",required=false)
+  protected StatoFunzionalita dumpBinarioPortaDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
+  @XmlTransient
+  protected java.lang.String _value_dumpBinarioPortaApplicativa;
+
+  @XmlAttribute(name="dump-binario-porta-applicativa",required=false)
+  protected StatoFunzionalita dumpBinarioPortaApplicativa = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
 }

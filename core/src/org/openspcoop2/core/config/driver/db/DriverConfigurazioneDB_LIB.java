@@ -5319,10 +5319,14 @@ public class DriverConfigurazioneDB_LIB {
 
 		Tracciamento t = config.getTracciamento();
 		String tracciamentoBuste = null;
-		String dump = null;
+		String dumpApplicativo = null;
+		String dumpPD = null;
+		String dumpPA = null;
 		if (t != null) {
 			tracciamentoBuste = DriverConfigurazioneDB_LIB.getValue(t.getBuste());
-			dump = DriverConfigurazioneDB_LIB.getValue(t.getDump());
+			dumpApplicativo = DriverConfigurazioneDB_LIB.getValue(t.getDump());
+			dumpPD = DriverConfigurazioneDB_LIB.getValue(t.getDumpBinarioPortaDelegata());
+			dumpPA = DriverConfigurazioneDB_LIB.getValue(t.getDumpBinarioPortaApplicativa());
 		}
 
 		String modRisposta = CostantiConfigurazione.CONNECTION_REPLY.toString();
@@ -5369,6 +5373,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("validazione_manifest", "?");
 				sqlQueryObject.addInsertField("tracciamento_buste", "?");
 				sqlQueryObject.addInsertField("tracciamento_dump", "?");
+				sqlQueryObject.addInsertField("tracciamento_dump_bin_pd", "?");
+				sqlQueryObject.addInsertField("tracciamento_dump_bin_pa", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
@@ -5409,7 +5415,9 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, gestioneManifest);
 				updateStmt.setString(index++, val_manifest);
 				updateStmt.setString(index++, tracciamentoBuste);
-				updateStmt.setString(index++, dump);
+				updateStmt.setString(index++, dumpApplicativo);
+				updateStmt.setString(index++, dumpPD);
+				updateStmt.setString(index++, dumpPA);
 				updateStmt.setString(index++, validazione_contenuti_stato);
 				updateStmt.setString(index++, validazione_contenuti_tipo);
 				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
@@ -5441,7 +5449,7 @@ public class DriverConfigurazioneDB_LIB {
 								val_profiloCollaborazione, 
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
-								val_manifest, tracciamentoBuste, dump,
+								val_manifest, tracciamentoBuste, dumpApplicativo, dumpPD, dumpPA,
 								validazione_contenuti_stato,validazione_contenuti_tipo,validazione_contenuti_acceptMtomMessage,
 								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
 								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
@@ -5686,6 +5694,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("validazione_manifest", "?");
 				sqlQueryObject.addUpdateField("tracciamento_buste", "?");
 				sqlQueryObject.addUpdateField("tracciamento_dump", "?");
+				sqlQueryObject.addUpdateField("tracciamento_dump_bin_pd", "?");
+				sqlQueryObject.addUpdateField("tracciamento_dump_bin_pa", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");
@@ -5726,7 +5736,9 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, gestioneManifest);
 				updateStmt.setString(index++, val_manifest);
 				updateStmt.setString(index++, tracciamentoBuste);
-				updateStmt.setString(index++, dump);
+				updateStmt.setString(index++, dumpApplicativo);
+				updateStmt.setString(index++, dumpPD);
+				updateStmt.setString(index++, dumpPA);
 				updateStmt.setString(index++, validazione_contenuti_stato);
 				updateStmt.setString(index++, validazione_contenuti_tipo);
 				updateStmt.setString(index++, validazione_contenuti_acceptMtomMessage);
@@ -5759,7 +5771,7 @@ public class DriverConfigurazioneDB_LIB {
 								modRisposta, utilizzoIndTelematico, 
 								routingEnabled, gestioneManifest, 
 								val_manifest, 
-								tracciamentoBuste, dump,
+								tracciamentoBuste, dumpApplicativo, dumpPD, dumpPA,
 								validazione_contenuti_stato,validazione_contenuti_tipo,
 								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
 								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,

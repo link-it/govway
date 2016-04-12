@@ -594,6 +594,8 @@
     </collection>
     <value name="buste" field="buste" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="dump" field="dump" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="dump-binario-porta-delegata" field="dumpBinarioPortaDelegata" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="dump-binario-porta-applicativa" field="dumpBinarioPortaApplicativa" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="integration-manager" class="org.openspcoop2.core.config.IntegrationManager">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
