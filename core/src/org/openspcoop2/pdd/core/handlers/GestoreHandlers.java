@@ -23,6 +23,8 @@
 package org.openspcoop2.pdd.core.handlers;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -123,6 +125,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InitHandler ["+GestoreHandlers.tipiInitHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.initHandlers = reorder(GestoreHandlers.initHandlers);
 			}
 			
 			// ExitHandler
@@ -140,6 +143,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione ExitHandler ["+GestoreHandlers.tipiExitHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.exitHandlers = reorder(GestoreHandlers.exitHandlers);
 			}
 			
 			// PreInRequestHandler
@@ -163,6 +167,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PreInRequestHandler ["+GestoreHandlers.tipiPreInRequestHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.preInRequestHandlers = reorder(GestoreHandlers.preInRequestHandlers);
 			}
 			
 			// InRequestHandler
@@ -186,6 +191,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InRequestHandler ["+GestoreHandlers.tipiInRequestHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.inRequestHandlers = reorder(GestoreHandlers.inRequestHandlers);
 			}
 			
 			// InRequestProtocolHandler
@@ -209,6 +215,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InRequestProtocolHandler ["+GestoreHandlers.tipiInRequestProtocolHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.inRequestProtocolHandlers = reorder(GestoreHandlers.inRequestProtocolHandlers);
 			}
 			
 			// OutRequestHandler
@@ -232,6 +239,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione OutRequestHandler ["+GestoreHandlers.tipiOutRequestHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.outRequestHandlers = reorder(GestoreHandlers.outRequestHandlers);
 			}
 			
 			// PostOutRequestHandler
@@ -255,6 +263,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PostOutRequestHandler ["+GestoreHandlers.tipiPostOutRequestHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.postOutRequestHandlers = reorder(GestoreHandlers.postOutRequestHandlers);
 			}
 			
 			// PreInResponseHandler
@@ -278,6 +287,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PreInResponseHandler ["+GestoreHandlers.tipiPreInResponseHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.preInResponseHandlers = reorder(GestoreHandlers.preInResponseHandlers);
 			}
 			
 			// InResponseHandler
@@ -301,6 +311,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InResponseHandler ["+GestoreHandlers.tipiInResponseHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.inResponseHandlers = reorder(GestoreHandlers.inResponseHandlers);
 			}
 			
 			// OutResponseHandler
@@ -324,6 +335,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione OutResponseHandler ["+GestoreHandlers.tipiOutResponseHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.outResponseHandlers = reorder(GestoreHandlers.outResponseHandlers);
 			}
 			
 			// PostOutResponseHandler
@@ -347,6 +359,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PostOutResponseHandler ["+GestoreHandlers.tipiPostOutResponseHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.postOutResponseHandlers = reorder(GestoreHandlers.postOutResponseHandlers);
 			}
 			
 			// IntegrationManagerRequestHandler
@@ -364,6 +377,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerRequestHandler ["+GestoreHandlers.tipiIntegrationManagerRequestHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.integrationManagerRequestHandlers = reorder(GestoreHandlers.integrationManagerRequestHandlers);
 			}
 			
 			// IntegrationManagerResponseHandler
@@ -381,6 +395,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerResponseHandler ["+GestoreHandlers.tipiIntegrationManagerResponseHandlers[i]+"]");
 					}
 				}
+				GestoreHandlers.integrationManagerResponseHandlers = reorder(GestoreHandlers.integrationManagerResponseHandlers);
 			}
 			
 		}
@@ -388,6 +403,83 @@ public class GestoreHandlers  {
 		GestoreHandlers.initialize=true;
 	}
 	
+	private final static boolean printOrderInfo = false;
+	private static <T> T[] reorder(T [] handlers){
+		if(handlers!=null && handlers.length>0){
+			
+			List<String> handlerPositionHeadId = new ArrayList<String>();
+			Hashtable<String,T> handlerPositionHeadMap = new Hashtable<String,T>();
+			
+			List<String> handlerPositionTailId = new ArrayList<String>();
+			Hashtable<String,T> handlerPositionTailMap = new Hashtable<String,T>();
+			
+			List<T> handlerPositionMiddle = new ArrayList<T>();
+			
+			if(printOrderInfo){
+				System.out.println("================== "+handlers.getClass().getName()+" =====================");
+				System.out.println("PRE ORDER:");
+			}
+			for(int i=0; i<handlers.length; i++){
+				boolean position = false;
+				if(handlers[i] instanceof PositionHandler){
+					PositionHandler p = (PositionHandler) handlers[i];
+					if(p.getIdPosition()!=null){
+						if(p.isHeadHandler()){
+							handlerPositionHeadId.add(p.getIdPosition());
+							handlerPositionHeadMap.put(p.getIdPosition(), handlers[i]);
+						}
+						else{
+							handlerPositionTailId.add(p.getIdPosition());
+							handlerPositionTailMap.put(p.getIdPosition(), handlers[i]);
+						}
+						position = true;
+					}
+				}
+				if(position==false){
+					handlerPositionMiddle.add(handlers[i]);
+				}
+				
+				if(printOrderInfo){
+					System.out.println("\t(Pos:"+position+")["+handlers[i].getClass().getName()+"]");
+				}
+			}
+			
+			// reorder
+			List<T> orderedList = new ArrayList<T>();
+			
+			if(handlerPositionHeadId.size()>0){
+				Collections.sort(handlerPositionHeadId);
+				for (String positionId : handlerPositionHeadId) {
+					orderedList.add(handlerPositionHeadMap.get(positionId));
+				}
+			}
+			
+			if(handlerPositionMiddle.size()>0){
+				for (T t : handlerPositionMiddle) {
+					orderedList.add(t);
+				}
+			}
+			
+			if(handlerPositionTailId.size()>0){
+				Collections.sort(handlerPositionTailId);
+				for (String positionId : handlerPositionTailId) {
+					orderedList.add(handlerPositionTailMap.get(positionId));
+				}
+			}
+			
+			if(printOrderInfo){
+				System.out.println("POST ORDER:");
+				for (T t : orderedList) {
+					System.out.println("\t["+t.getClass().getName()+"]");
+				}
+			}
+			
+			return (T[]) orderedList.toArray(handlers);
+		}
+		else{
+			return null;
+		}
+	}
 	
 	
 	private static String[] updateNotifierCallback(String [] tipi) {
