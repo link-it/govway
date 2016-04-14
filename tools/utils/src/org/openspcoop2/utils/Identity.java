@@ -83,78 +83,9 @@ public class Identity {
 		if(certs!=null) {
 			if(log!=null){
 				try{
-					log.info("Certificati presenti nella richiesta: "+certs.length);
-					for (int i = 0; i < certs.length; i++) {
-						java.security.cert.X509Certificate cert = certs[i];
-						log.info("===================================================");
-						log.info("\tCert["+i+"].toString()="+cert.toString());
-						log.info("\tCert["+i+"].getType()="+cert.getType());
-						log.info("\tCert["+i+"].getVersion()="+cert.getVersion());
-						
-						if(cert.getIssuerDN()!=null){
-							log.info("\tCert["+i+"].cert.getIssuerDN().toString()="+cert.getIssuerDN().toString());
-							log.info("\tCert["+i+"].cert.getIssuerDN().getName()="+cert.getIssuerDN().getName());
-						}
-						else{
-							log.info("\tCert["+i+"].cert.getIssuerDN() is null");
-						}
-						
-						if(cert.getIssuerX500Principal()!=null){
-							log.info("\tCert["+i+"].getIssuerX500Principal().toString()="+cert.getIssuerX500Principal().toString());
-							log.info("\tCert["+i+"].getIssuerX500Principal().getName()="+cert.getIssuerX500Principal().getName());
-							log.info("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.CANONICAL)="+cert.getIssuerX500Principal().getName(X500Principal.CANONICAL));
-							log.info("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.RFC1779)="+cert.getIssuerX500Principal().getName(X500Principal.RFC1779));
-							log.info("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.RFC2253)="+cert.getIssuerX500Principal().getName(X500Principal.RFC2253));
-//							Map<String,String> oidMapCanonical = new Hashtable<String, String>();
-//							log.info("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
-//									cert.getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
-//							if(oidMapCanonical!=null && oidMapCanonical.size()>0){
-//								Iterator<String> it = oidMapCanonical.keySet().iterator();
-//								while (it.hasNext()) {
-//									String key = (String) it.next();
-//									String value = oidMapCanonical.get(key);
-//									log.info("\tCert["+i+"].getIssuerX500Principal() ["+key+"]=["+value+"]");
-//								}
-//							}
-						}
-						else{
-							log.info("\tCert["+i+"].cert.getIssuerX500Principal() is null");
-						}
-						
-						if(cert.getSubjectDN()!=null){
-							log.info("\tCert["+i+"].getSubjectDN().toString()="+cert.getSubjectDN().toString());
-							log.info("\tCert["+i+"].getSubjectDN().getName()="+cert.getSubjectDN().getName());
-						}
-						else{
-							log.info("\tCert["+i+"].cert.getSubjectDN() is null");
-						}
-						
-						log.info("\tCert["+i+"].getSerialNumber()="+cert.getSerialNumber());
-						log.info("\tCert["+i+"].getNotAfter()="+cert.getNotAfter());
-						log.info("\tCert["+i+"].getNotBefore()="+cert.getNotBefore());
-						
-						if(cert.getSubjectX500Principal()!=null){
-							log.info("\tCert["+i+"].getSubjectX500Principal().toString()="+cert.getSubjectX500Principal().toString());
-							log.info("\tCert["+i+"].getSubjectX500Principal().getName()="+cert.getSubjectX500Principal().getName());
-							log.info("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.CANONICAL)="+cert.getSubjectX500Principal().getName(X500Principal.CANONICAL));
-							log.info("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.RFC1779)="+cert.getSubjectX500Principal().getName(X500Principal.RFC1779));
-							log.info("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.RFC2253)="+cert.getSubjectX500Principal().getName(X500Principal.RFC2253));
-//							Map<String,String> oidMapCanonical = new Hashtable<String, String>();
-//							log.info("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
-//									cert.getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
-//							if(oidMapCanonical!=null && oidMapCanonical.size()>0){
-//								Iterator<String> it = oidMapCanonical.keySet().iterator();
-//								while (it.hasNext()) {
-//									String key = (String) it.next();
-//									String value = oidMapCanonical.get(key);
-//									log.info("\tCert["+i+"].getSubjectX500Principal() ["+key+"]=["+value+"]");
-//								}
-//							}
-						}
-						else{
-							log.info("\tCert["+i+"].cert.getSubjectX500Principal() is null");
-						}
-					}
+					StringBuffer bf = new StringBuffer();
+					printCertificate(bf, certs);
+					log.info(bf.toString());
 				}catch(Throwable e){
 					log.error("Print info certs error: "+e.getMessage(),e);
 				}
@@ -178,6 +109,82 @@ public class Identity {
 		if( req.getUserPrincipal()!=null ){
 			this.principal = req.getUserPrincipal();
 			this.principalName = this.principal.getName();
+		}
+	}
+	
+	
+	public static void printCertificate(StringBuffer bf,java.security.cert.X509Certificate[] certs){
+		bf.append("X509Certificates: "+certs.length+"\n");
+		for (int i = 0; i < certs.length; i++) {
+			java.security.cert.X509Certificate cert = certs[i];
+			bf.append("#### X509Certificate["+i+"]\n");
+			bf.append("\tCert["+i+"].toString()="+cert.toString()+"\n");
+			bf.append("\tCert["+i+"].getType()="+cert.getType()+"\n");
+			bf.append("\tCert["+i+"].getVersion()="+cert.getVersion()+"\n");
+			
+			if(cert.getIssuerDN()!=null){
+				bf.append("\tCert["+i+"].cert.getIssuerDN().toString()="+cert.getIssuerDN().toString()+"\n");
+				bf.append("\tCert["+i+"].cert.getIssuerDN().getName()="+cert.getIssuerDN().getName()+"\n");
+			}
+			else{
+				bf.append("\tCert["+i+"].cert.getIssuerDN() is null"+"\n");
+			}
+			
+			if(cert.getIssuerX500Principal()!=null){
+				bf.append("\tCert["+i+"].getIssuerX500Principal().toString()="+cert.getIssuerX500Principal().toString()+"\n");
+				bf.append("\tCert["+i+"].getIssuerX500Principal().getName()="+cert.getIssuerX500Principal().getName()+"\n");
+				bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.CANONICAL)="+cert.getIssuerX500Principal().getName(X500Principal.CANONICAL)+"\n");
+				bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.RFC1779)="+cert.getIssuerX500Principal().getName(X500Principal.RFC1779)+"\n");
+				bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.RFC2253)="+cert.getIssuerX500Principal().getName(X500Principal.RFC2253)+"\n");
+//					Map<String,String> oidMapCanonical = new Hashtable<String, String>();
+//					bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
+//							cert.getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
+//					if(oidMapCanonical!=null && oidMapCanonical.size()>0){
+//						Iterator<String> it = oidMapCanonical.keySet().iterator();
+//						while (it.hasNext()) {
+//							String key = (String) it.next();
+//							String value = oidMapCanonical.get(key);
+//							bf.append("\tCert["+i+"].getIssuerX500Principal() ["+key+"]=["+value+"]"+"\n");
+//						}
+//					}
+			}
+			else{
+				bf.append("\tCert["+i+"].cert.getIssuerX500Principal() is null"+"\n");
+			}
+			
+			if(cert.getSubjectDN()!=null){
+				bf.append("\tCert["+i+"].getSubjectDN().toString()="+cert.getSubjectDN().toString()+"\n");
+				bf.append("\tCert["+i+"].getSubjectDN().getName()="+cert.getSubjectDN().getName()+"\n");
+			}
+			else{
+				bf.append("\tCert["+i+"].cert.getSubjectDN() is null"+"\n");
+			}
+			
+			bf.append("\tCert["+i+"].getSerialNumber()="+cert.getSerialNumber()+"\n");
+			bf.append("\tCert["+i+"].getNotAfter()="+cert.getNotAfter()+"\n");
+			bf.append("\tCert["+i+"].getNotBefore()="+cert.getNotBefore()+"\n");
+			
+			if(cert.getSubjectX500Principal()!=null){
+				bf.append("\tCert["+i+"].getSubjectX500Principal().toString()="+cert.getSubjectX500Principal().toString()+"\n");
+				bf.append("\tCert["+i+"].getSubjectX500Principal().getName()="+cert.getSubjectX500Principal().getName()+"\n");
+				bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.CANONICAL)="+cert.getSubjectX500Principal().getName(X500Principal.CANONICAL)+"\n");
+				bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.RFC1779)="+cert.getSubjectX500Principal().getName(X500Principal.RFC1779)+"\n");
+				bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.RFC2253)="+cert.getSubjectX500Principal().getName(X500Principal.RFC2253)+"\n");
+//					Map<String,String> oidMapCanonical = new Hashtable<String, String>();
+//					bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
+//							cert.getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
+//					if(oidMapCanonical!=null && oidMapCanonical.size()>0){
+//						Iterator<String> it = oidMapCanonical.keySet().iterator();
+//						while (it.hasNext()) {
+//							String key = (String) it.next();
+//							String value = oidMapCanonical.get(key);
+//							bf.append("\tCert["+i+"].getSubjectX500Principal() ["+key+"]=["+value+"]"+"\n");
+//						}
+//					}
+			}
+			else{
+				bf.append("\tCert["+i+"].cert.getSubjectX500Principal() is null"+"\n");
+			}
 		}
 	}
 	

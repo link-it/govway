@@ -70,6 +70,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
+import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiContext;
@@ -98,6 +99,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -1628,6 +1630,25 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Verifica risorse sistema
 		this.verificaRisorseSistema(protocolFactory,logCore, tipoOperazione);
 		
+		// DumpRaw
+		DumpRaw dumpRaw = null;
+		try{
+			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
+			if(configPdDManager==null || configPdDManager.isInitializedConfigurazionePdDReader()==false){
+				throw new Exception("ConfigurazionePdDManager not initialized");
+			}
+			if(configPdDManager.dumpBinarioPD()){
+				dumpRaw = new DumpRaw(logCore,true);
+			}
+		}catch(Throwable e){
+			logCore.error("Inizializzazione di OpenSPCoop non correttamente effettuata: ConfigurazionePdDManager");
+			try{
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+			}catch(Throwable eError){
+				logCore.error("Errore generazione SOAPFault",e);
+			}
+		}
+		
 		MsgDiagnostico msgDiag = getMsgDiagnostico();
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		
@@ -1651,11 +1672,17 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
 		}
 		context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
+		context.setTipoPorta(TipoPdD.DELEGATA);
 		msgDiag.setPddContext(context.getPddContext(), protocolFactory);
+		
 		try{
 			msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
 		}catch(Exception e){
 			logCore.error("Errore generazione diagnostico di ingresso",e);
+		}
+		
+		if(dumpRaw!=null){
+			dumpRaw.serializeContext(context, protocolFactory.getProtocol());
 		}
 		
 		// PddContext
@@ -1837,6 +1864,19 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			Utilities.printFreeMemory("IntegrationManager - Pre costruzione richiesta");
 			if(idInvocazionePerRiferimento!=null){
 
+				if(dumpRaw!=null){
+					String contentTypeRichiesta = null; // idInvocazionePerRiferimento
+					Integer contentLengthRichiesta = null;
+					String rawMessage = idInvocazionePerRiferimento;
+					Identity identity = null;
+					try{
+						identity = new Identity(req);
+					}catch(Throwable t){
+						logCore.error("Dump Identity error: "+t.getMessage(),t);
+					}
+					dumpRaw.serializeRequest(contentTypeRichiesta, contentLengthRichiesta, identity, urlProtocolContext, rawMessage);
+				}
+				
 				stato = new OpenSPCoopStateful();
 				stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO,idTransazione);
 				msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());
@@ -1857,6 +1897,27 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			}else{
 
+				if(dumpRaw!=null){
+					String contentTypeRichiesta = "text/xml"; // per ora e' cablato.
+					Integer contentLengthRichiesta = null;
+					String rawMessage = null;
+					Identity identity = null;
+					if(msg.getMessage()!=null){
+						try{
+							contentLengthRichiesta = msg.getMessage().length;
+							rawMessage = new String(msg.getMessage());
+						}catch(Throwable t){
+							logCore.error("Dump error: "+t.getMessage(),t);
+						}
+					}
+					try{
+						identity = new Identity(req);
+					}catch(Throwable t){
+						logCore.error("Dump Identity error: "+t.getMessage(),t);
+					}
+					dumpRaw.serializeRequest(contentTypeRichiesta, contentLengthRichiesta, identity, urlProtocolContext, rawMessage);
+				}
+				
 				// Ricostruzione Messaggio
 				try{
 					msgRequest = SoapUtils.build(new SoapUtilsBuildParameter(msg.getMessage(), msg.getImbustamento(), 
@@ -1888,6 +1949,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			Utilities.printFreeMemory("IntegrationManager - Post costruzione richiesta");
 			msgRequest.setProtocolName(protocolFactory.getProtocol());
 
+			
 
 
 			//	Costruisco HeaderIntegrazione IntegrationManager
@@ -2055,9 +2117,32 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}	    
 
 			msgReturn.setProtocolHeaderInfo(protocolHeaderInfoResponse);
+			
+			if(dumpRaw!=null){
+				String contentTypeRisposta = "text/xml"; // per ora e' cablato.
+				String rawMessage = null;
+				Integer contentLengthRisposta = null;
+				if(msgReturn.getMessage()!=null){
+					try{
+						contentLengthRisposta = msgReturn.getMessage().length;
+						rawMessage = new String(msgReturn.getMessage());
+					}catch(Throwable t){
+						logCore.error("Dump error: "+t.getMessage(),t);
+					}
+				}
+				dumpRaw.serializeResponse(rawMessage, null, contentLengthRisposta, contentTypeRisposta, 200);
+			}
+			
 			return msgReturn;
 			
 		}catch(Exception e){
+			
+			if(dumpRaw!=null){
+				String contentTypeRisposta = "text/xml"; // per ora e' cablato.
+				String rawMessage = "[Exception "+e.getClass().getName()+"]: "+ e.getMessage();
+				Integer contentLengthRisposta = null;
+				dumpRaw.serializeResponse(rawMessage, null, contentLengthRisposta, contentTypeRisposta, 500);
+			}
 			
 			errore = e.getMessage();
 			msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, descrizioneSoapFault);

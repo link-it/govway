@@ -101,6 +101,10 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopConfigurazioneSistema = null;
 	/**  Logger log4j utilizzato per i connettori */
 	protected static Logger loggerOpenSPCoopConnettori = null;
+	/**  Logger log4j utilizzato per i dati binari del servizio PD */
+	protected static Logger loggerOpenSPCoopDumpBinarioPD = null;
+	/**  Logger log4j utilizzato per i dati binari del servizio PA */
+	protected static Logger loggerOpenSPCoopDumpBinarioPA = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
 	protected static Vector<IMsgDiagnosticoOpenSPCoopAppender> loggerMsgDiagnosticoOpenSPCoopAppender = new Vector<IMsgDiagnosticoOpenSPCoopAppender>(); 
 	protected static Vector<String> tipoMsgDiagnosticoOpenSPCoopAppender = new Vector<String>();
@@ -349,6 +353,16 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopConnettori = Logger.getLogger("openspcoop2.connettori");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConnettori==null)
 				throw new Exception("Logger openspcoop2.connettori non trovato");
+			
+			// RAW DATA SERVIZIO PD LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD = Logger.getLogger("openspcoop2.dumpBinarioPD");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD==null)
+				throw new Exception("Logger openspcoop2.dumpBinarioPD non trovato");
+			
+			// RAW DATA SERVIZIO PD LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA = Logger.getLogger("openspcoop2.dumpBinarioPA");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA==null)
+				throw new Exception("Logger openspcoop2.dumpBinarioPA non trovato");
 			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
@@ -693,6 +707,14 @@ public class OpenSPCoop2Logger {
 	
 	public static Logger getLoggerOpenSPCoopConnettori() {
 		return OpenSPCoop2Logger.loggerOpenSPCoopConnettori;
+	}
+	
+	public static Logger getLoggerOpenSPCoopDumpBinarioPD() {
+		return OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD;
+	}
+	
+	public static Logger getLoggerOpenSPCoopDumpBinarioPA() {
+		return OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA;
 	}
 	
 	public static Vector<IMsgDiagnosticoOpenSPCoopAppender> getLoggerMsgDiagnosticoOpenSPCoopAppender() {

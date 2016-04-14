@@ -38,6 +38,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -109,9 +110,37 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				res.flush(false);
 				res.close(false);
 				return;
-			}catch(Exception e){
+			}catch(Throwable e){
 				logCore.error("Errore generazione SOAPFault",e);
 				throw new ConnectorException("Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties");
+			}
+		}
+		
+		// Configurazione Reader
+		ConfigurazionePdDManager configPdDManager = null;
+		DumpRaw dumpRaw = null;
+		try{
+			configPdDManager = ConfigurazionePdDManager.getInstance();
+			if(configPdDManager==null || configPdDManager.isInitializedConfigurazionePdDReader()==false){
+				throw new Exception("ConfigurazionePdDManager not initialized");
+			}
+			if(configPdDManager.dumpBinarioPD()){
+				dumpRaw = new DumpRaw(logCore,true);
+				req = new DumpRawConnectorInMessage(logCore, req);
+				res = new DumpRawConnectorOutMessage(logCore, res);
+			}
+		}catch(Throwable e){
+			logCore.error("Inizializzazione di OpenSPCoop non correttamente effettuata: ConfigurazionePdDManager");
+			try{
+				OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(SOAPVersion.SOAP11, "ErroreInizializzazioneConfigurazionePdDManager"); 
+				res.setStatus(500);
+				res.sendResponse(SoapUtils.sbustamentoMessaggio(msg));
+				res.flush(false);
+				res.close(false);
+				return;
+			}catch(Throwable eError){
+				logCore.error("Errore generazione SOAPFault",e);
+				throw new ConnectorException("Inizializzazione di OpenSPCoop non correttamente effettuata: ConfigurazionePdDManager");
 			}
 		}
 		
@@ -194,6 +223,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 				logCore.error("Errore generazione diagnostico di ingresso",e);
 			}
 			
+			if(dumpRaw!=null){
+				dumpRaw.serializeContext(context, protocol);
+			}
+			
 			if(req instanceof DirectVMConnectorInMessage){
 				DirectVMConnectorInMessage vm = (DirectVMConnectorInMessage) req;
 				if(vm.getDirectVMProtocolInfo()!=null){
@@ -238,6 +271,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 			// Lettura risposta parametri NotifierInputStream
 			NotifierInputStreamParams notifierInputStreamParams = preInRequestContext.getNotifierInputStreamParams();
 			context.setNotifierInputStreamParams(notifierInputStreamParams);
+			
+			if(dumpRaw!=null){
+				dumpRaw.serializeRequest(((DumpRawConnectorInMessage)req), false, notifierInputStreamParams);
+			}
 
 			
 			
@@ -738,6 +775,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 					// non dovrebbe mai essere null
 				}
 				
+			}
+			
+			if(dumpRaw!=null){
+				dumpRaw.serializeResponse(((DumpRawConnectorOutMessage)res));
 			}
 			
 		}
