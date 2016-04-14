@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 public class ErroreCooperazione implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
 	private String descrizione;
 	private CodiceErroreCooperazione codiceErrore;
 	

@@ -20,14 +20,21 @@
  */
 package org.openspcoop2.protocol.sdk.constants;
 
+import java.io.Serializable;
+
 /**
 *
 * @author Poli Andrea (apoli@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class KeyValueObject {
+public class KeyValueObject implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String key;
 	private String value;
 	

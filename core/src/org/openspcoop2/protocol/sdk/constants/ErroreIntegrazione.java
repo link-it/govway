@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.protocol.sdk.constants;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,13 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class ErroreIntegrazione  {
+public class ErroreIntegrazione implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String descrizione;
 	private CodiceErroreIntegrazione codiceErrore;
 	private List<KeyValueObject> keyValueObjects = new ArrayList<KeyValueObject>();

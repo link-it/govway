@@ -406,8 +406,14 @@ public class CostantiPdD {
     public final static String KEY_TIMEOUT = "@TIMEOUT@";
     /** Costante che identifica una keyword per rappresentare un limit */
     public final static String KEY_LIMIT = "@LIMIT@";
+    /** Costante che identifica il tipo di autorizzazione */
+    public final static String KEY_TIPO_AUTORIZZAZIONE = "@TIPO_AUTORIZZAZIONE@";
+    /** Costante che identifica il tipo di autorizzazione buste */
+    public final static String KEY_TIPO_AUTORIZZAZIONE_CONTENUTO = "@TIPO_AUTORIZZAZIONE_CONTENUTO@";
     /** Costante che identifica il tipo di autorizzazione buste */
     public final static String KEY_TIPO_AUTORIZZAZIONE_BUSTE = "@TIPO_AUTORIZZAZIONE_BUSTE@";
+    /** Costante che identifica il tipo di autenticazione */
+    public final static String KEY_TIPO_AUTENTICAZIONE = "@TIPO_AUTENTICAZIONE@";
     /** Costante che identifica il tipo di messaggio (normale, ricevuta asincrona...) */
     public final static String KEY_TIPO_MESSAGGIO_BUSTA = "@TIPO_MESSAGGIO_BUSTA@"; 
     /** Costante che identifica tipo/nome mittente e tipo/nome destinatario erogatore del servizio da autorizzare, calcolato in base al tipo di messaggio ricevuto.  */

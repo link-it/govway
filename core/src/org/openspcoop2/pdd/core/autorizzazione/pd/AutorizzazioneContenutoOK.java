@@ -47,7 +47,7 @@ public class AutorizzazioneContenutoOK extends AbstractCore implements IAutorizz
     	// Autorizzazzione servizio applicativo
     	try{
     		
-    		byte[] msgBytes = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap()).getAsByte(msg.getSOAPBody(), true);
+    		byte[] msgBytes = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap()).getAsByte(msg.getSOAPBody(), false);
     		System.out.println("(TestOK) Messaggio ricevuto: "+new String(msgBytes));
         	
     		esito.setServizioAutorizzato(true);

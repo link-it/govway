@@ -3191,13 +3191,19 @@ public class RicezioneBuste {
 		String tipoAutorizzazione_TODO_SpostareSuPortaApplicativa = propertiesReader.getTipoAutorizzazioneBuste();
 		boolean isAttivoAutorizzazioneBuste_TODO_SpostareSuPortaApplicativa = !CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione_TODO_SpostareSuPortaApplicativa);
 		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione_TODO_SpostareSuPortaApplicativa);
+		if(tipoAutorizzazione_TODO_SpostareSuPortaApplicativa!=null){
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_BUSTE, tipoAutorizzazione_TODO_SpostareSuPortaApplicativa);
+		}
+		if(!isAttivoAutorizzazioneBuste_TODO_SpostareSuPortaApplicativa){
+			msgDiag.logPersonalizzato("autorizzazioneBusteDisabilitata");
+		}
 		if(isAttivoAutorizzazioneBuste_TODO_SpostareSuPortaApplicativa &&
 				isMessaggioErroreProtocollo==false &&
 				bustaDiServizio==false &&
 				eccezioniValidazioni==false){	
 			try{
 
-				msgDiag.mediumDebug("Autorizzazione Protocollo di tipo ["+propertiesReader.getTipoAutorizzazioneBuste()+"]...");
+				msgDiag.mediumDebug("Autorizzazione Protocollo di tipo ["+tipoAutorizzazione_TODO_SpostareSuPortaApplicativa+"]...");
 
 				//	Controllo Autorizzazione
 				String identitaMittente = null;
@@ -3224,7 +3230,6 @@ public class RicezioneBuste {
 						tipoMessaggio = "ricevuta asincrona";
 					}
 				}
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_BUSTE, propertiesReader.getTipoAutorizzazioneBuste());
 				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA, tipoMessaggio);
 				msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "FR["+soggettoMittentePerAutorizzazione.toString()+"]->ER["+idServizioPerAutorizzazione.toString()+"]");
 				if(identitaMittente!=null)
@@ -3582,6 +3587,10 @@ public class RicezioneBuste {
 			
 			
 			// AUTORIZZAZIONE PER CONTENUTO
+			this.msgContext.getIntegrazione().setTipoAutorizzazioneContenuto(tipoAutorizzazionePerContenuto);
+			if(tipoAutorizzazionePerContenuto!=null){
+				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_CONTENUTO, tipoAutorizzazionePerContenuto);
+			}
 			if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazionePerContenuto) == false) {
 				try{
 //					if (RicezioneBuste.gestoriAutorizzazioneContenutoBuste.containsKey(tipoAutorizzazionePerContenuto) == false)
@@ -3620,7 +3629,6 @@ public class RicezioneBuste {
 						if(RuoloBusta.RICEVUTA_RICHIESTA.equals(ruoloBustaRicevuta.toString()) || RuoloBusta.RICEVUTA_RISPOSTA.equals(ruoloBustaRicevuta.toString())){
 							tipoMessaggio = "ricevuta asincrona";
 						}
-						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_BUSTE, "AutorizzazioneContenuto("+tipoAutorizzazionePerContenuto+")");
 						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA, tipoMessaggio);
 						msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "FR["+soggettoMittentePerAutorizzazione.toString()+"]->ER["+idServizioPerAutorizzazione.toString()+"]");
 						if(identitaMittente!=null)
@@ -3635,7 +3643,28 @@ public class RicezioneBuste {
 							msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, " subjectMessageSecurity ["+subjectMessageSecurity+"]");
 						else
 							msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, "");
-						msgDiag.logPersonalizzato("autorizzazioneBusteInCorso");
+						msgDiag.logPersonalizzato("autorizzazioneContenutiBusteInCorso");
+						
+						if(datiInvocazione==null){
+							
+							IDServizioApplicativo identitaServizioApplicativoFruitore = new IDServizioApplicativo();
+							identitaServizioApplicativoFruitore.setNome(servizioApplicativoFruitore);
+							identitaServizioApplicativoFruitore.setIdSoggettoProprietario(soggettoMittentePerAutorizzazione);
+							
+							datiInvocazione = new DatiInvocazionePortaApplicativa();
+							datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+							datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
+							datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+							datiInvocazione.setCredenzialiPdDMittente(credenziali);
+							datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
+							datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
+							datiInvocazione.setIdPA(idPAbyNome);
+							datiInvocazione.setPa(pa);
+							datiInvocazione.setIdPD(idPD);
+							datiInvocazione.setPd(pd);
+							datiInvocazione.setIdSoggettoFruitore(soggettoMittentePerAutorizzazione);
+							datiInvocazione.setRuoloBusta(ruoloBustaRicevuta);
+						}
 						
 						// Controllo Autorizzazione
 						EsitoAutorizzazioneCooperazione esito = auth.process(datiInvocazione, requestMessage);
@@ -3647,7 +3676,7 @@ public class RicezioneBuste {
 								logCore.error("getDescrizione Error:"+e.getMessage(),e);
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, traduttore.toString(esito.getErroreCooperazione().getCodiceErrore()));
-							msgDiag.logPersonalizzato("autorizzazioneBusteFallita");
+							msgDiag.logPersonalizzato("autorizzazioneContenutiBusteFallita");
 							if(this.msgContext.isGestioneRisposta()){
 								OpenSPCoop2Message errorMsg = null;
 								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -3674,7 +3703,7 @@ public class RicezioneBuste {
 							}else{
 								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 							}
-							msgDiag.logPersonalizzato("autorizzazioneBusteEffettuata");
+							msgDiag.logPersonalizzato("autorizzazioneContenutiBusteEffettuata");
 						}
 						
 					} else {
@@ -3700,8 +3729,10 @@ public class RicezioneBuste {
 					return;
 				}
 			}
+			else{
+				msgDiag.logPersonalizzato("autorizzazioneContenutiBusteDisabilitata");
+			}
 		}
-
 
 
 

@@ -21,6 +21,8 @@
 
 package org.openspcoop2.message;
 
+import java.io.Serializable;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -32,7 +34,7 @@ import javax.xml.namespace.QName;
  * @version $Rev$, $Date$
  */
 
-public enum SOAPFaultCode {
+public enum SOAPFaultCode implements Serializable {
 	DataEncodingUnknown, MustUnderstand, Receiver, Sender, VersionMismatch;
 	
 	public QName toQName(SOAPVersion version,String prefix){

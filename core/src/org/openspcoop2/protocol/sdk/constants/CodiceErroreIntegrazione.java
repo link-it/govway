@@ -23,6 +23,8 @@
 
 package org.openspcoop2.protocol.sdk.constants;
 
+import java.io.Serializable;
+
 /**
  * CodiceErroreIntegrazione
  *
@@ -30,7 +32,7 @@ package org.openspcoop2.protocol.sdk.constants;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum CodiceErroreIntegrazione implements CodiceErrore{
+public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
    
 
     /* ********  F I E L D S    S T A T I C    P U B L I C  ******** */

@@ -1140,9 +1140,14 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Autenticazione del servizio applicativo...");
 		String tipoAutenticazione = identificazione.getTipoAutenticazione();
 		this.msgContext.getIntegrazione().setTipoAutenticazione(tipoAutenticazione);
+		if(tipoAutenticazione!=null){
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTENTICAZIONE, tipoAutenticazione);
+		}
 		String servizioApplicativo = CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO;
 		if (CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString().equalsIgnoreCase(tipoAutenticazione)) {
 
+			msgDiag.logPersonalizzato("autenticazioneDisabilitata");
+			
 			// dichiarazione nell'header di integrazione
 			if (headerIntegrazioneRichiesta.getServizioApplicativo() != null) {
 				servizioApplicativo = headerIntegrazioneRichiesta.getServizioApplicativo();
@@ -1173,6 +1178,8 @@ public class RicezioneContenutiApplicativi {
 
 		} else {
 
+			msgDiag.logPersonalizzato("autenticazioneInCorso");
+			
 			// Caricamento classe
 			String authClass = className.getAutenticazione(tipoAutenticazione);
 			IAutenticazione auth = null;
@@ -1225,6 +1232,11 @@ public class RicezioneContenutiApplicativi {
 			this.msgContext.getIntegrazione().setServizioApplicativoFruitore(servizioApplicativo);
 		}
 		erroreApplicativoBuilder.setServizioApplicativo(servizioApplicativo);
+		
+		/*
+		 * ------ msgDiagnosito di avvenuta ricezione della richiesta da parte del SIL -----------
+		 */
+		msgDiag.logPersonalizzato("ricevutaRichiestaApplicativa");
 		
 		/*
 		 * Get Servizio Applicativo
@@ -1668,7 +1680,13 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Autorizzazione del servizio applicativo...");
 		String tipoAutorizzazione = identificazione.getTipoAutorizzazione();
 		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione);
+		if(tipoAutorizzazione!=null){
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE, tipoAutorizzazione);
+		}
 		if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione) == false) {
+			
+			msgDiag.logPersonalizzato("autorizzazioneInCorso");
+			
 			ErroreIntegrazione errore = null;
 			Exception eAutorizzazione = null;
 			try {
@@ -1703,6 +1721,12 @@ public class RicezioneContenutiApplicativi {
 				}
 				return;
 			}
+			else{
+				msgDiag.logPersonalizzato("autorizzazioneEffettuata");
+			}
+		}
+		else{
+			msgDiag.logPersonalizzato("autorizzazioneDisabilitata");
 		}
 
 		
@@ -2223,7 +2247,14 @@ public class RicezioneContenutiApplicativi {
 		/* ------------ Autorizzazione per Contenuto ------------- */
 		msgDiag.mediumDebug("Autorizzazione del servizio applicativo...");
 		String tipoAutorizzazioneContenuto = identificazione.getTipoAutorizzazioneContenuto();
+		this.msgContext.getIntegrazione().setTipoAutorizzazioneContenuto(tipoAutorizzazioneContenuto);
+		if(tipoAutorizzazioneContenuto!=null){
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_CONTENUTO, tipoAutorizzazioneContenuto);
+		}
 		if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazioneContenuto) == false) {
+			
+			msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiInCorso");
+			
 			ErroreIntegrazione errore = null;
 			Exception eAutorizzazione = null;
 			try {
@@ -2276,6 +2307,12 @@ public class RicezioneContenutiApplicativi {
 				}
 				return;
 			}
+			else{
+				msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
+			}
+		}
+		else{
+			msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiDisabilitata");
 		}
 		
 		
@@ -2360,11 +2397,6 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		
-		/*
-		 * ------ msgDiagnosito di avvenuta ricezione della richiesta da parte del SIL -----------
-		 */
-		msgDiag.logPersonalizzato("ricevutaRichiestaApplicativa");
-
 		
 		
 		

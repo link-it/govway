@@ -60,6 +60,11 @@ public class IntegrationContext {
 	private String tipoAutorizzazione;
 	
 	/**
+	 * Tipo di autorizzazione per contenuto utilizzato
+	 */
+	private String tipoAutorizzazioneContenuto;
+	
+	/**
 	 * Identificativo della Porta Applicativa
 	 */
 	private IDPortaApplicativaByNome idPA;
@@ -80,6 +85,13 @@ public class IntegrationContext {
 	}
 	public void setTipoAutenticazione(String tipoAutenticazione) {
 		this.tipoAutenticazione = tipoAutenticazione;
+	}
+	
+	public String getTipoAutorizzazioneContenuto() {
+		return this.tipoAutorizzazioneContenuto;
+	}
+	public void setTipoAutorizzazioneContenuto(String tipoAutorizzazioneContenuto) {
+		this.tipoAutorizzazioneContenuto = tipoAutorizzazioneContenuto;
 	}
 	
 	public String getIdCorrelazioneApplicativa() {

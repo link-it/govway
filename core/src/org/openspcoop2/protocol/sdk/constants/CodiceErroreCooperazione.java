@@ -22,6 +22,9 @@
 package org.openspcoop2.protocol.sdk.constants;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
+
+import java.io.Serializable;
+
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
@@ -31,7 +34,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum CodiceErroreCooperazione implements CodiceErrore {
+public enum CodiceErroreCooperazione implements CodiceErrore,Serializable {
 	
 	UNKNOWN(0),
 	

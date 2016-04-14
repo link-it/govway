@@ -46,7 +46,7 @@ public class AutorizzazioneContenutoBusteOK extends AbstractCore implements IAut
     	// Autorizzazzione servizio applicativo
     	try{
     		
-    		byte[] msgBytes = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap()).getAsByte(msg.getSOAPBody(), true);
+    		byte[] msgBytes = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap()).getAsByte(msg.getSOAPBody(), false);
     		System.out.println("(TestOK) Messaggio ricevuto (Ruolo busta: "+datiInvocazione.getRuoloBusta().toString()+"): "+new String(msgBytes));
         	
     		esito.setServizioAutorizzato(true);
