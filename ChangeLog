@@ -1,3 +1,15 @@
+2016-04-13  Andrea Poli <apoli@link.it>
+
+	[Pdd,PddConsole]
+	Aggiunta funzionalità OP-488
+	Aggiunta la possibilità di configurare un dump binario dei dati 'RAW' che vengono scambiati 
+	nei servizi in ingresso sulla Porta Delegata e Porta Applicativa.
+	La configurazione (attivabile nella sezione Configurazione in modalità avanzata della pddconsole) 
+	permette di abilitare il dump in maniera selettiva sui due canali (PD o PA).
+	I dati 'RAW' vengono registrati su un file di log dedicato al canale:
+	- Canale PD: openspcoop2_dumpBinarioPD.log
+	- Canale PA: openspcoop2_dumpBinarioPA.log
+
 2016-04-12  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole,PddLoader]
