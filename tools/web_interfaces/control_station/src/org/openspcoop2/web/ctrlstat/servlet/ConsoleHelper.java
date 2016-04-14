@@ -99,7 +99,6 @@ import org.openspcoop2.web.lib.users.dao.User;
  */
 public class ConsoleHelper {
 
-	// ELIMINARE RESULT SET!!!!
 
 	protected HttpServletRequest request;
 	public HttpServletRequest getRequest() {
@@ -590,7 +589,7 @@ public class ConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 2; // configurazione e audit
+					dimensioneEntries = 3; // configurazione, runtime e audit
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
@@ -624,6 +623,9 @@ public class ConsoleHelper {
 					int index = 0;
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
+					index++;
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
 					index++;
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
