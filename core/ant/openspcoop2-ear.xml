@@ -702,6 +702,7 @@
 				<include name="commons-io-2.1.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.0.1.jar"/>
+				<include name="commons-beanutils-1.8.3.jar"/> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset dir="${required_lib}/jibx" prefix="lib" >
 				<include name="bcel-5.2.jar"/>
@@ -729,6 +730,9 @@
 				<include name="velocity-1.6.4.jar"/>
 				<include name="urlrewritefilter-4.0.3.jar"/>
 				<include name="${concurrent_jar}"/>
+				<include name="json-lib-2.4-jdk15.jar" /> <!--jmx mini console -->
+				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
+				<include name="xom-1.2.7.jar" /> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset dir="${required_lib}/log" prefix="lib" >
 				<include name="slf4j-api-1.6.2.jar"/>

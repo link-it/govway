@@ -92,6 +92,7 @@
 				<include name="commons-logging-1.1.1.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="commons-net-3.0.1.jar"/>
 				<include name="commons-io-2.1.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="commons-beanutils-1.8.3.jar"/> <!--jmx mini console -->
 			</lib>
 			<lib dir="${required_lib}/jibx">
 				<include name="bcel-5.2.jar"/>
@@ -129,6 +130,9 @@
 				<include name="xalan-2.7.1_serializer.jar"/> 
 				<include name="velocity-1.6.4.jar"/>
 				<include name="urlrewritefilter-4.0.3.jar"/>
+				<include name="json-lib-2.4-jdk15.jar" /> <!--jmx mini console -->
+				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
+				<include name="xom-1.2.7.jar" /> <!--jmx mini console -->
 			</lib>
 			<lib dir="${required_lib}/jminix">
 				<include name="*.jar"/>
