@@ -47,7 +47,7 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 	private static final long serialVersionUID = 1L;
 
 	/** Schema XSD */
-	private Schema schema = null;
+	private transient Schema schema = null;
 
 	public Schema getSchema() {
 		return this.schema;
