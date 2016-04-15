@@ -28,6 +28,9 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -75,6 +78,22 @@ public class ValidatoreMessaggiApplicativi {
 	
 	
 	/* ------ Utility ------- */
+	
+	public static String getTipo(ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo){
+		String tipo = validazioneContenutoApplicativoApplicativo.getTipo().getValue();
+		if(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage()!=null){
+			if(StatoFunzionalita.ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage())){
+				tipo = tipo + CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_PRINT_SEPARATOR + 
+						CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_CON_MTOM;
+			}
+			if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
+				tipo = tipo + CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_PRINT_SEPARATOR + 
+						CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_IN_WARNING_MODE;
+			}
+		}
+		return tipo;
+	}
+	
 	public boolean isServizioCorrelato(){
 		try{
 			return TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio());

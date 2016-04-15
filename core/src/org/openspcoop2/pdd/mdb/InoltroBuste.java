@@ -3454,23 +3454,32 @@ public class InoltroBuste extends GenericLib{
 									"getTipoValidazioneContenutoApplicativo(pd)");
 							return esito;
 						}
+						if(validazioneContenutoApplicativoApplicativo!=null && validazioneContenutoApplicativoApplicativo.getTipo()!=null){
+							String tipo = ValidatoreMessaggiApplicativi.getTipo(validazioneContenutoApplicativoApplicativo);
+							//this.msgContext.getIntegrazione().setTipoValidazioneContenuti(tipo);
+							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_CONTENUTI, tipo);
+							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,"");
+						}
 						if(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())||
 								CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
 
 							ByteArrayInputStream binXSD = null;
 							try{
 								if(responseMessage.getSOAPBody()!=null && (responseMessage.getSOAPBody().hasFault()==false) ){
-									msgDiag.mediumDebug("Validatore contenuti applicativi della risposta...");
+									
+									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaInCorso");
 									
 									// Accept mtom message
 									List<MtomXomReference> xomReferences = null;
 									if(StatoFunzionalita.ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage())){
+										msgDiag.mediumDebug("Validazione xsd della risposta (mtomFastUnpackagingForXSDConformance)...");
 										xomReferences = responseMessage.mtomFastUnpackagingForXSDConformance();
 									}
 									
 									// Init Validatore
 									boolean readWSDL = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo());
 									//System.out.println("MESSAGGIO PRIMA DI VALIDARE: "+requestMessage.getAsString(responseMessage.getSOAPPart().getEnvelope(), false));
+									msgDiag.mediumDebug("Validazione xsd della risposta (initValidator)...");
 									ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 										new ValidatoreMessaggiApplicativi(registroServiziManager,richiestaDelegata.getIdServizio(),
 												responseMessage.getVersioneSoap(),responseMessage.getSOAPPart().getEnvelope(),readWSDL);
@@ -3480,7 +3489,7 @@ public class InoltroBuste extends GenericLib{
 											||
 											CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 									){
-										msgDiag.mediumDebug("Validazione wsdl della richiesta ...");
+										msgDiag.mediumDebug("Validazione wsdl della risposta ...");
 										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false, null);
 									}
 									
@@ -3490,13 +3499,26 @@ public class InoltroBuste extends GenericLib{
 									
 									// Ripristino struttura messaggio con xom
 									if(xomReferences!=null && xomReferences.size()>0){
+										msgDiag.mediumDebug("Validazione xsd della risposta (mtomRestoreAfterXSDConformance)...");
 										responseMessage.mtomRestoreAfterXSDConformance(xomReferences);
+									}
+									
+									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaEffettuata");
+								}
+								else{
+									if(responseMessage.getSOAPBody()==null){
+										msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_BODY_NON_PRESENTE);
+										msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
+									}
+									else if (responseMessage.getSOAPBody().hasFault() ){
+										msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_FAULT_PRESENTE);
+										msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
 									}
 								}
 
 							}catch(ValidatoreMessaggiApplicativiException ex){
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
-								msgDiag.logPersonalizzato("validazioneContenutiApplicativiNonRiuscita");
+								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 									// validazione abilitata
 									if(msgResponse!=null){
@@ -3513,7 +3535,7 @@ public class InoltroBuste extends GenericLib{
 								}
 							}catch(Exception ex){
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
-								msgDiag.logPersonalizzato("validazioneContenutiApplicativiNonRiuscita");
+								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("Riscontrato errore durante la validazione xsd della risposta applicativa",ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 									// validazione abilitata
@@ -3537,6 +3559,9 @@ public class InoltroBuste extends GenericLib{
 									}catch(Exception e){}
 								}
 							}
+						}
+						else{
+							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
 						}
 					}
 

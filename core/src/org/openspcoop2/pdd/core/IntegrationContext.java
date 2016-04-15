@@ -65,6 +65,11 @@ public class IntegrationContext {
 	private String tipoAutorizzazioneContenuto;
 	
 	/**
+	 * Tipo di validazione contenuti
+	 */
+	private String tipoValidazioneContenuti;
+	
+	/**
 	 * Identificativo della Porta Applicativa
 	 */
 	private IDPortaApplicativaByNome idPA;
@@ -92,6 +97,13 @@ public class IntegrationContext {
 	}
 	public void setTipoAutorizzazioneContenuto(String tipoAutorizzazioneContenuto) {
 		this.tipoAutorizzazioneContenuto = tipoAutorizzazioneContenuto;
+	}
+	
+	public String getTipoValidazioneContenuti() {
+		return this.tipoValidazioneContenuti;
+	}
+	public void setTipoValidazioneContenuti(String tipoValidazioneContenuti) {
+		this.tipoValidazioneContenuti = tipoValidazioneContenuti;
 	}
 	
 	public String getIdCorrelazioneApplicativa() {

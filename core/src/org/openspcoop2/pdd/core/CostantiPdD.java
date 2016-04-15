@@ -414,6 +414,10 @@ public class CostantiPdD {
     public final static String KEY_TIPO_AUTORIZZAZIONE_BUSTE = "@TIPO_AUTORIZZAZIONE_BUSTE@";
     /** Costante che identifica il tipo di autenticazione */
     public final static String KEY_TIPO_AUTENTICAZIONE = "@TIPO_AUTENTICAZIONE@";
+    /** Costante che identifica il tipo di validazione contenuti */
+    public final static String KEY_TIPO_VALIDAZIONE_CONTENUTI = "@TIPO_VALIDAZIONE_CONTENUTI@";
+    /** Costante che identifica dettagli ulteriori sulla validazione contenuti */
+    public final static String KEY_DETAILS_VALIDAZIONE_CONTENUTI = "@DETAILS_VALIDAZIONE_CONTENUTI@";    
     /** Costante che identifica il tipo di messaggio (normale, ricevuta asincrona...) */
     public final static String KEY_TIPO_MESSAGGIO_BUSTA = "@TIPO_MESSAGGIO_BUSTA@"; 
     /** Costante che identifica tipo/nome mittente e tipo/nome destinatario erogatore del servizio da autorizzare, calcolato in base al tipo di messaggio ricevuto.  */

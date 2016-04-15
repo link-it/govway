@@ -203,6 +203,12 @@ public class CostantiConfigurazione {
     public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL = ValidazioneContenutiApplicativiTipo.WSDL;
     /** Validazione WSDL: Accordo */
     public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP = ValidazioneContenutiApplicativiTipo.OPENSPCOOP;
+    
+    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_PRINT_SEPARATOR = "-";
+    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_CON_MTOM = "mtom/xop";
+    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_IN_WARNING_MODE = "warningOnly";
+    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_BODY_NON_PRESENTE = " (SOAPBody non presente nella risposta)";
+    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_FAULT_PRESENTE = " (la risposta contiene un SOAPFault)";
 	
     /** tipo di repository */
     public final static String REPOSITORY_BUSTE_DEFAULT = "default";

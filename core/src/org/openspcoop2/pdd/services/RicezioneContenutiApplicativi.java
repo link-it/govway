@@ -2162,22 +2162,30 @@ public class RicezioneContenutiApplicativi {
 			}
 			return;
 		}
+		if(validazioneContenutoApplicativoApplicativo!=null && validazioneContenutoApplicativoApplicativo.getTipo()!=null){
+			String tipo = ValidatoreMessaggiApplicativi.getTipo(validazioneContenutoApplicativoApplicativo);
+			this.msgContext.getIntegrazione().setTipoValidazioneContenuti(tipo);
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_CONTENUTI, tipo);
+			msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,"");
+		}
 		if (CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())
 				|| CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
 
 			ByteArrayInputStream binXSD = null;
 			try {
-				msgDiag.mediumDebug("Validatore contenuti applicativi della richiesta...");
+				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaInCorso");
 				
 				// Accept mtom message
 				List<MtomXomReference> xomReferences = null;
 				if(StatoFunzionalita.ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage())){
+					msgDiag.mediumDebug("Validazione xsd della richiesta (mtomFastUnpackagingForXSDConformance)...");
 					xomReferences = requestMessage.mtomFastUnpackagingForXSDConformance();
 				}
 				
 				// Init Validatore
 				boolean readWSDL = 
 					CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo());
+				msgDiag.mediumDebug("Validazione xsd della richiesta (initValidator)...");
 				ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = new ValidatoreMessaggiApplicativi(
 						registroServiziReader, richiestaDelegata.getIdServizio(), 
 						requestMessage.getVersioneSoap(),requestMessage.getSOAPPart().getEnvelope(),readWSDL);
@@ -2195,12 +2203,15 @@ public class RicezioneContenutiApplicativi {
 
 				// Ripristino struttura messaggio con xom
 				if(xomReferences!=null && xomReferences.size()>0){
+					msgDiag.mediumDebug("Validazione xsd della richiesta (mtomRestoreAfterXSDConformance)...");
 					requestMessage.mtomRestoreAfterXSDConformance(xomReferences);
 				}
 				
+				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaEffettuata");
+				
 			} catch (ValidatoreMessaggiApplicativiException ex) {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
-				msgDiag.logPersonalizzato("validazioneContenutiApplicativiNonRiuscita");
+				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 				if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false) {
 					// validazione abilitata
 					openspcoopstate.releaseResource();
@@ -2211,7 +2222,7 @@ public class RicezioneContenutiApplicativi {
 				}
 			} catch (Exception ex) {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
-				msgDiag.logPersonalizzato("validazioneContenutiApplicativiNonRiuscita");
+				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 				logCore.error("Riscontrato errore durante la validazione xsd della richiesta applicativa",ex);
 				if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false) {
 					// validazione abilitata
@@ -2229,6 +2240,9 @@ public class RicezioneContenutiApplicativi {
 					} catch (Exception e) {}
 				}
 			}
+		}
+		else{
+			msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaDisabilitata");
 		}
 
 		
