@@ -432,7 +432,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_XSD = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE = "Stato";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE = "Dimensione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE = "Dimensione (Elementi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE = "Algoritmo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "Item Idle Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Item Life Time (Secondi)";
