@@ -210,7 +210,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
 						oldwsdl, this.validazioneDocumenti, myFru, dati,
-						idServ+"", tipologiaDocumentoScaricare);
+						idServ+"", tipologiaDocumentoScaricare, false);
 
 				pd.setDati(dati);
 
@@ -255,7 +255,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
 						oldwsdl, this.validazioneDocumenti, myFru, dati,
-						idServ+"", tipologiaDocumentoScaricare);
+						idServ+"", tipologiaDocumentoScaricare, false);
 
 				pd.setDati(dati);
 
@@ -321,10 +321,14 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			dati = apsHelper.addFruitoreWSDLToDati(TipoOperazione.OTHER, this.tipo, this.idSoggettoErogatoreDelServizio ,
 					this.wsdl, this.validazioneDocumenti, myFru, dati,
-					idServ+"", tipologiaDocumentoScaricare);
+					idServ+"", tipologiaDocumentoScaricare, true);
 
+			pd.setMessage("Modifica effettuata con successo");
+			
 			pd.setDati(dati);
 
+			pd.disableEditMode(); // altrimenti un successivo invio per aggiornare wsdl (o eliminarlo) non funziona.
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,

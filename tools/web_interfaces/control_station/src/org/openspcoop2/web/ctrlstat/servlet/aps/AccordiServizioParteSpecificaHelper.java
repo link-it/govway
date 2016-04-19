@@ -3013,7 +3013,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String tipo, String idSoggettoErogatoreDelServizio, String wsdl, Boolean validazioneDocumenti,
 			Fruitore myFru,
 			Vector<DataElement> dati,
-			String id, String tipologiaDocumentoScaricare) {
+			String id, String tipologiaDocumentoScaricare,
+			boolean finished) {
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
@@ -3082,12 +3083,14 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
 				dati.add(saveAs);
 				
-				de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_AGGIORNAMENTO);
-				de.setValue("");
-				de.setSize(this.getSize());
-				dati.addElement(de);
+				if(!finished){
+					de = new DataElement();
+					de.setType(DataElementType.TITLE);
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_AGGIORNAMENTO);
+					de.setValue("");
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}
 			}else {
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_ATTUALE +":");
@@ -3099,7 +3102,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 			de.setValue("" + validazioneDocumenti);
-			if (isModalitaAvanzata) {
+			if (isModalitaAvanzata && !finished) {
 				de.setType(DataElementType.CHECKBOX);
 				if( validazioneDocumenti){
 					de.setSelected(Costanti.CHECK_BOX_ENABLED);
@@ -3113,23 +3116,25 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			de.setSize( getSize());
 			dati.addElement(de);
 
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_NUOVO);
-			de.setValue("");
-			de.setType(DataElementType.FILE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
-			de.setSize( getSize());
-			dati.addElement(de);
-			
-			if(wsdl != null && !wsdl.isEmpty()){
+			if(!finished){
 				de = new DataElement();
-				de.setBold(true);
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_CHANGE_CLEAR_WARNING);
-				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_CHANGE_CLEAR);
-				de.setType(DataElementType.NOTE);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_WARN);
-				de.setSize(this.getSize());
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_NUOVO);
+				de.setValue("");
+				de.setType(DataElementType.FILE);
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL);
+				de.setSize( getSize());
 				dati.addElement(de);
+				
+				if(wsdl != null && !wsdl.isEmpty()){
+					de = new DataElement();
+					de.setBold(true);
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_CHANGE_CLEAR_WARNING);
+					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_CHANGE_CLEAR);
+					de.setType(DataElementType.NOTE);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_WARN);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}
 			}
 		}
 		return dati;
