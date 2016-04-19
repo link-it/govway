@@ -23,7 +23,7 @@
 package org.openspcoop2.pdd.services;
 
 import java.util.Enumeration;
-import java.util.Properties;
+import java.util.List;
 
 import javax.mail.internet.ContentType;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +52,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 
@@ -281,7 +282,7 @@ public class ServletUtils {
 				if(openspcoopProperties.isBypassFilterMustUnderstandEnabledForAllHeaders()){
 					return null;
 				}else{
-					Properties filtri = openspcoopProperties.getBypassFilterMustUnderstandProperties(protocolFactory.getProtocol());
+					List<NameValue> filtri = openspcoopProperties.getBypassFilterMustUnderstandProperties(protocolFactory.getProtocol());
 					if(filtri!=null && filtri.size()>0){
 						return ServletUtils.checkMustUnderstandHeaderElement(header,filtri);
 					}
@@ -327,7 +328,7 @@ public class ServletUtils {
 		}     	
 	}
 
-	public static String checkMustUnderstandHeaderElement(SOAPHeader header,Properties filtri)throws UtilsException{
+	public static String checkMustUnderstandHeaderElement(SOAPHeader header,List<NameValue> filtri)throws UtilsException{
 		
 		
 		String error = null;
@@ -344,17 +345,18 @@ public class ServletUtils {
 				// Prendo gli headers con MustUnderstand="1" senza Actor
 				if(elementHeader.getActor()==null&&elementHeader.getMustUnderstand()==true){
 					boolean checked = false;
-					java.util.Enumeration<?> en = filtri.keys();
-					// Guardo se l'header è nella lista di quelli da bypassare
-					while(en.hasMoreElements()){
-						String key = (String) en.nextElement();
-						
-						if(key.equals(elementHeader.getLocalName()) && filtri.get(key).equals(elementHeader.getNamespaceURI())){
-							// Ok si bypassa.
-							checked = true;
-							break;
+					if(filtri!=null && filtri.size()>0){
+						for (NameValue nameValue : filtri) {
+							String localName = nameValue.getName();
+							String namespaceURI = nameValue.getValue();
+							if(localName.equals(elementHeader.getLocalName()) && namespaceURI.equals(elementHeader.getNamespaceURI())){
+								// Ok si bypassa.
+								checked = true;
+								break;
+							}
 						}
 					}
+					
 					// Controllo se abbiamo bypassato l'header
 					if(!checked){
 						// Abbiamo un MustUnderstand="1" senza Actor che non appare nella lista da Bypassare!

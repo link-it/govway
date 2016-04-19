@@ -100,6 +100,7 @@ import org.openspcoop2.protocol.sdk.constants.SOAPFaultIntegrationGenericInfoMod
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
+import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.digest.IDigestReader;
@@ -4568,9 +4569,9 @@ public class OpenSPCoop2Properties {
 	 * @return proprieta' che localizzano gli header element su cui deve essere applicato il filtro bypass.
 	 * 
 	 */
-	private static Hashtable<String,java.util.Properties> mapGetBypassFilterMustUnderstandProperties = null;
+	private static Hashtable<String,List<NameValue>> mapGetBypassFilterMustUnderstandProperties = null;
 	//private static java.util.Properties getBypassFilterMustUnderstandProperties = null;
-	public java.util.Properties getBypassFilterMustUnderstandProperties(String protocol) {
+	public List<NameValue> getBypassFilterMustUnderstandProperties(String protocol) {
 		if(OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties==null){
 			initBypassFilterMustUnderstandProperties();
 		}
@@ -4579,12 +4580,36 @@ public class OpenSPCoop2Properties {
 	public void initBypassFilterMustUnderstandProperties(){
 		if(OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties==null){
 			
-			OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties = new Hashtable<String, Properties>();
+			OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties = new Hashtable<String, List<NameValue>>();
 			
-			java.util.Properties prop = new java.util.Properties();
+			List<NameValue> resultList = new ArrayList<NameValue>();
 			try{ 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.");
-			
+				java.util.Properties tmpP = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.");
+				if(tmpP!=null && tmpP.size()>0){
+					Enumeration<Object> keys = tmpP.keys();
+					while (keys.hasMoreElements()) {
+						Object object = (Object) keys.nextElement();
+						if(object instanceof String){
+							String key = (String) object;
+							String localName = key;
+							String namespace = tmpP.getProperty(key);
+							if(key.contains("!")){
+								// serve a fornire più proprietà con stesso localName e namespace differente
+								// tramite la formula 
+								// org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.nomeHeader=http://prova
+								// org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.nomeHeader!1=http://prova2
+								// org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.nomeHeader!2=http://prova3
+								localName = key.split("!")[0];
+							}
+							NameValue nameValue = new NameValue();
+							nameValue.setName(localName);
+							nameValue.setValue(namespace);
+							resultList.add(nameValue);
+						}
+					}
+				}
+				
+				
 				// aggiungo i bypass specifici dei protocolli
 				Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
 				while (protocolli.hasMoreElements()) {
@@ -4593,16 +4618,28 @@ public class OpenSPCoop2Properties {
 					IProtocolConfiguration pc = pf.createProtocolConfiguration();
 					List<BypassMustUnderstandCheck> list = pc.getBypassMustUnderstandCheck();
 					
-					java.util.Properties propForProtocol = new java.util.Properties();
-					propForProtocol.putAll(prop);
+					List<NameValue> resultListForProtocol = new ArrayList<NameValue>();
+					if(resultList!=null && resultList.size()>0){
+						resultListForProtocol.addAll(resultList);
+					}
+					
 					if(list!=null && list.size()>0){
 						for (Iterator<?> iterator = list.iterator(); iterator.hasNext();) {
 							BypassMustUnderstandCheck bypassMustUnderstandCheck = (BypassMustUnderstandCheck) iterator.next();
-							propForProtocol.put(bypassMustUnderstandCheck.getElementName(),bypassMustUnderstandCheck.getNamespace());
+							
+							NameValue nameValue = new NameValue();
+							nameValue.setName(bypassMustUnderstandCheck.getElementName());
+							nameValue.setValue(bypassMustUnderstandCheck.getNamespace());
+							resultListForProtocol.add(nameValue);
+							
 						}
 					}
 					
-					OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties.put(protocollo, propForProtocol);
+					for (NameValue nameValue : resultListForProtocol) {
+						this.log.debug("["+protocollo+"] ["+nameValue.getName()+"]=["+nameValue.getValue()+"]");
+					}
+					
+					OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties.put(protocollo, resultListForProtocol);
 				}
 				
 			}catch(java.lang.Exception e) {
