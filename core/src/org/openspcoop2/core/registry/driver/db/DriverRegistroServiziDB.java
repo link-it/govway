@@ -3412,8 +3412,35 @@ IDriverWS ,IMonitoraggioRisorsa{
 //			int n=stm.executeUpdate();
 //			stm.close();
 			
-			
+			List<Long> idsOperation = new ArrayList<Long>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
+			sqlQueryObject.addWhereCondition("id_port_type=?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(queryString);
+			stm.setLong(1, portType.getId());
+			rs=stm.executeQuery();
+			while(rs.next()){
+				idsOperation.add(rs.getLong("id"));
+			}
+			rs.close();
+			stm.close();
+			
+			if(idsOperation!=null && idsOperation.size()>0){
+				for (Long id : idsOperation) {
+					ISQLQueryObject sqlQueryObjectMessages = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObjectMessages.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI_OPERATION_MESSAGES);
+					sqlQueryObjectMessages.addWhereCondition("id_port_type_azione=?");
+					String updateString = sqlQueryObjectMessages.createSQLDelete();
+					stm = connection.prepareStatement(updateString);
+					stm.setLong(1, id);
+					int n=stm.executeUpdate();
+					stm.close();
+					this.log.debug("Cancellate "+n+" operation messages associate all'azione con id "+id+" del port type "+portType.getNome()+ " dell'accordo: "+as.getNome());
+				}
+			}
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI);
 			sqlQueryObject.addWhereCondition("id_port_type=?");
 			String updateString = sqlQueryObject.createSQLDelete();
