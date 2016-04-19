@@ -36,6 +36,7 @@ import java.io.Serializable;
 public enum EsitoTransazioneName implements Serializable{
 
 	OK,
+	OK_PRESENZA_ANOMALIE,
 	ERRORE_PROTOCOLLO,
 	ERRORE_APPLICATIVO,
 	ERRORE_GENERICO,

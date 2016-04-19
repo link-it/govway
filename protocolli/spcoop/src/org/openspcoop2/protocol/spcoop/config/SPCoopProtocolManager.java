@@ -213,5 +213,9 @@ public class SPCoopProtocolManager implements IProtocolManager {
     	return this.spcoopProperties.isHttpOneWay_PD_HTTPEmptyResponse();
     }
 
+    @Override
+	public boolean isBlockedTransaction_responseMessageWithTransportCodeError(){
+    	return this.spcoopProperties.isResponseMessageWithTransportCodeError_blockedTransaction();
+    }
 
 }

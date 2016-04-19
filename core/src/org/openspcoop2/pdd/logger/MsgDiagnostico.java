@@ -34,6 +34,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -766,6 +767,15 @@ public class MsgDiagnostico {
 
 	/** ----------------- METODI DI LOGGING (Messaggi Diagnostici) ---------------- */
 
+	private void setEmitErrorConditionInContext(int livelloLog){
+		if(this.pddContext!=null){
+			if(livelloLog<=LogLevels.SEVERITA_ERROR_INTEGRATION){
+				if(this.pddContext.containsKey(Costanti.EMESSI_DIAGNOSTICI_ERRORE)==false){
+					this.pddContext.addObject(Costanti.EMESSI_DIAGNOSTICI_ERRORE, "true");
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Il Metodo si occupa di creare un messaggio di livello 'Personalizzato'. 
@@ -802,6 +812,7 @@ public class MsgDiagnostico {
 			logError("MsgDiagnostico.logPersonalizzato error, conversione a livello OpenSPCoop non riuscita ["+severitaLivelloOpenSPCoop2+"]");
 			return;
 		}
+		this.setEmitErrorConditionInContext(severitaLivelloOpenSPCoop2);
 		Level logLevelseveritaLivelloLog4J = LogLevels.toLog4J(severitaLivelloOpenSPCoop2);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1006,6 +1017,8 @@ public class MsgDiagnostico {
 
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
 		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_FATAL);
+				
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1115,6 +1128,8 @@ public class MsgDiagnostico {
 		
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
 		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_ERROR_PROTOCOL);
+		
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1223,6 +1238,8 @@ public class MsgDiagnostico {
 		
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
 		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_ERROR_INTEGRATION);
+		
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1329,6 +1346,8 @@ public class MsgDiagnostico {
 	public void infoProtocol(String msg) {
 		
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
+		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_INFO_PROTOCOL);
 		
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1438,6 +1457,8 @@ public class MsgDiagnostico {
 		
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
 		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_INFO_INTEGRATION);
+		
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1545,6 +1566,8 @@ public class MsgDiagnostico {
 		
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
 		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_DEBUG_LOW);
+		
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
 		int severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1649,6 +1672,8 @@ public class MsgDiagnostico {
 	public void mediumDebug(String msg) {
 		
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
+		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_DEBUG_MEDIUM);
 		
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();
@@ -1755,6 +1780,8 @@ public class MsgDiagnostico {
 	public void highDebug(String msg){
 		
 		String codiceDiagnostico = null; // con questi metodi viene fornito un unico codice diagnostico associato ad ogni messaggio di questo livello
+		
+		this.setEmitErrorConditionInContext(LogLevels.SEVERITA_DEBUG_HIGH);
 		
 		int severitaLogEmessoPerFiltro = LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH);
 		int severitaRichiestaPdD = this.msgDiagPropertiesReader.getFiltroMsgDiagnostico_OpenSPCoop2_7();

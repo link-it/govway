@@ -56,6 +56,7 @@ public class Costanti {
 	public final static String ERRORE_SOAP_FAULT_SERVER = "ERRORE_SOAP_FAULT_SERVER";
 	public final static String URL_INVOCAZIONE = "URL_INVOCAZIONE";
 	public final static String CREDENZIALI_INVOCAZIONE = "CREDENZIALI_INVOCAZIONE";
+	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.CLUSTER_ID,Costanti.PROTOCOLLO,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,

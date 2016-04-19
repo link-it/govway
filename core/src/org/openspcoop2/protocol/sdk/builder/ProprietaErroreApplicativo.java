@@ -236,6 +236,7 @@ public class ProprietaErroreApplicativo implements java.io.Serializable {
     				code.getCodice() != CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE.getCodice() &&
     				code.getCodice() != CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA.getCodice() && 
     				code.getCodice() != CodiceErroreIntegrazione.CODICE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT.getCodice() && 
+    				code.getCodice() != CodiceErroreIntegrazione.CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.getCodice() && 
 					code.getCodice() != CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST.getCodice() &&  
     				code.getCodice() != CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE.getCodice() &&  
     				code.getCodice() != CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST.getCodice()  

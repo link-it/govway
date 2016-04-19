@@ -587,12 +587,25 @@ public class InoltroBuste extends GenericLib{
 				sbustamentoInformazioniProtocolloRisposta = configurazionePdDManager.invocazionePortaDelegataSbustamentoInformazioniProtocollo(sa);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "isGestioneManifestAttachments(pd)");
-				ejbUtils.rollbackMessage("Errore nella creazione dei gestori messaggio", esito);
+				ejbUtils.rollbackMessage("Errore durante l'invocazione del metodo isGestioneManifestAttachments", esito);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(false);	
 				esito.setStatoInvocazioneErroreNonGestito(e);
 				return esito;
 			}
+		}
+		
+		boolean isBlockedTransaction_responseMessageWithTransportCodeError = false;
+		try{		
+			isBlockedTransaction_responseMessageWithTransportCodeError = 
+						protocolManager.isBlockedTransaction_responseMessageWithTransportCodeError();
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "isBlockedTransaction_responseMessageWithTransportCodeError)");
+			ejbUtils.rollbackMessage("Errore durante l'invocazione del metodo isBlockedTransaction_responseMessageWithTransportCodeError", esito);
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false);	
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
 		}
 		
 		
@@ -2095,6 +2108,8 @@ public class InoltroBuste extends GenericLib{
 			/* ------------  Tracciamento Richiesta e Messaggio Diagnostico ------------- */
 			if(invokerNonSupportato==false){// && errorConsegna==false){
 
+				
+				String msgErroreSituazioneAnomale = null;
 
 				// Tracciamento effettuato:
 
@@ -2115,6 +2130,17 @@ public class InoltroBuste extends GenericLib{
 					}else{
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
 						msgDiag.logPersonalizzato("inoltroConErrore");
+						
+						// Controllo Situazione Anomala ISSUE OP-7
+						if(responseMessage!=null && responseMessage.getSOAPPart()!=null && 
+								responseMessage.getSOAPPart().getEnvelope()!=null &&
+								(responseMessage.getSOAPPart().getEnvelope().getBody()==null || (!responseMessage.getSOAPPart().getEnvelope().getBody().hasFault()))){
+							msgDiag.logPersonalizzato("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+							if(isBlockedTransaction_responseMessageWithTransportCodeError){
+								msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+								this.log.error(msgErroreSituazioneAnomale);
+							}
+						}
 					}
 				}else{	
 					if(fault!=null && fault.getFaultString()!=null && 
@@ -2152,6 +2178,40 @@ public class InoltroBuste extends GenericLib{
 							idCorrelazioneApplicativa);
 				}
 
+				// Dopo che ho effettuata la tracciatura ritorno errore se necessario
+				if(msgErroreSituazioneAnomale!=null){
+					if(functionAsRouter){		
+						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
+								ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
+									get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),
+								idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,null);
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreSituazioneAnomale);
+						esito.setEsitoInvocazione(true);
+					}else{
+						if(sendRispostaApplicativa){
+							OpenSPCoop2Message responseMessageError = 
+								this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
+										get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),null);
+							ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreSituazioneAnomale);
+							esito.setEsitoInvocazione(true);
+						}else{
+							// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
+							// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
+							if(gestioneBusteNonRiscontrateAttive==false){
+								ejbUtils.rollbackMessage(msgErroreSituazioneAnomale, esito);
+								esito.setEsitoInvocazione(false);
+								esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,msgErroreSituazioneAnomale);
+							}else{
+								ejbUtils.updateErroreProcessamentoMessage(msgErroreSituazioneAnomale, esito);
+								esito.setEsitoInvocazione(true);
+								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreSituazioneAnomale);
+							}
+						}
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+				}
 			}
 
 			

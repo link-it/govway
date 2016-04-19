@@ -262,6 +262,14 @@ public interface IProtocolManager {
 	 */
     public boolean isHttpOneWay_PD_HTTPEmptyResponse();
     
+    /**
+     * Una risposta ben formata (envelope SOAP senza Fault) presente in un http-body di una risposta insieme ad un codice di trasporto 500
+     * non è compatibile con quanto indicato nel basic profile (R1111, (http://www.ws-i.org/profiles/basicprofile-1.1.html#HTTP_Success_Status_Codes).
+     * In particolare non e' chiaro quale sia il senso di questa risposta associata ad un profilo di collaborazione OneWay e quindi quale sia un modo migliore per gestirlo.
+     * L'opzione seguente indica se far terminare la transazione con errore o continuarla normalmente la gestione utilizzando la risposta ritornata sul codice di trasporto 500.
+     */
+    public boolean isBlockedTransaction_responseMessageWithTransportCodeError();
+    
     
 	
 }

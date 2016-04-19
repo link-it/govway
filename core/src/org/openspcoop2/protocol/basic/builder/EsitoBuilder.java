@@ -177,7 +177,16 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 			ITraduttore trasl = this.factory.createTraduttore();
 			
 			String tipoContext = this.getTipoContext(transportRequestContext);
-				
+			
+			// Emissione diagnostici di livello error
+			boolean emissioneDiagnosticiError = (context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.EMESSI_DIAGNOSTICI_ERRORE));
+			
+			// Tipo di esito OK
+			EsitoTransazioneName esitoOK = EsitoTransazioneName.OK;
+			if(emissioneDiagnosticiError){
+				esitoOK = EsitoTransazioneName.OK_PRESENZA_ANOMALIE;
+			}
+			
 			// Devo riconoscere eventuali codifiche custom inserite nel contesto
 			if(context!=null){
 				List<Integer> customCodeForContextProperty = this.esitiProperties.getEsitiCodeForContextPropertyIdentificationMode();
@@ -210,7 +219,7 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
 			else if(body==null){
-				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK, tipoContext); // oneway
+				return this.esitiProperties.convertToEsitoTransazione(esitoOK, tipoContext); // oneway
 			}
 			else{
 				if(body.hasFault()){
@@ -363,7 +372,7 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 
 				}
 				else{
-					return getEsitoMessaggioApplicativo(erroreApplicativo, body, tipoContext);
+					return getEsitoMessaggioApplicativo(erroreApplicativo, body, tipoContext, esitoOK);
 				}
 			}
 		}catch(Exception e){
@@ -372,7 +381,7 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 	}
 
 	
-	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, EsitoTransazioneName esitoOK) throws ProtocolException{
 		if(erroreApplicativo!=null){
 			Node childNode = body.getFirstChild();
 			if(childNode!=null){
@@ -414,57 +423,11 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 						
 					}
 					
-//					if("errore-applicativo".equals(childNode.getLocalName()) &&
-//							org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.ROOT_LOCAL_NAME_ERRORE_APPLICATIVO.equals(childNode.getNamespaceURI())){
-//						NodeList elements = childNode.getChildNodes();
-//						if(elements!=null){
-//							for(int i=0;i<elements.getLength();i++){
-//								Node elem = elements.item(i);
-//								if("eccezione".equals(elem.getLocalName())){
-//									NodeList elementsEccezione = elem.getChildNodes();
-//									if(elementsEccezione!=null){
-//										for(int j=0;j<elementsEccezione.getLength();j++){
-//											Node tipoEccezione = elementsEccezione.item(j);
-//											if(org.openspcoop2.protocol.basic.Costanti.ECCEZIONE_INTEGRAZIONE.equals(tipoEccezione.getLocalName())){
-//												NamedNodeMap attr = tipoEccezione.getAttributes();
-//												if(attr!=null){
-//													Node at = attr.getNamedItem("codiceEccezione");
-//													if(at!=null){
-//														String value = at.getNodeValue();
-//														String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
-//														if(prefixFaultCode==null){
-//															prefixFaultCode="OPENSPCOOP2_ORG_";
-//														}
-//														if(value.startsWith(prefixFaultCode)){
-//															value = value.substring(prefixFaultCode.length());
-//															int valueInt = Integer.parseInt(value);
-//															if(valueInt>=400 && valueInt<=499){
-//																return Esito.ERRORE_PROCESSAMENTO_PDD_4XX;
-//															}else if(valueInt>=500 && valueInt<=599){
-//																return Esito.ERRORE_PROCESSAMENTO_PDD_5XX;
-//															}else{
-//																return Esito.ERRORE_GENERICO;
-//															}
-//														}else{
-//															return Esito.ERRORE_GENERICO; // ???
-//														}
-//													}
-//												}
-//											}
-//											else if(org.openspcoop2.protocol.basic.Costanti.ECCEZIONE_PROTOCOLLO.equals(tipoEccezione.getLocalName())){
-//												return Esito.ERRORE_PROTOCOLLO;
-//											}
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
 				}
 			}
 		}
 
-		return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK, tipoContext);
+		return this.esitiProperties.convertToEsitoTransazione(esitoOK, tipoContext);
 
 	}
 	

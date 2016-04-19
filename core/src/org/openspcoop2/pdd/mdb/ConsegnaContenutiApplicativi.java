@@ -985,8 +985,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		ejbUtils.setUtilizzoIndirizzoTelematico(gestioneIndirizzoTelematico);
 
 		IProtocolVersionManager protocolManager = null;
+		boolean isBlockedTransaction_responseMessageWithTransportCodeError = false;
 		try{
 			protocolManager = protocolFactory.createProtocolVersionManager(profiloGestione);
+			isBlockedTransaction_responseMessageWithTransportCodeError = 
+					protocolManager.isBlockedTransaction_responseMessageWithTransportCodeError();
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e, "ProtocolFactory.createProtocolManager("+profiloGestione+")");
 			ejbUtils.rollbackMessage("ProtocolFactory.createProtocolManager("+profiloGestione+"):"+e.getMessage(),servizioApplicativo, esito);
@@ -1926,7 +1929,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			//	Errori avvenuti durante la consegna
 			else if(errorConsegna){
-								
+						
 				// Effettuo log dell'eventuale fault
 				if(fault!=null && 
 						( 
@@ -1938,6 +1941,34 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
+				else{
+					// Controllo Situazione Anomala ISSUE OP-7
+					if(responseMessage!=null && responseMessage.getSOAPPart()!=null && 
+							responseMessage.getSOAPPart().getEnvelope()!=null &&
+							(responseMessage.getSOAPPart().getEnvelope().getBody()==null || (!responseMessage.getSOAPPart().getEnvelope().getBody().hasFault()))){
+						msgDiag.logPersonalizzato("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+						if(isBlockedTransaction_responseMessageWithTransportCodeError){
+							String msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+							if(existsModuloInAttesaRispostaApplicativa) {
+								
+								this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+										ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
+											get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),
+										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato);
+								
+								esito.setEsitoInvocazione(true); 
+								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErroreSituazioneAnomale);
+							}else{
+								ejbUtils.rollbackMessage(msgErroreSituazioneAnomale,servizioApplicativo, esito);
+								esito.setEsitoInvocazione(false); 
+								esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO, msgErroreSituazioneAnomale);
+							}
+							openspcoopstate.releaseResource();
+							return esito;
+						}
+					}
+				}
+				
 				String messaggioErroreConsegnaConnettore = "Consegna ["+tipoConnector+"] con errore: "+motivoErroreConsegna;
 				if(existsModuloInAttesaRispostaApplicativa) {
 					if(connettoreMsg.getRequestMessage().getParsingError() != null){
@@ -2486,7 +2517,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							if(scartaBody){
 								try{
 									// E' permesso SOLO per messaggi con attachment
-									if(responseMessage.countAttachments() <= 0){
+									if(responseMessage!=null && responseMessage.countAttachments() <= 0){
 										throw new Exception("La funzionalita' e' permessa solo per messaggi SOAP With Attachments");
 									}
 								}catch(Exception e){
@@ -2506,20 +2537,22 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							}
 							if(allegaBody){
 								try{
-									// E' permesso SOLO per messaggi senza attachment
-									if(responseMessage.countAttachments() > 0){
-										throw new Exception("La funzionalita' non e' permessa per messaggi con attachments");
+									if(responseMessage!=null){
+										// E' permesso SOLO per messaggi senza attachment
+										if(responseMessage.countAttachments() > 0){
+											throw new Exception("La funzionalita' non e' permessa per messaggi con attachments");
+										}
+	
+										// Metto il contenuto del body in un attachments.
+										byte[] body = SoapUtils.sbustamentoSOAPEnvelope(responseMessage.getSOAPPart().getEnvelope());
+										AttachmentPart ap =  responseMessage.createAttachmentPart();
+										ap.setRawContentBytes(body, 0, body.length, "text/xml");
+										ap.setContentId(responseMessage.createContentID(this.propertiesReader.getHeaderSoapActorIntegrazione()));
+										responseMessage.addAttachmentPart(ap);
+	
+										// Rimuovo contenuti del body
+										responseMessage.getSOAPBody().removeContents();
 									}
-
-									// Metto il contenuto del body in un attachments.
-									byte[] body = SoapUtils.sbustamentoSOAPEnvelope(responseMessage.getSOAPPart().getEnvelope());
-									AttachmentPart ap =  responseMessage.createAttachmentPart();
-									ap.setRawContentBytes(body, 0, body.length, "text/xml");
-									ap.setContentId(responseMessage.createContentID(this.propertiesReader.getHeaderSoapActorIntegrazione()));
-									responseMessage.addAttachmentPart(ap);
-
-									// Rimuovo contenuti del body
-									responseMessage.getSOAPBody().removeContents();
 								}catch(Exception e){
 									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 									msgDiag.logPersonalizzato("funzionalitaAllegaBodyNonRiuscita");

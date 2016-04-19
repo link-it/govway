@@ -62,6 +62,9 @@ public enum ErroriIntegrazione {
 	ERRORE_539_RICEVUTA_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO("Busta asincrona non gestibile poichè risulta ancora in gestione nella porta la precedente ricevuta alla richiesta.",
 			CodiceErroreIntegrazione.CODICE_539_RICEVUTA_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO),
 	
+	ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
+			CodiceErroreIntegrazione.CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO),
+	
 	/* 4XX */
 	
 	ERRORE_401_PD_INESISTENTE("La porta delegata invocata non esiste"+
@@ -374,6 +377,15 @@ public enum ErroriIntegrazione {
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_ID_BUSTA,id));
+		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
+	}
+	
+	public ErroreIntegrazione get559_RicevutaRispostaConErroreTrasporto(String msgErrore) {
+		if(!this.equals(ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.name());
+		}
+		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,msgErrore));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	

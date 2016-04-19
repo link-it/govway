@@ -200,5 +200,10 @@ public abstract class BasicManager implements IProtocolManager {
     	return true;
     }
     
+	@Override
+	public boolean isBlockedTransaction_responseMessageWithTransportCodeError(){
+		return false;
+	}
+    
     
 }

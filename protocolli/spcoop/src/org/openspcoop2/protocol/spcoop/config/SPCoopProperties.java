@@ -342,6 +342,30 @@ public class SPCoopProperties {
 
 		return SPCoopProperties.isHttpOneWay_PD_HTTPEmptyResponse;
 	}
+	
+	private static Boolean isResponseMessageWithTransportCodeError_blockedTransaction = null;
+	public boolean isResponseMessageWithTransportCodeError_blockedTransaction(){
+		if(SPCoopProperties.isResponseMessageWithTransportCodeError_blockedTransaction==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.responseMessageWithTransportCodeError.blockedTransaction"); 
+
+				if (value != null){
+					value = value.trim();
+					SPCoopProperties.isResponseMessageWithTransportCodeError_blockedTransaction = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.responseMessageWithTransportCodeError.blockedTransaction' non impostata, viene utilizzato il default=true");
+					SPCoopProperties.isResponseMessageWithTransportCodeError_blockedTransaction = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.responseMessageWithTransportCodeError.blockedTransaction' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				SPCoopProperties.isResponseMessageWithTransportCodeError_blockedTransaction = true;
+			}
+		}
+
+		return SPCoopProperties.isResponseMessageWithTransportCodeError_blockedTransaction;
+	}
+
 
 
 	/**

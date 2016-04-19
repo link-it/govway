@@ -123,7 +123,8 @@ public class BasicTraduttore implements org.openspcoop2.protocol.sdk.config.ITra
     		if(cod.getCodice() >= 500 && 
     				!cod.equals(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE) &&
     				!cod.equals(CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA) &&
-    				!cod.equals(CodiceErroreIntegrazione.CODICE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT) ){
+    				!cod.equals(CodiceErroreIntegrazione.CODICE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT) &&
+    				!cod.equals(CodiceErroreIntegrazione.CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO) ){
     			codiceMappato = "500";
     		}
     	}
