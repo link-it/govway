@@ -1,13 +1,30 @@
 2016-04-18  Andrea Poli <apoli@link.it>
 
-	[PddConsole]
+	* [Pdd]
+	Risolto Bug OP-7
+	Una risposta ben formata (envelope SOAP senza Fault) presente in un http-body di una risposta insieme ad un codice di trasporto 500
+	non è compatibile con quanto indicato nel basic profile (R1111, (http://www.ws-i.org/profiles/basicprofile-1.1.html#HTTP_Success_Status_Codes).
+	Tale comportamento non veniva segnalato in alcun modo dalla PdD a parte la segnalazione del diagnostico di errore per quanto concere l'errore di trasporto.
+	Questo provocava confusione, poichè si vedeva nei diagnostici un errore di consegna ma poi la transazione terminava correttamente.
+	Con il fix è stato aggiunto un diagnostico che evidenzia il comportamento anomalo.
+	Inoltre è attivabile tramite opzione su file di proprietà la possibilità di far terminare in errore le transazioni
+	che presentano questo caso anomalo.
+	Per backward compatibility è rimasto il comportamento di non far terminare con errore la transazione, 
+	ma però viene sollevato un opportuno diagnostico.
+	Nell'occasione è stato aggiunto un nuovo stato nell'Esito di una transazione con nome 'Ok (Presenza anomalie)'.
+	Tale stato, utilizzabile attraverso un handler, segnala che la transazione è andata a buon fine ma sono stati emessi dei diagnostici 
+	con severità error.
+
+2016-04-18  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
 	Risolto Bug OP-492
 	La modifica di un servizio interno ad un accordo di servizio parte comune, creato a partire dal caricamento tramite wsdl,
 	provocava un errore SQL (FK constraint violated). Il problema è stato risolto.
 
 2016-04-13  Andrea Poli <apoli@link.it>
 
-	[Pdd,PddConsole]
+	* [Pdd,PddConsole]
 	Aggiunta funzionalità OP-488
 	Aggiunta la possibilità di configurare un dump binario dei dati 'RAW' che vengono scambiati 
 	nei servizi in ingresso sulla Porta Delegata e Porta Applicativa.
