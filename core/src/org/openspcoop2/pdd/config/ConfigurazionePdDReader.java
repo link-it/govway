@@ -4850,7 +4850,9 @@ public class ConfigurazionePdDReader {
 //					this.log.error("getExtendedInfoConfigurazione",e);
 //				}
 				
-				ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.put(id, result);
+				if(result!=null){
+					ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.put(id, result);
+				}
 
 			}catch(Exception e){
 				this.log.error("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione: "+e.getMessage(),e);
