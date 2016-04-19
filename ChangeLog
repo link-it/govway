@@ -1,3 +1,10 @@
+2016-04-18  Andrea Poli <apoli@link.it>
+
+	[PddConsole]
+	Risolto Bug OP-492
+	La modifica di un servizio interno ad un accordo di servizio parte comune, creato a partire dal caricamento tramite wsdl,
+	provocava un errore SQL (FK constraint violated). Il problema è stato risolto.
+
 2016-04-13  Andrea Poli <apoli@link.it>
 
 	[Pdd,PddConsole]
