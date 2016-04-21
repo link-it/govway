@@ -21,6 +21,8 @@
 
 package org.openspcoop2.security.message.constants;
 
+import java.util.Hashtable;
+
 import javax.xml.namespace.QName;
 
 import org.apache.ws.security.handler.WSHandlerConstants;
@@ -37,10 +39,52 @@ public class SecurityConstants {
 
 	public static final String ACTION = WSHandlerConstants.ACTION;
 		
+	public static final String TIPO_SECURITY_ENGINE_SEPARATOR = " ";
+	public static final String TIPO_SECURITY_ACTION_SEPARATOR = ",";
+	public static String convertActionToString(Hashtable<String, Object> flow){
+		if(flow!=null){
+			if(flow.containsKey(ACTION)){
+				
+				String engine = SECURITY_ENGINE_WSS4J;
+				if(flow.containsKey(SECURITY_ENGINE)){
+					Object o = flow.get(SECURITY_ENGINE);
+					if(o!=null && o instanceof String){
+						engine = (String) o;
+					}
+				}
+				
+				Object o = flow.get(ACTION);
+				if(o!=null && o instanceof String){
+					String actions = (String) o;
+					actions = actions.trim();
+					if(actions.contains(" ")){
+						String [] tmp = actions.split(" ");
+						StringBuffer bf = new StringBuffer();
+						bf.append(engine);
+						bf.append(TIPO_SECURITY_ENGINE_SEPARATOR);
+						for (int i = 0; i < tmp.length; i++) {
+							if(tmp[i]!=null){
+								if(i>0){
+									bf.append(TIPO_SECURITY_ACTION_SEPARATOR);
+								}
+								bf.append(tmp[i].trim());
+							}
+						}
+						return bf.toString();
+					}
+					else{
+						return engine + TIPO_SECURITY_ENGINE_SEPARATOR + actions; // una sola azione presente
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 	public static final String SECURITY_ENGINE = "securityEngine";
 	public static final String SECURITY_ENGINE_WSS4J = "wss4j";
 	public static final String SECURITY_ENGINE_SOAPBOX = "soapbox";
-//	public static final String SECURITY_ENGINE_DSS = "dss";
+	public static final String SECURITY_ENGINE_DSS = "dss";
 	
 	public static final String SIGNATURE_ENGINE = "signatureEngine";
 	public static final String SIGNATURE_ENGINE_SUN = "sun";
@@ -137,6 +181,41 @@ public class SecurityConstants {
     public static final String TIMESTAMP_SOAPBOX_TTL_DEFAULT = "300";
 	public static final String TIMESTAMP_SOAPBOX_FUTURE_TTL_DEFAULT =  "60";
 
+	
+	// Do not perform any action, do nothing. Only applies to DOM code.
+	public static final String ACTION_NO_SECURITY = "NoSecurity"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.ACTION_NO_SECURITY; // WSS4J 2.0.0
+	// Perform a UsernameTokenSignature action.
+	public static final String ACTION_USERNAME_TOKEN_SIGNATURE = "UsernameTokenSignature"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.USERNAME_TOKEN_SIGNATURE; // WSS4J 2.0.0
+	// Perform a UsernameToken action.
+	public static final String ACTION_USERNAME_TOKEN = WSHandlerConstants.USERNAME_TOKEN; 
+	// Used on the receiving side to specify a UsernameToken with no password
+	public static final String ACTION_USERNAME_TOKEN_NO_PASSWORD = WSHandlerConstants.USERNAME_TOKEN_NO_PASSWORD; 
+	// Perform an unsigned SAML Token action.
+	public static final String ACTION_SAML_TOKEN_UNSIGNED = WSHandlerConstants.SAML_TOKEN_UNSIGNED; 	
+	// Perform a signed SAML Token action.
+	public static final String ACTION_SAML_TOKEN_SIGNED = WSHandlerConstants.SAML_TOKEN_SIGNED; 	
+	// Perform a signature action.
+	public static final String ACTION_SIGNATURE = SIGNATURE_ACTION;
+	// Perform a encryption action.
+	public static final String ACTION_ENCRYPT = ENCRYPT_ACTION;
+	// Perform a Timestamp action.
+	public static final String ACTION_TIMESTAMP = TIMESTAMP_ACTION;
+	// Perform a Signature action with derived keys.
+	public static final String ACTION_SIGNATURE_DERIVED = "SignatureDerived"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.SIGNATURE_DERIVED; // WSS4J 2.0.0
+	// Perform a Encryption action with derived keys.
+	public static final String ACTION_ENCRYPT_DERIVED = "EncryptDerived"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.ENCRYPT_DERIVED; // WSS4J 2.0.0
+	// Perform a Signature action with a kerberos token. Only for StAX code.
+	public static final String ACTION_SIGNATURE_WITH_KERBEROS_TOKEN = "SignatureWithKerberosToken"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.SIGNATURE_WITH_KERBEROS_TOKEN; // WSS4J 2.0.0
+	// Perform a Encryption action with a kerberos token. Only for StAX code.
+	public static final String ACTION_ENCRYPT_WITH_KERBEROS_TOKEN = "EncryptWithKerberosToken"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.ENCRYPT_WITH_KERBEROS_TOKEN; // WSS4J 2.0.0
+	// Add a kerberos token.
+	public static final String ACTION_KERBEROS_TOKEN = "KerberosToken"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.KERBEROS_TOKEN; // WSS4J 2.0.0
+	// Add a "Custom" token from a CallbackHandler
+	public static final String ACTION_CUSTOM_TOKEN = "CustomToken"; //USARE COSTANTE QUANDO SI FA UPDATE WSHandlerConstants.CUSTOM_TOKEN; // WSS4J 2.0.0
+	// Perform a .NET specific signature using a Username Token action.
+	public static final String ACTION_SIGN_WITH_UT_KEY = WSHandlerConstants.SIGN_WITH_UT_KEY; 	// SOLO IN WSS4J 1.6.x QUANDO SI PASSA A 2.0.0 TRASFORMARLO IN STRINGA
+
+	
     
     public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE = "DirectReference";
     public static final String KEY_IDENTIFIER_ISSUER_SERIAL = "IssuerSerial";

@@ -70,6 +70,26 @@ public class IntegrationContext {
 	private String tipoValidazioneContenuti;
 	
 	/**
+	 * Tipo di processamento mtom della richiesta
+	 */
+	private String tipoProcessamentoMtomXopRichiesta;
+	
+	/**
+	 * Tipo di processamento mtom della risposta
+	 */
+	private String tipoProcessamentoMtomXopRisposta;
+	
+	/**
+	 * Tipo di security message applicato alla richiesta
+	 */
+	private String tipoMessageSecurityRichiesta;
+	
+	/**
+	 * Tipo di security message applicato alla risposta
+	 */
+	private String tipoMessageSecurityRisposta;
+	
+	/**
 	 * Identificativo della Porta Applicativa
 	 */
 	private IDPortaApplicativaByNome idPA;
@@ -104,6 +124,36 @@ public class IntegrationContext {
 	}
 	public void setTipoValidazioneContenuti(String tipoValidazioneContenuti) {
 		this.tipoValidazioneContenuti = tipoValidazioneContenuti;
+	}
+	
+	public String getTipoProcessamentoMtomXopRichiesta() {
+		return this.tipoProcessamentoMtomXopRichiesta;
+	}
+	public void setTipoProcessamentoMtomXopRichiesta(
+			String tipoProcessamentoMtomXopRichiesta) {
+		this.tipoProcessamentoMtomXopRichiesta = tipoProcessamentoMtomXopRichiesta;
+	}
+	
+	public String getTipoProcessamentoMtomXopRisposta() {
+		return this.tipoProcessamentoMtomXopRisposta;
+	}
+	public void setTipoProcessamentoMtomXopRisposta(
+			String tipoProcessamentoMtomXopRisposta) {
+		this.tipoProcessamentoMtomXopRisposta = tipoProcessamentoMtomXopRisposta;
+	}
+	
+	public String getTipoMessageSecurityRichiesta() {
+		return this.tipoMessageSecurityRichiesta;
+	}
+	public void setTipoMessageSecurityRichiesta(String tipoMessageSecurityRichiesta) {
+		this.tipoMessageSecurityRichiesta = tipoMessageSecurityRichiesta;
+	}
+	
+	public String getTipoMessageSecurityRisposta() {
+		return this.tipoMessageSecurityRisposta;
+	}
+	public void setTipoMessageSecurityRisposta(String tipoMessageSecurityRisposta) {
+		this.tipoMessageSecurityRisposta = tipoMessageSecurityRisposta;
 	}
 	
 	public String getIdCorrelazioneApplicativa() {

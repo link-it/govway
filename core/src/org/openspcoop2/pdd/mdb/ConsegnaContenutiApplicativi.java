@@ -2333,6 +2333,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							}catch(ValidatoreMessaggiApplicativiException ex){
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
+								this.log.error("[ValidazioneContenutiApplicativi Risposta] "+ex.getMessage(),ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 									// validazione abilitata
 									

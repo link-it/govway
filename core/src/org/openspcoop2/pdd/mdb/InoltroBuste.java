@@ -1276,7 +1276,8 @@ public class InoltroBuste extends GenericLib{
 					return esito;
 				}
 				else{
-					mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityConfig, tipoPdD);
+					mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityConfig, 
+							tipoPdD, msgDiag, this.log, pddContext);
 				}
 								
 			}
@@ -1288,10 +1289,10 @@ public class InoltroBuste extends GenericLib{
 			/* ------------ MTOM Processor BeforeSecurity  -------------- */
 			if(mtomProcessor!=null){
 				try{
-					msgDiag.mediumDebug("MTOM Processor [BeforeSecurity]...");
 					mtomProcessor.mtomBeforeSecurity(requestMessage, TipoTraccia.RICHIESTA);
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
+					// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
+					// msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
 				
 					ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
@@ -1321,6 +1322,11 @@ public class InoltroBuste extends GenericLib{
 					return esito;
 				}
 			}
+			else{
+				if(functionAsRouter==false){
+					msgDiag.logPersonalizzato("mtom.beforeSecurity.processamentoRichiestaDisabilitato");
+				}
+			}
 			
 			
 			
@@ -1336,7 +1342,7 @@ public class InoltroBuste extends GenericLib{
 			MessageSecurityContext messageSecurityContext = null;
 			SecurityInfo securityInfo = null;
 			if(functionAsRouter==false){
-				msgDiag.mediumDebug("Gestione MessageSecurity della richiesta ...");
+
 				// ottiene le proprieta' Message-Security relative alla porta delegata:
 				// OneWay -> RequestFlow
 				// Sincrono --> RequestFlow
@@ -1345,38 +1351,64 @@ public class InoltroBuste extends GenericLib{
 				ErroreIntegrazione erroreIntegrazione = null;
 				CodiceErroreCooperazione codiceErroreCooperazione = null;
 				Exception messageSecurityException = null;
-				if(messageSecurityConfig!=null && messageSecurityConfig.getFlowParameters()!=null){
-					if(messageSecurityConfig.getFlowParameters().size() > 0){
-						try{
-							// Imposto un context di Base (utilizzato per la successiva ricezione)
-							MessageSecurityContextParameters contextParameters = new MessageSecurityContextParameters();
-							contextParameters.setUseActorDefaultIfNotDefined(this.propertiesReader.isGenerazioneActorDefault(implementazionePdDDestinatario));
-							contextParameters.setActorDefault(this.propertiesReader.getActorDefault(implementazionePdDDestinatario));
-							contextParameters.setLog(this.log);
-							contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
-							contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
-							contextParameters.setIdFruitore(soggettoFruitore);
-							contextParameters.setIdServizio(idServizio);
-							contextParameters.setPddFruitore(registroServiziManager.getIdPortaDominio(soggettoFruitore, null));
-							contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null));
+				if(messageSecurityConfig!=null && messageSecurityConfig.getFlowParameters()!=null && 
+						messageSecurityConfig.getFlowParameters().size() > 0){
+					try{
+						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityConfig.getFlowParameters());
+						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						
+						msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta ...");
+						
+						// Imposto un context di Base (utilizzato per la successiva ricezione)
+						MessageSecurityContextParameters contextParameters = new MessageSecurityContextParameters();
+						contextParameters.setUseActorDefaultIfNotDefined(this.propertiesReader.isGenerazioneActorDefault(implementazionePdDDestinatario));
+						contextParameters.setActorDefault(this.propertiesReader.getActorDefault(implementazionePdDDestinatario));
+						contextParameters.setLog(this.log);
+						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
+						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
+						contextParameters.setIdFruitore(soggettoFruitore);
+						contextParameters.setIdServizio(idServizio);
+						contextParameters.setPddFruitore(registroServiziManager.getIdPortaDominio(soggettoFruitore, null));
+						contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null));
+						
+						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
+						messageSecurityContext.setOutgoingProperties(messageSecurityConfig.getFlowParameters());
+						
+						msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
+						
+						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
+						if(messageSecurityContext.processOutgoing(requestMessage) == false){
+							msgErrore = messageSecurityContext.getMsgErrore();
+							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
 							
-							messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
-							messageSecurityContext.setOutgoingProperties(messageSecurityConfig.getFlowParameters());
-							if(messageSecurityContext.processOutgoing(requestMessage) == false){
-								msgErrore = messageSecurityContext.getMsgErrore();
-								codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
-							}
-						}catch(Exception e){
-							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
-							messageSecurityException = e;
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "["+codiceErroreCooperazione+"] "+msgErrore );
+							msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInErrore");
 						}
+						else{
+							msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaEffettuato");
+						}
+						
+					}catch(Exception e){
+						
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInErrore");
+						this.log.error("[MessageSecurityRequest]" + e.getMessage(),e);
+						
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+						messageSecurityException = e;
 					}
+				}
+				else{
+					msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaDisabilitato");
 				}
 				if(erroreIntegrazione==null && codiceErroreCooperazione==null){
 					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
 						try{
+							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta ...");
 							securityInfo = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessage);
+							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta completata con successo");
 						}catch(Exception e){
 							msgDiag.logErroreGenerico(e,"ErroreLetturaInformazioniSicurezza");
 							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1385,7 +1417,6 @@ public class InoltroBuste extends GenericLib{
 					}
 				}
 				if(erroreIntegrazione!=null || codiceErroreCooperazione!= null){
-					msgDiag.logErroreGenerico(msgErrore, "Costruzione header Message Security");
 					if(sendRispostaApplicativa){
 						OpenSPCoop2Message responseMessageError = null;
 						if(erroreIntegrazione!=null){
@@ -1423,10 +1454,10 @@ public class InoltroBuste extends GenericLib{
 			/* ------------ MTOM Processor AfterSecurity  -------------- */
 			if(mtomProcessor!=null){
 				try{
-					msgDiag.mediumDebug("MTOM Processor [AfterSecurity]...");
 					mtomProcessor.mtomAfterSecurity(requestMessage, TipoTraccia.RICHIESTA);
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
+					// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
+					//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
 				
 					ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
@@ -2252,7 +2283,8 @@ public class InoltroBuste extends GenericLib{
 					((StatelessMessage) openspcoopstate.getStatoRisposta()).setBustaCorrelata(bustaRichiesta);
 				}
 				validatore = new Validatore(responseMessage,property,openspcoopstate.getStatoRisposta(),readQualifiedAttribute, protocolFactory);
-								
+						
+				msgDiag.logPersonalizzato("validazioneSintattica");
 				presenzaRispostaProtocollo  = validatore.validazioneSintattica(bustaRichiesta, Boolean.FALSE);
 				if(presenzaRispostaProtocollo){
 					headerBustaRisposta = validatore.getHeaderProtocollo();
@@ -2331,7 +2363,8 @@ public class InoltroBuste extends GenericLib{
 						return esito;
 					}
 					else{
-						mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityConfig, tipoPdD);
+						mtomProcessor = new MTOMProcessor(mtomConfig, messageSecurityConfig, 
+								tipoPdD, msgDiag, this.log, pddContext);
 					}
 					
 					
@@ -2340,10 +2373,10 @@ public class InoltroBuste extends GenericLib{
 					/* *** MTOM Processor BeforeSecurity  *** */
 					if(mtomProcessor!=null){
 						try{
-							msgDiag.mediumDebug("MTOM Processor [BeforeSecurity]...");
 							mtomProcessor.mtomBeforeSecurity(responseMessage, TipoTraccia.RISPOSTA);
 						}catch(Exception e){
-							msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
+							// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
+							// msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
 						
 							ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
@@ -2381,8 +2414,14 @@ public class InoltroBuste extends GenericLib{
 					/* *** Init context sicurezza *** */
 					if(messageSecurityConfig!=null && messageSecurityConfig.getFlowParameters()!=null
 							&& messageSecurityConfig.getFlowParameters().size()>0){
-						msgDiag.mediumDebug("Inizializzazione contesto di sicurezza...");
+						
 						try{
+							String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityConfig.getFlowParameters());
+							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+							pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+							
+							msgDiag.mediumDebug("Inizializzazione contesto di Message Security della risposta ...");
+														
 							if(messageSecurityContext==null){
 								// se non vi era la richiesta di MessageSecurity
 								MessageSecurityContextParameters contextParameters = new MessageSecurityContextParameters();
@@ -2398,6 +2437,9 @@ public class InoltroBuste extends GenericLib{
 								messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 							}
 							messageSecurityContext.setIncomingProperties(messageSecurityConfig.getFlowParameters());  
+							
+							msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
+							
 						}catch(Exception e){
 							msgDiag.logErroreGenerico(e,"InizializzazioneContestoSicurezzaRisposta");
 							if(sendRispostaApplicativa){
@@ -2426,13 +2468,18 @@ public class InoltroBuste extends GenericLib{
 							return esito;
 						}
 					}
+					else{
+						msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaDisabilitato");
+					}
 					
 					
 					
 					/* *** ReadSecurityInformation *** */
 					try{
 						if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di risposta ...");
 							securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
+							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di risposta completata con successo");
 						}
 					}catch(Exception e){
 						msgDiag.logErroreGenerico(e,"ErroreLetturaInformazioniSicurezza");
@@ -2466,19 +2513,45 @@ public class InoltroBuste extends GenericLib{
 					
 					
 					/* *** ValidazioneSemantica (e applicazione sicurezza del messaggio) *** */
-					msgDiag.mediumDebug("Analisi della risposta (validazione semantica)...");
-					presenzaRispostaProtocollo = validatore.validazioneSemantica(messageSecurityContext,true,profiloGestione,proprietaManifestAttachments,validazioneIDBustaCompleta);
 					
+					msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
+					presenzaRispostaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(true, profiloGestione);
+					
+					if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
+						
+						if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
+						
+							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
+							
+							StringBuffer bfErroreSecurity = new StringBuffer();
+							presenzaRispostaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity);
+							
+							if(bfErroreSecurity.length()>0){
+								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , bfErroreSecurity.toString() );
+								msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
+							}
+							else{
+								msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaEffettuato");
+							}
+						}
+					
+						if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
+							
+							msgDiag.logPersonalizzato("validazioneSemantica.afterSecurity");
+							presenzaRispostaProtocollo = validatore.validazioneSemantica_afterMessageSecurity(proprietaManifestAttachments, validazioneIDBustaCompleta);
+					
+						}
+					}
 					
 					
 					
 					/* *** MTOM Processor AfterSecurity  *** */
 					if(mtomProcessor!=null){
 						try{
-							msgDiag.mediumDebug("MTOM Processor [AfterSecurity]...");
 							mtomProcessor.mtomAfterSecurity(responseMessage, TipoTraccia.RISPOSTA);
 						}catch(Exception e){
-							msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
+							// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
+							// msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
 						
 							ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
@@ -3579,6 +3652,7 @@ public class InoltroBuste extends GenericLib{
 							}catch(ValidatoreMessaggiApplicativiException ex){
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
+								this.log.error("[ValidazioneContenutiApplicativi Risposta] "+ex.getMessage(),ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 									// validazione abilitata
 									if(msgResponse!=null){

@@ -418,6 +418,14 @@ public class CostantiPdD {
     public final static String KEY_TIPO_VALIDAZIONE_CONTENUTI = "@TIPO_VALIDAZIONE_CONTENUTI@";
     /** Costante che identifica dettagli ulteriori sulla validazione contenuti */
     public final static String KEY_DETAILS_VALIDAZIONE_CONTENUTI = "@DETAILS_VALIDAZIONE_CONTENUTI@";    
+    /** Costante che identifica la tipologia di processamento MTOM della richiesta */
+    public final static String KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA = "@TIPO_PROCESSAMENTO_MTOM_RICHIESTA@";
+    /** Costante che identifica la tipologia di processamento MTOM della risposta */
+    public final static String KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA = "@TIPO_PROCESSAMENTO_MTOM_RISPOSTA@";
+    /** Costante che identifica lil tipo di sicurezza sul messaggio applicato alla richiesta */
+    public final static String KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA = "@TIPO_SICUREZZA_MESSAGGIO_RICHIESTA@";
+    /** Costante che identifica lil tipo di sicurezza sul messaggio applicato alla risposta */
+    public final static String KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA = "@TIPO_SICUREZZA_MESSAGGIO_RISPOSTA@";    
     /** Costante che identifica il tipo di messaggio (normale, ricevuta asincrona...) */
     public final static String KEY_TIPO_MESSAGGIO_BUSTA = "@TIPO_MESSAGGIO_BUSTA@"; 
     /** Costante che identifica tipo/nome mittente e tipo/nome destinatario erogatore del servizio da autorizzare, calcolato in base al tipo di messaggio ricevuto.  */

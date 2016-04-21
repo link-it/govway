@@ -496,6 +496,30 @@ public class RicezioneContenutiApplicativi {
 			return;
 		} 
 		
+		try{
+			if(this.msgContext.getPddContext()!=null  && this.msgContext.getIntegrazione()!=null){
+				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
+					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRichiesta(
+							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
+				}
+				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
+					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRisposta(
+							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
+				}
+				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
+					this.msgContext.getIntegrazione().setTipoMessageSecurityRichiesta(
+							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
+				}
+				if(this.msgContext.getPddContext().containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
+					this.msgContext.getIntegrazione().setTipoMessageSecurityRisposta(
+							(String)this.msgContext.getPddContext().getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
+				}
+			}
+		}catch(Exception e){
+			setSOAPFault(logCore,msgDiag, e, "FinalizeIntegrationContextRicezioneContenutiApplicativi");
+			return;
+		}
+		
 		
 		
 		
@@ -2212,6 +2236,7 @@ public class RicezioneContenutiApplicativi {
 			} catch (ValidatoreMessaggiApplicativiException ex) {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
 				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
+				logCore.error("[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
 				if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false) {
 					// validazione abilitata
 					openspcoopstate.releaseResource();

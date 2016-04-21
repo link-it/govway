@@ -20,11 +20,14 @@
  */
 package org.openspcoop2.pdd.core;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
 
 /**
@@ -39,11 +42,18 @@ public class MTOMProcessor {
 	private MTOMProcessorConfig config;
 	private MessageSecurityConfig secConfig;
 	private TipoPdD tipoPdD;
+	private MsgDiagnostico msgDiag;
+	private Logger log;
+	private PdDContext pddContext;
 	
-	public MTOMProcessor(MTOMProcessorConfig config, MessageSecurityConfig secConfig, TipoPdD tipoPdD){
+	public MTOMProcessor(MTOMProcessorConfig config, MessageSecurityConfig secConfig, TipoPdD tipoPdD, 
+			MsgDiagnostico msgDiag, Logger log, PdDContext pddContext){
 		this.config = config;
 		this.secConfig = secConfig;
 		this.tipoPdD = tipoPdD;
+		this.msgDiag = msgDiag;
+		this.log = log;
+		this.pddContext = pddContext;
 	}
 	
 	
@@ -56,34 +66,153 @@ public class MTOMProcessor {
 	
 	public void mtomBeforeSecurity(OpenSPCoop2Message msg,TipoTraccia tipo) throws Exception{
 		
+		boolean emitDiagDisabled = false;
+		
 		if(this.isEngineEnabled()){
 			
 			if(this.isMTOMBeforeSecurity(tipo)){
 				
-				this.mtomApply(msg);
+				this.setProcessorTypeIntoDiagnostic(tipo);
+				
+				this.emitDiagnostic(tipo, 
+						"mtom.processamentoRichiestaInCorso",
+						"mtom.processamentoRispostaInCorso");
+				
+				try{
+					
+					this.mtomApply(msg);
+					
+					this.emitDiagnostic(tipo, 
+							"mtom.processamentoRichiestaEffettuato",
+							"mtom.processamentoRispostaEffettuato");
+					
+				}catch(Exception e){
+					
+					this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					this.log.error("[MTOM BeforeSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
+					
+					this.emitDiagnostic(tipo, 
+							"mtom.processamentoRichiestaInErrore",
+							"mtom.processamentoRispostaInErrore");
+					
+					throw e;
+				}
 				
 			}
+			else{
+				emitDiagDisabled = true;
+			}
 			
+		}
+		else{
+			emitDiagDisabled = true;
+		}
+		
+		if(emitDiagDisabled){
+			this.emitDiagnostic(tipo, 
+					"mtom.beforeSecurity.processamentoRichiestaDisabilitato", 
+					"mtom.beforeSecurity.processamentoRispostaDisabilitato");			
 		}
 		
 	}
 	
 	public void mtomAfterSecurity(OpenSPCoop2Message msg,TipoTraccia tipo) throws Exception{
 		
+		boolean emitDiagDisabled = false;
+		
 		if(this.isEngineEnabled()){
 			
 			if(this.isMTOMBeforeSecurity(tipo)==false){
 				
-				this.mtomApply(msg);
+				this.setProcessorTypeIntoDiagnostic(tipo);
+				
+				this.emitDiagnostic(tipo, 
+						"mtom.processamentoRichiestaInCorso",
+						"mtom.processamentoRispostaInCorso");
+				
+				try{
+					
+					this.mtomApply(msg);
+					
+					this.emitDiagnostic(tipo, 
+							"mtom.processamentoRichiestaEffettuato",
+							"mtom.processamentoRispostaEffettuato");
+					
+				}catch(Exception e){
+					
+					this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					this.log.error("[MTOM AfterSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
+					
+					this.emitDiagnostic(tipo, 
+							"mtom.processamentoRichiestaInErrore",
+							"mtom.processamentoRispostaInErrore");
+					
+					throw e;
+				}
 				
 			}
+			else{
+				emitDiagDisabled = true;
+			}
 			
+		}
+		else{
+			emitDiagDisabled = true;
+		}
+		
+		if(emitDiagDisabled){
+			this.emitDiagnostic(tipo, 
+					"mtom.afterSecurity.processamentoRichiestaDisabilitato", 
+					"mtom.afterSecurity.processamentoRispostaDisabilitato");			
 		}
 		
 	}
 	
 	
 	/* **** UTILITIES INTERNE ***** */
+	
+	private void setProcessorTypeIntoDiagnostic(TipoTraccia tipo){
+		switch (tipo) {
+		case RICHIESTA:
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA, this.config.getMtomProcessorType().getValue());
+			this.pddContext.addObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA, this.config.getMtomProcessorType().getValue());
+			break;
+		case RISPOSTA:
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA, this.config.getMtomProcessorType().getValue());
+			this.pddContext.addObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA, this.config.getMtomProcessorType().getValue());
+			break;
+		}	
+	}
+	
+	private void emitDiagnostic(TipoTraccia tipo, String idDiagnosticRichiesta, String idDiagnosticRisposta){
+		
+		// Il set del prefisso viene fatto poichè il processor viene usato anche in moduli (es. LocalForward) dove non è correttamente impostato
+		
+		String originalPrefix = this.msgDiag.getPrefixMsgPersonalizzati();
+		try{
+			switch (this.tipoPdD) {
+			case DELEGATA:
+				this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE);
+				break;
+			case APPLICATIVA:
+				this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+				break;
+			default:
+				return; // nessun diagnostico
+			}
+			
+			switch (tipo) {
+			case RICHIESTA:
+				this.msgDiag.logPersonalizzato(idDiagnosticRichiesta);
+				break;
+			case RISPOSTA:
+				this.msgDiag.logPersonalizzato(idDiagnosticRisposta);
+				break;
+			}	
+		}finally{
+			this.msgDiag.setPrefixMsgPersonalizzati(originalPrefix);
+		}
+	}
 	
 	private void mtomApply(OpenSPCoop2Message msg) throws Exception{
 		switch (this.config.getMtomProcessorType()) {

@@ -296,185 +296,252 @@ public class Validatore  {
 	 * @return true in caso di validazione effettuata (con o senza errori), false in caso di errori di processamento
 	 * 
 	 */
-	public boolean validazioneSemantica(MessageSecurityContext messageSecurityContext,boolean rispostaConnectionReply,String profiloGestione,
-			ProprietaManifestAttachments proprietaManifestAttachments,boolean validazioneIdentificativiCompleta) {
-		        try{
-				if(this.validatoreSintattico == null){
-					this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento("Errore di processamento: Analisi sintattica richiesta e validatoreSintattico non risulta inizializzato");
-					return false;
-				}
+	private boolean rilevatiErroriDuranteValidazioneSemantica = false;
+	public boolean isRilevatiErroriDuranteValidazioneSemantica() {
+		return this.rilevatiErroriDuranteValidazioneSemantica;
+	}
+	public boolean validazioneSemantica_beforeMessageSecurity(boolean rispostaConnectionReply,String profiloGestione) {
+		try{
+			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 			
-				// Tipo Busta (Servizio,Richiesta,Risposta,Ricevuta)
-				if(this.ruoloBustaRicevuta==null)
-					this.ruoloBustaRicevuta = ValidazioneSemantica.getTipoBustaDaValidare(this.busta, this.protocolFactory, rispostaConnectionReply,this.state,this.log);
-				//log.info("Validazione tipoBusta ["+tipoBusta+"]...");
-			
-				// Riconoscimento Profilo di Gestione per servizio erogato.
-				try{
-					if(rispostaConnectionReply){
-						this.versioneProtocollo = profiloGestione;
-					}else{
-						this.versioneProtocollo = ValidazioneSemantica.riconoscimentoVersioneProtocolloServizioErogato(this.busta, this.protocolFactory.createTraduttore(), this.ruoloBustaRicevuta, this.state);
-					}
-				}catch(Exception e){
-					// L'eventuale errore, e' dovuto al non riconoscimento nel registro dei servizi del soggetto mittente o destinatario.
-					// L'errore verra' riportato poi nel resto della validazione se il messaggio non era un messaggio Errore
-					// Se invece era gia' stato marcato come messaggio Errore, molto probabilmente uno dei motivi era quello!
-					this.log.error("Riconoscimento profilo di gestione non riuscito",e);
+			if(this.validatoreSintattico == null){
+				this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento("Errore di processamento: Analisi sintattica richiesta e validatoreSintattico non risulta inizializzato");
+				return false;
+			}
+		
+			// Tipo Busta (Servizio,Richiesta,Risposta,Ricevuta)
+			if(this.ruoloBustaRicevuta==null)
+				this.ruoloBustaRicevuta = ValidazioneSemantica.getTipoBustaDaValidare(this.busta, this.protocolFactory, rispostaConnectionReply,this.state,this.log);
+			//log.info("Validazione tipoBusta ["+tipoBusta+"]...");
+		
+			// Riconoscimento Profilo di Gestione per servizio erogato.
+			try{
+				if(rispostaConnectionReply){
+					this.versioneProtocollo = profiloGestione;
+				}else{
+					this.versioneProtocollo = ValidazioneSemantica.riconoscimentoVersioneProtocolloServizioErogato(this.busta, this.protocolFactory.createTraduttore(), this.ruoloBustaRicevuta, this.state);
 				}
+			}catch(Exception e){
+				// L'eventuale errore, e' dovuto al non riconoscimento nel registro dei servizi del soggetto mittente o destinatario.
+				// L'errore verra' riportato poi nel resto della validazione se il messaggio non era un messaggio Errore
+				// Se invece era gia' stato marcato come messaggio Errore, molto probabilmente uno dei motivi era quello!
+				this.log.error("Riconoscimento profilo di gestione non riuscito",e);
+			}
 
 
-				if(this.protocolFactory.createProtocolVersionManager(this.versioneProtocollo).isEccezioniLivelloInfoAbilitato()){
-					// Eventuali eccezioni trovate in buste errore, di livello INFO, non marcano il msg come BustaErrore, rieffettuo il test
-					if(this.isMessaggioErrore){
-						IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori();
-						ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
-						pValidazioneErrori.setIgnoraEccezioniNonGravi(this.protocolManager.isIgnoraEccezioniNonGravi());
-						pValidazioneErrori.setVersioneProtocollo(this.versioneProtocollo);
-						this.isMessaggioErrore = validatoreErrori.isBustaErrore(this.busta,this.msg,pValidazioneErrori);
-						this.isMessaggioErroreIntestazione = validatoreErrori.isBustaErroreIntestazione(this.busta, this.msg,pValidazioneErrori);
-						this.isMessaggioErroreProcessamento = validatoreErrori.isBustaErroreProcessamento(this.busta, this.msg,pValidazioneErrori);
-					}
+			if(this.protocolFactory.createProtocolVersionManager(this.versioneProtocollo).isEccezioniLivelloInfoAbilitato()){
+				// Eventuali eccezioni trovate in buste errore, di livello INFO, non marcano il msg come BustaErrore, rieffettuo il test
+				if(this.isMessaggioErrore){
+					IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori();
+					ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
+					pValidazioneErrori.setIgnoraEccezioniNonGravi(this.protocolManager.isIgnoraEccezioniNonGravi());
+					pValidazioneErrori.setVersioneProtocollo(this.versioneProtocollo);
+					this.isMessaggioErrore = validatoreErrori.isBustaErrore(this.busta,this.msg,pValidazioneErrori);
+					this.isMessaggioErroreIntestazione = validatoreErrori.isBustaErroreIntestazione(this.busta, this.msg,pValidazioneErrori);
+					this.isMessaggioErroreProcessamento = validatoreErrori.isBustaErroreProcessamento(this.busta, this.msg,pValidazioneErrori);
 				}
+			}
 
-				// Se la lettura precedente (readBusta) ha riscontrato anomalie, ho gia' finito
-				boolean ignoraEccezioniLivelloNonGravi = this.protocolFactory.createProtocolVersionManager(this.versioneProtocollo).isIgnoraEccezioniLivelloNonGrave();
-				int sizeErroriValidazione = countErrori(ignoraEccezioniLivelloNonGravi, this.erroriValidazione);
-				int sizeErroriProcessamento = countErrori(ignoraEccezioniLivelloNonGravi, this.erroriProcessamento);				
-				if( sizeErroriValidazione>0 || sizeErroriProcessamento>0 )
-					return true; // riscontrati errori durante la validazione sintattica.
+			// Se la lettura precedente (readBusta) ha riscontrato anomalie, ho gia' finito
+			boolean ignoraEccezioniLivelloNonGravi = this.protocolFactory.createProtocolVersionManager(this.versioneProtocollo).isIgnoraEccezioniLivelloNonGrave();
+			int sizeErroriValidazione = countErrori(ignoraEccezioniLivelloNonGravi, this.erroriValidazione);
+			int sizeErroriProcessamento = countErrori(ignoraEccezioniLivelloNonGravi, this.erroriProcessamento);				
+			if( sizeErroriValidazione>0 || sizeErroriProcessamento>0 )
+				return true; // riscontrati errori durante la validazione sintattica.
 
+		}catch(Exception e){
+			this.log.error("validazioneSemantica (validazioneSemantica_beforeMessageSecurity)",e);
+			this.eccezioneProcessamentoValidazioneSemantica = e;
+			this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione();
+			return false;
+		}
+
+		this.rilevatiErroriDuranteValidazioneSemantica = false;
+		return true;	
+	}
+	
+	public boolean validazioneSemantica_messageSecurity_readSecurityInfo(MessageSecurityContext messageSecurityContext) {
+		try{
+			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 				
-				/** Leggo contesto sicurezza prima di processare la parte MessageSecurity */
-				if(messageSecurityContext!= null && messageSecurityContext.getDigestReader()!=null){
-					this.securityInfo = this.protocolFactory.createValidazioneSemantica().readSecurityInformation(messageSecurityContext.getDigestReader(),
-							this.msg, this.msg.getSOAPPart().getEnvelope(), this.validatoreSintattico.getProtocolHeader());
-				}
+			/** Leggo contesto sicurezza prima di processare la parte MessageSecurity */
+			if(messageSecurityContext!= null && messageSecurityContext.getDigestReader()!=null){
+				this.securityInfo = this.protocolFactory.createValidazioneSemantica().readSecurityInformation(messageSecurityContext.getDigestReader(),
+						this.msg, this.msg.getSOAPPart().getEnvelope(), this.validatoreSintattico.getProtocolHeader());
+			}		
+
+		}catch(Exception e){
+			this.log.error("validazioneSemantica (validazioneSemantica_messageSecurity_readSecurityInfo)",e);
+			this.eccezioneProcessamentoValidazioneSemantica = e;
+			this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione();
+			return false;
+		}
+
+		this.rilevatiErroriDuranteValidazioneSemantica = false;
+		return true;	
+	}
+	
+	public boolean validazioneSemantica_messageSecurity_process(MessageSecurityContext messageSecurityContext, StringBuffer errore) {
+		try{
+			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 				
 
-				/** Applicazione Message-Security (eventualmente per decriptare il body applicativo: utile anche per il SoapFault del MessaggioErrore) */
-				if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
-					boolean existsHeaderMessageSecurity = messageSecurityContext.existsSecurityHeader(this.msg, messageSecurityContext.getActor());
-					if(messageSecurityContext.processIncoming(this.msg,this.busta) == false){  
-						List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
-						if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
-							List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
-							for (Iterator<?> iterator = subCodiciErrore.iterator(); iterator.hasNext();) {
-								SubErrorCodeSecurity subCodiceErrore = (SubErrorCodeSecurity) iterator.next();
-								Eccezione ecc = new Eccezione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(subCodiceErrore.getMsgErrore(), messageSecurityContext.getCodiceErrore()),true,null, this.protocolFactory);
-								ecc.setSubCodiceEccezione(subCodiceErrore);
-								eccezioniSicurezza.add(ecc);
-							}
-						}else{
-							Eccezione ecc = new Eccezione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(),messageSecurityContext.getCodiceErrore()), true, null, this.protocolFactory);
+			/** Applicazione Message-Security (eventualmente per decriptare il body applicativo: utile anche per il SoapFault del MessaggioErrore) */
+			if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
+				boolean existsHeaderMessageSecurity = messageSecurityContext.existsSecurityHeader(this.msg, messageSecurityContext.getActor());
+				if(messageSecurityContext.processIncoming(this.msg,this.busta) == false){  
+					List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
+					if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
+						List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
+						for (Iterator<?> iterator = subCodiciErrore.iterator(); iterator.hasNext();) {
+							SubErrorCodeSecurity subCodiceErrore = (SubErrorCodeSecurity) iterator.next();
+							Eccezione ecc = new Eccezione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(subCodiceErrore.getMsgErrore(), messageSecurityContext.getCodiceErrore()),true,null, this.protocolFactory);
+							ecc.setSubCodiceEccezione(subCodiceErrore);
 							eccezioniSicurezza.add(ecc);
 						}
-						if(this.isMessaggioErrore){
-							// NOTA: il message security header puo' non essere presente se l'altra porta di dominio, ha generato un messaggio Busta Errore.
-							//       La porta di dominio riesce ad aggiungere l'header di sicurezza solo se riesce ad identificare la PortaApplicativa/Delegata,
-							//       altrimenti genera un msg di Busta Errore chiaramente senza header di sicurezza.
-							if(existsHeaderMessageSecurity){
-								for (Iterator<?> iterator = eccezioniSicurezza.iterator(); iterator.hasNext();) {
-									Eccezione ecc = (Eccezione) iterator.next();
-									this.erroriValidazione.add(ecc);	
-								}
-								return true; // riscontrati errori durante la validazione Message Security
-							}
-							else{
-								StringBuffer bf = new StringBuffer();
-								for (Iterator<?> iterator = eccezioniSicurezza.iterator(); iterator.hasNext();) {
-									Eccezione ecc = (Eccezione) iterator.next();
-									if(bf.length()>0){
-										bf.append(" ; ");
-									}
-									bf.append(ecc.toString(this.protocolFactory));
-								}
-								this.log.debug("MessageSecurityHeader not exists: "+bf.toString());
-							}
-						}else{
+					}else{
+						Eccezione ecc = new Eccezione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(),messageSecurityContext.getCodiceErrore()), true, null, this.protocolFactory);
+						eccezioniSicurezza.add(ecc);
+					}
+					if(this.isMessaggioErrore){
+						// NOTA: il message security header puo' non essere presente se l'altra porta di dominio, ha generato un messaggio Busta Errore.
+						//       La porta di dominio riesce ad aggiungere l'header di sicurezza solo se riesce ad identificare la PortaApplicativa/Delegata,
+						//       altrimenti genera un msg di Busta Errore chiaramente senza header di sicurezza.
+						if(existsHeaderMessageSecurity){
 							for (Iterator<?> iterator = eccezioniSicurezza.iterator(); iterator.hasNext();) {
 								Eccezione ecc = (Eccezione) iterator.next();
 								this.erroriValidazione.add(ecc);	
+								
+								if(errore.length()>0){
+									errore.append("\n");
+								}
+								errore.append(ecc.getDescrizione(this.protocolFactory));
 							}
 							return true; // riscontrati errori durante la validazione Message Security
 						}
+						else{
+							StringBuffer bf = new StringBuffer();
+							for (Iterator<?> iterator = eccezioniSicurezza.iterator(); iterator.hasNext();) {
+								Eccezione ecc = (Eccezione) iterator.next();
+								if(bf.length()>0){
+									bf.append(" ; ");
+								}
+								bf.append(ecc.toString(this.protocolFactory));
+							}
+							this.log.debug("MessageSecurityHeader not exists: "+bf.toString());
+						}
+					}else{
+						for (Iterator<?> iterator = eccezioniSicurezza.iterator(); iterator.hasNext();) {
+							Eccezione ecc = (Eccezione) iterator.next();
+							this.erroriValidazione.add(ecc);
+							
+							if(errore.length()>0){
+								errore.append("\n");
+							}
+							errore.append(ecc.getDescrizione(this.protocolFactory));
+						}
+						return true; // riscontrati errori durante la validazione Message Security
 					}
 				}
+			}
 
-				/** Se ho ricevuto un messaggio Busta Errore, devo controllare il SOAPFault ricevuto 
-				 * Deve essere fatta dopo Message-Security per il Body (attachments manifest)
-				 */
-				if(this.isMessaggioErrore){
-					this.validatoreSintattico.validazioneFault(this.msg.getSOAPBody());
-					addListaEccezioni(this.validatoreSintattico.getErroriTrovatiSullaListaEccezioni(),this.erroriValidazione);
+		}catch(Exception e){
+			
+			if(errore.length()>0){
+				errore.append("\n");
+			}
+			errore.append(e.getMessage());
+			
+			this.log.error("validazioneSemantica (validazioneSemantica_messageSecurity_process)",e);
+			this.eccezioneProcessamentoValidazioneSemantica = e;
+			this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione();
+			return false;
+		}
+
+		this.rilevatiErroriDuranteValidazioneSemantica = false;
+		return true;	
+	}
+	
+	public boolean validazioneSemantica_afterMessageSecurity(ProprietaManifestAttachments proprietaManifestAttachments,boolean validazioneIdentificativiCompleta) {
+		try{
+			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
+
+			/** Se ho ricevuto un messaggio Busta Errore, devo controllare il SOAPFault ricevuto 
+			 * Deve essere fatta dopo Message-Security per il Body (attachments manifest)
+			 */
+			if(this.isMessaggioErrore){
+				this.validatoreSintattico.validazioneFault(this.msg.getSOAPBody());
+				addListaEccezioni(this.validatoreSintattico.getErroriTrovatiSullaListaEccezioni(),this.erroriValidazione);
+				addListaEccezioni(this.validatoreSintattico.getEccezioniProcessamento(),this.erroriProcessamento);
+				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
+						|| 
+					( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
+					)
+					return true; // riscontrati errori durante la validazione
+			}
+
+			/** Se ho ricevuto un messaggio con Attachments devo controllare il manifest
+			 * Deve essere fatta dopo Message-Security per il Body (attachments manifest)
+			 */
+			// Questa validazione non deve essere effettuata per messaggi Busta Errore
+			if(this.isMessaggioErrore==false){
+				if(this.proprietaValidazione.isValidazioneManifestAttachments() &&  this.msg.countAttachments()>0){
+					this.validatoreSintattico.validazioneManifestAttachments(this.msg,proprietaManifestAttachments);
+					addListaEccezioni(this.validatoreSintattico.getEccezioniValidazione(),this.erroriValidazione);
 					addListaEccezioni(this.validatoreSintattico.getEccezioniProcessamento(),this.erroriProcessamento);
 					if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
 							|| 
 						( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
 						)
-						return true; // riscontrati errori durante la validazione
+						return true; // riscontrati errori durante la validazione 
 				}
-
-				/** Se ho ricevuto un messaggio con Attachments devo controllare il manifest
-				 * Deve essere fatta dopo Message-Security per il Body (attachments manifest)
-				 */
-				// Questa validazione non deve essere effettuata per messaggi Busta Errore
-				if(this.isMessaggioErrore==false){
-					if(this.proprietaValidazione.isValidazioneManifestAttachments() &&  this.msg.countAttachments()>0){
-						this.validatoreSintattico.validazioneManifestAttachments(this.msg,proprietaManifestAttachments);
-						addListaEccezioni(this.validatoreSintattico.getEccezioniValidazione(),this.erroriValidazione);
-						addListaEccezioni(this.validatoreSintattico.getEccezioniProcessamento(),this.erroriProcessamento);
-						if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
-								|| 
-							( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
-							)
-							return true; // riscontrati errori durante la validazione 
-					}
-				}
-
-				/** Validazione semantica */
-				// Questa validazione non deve essere effettuata per messaggi Busta Errore
-				if(this.isMessaggioErrore==false){
-					ValidazioneSemantica registryValidator = new ValidazioneSemantica(this.busta,this.state,validazioneIdentificativiCompleta,this.log, this.protocolFactory);
-					registryValidator.valida(this.msg,this.proprietaValidazione,this.ruoloBustaRicevuta,this.versioneProtocollo);
-					addListaEccezioni(registryValidator.getEccezioniValidazione(),this.erroriValidazione);
-					addListaEccezioni(registryValidator.getEccezioniProcessamento(),this.erroriProcessamento);
-					this.servizioCorrelato = registryValidator.getServizioCorrelato();
-					this.tipoServizioCorrelato = registryValidator.getTipoServizioCorrelato();
-					this.infoServizio = registryValidator.getInfoServizio();
-					if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
-							|| 
-						( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
-						)
-						return true; // riscontrati errori durante la validazione sul registro.
-				}
-
-				/** Validazione con SCHEMA (Opzionale): deve essere fatta dopo Message-Security per il Body (attachments manifest)*/
-				// Questa validazione deve essere effettuata anche per messaggi Busta Errore
-				if( this.proprietaValidazione.isValidazioneConSchema() ){
-					javax.xml.soap.SOAPBody body = this.msg.getSOAPBody();
-					ValidazioneConSchema schemaValidator = new ValidazioneConSchema(this.msg,this.validatoreSintattico.getProtocolHeader(), body,
-							this.isMessaggioErroreProcessamento, this.isMessaggioErroreIntestazione,this.proprietaValidazione.isValidazioneManifestAttachments(), this.log, this.protocolFactory);
-					schemaValidator.valida((this.msg.countAttachments()>0));
-					addListaEccezioni(schemaValidator.getEccezioniValidazione(),this.erroriValidazione);
-					addListaEccezioni(schemaValidator.getEccezioniProcessamento(),this.erroriProcessamento);
-					if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
-							|| 
-						( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
-						)
-						return true; // riscontrati errori durante la validazione
-				}
-
-
-			}catch(Exception e){
-				this.log.error("validazioneSemantica",e);
-				this.eccezioneProcessamentoValidazioneSemantica = e;
-				this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione();
-				return false;
 			}
 
-			return true;	
+			/** Validazione semantica */
+			// Questa validazione non deve essere effettuata per messaggi Busta Errore
+			if(this.isMessaggioErrore==false){
+				ValidazioneSemantica registryValidator = new ValidazioneSemantica(this.busta,this.state,validazioneIdentificativiCompleta,this.log, this.protocolFactory);
+				registryValidator.valida(this.msg,this.proprietaValidazione,this.ruoloBustaRicevuta,this.versioneProtocollo);
+				addListaEccezioni(registryValidator.getEccezioniValidazione(),this.erroriValidazione);
+				addListaEccezioni(registryValidator.getEccezioniProcessamento(),this.erroriProcessamento);
+				this.servizioCorrelato = registryValidator.getServizioCorrelato();
+				this.tipoServizioCorrelato = registryValidator.getTipoServizioCorrelato();
+				this.infoServizio = registryValidator.getInfoServizio();
+				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
+						|| 
+					( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
+					)
+					return true; // riscontrati errori durante la validazione sul registro.
+			}
+
+			/** Validazione con SCHEMA (Opzionale): deve essere fatta dopo Message-Security per il Body (attachments manifest)*/
+			// Questa validazione deve essere effettuata anche per messaggi Busta Errore
+			if( this.proprietaValidazione.isValidazioneConSchema() ){
+				javax.xml.soap.SOAPBody body = this.msg.getSOAPBody();
+				ValidazioneConSchema schemaValidator = new ValidazioneConSchema(this.msg,this.validatoreSintattico.getProtocolHeader(), body,
+						this.isMessaggioErroreProcessamento, this.isMessaggioErroreIntestazione,this.proprietaValidazione.isValidazioneManifestAttachments(), this.log, this.protocolFactory);
+				schemaValidator.valida((this.msg.countAttachments()>0));
+				addListaEccezioni(schemaValidator.getEccezioniValidazione(),this.erroriValidazione);
+				addListaEccezioni(schemaValidator.getEccezioniProcessamento(),this.erroriProcessamento);
+				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
+						|| 
+					( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
+					)
+					return true; // riscontrati errori durante la validazione
+			}
+
+
+		}catch(Exception e){
+			this.log.error("validazioneSemantica (validazioneSemantica_afterMessageSecurity)",e);
+			this.eccezioneProcessamentoValidazioneSemantica = e;
+			this.errore = ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione();
+			return false;
+		}
+
+		this.rilevatiErroriDuranteValidazioneSemantica = false;
+		return true;	
 	}
+	
 	private Exception eccezioneProcessamentoValidazioneSemantica = null;
 	public Exception getEccezioneProcessamentoValidazioneSemantica() {
 		return this.eccezioneProcessamentoValidazioneSemantica;

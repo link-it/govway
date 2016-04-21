@@ -563,6 +563,9 @@ public class MsgDiagnostico {
 	}
 	
 	private String prefixMsgPersonalizzati = null;
+	public String getPrefixMsgPersonalizzati() {
+		return this.prefixMsgPersonalizzati;
+	}
 	public void setPrefixMsgPersonalizzati(String v){
 		this.prefixMsgPersonalizzati = v;
 	}

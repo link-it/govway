@@ -628,7 +628,8 @@ public class InoltroRisposte extends GenericLib{
 				
 				if(flowProperties!=null){
 					msgDiag.mediumDebug("init MTOM Processor ...");
-					mtomProcessor = new MTOMProcessor(flowProperties.mtom, flowProperties.messageSecurity, tipoPorta);
+					mtomProcessor = new MTOMProcessor(flowProperties.mtom, flowProperties.messageSecurity, 
+							tipoPorta, msgDiag, this.log, pddContext);
 					securityConfig = flowProperties.messageSecurity;
 				}
 			}
@@ -646,7 +647,8 @@ public class InoltroRisposte extends GenericLib{
 			try{
 				mtomProcessor.mtomBeforeSecurity(responseMessage, flowProperties.tipoMessaggio);
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
+				// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
+				//msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
 			
 				ejbUtils.rollbackMessage("Riscontrato errore durante la gestione MTOM(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+"): "+e.getMessage(), esito);
 				openspcoopstate.releaseResource();
@@ -732,7 +734,8 @@ public class InoltroRisposte extends GenericLib{
 			try{
 				mtomProcessor.mtomAfterSecurity(responseMessage, flowProperties.tipoMessaggio);
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
+				// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
+				//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
 			
 				ejbUtils.rollbackMessage("Riscontrato errore durante la gestione MTOM(AfterSec-"+mtomProcessor.getMTOMProcessorType()+"): "+e.getMessage(), esito);
 				openspcoopstate.releaseResource();
