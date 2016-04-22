@@ -33,14 +33,6 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
-import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
-import org.openspcoop2.testsuite.core.Repository;
-import org.openspcoop2.testsuite.db.DatabaseComponent;
-import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
-import org.openspcoop2.testsuite.db.DatiServizio;
-import org.openspcoop2.testsuite.units.CooperazioneBase;
-import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -51,10 +43,18 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
-import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
-import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
+import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.testsuite.db.DatiServizio;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -116,7 +116,7 @@ public class HTTPS {
 	private static final String AUTORIZZAZIONE_IN_CORSO = AUTORIZZAZIONE_PREFIX+" ...";
 	private static final String AUTORIZZAZIONE_EFFETTUATA = AUTORIZZAZIONE_PREFIX+": autorizzato";
 	
-	private static final String AUTORIZZAZIONE_BUSTE_FALLITA = "Controllo Autorizzazione[registro] messaggio con identificativo [@IDEGOV@] FR[@MITTENTE@]->ER[@DESTINATARIO@--@SERVIZIO@:1--@AZIONE@]@PDD@: (non autorizzato, codice: EGOV_IT_201) Il soggetto @MITTENTE@ non e' autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
+	private static final String AUTORIZZAZIONE_BUSTE_FALLITA = "Verifica autorizzazione [registro] messaggio con identificativo [@IDEGOV@] FR[@MITTENTE@]->ER[@DESTINATARIO@--@SERVIZIO@:1--@AZIONE@]@PDD@ fallita (codice: EGOV_IT_201) Il soggetto @MITTENTE@ non e' autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
 	private static final String SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: Il soggetto @MITTENTE@ non e' autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
 	
 	private static final String PDD_NON_DISPONIBILE = "Porta di Dominio del soggetto @DESTINATARIO@ non disponibile";
@@ -838,8 +838,12 @@ public class HTTPS {
 	 * Test https con autenticazione client
 	 */
 	Repository repositoryHTTPSAutenticazioneSIL=new Repository();
+	Date dataTestAutenticazioneSIL = null;
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_SIL"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void httpsAutenticazioneSIL() throws FatalTestSuiteException, IOException, Exception{
+		
+		this.dataTestAutenticazioneSIL = new Date();
+		
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -894,9 +898,10 @@ public class HTTPS {
 	@DataProvider (name="httpsAutenticazioneSIL")
 	public Object[][]testHttpsAutenticazioneSIL()throws Exception{
 		String id=this.repositoryHTTPSAutenticazioneSIL.getNext();
+		
 		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}	
+				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),null,id,true}	
 		};
 	}
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_SIL"},dataProvider="httpsAutenticazioneSIL",dependsOnMethods={"httpsAutenticazioneSIL"})
@@ -911,7 +916,7 @@ public class HTTPS {
 				String msg1 = SIL_RICONOSCIUTO.replace("@SIL@", "sil1");
 				msg1 = msg1.replace("@SILNAME@", "sil1HTTPS");
 				msg1 = msg1.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL);
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataTestAutenticazioneSIL , msg1));
 			}
 			
 		}catch(Exception e){
@@ -939,6 +944,7 @@ public class HTTPS {
 	/***
 	 * Test https con autenticazione client
 	 */
+	Date dataTestAutenticazioneSIL2 = null;
 	Repository repositoryHTTPSAutenticazioneSIL_Test2=new Repository();
 	private CooperazioneBaseInformazioni infoTestSil2 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1,
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
@@ -950,6 +956,9 @@ public class HTTPS {
 		
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_SIL_2"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void httpsAutenticazioneSIL_2() throws FatalTestSuiteException, IOException, Exception{
+		
+		this.dataTestAutenticazioneSIL2 = new Date();
+		
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1005,8 +1014,8 @@ public class HTTPS {
 	public Object[][]testHttpsAutenticazioneSIL_2()throws Exception{
 		String id=this.repositoryHTTPSAutenticazioneSIL_Test2.getNext();
 		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}	
+				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),null,id,true}	
 		};
 	}
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_SIL_2"},dataProvider="httpsAutenticazioneSIL_2",dependsOnMethods={"httpsAutenticazioneSIL_2"})
@@ -1022,7 +1031,7 @@ public class HTTPS {
 				msg1 = msg1.replace("@SILNAME@", "sil1HTTPS_test2");
 				msg1 = msg1.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL_2);
 				Reporter.log("Verifico msg ["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataTestAutenticazioneSIL2, msg1));
 			}
 			
 		}catch(Exception e){
