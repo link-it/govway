@@ -363,13 +363,20 @@ public class ValidazioneContenutiApplicativi {
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteWDL");
+		
 		Date dataFineTestA = DateManager.getDate();
 		ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
 		errA.setIntervalloInferiore(dataInizioTestA);
 		errA.setIntervalloSuperiore(dataFineTestA);
 		errA.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
 		this.erroriAttesiOpenSPCoopCore.add(errA);
-
+		
+		ErroreAttesoOpenSPCoopLogCore errA2 = new ErroreAttesoOpenSPCoopLogCore();
+		errA2.setIntervalloInferiore(dataInizioTestA);
+		errA2.setIntervalloSuperiore(dataFineTestA);
+		errA2.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
+		this.erroriAttesiOpenSPCoopCore.add(errA2);
+				
 		// Test  identificazione contenuto applicativo non corretto secondo il wsdl definitorio (xsd) per Validazione OpenSPCoop
 		Date dataInizioTestB = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml",
@@ -386,7 +393,13 @@ public class ValidazioneContenutiApplicativi {
 		errB.setIntervalloSuperiore(dataFineTestB);
 		errB.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
 		this.erroriAttesiOpenSPCoopCore.add(errB);
-
+		
+		ErroreAttesoOpenSPCoopLogCore errB2 = new ErroreAttesoOpenSPCoopLogCore();
+		errB2.setIntervalloInferiore(dataInizioTestB);
+		errB2.setIntervalloSuperiore(dataFineTestB);
+		errB2.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
+		this.erroriAttesiOpenSPCoopCore.add(errB2);
+		
 		// Test contenuto corretto ma invocazione della porta delegata, con azione 'eliminazione' 
 		//              mentre contenuto applicativo dell'operation 'registrazione'. 
 		//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
@@ -413,6 +426,12 @@ public class ValidazioneContenutiApplicativi {
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
+		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
+		err2.setIntervalloInferiore(dataInizioTest1);
+		err2.setIntervalloSuperiore(dataFineTest1);
+		err2.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL):");
+		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
 		// Test contenuto corretto ma invocazione della porta delegata, con azione 'eliminazione' 
 		//              mentre contenuto applicativo dell'operation 'registrazione'. 
 		//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
@@ -433,11 +452,17 @@ public class ValidazioneContenutiApplicativi {
 			Assert.assertTrue(error.getFaultString().indexOf("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi")>=0);
 		}
 		Date dataFineTest2 = DateManager.getDate();
-		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
-		err2.setIntervalloInferiore(dataInizioTest2);
-		err2.setIntervalloSuperiore(dataFineTest2);
-		err2.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
-		this.erroriAttesiOpenSPCoopCore.add(err2);
+		ErroreAttesoOpenSPCoopLogCore errW = new ErroreAttesoOpenSPCoopLogCore();
+		errW.setIntervalloInferiore(dataInizioTest2);
+		errW.setIntervalloSuperiore(dataFineTest2);
+		errW.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
+		this.erroriAttesiOpenSPCoopCore.add(errW);
+		
+		ErroreAttesoOpenSPCoopLogCore errW2 = new ErroreAttesoOpenSPCoopLogCore();
+		errW2.setIntervalloInferiore(dataInizioTest2);
+		errW2.setIntervalloSuperiore(dataFineTest2);
+		errW2.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteWDL] del Servizio [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop):");
+		this.erroriAttesiOpenSPCoopCore.add(errW2);
 		
 		// Test contenuto corretto ma invocazione con una SOAPAction non conforme a quanto indicato nel wsdl per Validazione WSDL
 		Date dataInizioTest3 = DateManager.getDate();
@@ -456,6 +481,12 @@ public class ValidazioneContenutiApplicativi {
 		err3.setMsgErrore("Validazione WSDL (true) fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
 		this.erroriAttesiOpenSPCoopCore.add(err3);
 		
+		ErroreAttesoOpenSPCoopLogCore err3a = new ErroreAttesoOpenSPCoopLogCore();
+		err3a.setIntervalloInferiore(dataInizioTest3);
+		err3a.setIntervalloSuperiore(dataFineTest3);
+		err3a.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
+		this.erroriAttesiOpenSPCoopCore.add(err3a);
+		
 		// Test contenuto corretto ma invocazione con una SOAPAction non conforme a quanto indicato nel wsdl per Validazione OpenSPCoop
 		Date dataInizioTest4 = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDL.xml",
@@ -473,6 +504,11 @@ public class ValidazioneContenutiApplicativi {
 		err4.setMsgErrore("Validazione WSDL (true) fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
 		this.erroriAttesiOpenSPCoopCore.add(err4);
 		
+		ErroreAttesoOpenSPCoopLogCore err4a = new ErroreAttesoOpenSPCoopLogCore();
+		err4a.setIntervalloInferiore(dataInizioTest4);
+		err4a.setIntervalloSuperiore(dataFineTest4);
+		err4a.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Operazione [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] con soap action [SOAP_ACTION_ERRATA] che non rispetta quella indicata nel wsdl: registrazioneUtenteWDL");
+		this.erroriAttesiOpenSPCoopCore.add(err4a);
 	}
 	@DataProvider (name="gestioneUtentiWrappedDocumentLiteral")
 	public Object[][]testGestioneUtentiWrappedDocumentLiteral()throws Exception{

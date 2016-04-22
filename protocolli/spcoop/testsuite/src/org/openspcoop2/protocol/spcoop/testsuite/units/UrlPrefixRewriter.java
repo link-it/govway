@@ -162,7 +162,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: urlPDNonEsistente");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'urlPDNonEsistente");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPD1Provider")
@@ -181,7 +181,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPDNonEsistente]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD1StartTime,"(location: http://urlPDNonEsistente/openspcoop2/spcoop/PA)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD1StartTime,"Errore avvenuto durante la consegna HTTP: urlPDNonEsistente"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD1StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPDNonEsistente"));
 			
 		}catch(Exception e){
 			throw e;
@@ -276,7 +276,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: urlPANonEsistente");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'urlPANonEsistente");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPA1Provider")
@@ -364,7 +364,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPANonEsistente]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://urlPANonEsistente/OpenSPCoop2TestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: urlPANonEsistente"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPANonEsistente"));
 			
 		}catch(Exception e){
 			throw e;
@@ -454,7 +454,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: urlPDNonEsistente");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'urlPDNonEsistente");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPD2Provider")
@@ -473,7 +473,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPDNonEsistente/]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD2StartTime,"(location: http://urlPDNonEsistente/openspcoop2/spcoop/PA)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD2StartTime,"Errore avvenuto durante la consegna HTTP: urlPDNonEsistente"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD2StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPDNonEsistente"));
 			
 		}catch(Exception e){
 			throw e;
@@ -568,7 +568,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: urlPANonEsistente");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'urlPANonEsistente");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPA2Provider")
@@ -656,7 +656,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPANonEsistente/]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://urlPANonEsistente/OpenSPCoop2TestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: urlPANonEsistente"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPANonEsistente"));
 			
 		}catch(Exception e){
 			throw e;
@@ -1217,7 +1217,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: localhostPD");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'localhostPD");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPD5Provider")
@@ -1236,7 +1236,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhostPD:6789]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD5StartTime,"(location: http://localhostPD:6789/openspcoop2/spcoop/PA)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD5StartTime,"Errore avvenuto durante la consegna HTTP: localhostPD"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD5StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'localhostPD"));
 			
 		}catch(Exception e){
 			throw e;
@@ -1331,7 +1331,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: localhostPA");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'localhostPA");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPA5Provider")
@@ -1419,7 +1419,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [ http://localhostPA:6789/OpenSPCoop2TestSuite/server]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhostPA:6789/OpenSPCoop2TestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: localhostPA"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'localhostPA"));
 			
 		}catch(Exception e){
 			throw e;
@@ -1510,7 +1510,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: verificaSSLTestPD");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'verificaSSLTestPD");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPD6Provider")
@@ -1529,7 +1529,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD6StartTime,"(location: https://verificaSSLTestPD/openspcoop2/spcoop/PA)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD6StartTime,"Errore avvenuto durante la consegna HTTP: verificaSSLTestPD"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD6StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'verificaSSLTestPD"));
 			
 		}catch(Exception e){
 			throw e;
@@ -1624,7 +1624,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: verificaSSLTestPA");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown host 'verificaSSLTestPA");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPA6Provider")
@@ -1712,7 +1712,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: https://verificaSSLTestPA/OpenSPCoop2TestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: verificaSSLTestPA"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'verificaSSLTestPA"));
 			
 		}catch(Exception e){
 			throw e;

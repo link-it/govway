@@ -328,6 +328,43 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
+	public boolean isTracedCodice(Date date,String codice)throws Exception{
+		if(codice==null)throw new TestSuiteException("Codice vale null");
+
+		ResultSet res = null;
+		PreparedStatement prep = null;
+		try {
+			prep = this.connectionMsgDiagnostici
+			.prepareStatement("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+					CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+">=? AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"=?");
+			prep.setTimestamp(1, new Timestamp(date.getTime()));
+			prep.setString(2, codice);
+
+			/*java.text.SimpleDateFormat dateformat = new java.text.SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSS");
+			System.out.println("QUERY [select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+					CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+">='"+dateformat.format(date)+"' AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"='"+codice+"'");*/
+			
+			res = prep.executeQuery();
+			boolean ris = res.next();
+			//System.out.println("RESULT: "+ris);
+			//if(ris)
+			//	System.out.println("TROVATO ID ["+res.getLong("id")+"]");
+			return ris;
+		} catch (SQLException e) {
+			throw new TestSuiteException("Errore nel database: "+e.getMessage(),
+			"nella fase DBC.getResult");
+		} finally{
+			try{
+				if(res!=null)
+					res.close();
+			}catch(Exception e){}
+			try{
+				if(prep!=null)
+					prep.close();
+			}catch(Exception e){}
+		}
+	}
+	
 	public boolean isTracedMessaggio(String messaggio)throws FatalTestSuiteException{
 		if(messaggio==null)throw new TestSuiteException("Messaggio vale null");
 
@@ -399,7 +436,7 @@ public class DatabaseMsgDiagnosticiComponent {
 			/*java.text.SimpleDateFormat dateformat = new java.text.SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSS");
 			System.out.println("QUERY [select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
 					CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+">='"+dateformat.format(date)+"' AND "+
-					CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSSAGGIO+" LIKE '%"+SQLQueryObjectCore.escapeStringValue(messaggio)+"%']");*/
+					CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" LIKE '%"+org.openspcoop2.utils.sql.SQLQueryObjectCore.getEscapeStringValue(messaggio)+"%']");*/
 			
 			res = prep.executeQuery();
 			boolean ris = res.next();

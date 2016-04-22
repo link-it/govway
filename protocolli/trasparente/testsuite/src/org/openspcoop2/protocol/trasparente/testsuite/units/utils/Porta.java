@@ -275,10 +275,10 @@ public class Porta {
 		}
 	}
 
-	public void testOneWayAutenticato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
+	public void testOneWayAutenticato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo, Date date) throws Exception{
 		try{
 			this.collaborazioneTrasparenteBaseAutenticato.testOneWayAutenticato(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo);
+					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo, date);
 			
 		}catch(Exception e){
 			throw e;
@@ -371,10 +371,10 @@ public class Porta {
 		this.collaborazioneTrasparenteBaseAutenticato.sincrono(repository,this.portaDelegataSincronoAutenticata,true,this.usernameSincronoAutenticata,this.passwordSincronoAutenticata);
 	}
 	
-	public void testSincronoAutenticato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo) throws Exception{
+	public void testSincronoAutenticato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo, Date date) throws Exception{
 		try{
 			this.collaborazioneTrasparenteBaseAutenticato.testSincronoAutenticato(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo);
+					CostantiTestSuite.PROXY_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo, date);
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -434,8 +434,8 @@ public class Porta {
 		port.testOneWayFault500(data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	public static void _testOneWayAutenticato(Porta port, DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
-		port.testOneWayAutenticato(data, msgDiagData, id, checkServizioApplicativo);
+	public static void _testOneWayAutenticato(Porta port, DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo, Date date) throws Exception{
+		port.testOneWayAutenticato(data, msgDiagData, id, checkServizioApplicativo, date);
 	}	
 	
 	public static void _sincrono(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
@@ -462,8 +462,8 @@ public class Porta {
 		port.testSincronoFault500(data, msgDiagData, id, checkServizioApplicativo);
 	}
 
-	public static void _testSincronoAutenticato(Porta port, DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
-		port.testSincronoAutenticato(data, msgDiagData, id, checkServizioApplicativo);
+	public static void _testSincronoAutenticato(Porta port, DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo, Date date) throws Exception{
+		port.testSincronoAutenticato(data, msgDiagData, id, checkServizioApplicativo, date);
 	}
 
 	public static void _sincronoAutenticato(Porta port, Repository repository) throws FatalTestSuiteException, Exception{

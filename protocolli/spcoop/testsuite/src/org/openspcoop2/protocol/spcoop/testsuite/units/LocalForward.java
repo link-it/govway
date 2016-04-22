@@ -74,29 +74,29 @@ public class LocalForward {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "LocalForward";
-	
+
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBaseInformazioni info = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBase = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
-				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
-				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+			new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
 
 	private static boolean addIDUnivoco = true;
 
 	private static boolean use_axis14_engine = Utilities.testSuiteProperties.isSoapEngineAxis14();
 	private static boolean use_cxf_engine = Utilities.testSuiteProperties.isSoapEngineCxf();
-	
-	
+
+
 	private Date dataAvvioGruppoTest = null;
 	private boolean doTestStateful = true;
 	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
-		
+
 		String version_jbossas = Utilities.readApplicationServerVersion();
 		if(version_jbossas.startsWith("tomcat")){
 			System.out.println("WARNING: Verifiche Stateful disabilitate per Tomcat");
@@ -113,32 +113,35 @@ public class LocalForward {
 			FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest);
 		}
 	} 
-	
-	
-	
+
+
+
 	private static final String MSG_LOCAL_FORWARD = "Modalità 'local-forward' attiva, messaggio ruotato direttamente verso la porta applicativa";
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	/* ********************* CASI OK ************************ */
-	
-	
+
+
 
 	/***
 	 * Test per ONEWAY_STATEFUL
 	 */
+	private Date testONEWAY_STATEFUL;
 	Repository repositoryONEWAY_STATEFUL=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_STATEFUL"})
 	public void invokePD_ONEWAY_STATEFUL() throws FatalTestSuiteException, Exception{
-		
+
 		if(this.doTestStateful==false){
 			return;
 		}
-		
+
+		this.testONEWAY_STATEFUL = new Date();
+
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -154,7 +157,7 @@ public class LocalForward {
 			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
 				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
 				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
-				
+
 				client.setAttesaTerminazioneMessaggi(true);
 				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
@@ -173,13 +176,13 @@ public class LocalForward {
 	}
 	@DataProvider (name="Provider_ONEWAY_STATEFUL")
 	public Object[][]provider_ONEWAY_STATEFUL() throws Exception{
-		
+
 		if(this.doTestStateful==false){
 			return new Object[][]{
 					{null,null,null}	
 			};
 		}
-		
+
 		String id=this.repositoryONEWAY_STATEFUL.getNext();
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
@@ -195,24 +198,26 @@ public class LocalForward {
 	}
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_STATEFUL"},dataProvider="Provider_ONEWAY_STATEFUL",dependsOnMethods={"invokePD_ONEWAY_STATEFUL"})
 	public void verifica_ONEWAY_STATEFUL(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiag,String id) throws Exception{
-		
+
 		if(this.doTestStateful==false){
 			return;
 		}
-		
+
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","001005","007011","007012"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATEFUL, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATEFUL, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -224,18 +229,21 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/***
 	 * Test per ONEWAY_STATELESS
 	 */
+	private Date testONEWAY_STATELESS;
 	Repository repositoryONEWAY_STATELESS=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_STATELESS"})
 	public void invokePD_ONEWAY_STATELESS() throws FatalTestSuiteException, Exception{
+
+		this.testONEWAY_STATELESS = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryONEWAY_STATELESS);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -245,7 +253,7 @@ public class LocalForward {
 		client.run();
 
 		Assert.assertTrue(org.openspcoop2.testsuite.core.Utilities.isOpenSPCoopOKMessage(client.getResponseMessage()));
-		
+
 	}
 	@DataProvider (name="Provider_ONEWAY_STATELESS")
 	public Object[][]provider_ONEWAY_STATELESS() throws Exception{
@@ -267,16 +275,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS , "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -288,16 +298,19 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	/***
 	 * Test per ONEWAY_STATELESS_PA_STATEFUL
 	 */
+	Date testONEWAY_STATELESS_PA_STATEFUL;
 	Repository repositoryONEWAY_STATELESS_PA_STATEFUL=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_STATELESS_PA_STATEFUL"})
 	public void invokePD_ONEWAY_STATELESS_PA_STATEFUL() throws FatalTestSuiteException, Exception{
+
+		this.testONEWAY_STATELESS_PA_STATEFUL = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryONEWAY_STATELESS_PA_STATEFUL);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -329,16 +342,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS_PA_STATEFUL, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATELESS_PA_STATEFUL, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -350,16 +365,19 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	/***
 	 * Test per SINCRONO
 	 */
+	Date testSINCRONO;
 	Repository repositorySINCRONO=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SINCRONO"})
 	public void invokePD_SINCRONO() throws FatalTestSuiteException, Exception{
+
+		this.testSINCRONO = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositorySINCRONO);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -369,7 +387,7 @@ public class LocalForward {
 		client.run();
 
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage());
-		
+
 	}
 	@DataProvider (name="Provider_SINCRONO")
 	public Object[][]provider_SINCRONO() throws Exception{
@@ -391,16 +409,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testSINCRONO, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testSINCRONO, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -412,37 +432,40 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 
 	/***
 	 * Test per ONEWAY_INTEGRATION_MANAGER
 	 */
+	Date testONEWAY_INTEGRATION_MANAGER;
 	Repository repositoryONEWAY_INTEGRATION_MANAGER=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_INTEGRATION_MANAGER"})
 	public void invokePD_ONEWAY_INTEGRATION_MANAGER() throws FatalTestSuiteException, Exception{
 
+		this.testONEWAY_INTEGRATION_MANAGER = new Date();
+		
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop1_axis14 = null;
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop3_axis14 = null;
 		if(use_axis14_engine){
 			imSilGop1_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-				"gop1","123456");
+					"gop1","123456");
 			imSilGop3_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-				"gop3","123456");
-			
+					"gop3","123456");
+
 		}
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilGop1_cxf = null;
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilGop3_cxf = null;
 		if(use_cxf_engine){
 			imSilGop1_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-				"gop1","123456");
+					"gop1","123456");
 			imSilGop3_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-				"gop3","123456");
+					"gop3","123456");
 		}
-		
+
 		// Clean
 		if(use_axis14_engine){
 			try{
@@ -472,10 +495,10 @@ public class LocalForward {
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
 			}
 		}
-		
-		
+
+
 		//		DatabaseComponent dbComponentFruitore = null;
-//		DatabaseComponent dbComponentErogatore = null;
+		//		DatabaseComponent dbComponentErogatore = null;
 
 		try{
 			// Creazione client OneWay
@@ -486,39 +509,39 @@ public class LocalForward {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getLocalForwardFileName(), false,addIDUnivoco);
 
 			// AttesaTerminazioneMessaggi
-//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-//				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
-//				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
-				
-//				client.setAttesaTerminazioneMessaggi(true);
-//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
-//			}
+			//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+			//				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+			//				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+
+			//				client.setAttesaTerminazioneMessaggi(true);
+			//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			//			}
 			client.run();
 		}catch(Exception e){
 			throw e;
 		}finally{
-//			try{
-//				dbComponentFruitore.close();
-//			}catch(Exception eClose){}
-//			try{
-//				dbComponentErogatore.close();
-//			}catch(Exception eClose){}
+			//			try{
+			//				dbComponentFruitore.close();
+			//			}catch(Exception eClose){}
+			//			try{
+			//				dbComponentErogatore.close();
+			//			}catch(Exception eClose){}
 		}
 	}
 	@DataProvider (name="Provider_ONEWAY_INTEGRATION_MANAGER")
 	public Object[][]provider_ONEWAY_INTEGRATION_MANAGER() throws Exception{
 		String id=this.repositoryONEWAY_INTEGRATION_MANAGER.getNext();
-		
+
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id}	
-//				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}	
+				//				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}	
 		};
 	}
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_INTEGRATION_MANAGER"},dataProvider="Provider_ONEWAY_INTEGRATION_MANAGER",dependsOnMethods={"invokePD_ONEWAY_INTEGRATION_MANAGER"})
@@ -526,42 +549,44 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007001","007001","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_INTEGRATION_MANAGER, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_INTEGRATION_MANAGER, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007001","007001","001005"));
+
 			// IntegrationManager
 			org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop1_axis14 = null;
 			org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop3_axis14 = null;
 			if(use_axis14_engine){
 				imSilGop1_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-					"gop1","123456");
+						"gop1","123456");
 				imSilGop3_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-					"gop3","123456");
-				
+						"gop3","123456");
+
 			}
 			org.openspcoop2.pdd.services.cxf.MessageBox imSilGop1_cxf = null;
 			org.openspcoop2.pdd.services.cxf.MessageBox imSilGop3_cxf = null;
 			if(use_cxf_engine){
 				imSilGop1_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-					"gop1","123456");
+						"gop1","123456");
 				imSilGop3_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
-					"gop3","123456");
+						"gop3","123456");
 			}
-			
+
 			// Prelievo
 			if(use_axis14_engine){
 				String[]ids = imSilGop1_axis14.getAllMessagesId();
 				Assert.assertTrue(ids!=null);
 				Assert.assertTrue(ids.length==1);
 				Assert.assertTrue(ids[0].equals(id));
-				
+
 				ids = imSilGop3_axis14.getAllMessagesId();
 				Assert.assertTrue(ids!=null);
 				Assert.assertTrue(ids.length==1);
@@ -572,13 +597,13 @@ public class LocalForward {
 				Assert.assertTrue(idsList!=null);
 				Assert.assertTrue(idsList.size()==1);
 				Assert.assertTrue(idsList.get(0).equals(id));
-				
+
 				idsList = imSilGop3_cxf.getAllMessagesId();
 				Assert.assertTrue(idsList!=null);
 				Assert.assertTrue(idsList.size()==1);
 				Assert.assertTrue(idsList.get(0).equals(id));
 			}
-			
+
 			// Clean
 			if(use_axis14_engine){
 				try{
@@ -608,7 +633,7 @@ public class LocalForward {
 					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI).equals(e.getFaultInfo().getCodiceEccezione()));
 				}
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -620,15 +645,15 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
 	/* ************** CASI ERRATI ********************* */
 
 	/***
@@ -640,7 +665,7 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-			
+
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI);
@@ -660,17 +685,17 @@ public class LocalForward {
 			}
 			try {
 				client.run();
-				
+
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
-	
+
 			} catch (AxisFault error) {
-				
+
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				String infoServizio = "( Servizio v1 SPC/RichiestaStatoAvanzamentoAsincronoAsimmetrico Azione richiestaAsincrona Erogatore SPC/MinisteroErogatore )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" profilo di collaborazione AsincronoAsimmetrico non supportato";
-				
+
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
 							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
@@ -678,7 +703,7 @@ public class LocalForward {
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -690,12 +715,12 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/***
 	 * Test per SINCRONO_STATEFUL
 	 */
@@ -705,12 +730,12 @@ public class LocalForward {
 		if(this.doTestStateful==false){
 			return;
 		}
-		
+
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-			
+
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SINCRONO_STATEFUL);
@@ -730,17 +755,17 @@ public class LocalForward {
 			}
 			try {
 				client.run();
-				
+
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SINCRONO_STATEFUL+") non ha causato errori.");
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SINCRONO_STATEFUL+") non ha causato errori.");
-	
+
 			} catch (AxisFault error) {
-				
+
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				String infoServizio = "( Servizio v1 SPC/RichiestaStatoAvanzamento Azione stateful Erogatore SPC/MinisteroErogatore )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" profilo di collaborazione Sincrono non supportato nella modalità stateful";
-				
+
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
 							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
@@ -748,7 +773,7 @@ public class LocalForward {
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -760,12 +785,12 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/***
 	 * Test per SOGGETTO_NON_LOCALE
 	 */
@@ -775,7 +800,7 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-			
+
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOGGETTO_NON_LOCALE);
@@ -795,18 +820,18 @@ public class LocalForward {
 			}
 			try {
 				client.run();
-				
+
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOGGETTO_NON_LOCALE+") non ha causato errori.");
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOGGETTO_NON_LOCALE+") non ha causato errori.");
-	
+
 			} catch (AxisFault error) {
-				
+
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				String infoServizio = "( Servizio v1 SPC/ComunicazioneVariazione Erogatore SPC/SoggettoConnettoreErrato )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" il soggetto erogatore non risulta essere gestito localmente dalla Porta";
 				String msgErrore2 = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" non risulta esistere una porta applicativa associata al servizio richiesto";
-				
+
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart())){
 					try{
 						Utilities.verificaFaultIntegrazione(error, 
@@ -825,7 +850,7 @@ public class LocalForward {
 					Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
 				}
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -838,24 +863,27 @@ public class LocalForward {
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
 	/* *********** WSS ENCRYPT **************** */
-	
+
 	/***
 	 * Test per WSS_ENCRYPT_REQUEST
 	 */
+	Date testWSS_ENCRYPT_REQUEST;
 	Repository repositoryWSS_ENCRYPT_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_REQUEST"})
 	public void invokePD_WSS_ENCRYPT_REQUEST() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_ENCRYPT_REQUEST = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_ENCRYPT_REQUEST);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -892,16 +920,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_REQUEST, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_REQUEST, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -913,17 +943,20 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/***
 	 * Test per WSS_ENCRYPT_DECRYPT_REQUEST
 	 */
+	Date testWSS_ENCRYPT_DECRYPT_REQUEST;
 	Repository repositoryWSS_ENCRYPT_DECRYPT_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_DECRYPT_REQUEST"})
 	public void invokePD_WSS_ENCRYPT_DECRYPT_REQUEST() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_ENCRYPT_DECRYPT_REQUEST = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_ENCRYPT_DECRYPT_REQUEST);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -937,7 +970,7 @@ public class LocalForward {
 		Assert.assertFalse("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getLocalName()));
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getNamespaceURI());
 		Assert.assertFalse("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
-//		client.getResponseMessage().writeTo(System.out);
+		//		client.getResponseMessage().writeTo(System.out);
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList==null || nodeList.getLength()==0);
 	}
@@ -961,16 +994,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_REQUEST, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_REQUEST, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -982,12 +1017,12 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/***
 	 * Test per DECRYPT_REQUEST
 	 */
@@ -997,7 +1032,7 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-			
+
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_DECRYPT_REQUEST);
@@ -1017,16 +1052,16 @@ public class LocalForward {
 			}
 			try {
 				client.run();
-				
+
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_DECRYPT_REQUEST+") non ha causato errori.");
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_DECRYPT_REQUEST+") non ha causato errori.");
-	
+
 			} catch (AxisFault error) {
-				
+
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				String msgErrore = "Header Message Security, richiesto dalla configurazione (action:Encrypt), non riscontrato nella SOAPEnvelope ricevuta";
-				
+
 				if(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
 							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
@@ -1034,7 +1069,7 @@ public class LocalForward {
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (200): " + error.getFaultCode().getLocalPart());
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1046,16 +1081,19 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	/***
 	 * Test per WSS_ENCRYPT_RESPONSE
 	 */
+	Date testWSS_ENCRYPT_RESPONSE;
 	Repository repositoryWSS_ENCRYPT_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_RESPONSE"})
 	public void invokePD_WSS_ENCRYPT_RESPONSE() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_ENCRYPT_RESPONSE = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_ENCRYPT_RESPONSE);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1092,16 +1130,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_RESPONSE, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_RESPONSE, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1114,15 +1154,18 @@ public class LocalForward {
 		}
 	}
 
-	
-	
-	
+
+
+
 	/***
 	 * Test per WSS_ENCRYPT_DECRYPT_RESPONSE
 	 */
+	Date testWSS_ENCRYPT_DECRYPT_RESPONSE;
 	Repository repositoryWSS_ENCRYPT_DECRYPT_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_DECRYPT_RESPONSE"})
 	public void invokePD_WSS_ENCRYPT_DECRYPT_RESPONSE() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_ENCRYPT_DECRYPT_RESPONSE = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_ENCRYPT_DECRYPT_RESPONSE);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1136,7 +1179,7 @@ public class LocalForward {
 		Assert.assertFalse("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getLocalName()));
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getNamespaceURI());
 		Assert.assertFalse("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
-//		client.getResponseMessage().writeTo(System.out);
+		//		client.getResponseMessage().writeTo(System.out);
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList==null || nodeList.getLength()==0);
 	}
@@ -1160,16 +1203,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_RESPONSE, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_RESPONSE, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1181,25 +1226,28 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
 	/* *********** WSS SIGNATURE **************** */
-	
+
 	/***
 	 * Test per WSS_SIGNATURE_REQUEST
 	 */
+	Date testWSS_SIGNATURE_REQUEST;
 	Repository repositoryWSS_SIGNATURE_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_REQUEST"})
 	public void invokePD_WSS_SIGNATURE_REQUEST() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_SIGNATURE_REQUEST = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_SIGNATURE_REQUEST);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1209,7 +1257,7 @@ public class LocalForward {
 		client.run();
 
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()); 
-		
+
 		NamedNodeMap attributi = client.getResponseMessage().getSOAPBody().getAttributes();
 		Assert.assertTrue(attributi!=null && attributi.getLength()>0);
 		boolean foundId = false;
@@ -1222,7 +1270,7 @@ public class LocalForward {
 			//System.out.println("["+n.getLocalName()+"]["+n.getNamespaceURI()+"]");
 		}
 		Assert.assertTrue(foundId);
-		
+
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList!=null && nodeList.getLength()==1);
 	}
@@ -1246,16 +1294,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_REQUEST, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_REQUEST, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1267,17 +1317,20 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/***
 	 * Test per WSS_SIGNATURE_VERIFY_REQUEST
 	 */
+	Date testWSS_SIGNATURE_VERIFY_REQUEST;
 	Repository repositoryWSS_SIGNATURE_VERIFY_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_VERIFY_REQUEST"})
 	public void invokePD_WSS_SIGNATURE_VERIFY_REQUEST() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_SIGNATURE_VERIFY_REQUEST = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_SIGNATURE_VERIFY_REQUEST);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1287,7 +1340,7 @@ public class LocalForward {
 		client.run();
 
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()); 
-		
+
 		NamedNodeMap attributi = client.getResponseMessage().getSOAPBody().getAttributes();
 		//Assert.assertTrue(attributi==null || attributi.getLength()<=0);
 		boolean foundId = false;
@@ -1302,7 +1355,7 @@ public class LocalForward {
 			}
 		}
 		Assert.assertTrue(foundId==false);
-		
+
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList==null || nodeList.getLength()==0);
 	}
@@ -1326,16 +1379,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_REQUEST, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_REQUEST, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1347,11 +1402,11 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/***
 	 * Test per VERIFY_REQUEST
 	 */
@@ -1361,7 +1416,7 @@ public class LocalForward {
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
-			
+
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_VERIFY_REQUEST);
@@ -1381,16 +1436,16 @@ public class LocalForward {
 			}
 			try {
 				client.run();
-				
+
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_VERIFY_REQUEST+") non ha causato errori.");
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_VERIFY_REQUEST+") non ha causato errori.");
-	
+
 			} catch (AxisFault error) {
-				
+
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				String msgErrore = "Header Message Security, richiesto dalla configurazione (action:Signature), non riscontrato nella SOAPEnvelope ricevuta";
-				
+
 				if(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
 							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
@@ -1398,7 +1453,7 @@ public class LocalForward {
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (200): " + error.getFaultCode().getLocalPart());
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1410,17 +1465,20 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
 
-	
+
+
+
+
 	/***
 	 * Test per WSS_SIGNATURE_RESPONSE
 	 */
+	Date testWSS_SIGNATURE_RESPONSE;
 	Repository repositoryWSS_SIGNATURE_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_RESPONSE"})
 	public void invokePD_WSS_SIGNATURE_RESPONSE() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_SIGNATURE_RESPONSE = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_SIGNATURE_RESPONSE);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1430,7 +1488,7 @@ public class LocalForward {
 		client.run();
 
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()); 
-		
+
 		NamedNodeMap attributi = client.getResponseMessage().getSOAPBody().getAttributes();
 		Assert.assertTrue(attributi!=null && attributi.getLength()>0);
 		boolean foundId = false;
@@ -1443,7 +1501,7 @@ public class LocalForward {
 			//System.out.println("["+n.getLocalName()+"]["+n.getNamespaceURI()+"]");
 		}
 		Assert.assertTrue(foundId);
-		
+
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList!=null && nodeList.getLength()==1);
 	}
@@ -1467,16 +1525,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_RESPONSE, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_RESPONSE, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1488,16 +1548,19 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	/***
 	 * Test per WSS_SIGNATURE_VERIFY_RESPONSE
 	 */
+	Date testWSS_SIGNATURE_VERIFY_RESPONSE;
 	Repository repositoryWSS_SIGNATURE_VERIFY_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_VERIFY_RESPONSE"})
 	public void invokePD_WSS_SIGNATURE_VERIFY_RESPONSE() throws FatalTestSuiteException, Exception{
+
+		this.testWSS_SIGNATURE_VERIFY_RESPONSE = new Date();
 		
 		ClientSincrono client=new ClientSincrono(this.repositoryWSS_SIGNATURE_VERIFY_RESPONSE);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -1507,7 +1570,7 @@ public class LocalForward {
 		client.run();
 
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()); 
-		
+
 		NamedNodeMap attributi = client.getResponseMessage().getSOAPBody().getAttributes();
 		//Assert.assertTrue(attributi==null || attributi.getLength()<=0);
 		boolean foundId = false;
@@ -1522,7 +1585,7 @@ public class LocalForward {
 			}
 		}
 		Assert.assertTrue(foundId==false);
-		
+
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList==null || nodeList.getLength()==0);
 	}
@@ -1546,16 +1609,18 @@ public class LocalForward {
 		try{
 			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-				
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","001005"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_RESPONSE, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_RESPONSE, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1567,34 +1632,37 @@ public class LocalForward {
 			}catch(Exception eClose){}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/* ************** CASI ERRORE **************** */
-	
+
 	/***
 	 * Test per CONNETTORE_ERRATO_STATEFUL
 	 */
+	Date testPD_CONNETTORE_ERRATO_STATEFUL;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".CONNETTORE_ERRATO_STATEFUL"})
 	public void invokePD_CONNETTORE_ERRATO_STATEFUL() throws FatalTestSuiteException, Exception{
 
+		this.testPD_CONNETTORE_ERRATO_STATEFUL = new Date();
+		
 		if(this.doTestStateful==false){
 			return;
 		}
-		
+
 		Date dataInizioTest = DateManager.getDate();
-		
+
 		//		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseMsgDiagnosticiComponent msgDiag = null;
@@ -1609,45 +1677,47 @@ public class LocalForward {
 			//client.setMessaggioXMLRichiesta("CONTENTUO_ERRATO".getBytes()); QUESTO non rilancia il soap fault
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
-//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				//dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+			//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+			//dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
 			dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
-//
-//				client.setAttesaTerminazioneMessaggi(true);
-//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
-//			}
+			//
+			//				client.setAttesaTerminazioneMessaggi(true);
+			//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			//			}
 			client.run();
-			
+
 			try{
 				Thread.sleep(3000);
 			}catch(Exception e){}
-			
+
 			String id = r.getNext();
-			
+
 			String motivoErroreProcessamento = dbComponentErogatore.getVerificatoreMessaggi().getMotivoErroreProcessamentoMessaggio(id, "INBOX");
 			//System.out.println("A:"+motivoErroreProcessamento);
 			Assert.assertTrue(motivoErroreProcessamento!=null && motivoErroreProcessamento.contains("Errore avvenuto durante la consegna HTTP: Connection refused"));
-			
+
 			dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX", Utilities.testSuiteProperties.isUseTransazioni());
-			
+
 			msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
-			
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==true);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","001005","007011","007013"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATEFUL, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATEFUL, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007013"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
-//			try{
-//				dbComponentFruitore.close();
-//			}catch(Exception eClose){}
+			//			try{
+			//				dbComponentFruitore.close();
+			//			}catch(Exception eClose){}
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
@@ -1655,34 +1725,38 @@ public class LocalForward {
 				msgDiag.close();
 			}catch(Exception eClose){}
 		}
-		
+
 		Date dataFineTest = DateManager.getDate();
-		
+
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
 		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/***
 	 * Test per CONNETTORE_ERRATO_STATELESS
 	 */
+	Date testPD_CONNETTORE_ERRATO_STATELESS;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".CONNETTORE_ERRATO_STATELESS"})
 	public void invokePD_CONNETTORE_ERRATO_STATELESS() throws FatalTestSuiteException, Exception{
+		
+		this.testPD_CONNETTORE_ERRATO_STATELESS = new Date();
+		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseMsgDiagnosticiComponent msgDiag = null;
 		Date dataInizioTest = DateManager.getDate();
-		
+
 		try{
-			
+
 			Repository r = new Repository();
-			
+
 			ClientHttpGenerico client=new ClientHttpGenerico(r);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_CONNETTORE_ERRATO_STATELESS);
@@ -1702,35 +1776,37 @@ public class LocalForward {
 			}
 			try {
 				client.run();
-				
+
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_CONNETTORE_ERRATO_STATELESS+") non ha causato errori.");
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_CONNETTORE_ERRATO_STATELESS+") non ha causato errori.");
-	
+
 			} catch (AxisFault error) {
-				
+
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
 							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"ConsegnaContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
 							CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (516): " + error.getFaultCode().getLocalPart());
-				
+
 				msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
-				
+
 				String id = r.getNext();
-				
+
 				Reporter.log("Controllo msg diag local forward per id: " +id);
 				Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-				
+
 				Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
 				Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==true);
-				
+
 				Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007013","001006"));
+				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATELESS, "001039"));
+				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATELESS, "001003"));
+				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007013","001006"));
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1744,34 +1820,37 @@ public class LocalForward {
 				msgDiag.close();
 			}catch(Exception eClose){}
 		}
-		
-		
+
+
 		Date dataFineTest = DateManager.getDate();
-		
+
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
 		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/***
 	 * Test per SOAP_FAULT_STATEFUL
 	 */
+	Date testPA_CONNETTORE_ERRATO_STATEFUL;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SOAP_FAULT_STATEFUL"})
 	public void invokePD_SOAP_FAULT_STATEFUL() throws FatalTestSuiteException, Exception{
+
+		this.testPA_CONNETTORE_ERRATO_STATEFUL = new Date();
 		
 		if(this.doTestStateful==false){
 			return;
 		}
-		
-//
-//		Date dataInizioTest = DateManager.getDate();
-//		
+
+		//
+		//		Date dataInizioTest = DateManager.getDate();
+		//		
 		//		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseMsgDiagnosticiComponent msgDiag = null;
@@ -1786,49 +1865,51 @@ public class LocalForward {
 			//client.setMessaggioXMLRichiesta("CONTENTUO_ERRATO".getBytes()); QUESTO non rilancia il soap fault
 			client.setRispostaDaGestire(true);
 			// AttesaTerminazioneMessaggi
-//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				//dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+			//			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+			//dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
 			dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
-//
-//				client.setAttesaTerminazioneMessaggi(true);
-//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
-//			}
+			//
+			//				client.setAttesaTerminazioneMessaggi(true);
+			//				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			//				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			//			}
 			client.run();
-			
+
 			try{
 				Thread.sleep(3000);
 			}catch(Exception e){}
-			
+
 			String id = r.getNext();
-			
+
 			//String motivoErroreProcessamento = dbComponentErogatore.getVerificatoreMessaggi().getMotivoErroreProcessamentoMessaggio(id, "INBOX");
 			//System.out.println("A:"+motivoErroreProcessamento);
 			//Assert.assertTrue(motivoErroreProcessamento==null);
-			
+
 			//dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX");
-			
+
 			msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
-			
+
 			Reporter.log("Controllo msg diag local forward per id: " +id);
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-			
+
 			Reporter.log("Controllo msg diag local forward per id con errori (segnalazioneFault): " +id);
 			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==true);
-			
+
 			Reporter.log("Controllo che vi sia solo un errore di livello error (segnalazioneFault): " +id);
 			Assert.assertTrue(msgDiag.countSeveritaLessEquals(id, LogLevels.SEVERITA_ERROR_INTEGRATION)==1);
-			
+
 			Reporter.log("Controllo msg diag local forward solo codici attesi (tra cui quello che segnala il fault): " +id);
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","001005","007011","007012","007014") ||
-					msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","001005","007012","007014"));
-			
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testPA_CONNETTORE_ERRATO_STATEFUL, "001039"));
+			Assert.assertTrue(msgDiag.isTracedCodice(this.testPA_CONNETTORE_ERRATO_STATEFUL, "001003"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012","007014") ||
+					msgDiag.isTracedMessaggiWithCode(id, "001039","001003","001034","007011","001005","007012","007014"));
+
 		}catch(Exception e){
 			throw e;
 		}finally{
-//			try{
-//				dbComponentFruitore.close();
-//			}catch(Exception eClose){}
+			//			try{
+			//				dbComponentFruitore.close();
+			//			}catch(Exception eClose){}
 			try{
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
@@ -1836,36 +1917,40 @@ public class LocalForward {
 				msgDiag.close();
 			}catch(Exception eClose){}
 		}
-		
-//		Date dataFineTest = DateManager.getDate();
-		
-//		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
-//		err.setIntervalloInferiore(dataInizioTest);
-//		err.setIntervalloSuperiore(dataFineTest);
-//		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
-//		this.erroriAttesiOpenSPCoopCore.add(err);
+
+		//		Date dataFineTest = DateManager.getDate();
+
+		//		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		//		err.setIntervalloInferiore(dataInizioTest);
+		//		err.setIntervalloSuperiore(dataFineTest);
+		//		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		//		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	/***
 	 * Test per SOAP_FAULT_STATELESS
 	 */
+	Date testPD_SOAP_FAULT_STATELESS;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SOAP_FAULT_STATELESS"})
 	public void invokePD_SOAP_FAULT_STATELESS() throws FatalTestSuiteException, Exception{
+		
+		this.testPD_SOAP_FAULT_STATELESS = new Date();
+		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseMsgDiagnosticiComponent msgDiag = null;
-//		Date dataInizioTest = DateManager.getDate();
-		
+		//		Date dataInizioTest = DateManager.getDate();
+
 		try{
-			
+
 			Repository r = new Repository();
-			
+
 			ClientHttpGenerico client=new ClientHttpGenerico(r);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOAP_FAULT_STATELESS);
@@ -1885,35 +1970,37 @@ public class LocalForward {
 			}
 			try {
 				client.run();
-				
+
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOAP_FAULT_STATELESS+") non ha causato errori.");
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOAP_FAULT_STATELESS+") non ha causato errori.");
-	
+
 			} catch (AxisFault error) {
-				
+
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-				
+
 				if("Server.faultExample".equals(error.getFaultCode().getLocalPart()))
 					Assert.assertTrue("Fault ritornato dalla servlet di esempio di OpenSPCoop".equals(error.getFaultString()));
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (FaultExample): " + error.getFaultCode().getLocalPart());
-				
+
 				msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
-				
+
 				String id = r.getNext();
-				
+
 				Reporter.log("Controllo msg diag local forward per id: " +id);
 				Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
-				
+
 				Reporter.log("Controllo msg diag local forward per id con errori (segnalazioneFault): " +id);
 				Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==true);
-				
+
 				Reporter.log("Controllo che vi sia solo un errore di livello error (segnalazioneFault): " +id);
 				Assert.assertTrue(msgDiag.countSeveritaLessEquals(id, LogLevels.SEVERITA_ERROR_INTEGRATION)==1);
-				
+
 				Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
-				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001003","001034","007011","007012","007014","001006"));
+				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_SOAP_FAULT_STATELESS, "001039"));
+				Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_SOAP_FAULT_STATELESS, "001003"));
+				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","007014","001006"));
 			}
-			
+
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1927,14 +2014,14 @@ public class LocalForward {
 				msgDiag.close();
 			}catch(Exception eClose){}
 		}
-		
-//		
-//		Date dataFineTest = DateManager.getDate();
-//		
-//		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
-//		err.setIntervalloInferiore(dataInizioTest);
-//		err.setIntervalloSuperiore(dataFineTest);
-//		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
-//		this.erroriAttesiOpenSPCoopCore.add(err);
+
+		//		
+		//		Date dataFineTest = DateManager.getDate();
+		//		
+		//		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		//		err.setIntervalloInferiore(dataInizioTest);
+		//		err.setIntervalloSuperiore(dataFineTest);
+		//		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		//		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 }

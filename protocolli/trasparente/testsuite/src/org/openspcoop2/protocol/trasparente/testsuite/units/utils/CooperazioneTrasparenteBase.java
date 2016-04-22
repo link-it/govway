@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -53,12 +55,13 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 
 	public void testOneWayAutenticato(DatabaseComponent data,
 			DatabaseMsgDiagnosticiComponent msgDiagData, String id,
-			String tipoServizio, String nomeServizio,boolean checkServizioApplicativo) {
+			String tipoServizio, String nomeServizio,boolean checkServizioApplicativo,
+			Date date) {
 		this.testOneWay(data, msgDiagData, id, tipoServizio, nomeServizio, checkServizioApplicativo);
 		
 		if(this.portaDelegata) {
 			try{
-				if(!msgDiagData.isTracedMessaggioWithLike(id, "Ricevuta richiesta di servizio dal Servizio Applicativo ( Basic Username:")) {
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Ricevuta richiesta di servizio dal Servizio Applicativo ( Basic Username:")) {
 					Reporter.log("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 				}
@@ -91,11 +94,11 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 	
 	public void testSincronoAutenticato(DatabaseComponent data,
 			DatabaseMsgDiagnosticiComponent msgDiagData, String id,
-			String tipoServizio, String nomeServizio,boolean checkServizioApplicativo) {
+			String tipoServizio, String nomeServizio,boolean checkServizioApplicativo, Date date) {
 		this.testSincrono(data, msgDiagData, id, tipoServizio, nomeServizio, checkServizioApplicativo);
 		if(this.portaDelegata) {
 			try{
-				if(!msgDiagData.isTracedMessaggioWithLike(id, "Ricevuta richiesta di servizio dal Servizio Applicativo ( Basic Username:")) {
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Ricevuta richiesta di servizio dal Servizio Applicativo ( Basic Username:")) {
 					Reporter.log("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 				}
