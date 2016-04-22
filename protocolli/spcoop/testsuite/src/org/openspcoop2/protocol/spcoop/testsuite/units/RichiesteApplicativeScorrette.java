@@ -1946,10 +1946,14 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		//err.setMsgErrore("Validazione WSDL (true) fallita: Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL), con argomenti non conformi alla definizione wsdl");
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
+		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
+		err2.setIntervalloInferiore(dataInizioTest);
+		err2.setIntervalloSuperiore(dataFineTest);
+		err2.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
+		this.erroriAttesiOpenSPCoopCore.add(err2);
 		
 	}
 	
@@ -2026,8 +2030,14 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione fallita (elemento AlterazioneMessaggio)");
+		err.setMsgErrore("Validazione XSD del contenuto della risposta fallita:");
 		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
+		err2.setIntervalloInferiore(dataInizioTest);
+		err2.setIntervalloSuperiore(dataFineTest);
+		err2.setMsgErrore("Validazione fallita (elemento AlterazioneMessaggio)");
+		this.erroriAttesiOpenSPCoopCore.add(err2);
 	}
 	
 	
