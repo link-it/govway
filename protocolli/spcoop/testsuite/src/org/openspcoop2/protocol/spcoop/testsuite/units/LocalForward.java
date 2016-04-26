@@ -216,7 +216,9 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATEFUL, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testONEWAY_STATEFUL, "001003"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012") || 
+					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012", "001005") ||
+					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","001005", "007012"));
 
 		}catch(Exception e){
 			throw e;
@@ -1710,7 +1712,9 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATEFUL, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPD_CONNETTORE_ERRATO_STATEFUL, "001003"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007013"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007013") ||
+					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","001005", "007013") || 
+					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007013", "001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1902,7 +1906,9 @@ public class LocalForward {
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPA_CONNETTORE_ERRATO_STATEFUL, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testPA_CONNETTORE_ERRATO_STATEFUL, "001003"));
 			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012","007014") ||
-					msgDiag.isTracedMessaggiWithCode(id, "001039","001003","001034","007011","001005","007012","007014"));
+					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","001005","007012","007014") ||
+					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005","007014") || 
+					msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","007014","001005"));
 
 		}catch(Exception e){
 			throw e;

@@ -1445,6 +1445,12 @@ public class ValidazioneContenutiApplicativi {
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
+		ErroreAttesoOpenSPCoopLogCore errA = new ErroreAttesoOpenSPCoopLogCore();
+		errA.setIntervalloInferiore(dataInizioTest);
+		errA.setIntervalloSuperiore(dataFineTest);
+		errA.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
+		this.erroriAttesiOpenSPCoopCore.add(errA);
+		
 		// Test N.1 con Validazione OpenSPCoop
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConTroppiParametriInput.xml",
@@ -1461,6 +1467,12 @@ public class ValidazioneContenutiApplicativi {
 		err.setIntervalloSuperiore(dataFineTest);
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+		errA = new ErroreAttesoOpenSPCoopLogCore();
+		errA.setIntervalloInferiore(dataInizioTest);
+		errA.setIntervalloSuperiore(dataFineTest);
+		errA.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
+		this.erroriAttesiOpenSPCoopCore.add(errA);
 		
 		// Test N.2 con Validazione WSDL
 		dataInizioTest = DateManager.getDate();
@@ -1479,6 +1491,12 @@ public class ValidazioneContenutiApplicativi {
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
+		errA = new ErroreAttesoOpenSPCoopLogCore();
+		errA.setIntervalloInferiore(dataInizioTest);
+		errA.setIntervalloSuperiore(dataFineTest);
+		errA.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
+		this.erroriAttesiOpenSPCoopCore.add(errA);
+		
 		// Test N.2 con Validazione OpenSPCoop
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConPochiParametriInput.xml",
@@ -1495,6 +1513,12 @@ public class ValidazioneContenutiApplicativi {
 		err.setIntervalloSuperiore(dataFineTest);
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+		errA = new ErroreAttesoOpenSPCoopLogCore();
+		errA.setIntervalloInferiore(dataInizioTest);
+		errA.setIntervalloSuperiore(dataFineTest);
+		errA.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
+		this.erroriAttesiOpenSPCoopCore.add(errA);
 		
 		// Test N.3 con Validazione WSDL
 		dataInizioTest = DateManager.getDate();
@@ -1513,6 +1537,12 @@ public class ValidazioneContenutiApplicativi {
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
+		errA = new ErroreAttesoOpenSPCoopLogCore();
+		errA.setIntervalloInferiore(dataInizioTest);
+		errA.setIntervalloSuperiore(dataFineTest);
+		errA.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteDL] del port-type [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL):");
+		this.erroriAttesiOpenSPCoopCore.add(errA);
+		
 		// Test N.3 con Validazione OpenSPCoop
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml",
@@ -1529,6 +1559,12 @@ public class ValidazioneContenutiApplicativi {
 		err.setIntervalloSuperiore(dataFineTest);
 		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+		errA = new ErroreAttesoOpenSPCoopLogCore();
+		errA.setIntervalloInferiore(dataInizioTest);
+		errA.setIntervalloSuperiore(dataFineTest);
+		errA.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione [registrazioneUtenteDL] del Servizio [GestioneUtentiDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneOpenSPCoop):");
+		this.erroriAttesiOpenSPCoopCore.add(errA);
 	}
 	@DataProvider (name="gestioneUtentiDocumentLiteralContenutiErrato")
 	public Object[][]testGestioneUtentiDocumentLiteralContenutiErrato()throws Exception{
