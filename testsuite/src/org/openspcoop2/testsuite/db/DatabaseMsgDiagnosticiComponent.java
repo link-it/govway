@@ -724,6 +724,14 @@ public class DatabaseMsgDiagnosticiComponent {
 					}
 				}
 				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("EMAILADDRESS=apoli@link.it")){
+						String tmp = new String(messaggio);
+						tmp = tmp.replace("EMAILADDRESS=apoli@link.it", "");
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
+				
 				if(casoSpecialeEmail==false){
 					resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 							": "+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));

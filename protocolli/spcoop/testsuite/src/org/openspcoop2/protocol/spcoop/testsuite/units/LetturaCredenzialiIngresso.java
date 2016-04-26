@@ -372,10 +372,21 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, msg));
 				
 				msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL.replace("@ID@", "CN=clientkey");
-				msg = msg.replace("@ID_SIL@", "silX");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
-				Reporter.log("Verifica log identita ["+msg+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, msg));
+				
+				String configurazioneXml = new String(msg);
+				configurazioneXml = configurazioneXml.replace("@ID_SIL@", "silX");
+				
+				String configurazioneDb = new String(msg);
+				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
+				
+				boolean identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, configurazioneXml);
+				Reporter.log("Verifica log identita XML:"+identitaXML+" ["+configurazioneXml+"]");
+				
+				boolean identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, configurazioneDb);
+				Reporter.log("Verifica log identita DB:"+identitaDB+" ["+configurazioneDb+"]");
+				
+				Assert.assertTrue(identitaXML || identitaDB);
 			}
 			
 		}catch(Exception e){
@@ -620,10 +631,21 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, msg));
 				
 				msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL.replace("@ID@", "CN=clientkey");
-				msg = msg.replace("@ID_SIL@", "silX");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
-				Reporter.log("Verifica log identita ["+msg+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, msg));
+				
+				String configurazioneXml = new String(msg);
+				configurazioneXml = configurazioneXml.replace("@ID_SIL@", "silX");
+				
+				String configurazioneDb = new String(msg);
+				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
+				
+				boolean identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, configurazioneXml);
+				Reporter.log("Verifica log identita XML:"+identitaXML+" ["+configurazioneXml+"]");
+				
+				boolean identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, configurazioneDb);
+				Reporter.log("Verifica log identita DB:"+identitaDB+" ["+configurazioneDb+"]");
+				
+				Assert.assertTrue(identitaXML || identitaDB);
 			}
 			
 		}catch(Exception e){
@@ -889,10 +911,21 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, msg));
 				
 				msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL.replace("@ID@", "CN=clientkey");
-				msg = msg.replace("@ID_SIL@", "silX");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
-				Reporter.log("Verifica log identita ["+msg+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, msg));
+				
+				String configurazioneXml = new String(msg);
+				configurazioneXml = configurazioneXml.replace("@ID_SIL@", "silX");
+				
+				String configurazioneDb = new String(msg);
+				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
+				
+				boolean identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, configurazioneXml);
+				Reporter.log("Verifica log identita XML:"+identitaXML+" ["+configurazioneXml+"]");
+				
+				boolean identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, configurazioneDb);
+				Reporter.log("Verifica log identita DB:"+identitaDB+" ["+configurazioneDb+"]");
+				
+				Assert.assertTrue(identitaXML || identitaDB);
 			}
 			
 		}catch(Exception e){

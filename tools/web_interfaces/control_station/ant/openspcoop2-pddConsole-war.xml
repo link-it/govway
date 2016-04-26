@@ -232,7 +232,6 @@
 		</if>
 		
 		<var name="pddConsoleRemota_security_neethi" value="" />
-		<var name="pddConsoleRemota_security_xmlsec" value="" />
 		<var name="pddConsoleRemota_httpcore" value="" />
 		<var name="pddConsoleRemota_cxf_xmlschema-core" value="" />
 		<var name="pddConsoleRemota_cxf_woodstox-core-asl" value="" />
@@ -244,7 +243,6 @@
 			</or>
 			<then>
 				<var name="pddConsoleRemota_security_neethi" value="neethi-3.0.2.jar" />
-				<var name="pddConsoleRemota_security_xmlsec" value="xmlsec-1.5.4.jar" />
 				<var name="pddConsoleRemota_httpcore" value="*.jar" />
 				<var name="pddConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.0.3.jar" />
 				<var name="pddConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-asl-4.2.0.jar" />
@@ -335,7 +333,7 @@
 			</lib>
 			<lib dir="${required_lib}/security">
 				<include name="${pddConsoleRemota_security_neethi}"/>
-				<include name="${pddConsoleRemota_security_xmlsec}"/>
+				<include name="xmlsec-1.5.4.jar"/>
 			</lib>
 			<lib dir="${required_lib}/httpcore">
 				<include name="${pddConsoleRemota_httpcore}"/>

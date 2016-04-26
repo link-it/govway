@@ -7994,6 +7994,16 @@
     <soggetto tipo="SPC" nome="SoggettoNonEsistenteRegistro">
     </soggetto>
     <!-- End Configurazione valida solo per xml -->
+
+    <!-- Start Configurazione valida solo per db (Crearlo a mano da console) -->
+    <soggetto tipo="SPC" nome="MinisteroFruitore" >
+        <servizio-applicativo nome="silX_SSL">
+            <invocazione-porta>
+                <credenziali tipo="ssl" subject="CN=clientkey" />
+            </invocazione-porta>
+        </servizio-applicativo>
+    </soggetto>
+    <!-- End Configurazione valida solo per db -->
     
     <soggetto tipo="SPC" nome="TestRichiesteScorrette">
         
