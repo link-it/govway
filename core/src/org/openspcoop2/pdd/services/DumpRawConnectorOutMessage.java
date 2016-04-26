@@ -88,7 +88,11 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 				this.bout = null;
 			}
 			this.bout = new ByteArrayOutputStream();
-			message.writeTo(this.bout, false);
+			// il save e' necessario con i connettori in caso di errori di validazione
+			if(message!=null && message.getSOAPBody()!=null && message.getSOAPBody().hasFault()){
+				message.saveChanges();
+			}
+			message.writeTo(this.bout, consume);
 		}catch(Throwable t){
 			try{
 				this.bout = new ByteArrayOutputStream();
@@ -109,7 +113,8 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		}
 		
 		// wrapped method
-		this.connectorOutMessage.sendResponse(message, consume);
+		//this.connectorOutMessage.sendResponse(message, consume); Nel caso di attachments genera un nuovo boundary
+		this.connectorOutMessage.sendResponse(this.bout.toByteArray());
 	}
 
 	@Override

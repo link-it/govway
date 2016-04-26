@@ -182,6 +182,7 @@ Batterie di test che verificano funzionalita' di sicurezza della Porta.
 !! Pre-requisiti descritti sotto!!
 - 'AutorizzazioneContenuto' vengono verificate le funzionalita' di autorizzazione dei contenuti per i servizi PD e PA
 - 'WSSecurity' vengono provate le funzionalita' di WSSecurity con i vari profili di collaborazione e riscontri (libreria wss4j)
+   (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - 'WSSecuritySoapBox' vengono provate alcune funzionalità di WSSecurity tramite libreria 'soapbox', in particolar modo firma e cifratura degli attachments
 !! Pre-requisiti!!
 Il test richiede l'installazione di diversi keystore in /etc/openspcoop2/keys:
@@ -248,6 +249,7 @@ Il test richiede l'installazione del jar './protocolli/spcoop/testsuite/dist/ope
 
 I test presenti verificano il corretto funzionamento della Porta di Dominio rispetto a diversi formati di Messaggi SOAP:
 - 'SOAPWithAttachments' vengono provati i quattro profili di collaborazione con Messaggi SOAP With Attachments
+  (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - 'SOAPAction' viene verificato che la PdD gestisca correttamente le possibili SOAPAction ricevute nell'header di trasporto HTTP
 - 'SOAPBodyEmpty' viene verificato che la PdD gestisca correttamente messaggi soap senza Body
 - 'SOAPHeaderEmpty' viene verificato che la PdD gestisca correttamente messaggi soap senza Header
@@ -256,6 +258,7 @@ I test presenti verificano il corretto funzionamento della Porta di Dominio risp
 
 ** Validazione Contenuti Applicativi **
 
+(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 I test presenti nella batteria 'ValidazioneContenutiApplicativi' verificano la funzionalita' di validazione dei contenuti applicativi della Porta di Dominio. La validazione viene effettuata tramite gli schemi xsd di un servizio realizzato ad hoc per il test. Inoltre viene controllata la conformita' dei messaggi rispetto agli stili ed usi definiti nel wsdl del servizio.
 !!Pre-requisito!!
 a. server disponibile nella root di openspcoop in protocolli/spcoop/example/server/ValidazioneContenutiWS/dist/ValidazioneContenutiWS.war (configurazione del property 'validazione.properties' dove deve essere indicato il datasource del tracciamento)
@@ -273,6 +276,7 @@ I test verificano la funzionalita' di LocalForward
 Batterie di test che verificano funzionalita' base nella Porta di Dominio
 - 'TunnelSOAP' vengono testate le funzionalita' di sbustamento e imbustamento
 - 'TunnelSOAP' con dump disabilitato (NOTA: provare anche con questa configurazione, vi sono differenze)
+   (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - 'UrlPrefixRewriter' vengono verificate le funzionalita' di pd-url-prefix-rewriter e pa-url-prefix-rewriter
 - 'VersionamentoAccordiServizio' vengono verificate le funzionalità di versionamento degli accordi
 - 'XMLEncoding' vengono utilizzati messaggi che contengono caratteri non compresi nel set ASCII

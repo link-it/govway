@@ -127,6 +127,8 @@ Requisiti globali:
 
 ** Porta Delegata **
 
+(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+
 Batterie di test che verificano la normale gestione del servizio Porta Delegata
 - 'PortaDelegata':  vengono eseguiti tutti i test riguardanti la PortaDelegata
 Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gruppi:
@@ -138,6 +140,8 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 ault con codice di trasporto 500
 
 ** Porta Applicativa **
+
+(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 Batterie di test che verificano la normale gestione del servizio Porta Delegata
 - 'PortaApplicativa':  vengono eseguiti tutti i test riguardanti la PortaApplicativa
