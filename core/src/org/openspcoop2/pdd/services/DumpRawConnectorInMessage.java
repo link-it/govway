@@ -58,6 +58,9 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		this.connectorInMessage = connectorInMessage;
 	}
 
+	public ConnectorInMessage getWrappedConnectorInMessage() {
+		return this.connectorInMessage;
+	}
 	
 	public byte[] getRequestAsByte(){
 		if(this.bout!=null){

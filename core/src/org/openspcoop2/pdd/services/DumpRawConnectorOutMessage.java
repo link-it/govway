@@ -51,6 +51,10 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		this.connectorOutMessage = connectorOutMessage;
 	}
 	
+	public ConnectorOutMessage getWrappedConnectorOutMessage() {
+		return this.connectorOutMessage;
+	}
+	
 	public byte[] getResponseAsByte(){
 		if(this.bout!=null){
 			return this.bout.toByteArray();

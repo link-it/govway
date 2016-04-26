@@ -222,11 +222,17 @@ public class RicezioneContenutiApplicativiSOAP {
 				dumpRaw.serializeContext(context, protocol);
 			}
 			
+			DirectVMConnectorInMessage vm = null;
 			if(req instanceof DirectVMConnectorInMessage){
-				DirectVMConnectorInMessage vm = (DirectVMConnectorInMessage) req;
-				if(vm.getDirectVMProtocolInfo()!=null){
-					vm.getDirectVMProtocolInfo().setInfo(pddContext);
+				vm = (DirectVMConnectorInMessage) req;
+			}
+			else if(req instanceof DumpRawConnectorInMessage){
+				if( ((DumpRawConnectorInMessage)req).getWrappedConnectorInMessage() instanceof DirectVMConnectorInMessage ){
+					vm = (DirectVMConnectorInMessage) ((DumpRawConnectorInMessage)req).getWrappedConnectorInMessage();
 				}
+			}
+			if(vm!=null && vm.getDirectVMProtocolInfo()!=null){
+				vm.getDirectVMProtocolInfo().setInfo(pddContext);
 			}
 			
 			
@@ -571,9 +577,17 @@ public class RicezioneContenutiApplicativiSOAP {
 		if(context!=null && context.getIntegrazione()!=null){
 			erroreApplicativoBuilder.setServizioApplicativo(context.getIntegrazione().getServizioApplicativoFruitore());
 		}
+		DirectVMConnectorOutMessage vm = null;
 		if(res instanceof DirectVMConnectorOutMessage){
+			vm = (DirectVMConnectorOutMessage) res;
+		}
+		else if(req instanceof DumpRawConnectorOutMessage){
+			if( ((DumpRawConnectorOutMessage)res).getWrappedConnectorOutMessage() instanceof DirectVMConnectorOutMessage ){
+				vm = (DirectVMConnectorOutMessage) ((DumpRawConnectorOutMessage)res).getWrappedConnectorOutMessage();
+			}
+		}
+		if(vm!=null){
 			if(context!=null && context.getPddContext()!=null){
-				DirectVMConnectorOutMessage vm = (DirectVMConnectorOutMessage) res;
 				DirectVMProtocolInfo pInfo = new DirectVMProtocolInfo();
 				Object oIdTransazione = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 				if(oIdTransazione!=null){
