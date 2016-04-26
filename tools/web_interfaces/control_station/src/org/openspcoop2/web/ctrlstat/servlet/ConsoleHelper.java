@@ -589,7 +589,11 @@ public class ConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 3; // configurazione, runtime e audit
+					dimensioneEntries = 2; // configurazione e audit
+					List<String> aliases = this.confCore.getJmxPdD_aliases();
+					if(aliases!=null && aliases.size()>0){
+						dimensioneEntries++; // runtime
+					}
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
@@ -624,9 +628,11 @@ public class ConsoleHelper {
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
 					index++;
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
-					index++;
+					if(aliases!=null && aliases.size()>0){
+						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA;
+						entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
+						index++;
+					}
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
 						for (int j = 0; j < entriesUtenti.length; j++) {
