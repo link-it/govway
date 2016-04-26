@@ -823,19 +823,35 @@ public class MsgDiagnosticoOpenSPCoopAppenderDB implements IMsgDiagnosticoOpenSP
 					gdoColumnValue = " , ?";
 				}
 				
-				
-				String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA
-				+" (id_correlazione, servizio_applicativo"+gdoColumnName+")"+
-				" VALUES (?, ?"+gdoColumnValue+")";
-				stmt = con.prepareStatement(updateString);
+				// Controllo che non esista già.
+				// Può succedere (succede in ORACLE)
+				selectString = new StringBuffer("SELECT ");
+				selectString.append(" * FROM "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA+" WHERE id_correlazione=? AND servizio_applicativo=?");
+				stmt = con.prepareStatement(selectString.toString());
 				int index = 1;
 				stmt.setLong(index++, idCorrelazione);
 				JDBCUtilities.setSQLStringValue(stmt,index++, msgDiagCorrelazioneSA.getServizioApplicativo());
-				if(this.addGdoForAllTables){
-					stmt.setTimestamp(index++, gdoT);
-				}
-				stmt.executeUpdate();
+				rs = stmt.executeQuery();
+				boolean existsAlready = rs.next();
+				rs.close();
 				stmt.close();
+								
+				if(existsAlready==false){
+							
+					String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA
+					+" (id_correlazione, servizio_applicativo"+gdoColumnName+")"+
+					" VALUES (?, ?"+gdoColumnValue+")";
+					stmt = con.prepareStatement(updateString);
+					index = 1;
+					stmt.setLong(index++, idCorrelazione);
+					JDBCUtilities.setSQLStringValue(stmt,index++, msgDiagCorrelazioneSA.getServizioApplicativo());
+					if(this.addGdoForAllTables){
+						stmt.setTimestamp(index++, gdoT);
+					}
+					stmt.executeUpdate();
+					stmt.close();
+					
+				}
 				
 				
 			}catch(Exception e){
