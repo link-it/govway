@@ -716,6 +716,14 @@ public class DatabaseMsgDiagnosticiComponent {
 					casoSpecialeEmail = true;
 				}
 				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("EMAILADDRESS=info@openspcoop.org")){
+						String tmp = new String(messaggio);
+						tmp = tmp.replace("EMAILADDRESS=info@openspcoop.org", "");
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
+				
 				if(casoSpecialeEmail==false){
 					resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 							": "+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
