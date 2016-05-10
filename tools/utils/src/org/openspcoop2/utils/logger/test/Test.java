@@ -23,27 +23,27 @@ package org.openspcoop2.utils.logger.test;
 import java.util.Date;
 
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.logger.Attachment;
-import org.openspcoop2.utils.logger.Event;
 import org.openspcoop2.utils.logger.ILogger;
 import org.openspcoop2.utils.logger.LoggerFactory;
-import org.openspcoop2.utils.logger.LowSeverity;
-import org.openspcoop2.utils.logger.Message;
-import org.openspcoop2.utils.logger.MessageType;
-import org.openspcoop2.utils.logger.Property;
-import org.openspcoop2.utils.logger.Severity;
-import org.openspcoop2.utils.logger.basic.Log4JLogger;
-import org.openspcoop2.utils.logger.proxy.Actor;
-import org.openspcoop2.utils.logger.proxy.Client;
-import org.openspcoop2.utils.logger.proxy.FlowMode;
-import org.openspcoop2.utils.logger.proxy.Identifier;
-import org.openspcoop2.utils.logger.proxy.Operation;
-import org.openspcoop2.utils.logger.proxy.ProxyContext;
-import org.openspcoop2.utils.logger.proxy.Result;
-import org.openspcoop2.utils.logger.proxy.Role;
-import org.openspcoop2.utils.logger.proxy.Server;
-import org.openspcoop2.utils.logger.proxy.ServerEndpointType;
-import org.openspcoop2.utils.logger.proxy.Service;
+import org.openspcoop2.utils.logger.beans.Attachment;
+import org.openspcoop2.utils.logger.beans.Event;
+import org.openspcoop2.utils.logger.beans.Message;
+import org.openspcoop2.utils.logger.beans.Property;
+import org.openspcoop2.utils.logger.beans.proxy.Actor;
+import org.openspcoop2.utils.logger.beans.proxy.Client;
+import org.openspcoop2.utils.logger.beans.proxy.Identifier;
+import org.openspcoop2.utils.logger.beans.proxy.Operation;
+import org.openspcoop2.utils.logger.beans.proxy.ProxyContext;
+import org.openspcoop2.utils.logger.beans.proxy.Role;
+import org.openspcoop2.utils.logger.beans.proxy.Server;
+import org.openspcoop2.utils.logger.beans.proxy.Service;
+import org.openspcoop2.utils.logger.constants.LowSeverity;
+import org.openspcoop2.utils.logger.constants.MessageType;
+import org.openspcoop2.utils.logger.constants.Severity;
+import org.openspcoop2.utils.logger.constants.proxy.FlowMode;
+import org.openspcoop2.utils.logger.constants.proxy.Result;
+import org.openspcoop2.utils.logger.constants.proxy.ServerEndpointType;
+import org.openspcoop2.utils.logger.log4j.Log4JLoggerWithProxyContext;
 
 /**
  * Test
@@ -56,7 +56,7 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 		
-		LoggerFactory.initialize(Log4JLogger.class.getName(),
+		LoggerFactory.initialize(Log4JLoggerWithProxyContext.class.getName(),
 				"/org/openspcoop2/utils/logger/test/example.msgDiagnostici.properties",
 				false,
 				"/org/openspcoop2/utils/logger/test/example.log4j.properties");
@@ -276,7 +276,7 @@ public class Test {
 			Identifier idResponse = new Identifier();
 			idResponse.setId("ProvaResponse_238231232_3232");
 			context.getResponse().setIdentifier(idResponse);
-			context.getResponse().setCorrelationIdentifier("ID_CORRELAZIONE_APPLICATIVA");
+			context.getResponse().setCorrelationIdentifier("ID_CORRELAZIONE_APPLICATIVA_RISP");
 			
 			int returnCodeClient = 200;
 			boolean fault = true; // SIMULAZIONE TODO...

@@ -66,6 +66,7 @@ public class LoggerFactory {
 		try{
 			Constructor<ILogger> c = loggerImpl.getConstructor(parameterTypes);
 			ILogger logger = (ILogger) c.newInstance(parameters);
+			logger.initLogger();
 			return logger;
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);

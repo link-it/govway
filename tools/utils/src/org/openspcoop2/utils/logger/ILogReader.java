@@ -20,40 +20,36 @@
  */
 package org.openspcoop2.utils.logger;
 
+import java.util.List;
+
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.logger.beans.Diagnostic;
 import org.openspcoop2.utils.logger.beans.Event;
 import org.openspcoop2.utils.logger.beans.Message;
-import org.openspcoop2.utils.logger.constants.LowSeverity;
 
 /**
  * ILogger
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 11425 $, $Date: 2016-01-26 11:12:54 +0100 (Tue, 26 Jan 2016) $
  */
-public interface ILogger {
+public interface ILogReader {
 	
-	public void initLogger() throws UtilsException;
+	public void initReader() throws UtilsException;
 	
 	// diagnostici
-	public void log(String message, LowSeverity severity) throws UtilsException;
-	public void log(String message, LowSeverity severity, String function) throws UtilsException;
-	public void log(String code) throws UtilsException;
-	public void log(String code, String ... params) throws UtilsException;
-	public void log(String code, String param) throws UtilsException; // serve per evitare che la chiamata con string ricata erroneamente nella firma Object invece che nella firma String ... params
-	public void log(String code, Object o) throws UtilsException;
-	public String getLogParam(String logParam) throws UtilsException;
-	
+	public List<Diagnostic> findDiagnostics(IPaginatedSearchContext searchContext);
+
 	// transazione (+tracce)
-	public IContext getContext() throws UtilsException;
-	public void log() throws UtilsException;
-	public void log(IContext context) throws UtilsException;
+	public IContext getContext(String idTransaction) throws UtilsException;
+	public List<IContext> findContexts(IPaginatedSearchContext searchContext) throws UtilsException;
 	
 	// dump
-	public void log(Message message) throws UtilsException;
+	public List<Message> findMessages(String idTransaction) throws UtilsException;
+	public List<Message> findMessages(IPaginatedSearchContext searchContext) throws UtilsException;
 	
 	// event
-	public void log(Event event) throws UtilsException;
+	public List<Event> findEvents(IEventSearchContext searchContext) throws UtilsException;
 	
 }
