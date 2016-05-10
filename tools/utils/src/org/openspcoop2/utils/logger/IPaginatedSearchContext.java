@@ -24,8 +24,8 @@ package org.openspcoop2.utils.logger;
  * IPaginatedSearchContext
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 11425 $, $Date: 2016-01-26 11:12:54 +0100 (Tue, 26 Jan 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public interface IPaginatedSearchContext extends ISearchContext {
 

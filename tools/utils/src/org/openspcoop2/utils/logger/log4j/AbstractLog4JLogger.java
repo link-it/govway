@@ -42,8 +42,8 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * Log4JLogger
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 11425 $, $Date: 2016-01-26 11:12:54 +0100 (Tue, 26 Jan 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 
