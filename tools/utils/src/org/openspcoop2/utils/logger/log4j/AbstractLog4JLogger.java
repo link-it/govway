@@ -47,41 +47,61 @@ import org.openspcoop2.utils.logger.constants.Severity;
  */
 public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 
-	
+
 	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
+		this(diagnosticProperties,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
+	}
+	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType) throws UtilsException {
 		super(diagnosticProperties,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties);
+		this.init(resourceLogProperties,log4jType);
 	}
 
 	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
+		this(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
+	}	
+	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType) throws UtilsException {
 		super(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties);
+		this.init(resourceLogProperties,log4jType);
 	}
 
 	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
+		this(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
+	}
+	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType) throws UtilsException {
 		super(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties);
+		this.init(resourceLogProperties,log4jType);
 	}
 	
 	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		this(diagnosticProperties,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
+	}
+	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType) throws UtilsException {
 		super(diagnosticProperties,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties);
+		this.init(resourceLogProperties,log4jType);
 	}
 
 	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		this(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
+	}
+	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType) throws UtilsException {
 		super(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties);
+		this.init(resourceLogProperties,log4jType);
 	}
 
 	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		this(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
+	}
+	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType) throws UtilsException {
 		super(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties);
+		this.init(resourceLogProperties,log4jType);
 	}
 
 	protected Logger logTransaction;
 	protected Logger logDiagnostic;
 	protected Logger logDump;
 	protected Logger logEvent;
+	
+	protected Log4jType log4jType;
 	
 	private static Severity diagnosticSeverity = Severity.DEBUG_HIGH;
 	public static void setDiagnosticSeverity(Severity logSeverity) {
@@ -99,7 +119,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		return severity.intValue() <= eventSeverity.intValue();
 	}
 
-	private void init(String resourceLogProperties) throws UtilsException{
+	private void init(String resourceLogProperties, Log4jType log4jType) throws UtilsException{
 		InputStream is = null;
 		try{
 			is = AbstractLog4JLogger.class.getResourceAsStream(resourceLogProperties);
@@ -108,7 +128,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 			}
 			Properties p = new Properties();
 			p.load(is);
-			this.init(p);
+			this.init(p,log4jType);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -121,7 +141,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		}
 	}
 	
-	private void init(Properties p) throws UtilsException{
+	private void init(Properties p, Log4jType log4jType) throws UtilsException{
 		try{
 			PropertyConfigurator.configure(p);
 			
@@ -322,7 +342,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 	}
 	
 	protected Priority convertToPriority(Severity severity){
-		return SeverityLog4J.getSeverityLog4J(severity);
+		return SeverityLog4J.getSeverityLog4J(severity,this.log4jType);
 	}
 
 	@Override
