@@ -38,32 +38,68 @@ import org.openspcoop2.utils.logger.beans.proxy.ProxyContext;
  */
 public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 
+	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
+			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType)
+			throws UtilsException {
+		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
+	}
+	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
+			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	}
+
+	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
+			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType)
+			throws UtilsException {
+		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
+	}
+	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
+			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
+		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	}
+
+	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
+			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType)
+			throws UtilsException {
+		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
+	}
+	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
+			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	}
+
+	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
+			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType)
+			throws UtilsException {
+		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
+	}
+	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
+			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
+		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	}
+
+	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
+			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType)
+			throws UtilsException {
+		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
+	}
+	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
+			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
+		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	}
+
+	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
+			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType)
+			throws UtilsException {
+		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
+	}
+	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
+			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
+		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	}
+	
 	private ProxyContext context = new ProxyContext();
 	
-	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
 
 	@Override
 	public void initLogger() throws UtilsException{

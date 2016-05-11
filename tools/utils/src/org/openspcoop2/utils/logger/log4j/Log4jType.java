@@ -30,6 +30,6 @@ package org.openspcoop2.utils.logger.log4j;
  */
 public enum Log4jType {
 
-	LOG4Jv1,LOG4jv2
+	LOG4Jv1,LOG4Jv2
 	
 }

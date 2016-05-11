@@ -44,6 +44,7 @@ import org.openspcoop2.utils.logger.constants.proxy.FlowMode;
 import org.openspcoop2.utils.logger.constants.proxy.Result;
 import org.openspcoop2.utils.logger.constants.proxy.ServerEndpointType;
 import org.openspcoop2.utils.logger.log4j.Log4JLoggerWithProxyContext;
+import org.openspcoop2.utils.logger.log4j.Log4jType;
 
 /**
  * Test
@@ -59,7 +60,8 @@ public class Test {
 		LoggerFactory.initialize(Log4JLoggerWithProxyContext.class.getName(),
 				"/org/openspcoop2/utils/logger/test/example.msgDiagnostici.properties",
 				false,
-				"/org/openspcoop2/utils/logger/test/example.log4j.properties");
+				"/org/openspcoop2/utils/logger/test/example.log4j.properties",
+				Log4jType.LOG4Jv1);
 		
 		//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
 		//Log4JLogger.setEventSeverity(Severity.ERROR);
