@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger;
 
+import java.io.Serializable;
+
 /**
  * IContext
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IContext {
+public interface IContext extends Serializable {
 
 	public String getIdTransaction();
 	

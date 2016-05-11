@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 /**
  * Response
  *
@@ -27,8 +29,13 @@ package org.openspcoop2.utils.logger.beans.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Response extends AbstractFlow {
+public class Response extends AbstractFlow implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private byte[] inFault;
 	private byte[] outFault;
 	

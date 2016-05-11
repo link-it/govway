@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 /**
  * Service
  *
@@ -27,8 +29,13 @@ package org.openspcoop2.utils.logger.beans.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Service {
+public class Service implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private String type;
 	private Integer version;

@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.utils.logger.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.openspcoop2.utils.logger.constants.Severity;
@@ -31,8 +32,13 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Event {
+public class Event implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Date date;
 	private String source;
 	private String code;

@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,8 +34,13 @@ import org.openspcoop2.utils.logger.beans.Property;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractFlow {
+public abstract class AbstractFlow implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Date inDate;
 	private Date outDate;
 	

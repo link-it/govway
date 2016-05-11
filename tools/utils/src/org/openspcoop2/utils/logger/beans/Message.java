@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.utils.logger.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,12 @@ import org.openspcoop2.utils.logger.constants.MessageType;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Message {
+public class Message implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private MessageType type;
 	

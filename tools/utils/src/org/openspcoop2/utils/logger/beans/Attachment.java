@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans;
 
+import java.io.Serializable;
+
 /**
  * Attachment
  *
@@ -27,8 +29,13 @@ package org.openspcoop2.utils.logger.beans;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Attachment {
+public class Attachment implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String contentType;
 	private String contentId;
 	private byte[] content;

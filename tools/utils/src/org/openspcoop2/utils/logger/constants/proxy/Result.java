@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.constants.proxy;
 
+import java.io.Serializable;
+
 /**
  * Result
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.logger.constants.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum Result {
+public enum Result implements Serializable {
 
 	SUCCESS, 
 	INTERNAL_ERROR,  // errore inatteso

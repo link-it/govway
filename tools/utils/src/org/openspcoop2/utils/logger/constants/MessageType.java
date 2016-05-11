@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.constants;
 
+import java.io.Serializable;
+
 /**
  * MessageType
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.logger.constants;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum MessageType {
+public enum MessageType implements Serializable {
 
 	IN, OUT,
 	REQUEST_IN, REQUEST_OUT,

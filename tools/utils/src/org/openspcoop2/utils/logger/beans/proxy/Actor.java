@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 /**
  * Actor
  *
@@ -27,8 +29,13 @@ package org.openspcoop2.utils.logger.beans.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Actor {
+public class Actor implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private String address;
 	private String type;

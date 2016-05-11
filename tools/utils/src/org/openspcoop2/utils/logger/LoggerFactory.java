@@ -37,12 +37,12 @@ public class LoggerFactory {
 	private static Object [] parameters = null;
 	private static Class<?> [] parameterTypes = null;
 	
+	@SuppressWarnings("unchecked")
 	public static void initialize(String implementationClassName, Object ... pars) throws UtilsException, ClassNotFoundException{
-		Class<?> c = Class.forName(implementationClassName);
+		Class<ILogger> c = (Class<ILogger>) Class.forName(implementationClassName);
 		initialize(c, pars);
 	}
-	@SuppressWarnings("unchecked")
-	public static void initialize(Class<?> implementationClass, Object ... pars) throws UtilsException {
+	public static void initialize(Class<ILogger> implementationClass, Object ... pars) throws UtilsException {
 		try{
 			loggerImpl = (Class<ILogger>)implementationClass;
 			parameters = pars;
@@ -58,6 +58,9 @@ public class LoggerFactory {
 	}
 	
 	public static ILogger newLogger() throws UtilsException{
+		return newLogger(null);
+	}
+	public static ILogger newLogger(IContext context) throws UtilsException{
 		
 		if(loggerImpl==null){
 			throw new UtilsException("LoggerFactory not Initialized");
@@ -66,7 +69,12 @@ public class LoggerFactory {
 		try{
 			Constructor<ILogger> c = loggerImpl.getConstructor(parameterTypes);
 			ILogger logger = (ILogger) c.newInstance(parameters);
-			logger.initLogger();
+			if(context!=null){
+				logger.initLogger(context);
+			}
+			else{
+				logger.initLogger();
+			}
 			return logger;
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);

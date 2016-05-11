@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.logger.constants.proxy.Result;
 
 /**
@@ -29,7 +31,12 @@ import org.openspcoop2.utils.logger.constants.proxy.Result;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Transaction {
+public class Transaction implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String state; // per marcare la transazione appartenente ad uno stato condiviso tra più transazioni
 	

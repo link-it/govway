@@ -98,11 +98,15 @@ public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
 	}
 	
-	private ProxyContext context = new ProxyContext();
+	private ProxyContext context;
 	
-
 	@Override
 	public void initLogger() throws UtilsException{
+		this.initLogger(new ProxyContext());
+	}
+	@Override
+	public void initLogger(IContext contextParam) throws UtilsException{
+		this.context = (ProxyContext) contextParam;
 		super.initLogger();
 		this.context.setIdTransaction(this.idTransaction);
 	}

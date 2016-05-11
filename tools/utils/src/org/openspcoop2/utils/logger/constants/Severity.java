@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.constants;
 
+import java.io.Serializable;
+
 /**
  * Severity
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.logger.constants;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum Severity {
+public enum Severity implements Serializable {
 
 	DEBUG_HIGH, DEBUG_MEDIUM, DEBUG_LOW, INFO, WARN, ERROR, FATAL;  
 	

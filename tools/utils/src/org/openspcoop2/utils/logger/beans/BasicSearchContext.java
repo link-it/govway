@@ -21,6 +21,8 @@
 
 package org.openspcoop2.utils.logger.beans;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.logger.ISearchContext;
 
 /**
@@ -30,8 +32,13 @@ import org.openspcoop2.utils.logger.ISearchContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BasicSearchContext implements ISearchContext {
+public class BasicSearchContext implements ISearchContext,Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String idTransaction;
 	
 	@Override

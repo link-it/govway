@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.constants.proxy;
 
+import java.io.Serializable;
+
 /**
  * FlowMode
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.logger.constants.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum FlowMode {
+public enum FlowMode implements Serializable {
 
 	ONEWAY,INPUT_OUTPUT;
 	

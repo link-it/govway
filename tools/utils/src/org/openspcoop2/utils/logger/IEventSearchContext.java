@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.utils.logger;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.openspcoop2.utils.logger.constants.Severity;
@@ -31,7 +32,7 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IEventSearchContext {
+public interface IEventSearchContext extends Serializable {
 
 	public String getConfigurationId();
 	public void setConfigurationId(String configurationId);

@@ -21,6 +21,7 @@
 
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.openspcoop2.utils.logger.beans.BasicPaginatedSearchContext;
@@ -33,8 +34,13 @@ import org.openspcoop2.utils.logger.constants.proxy.Result;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ProxySearchContext extends BasicPaginatedSearchContext {
+public class ProxySearchContext extends BasicPaginatedSearchContext implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Date leftIntervalDate;
 	private Date rightIntervalDate;
 	

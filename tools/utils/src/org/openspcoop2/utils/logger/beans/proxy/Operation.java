@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.logger.constants.proxy.FlowMode;
 
 /**
@@ -29,8 +31,13 @@ import org.openspcoop2.utils.logger.constants.proxy.FlowMode;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Operation {
+public class Operation implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private FlowMode mode;
 	

@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 /**
  * Server
  *
@@ -27,8 +29,13 @@ package org.openspcoop2.utils.logger.beans.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Server {
+public class Server implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private String endpoint;
 	private String endpointType;

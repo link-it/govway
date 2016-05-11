@@ -35,6 +35,7 @@ import org.openspcoop2.utils.logger.constants.LowSeverity;
 public interface ILogger {
 	
 	public void initLogger() throws UtilsException;
+	public void initLogger(IContext context) throws UtilsException;
 	
 	// diagnostici
 	public void log(String message, LowSeverity severity) throws UtilsException;

@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.logger.IContext;
 
 /**
@@ -29,7 +31,12 @@ import org.openspcoop2.utils.logger.IContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ProxyContext implements IContext {
+public class ProxyContext implements IContext,Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String idTransaction;
 		
@@ -38,7 +45,7 @@ public class ProxyContext implements IContext {
 	private Request request;
 	
 	private Response response;
-	
+		
 	public ProxyContext(){}
 	
 	@Override

@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.constants.proxy;
 
+import java.io.Serializable;
+
 /**
  * ServerEndpointType
  *
@@ -27,6 +29,6 @@ package org.openspcoop2.utils.logger.constants.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum ServerEndpointType{
+public enum ServerEndpointType implements Serializable {
 	HTTP,HTTPS,JMS;
 }

@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger;
 
+import java.io.Serializable;
+
 /**
  * ISearchContext
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface ISearchContext {
+public interface ISearchContext extends Serializable {
 
 	public String getIdTransaction();
 	public void setIdTransaction(String idTransaction);

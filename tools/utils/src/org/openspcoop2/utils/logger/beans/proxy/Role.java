@@ -20,6 +20,8 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
+
 /**
  * Role
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.logger.beans.proxy;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum Role {
+public enum Role implements Serializable {
 
 	CLIENT, SERVER;
 	

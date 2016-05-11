@@ -21,6 +21,8 @@
 
 package org.openspcoop2.utils.logger.beans;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.logger.IPaginatedSearchContext;
 
 /**
@@ -30,8 +32,13 @@ import org.openspcoop2.utils.logger.IPaginatedSearchContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BasicPaginatedSearchContext extends BasicSearchContext implements IPaginatedSearchContext {
+public class BasicPaginatedSearchContext extends BasicSearchContext implements IPaginatedSearchContext,Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer limit;
 	private Integer offset;
 	

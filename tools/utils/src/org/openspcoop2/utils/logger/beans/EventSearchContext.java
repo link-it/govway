@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.utils.logger.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.openspcoop2.utils.logger.IEventSearchContext;
@@ -32,8 +33,13 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class EventSearchContext implements IEventSearchContext {
+public class EventSearchContext implements IEventSearchContext,Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Date leftIntervalDate;
 	private Date rightIntervalDate;
 	private String source;

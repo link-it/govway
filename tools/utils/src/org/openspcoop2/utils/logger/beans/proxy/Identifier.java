@@ -20,6 +20,7 @@
  */
 package org.openspcoop2.utils.logger.beans.proxy;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -30,8 +31,13 @@ import java.util.Date;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Identifier {
+public class Identifier implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String id;
 	private Date date; // se l'id contiene una data, fornirla anche come oggetto
 	
