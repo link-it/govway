@@ -21,7 +21,7 @@
 package org.openspcoop2.utils.logger.log4j;
 
 import org.apache.log4j.Level;
-
+import org.apache.log4j.Logger;
 import org.openspcoop2.utils.logger.constants.Severity;
 
 /**
@@ -155,6 +155,10 @@ public class SeverityLog4J extends org.apache.log4j.Level{
 			}
 		}
 		else{
+			
+			// TODO: Per log4j 2 non funziona la conversione in Priority. Per i custom level è tutto differente: http://logging.apache.org/log4j/2.x/manual/customloglevels.html
+			// Viene quindi implementato un metodo che per ora mappa suil livelli standard di log4j. Vedi metodo sottostante
+			
 			switch (severity) {
 			case FATAL:
 				return LOG_V2_LEVEL_FATAL;
@@ -175,5 +179,30 @@ public class SeverityLog4J extends org.apache.log4j.Level{
 		return null;
 	}
 	
+	public static void log4j2(Logger log,Severity severity, String msg){
+		switch (severity) {
+		case FATAL:
+			log.fatal(msg);
+			break;
+		case ERROR:
+			log.error(msg);
+			break;
+		case WARN:
+			log.warn(msg);
+			break;
+		case INFO:
+			log.info(msg);
+			break;
+		case DEBUG_LOW:
+			log.debug(msg);
+			break;
+		case DEBUG_MEDIUM:
+			log.debug(msg);
+			break;
+		case DEBUG_HIGH:
+			log.trace(msg);
+			break;
+		}
+	}
 	
 }

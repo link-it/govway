@@ -337,7 +337,14 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		showMsg.append(diagnostic.getMessage());
 		showMsg.append("\n");
 
-		this.logDiagnostic.log(this.convertToPriority(diagnostic.getSeverity()), showMsg.toString());
+		// TODO: Per log4j 2 non funziona la conversione in Priority. Per i custom level è tutto differente: http://logging.apache.org/log4j/2.x/manual/customloglevels.html
+		// Viene quindi implementato in un if
+		if(Log4jType.LOG4Jv1.equals(this.log4jType)){
+			this.logDiagnostic.log(this.convertToPriority(diagnostic.getSeverity()), showMsg.toString());
+		}
+		else{
+			SeverityLog4J.log4j2(this.logDiagnostic, diagnostic.getSeverity(), showMsg.toString());
+		}
 
 	}
 	
