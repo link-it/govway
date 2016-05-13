@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.logger.beans.Property;
 
@@ -51,7 +52,8 @@ public abstract class AbstractFlow implements Serializable {
 	
 	private String correlationIdentifier;
 	
-	private List<Property> genericProperties = new ArrayList<Property>();
+	private List<String> _genericProperties_position = new ArrayList<String>();
+	private Map<String,Property> genericProperties = new java.util.Hashtable<String,Property>();
 	
 	public Date getInDate() {
 		return this.inDate;
@@ -110,20 +112,46 @@ public abstract class AbstractFlow implements Serializable {
 	
 	
 
-	public List<Property> getGenericProperties() {
+	public Map<String,Property> getGenericProperties() {
 		return this.genericProperties;
 	}
+	public List<Property> getGenericPropertiesAsList() {
+		List<Property> l = new ArrayList<Property>();
+		for (String key : this._genericProperties_position) {
+			l.add(this.genericProperties.get(key));
+		}
+		return l;
+	}
 	
-	public void addGenericProperty(Property Property){
-		this.genericProperties.add(Property);
+	public void addGenericProperty(Property property){
+		this.genericProperties.put(property.getName(),property);
+		this._genericProperties_position.add(property.getName());
+	}
+	
+	public Property getGenericProperty(String key){
+		return this.genericProperties.get(key);
+	}
+	
+	public Property removeGenericProperty(String key){
+		int index = -1;
+		for (int i = 0; i < this._genericProperties_position.size(); i++) {
+			if(key.equals(this._genericProperties_position.get(i))){
+				index = i;
+				break;
+			}
+		}
+		this._genericProperties_position.remove(index);
+		return this.genericProperties.remove(key);
 	}
 	
 	public Property getGenericProperty(int index){
-		return this.genericProperties.get(index);
+		return this.getGenericPropertiesAsList().get(index);
 	}
 	
 	public Property removeGenericProperty(int index){
-		return this.genericProperties.remove(index);
+		Property p = this.getGenericPropertiesAsList().get(index);
+		this.genericProperties.remove(p.getName());
+		return p;
 	}
 	
 	public int sizeGenericProperties(){

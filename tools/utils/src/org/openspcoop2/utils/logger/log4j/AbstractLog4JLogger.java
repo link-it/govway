@@ -384,7 +384,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		// HEADER
 		if(message.getHeaders()!=null && message.getHeaders().size()>0){
 			out.append("------ Header ------\n");
-			for (Property header : message.getHeaders()) {
+			for (Property header : message.getHeadersAsList()) {
 				out.append(header.getName()+"="+header.getValue()+"\n");
 			}
 		}
@@ -392,7 +392,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		// RESOURCES
 		if(message.getResources()!=null && message.getResources().size()>0){
 			out.append("------ Resource ------\n");
-			for (Property header : message.getResources()) {
+			for (Property header : message.getResourcesAsList()) {
 				out.append(header.getName()+"="+header.getValue()+"\n");
 			}
 		}
@@ -400,6 +400,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		// CONTENT
 		if(message.getContent()!=null){
 			out.append("------ Content ------\n");
+			out.append("Size:"+message.getContent().length+"\n");
 			// 1024 = 1K
 			// Visualizzo al massimo 250K
 			int max = 250 * 1024;
@@ -426,6 +427,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 					out.append(" \n");
 				}
 				if(attachment.getContent()!=null){
+					out.append("Size:"+attachment.getContent().length+"\n");
 					// 1024 = 1K
 					 // Visualizzo al massimo 250K
 					 int max = 250 * 1024;

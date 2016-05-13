@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.utils.Utilities;
@@ -445,12 +447,28 @@ public class DiagnosticManager {
 	private String readValueInObject(String diagnostic, Object o,String name, String placeholderOriginale) throws UtilsException{
 		//System.out.println("Invocato con oggetto["+o.getClass().getName()+"] nome["+name+"]");
 		String fieldName = name;
+		String position = null;
 		if(name.contains(".")){
 			fieldName = name.substring(0, name.indexOf("."));
 		}
-		String getMethod = "get"+((fieldName.charAt(0)+"").toUpperCase());
-		if(fieldName.length()>1){
-			getMethod = getMethod + fieldName.substring(1);
+		String methodName = new String(fieldName);
+		if(fieldName.endsWith("]") && fieldName.contains("[")){
+			try{
+				position = fieldName.substring(fieldName.indexOf("[")+1,fieldName.length()-1);
+				methodName = fieldName.substring(0, fieldName.indexOf("["));
+			}catch(Exception e){
+				if(this.throwExceptionPlaceholderFailedResolution){
+					throw new UtilsException("Errore durante la comprensione del parametro di posizionamento ["+fieldName+"]: "+e.getMessage(),e);
+				}
+				else{
+					return "(???Placeholder ["+placeholderOriginale+"] uncorrect, errore durante la comprensione del parametro di posizionamento ["+fieldName+"]: "+e.getMessage()+")";
+				}
+			}
+		}
+		//System.out.println("NAME ["+fieldName+"] position["+position+"]");
+		String getMethod = "get"+((methodName.charAt(0)+"").toUpperCase());
+		if(methodName.length()>1){
+			getMethod = getMethod + methodName.substring(1);
 		}
 		Method m = null;
 		try{
@@ -472,6 +490,70 @@ public class DiagnosticManager {
 			}
 			else{
 				return "(???Placeholder ["+placeholderOriginale+"] Invocation method ["+o.getClass().getName()+"."+getMethod+"()] failed: "+e.getMessage()+")";
+			}
+		}
+		if(ret!=null){
+			if(ret instanceof List<?> || ret instanceof Map<?,?> || ret instanceof Object[]){
+				if(position==null){
+					if(this.throwExceptionPlaceholderFailedResolution){
+						throw new UtilsException("(diagnostic:"+diagnostic+") Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object without position");
+					}
+					else{
+						return "(???Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object without position)";
+					}
+				}
+				//System.out.println("ARRAY ["+ret.getClass().getName()+"]");
+				if(ret instanceof List<?> || ret instanceof Object[]){
+					int index = -1;
+					try{
+						index = Integer.parseInt(position);
+					}catch(Exception e){
+						if(this.throwExceptionPlaceholderFailedResolution){
+							throw new UtilsException("(diagnostic:"+diagnostic+") Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value (not integer?): "+e.getMessage()+" )");
+						}
+						else{
+							return "(???Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value (not integer?): "+e.getMessage()+" )";
+						}
+					}
+					if(ret instanceof List<?>){
+						List<?> list = (List<?>) ret;
+						if(list.size()<=index){
+							if(this.throwExceptionPlaceholderFailedResolution){
+								throw new UtilsException("(diagnostic:"+diagnostic+") Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (list size:"+list.size()+") )");
+							}
+							else{
+								return "(???Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (list size:"+list.size()+") )";
+							}
+						}
+						ret = list.get(index);
+					}
+					else if(ret instanceof Object[]){
+						Object[] arrayObj = (Object[]) ret;
+						if(arrayObj.length<=index){
+							if(this.throwExceptionPlaceholderFailedResolution){
+								throw new UtilsException("(diagnostic:"+diagnostic+") Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (array size:"+arrayObj.length+") )");
+							}
+							else{
+								return "(???Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (array size:"+arrayObj.length+") )";
+							}
+						}
+						ret = arrayObj[index];
+					}
+				}
+				else if(ret instanceof Map<?,?>){
+					Map<?,?> map = (Map<?,?>) ret;
+					if(map.containsKey(position)==false){
+						if(this.throwExceptionPlaceholderFailedResolution){
+							throw new UtilsException("(diagnostic:"+diagnostic+") Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position ["+position+"] not exists as key in map )");
+						}
+						else{
+							return "(???Placeholder ["+placeholderOriginale+"] uncorrect, method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position ["+position+"] not exists as key in map )";
+						}
+					}
+					ret = map.get(position);
+				}
+				
+				
 			}
 		}
 		if(name.contains(".")){

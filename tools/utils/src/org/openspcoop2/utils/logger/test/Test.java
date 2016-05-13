@@ -20,7 +20,10 @@
  */
 package org.openspcoop2.utils.logger.test;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.logger.ILogger;
@@ -182,8 +185,56 @@ public class Test {
 			context.getRequest().setIdentifier(idRequest);
 			context.getRequest().setCorrelationIdentifier("ID_CORRELAZIONE_APPLICATIVA");
 			
+			Property p1 = new Property("Prova","TestProva");
+			Property p2 = new Property("Prova2","TestProva2");
+			Property p3 = new Property("Prova3","TestProva3");
+			context.getRequest().addGenericProperty(p1);
+			context.getRequest().addGenericProperty(p2);
+			context.getRequest().addGenericProperty(p3);
 			
 			logger.log("002001");
+			
+			Contenitore c = new Contenitore();
+			
+			List<String> listPrimitive = new ArrayList<String>();
+			listPrimitive.add("EsempioListPrimitiveValue1");
+			listPrimitive.add("EsempioListPrimitiveValue2");
+			c.setListPrimitive(listPrimitive);
+			
+			List<Property> listProperty = new ArrayList<Property>();
+			listProperty.add(p1);
+			listProperty.add(p2);
+			listProperty.add(p3);
+			c.setListProperty(listProperty);
+			
+			Integer [] arrayPrimitive = new Integer[3];
+			arrayPrimitive[0] = 11;
+			arrayPrimitive[1] = 22;
+			arrayPrimitive[2] = 33;
+			c.setArrayPrimitive(arrayPrimitive);
+			
+			Property [] arrayProperty = new Property[3];
+			arrayProperty[0] = p1;
+			arrayProperty[1] = p2;
+			arrayProperty[2] = p3;
+			c.setArrayProperty(arrayProperty);
+			
+			Map<String, Long> mapPrimitive = new java.util.Hashtable<String,Long>(); 
+			mapPrimitive.put("K1", 555l);
+			mapPrimitive.put("K2", 666l);
+			mapPrimitive.put("K3", 777l);
+			c.setMapPrimitive(mapPrimitive);
+			
+			Map<String, Property> mapProperty = new java.util.Hashtable<String,Property>(); 
+			mapProperty.put("K1", p1);
+			mapProperty.put("K2", p2);
+			mapProperty.put("K3", p3);
+			c.setMapProperty(mapProperty);
+			
+			logger.log("002002",c);
+			logger.log("002003",c);
+			logger.log("002004",c);
+
 			
 			
 			// .... TODO DUMP RICHIESTA USCITA

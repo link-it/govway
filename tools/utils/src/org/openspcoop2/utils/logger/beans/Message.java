@@ -23,6 +23,7 @@ package org.openspcoop2.utils.logger.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.logger.constants.MessageType;
 
@@ -52,9 +53,11 @@ public class Message implements Serializable {
 	
 	private List<Attachment> attachments = new ArrayList<Attachment>();
 	
-	private List<Property> headers = new ArrayList<Property>();
+	private List<String> _headers_position = new ArrayList<String>();
+	private Map<String,Property> headers = new java.util.Hashtable<String,Property>();
 	
-	private List<Property> resources = new ArrayList<Property>();
+	private List<String> _resources_position = new ArrayList<String>();
+	private Map<String,Property> resources = new java.util.Hashtable<String,Property>();
 	
 	
 	public String getContentType() {
@@ -97,20 +100,47 @@ public class Message implements Serializable {
 		this.attachments.clear();
 	}
 	
-	public List<Property> getHeaders() {
+	
+	public Map<String,Property> getHeaders() {
 		return this.headers;
 	}
-	
-	public void addHeader(Property Property){
-		this.headers.add(Property);
+	public List<Property> getHeadersAsList() {
+		List<Property> l = new ArrayList<Property>();
+		for (String key : this._headers_position) {
+			l.add(this.headers.get(key));
+		}
+		return l;
 	}
 	
-	public void getHeader(int index){
-		this.headers.get(index);
+	public void addHeader(Property property){
+		this.headers.put(property.getName(),property);
+		this._headers_position.add(property.getName());
 	}
 	
-	public void removeHeader(int index){
-		this.headers.remove(index);
+	public Property getHeader(String key){
+		return this.headers.get(key);
+	}
+	
+	public Property removeHeader(String key){
+		int index = -1;
+		for (int i = 0; i < this._headers_position.size(); i++) {
+			if(key.equals(this._headers_position.get(i))){
+				index = i;
+				break;
+			}
+		}
+		this._headers_position.remove(index);
+		return this.headers.remove(key);
+	}
+	
+	public Property getHeader(int index){
+		return this.getHeadersAsList().get(index);
+	}
+	
+	public Property removeHeader(int index){
+		Property p = this.getHeadersAsList().get(index);
+		this.headers.remove(p.getName());
+		return p;
 	}
 	
 	public int sizeHeaders(){
@@ -121,20 +151,50 @@ public class Message implements Serializable {
 		this.headers.clear();
 	}
 	
-	public List<Property> getResources() {
+	
+	
+	
+	
+	public Map<String,Property> getResources() {
 		return this.resources;
 	}
-	
-	public void addResource(Property Property){
-		this.resources.add(Property);
+	public List<Property> getResourcesAsList() {
+		List<Property> l = new ArrayList<Property>();
+		for (String key : this._resources_position) {
+			l.add(this.resources.get(key));
+		}
+		return l;
 	}
 	
-	public void getResource(int index){
-		this.resources.get(index);
+	public void addResource(Property property){
+		this.resources.put(property.getName(),property);
+		this._resources_position.add(property.getName());
 	}
 	
-	public void removeResource(int index){
-		this.resources.remove(index);
+	public Property getResource(String key){
+		return this.resources.get(key);
+	}
+	
+	public Property removeResource(String key){
+		int index = -1;
+		for (int i = 0; i < this._resources_position.size(); i++) {
+			if(key.equals(this._resources_position.get(i))){
+				index = i;
+				break;
+			}
+		}
+		this._resources_position.remove(index);
+		return this.resources.remove(key);
+	}
+	
+	public Property getResource(int index){
+		return this.getResourcesAsList().get(index);
+	}
+	
+	public Property removeResource(int index){
+		Property p = this.getResourcesAsList().get(index);
+		this.resources.remove(p.getName());
+		return p;
 	}
 	
 	public int sizeResources(){
@@ -144,6 +204,7 @@ public class Message implements Serializable {
 	public void clearResources(){
 		this.resources.clear();
 	}
+	
 	
 	public MessageType getType() {
 		return this.type;
