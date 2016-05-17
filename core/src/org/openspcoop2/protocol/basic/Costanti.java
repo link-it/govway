@@ -202,6 +202,8 @@ public class Costanti {
 	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_FRUITORE_WSDL = "InterfacciaLogicaFruitore.wsdl";
 	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_EROGATORE_WSDL = "InterfacciaImplementativaErogatore.wsdl";
 	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_FRUITORE_WSDL = "InterfacciaImplementativaFruitore.wsdl";
+	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION = "XSDSchemaCollection.zip";
+	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION_ERROR = "XSDSchemaCollection.buildError.txt";
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_CONVERSAZIONI = "specificheConversazioni";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SPECIFICA_CONVERSIONE_CONCETTUALE = "ConversazioneConcettuale.xml";

@@ -22,21 +22,16 @@ f * OpenSPCoop v2 - Customizable SOAP Message Broker
 
 package org.openspcoop2.utils.xml;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import javax.xml.validation.Schema;
-
 import org.apache.log4j.Logger;
-import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -150,6 +145,40 @@ public class XSDUtils {
 
 
 
+	
+	
+	// SCHEMA LOCATION
+	public void updateSchemaLocation(Node schemaImportInclude, String newLocation){
+		
+		//System.out.println("------------------------- updateSchemaLocation -------------------------------");
+		
+		if(schemaImportInclude!=null && schemaImportInclude.getAttributes()!=null && schemaImportInclude.getAttributes().getLength()>0){
+			
+//			try{
+//				System.out.println(" PRIMA: "+this.xmlUtils.toString(schemaImportInclude));
+//			}catch(Exception e){System.out.println("ERRORE PRIMA");}
+			
+			Attr oldSchemaLocation = (Attr) schemaImportInclude.getAttributes().getNamedItem("schemaLocation");
+			this.xmlUtils.removeAttribute(oldSchemaLocation, (Element)schemaImportInclude);
+			
+//			try{
+//				System.out.println(" REMOVE: "+this.xmlUtils.toString(schemaImportInclude));
+//			}catch(Exception e){System.out.println("ERRORE REMOVE");}
+			
+			oldSchemaLocation.setValue(newLocation);
+			this.xmlUtils.addAttribute(oldSchemaLocation, (Element)schemaImportInclude);
+			
+//			try{
+//				System.out.println(" DOPO: "+this.xmlUtils.toString(schemaImportInclude));
+//			}catch(Exception e){System.out.println("ERRORE DOPO");}
+		}
+		
+	}
+	
+	
+	
+	
+	
 	// IMPORT
 	public String getImportNamespace(Node xsd) throws XMLException {
 		try{
@@ -183,6 +212,29 @@ public class XSDUtils {
 			throw new XMLException(e.getMessage(),e);
 		}
 	}
+	
+	public boolean isSchemaWithOnlyImports(Node xsd) throws XMLException {
+		if(this.isXSDSchema(xsd)==false){
+			throw new XMLException("Il parametro fornito non è uno schema"); // non è uno schmea
+		}
+		List<Node> listChild = this.xmlUtils.getNotEmptyChildNodes(xsd, false);
+		if(listChild==null || listChild.size()<=0){
+			return false; // schema vuoto
+		}
+		boolean schemaConSoloImports = true;
+		for (int j = 0; j < listChild.size(); j++) {
+			if( !( 
+					"import".equals(listChild.get(j).getLocalName()) 
+					&& 
+					"http://www.w3.org/2001/XMLSchema".equals(listChild.get(j).getNamespaceURI())
+					) 
+				){
+				schemaConSoloImports = false;
+				break;
+			}
+		}
+		return schemaConSoloImports;
+	}
 
 
 	// INCLUDE
@@ -201,6 +253,56 @@ public class XSDUtils {
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}
+	}
+	
+	public boolean isSchemaWithOnlyIncludes(Node xsd) throws XMLException {
+		if(this.isXSDSchema(xsd)==false){
+			throw new XMLException("Il parametro fornito non è uno schema"); // non è uno schmea
+		}
+		List<Node> listChild = this.xmlUtils.getNotEmptyChildNodes(xsd, false);
+		if(listChild==null || listChild.size()<=0){
+			return false; // schema vuoto
+		}
+		boolean schemaConSoloIncludes = true;
+		for (int j = 0; j < listChild.size(); j++) {
+			if( !( 
+					"include".equals(listChild.get(j).getLocalName()) 
+					&& 
+					"http://www.w3.org/2001/XMLSchema".equals(listChild.get(j).getNamespaceURI())
+					) 
+				){
+				schemaConSoloIncludes = false;
+				break;
+			}
+		}
+		return schemaConSoloIncludes;
+	}
+	
+	
+	
+	// IMPORT - INCLUDE
+	
+	public boolean isSchemaWithOnlyImportsAndIncludes(Node xsd) throws XMLException {
+		if(this.isXSDSchema(xsd)==false){
+			throw new XMLException("Il parametro fornito non è uno schema"); // non è uno schmea
+		}
+		List<Node> listChild = this.xmlUtils.getNotEmptyChildNodes(xsd, false);
+		if(listChild==null || listChild.size()<=0){
+			return false; // schema vuoto
+		}
+		boolean schemaConSoloImportsAndIncludes = true;
+		for (int j = 0; j < listChild.size(); j++) {
+			if( !( 
+					( "import".equals(listChild.get(j).getLocalName()) || "include".equals(listChild.get(j).getLocalName()) ) 
+					&& 
+					"http://www.w3.org/2001/XMLSchema".equals(listChild.get(j).getNamespaceURI())
+					) 
+				){
+				schemaConSoloImportsAndIncludes = false;
+				break;
+			}
+		}
+		return schemaConSoloImportsAndIncludes;
 	}
 
 
@@ -480,18 +582,9 @@ public class XSDUtils {
 	
 	
 	
-	// BUILD SCHEMA
-	
-	/**
-	 * Costruisce un unico schema unendo tutti gli schemi importati
-	 * 
-	 * @param resources hashtable contenente come chiave i systemIds degli schemi, e come valore i bytes che definiscono uno schema
-	 * @param mappingNamespaceLocations hashtable contenente come chiave il namespace di uno schema e come valore il systemId
-	 * @param logger logger
-	 * @return Schema
-	 * @throws XMLException
-	 */
-	public Schema buildSchema(Hashtable<String, byte[]> resources,Hashtable<String, String> mappingNamespaceLocations,Logger logger) throws XMLException {
+	// BUILD SCHEMA COLLECTION
+		
+	public XSDSchemaCollection buildSchemaCollection(Hashtable<String, byte[]> resources,Hashtable<String, String> mappingNamespaceLocations,Logger logger) throws XMLException {
 
 		// ---------  Check esistenza almeno 1 schema --------- 
 		if(resources.size()==0){
@@ -508,7 +601,7 @@ public class XSDUtils {
 			StringBuffer bfImportNormali = new StringBuffer();
 
 			Enumeration<String> targetNamespaces = mappingNamespaceLocations.keys();
-			int indexSystemId = 0;
+			int indexSystemId = 1;
 			while(targetNamespaces.hasMoreElements()){
 				String targetNamespace = targetNamespaces.nextElement();
 				String locations = mappingNamespaceLocations.get(targetNamespace);
@@ -633,7 +726,7 @@ public class XSDUtils {
 					bfImportNormali.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+splitLocations[0]+"\" />\n");
 				}
 				else{
-					String systemIdNewSchema = "System_OpenSPCoop_Id_"+indexSystemId;
+					String systemIdNewSchema = "System_OpenSPCoop_Id_"+indexSystemId+".xsd";
 					indexSystemId++;
 					bfContenitori.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+systemIdNewSchema+"\" />\n");
 
@@ -715,30 +808,12 @@ public class XSDUtils {
 			throw new XMLException("Creazione dello schema fallita: "+e.getMessage(),e);
 		}
 
-		// Creo XSDResolver con le risorse localizzate e procedo con la validazione
-		XSDResourceResolver resourceResolver = new XSDResourceResolver(resources);
-		try{
-			// UndeclaredPrefix: Cannot resolve 'example:xxxxType' as a QName: the prefix 'example' is not declared.
-			// After some debugging, I've found out that this is a bug of the JAXP api's built in to the JDK.
-			// You can fix it by making sure that you use the Xerces version of the SchemaFactory, and not the JDK internal one. 
-			// The algorithm for choosing a SchemaFactory is explained at http://java.sun.com/j2se/1.5.0/docs/api/javax/xml/validation/SchemaFactory.html#newInstance(java.lang.String).
-			// It comes down to setting the System property "javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema" to the value "org.apache.xerces.jaxp.validation.XMLSchemaFactory".
-			// Note that just adding Xerces to your classpath won't fix this, for reasons explained at http://xerces.apache.org/xerces2-j/faq-general.html#faq-4
-			//return new ValidatoreXSD(org.apache.xerces.jaxp.validation.XMLSchemaFactory.class.getName(),xsdResourceResolver,is);
-			ValidatoreXSD validatoreXSD = new ValidatoreXSD(logger,"org.apache.xerces.jaxp.validation.XMLSchemaFactory",resourceResolver,new ByteArrayInputStream(schemaPerValidazione));
-			//ValidatoreXSD validatoreXSD = new ValidatoreXSD(this.logger,resourceResolver,new ByteArrayInputStream(schemaPerValidazione));
-
-			//System.out.println("CANCELLAMI");
-			//debugPrintXSDSchemi(schemaPerValidazione, resourceResolver, logger);
-
-			return validatoreXSD.getSchema();
-
-		}catch (Exception e) {
-
-			debugPrintXSDSchemi(schemaPerValidazione, resourceResolver, logger);
-
-			throw new XMLException("Riscontrato errore durante l'inizializzazione dello schema: "+e.getMessage(),e);
-		}
+		XSDSchemaCollection collection = new XSDSchemaCollection();
+		collection.setSchemaRoot(schemaPerValidazione);
+		collection.setResources(resources);
+		collection.setMappingNamespaceLocations(mappingNamespaceLocations);
+		
+		return collection;
 
 	}
 	
@@ -777,57 +852,5 @@ public class XSDUtils {
 		}
 	}
 	
-	public void debugPrintXSDSchemi(byte[]schemaPerValidazione,XSDResourceResolver resourceResolver,Logger logger){
-		try{
-			File dir = File.createTempFile("xsd_dir_", "");
-			dir.delete();
-			boolean dirCreate = dir.mkdir();
-			//System.out.println("FILE?["+dir.getAbsolutePath()+"] ["+dirCreate+"] ["+dir.isDirectory()+"]");
-			dirCreate = dirCreate & dir.isDirectory();
-			//System.out.println("DIR CREATE ["+dirCreate+"]");
-			
-			// Provo a registrare lo schema principale
-			String uniqueID = XSDUtils.getIdForDebug();
-			File f = null;
-			if(dirCreate)
-				f = File.createTempFile("root_"+uniqueID+"_", ".xsd",dir);
-			else
-				f =	File.createTempFile("root_"+uniqueID+"_", ".xsd");
-			FileSystemUtilities.writeFile(f, schemaPerValidazione);
-			
-			// Provo a registrare gli schemi utilizzati
-			if(resourceResolver!=null){
-				if(resourceResolver instanceof XSDResourceResolver){
-					XSDResourceResolver xsdResolver = resourceResolver;
-					Enumeration<String> keys = xsdResolver.getResources().keys();
-					while (keys.hasMoreElements()) {
-						String systemId = keys.nextElement();
-						byte[] contenuto = xsdResolver.getResources().get(systemId);
-						File schemaTmpLog = null;
-						if(dirCreate)
-							schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd", dir);
-						else
-							schemaTmpLog = File.createTempFile("import_"+uniqueID+"_"+systemId+"_", ".xsd");
-						FileSystemUtilities.writeFile(schemaTmpLog, contenuto);
-					}
-				}
-			}
-			
-			if(dirCreate)
-				logger.error("Inizializzazione dello schema fallita, gli schemi sono stati registrati nella directory "+dir.getAbsolutePath());
-			else
-				logger.error("Inizializzazione dello schema fallita, gli schemi sono stati registrati nella area temporanea (root schema: "+f.getAbsolutePath()+")");
-							
-		}catch(Exception eDebug){
-			logger.error("Registrazione xsd per debug non riuscita: "+eDebug.getMessage(),eDebug);
-		}
-	}
-	
-	private static long counter = 0;
-	private static synchronized String getIdForDebug(){
-		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
-		XSDUtils.counter++;
-		return "ID_"+XSDUtils.counter+"_"+dateformat.format(DateManager.getDate());
-	}
 
 }

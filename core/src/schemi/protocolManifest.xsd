@@ -58,6 +58,7 @@
                             <xsd:element name="profilo" type="profilo" minOccurs="0"/>
                             <xsd:element name="funzionalita" type="funzionalita" minOccurs="0"/>
                      </xsd:sequence>
+                     <xsd:attribute name="wsdlDefinitorio" type="xsd:boolean" use="optional" default="false"/>
                      <xsd:attribute name="specificaConversazioni" type="xsd:boolean" use="optional" default="false"/>
               </xsd:complexType>
        </xsd:element>

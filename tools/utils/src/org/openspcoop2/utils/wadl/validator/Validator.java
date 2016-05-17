@@ -46,7 +46,6 @@ import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.openspcoop2.utils.xml.XMLUtils;
-import org.openspcoop2.utils.xml.XSDUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -63,7 +62,6 @@ public class Validator {
 	private ApplicationWrapper application;
 	private Logger log;
 	private AbstractXMLUtils xmlUtils;
-	private XSDUtils xsdUtils;
 	private Schema schema;
 		
 	public Validator(Logger log,ApplicationWrapper application) throws WADLException{
@@ -76,11 +74,10 @@ public class Validator {
 			this.log = log;
 			this.application = application;
 			this.xmlUtils = xmlUtils;
-			this.xsdUtils = new XSDUtils(this.xmlUtils);
 			
 			// Costruisco l'eventuale schema XSD necessario per una validazione rispetto a schemi XSD
 			if(this.application.getResources().size()>0){
-				this.schema = this.xsdUtils.buildSchema(this.application.getResources(), this.application.getMappingNamespaceLocations(), this.log);
+				this.schema = this.application.buildSchemaCollection(this.log).buildSchema(this.log);
 			}
 			
 		}catch(Exception e){

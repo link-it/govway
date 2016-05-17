@@ -2882,7 +2882,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 			String[] providersList, String[] providersListLabel,boolean privato,
 			boolean isServizioComposto,String[] accordiCooperazioneEsistenti,String[] accordiCooperazioneEsistentiLabel,String accordoCooperazione,
 			String stato,String oldStato,String tipoAccordo,boolean validazioneDocumenti,
-			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used
+			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used, boolean asWithAllegati
 			) throws Exception {
 
 		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute("ShowAccordiAzioni");
@@ -3275,10 +3275,23 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
+		boolean showWsdlDefinitorio = this.core.isShowWsdlDefinitorioAccordoServizioParteComune();
+		if(showWsdlDefinitorio){
+			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
+				showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(sogg.getTipo(),this.soggettiCore);
+			}
+			else{
+				if(tipoProtocollo!=null){
+					showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(tipoProtocollo);
+				}
+			}
+		}
+
+		
 		if(isInterfacciaAvanzata){
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				//visualizza il link al wsdl definitorio se e' abilitato
-				if(this.core.isShowWsdlDefinitorioAccordoServizioParteComune()){
+				if(showWsdlDefinitorio){
 					de = new DataElement();
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
 					de.setValue("");
@@ -3346,7 +3359,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 				}
 			} else {
 				//visualizza il link al wsdl definitorio se e' abilitato
-				if(this.core.isShowWsdlDefinitorioAccordoServizioParteComune()){
+				if(showWsdlDefinitorio){
 					de = new DataElement();
 					de.setType(DataElementType.LINK);
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
@@ -3397,6 +3410,18 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO);
 					dati.addElement(de);
 				}
+				
+				if(asWithAllegati){
+					DataElement saveAs = new DataElement();
+					saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION);
+					saveAs.setType(DataElementType.LINK);
+					saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION));
+					dati.add(saveAs);
+				}
+					
 			}
 		}else{
 			// Interfaccia standard mostro solo quello LogicoErogatore, lascio gli altri campi hidden
@@ -3451,7 +3476,12 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 			showConversazioni = this.apcCore.showConversazioni(sogg.getTipo(),this.soggettiCore);
 		}
 		else{
-			showConversazioni = false;
+			if(tipoProtocollo!=null){
+				showConversazioni = this.apcCore.showConversazioni(tipoProtocollo);
+			}
+			else{
+				showConversazioni = false;
+			}
 		}
 
 		showConversazioni = showConversazioni && isInterfacciaAvanzata;

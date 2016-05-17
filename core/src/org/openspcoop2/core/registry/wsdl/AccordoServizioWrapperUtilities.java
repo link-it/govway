@@ -194,6 +194,7 @@ public class AccordoServizioWrapperUtilities {
 			}
 			
 			// Elimino schema xsd e import di altri wsdl, non servono per la validazione wsdl di openspcoop
+			// TODO: Forse questi due imports servono! Nella costruzione del metodo this.openspcoopUtilities.buildWsdlFromObjects gli schemi vengono inseriti nel wsdl.
 			this.wsdlUtilities.removeSchemiIntoTypes(document);
 			this.wsdlUtilities.removeImports(document);
 			

@@ -37,6 +37,7 @@
     <structure name="tipi" field="tipi" usage="required" map-as="_Tipi_Type"/>
     <structure field="profilo" usage="optional" map-as="org.openspcoop2.protocol.manifest.Profilo"/>
     <structure field="funzionalita" usage="optional" map-as="org.openspcoop2.protocol.manifest.Funzionalita"/>
+    <value name="wsdlDefinitorio" field="wsdlDefinitorio" default="false" usage="optional" style="attribute"/>
     <value name="specificaConversazioni" field="specificaConversazioni" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="tipi" class="org.openspcoop2.protocol.manifest.Tipi" abstract="false">

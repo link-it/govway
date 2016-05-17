@@ -74,6 +74,11 @@ public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.I
 	}
 	
 	@Override
+	public boolean isSupportoWsdlDefinitorio(){
+		return this.registroManifest.getServizi().getWsdlDefinitorio();
+	}
+	
+	@Override
 	public boolean isSupportoSpecificaConversazioni(){
 		return this.registroManifest.getServizi().getSpecificaConversazioni();
 	}

@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.wsdl.Import;
-import javax.wsdl.Types;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDAccordo;
@@ -47,8 +46,6 @@ import org.openspcoop2.utils.xml.XSDUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.ibm.wsdl.TypesImpl;
 
 /**
  * Utilities per la gestione dei bean accordi di servizio di OpenSPCoop
@@ -94,6 +91,7 @@ public class RegistroOpenSPCoopUtilities {
 	 */
 	public javax.wsdl.Definition buildWsdlFromObjects(AccordoServizioParteComune parteComune, byte[] implementativoByte, boolean implementativoErogatore) throws DriverRegistroServiziException{
 		try{
+			
 			// Normalizzo l'accordo di servizio per avere i path relativi basati sul Registro dei Servizi di OpenSPCoop
 			AccordoServizioParteComune parteComuneNormalizzata = (AccordoServizioParteComune) parteComune.clone();
 			this.updateLocation(parteComuneNormalizzata, false, false);
@@ -122,18 +120,19 @@ public class RegistroOpenSPCoopUtilities {
 			}
 			this.logger.debug("Leggo WSDL logico");
 			Document documentLogico = this.xmlUtils.newDocument(logicoByte);
+
 			
 							
 			// Gestione import presenti nel wsdl logico
 			Element wsdlElement = documentLogico.getDocumentElement();
 			String prefix = wsdlElement.getPrefix();
-			Types types = new TypesImpl();
 			ByteArrayOutputStream xsd = new ByteArrayOutputStream();
 			HashMap<String,String> prefixForWSDL = new HashMap<String, String>();
 						
 			
 			
-			// Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
+			// NOTA: Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
+			
 			List<Node> importIntoWSDL = this.wsdlUtilities.readImportsSchemaIntoTypes(documentLogico);
 			//System.out.println("IMPORTS ["+importIntoWSDL.size()+"]");
 			for(int i=0; i<importIntoWSDL.size(); i++){
@@ -198,7 +197,8 @@ public class RegistroOpenSPCoopUtilities {
 			}
 			
 			
-			// Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
+			// NOTA: Avendo normalizzato il wsdl, tutti gli import/include sono dentro i types
+			
 			List<Node> includeIntoWSDL = this.wsdlUtilities.readIncludesSchemaIntoTypes(documentLogico);
 			//System.out.println("INCLUDE ["+includeIntoWSDL.size()+"]");
 			for(int i=0; i<includeIntoWSDL.size(); i++){
@@ -214,7 +214,7 @@ public class RegistroOpenSPCoopUtilities {
 				try{
 					location = this.xsdUtils.getIncludeSchemaLocation(n);
 				}catch(Exception e){}
-				//System.out.println("Include WSDL ["+this.wsdlUtilities.getAttributeValue(n,"namespace")+"] ["+location+"]");
+				//System.out.println("Include WSDL ["+location+"]");
 				if(location!=null){
 					//System.out.println("IMPORT XSD INTO WSDL!");
 					if(CostantiRegistroServizi.ALLEGATO_DEFINITORIO_XSD.equals(location)){
@@ -222,7 +222,7 @@ public class RegistroOpenSPCoopUtilities {
 							//System.out.println("DA WSDL AGGIUNGO WSDL DEFINITORIO");
 							xsd.write("\n".getBytes());
 							risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getByteWsdlDefinitorio(), 
-									xsd, wsdlElement,prefixForWSDL, true, targetNamespaceXSD, 1);
+									xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
 						}
 					}
 					else if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
@@ -234,7 +234,7 @@ public class RegistroOpenSPCoopUtilities {
 								//System.out.println("DA WSDL AGGIUNGO ALLEGATO");
 								xsd.write("\n".getBytes());
 								risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
-										xsd, wsdlElement,prefixForWSDL, true, targetNamespaceXSD, 1);
+										xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
 								break;
 							}
 						}
@@ -248,7 +248,7 @@ public class RegistroOpenSPCoopUtilities {
 								//System.out.println("DA WSDL AGGIUNGO SPECIFICA SEMIFORMALE");
 								xsd.write("\n".getBytes());
 								risoluzioneImportIncludeInXSD(parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
-										xsd, wsdlElement,prefixForWSDL, true, targetNamespaceXSD, 1);
+										xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
 								break;
 							}
 						}
@@ -256,37 +256,109 @@ public class RegistroOpenSPCoopUtilities {
 				}
 				//System.out.println("*******************************************  INCLUDE  *************************************************************");
 			}
-			
-			//System.out.println("Rimozione types");
-			this.wsdlUtilities.removeTypes(documentLogico);
-		
-			this.logger.debug("Costruisco WSDL Logico");
+						
+			if(this.wsdlUtilities.existsTypes(documentLogico)){
+				//System.out.println("Rimozione Schemi from types");
+				
+				// NOTA: Non è possibile lasciare gli schemi interni perche contengono include ed import
+				// Inizialmente venivano rimossi solo gli schemi
+				// Se però non è abilitata l'opzione dalla console che estra gli schemi da dentro il wsdl,
+				// poi il wsdl non conteneva tutti gli schemi una volta effettuata questa normalizzazione
+				// non venivano re-inseriti gli schemi definiti dentro il wsdl stesso
+				//this.wsdlUtilities.removeSchemiIntoTypes(documentLogico);
+				
+				List<Node> schemi = this.wsdlUtilities.getSchemiXSD(documentLogico);
+				if(schemi!=null && schemi.size()>0){
+					// Gli import ed includes sono già stati gestiti precedentemente
+					for (Node schema : schemi) {
+						boolean schemaWithOnlyImportOrIncludes = this.xsdUtils.isSchemaWithOnlyImportsAndIncludes(schema);
+						if(schemaWithOnlyImportOrIncludes){
+							this.wsdlUtilities.getIfExistsTypesElementIntoWSDL(documentLogico).removeChild(schema);
+						}
+						else{
+							// Elimino import e include
+							List<Node> nl = this.xsdUtils.readImportsAndIncludes(schema);
+							if(nl!=null){
+								for (Node importInclude : nl) {
+									schema.removeChild(importInclude);
+								}
+							}
+						}
+					}
+				}
+				
+			}
+			else{
+				//System.out.println("Add Empty types");	
+				this.wsdlUtilities.addEmptyTypesIfNotExists(documentLogico);
+			}
+								
 			// Costruisco wsdl logico che non contiene piu' gli import 
-			wsdl = builderWSDL.readWSDL(null,documentLogico);
-			wsdl.setTypes(types); // types è vuoto!
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			this.wsdlUtilities.writeWsdlTo(wsdl, bout);
+			bout.write(this.xmlUtils.toByteArray(documentLogico));
 			bout.flush();
 			bout.close();
+						
+			// Calcolo keyword
+			String typesStart = null;
+			String typesClosed = null;
+			String typesEnd = null;
+			String definitionLine = null;
+			if(prefix!=null){
+				typesStart = "<"+prefix+":types>";
+				typesClosed = "<"+prefix+":types/>";
+				typesEnd = "</"+prefix+":types>";
+				definitionLine = "<"+prefix+":definitions ";
+			}else{
+				typesStart = "<types>";
+				typesClosed = "<types/>";
+				typesEnd = "</types>";
+				definitionLine = "<definitions ";
+			}
+			
+			//System.out.println("KEYWORD typesLine1["+typesStart+"] typesLine2["+typesClosed+"] definitionLine["+definitionLine+"]");
 			
 			// Aggiungo dentro types gli schemi trovati nelle precedenti analisi degli import
-			String typesLine = null;
-			if(prefix!=null){
-				typesLine = "<"+prefix+":types>";
-			}else{
-				typesLine = "<types>";
+			String wsdlTrasformato = bout.toString();
+			if(wsdlTrasformato.contains(typesStart)){
+				//System.out.println("REPLACE1");
+				wsdlTrasformato = wsdlTrasformato.replace(typesStart, typesStart+"\n"+xsd.toString());
 			}
-			String wsdlTrasformato = bout.toString().replace(typesLine, typesLine+"\n"+xsd.toString());
-			if(wsdlTrasformato.trim().startsWith("<?xml")){
-				wsdlTrasformato = wsdlTrasformato.substring(wsdlTrasformato.indexOf(">")+1);
+			else{
+				//System.out.println("REPLACE2 contains("+wsdlTrasformato.contains(typesClosed)+")");
+				wsdlTrasformato = wsdlTrasformato.replace(typesClosed, typesStart+"\n"+xsd.toString()+"\n\t"+typesEnd);
 			}
+			
+			// Elimino <?xml
+			if(wsdlTrasformato.contains("<?xml") ){
+				//System.out.println("XML INSTR");
+				int indexOf = wsdlTrasformato.indexOf("<?xml");
+				int endIndexOf = wsdlTrasformato.indexOf(">",indexOf+"<?xml".length());
+				//System.out.println("XML INSTR indexOf["+indexOf+"] endIndexOf["+endIndexOf+"]");
+				if(endIndexOf>0 && indexOf>=0){
+					if(indexOf>0){
+						//System.out.println("XML INSTR A");
+						wsdlTrasformato = wsdlTrasformato.substring(0, indexOf)+wsdlTrasformato.substring(endIndexOf+1);
+					}
+					else{
+						//System.out.println("XML INSTR B");
+						wsdlTrasformato = wsdlTrasformato.substring(endIndexOf+1);
+					}
+				}
+			}
+			
+			// Aggiunto prefissi al wsdl
 			Iterator<String> keys = prefixForWSDL.keySet().iterator();
 			while(keys.hasNext()){
 				String key = keys.next();
-				wsdlTrasformato = wsdlTrasformato.replaceFirst(">", " "+key+"=\""+prefixForWSDL.get(key)+"\">");
+				//System.out.println("ADD ["+key+"] ["+prefixForWSDL.get(key)+"]");
+				wsdlTrasformato = wsdlTrasformato.replaceFirst(definitionLine, definitionLine+key+"=\""+prefixForWSDL.get(key)+"\" ");
 			}
 			
-			//System.out.println("TEST ["+wsdlTrasformato+"]");
+//			File f = File.createTempFile("aaaaaaaaaaa", ".tmp");
+//			org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(f, wsdlTrasformato.getBytes());
+//			System.out.println("TEST PERCHE SCHIANTAAAAAAAA ["+f.getAbsolutePath()+"] ["+wsdlTrasformato+"]");
+			
 			// Costruisco wsdl logico contenente gli schemi
 			documentLogico = this.xmlUtils.newDocument(wsdlTrasformato.getBytes());
 			this.logger.debug("Costruisco WSDL Logico per la seconda volta, stavolta con i types corretti");
@@ -368,6 +440,9 @@ public class RegistroOpenSPCoopUtilities {
 				if(strutturaPackageCNIPA){
 					file = ".."+File.separatorChar+file;
 				}
+				
+				//System.out.println("UPDATE LOCATION ALLEGATO["+file+"]");
+				
 				// Associazione TargetNamespace a path dei files.
 				if(doc.getByteContenuto()!=null){
 					String targetNamespace = null;
@@ -379,6 +454,7 @@ public class RegistroOpenSPCoopUtilities {
 							targetNamespace = this.wsdlUtilities.getTargetNamespace(doc.getByteContenuto()); // verifico che sia un wsdl
 						}catch(Exception e){}
 					}
+					//System.out.println("TARGET NAMESPACE["+targetNamespace+"]");
 					if(targetNamespace!=null){
 						//System.out.println("TARGET["+targetNamespace+"] FILE["+file+"]");
 						targetNamespacesXSD.put(targetNamespace,file);
@@ -848,7 +924,6 @@ public class RegistroOpenSPCoopUtilities {
 			for(int i=0; i<importsIntoTypesIntoWSDL.size(); i++){
 				Node n = importsIntoTypesIntoWSDL.get(i);
 				//System.out.println("CLASS["+n.getClass().getName()+"]");
-				//System.out.println("Import TYPES ["+this.wsdlUtilities.getAttributeValue(n,"namespace")+"] ["+this.wsdlUtilities.getAttributeValue(n,"schemaLocation")+"]");
 				String namespaceImport = null;
 				try{
 					namespaceImport = this.xsdUtils.getImportNamespace(n);
@@ -866,9 +941,10 @@ public class RegistroOpenSPCoopUtilities {
 						this.logger.debug("Schema non trovato per il namespace "+namespaceImport);
 					}
 					else{
-						Node old = n.getAttributes().removeNamedItem("schemaLocation");
-						old.setNodeValue(path);	
-						n.getAttributes().setNamedItem(old);
+//						Node old = n.getAttributes().removeNamedItem("schemaLocation");
+//						old.setNodeValue(path);	
+//						n.getAttributes().setNamedItem(old);
+						this.xsdUtils.updateSchemaLocation(n, path);
 						this.logger.debug("Reimpostata location: "+path);
 					}
 					
@@ -908,9 +984,10 @@ public class RegistroOpenSPCoopUtilities {
 						}
 						else{
 							//System.out.println("TROVATO: "+path);
-							Node old = n.getAttributes().removeNamedItem("schemaLocation");
-							old.setNodeValue(path);	
-							n.getAttributes().setNamedItem(old);
+//							Node old = n.getAttributes().removeNamedItem("schemaLocation");
+//							old.setNodeValue(path);	
+//							n.getAttributes().setNamedItem(old);
+							this.xsdUtils.updateSchemaLocation(n, path);
 							this.logger.debug("Reimpostata location: "+path);
 						}
 						
@@ -956,9 +1033,10 @@ public class RegistroOpenSPCoopUtilities {
 							newSchemi.add(schemaElement);
 						}
 						else{
-							Node old = n.getAttributes().removeNamedItem("location");
-							old.setNodeValue(path);	
-							n.getAttributes().setNamedItem(old);
+//							Node old = n.getAttributes().removeNamedItem("location");
+//							old.setNodeValue(path);	
+//							n.getAttributes().setNamedItem(old);
+							this.xsdUtils.updateSchemaLocation(n, path);
 							this.logger.debug("Reimpostata location: "+path);
 						}
 					}
@@ -980,19 +1058,16 @@ public class RegistroOpenSPCoopUtilities {
 					if(definition==null){
 						this.logger.debug("Definition non esistente");
 					}else{
-						//System.out.println("CREO ELEMENTO TYPES");
-						types = doc.createElementNS(definition.getNamespaceURI(),"types");
-						types.setPrefix(definition.getPrefix());
+						types = this.wsdlUtilities.addEmptyTypesIfNotExists(doc);
 						for(int i=0; i<newSchemi.size(); i++){
+							this.wsdlUtilities.addSchemaIntoTypes(doc, newSchemi.get(i));
 							//System.out.println("APPENDO SCHEMA DOPO CREO");
-							types.appendChild(newSchemi.get(i));
 						}
-						definition.appendChild(types);
 					}
 				}else{
 					for(int i=0; i<newSchemi.size(); i++){
 						//System.out.println("APPENDO SCHEMA");
-						types.appendChild(newSchemi.get(i));
+						this.wsdlUtilities.addSchemaIntoTypes(doc, newSchemi.get(i));
 					}
 				}
 			}
@@ -1045,9 +1120,10 @@ public class RegistroOpenSPCoopUtilities {
 						this.logger.debug("Schema non trovato per il namespace "+namespaceImport);
 					}
 					else{
-						Node old = n.getAttributes().removeNamedItem("schemaLocation");
-						old.setNodeValue(path);	
-						n.getAttributes().setNamedItem(old);
+//						Node old = n.getAttributes().removeNamedItem("schemaLocation");
+//						old.setNodeValue(path);	
+//						n.getAttributes().setNamedItem(old);
+						this.xsdUtils.updateSchemaLocation(n, path);
 						this.logger.debug("Reimpostata location: "+path);
 					}
 					
@@ -1107,9 +1183,10 @@ public class RegistroOpenSPCoopUtilities {
 					}
 					else{
 						//System.out.println("TROVATO");
-						Node old = n.getAttributes().removeNamedItem("schemaLocation");
-						old.setNodeValue(path);	
-						n.getAttributes().setNamedItem(old);
+//						Node old = n.getAttributes().removeNamedItem("schemaLocation");
+//						old.setNodeValue(path);	
+//						n.getAttributes().setNamedItem(old);
+						this.xsdUtils.updateSchemaLocation(n, path);
 						this.logger.debug("Reimpostata location: "+path);
 					}
 					

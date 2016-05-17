@@ -41,6 +41,7 @@ import java.io.Serializable;
  * 			&lt;element name="profilo" type="{http://www.openspcoop2.org/protocol/manifest}profilo" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="funzionalita" type="{http://www.openspcoop2.org/protocol/manifest}funzionalita" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="wsdlDefinitorio" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="specificaConversazioni" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
@@ -104,6 +105,18 @@ public class Servizi extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.funzionalita = funzionalita;
   }
 
+  public boolean isWsdlDefinitorio() {
+    return this.wsdlDefinitorio;
+  }
+
+  public boolean getWsdlDefinitorio() {
+    return this.wsdlDefinitorio;
+  }
+
+  public void setWsdlDefinitorio(boolean wsdlDefinitorio) {
+    this.wsdlDefinitorio = wsdlDefinitorio;
+  }
+
   public boolean isSpecificaConversazioni() {
     return this.specificaConversazioni;
   }
@@ -131,6 +144,10 @@ public class Servizi extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   @XmlElement(name="funzionalita",required=false,nillable=false)
   protected Funzionalita funzionalita;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="wsdlDefinitorio",required=false)
+  protected boolean wsdlDefinitorio = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="specificaConversazioni",required=false)

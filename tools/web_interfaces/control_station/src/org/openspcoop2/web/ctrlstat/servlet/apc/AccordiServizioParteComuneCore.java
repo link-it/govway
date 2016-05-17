@@ -24,6 +24,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -45,21 +47,32 @@ import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Servizio;
+import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.message.XMLDiff;
+import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.wsdl.WSDLUtilities;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.utils.xml.XSDUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UtilitiesSQLQuery;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * AccordiServizioParteComuneCore
@@ -141,11 +154,48 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
+	public boolean showWsdlDefinitorio(String tipoSoggetto,SoggettiCore soggettiCore) throws DriverRegistroServiziException{
+		String nomeMetodo = "showWsdlDefinitorio";
+		try {
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
+			return this.showWsdlDefinitorio(protocollo);
+
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		}
+	}
+	
+	public boolean showWsdlDefinitorio(String protocollo) throws DriverRegistroServiziException{
+		String nomeMetodo = "showWsdlDefinitorio";
+		try {
+
+			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			return protocol.createProtocolConfiguration().isSupportoWsdlDefinitorio();
+
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		}
+	}
+	
 	public boolean showConversazioni(String tipoSoggetto,SoggettiCore soggettiCore) throws DriverRegistroServiziException{
 		String nomeMetodo = "showConversazioni";
 		try {
 
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
+			return this.showConversazioni(protocollo);
+
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		}
+	}
+	
+	public boolean showConversazioni(String protocollo) throws DriverRegistroServiziException{
+		String nomeMetodo = "showConversazioni";
+		try {
+
 			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createProtocolConfiguration().isSupportoSpecificaConversazioni();
 
@@ -1297,6 +1347,276 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;
+		}
+	}
+	
+
+	public void estraiSchemiFromWSDLTypesAsAllegati(AccordoServizioParteComune as, byte[] wsdl, String tipoWSDL, Hashtable<String, byte[]> schemiAggiuntiInQuestaOperazione) throws Exception{
+				
+		String nomeMetodo = "addSchemiFromWSDLTypesAsAllegati";
+		try {
+			
+			// Allegati
+			List<byte[]> schemiPresentiInternamenteTypes = new ArrayList<byte[]>();
+			List<String> nomiSchemiPresentiInternamenteTypes = new ArrayList<String>();
+			
+			try{
+				
+				AbstractXMLUtils xmlUtils = XMLUtils.getInstance(); 
+				XSDUtils xsdUtils = new XSDUtils(xmlUtils);
+				WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
+				
+				ArchiviCore archiviCore = null;
+				
+				Document dConAllegati = xmlUtils.newDocument(wsdl);
+				
+				Hashtable<String, String> declarationNamespacesWSDL = xmlUtils.getNamespaceDeclaration(dConAllegati.getDocumentElement());
+				
+				List<Node> schemi = wsdlUtilities.getSchemiXSD(dConAllegati);
+				//System.out.println("SCHEMI ["+schemi.size()+"]");
+				if(schemi.size()>0){
+					wsdlUtilities.removeSchemiIntoTypes(dConAllegati);
+					
+					for (int i = 0; i < schemi.size(); i++) {
+						
+						Node schema = schemi.get(i);
+						
+						// NOTA: Volendo si potrebbe utilizzare la solita gestione anche per schemi che hanno solo gli include
+						//		  Al momento dell'implementazione non avevo chiaro però se era utile avere tra gli XSD Collections (utilizzati per la validazione)
+						//		  Lo schema originale che contiene gli include (per cambi di namespace)
+						//		  Quindi ho preferito tenere l'originale schema con gli include tra gli schemi e qua importarlo.
+						boolean schemaWithOnlyImport = xsdUtils.isSchemaWithOnlyImports(schema);
+						if(schemaWithOnlyImport){
+							// riaggiungo l'import
+							//System.out.println("SOLO IMPORTS");
+							wsdlUtilities.addSchemaIntoTypes(dConAllegati, schema);
+							continue;
+						}
+						
+						if(archiviCore==null)
+							archiviCore = new ArchiviCore(this);
+						
+						String targetNamespace = xsdUtils.getTargetNamespace(schema);
+						if(targetNamespace!=null){
+											
+							if(declarationNamespacesWSDL!=null && declarationNamespacesWSDL.size()>0){
+								xmlUtils.addNamespaceDeclaration(declarationNamespacesWSDL, (Element) schema);
+							}	
+							
+							String nomeSchema = null;
+							if(schemiAggiuntiInQuestaOperazione!=null && schemiAggiuntiInQuestaOperazione.size()>0){
+								Enumeration<String> enKeys = schemiAggiuntiInQuestaOperazione.keys();
+								while (enKeys.hasMoreElements()) {
+									String nomeFile = (String) enKeys.nextElement();
+									byte[] content = schemiAggiuntiInQuestaOperazione.get(nomeFile);
+									// check se si tratta di questo documento
+									try{
+										String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, content, nomeFile, schema);
+										if(tmp!=null){
+											nomeSchema = tmp;
+											break;
+										}
+									}catch(Throwable t){
+										log.error("Compare external failed: "+t.getMessage(),t);
+									}
+								}
+							}
+							if(nomeSchema==null){
+								if(as.getByteWsdlDefinitorio()!=null){
+									// check se si tratta di questo documento
+									try{
+										String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, as.getByteWsdlDefinitorio(), 
+												Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_INTERFACCIA_DEFINITORIA, schema);
+										if(tmp!=null){
+											nomeSchema = tmp;
+										}
+									}catch(Throwable t){
+										log.error("Compare external failed: "+t.getMessage(),t);
+									}
+								}
+							}
+							if(nomeSchema==null){
+								if(as.sizeAllegatoList()>0){
+									for (Documento docTMP : as.getAllegatoList()) {
+										String nomeDocumento = docTMP.getFile();
+										try{
+											Documento doc = archiviCore.getDocumento(docTMP.getId(),true);
+											if(xsdUtils.isXSDSchema(doc.getByteContenuto())){
+												// check se si tratta di questo documento
+												String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, doc.getByteContenuto(), nomeDocumento, schema);
+												if(tmp!=null){
+													nomeSchema = tmp;
+													break;
+												}
+											}
+										}catch(Throwable t){
+											log.error("Compare external failed: "+t.getMessage(),t);
+										}
+									}
+								}
+							}
+							if(nomeSchema==null){
+								if(as.sizeSpecificaSemiformaleList()>0){
+									for (Documento docTMP : as.getSpecificaSemiformaleList()) {
+										String nomeDocumento = docTMP.getFile();
+										try{
+											Documento doc = archiviCore.getDocumento(docTMP.getId(),true);
+											if(xsdUtils.isXSDSchema(doc.getByteContenuto())){
+												// check se si tratta di questo documento
+												String tmp = checkXsdAlreadyExists(archiviCore, xmlUtils, doc.getByteContenuto(), nomeDocumento, schema);
+												if(tmp!=null){
+													nomeSchema = tmp;
+													break;
+												}
+											}
+										}catch(Throwable t){
+											log.error("Compare external failed: "+t.getMessage(),t);
+										}
+									}
+								}
+							}
+							
+							boolean alreadyExistsSchema = (nomeSchema!=null);
+							
+							if(nomeSchema==null){
+								// build new nome
+								int index = 1;
+								nomeSchema = "WsdlTypes_"+(index)+".xsd";
+								while(index<10000){ // 10000 allegati??
+									boolean found = false;
+									if(nomiSchemiPresentiInternamenteTypes.contains(nomeSchema)){
+										found = true;
+									}
+									else{
+										for (Documento vecchioAllegatoTMP : as.getAllegatoList()) {
+											if(vecchioAllegatoTMP.getFile().startsWith("WsdlTypes_") && vecchioAllegatoTMP.getFile().equals(nomeSchema)){
+												found = true;
+												break;
+											}
+										}
+									}
+									if(!found){
+										break;
+									}
+									index++;
+									nomeSchema = "WsdlTypes_"+(index)+".xsd";
+								}
+								//System.out.println("CALCOLATO ["+nomeSchema+"]");
+							}
+							
+							//System.out.println("ADD MODIFICATO");
+							wsdlUtilities.addImportSchemaIntoTypes(dConAllegati, targetNamespace, nomeSchema);
+							
+							if(alreadyExistsSchema==false){
+								
+								nomiSchemiPresentiInternamenteTypes.add(nomeSchema);
+								schemiPresentiInternamenteTypes.add(xmlUtils.toByteArray(schema));
+
+							}
+														
+						}
+						else{
+							try{
+								log.error("Presente schema senza targetNamespace? (Viene usato l'originale) ["+xmlUtils.toString(schema)+"]");
+							}catch(Throwable t){
+								log.error("Presente schema senza targetNamespace? (Viene usato l'originale)");
+							}
+							//System.out.println("NON VALIDO??? RIPRISTINO ORIGINALE");
+							wsdlUtilities.addSchemaIntoTypes(dConAllegati, schema);
+						}
+						
+					}
+					
+					// Aggiorno WSDL
+					
+					byte [] wsdlPulito = xmlUtils.toByteArray(dConAllegati);
+					
+					if(AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE.equals(tipoWSDL)){
+						as.setByteWsdlConcettuale(wsdlPulito);
+					}
+					else if(AccordiServizioParteComuneCostanti.TIPO_WSDL_EROGATORE.equals(tipoWSDL)){
+						as.setByteWsdlLogicoErogatore(wsdlPulito);
+					}
+					else if(AccordiServizioParteComuneCostanti.TIPO_WSDL_FRUITORE.equals(tipoWSDL)){
+						as.setByteWsdlLogicoFruitore(wsdlPulito);
+					}
+				}
+				
+			}catch(Throwable t){
+				log.error("Errore durante la lettura degli schemi presenti all'interno del wsdl: "+t.getMessage(),t);
+			}
+			
+			if(nomiSchemiPresentiInternamenteTypes.size() > 0){
+				int i = 0;
+				for (String nomeNuovoAllegato : nomiSchemiPresentiInternamenteTypes) {
+					
+					try{
+					
+						if(schemiAggiuntiInQuestaOperazione!=null){
+							schemiAggiuntiInQuestaOperazione.put(nomeNuovoAllegato, schemiPresentiInternamenteTypes.get(i));
+						}
+						
+						Documento vecchioAllegato = null;
+						for (Documento vecchioAllegatoTMP : as.getAllegatoList()) {
+							if(vecchioAllegatoTMP.getFile().equals(nomeNuovoAllegato)){
+								vecchioAllegato = vecchioAllegatoTMP;
+								break;
+							}
+						}
+						
+						// non ho trovato l'elemento corrente nel aspc destinazione
+						if(vecchioAllegato == null){
+							Documento allegato = new Documento();
+							allegato.setRuolo(RuoliDocumento.allegato.toString());
+							allegato.setByteContenuto(schemiPresentiInternamenteTypes.get(i));
+							allegato.setFile(nomeNuovoAllegato);
+							allegato.setTipo("xsd");
+							allegato.setIdProprietarioDocumento(as.getId());
+							as.addAllegato(allegato);
+						} else {
+							
+							// CASO CHE NON DOVREBBE OCCORRERE MAI VISTO LA LOGICA CON XMLDIFF
+							
+							// ho trovato l'elemento, aggiorno i valori 
+							vecchioAllegato.setByteContenuto(schemiPresentiInternamenteTypes.get(i));
+						}
+						
+						i++;
+						
+					}catch(Throwable t){
+						log.error("Errore durante l'aggiornamento dello schema ["+nomeNuovoAllegato+"] estratto dal wsdl: "+t.getMessage(),t);
+					}
+				}
+			}
+			
+		}
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw e;
+		}
+	}
+	
+	private String checkXsdAlreadyExists(ArchiviCore archiviCore,AbstractXMLUtils xmlUtils, byte[] xsdEsistenteContenuto, String xsdEsistenteNome,  Node schema){
+		// check se si tratta di questo documento
+		try{
+			Node n = xmlUtils.newElement(xsdEsistenteContenuto);
+			XMLDiff xmlDiff = new XMLDiff();
+//			System.out.println("["+vecchioAllegatoTMP.getFile()+"] N:"+xmlUtils.toString(n));
+//			System.out.println("["+vecchioAllegatoTMP.getFile()+"] Schema:"+xmlUtils.toString(schema));
+			// NOTA: la ricostruzione in N2 è necessaria, poichè schema si porta dietro il definition wsdl (non ho capito perchè)
+			Node n2 = xmlUtils.newElement(xmlUtils.toString(schema).getBytes());
+//			System.out.println("["+vecchioAllegatoTMP.getFile()+"] N2:"+xmlUtils.toString(n2));
+			if(xmlDiff.diff(n, n2)){
+				return xsdEsistenteNome;
+				//System.out.println("["+vecchioAllegatoTMP.getFile()+"] TROVATO UGUALE ["+nomeSchema+"]");
+			}
+//			else{
+//				System.out.println("["+vecchioAllegatoTMP.getFile()+"] TROVATO NON UGUALE: \n"+xmlDiff.getDifferenceDetails());
+//			}
+			return null;
+		}catch(Throwable t){
+			log.error("Compare failed: "+t.getMessage(),t);
+			return null;
 		}
 	}
 

@@ -25,8 +25,8 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -163,8 +163,10 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			// Flag per controllare il mapping automatico di porttype e operation
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
+			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAcc));
+			boolean asWithAllegati = (as.sizeAllegatoList()>0 || as.sizeSpecificaSemiformaleList()>0 || as.getByteWsdlDefinitorio()!=null);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 
 			IdSoggetto idSoggettoReferente = as.getSoggettoReferente();
@@ -175,6 +177,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			byte[] wsdlbyte = null;
 			String label = null;
 			String tipologiaDocumentoScaricare = null;
+			boolean facilityUnicoWSDL_interfacciaStandard = false;
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				wsdlbyte = as.getByteWsdlDefinitorio();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO+" di " + uriAS;
@@ -194,6 +197,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO+" di " + uriAS;
 				} else {
 					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL+" di " + uriAS;
+					facilityUnicoWSDL_interfacciaStandard = true;
 				}
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE;
 			}
@@ -363,10 +367,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 							pd.setDati(dati);
 
-							String msg = "Attenzione, l''accordo [{0}] contiene la definizione di "+as.sizePortTypeList()+" servizi. <BR/>Il caricamento del wsdl comporter&agrave; l'aggiornamento dei servizi esistenti e/o la creazione di nuovi servizi. Procedere?";
 							String uriAccordo = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
-
-							pd.setMessage(MessageFormat.format(msg, uriAccordo));
+							String msg = "Attenzione, l'accordo ["+uriAccordo+"] contiene la definizione di "+as.sizePortTypeList()+" servizi e "+(as.sizeAllegatoList()+as.sizeSpecificaSemiformaleList())+" allegati. <BR/>"+
+									"Il caricamento del wsdl comporter&agrave; l'aggiornamento dei servizi/allegati esistenti e/o la creazione di nuovi servizi/allegati. Procedere?";
+								
+							pd.setMessage(msg);
 
 							// Bottoni
 							String[][] bottoni = { 
@@ -395,6 +400,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					if((this.wsdl != null) && !this.wsdl.trim().replaceAll("\n", "").equals("") ){
 						AccordoServizioParteComune asNuovo = new AccordoServizioParteComune();
 
+						boolean fillXsd = false;
+						String tipo = null;
+						
 						// decodifico quale wsdl/wsbl sto aggiornando
 						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
 							as.setByteWsdlConcettuale(this.wsdl.getBytes());
@@ -403,6 +411,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
 							asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
 							asNuovo.setByteWsdlConcettuale(this.wsdl.getBytes());
+							
+							fillXsd = true;
+							tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE;
 						}
 						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
 							as.setByteWsdlLogicoErogatore(this.wsdl.getBytes());
@@ -411,6 +422,15 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
 							asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
 							asNuovo.setByteWsdlLogicoErogatore(this.wsdl.getBytes());
+							
+							fillXsd = true;
+							if(facilityUnicoWSDL_interfacciaStandard){
+								tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE;
+							}
+							else{
+								tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_EROGATORE;
+							}
+							
 						}
 						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
 							as.setByteWsdlLogicoFruitore(this.wsdl.getBytes());
@@ -419,6 +439,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
 							asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
 							asNuovo.setByteWsdlLogicoFruitore(this.wsdl.getBytes());
+							
+							fillXsd = true;
+							tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_FRUITORE;
 						}
 						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
 							as.setByteSpecificaConversazioneConcettuale(this.wsdl.getBytes());
@@ -450,6 +473,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 						// se l'aggiornamento ha creato nuovi porttype o aggiornato i vecchi aggiorno la configurazione
 						apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo);
+						
+						// popolo gli allegati
+						if(fillXsd && enableAutoMapping_estraiXsdSchemiFromWsdlTypes){
+							apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, this.wsdl.getBytes(), tipo, new Hashtable<String, byte[]> ());
+							if(facilityUnicoWSDL_interfacciaStandard){
+								// è stato utilizzato il concettuale. Lo riporto nel logico
+								as.setByteWsdlLogicoErogatore(as.getByteWsdlConcettuale());
+							}
+						}
+						
 					}
 				}else {
 					// vecchio comportamento sovrascrivo i wsdl
@@ -597,7 +630,8 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					filtrodup, confric, idcoll, consord, scadenza, this.id, TipoOperazione.CHANGE, 
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, tipoProtocollo,listaTipiProtocollo,used);
+					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 
+					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati);
 
 			pd.setDati(dati);
 

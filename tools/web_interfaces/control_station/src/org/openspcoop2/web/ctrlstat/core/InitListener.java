@@ -30,7 +30,10 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.message.XMLDiff;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.xml.XMLDiffImplType;
+import org.openspcoop2.utils.xml.XMLDiffOptions;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
@@ -173,6 +176,14 @@ public class InitListener implements ServletContextListener {
 		}
 		InitListener.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 		
+		InitListener.log.info("Inizializzazione XMLDiff in corso...");
+		try{
+			XMLDiff diff = new XMLDiff();
+			diff.initialize(XMLDiffImplType.XML_UNIT, new XMLDiffOptions());
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		InitListener.log.info("Inizializzazione XMLDiff effettuata con successo");
 
 		try{
 			if(consoleProperties.isSinglePdD()==false){

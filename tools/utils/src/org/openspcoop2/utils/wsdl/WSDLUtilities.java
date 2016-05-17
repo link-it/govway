@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -46,11 +47,13 @@ import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
 import org.openspcoop2.utils.xml.XSDUtils;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import com.ibm.wsdl.xml.WSDLReaderImpl;
 import com.ibm.wsdl.xml.WSDLWriterImpl;
@@ -495,6 +498,77 @@ public class WSDLUtilities {
 	
 	
 	
+	/* ---------------- METODI ADD ------------------------- */
+	public void addSchemaIntoTypes(Document wsdl, Node schema) throws org.openspcoop2.utils.wsdl.WSDLException{
+		try{
+			NodeList list = wsdl.getChildNodes();
+			if(list!=null){
+				for(int i=0; i<list.getLength(); i++){
+					Node child = list.item(i);
+					if("definitions".equals(child.getLocalName())){
+						NodeList listDefinition = child.getChildNodes();
+						if(listDefinition!=null){
+							for(int j=0; j<listDefinition.getLength(); j++){
+								Node childDefinition = listDefinition.item(j);
+								if("types".equals(childDefinition.getLocalName())){
+									
+									childDefinition.appendChild(wsdl.createTextNode("\n\t\t"));
+									childDefinition.appendChild(schema);
+									childDefinition.appendChild(wsdl.createTextNode("\n"));
+									
+								}
+							}
+						}
+					}
+				}
+			}
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante l'aggiunto di uno schema nell'elemento Types: "+e.getMessage(),e);
+		}
+	}
+	
+	public void addImportSchemaIntoTypes(Document wsdl, String targetNamespace, String location) throws org.openspcoop2.utils.wsdl.WSDLException{
+		
+		// NOTA: types deve esistere
+		
+		try{
+			NodeList list = wsdl.getChildNodes();
+			if(list!=null){
+				for(int i=0; i<list.getLength(); i++){
+					Node child = list.item(i);
+					if("definitions".equals(child.getLocalName())){
+						NodeList listDefinition = child.getChildNodes();
+						if(listDefinition!=null){
+							for(int j=0; j<listDefinition.getLength(); j++){
+								Node childDefinition = listDefinition.item(j);
+								if("types".equals(childDefinition.getLocalName())){
+									
+									Element importSchemaElement = wsdl.createElementNS("http://www.w3.org/2001/XMLSchema", "schema");
+									importSchemaElement.setAttribute("targetNamespace", targetNamespace);
+									
+									Element importElement = wsdl.createElementNS("http://www.w3.org/2001/XMLSchema", "import");
+									importElement.setAttribute("namespace", targetNamespace);
+									importElement.setAttribute("schemaLocation", location);
+							
+									importSchemaElement.appendChild(wsdl.createTextNode("\n\t\t\t"));
+									importSchemaElement.appendChild(importElement);
+									importSchemaElement.appendChild(wsdl.createTextNode("\n\t\t"));
+									
+									childDefinition.appendChild(wsdl.createTextNode("\n\t\t"));
+									childDefinition.appendChild(importSchemaElement);
+									childDefinition.appendChild(wsdl.createTextNode("\n\n"));
+								}
+							}
+						}
+					}
+				}
+			}
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante l'aggiunto di uno schema nell'elemento Types: "+e.getMessage(),e);
+		}
+	}
+	
+	
 	
 	
 	
@@ -518,33 +592,7 @@ public class WSDLUtilities {
 			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante la lettura del wsdl: "+e.getMessage(),e);
 		}
 	}
-	
-	public Node getIfExistsTypesElementIntoWSDL(Document wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
 		
-		try{
-			NodeList list = wsdl.getChildNodes();
-			if(list!=null){
-				for(int i=0; i<list.getLength(); i++){
-					Node child = list.item(i);
-					if("definitions".equals(child.getLocalName())){
-						NodeList listDefinition = child.getChildNodes();
-						if(listDefinition!=null){
-							for(int j=0; j<listDefinition.getLength(); j++){
-								Node childDefinition = listDefinition.item(j);
-								if("types".equals(childDefinition.getLocalName())){
-									return childDefinition;
-								}
-							}
-						}
-					}
-				}
-			}
-			return null;
-		}catch(Exception e){
-			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante la lettura del wsdl: "+e.getMessage(),e);
-		}
-	}
-	
 	
 
 	
@@ -715,7 +763,67 @@ public class WSDLUtilities {
 		
 	}
 	
-	
+	public List<Node> getSchemiXSD(Document wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
+		
+		try{
+			if(this.xmlUtils==null){
+				throw new Exception("XMLUtils not initialized in WSDLUtilities, use static instance 'getInstance(AbstractXMLUtils xmlUtils)'");
+			}
+			XSDUtils xsdUtils = new XSDUtils(this.xmlUtils);
+			
+			Vector<Node> schemi = new Vector<Node>();
+			
+			NodeList list = wsdl.getChildNodes();
+			if(list!=null){
+				for(int i=0; i<list.getLength(); i++){
+					Node child = list.item(i);
+					if("definitions".equals(child.getLocalName())){
+						NodeList listDefinition = child.getChildNodes();
+						if(listDefinition!=null){
+							for(int j=0; j<listDefinition.getLength(); j++){
+								Node childDefinition = listDefinition.item(j);
+								if("types".equals(childDefinition.getLocalName())){
+									NodeList listTypes = childDefinition.getChildNodes();
+									if(listTypes!=null){
+										for(int h=0; h<listTypes.getLength(); h++){
+											Node childTypes = listTypes.item(h);
+											
+											if("schema".equals(childTypes.getLocalName()) && xsdUtils.isXSDSchema(childTypes) ){
+												
+												schemi.add(childTypes);
+												
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			return schemi;
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante la lettura del wsdl: "+e.getMessage(),e);
+		}
+	}
+	public List<byte[]> getBytesSchemiXSD(Document wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
+		List<Node> schemi = this.getSchemiXSD(wsdl);
+		
+		try{
+			if(this.xmlUtils==null){
+				throw new Exception("XMLUtils not initialized in WSDLUtilities, use static instance 'getInstance(AbstractXMLUtils xmlUtils)'");
+			}
+			List<byte[]> schemiBytes = new ArrayList<byte[]>();
+			if(schemi!=null && schemi.size()>0){
+				for (Node node : schemi) {
+					schemiBytes.add(this.xmlUtils.toByteArray(node));		
+				}
+			}
+			return schemiBytes;
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante la lettura del wsdl: "+e.getMessage(),e);
+		}
+	}
 	
 	
 	
@@ -732,43 +840,121 @@ public class WSDLUtilities {
 		if(docImportato){
 			
 			// GESTIONE DOCUMENTO IMPORTATO
+			//System.out.println("***** IMPORT");
 			
 			// Esamino targetNamespace e prefisso dell'xsd per verificarne la presenza nel definitions del wsdl
 			targetNamespace = readPrefixForWsdl(schemaXSD, wsdl, prefixForWSDL, uniquePrefixWSDL, true);
 		
 			// Rimozione completa di tutti gli attributi all'infuori del TargetNamespace e dell'associato prefix
 			NamedNodeMap attributi = schemaXSD.getAttributes();
-			Vector<Attr> attributiDaMantenere = new Vector<Attr>();
-			while(attributi.getLength()>0){
-				Attr attr = (Attr) attributi.item(0);
-				//System.out.println("REMOVE NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"]...");
-				if(targetNamespace.equals(attr.getNodeValue())){
-					//System.out.println("REMOVE NON EFFETTUATO");
-					attributiDaMantenere.add(attr);
+			Vector<Attr> attributiDaMantenere = new Vector<Attr>();	
+			if(attributi!=null && attributi.getLength()>0){
+				for (int i = (attributi.getLength()-1); i >= 0; i--) {
+					Attr attr = (Attr) attributi.item(i);
+					//System.out.println("REMOVE NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+					if(targetNamespace.equals(attr.getNodeValue())){
+						//System.out.println("REMOVE NON EFFETTUATO");
+						attributiDaMantenere.add(attr);
+					}
+					//schemaXSD.removeAttributeNode(attr);
+					this.xmlUtils.removeAttribute(attr, schemaXSD);
 				}
-				schemaXSD.removeAttributeNode(attr);
 			}
+//			IL Codice sotto non può funzionare, poichè in axiom la struttura NamedNodeMap non viene aggiornata dopo la remove
+//			while(attributi.getLength()>0){
+//				Attr attr = (Attr) attributi.item(0);
+//				System.out.println("REMOVE NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+//				if(targetNamespace.equals(attr.getNodeValue())){
+//					System.out.println("REMOVE NON EFFETTUATO");
+//					attributiDaMantenere.add(attr);
+//				}
+//				schemaXSD.removeAttributeNode(attr);
+//			}
+			
+//			// DEBUG DOPO ELIMINAZIONE
+//			attributi = schemaXSD.getAttributes();
+//			System.out.println("TEST: "+attributi.getLength());
+//			for (int i = 0; i < attributi.getLength(); i++) {
+//				Attr attr = (Attr) attributi.item(i);
+//				System.out.println("TEST NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+//			}
+			
 			while(attributiDaMantenere.size()>0){
-				schemaXSD.setAttributeNode(attributiDaMantenere.remove(0));
+				//schemaXSD.setAttributeNode(attributiDaMantenere.remove(0));
+				Attr attr = attributiDaMantenere.remove(0);
+				//System.out.println("RE-ADD NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+				this.xmlUtils.addAttribute(attr, schemaXSD);
 			}
+			
+//			// DEBUG DOPO AGGIUNTA
+//			attributi = schemaXSD.getAttributes();
+//			System.out.println("TEST2: "+attributi.getLength());
+//			for (int i = 0; i < attributi.getLength(); i++) {
+//				Attr attr = (Attr) attributi.item(i);
+//				System.out.println("TEST2 NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+//			}
 			
 		}else{
 			
 			// GESTIONE DOCUMENTO INCLUSO
+			//System.out.println("***** INCLUDE");
 			
 			targetNamespace = targetNamespaceParent;
 			
 			// Rimozione completa di tutti gli attributi 
 			NamedNodeMap attributi = schemaXSD.getAttributes();
-			while(attributi.getLength()>0){
-				Attr attr = (Attr) attributi.item(0);
-				//System.out.println("REMOVE NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"]...");
-				schemaXSD.removeAttributeNode(attr);
+			Vector<Attr> attributiDaMantenere = new Vector<Attr>();	
+			if(attributi!=null && attributi.getLength()>0){
+				for (int i = (attributi.getLength()-1); i >= 0; i--) {
+					Attr attr = (Attr) attributi.item(i);
+					//System.out.println("REMOVE NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+					if(targetNamespace.equals(attr.getNodeValue())){
+						//System.out.println("REMOVE NON EFFETTUATO");
+						attributiDaMantenere.add(attr);
+					}
+					//schemaXSD.removeAttributeNode(attr);
+					this.xmlUtils.removeAttribute(attr, schemaXSD);
+				}
+			}
+//			IL Codice sotto non può funzionare, poichè in axiom la struttura NamedNodeMap non viene aggiornata dopo la remove
+//			while(attributi.getLength()>0){
+//				Attr attr = (Attr) attributi.item(0);
+//				//System.out.println("REMOVE NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"]...");
+//				schemaXSD.removeAttributeNode(attr);
+//			}
+			
+//			// DEBUG DOPO ELIMINAZIONE
+//			attributi = schemaXSD.getAttributes();
+//			System.out.println("TEST: "+attributi.getLength());
+//			for (int i = 0; i < attributi.getLength(); i++) {
+//				Attr attr = (Attr) attributi.item(i);
+//				System.out.println("TEST NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+//			}
+			
+			// Aggiungo targetNamespace e altri prefix associati al namespace
+			boolean foundTargetNamespace = false;
+			if(attributiDaMantenere.size()>0){
+				while(attributiDaMantenere.size()>0){
+					//schemaXSD.setAttributeNode(attributiDaMantenere.remove(0));
+					Attr attr = attributiDaMantenere.remove(0);
+					if("targetNamespace".equals(attr.getName())){
+						foundTargetNamespace = true;
+					}
+					//System.out.println("RE-ADD NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+					this.xmlUtils.addAttribute(attr, schemaXSD);
+				}
+			}
+			if(!foundTargetNamespace){
+				schemaXSD.setAttribute("targetNamespace", targetNamespace);
 			}
 			
-			// Aggiungo targetNamespace
-			schemaXSD.setAttribute("targetNamespace", targetNamespace);
-			
+//			// DEBUG DOPO AGGIUNTA
+//			attributi = schemaXSD.getAttributes();
+//			System.out.println("TEST2: "+attributi.getLength());
+//			for (int i = 0; i < attributi.getLength(); i++) {
+//				Attr attr = (Attr) attributi.item(i);
+//				System.out.println("TEST2 NAME["+attr.getName()+"] LOCAL_NAME["+attr.getLocalName()+"] VALUE["+attr.getNodeValue()+"] URI["+attr.getNamespaceURI()+"]...");
+//			}
 		}
 		
 		return targetNamespace;
@@ -851,7 +1037,16 @@ public class WSDLUtilities {
 					schemaXSD.setAttribute(newPrefix, targetNamespace);
 					//System.out.println("SET NEW ATTRIBUTE NS LOCALNAME["+newPrefix+"] ["+targetNamespace+"] OK");
 					
-					prefixForWSDL.put(newPrefix, targetNamespace);
+					if(prefixForWSDL.containsKey(newPrefix)==false){
+						prefixForWSDL.put(newPrefix, targetNamespace);
+					}
+					else{
+						String namespace = prefixForWSDL.get(newPrefix);
+						if(namespace.equals(targetNamespace)==false){
+							throw new org.openspcoop2.utils.wsdl.WSDLException("Rilevati due prefissi a cui sono stati associati namespace differenti. \nPrefix["+
+									newPrefix+"]=Namespace["+namespace+"]\nPrefix["+newPrefix+"]=Namespace["+targetNamespace+"]"); 
+						}
+					}
 				}
 			}
 		}
@@ -927,12 +1122,26 @@ public class WSDLUtilities {
 								if("types".equals(childDefinition.getLocalName())){
 									NodeList listTypes = childDefinition.getChildNodes();
 									if(listTypes!=null){
+										boolean onlySchemaAndComment = true;
 										for(int h=0; h<listTypes.getLength(); h++){
 											Node childTypes = listTypes.item(h);
 											//System.out.println("?? IMPORT SCHEMA: "+childTypes.getLocalName());
 											if("schema".equals(childTypes.getLocalName())){
 												//System.out.println("REMOVE IMPORT SCHEMA");
 												childDefinition.removeChild(childTypes);
+											}
+											else{
+												if( !(childTypes instanceof Text) && !(childTypes instanceof Comment) ){
+													onlySchemaAndComment = false;
+												}
+											}
+										}
+										if(onlySchemaAndComment){
+											listTypes = childDefinition.getChildNodes();
+											if(listTypes!=null){
+												for(int h=0; h<listTypes.getLength(); h++){
+													childDefinition.removeChild(listTypes.item(h));
+												}
 											}
 										}
 									}
@@ -1066,5 +1275,114 @@ public class WSDLUtilities {
 			throw new WSDLException("removeAllServices(Definition definition)","WSDL non fornito");
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ---------------- TYPES ------------------------- */
 
+	public boolean existsTypes(Document document) throws org.openspcoop2.utils.wsdl.WSDLException{
+		
+		try{
+			NodeList list = document.getChildNodes();
+			if(list!=null){
+				for(int i=0; i<list.getLength(); i++){
+					Node child = list.item(i);
+					if("definitions".equals(child.getLocalName())){
+						NodeList listDefinition = child.getChildNodes();
+						if(listDefinition!=null){
+							for(int j=0; j<listDefinition.getLength(); j++){
+								Node childDefinition = listDefinition.item(j);
+								if("types".equals(childDefinition.getLocalName())){
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante la lettura del wsdl: "+e.getMessage(),e);
+		}
+		
+		return false;
+	}
+	
+	public Node getIfExistsTypesElementIntoWSDL(Document wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
+		
+		try{
+			NodeList list = wsdl.getChildNodes();
+			if(list!=null){
+				for(int i=0; i<list.getLength(); i++){
+					Node child = list.item(i);
+					if("definitions".equals(child.getLocalName())){
+						NodeList listDefinition = child.getChildNodes();
+						if(listDefinition!=null){
+							for(int j=0; j<listDefinition.getLength(); j++){
+								Node childDefinition = listDefinition.item(j);
+								if("types".equals(childDefinition.getLocalName())){
+									return childDefinition;
+								}
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante la lettura del wsdl: "+e.getMessage(),e);
+		}
+	}
+	
+	public Node addEmptyTypesIfNotExists(Document document) throws org.openspcoop2.utils.wsdl.WSDLException{
+		
+		try{
+			boolean exists = false;
+			NodeList list = document.getChildNodes();
+			if(list!=null){
+				for(int i=0; i<list.getLength(); i++){
+					Node child = list.item(i);
+					if("definitions".equals(child.getLocalName())){
+						NodeList listDefinition = child.getChildNodes();
+						if(listDefinition!=null){
+							for(int j=0; j<listDefinition.getLength(); j++){
+								Node childDefinition = listDefinition.item(j);
+								if("types".equals(childDefinition.getLocalName())){
+									exists = true;
+									break;
+								}
+							}
+						}
+						if(!exists){
+							String name = "types";
+							if(child.getPrefix()!=null && !"".equals(child.getPrefix())){
+								name = child.getPrefix()+":"+name;
+							}
+							Node n = this.xmlUtils.getFirstNotEmptyChildNode(child,false);
+							//System.out.println("FIRST ["+n.getLocalName()+"] ["+n.getPrefix()+"] ["+n.getNamespaceURI()+"]");
+							Node type = document.createElementNS(child.getNamespaceURI(), name);
+							child.insertBefore(type,n);
+							return type;
+						}
+					}
+				}
+			}
+
+			return null;
+			
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException("Riscontrato errore durante la lettura del wsdl: "+e.getMessage(),e);
+		}
+	}
 }

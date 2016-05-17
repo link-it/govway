@@ -1709,7 +1709,10 @@ public class RegistroServizi  {
 			boolean readParteImplementativa = 
 				( (servizio.getWsdlImplementativoFruitore()!=null) && ("".equals(servizio.getWsdlImplementativoFruitore())==false) )
 				||
-				(servizio.getByteWsdlImplementativoFruitore()!=null) ;
+				(servizio.getByteWsdlImplementativoFruitore()!=null) 
+				||
+				(wsdlFruitore.getAllBindings()!=null && wsdlFruitore.getAllBindings().size()>0) 
+				;
 			wsdlWrapperUtilities.buildAccordoServizioWrapperFromWsdl(wsdlFruitore,readParteImplementativa);
 		}else{
 			javax.wsdl.Definition wsdlErogatore = null;
@@ -1721,7 +1724,10 @@ public class RegistroServizi  {
 			boolean readParteImplementativa =	 
 				( (servizio.getWsdlImplementativoErogatore()!=null) && ("".equals(servizio.getWsdlImplementativoErogatore())==false) )
 				||
-				(servizio.getByteWsdlImplementativoErogatore()!=null) ;
+				(servizio.getByteWsdlImplementativoErogatore()!=null) 
+				||
+				(wsdlErogatore.getAllBindings()!=null && wsdlErogatore.getAllBindings().size()>0) 
+				;
 			wsdlWrapperUtilities.buildAccordoServizioWrapperFromWsdl(wsdlErogatore,readParteImplementativa);
 		}
 	}

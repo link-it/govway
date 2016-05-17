@@ -601,6 +601,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.gestioneWsdl.autoMappingInAccordo");
 	}
 	
+	public Boolean isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes() throws UtilsException{
+		return this.readBooleanProperty(true, "console.gestioneWsdl.autoMappingInAccordo.estrazioneSchemiInWsdlTypes");
+	}
+	
 	public Boolean isMenuPorteApplicative_ProtocolProperties_VisualizzaListaValoriPredefiniti() throws UtilsException{
 		return this.readBooleanProperty(true, "menu.pa.protocolProperties.visualizzaListaValoriPredefiniti");
 	}

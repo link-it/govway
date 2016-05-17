@@ -194,19 +194,21 @@ public class WSDLValidator {
 					continue;
 				}
 				String nomeElemento = null;
+				String namespaceElemento = null;
 				Node n = null;
 				try{
 					n = nl.item(i);
 					nomeElemento = n.getLocalName();
+					namespaceElemento = n.getNamespaceURI();
 					validatoreBodyApplicativo.valida(n,true);
 				}catch(Exception e){
 					if(errorMsgValidazioneXSD.length()==0){
-						if(isRichiesta)
-							errorMsgValidazioneXSD.append("Validazione XSD del contenuto della richiesta fallita:\n");
-						else
-							errorMsgValidazioneXSD.append("Validazione XSD del contenuto della risposta fallita:\n");
+						errorMsgValidazioneXSD.append("Riscontrata non conformità rispetto agli schemi XSD\n");
 					}else{
 						errorMsgValidazioneXSD.append("\n");
+					}
+					if(namespaceElemento!=null){
+						nomeElemento = "{"+namespaceElemento+"}"+nomeElemento;
 					}
 					errorMsgValidazioneXSD.append("(elemento "+nomeElemento+"): "+e.getMessage());
 					String elementNonValidato = null;
@@ -289,12 +291,14 @@ public class WSDLValidator {
 							continue;
 						}
 						String nomeElemento = null;
+						String namespaceElemento = null;
 						Node n = null;
 						Node nodo = null;
 						Node nChild = null;
 						try{
 							n = nl.item(i);
 							nomeElemento = n.getLocalName();
+							namespaceElemento = n.getNamespaceURI();
 							if(CostantiRegistroServizi.WSDL_USE_ENCODED.equals(use)){
 								this.logger.debug("Validazione XSD con style["+style+"] e use["+use+"], richiede la pulizia dei xsi:types prima della validazione...");
 								nodo = this.cleanXSITypes(n);
@@ -329,12 +333,12 @@ public class WSDLValidator {
 							
 						}catch(Exception e){
 							if(errorMsgValidazioneXSD.length()==0){
-								if(isRichiesta)
-									errorMsgValidazioneXSD.append("Validazione XSD del contenuto della richiesta fallita:\n");
-								else
-									errorMsgValidazioneXSD.append("Validazione XSD del contenuto della risposta fallita:\n");
+								errorMsgValidazioneXSD.append("Riscontrata non conformità rispetto agli schemi XSD\n");
 							}else{
 								errorMsgValidazioneXSD.append("\n");
+							}
+							if(namespaceElemento!=null){
+								nomeElemento = "{"+namespaceElemento+"}"+nomeElemento;
 							}
 							errorMsgValidazioneXSD.append("(elemento "+nomeElemento+"): "+e.getMessage());
 							
@@ -612,6 +616,7 @@ public class WSDLValidator {
 			boolean matchingNameOperation = false, matchingArgomentsOperation = false;
 			String soapActionWSDL = null;
 			StringBuffer eccezioni = new StringBuffer();
+			StringBuffer eccezioneActionMatch = new StringBuffer();
 			for(int i=0; i<portTypeAS.sizeAzioneList(); i++){
 				Operation operationAS = portTypeAS.getAzione(i);
 				if (operationAS.getNome().equals(operation)) {
@@ -637,7 +642,7 @@ public class WSDLValidator {
 							namespaceRPC = argumentsOperation.getSoapNamespace();
 						}
 					}
-					
+										
 					this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"] (RPCNamespace:"+namespaceRPC+") ...");
 					
 					// il controllo sul nome dell'operation non basta.
@@ -683,19 +688,36 @@ public class WSDLValidator {
 						sizeArgumentsOperation = argumentsOperation.sizePartList();
 					}
 					int nodiContenutoApplicativoLength = 0;
+					StringBuffer nodiMessaggioErrore = new StringBuffer();
 					for(int ii=0;ii<nodiContenutoApplicativo.getLength();ii++){
 //						if (!(nodiContenutoApplicativo.item(ii) instanceof Text && 
 //								((Text) nodiContenutoApplicativo.item(ii)).getData().trim().length() == 0)) { 
 						if (!(nodiContenutoApplicativo.item(ii) instanceof Text)){
+							
+							if(nodiMessaggioErrore.length()>0){
+								nodiMessaggioErrore.append(", ");
+							}
+							Node n = nodiContenutoApplicativo.item(ii);
+							RootElementBody rootElementBody = new RootElementBody(this.envelope, nodoPossiedeContenutoApplicativo, 
+									CostantiRegistroServizi.WSDL_STYLE_RPC.equals(style), n);
+							nodiMessaggioErrore.append(rootElementBody.toString());
+							
 							nodiContenutoApplicativoLength++;
 							continue;
 						}
 					}
 					if(sizeArgumentsOperation!=nodiContenutoApplicativoLength){
+						
+						if(eccezioneActionMatch.length()>0){
+							eccezioneActionMatch.append("\n");
+						}
+						eccezioneActionMatch.append("Parametri trovati (size:"+nodiContenutoApplicativoLength+"): ");
+						eccezioneActionMatch.append(nodiMessaggioErrore.toString());
+						
 						this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Argomenti attesi["+sizeArgumentsOperation+"], trovati nel body["+nodiContenutoApplicativo.getLength()+"]");
 						continue;
 					}
-					
+										
 					String tipo  = "output";
 					if(isRichiesta)
 						tipo = "input";
@@ -781,7 +803,7 @@ public class WSDLValidator {
 							}
 	
 							if (!find) { //tipi non concordi nella sequenza
-								eccezioni.append("\nParametro di "+tipo+" '"+argomentoAtteso+"' richiesto nel wsdl ma non presente nei root-element ("+numeroBodyElements+") presenti nel body: "+bodyElements);
+								eccezioni.append("\nParametro di "+tipo+" '"+argomentoAtteso+"' richiesto nel wsdl ma non trovato nei root-element ("+numeroBodyElements+") presenti nel body: "+bodyElements);
 								this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Atteso "+argomentoAtteso+" body "+bodyElements);
 								break;
 							}
@@ -800,16 +822,62 @@ public class WSDLValidator {
 				if (matchingNameOperation) {
 					if(eccezioni.length()>0){
 						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-							throw new WSDLValidatorException("Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+"): "+eccezioni.toString());
+							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+eccezioni.toString());
 						}else{
-							throw new WSDLValidatorException("Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+"): "+eccezioni.toString());
+							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+eccezioni.toString());
 						}
+					}
+					else if(eccezioneActionMatch.length()>0){
+						StringBuffer bfMessage = new StringBuffer();
+						for(int i=0; i<portTypeAS.sizeAzioneList(); i++){
+							Operation operationAS = portTypeAS.getAzione(i);
+							if (operationAS.getNome().equals(operation)) {
+								Message argumentsOperation = isRichiesta ? operationAS.getMessageInput() : operationAS.getMessageOutput();
+								int length = 0;
+								if(argumentsOperation!=null && argumentsOperation.getPartList()!=null){
+									length = argumentsOperation.getPartList().size();
+								}
+								bfMessage.append("\n");
+								bfMessage.append("Parametri attesi (size:"+length+"): ");
+								if(length>0){
+									for (int j = 0; j < length; j++) {
+										MessagePart argument = argumentsOperation.getPart(j);
+										String nomeElementAtteso = null;
+										String namespaceElementAtteso = null;
+										String tipoXSIAtteso = null;
+										String argomentoAtteso = null;
+										if(argument.getElementName()!=null){
+											nomeElementAtteso = argument.getElementName();
+											namespaceElementAtteso = argument.getElementNamespace();
+										}
+										else{
+											nomeElementAtteso = argument.getName(); // definito nel message del wsdl
+											namespaceElementAtteso = argument.getTypeNamespace();
+											tipoXSIAtteso = argument.getTypeName();
+										}
+										argomentoAtteso = RootElementBody.toString(nomeElementAtteso, namespaceElementAtteso, tipoXSIAtteso);
+										if(j>0){
+											bfMessage.append(", ");
+										}
+										bfMessage.append(argomentoAtteso);
+									}
+								}
+							}
+						}
+						bfMessage.append("\n").append(eccezioneActionMatch.toString());
+
+						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
+							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+bfMessage.toString());
+						}else{
+							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+"): "+bfMessage.toString());
+						}
+
 					}
 					else{
 						if(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()){
-							throw new WSDLValidatorException("Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+")");
+							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Operation ["+operation+"] del port-type ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+")");
 						}else{
-							throw new WSDLValidatorException("Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+")");
+							throw new WSDLValidatorException("Messaggio con elementi non conformi alla definizione wsdl dell'Azione ["+operation+"] del Servizio ["+portType+"] (AccordoServizio:"+uriAccordo+" style:"+style+" use:"+use+")");
 						}
 					}
 				} else {
@@ -868,10 +936,7 @@ public class WSDLValidator {
 			}
 			if( (e instanceof WSDLValidatorException)==false )
 				this.logger.debug("Validazione WSDL fallita",e);
-			if(isRichiesta)
-				errorMsgValidazioneXSD = "Validazione WSDL del contenuto della richiesta fallita: "+e.getMessage();
-			else
-				errorMsgValidazioneXSD = "Validazione WSDL del contenuto della risposta fallita: "+e.getMessage();
+			errorMsgValidazioneXSD = "Riscontrata non conformità rispetto all'interfaccia WSDL; "+e.getMessage();
 		}
 		if(errorMsgValidazioneXSD!=null){
 			throw new WSDLValidatorException(errorMsgValidazioneXSD);

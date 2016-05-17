@@ -53,12 +53,9 @@ import org.apache.soap.util.mime.ByteArrayDataSource;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 
 /**
@@ -86,49 +83,14 @@ public class SoapUtils {
 		return getNotEmptyChildNodes(e, true);
 	}
 	public static Vector<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
-		NodeList nl = e.getChildNodes();
-		Vector<Node> vec = new Vector<Node>();
-		for(int index = 0 ; index<nl.getLength(); index++){
-			Node n = nl.item(index);
-			if(n instanceof Text){
-				if(consideraTextNotEmptyAsNode){
-					if (((Text) nl.item(index)).getData().trim().length() == 0) { 
-						continue;
-					}
-				}else{
-					continue;
-				}
-			}
-			else if (n instanceof Comment) { 
-				continue;
-			}
-			vec.add(nl.item(index));
-		}
-		return vec;
+		return XMLUtils.getInstance().getNotEmptyChildNodes(e, consideraTextNotEmptyAsNode);
 	}
 	
 	public static Node getFirstNotEmptyChildNode(Node e){
 		return getFirstNotEmptyChildNode(e, true);
 	}
 	public static Node getFirstNotEmptyChildNode(Node e, boolean consideraTextNotEmptyAsNode){
-		NodeList nl = e.getChildNodes();
-		for(int index = 0 ; index<nl.getLength(); index++){
-			Node n = nl.item(index);
-			if(n instanceof Text){
-				if(consideraTextNotEmptyAsNode){
-					if (((Text) nl.item(index)).getData().trim().length() == 0) { 
-						continue;
-					}
-				}else{
-					continue;
-				}
-			}
-			else if (nl.item(index) instanceof Comment) { 
-				continue;
-			}
-			return nl.item(index);
-		}
-		return null;
+		return XMLUtils.getInstance().getFirstNotEmptyChildNode(e, consideraTextNotEmptyAsNode);
 	}
 	
 	public static Vector<SOAPElement> getNotEmptyChildSOAPElement(SOAPElement e){

@@ -20,7 +20,7 @@
             </tipi>
         </soggetti>
 
-        <servizi specificaConversazioni="true">
+        <servizi wsdlDefinitorio="true" specificaConversazioni="true">
             <tipi default="SPC">
                 <tipo>SPC</tipo>
                 <tipo>TEST</tipo>

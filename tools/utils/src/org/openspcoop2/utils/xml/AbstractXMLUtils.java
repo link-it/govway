@@ -31,7 +31,10 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -48,10 +51,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.openspcoop2.utils.UtilsException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -702,7 +709,7 @@ public abstract class AbstractXMLUtils {
 	
 
 	
-	// ATTRIBUTE VALUE
+	// ATTRIBUTE
 	
 	public String getAttributeValue(Node n,String attrName){
 		NamedNodeMap att = n.getAttributes();
@@ -713,7 +720,199 @@ public abstract class AbstractXMLUtils {
 		}
 		return null;
 	}
+	
+	public void removeAttribute(Attr attr, Element src){
+		
+		// NOTA:
+		//	 attr.getName ritorna anche il prefisso se c'è a differenza di attr.getLocalName
+		
+		if("http://www.w3.org/2000/xmlns/".equals(attr.getNamespaceURI())){
+			if("xmlns".equals(attr.getName())){
+				if(attr.getClass().getName().contains("org.apache.axiom.")){
+					// axiom
+					//System.out.println("REMOVE NS SPECIAL AXIOM XMLNS ["+attr.getClass().getName()+"]");
+					src.removeAttributeNS(attr.getNamespaceURI(), "");
+				}
+				else{
+					// cxf
+					//System.out.println("REMOVE NS SPECIAL CXF XMLNS ["+attr.getClass().getName()+"]");
+					src.removeAttributeNS(attr.getNamespaceURI(), attr.getName());
+				}
+			}
+			else if(attr.getNamespaceURI()!=null){
+				//System.out.println("REMOVE NS XMLNS");
+				src.removeAttributeNS(attr.getNamespaceURI(), attr.getLocalName()); // Deve essere usato localName per cxf
+			}
+		}
+		else{
+			//System.out.println("REMOVE NORMAL");
+			src.removeAttribute(attr.getName());
+		}
+	}
+	
+	public void addAttribute(Attr attr, Element src){
+		
+		// NOTA:
+		//	 attr.getName ritorna anche il prefisso se c'è a differenza di attr.getLocalName
+		
+		if("http://www.w3.org/2000/xmlns/".equals(attr.getNamespaceURI())){
+			if("xmlns".equals(attr.getLocalName())){
+				//System.out.println("ADD NS SPECIAL XMLNS");
+				src.setAttribute(attr.getName(), attr.getValue());
+			}
+			else{
+				//System.out.println("ADD NS XMLNS");
+				src.setAttributeNS(attr.getNamespaceURI(), attr.getName(), attr.getValue());
+			}
+		}
+		else{
+			//System.out.println("ADD NORMAL ATTRIBUTE");
+			src.setAttribute(attr.getName(), attr.getValue());
+		}
+	}
 
+
+	
+	
+	
+	
+	
+	// NAMESPACE
+	
+	public Hashtable<String, String> getNamespaceDeclaration(Node n){
+		NamedNodeMap map = n.getAttributes();
+		Hashtable<String, String> namespaces = new Hashtable<String, String>();
+		if(map!=null){
+			for (int i = 0; i < map.getLength(); i++) {
+				Node attribute = map.item(i);
+				//System.out.println("ATTRIBUTE["+i+"] ("+attribute.getClass().getName()+") name["+attribute.getLocalName()+"] uri["+attribute.getNamespaceURI()+"] value["+attribute.getNodeValue()+"] prefix["+attribute.getPrefix()+"]");
+				
+				if(attribute!=null && (attribute instanceof  Attr) ){
+					Attr a = (Attr) attribute;
+					
+					//System.out.println("ATTRIBUTE["+i+"]  INSTACE name("+a.getName()+") value("+a.getValue()+") uri("+a.getBaseURI()+") prefix("+a.getPrefix()+") localName("+a.getLocalName()+")");
+					// INSTACE name(xmlns) value(www.namespace.org) 
+					// INSTACE name(xmlns:pp) value(www.namespace2.org) 
+					
+					String prefix = a.getName();
+					if(prefix!=null && (prefix.startsWith("xmlns") || prefix.equals("xmlns"))){
+						if(prefix.contains(":")){
+							prefix = prefix.split(":")[1];
+						}
+						else{
+							prefix = "";
+						}
+						namespaces.put(prefix, a.getValue());
+					}
+				}
+			}
+		}
+		return namespaces;
+	}
+	
+	public void addNamespaceDeclaration(Hashtable<String, String> namespace, Element destNode){
+		if(namespace!=null && namespace.size()>0){
+			Hashtable<String, String> declarationNamespacesDestNode = this.getNamespaceDeclaration(destNode);
+//			if(declarationNamespacesDestNode.size()>0){
+//				Enumeration<String> decSchema = declarationNamespacesDestNode.keys();
+//				while (decSchema.hasMoreElements()) {
+//					String dec = (String) decSchema.nextElement();
+//					System.out.println("TROVATO ORIGINALE ["+dec+"]=["+declarationNamespacesDestNode.get(dec)+"]");
+//				}
+//			}
+			Enumeration<String> decSource = namespace.keys();
+			while (decSource.hasMoreElements()) {
+				String dec = (String) decSource.nextElement();
+				//System.out.println("TROVATO ["+dec+"]=["+namespace.get(dec)+"]");
+				if(declarationNamespacesDestNode.containsKey(dec)==false){
+					//System.out.println("AGGIUNGO IN SCHEMA");
+					String name = "xmlns:"+dec;
+					if("".equals(dec)){
+						name = "xmlns";
+					}
+					destNode.setAttributeNS("http://www.w3.org/2000/xmlns/",name,namespace.get(dec));
+				}
+			}
+		}
+	}
+	
+	public void removeNamespaceDeclaration(Hashtable<String, String> namespace, Element destNode){
+		
+		// TODO: Da verificare, non ancora utilizzato
+		if(namespace!=null && namespace.size()>0){
+			Enumeration<String> decSource = namespace.keys();
+			while (decSource.hasMoreElements()) {
+				String dec = (String) decSource.nextElement();
+				//System.out.println("RIMUOVO ["+dec+"]=["+namespace.get(dec)+"]");
+				String name = "xmlns:"+dec;
+				if("".equals(dec)){
+					name = "xmlns";
+				}
+				destNode.removeAttributeNS("http://www.w3.org/2000/xmlns/", name);
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	// UTILITIES
+	
+	public Vector<Node> getNotEmptyChildNodes(Node e){
+		return getNotEmptyChildNodes(e, true);
+	}
+	public Vector<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
+		NodeList nl = e.getChildNodes();
+		Vector<Node> vec = new Vector<Node>();
+		if(nl!=null){
+			for(int index = 0 ; index<nl.getLength(); index++){
+				Node n = nl.item(index);
+				if(n instanceof Text){
+					if(consideraTextNotEmptyAsNode){
+						if (((Text) nl.item(index)).getData().trim().length() == 0) { 
+							continue;
+						}
+					}else{
+						continue;
+					}
+				}
+				else if (n instanceof Comment) { 
+					continue;
+				}
+				vec.add(nl.item(index));
+			}
+		}
+		return vec;
+	}
+	
+	public Node getFirstNotEmptyChildNode(Node e){
+		return getFirstNotEmptyChildNode(e, true);
+	}
+	public Node getFirstNotEmptyChildNode(Node e, boolean consideraTextNotEmptyAsNode){
+		NodeList nl = e.getChildNodes();
+		if(nl!=null){
+			for(int index = 0 ; index<nl.getLength(); index++){
+				Node n = nl.item(index);
+				if(n instanceof Text){
+					if(consideraTextNotEmptyAsNode){
+						if (((Text) nl.item(index)).getData().trim().length() == 0) { 
+							continue;
+						}
+					}else{
+						continue;
+					}
+				}
+				else if (nl.item(index) instanceof Comment) { 
+					continue;
+				}
+				return nl.item(index);
+			}
+		}
+		return null;
+	}
 	
 	
 }

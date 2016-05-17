@@ -1,3 +1,75 @@
+2016-05-17  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Aggiunta funzionalità OP-500
+	Aggiunta alla console in modalità avanzata, in fase di edit di un accordo di servizio parte comune, 
+	la possibilità di effettuare il download degli schemi XSD utilizzati per la validazione dei contenuti applicativi.
+	Il download permette di scaricare un archivio zip contenente la struttura degli schemi xsd utilizzati dalla PdD per effettuare la validazione.
+	Tale archivio potrebbe anche contenere il wsdl (intero comprensivo di schemi) utilizzato per la validazione di tipo wsdl,
+	se all'accordo è stato associato una interfaccia wsdl.
+	Infine è stata migliorata la visualizzazione/gestione del wsdl definitorio in modo che tale tipologia di wsdl 
+	sia disponibile solo per i protocolli che lo richiedono. Nei protocolli built-in della PdD solo il protocollo 'spcoop' lo richiede.
+
+2016-05-17  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-502
+	La funzionalità di validazione dei contenuti applicativi utilizza il wsdl Implementativo, caricato nell'accordo di servizio parte specifica, 
+	per differenziare come le parts di un messaggio vengono suddivise tra soap body e soap header.
+	Ad esempio se un wsdl contiene il seguente messaggio:
+		<wsdl:message name="example">
+			<wsdl:part name="bodyrichiesta" element="p:pagaCarrello"/>
+			<wsdl:part name="header" element="head:hdrCarrello"/>
+		</wsdl:message>
+	L'indicazione fornita nel binding è essenziale per non far fallire la validazione:
+		<soap:header message="tns:example" part="header" use="literal"/>
+		<soap:body parts="bodyrichiesta" use="literal" />
+	Questo poichè la validazione utilizza la definizione presente nella parte 'portTypes' del wsdl
+	per capire quale wsdl:message è stato associato ad un input/output di un'operation
+	e poi si aspetta di trovare nel body tutte le parts associate a quelo messaggio.
+	L'informazione presente nel binding serve a far escludere dai part attesi quelli che compongono gli header elements.
+	Il bug risiedeva nel fatto che se nel registro non veniva caricato un wsdl nella parte specifica, 
+	ma tuttavia il wsdl caricato nell'accordo di servizio parte comune possedeva una corretta definizione di binding, 
+	questa definizione veniva erroneamente ignorata e quindi la validazione falliva per le motivazioni precedentemente descritte.
+	Con il fix, anche un'eventuale binding presente nel wsdl caricato con l'accordo di servizio parte comune viene considerato.
+
+2016-05-17  Andrea Poli <apoli@link.it>
+
+	* [Pdd,PddConsole]
+	Aggiunta funzionalità OP-498
+	La funzionalità di validazione dei contenuti applicativi utilizza tutti gli schemi XSD,
+	caricati come allegati e/o specifiche semiformali e/o wsdl definitorio,
+	per creare un unico schema contenitore che viene utilizzato per effettuare la validazione dei messaggi in transito sulla PdD.
+	Gli schemi xsd che risiedevano all'interno dei WSDL concettuali o logici, caricati negli accordi di servizio,
+	venivano ignorati dalla PdD. Con questa nuova funzionalità anche tali schemi vengono considerati.
+	Sono stati aggiunte due modalità:
+	a) Estrazione al momento del caricamento dei wsdl da Console.
+	Se l'opzione 'console.gestioneWsdl.autoMappingInAccordo.estrazioneSchemiInWsdlTypes' risulta abilitata nel file console.properties (default:true)
+	gli schemi interni ai wsdl (nella sezione types) vengono estratti e associato all'accordo di servizio come allegati.
+	b) Estrazione runtime della PdD
+	Indipendentemente dall'opzione sopra indicata, il runtime comunque verifica se i wsdl concettuali e logici 
+	contengono all'interno degli schemi (nella sezione types) ed in tal caso li estrae ed aggiungendoli 
+	al "pacchetto" degli schemi xsd utilizzati per la validazione.
+
+2016-05-17  Andrea Poli <apoli@link.it>
+
+        * [Pdd]
+        Risolto Bug OP-496
+        Sono stati risolti i seguenti errori emersi durante la validazione dei contenuti applicativi:
+        1) org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException: Riscontrato errore durante l'inizializzazione: 
+           [WSDL-EROGATORE] Riscontrato errore durante la costruzione del wsdl dai bytes: com.ctc.wstx.exc.WstxParsingException:
+           Non-default namespace can not map to empty URI (as per Namespace 1.0 # 2) in XML 1.0 documents at [row,col {unknown-source}]: [2,210]
+           at org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi.<init>(ValidatoreMessaggiApplicativi.java:172)
+        2) Caused by: org.w3c.dom.DOMException: NOT_FOUND_ERR: An attempt is made to reference a node in a context where it does not exist.
+           at xxx.ElementImpl.removeAttributeNode(ElementImpl.java:342)
+           at org.openspcoop2.utils.wsdl.WSDLUtilities.normalizzazioneSchemaPerInserimentoInWsdl(WSDLUtilities.java:880)
+        3) org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException: Riscontrato errore durante l'inizializzazione: 
+           [WSDL-EROGATORE] Riscontrato errore durante la costruzione del wsdl dai bytes: 
+           Riscontrato errore durante la costruzione del xsd dai bytes: INUSE_ATTRIBUTE_ERR: 
+           An attempt is made to add an attribute that is already in use elsewhere.
+        4) Nel wsdl utilizzato per la validazione (metodo: org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities.buildWsdlFromObjects)
+           non venivano caricati correttamente gli schemi.
+
 2016-04-26  Andrea Poli <apoli@link.it>
 
         * Rilasciata versione 2.2.1

@@ -185,6 +185,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 		AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
+		boolean asWithAllegati = (as.sizeAllegatoList()>0 || as.sizeSpecificaSemiformaleList()>0 || as.getByteWsdlDefinitorio()!=null);
 
 		String[] providersList = null;
 		String[] providersListLabel = null;
@@ -375,7 +376,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
 						showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 						privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-						accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,tipoProtocollo, listaTipiProtocollo,used);
+						accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
+						tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
 
 				pd.setDati(dati);
 
@@ -420,7 +422,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 					filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 					privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-					accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,tipoProtocollo, listaTipiProtocollo,used);
+					accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
+					tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
 
 			pd.setDati(dati);
 
@@ -559,7 +562,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
 						showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 						privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-						accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,tipoProtocollo, listaTipiProtocollo,used);
+						accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
+						tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
 
 				pd.setDati(dati);
 
@@ -651,7 +655,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 									filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
 									showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 									privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-									accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,tipoProtocollo, listaTipiProtocollo,used);
+									accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
+									tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
 
 							pd.setDati(dati);
 

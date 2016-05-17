@@ -116,6 +116,13 @@ public interface IProtocolConfiguration {
 	public boolean isSupportoIndirizzoRisposta();
 	
 	/**
+	 * Ritorna l'indicazione se la specifica delle interfacce prevede il wsdl definitorio
+	 * 
+	 * @return True se la specifica delle interfacce prevede il wsdl definitorio
+	 */
+	public boolean isSupportoWsdlDefinitorio();
+	
+	/**
 	 * Ritorna l'indicazione se la specifica delle conversazioni viene supportata dal protocollo
 	 * 
 	 * @return True se la specifica delle conversazioni viene supportata dal protocollo

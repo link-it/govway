@@ -23,9 +23,11 @@ package org.openspcoop2.utils.wadl;
 
 import java.util.Hashtable;
 
+import org.apache.log4j.Logger;
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
+import org.openspcoop2.utils.xml.XSDSchemaCollection;
 import org.openspcoop2.utils.xml.XSDUtils;
 
 /**
@@ -77,6 +79,10 @@ public class ApplicationWrapper {
 			this.xsdUtils.registraMappingNamespaceLocations(resource, systemId, this.mappingNamespaceLocations);
 			
 		}
+	}
+	
+	public XSDSchemaCollection buildSchemaCollection(Logger log) throws XMLException{
+		return this.xsdUtils.buildSchemaCollection(this.resources, this.mappingNamespaceLocations, log);
 	}
 
 }

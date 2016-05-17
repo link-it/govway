@@ -208,6 +208,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_CORRELATA_A_AZIONE = "Correlata all'azione";
 	public final static String LABEL_CORRELAZIONE_ASINCRONA = "Correlazione asincrona";
 	public final static String LABEL_DOWNLOAD = "Download";
+	public final static String LABEL_XSD_SCHEMA_COLLECTION = "XSD Schema Collection";
 	public final static String LABEL_SOGGETTO = "Soggetto";
 	public final static String LABEL_ACCORDO_SERVIZIO_PARTE_SPECIFICA = "Accordo Servizio Parte Specifica";
 	public final static String LABEL_FRUITORI = "Fruitori";
@@ -389,6 +390,10 @@ public class AccordiServizioParteComuneCostanti {
 	
 	/* DEFAULT VALUE PARAMETRI */
 
+	public final static String TIPO_WSDL_CONCETTUALE = "Concettuale";
+	public final static String TIPO_WSDL_EROGATORE = "LogicoErogatore";
+	public final static String TIPO_WSDL_FRUITORE = "LogicoFruitore";
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPES_STYLE = BindingStyle.DOCUMENT.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_STYLE = "0";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_USE = BindingUse.LITERAL.getValue();

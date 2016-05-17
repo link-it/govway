@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -187,6 +188,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// Flag per controllare il mapping automatico di porttype e operation
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
+			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = apcCore.getProtocolli();
@@ -335,7 +337,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, "0", TipoOperazione.ADD, 
 						false, true, this.referente, this.versione, providersList, providersListLabel, 
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
-						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, listaTipiProtocollo,false);
+						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
+						this.tipoProtocollo, listaTipiProtocollo,false,false);
 
 				pd.setDati(dati);
 
@@ -371,7 +374,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, "0", TipoOperazione.ADD, 
 						false, true,this.referente, this.versione, providersList, providersListLabel,
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
-						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, listaTipiProtocollo,false);
+						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
+						this.tipoProtocollo, listaTipiProtocollo,false,false);
 
 				pd.setDati(dati);
 
@@ -399,8 +403,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// Se un utente ha impostato solo il logico erogatore (avviene automaticamente nel caso non venga visualizzato il campo concettuale)
 			// imposto lo stesso wsdl anche per il concettuale. Tanto Rappresenta la stessa informazione, ma e' utile per lo stato dell'accordo
+			boolean facilityUnicoWSDL_interfacciaStandard = false;
 			if(as.getByteWsdlLogicoErogatore()!=null && as.getByteWsdlLogicoFruitore()==null && as.getByteWsdlConcettuale()==null){
 				as.setByteWsdlConcettuale(as.getByteWsdlLogicoErogatore());
+				facilityUnicoWSDL_interfacciaStandard = true;
 			}
 			
 			// Conversione Abilitato/Disabilitato
@@ -469,7 +475,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, "0", TipoOperazione.ADD, 
 							false, true,this.referente, this.versione, providersList, providersListLabel,
 							this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
-							this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, listaTipiProtocollo,false);
+							this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
+							this.tipoProtocollo, listaTipiProtocollo,false,false);
 
 					pd.setDati(dati);
 
@@ -484,6 +491,26 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(enableAutoMapping){
 				if(as.getByteWsdlConcettuale() != null || as.getByteWsdlLogicoErogatore() != null || as.getByteWsdlLogicoFruitore() != null) {
 					apcCore.mappingAutomatico(this.tipoProtocollo, as);
+					if(enableAutoMapping_estraiXsdSchemiFromWsdlTypes){
+						Hashtable<String, byte[]> schemiAggiuntiInQuestaOperazione = new Hashtable<String, byte[]>();
+						if(as.getByteWsdlConcettuale() != null){ 
+							apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlConcettuale(),AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE, schemiAggiuntiInQuestaOperazione);
+						}
+						if(facilityUnicoWSDL_interfacciaStandard){
+							// è stato utilizzato il concettuale. Lo riporto nel logico
+							if(as.getByteWsdlConcettuale()!=null){
+								as.setByteWsdlLogicoErogatore(as.getByteWsdlConcettuale());
+							}
+						}
+						else{
+							if(as.getByteWsdlLogicoErogatore() != null){
+								apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlLogicoErogatore(),AccordiServizioParteComuneCostanti.TIPO_WSDL_EROGATORE, schemiAggiuntiInQuestaOperazione);
+							}
+							if(as.getByteWsdlLogicoFruitore() != null){
+								apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlLogicoFruitore(),AccordiServizioParteComuneCostanti.TIPO_WSDL_FRUITORE, schemiAggiuntiInQuestaOperazione);
+							}
+						}
+					}
 					try{
 						// Se ho fatto il mapping controllo la validita' di quanto prodotto
 						as.setStatoPackage(StatiAccordo.operativo.toString());

@@ -398,6 +398,7 @@ public class ControlStationCore {
 	private String labelSwitchRapidoModalitaInterfacciaAvanzata = null;
 	private boolean showMenuAggregatoOggettiRegistro = false;
 	private boolean enableAutoMappingWsdlIntoAccordo = false;
+	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
 	private boolean showMTOMVisualizzazioneCompleta = false;
 	private boolean showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = false;
 	private boolean showPortaDelegataUrlInvocazione = false;
@@ -475,6 +476,9 @@ public class ControlStationCore {
 	}
 	public boolean isEnableAutoMappingWsdlIntoAccordo() {
 		return this.enableAutoMappingWsdlIntoAccordo;
+	}
+	public boolean isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes() {
+		return this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
 	}
 	public boolean isShowMTOMVisualizzazioneCompleta() {
 		return this.showMTOMVisualizzazioneCompleta;
@@ -1142,6 +1146,7 @@ public class ControlStationCore {
 		this.labelSwitchRapidoModalitaInterfacciaStandard = core.labelSwitchRapidoModalitaInterfacciaStandard;
 		this.showMenuAggregatoOggettiRegistro = core.showMenuAggregatoOggettiRegistro;
 		this.enableAutoMappingWsdlIntoAccordo = core.enableAutoMappingWsdlIntoAccordo;
+		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
 		this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = core.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl;
 		this.showPortaDelegataUrlInvocazione = core.showPortaDelegataUrlInvocazione;
@@ -1358,6 +1363,7 @@ public class ControlStationCore {
 			this.labelSwitchRapidoModalitaInterfacciaStandard = consoleProperties.getLabelConsoleInterfacciaSwitchRapidoModalitaStandard();
 			this.showMenuAggregatoOggettiRegistro = consoleProperties.isMenuVisualizzazioneAggregataOggettiRegistro();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
+			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
 			this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = consoleProperties.isElenchiMenuVisualizzazioneCampiInserimentoStrutturaMessaggiWsdl();
 			this.showPortaDelegataUrlInvocazione = consoleProperties.isMenuPortaDelegataVisualizzazioneUrlInvocazione();

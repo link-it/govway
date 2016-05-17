@@ -44,6 +44,7 @@ public class ServiziModel extends AbstractModel<Servizi> {
 		this.TIPI = new org.openspcoop2.protocol.manifest.model.TipiModel(new Field("tipi",org.openspcoop2.protocol.manifest.Tipi.class,"servizi",Servizi.class));
 		this.PROFILO = new org.openspcoop2.protocol.manifest.model.ProfiloModel(new Field("profilo",org.openspcoop2.protocol.manifest.Profilo.class,"servizi",Servizi.class));
 		this.FUNZIONALITA = new org.openspcoop2.protocol.manifest.model.FunzionalitaModel(new Field("funzionalita",org.openspcoop2.protocol.manifest.Funzionalita.class,"servizi",Servizi.class));
+		this.WSDL_DEFINITORIO = new Field("wsdlDefinitorio",boolean.class,"servizi",Servizi.class);
 		this.SPECIFICA_CONVERSAZIONI = new Field("specificaConversazioni",boolean.class,"servizi",Servizi.class);
 	
 	}
@@ -55,6 +56,7 @@ public class ServiziModel extends AbstractModel<Servizi> {
 		this.TIPI = new org.openspcoop2.protocol.manifest.model.TipiModel(new ComplexField(father,"tipi",org.openspcoop2.protocol.manifest.Tipi.class,"servizi",Servizi.class));
 		this.PROFILO = new org.openspcoop2.protocol.manifest.model.ProfiloModel(new ComplexField(father,"profilo",org.openspcoop2.protocol.manifest.Profilo.class,"servizi",Servizi.class));
 		this.FUNZIONALITA = new org.openspcoop2.protocol.manifest.model.FunzionalitaModel(new ComplexField(father,"funzionalita",org.openspcoop2.protocol.manifest.Funzionalita.class,"servizi",Servizi.class));
+		this.WSDL_DEFINITORIO = new ComplexField(father,"wsdlDefinitorio",boolean.class,"servizi",Servizi.class);
 		this.SPECIFICA_CONVERSAZIONI = new ComplexField(father,"specificaConversazioni",boolean.class,"servizi",Servizi.class);
 	
 	}
@@ -66,6 +68,8 @@ public class ServiziModel extends AbstractModel<Servizi> {
 	public org.openspcoop2.protocol.manifest.model.ProfiloModel PROFILO = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.FunzionalitaModel FUNZIONALITA = null;
+	 
+	public IField WSDL_DEFINITORIO = null;
 	 
 	public IField SPECIFICA_CONVERSAZIONI = null;
 	 
