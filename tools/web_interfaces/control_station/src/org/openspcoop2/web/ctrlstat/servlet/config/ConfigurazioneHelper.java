@@ -3165,14 +3165,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			else{
+				if(versioneBaseDati!=null){
+					versioneBaseDati = StringEscapeUtils.escapeHtml(versioneBaseDati);
+				}
 				versioneBaseDati = versioneBaseDati.replaceAll("\n", "<br/>");
 			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
 			versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		if(versioneBaseDati!=null){
-			versioneBaseDati = StringEscapeUtils.escapeHtml(versioneBaseDati);
 		}
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
@@ -3193,14 +3193,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 			}
 			else{
+				if(confDir!=null){
+					confDir = StringEscapeUtils.escapeHtml(confDir);
+				}
 				confDir = confDir.replaceAll("\n", "<br/>");
 			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della directory di configurazione (jmxResourcePdD): "+e.getMessage(),e);
 			confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		if(confDir!=null){
-			confDir = StringEscapeUtils.escapeHtml(confDir);
 		}
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
