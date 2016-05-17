@@ -400,6 +400,9 @@ public class DatabaseMsgDiagnosticiComponent {
 					res = prep.executeQuery();
 					return res.next();
 				} catch (SQLException eClob) {
+			
+					// Se si ottiene: ORA-22835 Buffer too small for CLOB to CHAR or BLOB to RAW conversion (actual: 4907, maximum: 4000)
+					// Eliminare tutti i diagnostici e riprovare
 					
 					throw new TestSuiteException("Errore nel database: "+eClob.getMessage(),
 					"nella fase DBC.getResult (CLOB)");
