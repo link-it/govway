@@ -38,13 +38,13 @@ public class ProxyContext implements IContext,Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String idTransaction;
+	protected String idTransaction;
 		
-	private Transaction transaction;
+	protected Transaction transaction;
 	
-	private Request request;
+	protected Request request;
 	
-	private Response response;
+	protected Response response;
 		
 	public ProxyContext(){}
 	

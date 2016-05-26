@@ -23,6 +23,7 @@ package org.openspcoop2.utils.logger.beans;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.openspcoop2.utils.logger.constants.SortOrder;
 import org.openspcoop2.utils.logger.IEventSearchContext;
 import org.openspcoop2.utils.logger.constants.Severity;
 
@@ -45,9 +46,10 @@ public class EventSearchContext implements IEventSearchContext,Serializable {
 	private String source;
 	private String code;
 	private Severity severity;
-	private String correlationIdentifier;
-	private String clusterId;
-	private String configurationId;
+	private IdentifierSearch correlationIdentifier;
+	private IdentifierSearch clusterId;
+	private IdentifierSearch configurationId;
+	private SortOrder sortOrder;
 		
 	@Override
 	public Date getLeftIntervalDate() {
@@ -67,11 +69,11 @@ public class EventSearchContext implements IEventSearchContext,Serializable {
 	}
 	
 	@Override
-	public String getConfigurationId() {
+	public IdentifierSearch getConfigurationId() {
 		return this.configurationId;
 	}
 	@Override
-	public void setConfigurationId(String configurationId) {
+	public void setConfigurationId(IdentifierSearch configurationId) {
 		this.configurationId = configurationId;
 	}
 	
@@ -103,21 +105,31 @@ public class EventSearchContext implements IEventSearchContext,Serializable {
 	}
 
 	@Override
-	public String getCorrelationIdentifier() {
+	public IdentifierSearch getCorrelationIdentifier() {
 		return this.correlationIdentifier;
 	}
 	@Override
-	public void setCorrelationIdentifier(String correlationIdentifier) {
+	public void setCorrelationIdentifier(IdentifierSearch correlationIdentifier) {
 		this.correlationIdentifier = correlationIdentifier;
 	}
 	
 	@Override
-	public String getClusterId() {
+	public IdentifierSearch getClusterId() {
 		return this.clusterId;
 	}
 	@Override
-	public void setClusterId(String clusterId) {
+	public void setClusterId(IdentifierSearch clusterId) {
 		this.clusterId = clusterId;
+	}
+	
+	@Override
+	public SortOrder getSortOrder() {
+		return this.sortOrder;
+	}
+
+	@Override
+	public void setSortOrder(SortOrder sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 }

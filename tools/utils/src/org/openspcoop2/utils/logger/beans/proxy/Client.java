@@ -29,17 +29,13 @@ import java.io.Serializable;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Client implements Serializable {
+public class Client extends BaseClient implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String name;
-	private String principal;
-	private String interfaceName; // es. portaDelegata
-	private String invocationEndpoint;
 	private String transportResponseCode;
 	
 	
@@ -49,28 +45,5 @@ public class Client implements Serializable {
 	public void setTransportResponseCode(String transportResponseCode) {
 		this.transportResponseCode = transportResponseCode;
 	}
-	public String getName() {
-		return this.name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getInterfaceName() {
-		return this.interfaceName;
-	}
-	public void setInterfaceName(String interfaceName) {
-		this.interfaceName = interfaceName;
-	}
-	public String getPrincipal() {
-		return this.principal;
-	}
-	public void setPrincipal(String principal) {
-		this.principal = principal;
-	}
-	public String getInvocationEndpoint() {
-		return this.invocationEndpoint;
-	}
-	public void setInvocationEndpoint(String invocationEndpoint) {
-		this.invocationEndpoint = invocationEndpoint;
-	}
+
 }

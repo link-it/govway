@@ -47,8 +47,6 @@ public class Message implements Serializable {
 	
 	private byte[] content;
 	
-	private byte [] signature;
-	
 	private String idTransaction;
 	
 	private List<Attachment> attachments = new ArrayList<Attachment>();
@@ -212,14 +210,6 @@ public class Message implements Serializable {
 
 	public void setType(MessageType type) {
 		this.type = type;
-	}
-	
-	public byte[] getSignature() {
-		return this.signature;
-	}
-
-	public void setSignature(byte[] signature) {
-		this.signature = signature;
 	}
 	
 	public String getIdTransaction() {

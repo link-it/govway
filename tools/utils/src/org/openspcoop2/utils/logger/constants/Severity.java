@@ -53,4 +53,29 @@ public enum Severity implements Serializable {
 		return -1;
 	}
 	
+	public static Severity toSeverity(int value){
+		if(value == 0){
+			return FATAL;
+		}
+		else if(value == 1){
+			return ERROR;
+		}
+		else if(value == 2){
+			return WARN;
+		}
+		else if(value == 3){
+			return INFO;
+		}
+		else if(value == 4){
+			return DEBUG_LOW;
+		}
+		else if(value == 5){
+			return DEBUG_MEDIUM;
+		}
+		else if(value == 6){
+			return DEBUG_HIGH;
+		}
+		return null;
+	}
+	
 }

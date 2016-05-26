@@ -23,6 +23,8 @@ package org.openspcoop2.utils.logger;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.openspcoop2.utils.logger.constants.SortOrder;
+import org.openspcoop2.utils.logger.beans.IdentifierSearch;
 import org.openspcoop2.utils.logger.constants.Severity;
 
 /**
@@ -34,8 +36,11 @@ import org.openspcoop2.utils.logger.constants.Severity;
  */
 public interface IEventSearchContext extends Serializable {
 
-	public String getConfigurationId();
-	public void setConfigurationId(String configurationId);
+	public SortOrder getSortOrder();
+	public void setSortOrder(SortOrder sortOrder);
+	
+	public IdentifierSearch getConfigurationId();
+	public void setConfigurationId(IdentifierSearch configurationId);
 	
 	public Date getLeftIntervalDate();
 	public void setLeftIntervalDate(Date date);
@@ -52,10 +57,10 @@ public interface IEventSearchContext extends Serializable {
 	public Severity getSeverity();
 	public void setSeverity(Severity severity);
 	
-	public String getCorrelationIdentifier();
-	public void setCorrelationIdentifier(String correlationIdentifier);
+	public IdentifierSearch getCorrelationIdentifier();
+	public void setCorrelationIdentifier(IdentifierSearch correlationIdentifier);
 	
-	public String getClusterId();
-	public void setClusterId(String clusterId);
+	public IdentifierSearch getClusterId();
+	public void setClusterId(IdentifierSearch clusterId);
 	
 }

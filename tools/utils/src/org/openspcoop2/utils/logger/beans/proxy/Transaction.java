@@ -21,7 +21,10 @@
 package org.openspcoop2.utils.logger.beans.proxy;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.openspcoop2.utils.logger.constants.proxy.Context;
 import org.openspcoop2.utils.logger.constants.proxy.Result;
 
 /**
@@ -41,6 +44,7 @@ public class Transaction implements Serializable {
 	private String state; // per marcare la transazione appartenente ad uno stato condiviso tra più transazioni
 	
 	private Result result;
+	private Context context; // contesto della transazione
 	
 	private String domain;
 	private Role role;
@@ -55,6 +59,10 @@ public class Transaction implements Serializable {
 	private Server server;
 	
 	private String clusterId;
+	
+	private String protocol; // indicare un protocollo applicativo a cui appartiene il messaggio
+	
+	private List<String> events = new ArrayList<String>(); // eventi a cui appartiene la transazione
 	
 	public String getState() {
 		return this.state;
@@ -142,5 +150,29 @@ public class Transaction implements Serializable {
 
 	public void setClusterId(String clusterId) {
 		this.clusterId = clusterId;
+	}
+	
+	public Context getContext() {
+		return this.context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
+	public String getProtocol() {
+		return this.protocol;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
+
+	public List<String> getEvents() {
+		return this.events;
+	}
+	
+	public void addEvent(String event){
+		this.events.add(event);
 	}
 }

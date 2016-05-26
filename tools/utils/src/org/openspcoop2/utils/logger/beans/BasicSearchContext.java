@@ -24,6 +24,7 @@ package org.openspcoop2.utils.logger.beans;
 import java.io.Serializable;
 
 import org.openspcoop2.utils.logger.ISearchContext;
+import org.openspcoop2.utils.logger.constants.SortOrder;
 
 /**
  * BasicSearchContext
@@ -40,6 +41,7 @@ public class BasicSearchContext implements ISearchContext,Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String idTransaction;
+	private SortOrder sortOrder;
 	
 	@Override
 	public String getIdTransaction() {
@@ -49,6 +51,16 @@ public class BasicSearchContext implements ISearchContext,Serializable {
 	@Override
 	public void setIdTransaction(String idTransaction) {
 		this.idTransaction = idTransaction;
+	}
+
+	@Override
+	public SortOrder getSortOrder() {
+		return this.sortOrder;
+	}
+
+	@Override
+	public void setSortOrder(SortOrder sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 }

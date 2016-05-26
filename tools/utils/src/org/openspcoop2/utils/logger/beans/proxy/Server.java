@@ -29,15 +29,13 @@ import java.io.Serializable;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Server implements Serializable {
+public class Server extends BaseServer implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String name;
-	private String endpoint;
 	private String endpointType;
 	private String transportCode;
 	
@@ -46,18 +44,6 @@ public class Server implements Serializable {
 	}
 	public void setTransportCode(String transportCode) {
 		this.transportCode = transportCode;
-	}
-	public String getName() {
-		return this.name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getEndpoint() {
-		return this.endpoint;
-	}
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
 	}
 	public String getEndpointType() {
 		return this.endpointType;

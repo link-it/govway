@@ -18,46 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.logger.beans;
+package org.openspcoop2.utils.logger.beans.proxy;
 
 import java.io.Serializable;
 
 /**
- * Attachment
+ * BaseServer
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Attachment implements Serializable {
+public class BaseServer implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String contentType;
-	private String contentId;
-	private byte[] content;
+	private String name;
+	private String endpoint;
 	
-	public String getContentType() {
-		return this.contentType;
+	public String getName() {
+		return this.name;
 	}
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setName(String name) {
+		this.name = name;
 	}
-
-	public String getContentId() {
-		return this.contentId;
+	public String getEndpoint() {
+		return this.endpoint;
 	}
-	public void setContentId(String contentId) {
-		this.contentId = contentId;
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
 	}
-
-	public byte[] getContent() {
-		return this.content;
-	}
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
+	
 }
+

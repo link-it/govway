@@ -81,6 +81,74 @@ public class DiagnosticManager {
 		
 		this.init();
 	}
+	private DiagnosticManager(){} // for clone
+	
+	public DiagnosticManager clone(IContext newContext){
+		
+		DiagnosticManager dmNew = new DiagnosticManager();
+		
+		dmNew.context = newContext;
+		
+		if(this.defaultFunction!=null){
+			dmNew.defaultFunction = new String(this.defaultFunction);
+		}
+		
+		if(this.diagnosticProperties!=null && this.diagnosticProperties.size()>0){
+			dmNew.diagnosticProperties = new Properties();
+			Enumeration<Object> enKeys = this.diagnosticProperties.keys();
+			while (enKeys.hasMoreElements()) {
+				Object objKey = (Object) enKeys.nextElement();
+				Object objValue = this.diagnosticProperties.get(objKey);	
+				dmNew.diagnosticProperties.put(objKey, objValue);
+			}
+		}
+		
+		dmNew.loggerForCallback = this.loggerForCallback;
+		
+		dmNew.throwExceptionPlaceholderFailedResolution = this.throwExceptionPlaceholderFailedResolution;
+		
+		if(this.mappingFullCodeToFullString!=null && this.mappingFullCodeToFullString.size()>0){
+			dmNew.mappingFullCodeToFullString = new Hashtable<String, String>();
+			Enumeration<String> keys = this.mappingFullCodeToFullString.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				String value = this.mappingFullCodeToFullString.get(key);
+				dmNew.mappingFullCodeToFullString.put(key, value);
+			}
+		}
+		
+		if(this.mappingFunctionToCode!=null && this.mappingFunctionToCode.size()>0){
+			dmNew.mappingFunctionToCode = new Hashtable<String, String>();
+			Enumeration<String> keys = this.mappingFunctionToCode.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				String value = this.mappingFunctionToCode.get(key);
+				dmNew.mappingFunctionToCode.put(key, value);
+			}
+		}
+		
+		if(this.mappingSeverityToCode!=null && this.mappingSeverityToCode.size()>0){
+			dmNew.mappingSeverityToCode = new Hashtable<LowSeverity, String>();
+			Enumeration<LowSeverity> keys = this.mappingSeverityToCode.keys();
+			while (keys.hasMoreElements()) {
+				LowSeverity key = (LowSeverity) keys.nextElement();
+				String value = this.mappingSeverityToCode.get(key);
+				dmNew.mappingSeverityToCode.put(key, value);
+			}
+		}
+		
+		if(this.mappingStringCodeToDiagnostic!=null && this.mappingStringCodeToDiagnostic.size()>0){
+			dmNew.mappingStringCodeToDiagnostic = new Hashtable<String, DiagnosticInfo>();
+			Enumeration<String> keys = this.mappingStringCodeToDiagnostic.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				DiagnosticInfo value = this.mappingStringCodeToDiagnostic.get(key);
+				dmNew.mappingStringCodeToDiagnostic.put(key, value);
+			}
+		}
+		
+		return dmNew;
+	}
 	
 	public String getDefaultFunction() {
 		return this.defaultFunction;
@@ -101,6 +169,17 @@ public class DiagnosticManager {
 		if(this.mappingStringCodeToDiagnostic.containsKey(code)){
 			// è un codice stringa, ritorno il codice numerico
 			return this.mappingStringCodeToDiagnostic.get(code).functionCode+this.mappingStringCodeToDiagnostic.get(code).code;
+		}
+		throw new UtilsException("Diagnostic with code ["+code+"] undefined");
+	}
+	
+	public String getHumanCode(String code) throws UtilsException{
+		if(this.mappingStringCodeToDiagnostic.containsKey(code)){
+			// è già il codice human
+			return code;
+		}
+		if(this.mappingFullCodeToFullString.containsKey(code)){
+			return this.mappingFullCodeToFullString.get(code);
 		}
 		throw new UtilsException("Diagnostic with code ["+code+"] undefined");
 	}
@@ -372,6 +451,14 @@ public class DiagnosticManager {
 	
 	private String getValue(String diagnostic, String key, Object dinamycObject, String ... params) throws UtilsException{
 		if(key.startsWith(CONTEXT)){
+			if(this.context==null){
+				if(this.throwExceptionPlaceholderFailedResolution){
+					throw new UtilsException("(diagnostic:"+diagnostic+") Placeholder ["+key+"] required context");
+				}
+				else{
+					return "(???Placeholder ["+key+"] required context)";
+				}
+			}
 			return this.readValueInObject(diagnostic, this.context, key.substring(CONTEXT.length(), key.length()), key);
 		}
 		else if(key.startsWith(DYNAMIC_OBJECT)){
@@ -421,9 +508,11 @@ public class DiagnosticManager {
 					
 					// provo a chiamare callback
 					try{
-						String value = this.loggerForCallback.getLogParam(key);
-						if(value!=null){
-							return value;
+						if(this.loggerForCallback!=null){
+							String value = this.loggerForCallback.getLogParam(key);
+							if(value!=null){
+								return value;
+							}
 						}
 					}catch(Exception eCallback){
 						if(this.throwExceptionPlaceholderFailedResolution){

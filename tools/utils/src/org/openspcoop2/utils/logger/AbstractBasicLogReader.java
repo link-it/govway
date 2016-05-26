@@ -20,35 +20,35 @@
  */
 package org.openspcoop2.utils.logger;
 
-import java.util.List;
+import java.io.File;
+import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.logger.beans.Diagnostic;
-import org.openspcoop2.utils.logger.beans.Event;
-import org.openspcoop2.utils.logger.beans.Message;
 
 /**
- * ILogger
+ * AbstractBasicLogReader
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface ILogReader {
-	
-	public void initReader() throws UtilsException;
-	
-	// diagnostici
-	public List<Diagnostic> findDiagnostics(IPaginatedSearchContext searchContext) throws UtilsException;
+public abstract class AbstractBasicLogReader extends AbstractBaseDiagnosticManagerCore implements ILogReader {
 
-	// transazione (+tracce)
-	public IContext getContext(String idTransaction) throws UtilsException;
-	public List<IContext> findContexts(IPaginatedSearchContext searchContext) throws UtilsException;
 	
-	// dump
-	public List<Message> getMessages(String idTransaction) throws UtilsException;
+	public AbstractBasicLogReader(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
+		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution);
+	}
+	public AbstractBasicLogReader(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
+		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution);
+	}
+	public AbstractBasicLogReader(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
+		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution);
+	}
+
+	@Override
+	public void initReader() throws UtilsException{
+		super.init(null,null);
+	}
 	
-	// event
-	public List<Event> findEvents(IPaginatedEventSearchContext searchContext) throws UtilsException;
 	
 }

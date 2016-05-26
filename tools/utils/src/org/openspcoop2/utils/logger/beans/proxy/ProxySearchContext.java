@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.openspcoop2.utils.logger.beans.BasicPaginatedSearchContext;
-import org.openspcoop2.utils.logger.constants.proxy.Result;
 
 /**
  * ProxySearchContext
@@ -46,7 +45,7 @@ public class ProxySearchContext extends BasicPaginatedSearchContext implements S
 	
 	private String state;
 	
-	private Result result;
+	private ResultSearch result;
 	
 	private String domain;
 	private Role role;
@@ -57,20 +56,21 @@ public class ProxySearchContext extends BasicPaginatedSearchContext implements S
 	private Service service;
 	private Operation operation;
 	
-	private Client client;
-	private Server server;
+	private BaseClient client;
+
+	private BaseServer server;
 	
-	private String clusterId;
-	
-	private Identifier requestIdentifier;
-	
-	private String requestCorrelationIdentifier;
-	
-	private Identifier responseIdentifier;
-	
-	private String responseCorrelationIdentifier;
+	private IdentifierGroupSearch identifierSearch;
 
 	
+	public IdentifierGroupSearch getIdentifierSearch() {
+		return this.identifierSearch;
+	}
+
+	public void setIdentifierSearch(IdentifierGroupSearch identifierSearch) {
+		this.identifierSearch = identifierSearch;
+	}
+
 	public Date getLeftIntervalDate() {
 		return this.leftIntervalDate;
 	}
@@ -95,11 +95,11 @@ public class ProxySearchContext extends BasicPaginatedSearchContext implements S
 		this.state = state;
 	}
 
-	public Result getResult() {
+	public ResultSearch getResult() {
 		return this.result;
 	}
 
-	public void setResult(Result result) {
+	public void setResult(ResultSearch result) {
 		this.result = result;
 	}
 
@@ -151,59 +151,22 @@ public class ProxySearchContext extends BasicPaginatedSearchContext implements S
 		this.operation = operation;
 	}
 
-	public Client getClient() {
+	public BaseClient getClient() {
 		return this.client;
 	}
 
-	public void setClient(Client client) {
+	public void setClient(BaseClient client) {
 		this.client = client;
 	}
 
-	public Server getServer() {
+	public BaseServer getServer() {
 		return this.server;
 	}
 
-	public void setServer(Server server) {
+	public void setServer(BaseServer server) {
 		this.server = server;
 	}
 
-	public String getClusterId() {
-		return this.clusterId;
-	}
 
-	public void setClusterId(String clusterId) {
-		this.clusterId = clusterId;
-	}
 
-	public Identifier getRequestIdentifier() {
-		return this.requestIdentifier;
-	}
-
-	public void setRequestIdentifier(Identifier requestIdentifier) {
-		this.requestIdentifier = requestIdentifier;
-	}
-
-	public String getRequestCorrelationIdentifier() {
-		return this.requestCorrelationIdentifier;
-	}
-
-	public void setRequestCorrelationIdentifier(String requestCorrelationIdentifier) {
-		this.requestCorrelationIdentifier = requestCorrelationIdentifier;
-	}
-
-	public Identifier getResponseIdentifier() {
-		return this.responseIdentifier;
-	}
-
-	public void setResponseIdentifier(Identifier responseIdentifier) {
-		this.responseIdentifier = responseIdentifier;
-	}
-
-	public String getResponseCorrelationIdentifier() {
-		return this.responseCorrelationIdentifier;
-	}
-
-	public void setResponseCorrelationIdentifier(String responseCorrelationIdentifier) {
-		this.responseCorrelationIdentifier = responseCorrelationIdentifier;
-	}
 }

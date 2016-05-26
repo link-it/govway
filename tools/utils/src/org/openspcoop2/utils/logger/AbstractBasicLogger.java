@@ -21,13 +21,10 @@
 package org.openspcoop2.utils.logger;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.date.SystemDate;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 import org.openspcoop2.utils.logger.beans.Diagnostic;
 import org.openspcoop2.utils.logger.constants.LowSeverity;
@@ -40,28 +37,18 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractBasicLogger implements ILogger {
+public abstract class AbstractBasicLogger extends AbstractBaseDiagnosticManagerCore implements ILogger {
 
 	protected String idTransaction;
-	private DiagnosticManager diagnosticManager;
-	private boolean throwExceptionPlaceholderFailedResolution;
-	private Properties diagnosticProperties;
-	
+		
 	public AbstractBasicLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		this(getProperties(diagnosticPropertiesResourceURI), throwExceptionPlaceholderFailedResolution);
+		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution);
 	}
 	public AbstractBasicLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		this(getProperties(diagnosticPropertiesResource), throwExceptionPlaceholderFailedResolution);
+		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution);
 	}
 	public AbstractBasicLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		try{
-			this.diagnosticProperties = diagnosticProperties;
-						
-			this.throwExceptionPlaceholderFailedResolution = throwExceptionPlaceholderFailedResolution;
-			
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
+		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution);
 	}
 
 	@Override
@@ -72,9 +59,7 @@ public abstract class AbstractBasicLogger implements ILogger {
 			org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator g = new UniversallyUniqueIdentifierGenerator();
 			this.idTransaction = g.newID().toString();
 			
-			DateManager.initializeDataManager(SystemDate.class.getName(), null, null);
-			
-			this.diagnosticManager = new DiagnosticManager(this.diagnosticProperties, this.getContext(), this.throwExceptionPlaceholderFailedResolution, this);
+			super.init(this.getContext(), this);
 			
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -139,68 +124,4 @@ public abstract class AbstractBasicLogger implements ILogger {
 	
 	
 	
-	
-	// ---- STATIC 
-	
-	private static Properties getProperties(String diagnosticPropertiesResourceURI) throws UtilsException{
-		InputStream is = null;
-		try{
-			is = AbstractBasicLogger.class.getResourceAsStream(diagnosticPropertiesResourceURI);
-			if(is==null && diagnosticPropertiesResourceURI.startsWith("/")==false){
-				is = AbstractBasicLogger.class.getResourceAsStream("/"+diagnosticPropertiesResourceURI);
-			}
-			if(is==null){
-				throw new UtilsException("Resource ["+diagnosticPropertiesResourceURI+"] not found");
-			}
-			Properties p = new Properties();
-			p.load(is);
-			return p;
-		}
-		catch(Exception e){
-			if(e instanceof UtilsException){
-				throw (UtilsException) e;
-			}
-			else{
-				throw new UtilsException(e.getMessage(),e);
-			}
-		}
-		finally{
-			try{
-				if(is!=null){
-					is.close();
-				}
-			}catch(Exception eClose){}
-		}
-	}
-	
-	private static Properties getProperties(File diagnosticPropertiesResource) throws UtilsException{
-		InputStream is = null;
-		try{
-			if(diagnosticPropertiesResource.exists()==false){
-				throw new Exception("Not exists");
-			}
-			if(diagnosticPropertiesResource.canRead()==false){
-				throw new Exception("Cannot read");
-			}
-			is = new FileInputStream(diagnosticPropertiesResource);
-			Properties p = new Properties();
-			p.load(is);
-			return p;
-		}
-		catch(Exception e){
-			if(e instanceof UtilsException){
-				throw (UtilsException) e;
-			}
-			else{
-				throw new UtilsException(e.getMessage(),e);
-			}
-		}
-		finally{
-			try{
-				if(is!=null){
-					is.close();
-				}
-			}catch(Exception eClose){}
-		}
-	}
 }

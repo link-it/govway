@@ -366,11 +366,6 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 			out.append(" \n");
 		}
 		
-		if(message.getSignature()!=null){
-			out.append("Signature:"+message.getSignature());
-			out.append(" \n");
-		}
-		
 		if(message.getType()!=null){
 			out.append("Type:"+message.getType().name());
 			out.append(" \n");
@@ -418,10 +413,6 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		if(message.getAttachments()!=null && message.getAttachments().size()>0){
 			for (Attachment attachment : message.getAttachments()) {
 				out.append("------ Attachment id["+attachment.getContentId()+"] ------\n");
-				if(attachment.getSignature()!=null){
-					out.append("Signature:"+attachment.getSignature());
-					out.append(" \n");
-				}
 				if(attachment.getContentType()!=null){
 					out.append("Content-Type:"+attachment.getContentType());
 					out.append(" \n");

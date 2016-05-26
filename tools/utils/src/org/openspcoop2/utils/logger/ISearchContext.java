@@ -22,6 +22,8 @@ package org.openspcoop2.utils.logger;
 
 import java.io.Serializable;
 
+import org.openspcoop2.utils.logger.constants.SortOrder;
+
 /**
  * ISearchContext
  *
@@ -33,5 +35,8 @@ public interface ISearchContext extends Serializable {
 
 	public String getIdTransaction();
 	public void setIdTransaction(String idTransaction);
+	
+	public SortOrder getSortOrder();
+	public void setSortOrder(SortOrder sortOrder);
 	
 }

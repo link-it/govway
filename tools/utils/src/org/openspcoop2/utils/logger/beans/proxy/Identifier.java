@@ -40,7 +40,14 @@ public class Identifier implements Serializable {
 	
 	private String id;
 	private Date date; // se l'id contiene una data, fornirla anche come oggetto
+	private boolean duplicate;
 	
+	public boolean isDuplicate() {
+		return this.duplicate;
+	}
+	public void setDuplicate(boolean duplicate) {
+		this.duplicate = duplicate;
+	}
 	public String getId() {
 		return this.id;
 	}

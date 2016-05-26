@@ -18,46 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.logger.beans;
+package org.openspcoop2.utils.logger.constants.proxy;
 
 import java.io.Serializable;
 
 /**
- * Attachment
+ * Result
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Attachment implements Serializable {
+public enum Context implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	STANDARD, 
+	SYSTEM
+	;  
 	
-	private String contentType;
-	private String contentId;
-	private byte[] content;
-	
-	public String getContentType() {
-		return this.contentType;
-	}
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-	public String getContentId() {
-		return this.contentId;
-	}
-	public void setContentId(String contentId) {
-		this.contentId = contentId;
-	}
-
-	public byte[] getContent() {
-		return this.content;
-	}
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
 }
