@@ -19,48 +19,33 @@
  *
  */
 
-package org.openspcoop2.utils.logger.beans;
+package org.openspcoop2.utils.logger.config;
 
-import java.io.Serializable;
-
-import org.openspcoop2.utils.logger.IPaginatedEventSearchContext;
+import java.util.Properties;
 
 /**
- * EventPaginatedSearchContext
+ * DatabaseConfigDatasource
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class EventPaginatedSearchContext extends EventSearchContext implements IPaginatedEventSearchContext,Serializable {
+public class DatabaseConfigDatasource {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private String jndiName;
+	private Properties jndiContext;
 	
-	private Integer limit;
-	private Integer offset;
-	
-	@Override
-	public Integer getLimit() {
-		return this.limit;
+	public String getJndiName() {
+		return this.jndiName;
 	}
-
-	@Override
-	public void setLimit(Integer limit) {
-		this.limit = limit;
+	public void setJndiName(String jndiName) {
+		this.jndiName = jndiName;
 	}
-
-	@Override
-	public Integer getOffset() {
-		return this.offset;
+	public Properties getJndiContext() {
+		return this.jndiContext;
 	}
-
-	@Override
-	public void setOffset(Integer offset) {
-		this.offset = offset;
+	public void setJndiContext(Properties jndiContext) {
+		this.jndiContext = jndiContext;
 	}
-
 	
 }

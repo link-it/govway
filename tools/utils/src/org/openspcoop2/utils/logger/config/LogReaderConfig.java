@@ -19,48 +19,35 @@
  *
  */
 
-package org.openspcoop2.utils.logger.beans;
-
-import java.io.Serializable;
-
-import org.openspcoop2.utils.logger.IPaginatedEventSearchContext;
+package org.openspcoop2.utils.logger.config;
 
 /**
- * EventPaginatedSearchContext
+ * LogReaderConfig
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class EventPaginatedSearchContext extends EventSearchContext implements IPaginatedEventSearchContext,Serializable {
+public class LogReaderConfig {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private DiagnosticConfig diagnosticConfig;
 	
-	private Integer limit;
-	private Integer offset;
+	private DatabaseConfig databaseConfig;
 	
-	@Override
-	public Integer getLimit() {
-		return this.limit;
+
+	public DiagnosticConfig getDiagnosticConfig() {
+		return this.diagnosticConfig;
 	}
 
-	@Override
-	public void setLimit(Integer limit) {
-		this.limit = limit;
+	public void setDiagnosticConfig(DiagnosticConfig diagnosticConfig) {
+		this.diagnosticConfig = diagnosticConfig;
 	}
 
-	@Override
-	public Integer getOffset() {
-		return this.offset;
+	public DatabaseConfig getDatabaseConfig() {
+		return this.databaseConfig;
 	}
 
-	@Override
-	public void setOffset(Integer offset) {
-		this.offset = offset;
+	public void setDatabaseConfig(DatabaseConfig databaseConfig) {
+		this.databaseConfig = databaseConfig;
 	}
-
-	
 }

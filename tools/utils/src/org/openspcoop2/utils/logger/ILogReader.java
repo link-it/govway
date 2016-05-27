@@ -39,16 +39,19 @@ public interface ILogReader {
 	public void initReader() throws UtilsException;
 	
 	// diagnostici
+	public long countDiagnostics(IPaginatedSearchContext searchContext) throws UtilsException;
 	public List<Diagnostic> findDiagnostics(IPaginatedSearchContext searchContext) throws UtilsException;
 
 	// transazione (+tracce)
 	public IContext getContext(String idTransaction) throws UtilsException;
+	public long countContexts(IPaginatedSearchContext searchContext) throws UtilsException;
 	public List<IContext> findContexts(IPaginatedSearchContext searchContext) throws UtilsException;
 	
 	// dump
 	public List<Message> getMessages(String idTransaction) throws UtilsException;
 	
 	// event
+	public long countEvents(IPaginatedEventSearchContext searchContext) throws UtilsException;
 	public List<Event> findEvents(IPaginatedEventSearchContext searchContext) throws UtilsException;
 	
 }

@@ -19,48 +19,45 @@
  *
  */
 
-package org.openspcoop2.utils.logger.beans;
-
-import java.io.Serializable;
-
-import org.openspcoop2.utils.logger.IPaginatedEventSearchContext;
+package org.openspcoop2.utils.logger.config;
 
 /**
- * EventPaginatedSearchContext
+ * DatabaseConfigConnection
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class EventPaginatedSearchContext extends EventSearchContext implements IPaginatedEventSearchContext,Serializable {
+public class DatabaseConfigConnection {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private String jdbcConnectionUrl;
+	private String jdbcDriver;
+	private String jdbcUsername;
+	private String jdbcPassword;
 	
-	private Integer limit;
-	private Integer offset;
-	
-	@Override
-	public Integer getLimit() {
-		return this.limit;
+	public String getJdbcConnectionUrl() {
+		return this.jdbcConnectionUrl;
 	}
-
-	@Override
-	public void setLimit(Integer limit) {
-		this.limit = limit;
+	public void setJdbcConnectionUrl(String jdbcConnectionUrl) {
+		this.jdbcConnectionUrl = jdbcConnectionUrl;
 	}
-
-	@Override
-	public Integer getOffset() {
-		return this.offset;
+	public String getJdbcDriver() {
+		return this.jdbcDriver;
 	}
-
-	@Override
-	public void setOffset(Integer offset) {
-		this.offset = offset;
+	public void setJdbcDriver(String jdbcDriver) {
+		this.jdbcDriver = jdbcDriver;
 	}
-
+	public String getJdbcUsername() {
+		return this.jdbcUsername;
+	}
+	public void setJdbcUsername(String jdbcUsername) {
+		this.jdbcUsername = jdbcUsername;
+	}
+	public String getJdbcPassword() {
+		return this.jdbcPassword;
+	}
+	public void setJdbcPassword(String jdbcPassword) {
+		this.jdbcPassword = jdbcPassword;
+	}
 	
 }

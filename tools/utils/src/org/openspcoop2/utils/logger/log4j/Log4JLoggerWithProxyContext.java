@@ -28,6 +28,9 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.IContext;
 import org.openspcoop2.utils.logger.beans.Property;
 import org.openspcoop2.utils.logger.beans.proxy.ProxyContext;
+import org.openspcoop2.utils.logger.config.DiagnosticConfig;
+import org.openspcoop2.utils.logger.config.Log4jConfig;
+import org.openspcoop2.utils.logger.config.MultiLoggerConfig;
 
 /**
  * Log4JLogger
@@ -38,6 +41,23 @@ import org.openspcoop2.utils.logger.beans.proxy.ProxyContext;
  */
 public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 
+	public Log4JLoggerWithProxyContext(org.apache.log4j.Logger logger, MultiLoggerConfig config) throws UtilsException {
+		super(getDiagnosticProperties(config), config.getDiagnosticConfig().getThrowExceptionPlaceholderFailedResolution(), 
+				getLog4jProperties(config), config.getLog4jConfig().getLog4jType());
+	}
+	private static Properties getDiagnosticProperties(MultiLoggerConfig config) throws UtilsException{
+		if(config==null){
+			throw new UtilsException("Configuration undefined");
+		}
+		return DiagnosticConfig.validateAndGetProperties(config.getDiagnosticConfig());
+	}
+	private static Properties getLog4jProperties(MultiLoggerConfig config) throws UtilsException{
+		if(config==null){
+			throw new UtilsException("Configuration undefined");
+		}
+		return Log4jConfig.validateAndGetProperties(config.getLog4jConfig());
+	}
+	
 	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
 			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType)
 			throws UtilsException {

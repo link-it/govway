@@ -19,48 +19,37 @@
  *
  */
 
-package org.openspcoop2.utils.logger.beans;
+package org.openspcoop2.utils.logger.config;
 
-import java.io.Serializable;
-
-import org.openspcoop2.utils.logger.IPaginatedEventSearchContext;
+import org.openspcoop2.utils.logger.constants.Severity;
 
 /**
- * EventPaginatedSearchContext
+ * LoggerConfig
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class EventPaginatedSearchContext extends EventSearchContext implements IPaginatedEventSearchContext,Serializable {
+public class LoggerConfig extends LogReaderConfig {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private Severity diagnosticSeverityFilter = Severity.INFO;
+	private Severity eventSeverityFilter = Severity.INFO;
 	
-	private Integer limit;
-	private Integer offset;
+	public Severity getDiagnosticSeverityFilter() {
+		return this.diagnosticSeverityFilter;
+	}
+
+	public void setDiagnosticSeverityFilter(Severity diagnosticSeverityFilter) {
+		this.diagnosticSeverityFilter = diagnosticSeverityFilter;
+	}
+
+	public Severity getEventSeverityFilter() {
+		return this.eventSeverityFilter;
+	}
+
+	public void setEventSeverityFilter(Severity eventSeverityFilter) {
+		this.eventSeverityFilter = eventSeverityFilter;
+	}
 	
-	@Override
-	public Integer getLimit() {
-		return this.limit;
-	}
 
-	@Override
-	public void setLimit(Integer limit) {
-		this.limit = limit;
-	}
-
-	@Override
-	public Integer getOffset() {
-		return this.offset;
-	}
-
-	@Override
-	public void setOffset(Integer offset) {
-		this.offset = offset;
-	}
-
-	
 }

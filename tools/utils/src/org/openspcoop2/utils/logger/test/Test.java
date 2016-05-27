@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.logger.ILogger;
 import org.openspcoop2.utils.logger.LoggerFactory;
@@ -40,6 +41,9 @@ import org.openspcoop2.utils.logger.beans.proxy.ProxyContext;
 import org.openspcoop2.utils.logger.beans.proxy.Role;
 import org.openspcoop2.utils.logger.beans.proxy.Server;
 import org.openspcoop2.utils.logger.beans.proxy.Service;
+import org.openspcoop2.utils.logger.config.DiagnosticConfig;
+import org.openspcoop2.utils.logger.config.Log4jConfig;
+import org.openspcoop2.utils.logger.config.MultiLoggerConfig;
 import org.openspcoop2.utils.logger.constants.LowSeverity;
 import org.openspcoop2.utils.logger.constants.MessageType;
 import org.openspcoop2.utils.logger.constants.Severity;
@@ -60,11 +64,34 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 		
+		// DIAGNOSTIC CONFIGURATION
+		DiagnosticConfig diagnosticConfig = new DiagnosticConfig();
+		diagnosticConfig.setDiagnosticPropertiesResourceURI("/org/openspcoop2/utils/logger/test/example.msgDiagnostici.properties");
+		diagnosticConfig.setThrowExceptionPlaceholderFailedResolution(true);
+		
+		
+		// LOG4J CONFIGURATION
+		Log4jConfig log4jConfig = new Log4jConfig();
+		log4jConfig.setLog4jType(Log4jType.LOG4Jv1);
+		log4jConfig.setLog4jPropertiesResourceURI("/org/openspcoop2/utils/logger/test/example.log4j.properties");
+		
+		// MULTILOGGER
+		
+		MultiLoggerConfig mConfig = new MultiLoggerConfig();
+		
+		mConfig.setDiagnosticConfig(diagnosticConfig);
+		
+//		mConfig.setDiagnosticSeverityFilter(Severity.DEBUG_LOW);
+//		mConfig.setEventSeverityFilter(Severity.INFO);
+		
+		mConfig.setLog4jLoggerEnabled(true);
+		mConfig.setLog4jConfig(log4jConfig);
+		
+		mConfig.setDbLoggerEnabled(false);
+		//mConfig.setDatabaseConfig(dbConfig);
+		
 		LoggerFactory.initialize(Log4JLoggerWithProxyContext.class.getName(),
-				"/org/openspcoop2/utils/logger/test/example.msgDiagnostici.properties",
-				false,
-				"/org/openspcoop2/utils/logger/test/example.log4j.properties",
-				Log4jType.LOG4Jv1);
+				Logger.getLogger(Test.class),mConfig);
 		
 		//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
 		//Log4JLogger.setEventSeverity(Severity.ERROR);
