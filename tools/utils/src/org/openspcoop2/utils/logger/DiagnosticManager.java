@@ -665,7 +665,14 @@ public class DiagnosticManager {
 				if(ret instanceof Date){
 					SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
 					finalValue = dateformat.format((Date)ret);
-				}else{
+				}
+				else if(ret instanceof byte[]){
+					// 1024 = 1K
+					 // Visualizzo al massimo 5K
+					 int max = 5 * 1024;
+					 return org.openspcoop2.utils.Utilities.convertToPrintableText((byte[])ret, max);
+				}
+				else{
 					finalValue = ret.toString();
 				}
 			}
@@ -680,6 +687,7 @@ public class DiagnosticManager {
 			return finalValue;
 		}
 	}
+	
 }
 
 class DiagnosticInfo {

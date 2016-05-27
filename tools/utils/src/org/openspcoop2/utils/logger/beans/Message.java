@@ -82,12 +82,12 @@ public class Message implements Serializable {
 		this.attachments.add(attachment);
 	}
 	
-	public void getAttachment(int index){
-		this.attachments.get(index);
+	public Attachment getAttachment(int index){
+		return this.attachments.get(index);
 	}
 	
-	public void removeAttachment(int index){
-		this.attachments.remove(index);
+	public Attachment removeAttachment(int index){
+		return this.attachments.remove(index);
 	}
 	
 	public int sizeAttachments(){

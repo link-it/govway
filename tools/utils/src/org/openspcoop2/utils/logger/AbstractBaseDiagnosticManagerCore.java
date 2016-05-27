@@ -75,7 +75,7 @@ public abstract class AbstractBaseDiagnosticManagerCore  {
 	
 	// ---- STATIC 
 	
-	private static Properties getProperties(String diagnosticPropertiesResourceURI) throws UtilsException{
+	public static Properties getProperties(String diagnosticPropertiesResourceURI) throws UtilsException{
 		InputStream is = null;
 		try{
 			is = AbstractBaseDiagnosticManagerCore.class.getResourceAsStream(diagnosticPropertiesResourceURI);
@@ -106,7 +106,7 @@ public abstract class AbstractBaseDiagnosticManagerCore  {
 		}
 	}
 	
-	private static Properties getProperties(File diagnosticPropertiesResource) throws UtilsException{
+	public static Properties getProperties(File diagnosticPropertiesResource) throws UtilsException{
 		InputStream is = null;
 		try{
 			if(diagnosticPropertiesResource.exists()==false){

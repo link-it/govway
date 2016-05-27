@@ -105,9 +105,17 @@ public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 		this.initLogger(new ProxyContext());
 	}
 	@Override
+	public void initLogger(String idTransazione) throws UtilsException{
+		this.initLogger(idTransazione, new ProxyContext());
+	}
+	@Override
 	public void initLogger(IContext contextParam) throws UtilsException{
+		this.initLogger(null,contextParam);
+	}
+	@Override
+	public void initLogger(String idTransazione, IContext contextParam) throws UtilsException{
 		this.context = (ProxyContext) contextParam;
-		super.initLogger();
+		super.initLogger(idTransazione);
 		this.context.setIdTransaction(this.idTransaction);
 	}
 	

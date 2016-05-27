@@ -67,6 +67,25 @@ public abstract class AbstractBasicLogger extends AbstractBaseDiagnosticManagerC
 	}
 	
 	@Override
+	public void initLogger(String idTransaction) throws UtilsException{
+		try{
+			
+			if(idTransaction!=null && !"".equals(idTransaction)){
+				this.idTransaction = idTransaction;
+			}
+			else{
+				org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator g = new UniversallyUniqueIdentifierGenerator();
+				this.idTransaction = g.newID().toString();
+			}
+			
+			super.init(this.getContext(), this);
+			
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
 	public void log(String message, LowSeverity severity) throws UtilsException{
 		String functionDefault = this.diagnosticManager.getDefaultFunction();
 		this.log(functionDefault, message, severity.toSeverity(), this.diagnosticManager.getDefaultCode(functionDefault, severity));
