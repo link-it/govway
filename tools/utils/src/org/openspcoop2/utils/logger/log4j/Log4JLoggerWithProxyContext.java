@@ -274,6 +274,9 @@ public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 			if( context.getRequest().getOutSize()!=null){
 				showContext.append("OutSize="+context.getRequest().getOutSize()+"\n");
 			}
+			if( context.getRequest().getResultProcessing()!=null){
+				showContext.append("ResultProcessing="+context.getRequest().getResultProcessing().name()+"\n");
+			}
 			if( context.getRequest().getCorrelationIdentifier()!=null){
 				showContext.append("CorrelationIdentifier="+context.getRequest().getCorrelationIdentifier()+"\n");		
 			}
@@ -305,6 +308,9 @@ public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 			}
 			if( context.getResponse().getOutSize()!=null){
 				showContext.append("OutSize="+context.getResponse().getOutSize()+"\n");
+			}
+			if( context.getResponse().getResultProcessing()!=null){
+				showContext.append("ResultProcessing="+context.getResponse().getResultProcessing().name()+"\n");
 			}
 			if( context.getResponse().getCorrelationIdentifier()!=null){
 				showContext.append("CorrelationIdentifier="+context.getResponse().getCorrelationIdentifier()+"\n");		

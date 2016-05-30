@@ -49,6 +49,7 @@ import org.openspcoop2.utils.logger.constants.MessageType;
 import org.openspcoop2.utils.logger.constants.Severity;
 import org.openspcoop2.utils.logger.constants.proxy.FlowMode;
 import org.openspcoop2.utils.logger.constants.proxy.Result;
+import org.openspcoop2.utils.logger.constants.proxy.ResultProcessing;
 import org.openspcoop2.utils.logger.constants.proxy.ServerEndpointType;
 import org.openspcoop2.utils.logger.log4j.Log4JLoggerWithProxyContext;
 import org.openspcoop2.utils.logger.log4j.Log4jType;
@@ -306,6 +307,7 @@ public class Test {
 			long httpRequestModifySize = 231232;
 			context.getRequest().setOutDate(new Date());
 			context.getRequest().setOutSize(httpRequestModifySize);
+			context.getRequest().setResultProcessing(ResultProcessing.SEND);
 			
 			// .... TODO SEND E VERIFICA RISPOSTA RITORNATA
 			
@@ -423,6 +425,7 @@ public class Test {
 			
 			context.getResponse().setOutDate(new Date());
 			context.getResponse().setOutSize(httpRequestSize);
+			context.getResponse().setResultProcessing(ResultProcessing.RECEIVED);
 			
 			logger.log();
 			

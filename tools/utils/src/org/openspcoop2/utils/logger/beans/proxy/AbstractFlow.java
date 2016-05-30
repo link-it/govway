@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.logger.beans.Property;
+import org.openspcoop2.utils.logger.constants.proxy.ResultProcessing;
 
 /**
  * AbstractFlow
@@ -49,6 +50,8 @@ public abstract class AbstractFlow implements Serializable {
 	private Long outSize;
 	
 	private Identifier identifier;
+	
+	private ResultProcessing resultProcessing;
 	
 	private String correlationIdentifier;
 	
@@ -160,6 +163,14 @@ public abstract class AbstractFlow implements Serializable {
 	
 	public void clearGenericProperties(){
 		this.genericProperties.clear();
+	}
+	
+	public ResultProcessing getResultProcessing() {
+		return this.resultProcessing;
+	}
+
+	public void setResultProcessing(ResultProcessing resultProcessing) {
+		this.resultProcessing = resultProcessing;
 	}
 
 }
