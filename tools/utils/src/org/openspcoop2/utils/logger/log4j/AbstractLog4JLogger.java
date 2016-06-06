@@ -256,6 +256,10 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 	}
 	
 	protected abstract String getDomain(IContext contextParam);
+	protected abstract String getRequestIdentifier(IContext contextParam);
+	protected abstract String getResponseIdentifier(IContext contextParam);
+	protected abstract String getRequestCorrelationIdentifier(IContext contextParam);
+	protected abstract String getResponseCorrelationIdentifier(IContext contextParam);
 	protected abstract String getClient(IContext contextParam);
 	protected abstract String getClientPrincipal(IContext contextParam);
 	protected abstract String getFrom(IContext contextParam);
@@ -277,7 +281,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		
 		if(diagnostic.getIdTransaction()!=null)
 			showMsg.append("<").append(diagnostic.getIdTransaction()).append(">");
-		
+				
 		if(diagnostic.getCode()!=null){
 			if(showMsg.length()>0){
 				showMsg.append(" ");
@@ -297,8 +301,27 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		showMsg.append("(");
 		showMsg.append(diagnostic.getSeverity().name());
 		showMsg.append(")");
+				
+		String idRichiesta = this.getRequestIdentifier(context);
+		String idRisposta = this.getResponseIdentifier(context);
+		if(idRichiesta!=null){
+			showMsg.append(" [id-req:").append(idRichiesta).append("]");
+		}
+		if(idRisposta!=null){
+			showMsg.append(" [id-resp:").append(idRisposta).append("]");
+		}
+		
+		String idCorrelazioneRichiesta = this.getRequestCorrelationIdentifier(context);
+		String idCorrelazioneRisposta = this.getResponseCorrelationIdentifier(context);
+		if(idCorrelazioneRichiesta!=null){
+			showMsg.append(" {correlation-req:").append(idCorrelazioneRichiesta).append("}");
+		}
+		if(idCorrelazioneRisposta!=null){
+			showMsg.append(" {correlation-resp:").append(idCorrelazioneRisposta).append("}");
+		}
+		
 		String client = this.getClient(context);
-		String clientPrincipal = this.getClient(context);
+		String clientPrincipal = this.getClientPrincipal(context);
 		if(client!=null){
 			showMsg.append(" Client:"+client);
 		}

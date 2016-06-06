@@ -353,6 +353,26 @@ public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 		return context.getTransaction().getDomain();
 	}
 	@Override
+	protected String getRequestIdentifier(IContext contextParam){
+		ProxyContext context = (ProxyContext) contextParam;
+		return context.getRequest().getId();
+	}
+	@Override
+	protected String getResponseIdentifier(IContext contextParam){
+		ProxyContext context = (ProxyContext) contextParam;
+		return context.getResponse().getId();
+	}
+	@Override
+	protected String getRequestCorrelationIdentifier(IContext contextParam){
+		ProxyContext context = (ProxyContext) contextParam;
+		return context.getRequest().getCorrelationIdentifier();
+	}
+	@Override
+	protected String getResponseCorrelationIdentifier(IContext contextParam){
+		ProxyContext context = (ProxyContext) contextParam;
+		return context.getResponse().getCorrelationIdentifier();
+	}
+	@Override
 	protected String getClient(IContext contextParam){
 		ProxyContext context = (ProxyContext) contextParam;
 		if(context.getTransaction().getClient()!=null){
