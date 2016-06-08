@@ -1,3 +1,13 @@
+2016-06-08  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-512
+	Creando un'accordo di servizio parte specifica in modalita' avanzata su tomcat 7, 
+	quando veniva premuto il tasto invio l'interfaccia risponde con il seguente messaggio:
+	"L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile".
+	Con la modalita' di visualizzazione standard il problema non si presentava.
+	Il problema è stato risolto, non era presente il jar mailapi-1.4.4-openspcoop_ext.jar tra le librerie della pddConsole
+
 2016-05-17  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
