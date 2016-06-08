@@ -31,7 +31,7 @@
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/javax/javax.sql.jar"/>
-			<exclude name="**/jbossas/**/*.jar"/>
+			<exclude name="**/applicationServer/**/*.jar"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
 		</fileset>

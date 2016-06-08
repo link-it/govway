@@ -78,7 +78,7 @@
 			<classpath>
 				<pathelement path="${build}"/>
 				<path refid="classpath" />
-				<fileset dir="${libs}/jbossas/${as}">
+				<fileset dir="${libs}/applicationServer/${as}">
 					<include name="*.jar"/>
 				</fileset>
 			</classpath>
@@ -117,7 +117,7 @@
 			<classpath>
 				<pathelement path="${build}"/>
 				<path refid="classpath" />
-				<fileset dir="${libs}/jbossas/${as}">
+				<fileset dir="${libs}/applicationServer/${as}">
 					<include name="*.jar"/>
 				</fileset>
 			</classpath>

@@ -20,11 +20,11 @@
 			<var name="_asVersionVerified" value="true"/>
 		</then>
 	</if>
-	<var name="jboss_jars" value="jbossas/${as}"/>
+	<var name="jboss_jars" value="applicationServer/${as}"/>
 	<if>
 		<matches string="${as}" pattern="tomcat.*"/>
 		<then>
-			<var name="jboss_jars" value="jbossas"/> <!-- In modo da non rilevare nessun jar -->
+			<var name="jboss_jars" value="applicationServer"/> <!-- In modo da non rilevare nessun jar -->
 		</then>
 	</if>
 	

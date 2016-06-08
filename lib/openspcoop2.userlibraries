@@ -182,10 +182,10 @@
 	<archive path="/op2_2.3.dev/lib/faces2/richfaces-core-impl-4.3.7.Final.jar"/>
     </library>
     <library name="openspcoop2_2.3_lib_jboss4" systemlibrary="false">
-        <archive path="/op2_2.3.dev/lib/jbossas/jboss4/jbossall-client.jar"/>
+        <archive path="/op2_2.3.dev/lib/applicationServer/jboss4/jbossall-client.jar"/>
     </library>
     <library name="openspcoop2_2.3_lib_jboss6" systemlibrary="false">
-        <archive path="/op2_2.3.dev/lib/jbossas/jboss6/jbosssx-client.jar"/>
+        <archive path="/op2_2.3.dev/lib/applicationServer/jboss6/jbosssx-client.jar"/>
     </library>
     <library name="openspcoop2_2.3_lib_stub" systemlibrary="false">
         <archive path="/op2_2.3.dev/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
