@@ -5,13 +5,14 @@
       <!-- root di OpenSPCoop -->
       <property name="openspcoop2" location="../../.."/>
       <property name="openspcoop2_jars" location="${openspcoop2}/core/dist"/>
-
+      
 	  <!-- ApplicationServer version -->
 	  <property name="as" value="jboss/tomcat" />
 
       <property name="required_lib_pddConsole" location="${openspcoop2}/lib/"/>
       <property name="required_lib" value="${required_lib_pddConsole}"/>
       <property name="sql" value="${openspcoop2}/core/deploy/sql"/>
+      <property name="data_content_handler_dir" value="${openspcoop2}/core/deploy/data_content_handler" />
 
       <!-- Build-Options -->
       <property name="buildAsRelease" value="false"/>

@@ -250,6 +250,21 @@
 			</then>
 		</if>
 		
+		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
+		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<unzip src="${required_lib}/shared/mailapi-1.4.4.jar" dest="${build_pddConsole}/tmp/mailapi"/>
+				<concat destfile="${build_pddConsole}/tmp/mailapi/META-INF/mailcap" append="yes">
+					<filelist dir="${data_content_handler_dir}"
+		                           files="mailcap"/>
+				</concat>
+				<jar jarfile="${build_pddConsole}/tmp/mailapi-1.4.4-openspcoop_ext.jar">
+					<zipfileset dir="${build_pddConsole}/tmp/mailapi"/>
+				</jar>
+			</then>
+		</if>
+		
 		<war destfile="${dist_pddConsole}/pddConsole.war" webxml="${src_pddConsole}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
@@ -349,6 +364,10 @@
 				<include name="${stub_registry}"/>
 				<include name="${stub_config}"/>
 				<include name="${stub_monitor}"/>
+			</lib>
+			<!-- Mail api esteso con activation data handler openspcoop -->
+			<lib dir="${build_pddConsole}/tmp">
+				<include name="mailapi-1.4.4-openspcoop_ext.jar" />
 			</lib>
 			<!-- Plugins -->
 			<lib dir="${plugins_pddConsole}">
