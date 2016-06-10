@@ -979,6 +979,86 @@ public class ClientTest {
 		
 		
 		
+		
+		try{
+			
+			// TEST 2b (con unixTimestamp).
+			
+			System.out.println("\n\nb. ** Query con limit/offset (unixTimestamp)");
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
+
+			sqlQueryObject.addFromTable("tracce");
+
+			sqlQueryObject.setSelectDistinct(distinct);
+			sqlQueryObject.addSelectAliasField("tracce","tipo_destinatario", "TIPODEST");
+			sqlQueryObject.addSelectField("tracce.destinatario");
+			sqlQueryObject.addSelectField("mittente");
+			
+			sqlQueryObject.addSelectAliasField(sqlQueryObject.getDiffUnixTimestamp("gdo2", "gdo"),"latenza");
+
+			sqlQueryObject.addWhereIsNotNullCondition("tipo_mittente");
+
+			sqlQueryObject.addOrderBy("mittente");
+			sqlQueryObject.addOrderBy("TIPODEST",false);
+			sqlQueryObject.addOrderBy("tracce.destinatario",false);
+			sqlQueryObject.addOrderBy(sqlQueryObject.getDiffUnixTimestamp("gdo2", "gdo"));
+			sqlQueryObject.setSortType(true);
+
+			int limit = 10;
+			
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(0);
+
+			String test = sqlQueryObject.createSQLQuery();
+			System.out.println("\nTest1("+distinct+") ["+tipo.toString()+"] [QueryLimitOffset]:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				if(rs.next()){
+					if(index == 0 || index==1){
+						// verifico che l'offset=0 abbia funzionato
+						String mittente = rs.getString("mittente");
+						if(mittente.endsWith("0")==false){
+							throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
+						}
+					}
+					System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")("+rs.getLong("latenza")+")");
+					while(rs.next()){
+						System.out.println("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")("+rs.getLong("latenza")+")");					
+					}
+				}
+				else{
+					throw new Exception("Test failed"); 
+				}
+				
+				
+				if(index!=(limit)){
+					throw new Exception("Test failed (expected "+limit+" rows, found:"+(index)+")"); 
+				}
+			
+					
+				rs.close();
+				stmtQuery.close();
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+		}finally{
+			try{
+				rs.close();
+			}catch(Exception eClose){}
+			try{
+				stmtQuery.close();
+			}catch(Exception eClose){}
+		}
+		
+		
+		
+		
 		try{
 			
 			// TEST 3.

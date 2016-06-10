@@ -38,6 +38,7 @@ import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IAliasTableField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.IModel;
+import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.LikeMode;
@@ -275,8 +276,21 @@ public class ExpressionSQL extends ExpressionImpl {
 								}
 							}
 							if(add){
-								//System.out.println("ADD SELECT FIELD");
-								sqlQueryObject.addSelectField(columnOrderBy);
+								//System.out.println("ADD SELECT FIELD ["+field.getClass().getName()+"] ["+columnOrderBy+"]");
+								if(field instanceof UnixTimestampIntervalField){
+									UnixTimestampIntervalField unix = (UnixTimestampIntervalField) field;
+									String alias = null;
+									if(unix.existsAlias()==false){
+										//System.out.println("NOT EXISTS");
+										unix.buildAlias();
+									}
+									alias = unix.getAlias();
+									//System.out.println("ALIAS ["+alias+"]");
+									sqlQueryObject.addSelectAliasField(columnOrderBy, alias);
+								}
+								else{
+									sqlQueryObject.addSelectField(columnOrderBy);
+								}
 							}
 						}
 					}

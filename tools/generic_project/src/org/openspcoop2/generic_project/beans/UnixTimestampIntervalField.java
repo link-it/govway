@@ -58,5 +58,25 @@ public class UnixTimestampIntervalField extends CustomField {
 		return sqlQueryObject.getDiffUnixTimestamp(fieldConverter.toColumn(maxInterval, appendTablePrefix), fieldConverter.toColumn(minInterval, appendTablePrefix));
 	}
 	
-
+	private static int counter = 0;
+	private static synchronized int getNextCounter(){
+		counter = counter+1;
+		if(counter>1000){
+			counter = 0; // ruoto
+		}
+		return counter;
+	}
+	
+	private String alias = null;
+	public boolean existsAlias(){
+		return this.alias!=null;
+	}
+	public String getAlias(){
+		return this.alias;
+	}
+	public synchronized void buildAlias(){
+		if(this.alias==null){
+			this.alias = "TS"+getNextCounter();
+		}
+	}
 }
