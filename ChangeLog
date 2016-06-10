@@ -1,3 +1,10 @@
+2016-06-10  Andrea Poli <apoli@link.it>
+
+	* [GenericProject]
+	Risolto Bug OP-514
+	Se veniva utilizzato un UnixTimestampIntervalField come SortOrderField la query prodotta andava in errore su Oracle in presenza di offset/limit o distinct.
+	Il field non utilizzava un alias e quindi la query prodotta dall'utility veniva corrotta durante la "normalizzazione" dei field delle query annidate.
+
 2016-06-08  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
