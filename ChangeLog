@@ -1,3 +1,17 @@
+2016-06-13  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug OP-516
+	La presenza di un firewall tra l'application server ed un database comporta problemi simili al seguente errore:
+	        “an i/o error occurred while sending the batckend”
+	Questo succedeva poichè le connessioni aperte dai datasource di riferimento del prodotto non contenevano appropriate configurazioni di “idle” 
+	che evitassero alle connessioni di rimanere aperte all'infinito, 
+	comportamento non utilizzabile in presenza di firewall che effettuano il drop delle connessioni una volta rilevate inattive.
+	Di seguito le modifiche attuate:
+	- tomcat: attivato 'testWhileIdle' ed impostati parametri per la verifica dell'idle time a 5 minuti
+	- jboss v7_v8: impostato idle time a 5 minuti ed impostata a 'false' la proprietà 'use-strict-min'
+	- jboss v4_v5_v6: impostato idle time a 5 minuti
+
 2016-06-10  Andrea Poli <apoli@link.it>
 
 	* [GenericProject]
