@@ -22,7 +22,7 @@
 		<!-- Minimo/Massimo numero di connessioni che un pool deve mantenere -->
 		<pool>
 			<prefill>true</prefill>
-			<use-strict-min>true</use-strict-min>
+			<use-strict-min>false</use-strict-min>
 			<min-pool-size>10</min-pool-size>
 			<max-pool-size>50</max-pool-size>
 		</pool>
@@ -41,7 +41,7 @@
 		</validation>
 		<!-- Timeout -->
 		<timeout>
-			<idle-timeout-minutes>3</idle-timeout-minutes>
+			<idle-timeout-minutes>5</idle-timeout-minutes>
 			<blocking-timeout-millis>30000</blocking-timeout-millis>
 		</timeout>
 

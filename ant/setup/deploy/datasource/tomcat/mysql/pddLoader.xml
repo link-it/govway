@@ -14,6 +14,8 @@
 	          validationQuery="SELECT 1"
 	          validationQueryTimeout="10"
 	          testOnBorrow="true" testOnReturn="false"
+	          testWhileIdle="true" minEvictableIdleTimeMillis="300000"
+	          numTestsPerEvictionRun="10" timeBetweenEvictionRunsMillis="60000"
 	          poolPreparedStatements="true" maxOpenPreparedStatements="100"/>
 
 

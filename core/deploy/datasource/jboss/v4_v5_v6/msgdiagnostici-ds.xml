@@ -38,7 +38,7 @@
 		<max-pool-size>50</max-pool-size>
 
 		<!-- Massimo ammontare di minuti che una connessione puo' rimanere 'idle' prima di essere chiusa -->
-		<idle-timeout-minutes>3</idle-timeout-minutes>
+		<idle-timeout-minutes>5</idle-timeout-minutes>
 
 		<!--
 		Controllo degli Statements/ResultSet non chiusi. Viene effettuato quando una connessione viene ritornata al pool
