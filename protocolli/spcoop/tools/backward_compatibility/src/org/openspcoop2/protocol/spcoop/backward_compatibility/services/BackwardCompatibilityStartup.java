@@ -42,6 +42,8 @@ public class BackwardCompatibilityStartup implements ServletContextListener {
 		return codeMapping;
 	}
 
+	public static boolean initialized = false;
+	
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		
@@ -71,12 +73,13 @@ public class BackwardCompatibilityStartup implements ServletContextListener {
 //		}catch(Exception e){
 //			throw new RuntimeException(e.getMessage(), e);
 //		}
-		
+	
+		BackwardCompatibilityStartup.initialized = true;
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		
+		BackwardCompatibilityStartup.initialized = false;
 	}
 
 }

@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.protocol.spcoop.backward_compatibility.services.BackwardCompatibilityStartup;
 
 
 
@@ -98,10 +99,13 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.readTransportProperties(inRequestPAMessage.getUrlProtocolContext().getParametersTrasporto(), 
 						integrazione);
@@ -120,10 +124,13 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.setRequestTransportProperties(integrazione, outRequestPAMessage.getProprietaTrasporto());
 			}
@@ -141,10 +148,13 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.readTransportProperties(inResponsePAMessage.getProprietaTrasporto(), integrazione);
 			}
@@ -163,10 +173,13 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 			OutResponsePAMessage outResponsePAMessage) throws HeaderIntegrazioneException{
 		
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.setResponseTransportProperties(null, outResponsePAMessage.getProprietaTrasporto());
 			}

@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.protocol.spcoop.backward_compatibility.services.BackwardCompatibilityStartup;
 
 
 /**
@@ -101,10 +102,13 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.readHeader(inRequestPAMessage.getMessage(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -119,10 +123,13 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 	@Override
 	public void deleteInRequestHeader(InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.deleteHeader(inRequestPAMessage.getMessage(), this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -138,10 +145,13 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 	public void updateInRequestHeader(InRequestPAMessage inRequestPAMessage,
 			String idMessaggio,String servizioApplicativo,String correlazioneApplicativa) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.updateHeader(inRequestPAMessage.getMessage(), 
 						inRequestPAMessage.getSoggettoMittente(),
@@ -164,10 +174,13 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
 			
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 			
 				OpenSPCoop2Message message = outRequestPAMessage.getMessage();
@@ -229,10 +242,13 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.readHeader(inResponsePAMessage.getMessage(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -247,10 +263,13 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 	@Override
 	public void deleteInResponseHeader(InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.deleteHeader(inResponsePAMessage.getMessage(), this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -266,10 +285,13 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 	public void updateInResponseHeader(InResponsePAMessage inResponsePAMessage,
 			String idMessageRequest,String idMessageResponse,String servizioApplicativo,String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.updateHeader(inResponsePAMessage.getMessage(), 
 						inResponsePAMessage.getSoggettoMittente(),

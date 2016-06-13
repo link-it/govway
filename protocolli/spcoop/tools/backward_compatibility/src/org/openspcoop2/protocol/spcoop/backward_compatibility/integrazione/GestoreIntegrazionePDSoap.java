@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.protocol.spcoop.backward_compatibility.services.BackwardCompatibilityStartup;
 
 /**
  * Classe utilizzata per la ricezione di informazioni di integrazione 
@@ -101,9 +102,12 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){
 				this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -119,9 +123,12 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 	public void deleteInRequestHeader(InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){
 				this.utilities.deleteHeader(inRequestPDMessage.getMessage(),this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -140,9 +147,12 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 			String idMessaggio,String servizioApplicativo,String correlazioneApplicativa) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){	
 				this.utilities.updateHeader(inRequestPDMessage.getMessage(), 
 						inRequestPDMessage.getSoggettoPropeprietarioPortaDelegata(), idServizio, idMessaggio, 
@@ -179,9 +189,12 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 			InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){	
 				this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -197,9 +210,12 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 	public void deleteInResponseHeader(InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){	
 				this.utilities.deleteHeader(inResponsePDMessage.getMessage(),this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -216,9 +232,12 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 			String idMessageRequest,String idMessageResponse,String servizioApplicativo,String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){	
 				this.utilities.updateHeader(inResponsePDMessage.getMessage(), 
 						inResponsePDMessage.getSoggettoMittente(),
@@ -245,9 +264,12 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 		
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){	
 				SOAPHeaderElement header = this.utilities.buildHeader(integrazione, 
 						this.backwardCompatibilityProperties.getHeaderSoapNameIntegrazione(), // header name 

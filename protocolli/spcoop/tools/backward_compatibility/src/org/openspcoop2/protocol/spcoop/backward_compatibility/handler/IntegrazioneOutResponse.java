@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.CodeMapping;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.protocol.spcoop.backward_compatibility.services.BackwardCompatibilityStartup;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -54,7 +55,11 @@ public class IntegrazioneOutResponse implements OutResponseHandler {
 
 		try {
 
-			BackwardCompatibilityProperties backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance();
+			if(BackwardCompatibilityStartup.initialized==false){
+				return;
+			}
+			
+			BackwardCompatibilityProperties backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance(true);
 			
 			if(!backwardCompatibilityProperties.getProtocolName().equals(context.getProtocolFactory().getProtocol())){
 				return;

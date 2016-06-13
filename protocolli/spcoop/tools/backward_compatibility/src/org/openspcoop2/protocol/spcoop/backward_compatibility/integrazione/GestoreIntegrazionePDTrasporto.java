@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.protocol.spcoop.backward_compatibility.services.BackwardCompatibilityStartup;
 
 
 
@@ -99,9 +100,12 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){
 				this.utilities.readTransportProperties(inRequestPDMessage.getUrlProtocolContext().getParametersTrasporto(), integrazione);
 			}
@@ -139,9 +143,12 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 			OutResponsePDMessage outResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
 			if( 
-				(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
-				||
-				(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 			){
 				this.utilities.setResponseTransportProperties(integrazione, outResponsePDMessage.getProprietaTrasporto());		
 			}

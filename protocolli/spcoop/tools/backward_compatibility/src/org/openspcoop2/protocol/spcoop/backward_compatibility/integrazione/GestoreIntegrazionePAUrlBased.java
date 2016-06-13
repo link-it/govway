@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.protocol.spcoop.backward_compatibility.services.BackwardCompatibilityStartup;
 
 
 
@@ -99,10 +100,13 @@ public class GestoreIntegrazionePAUrlBased extends AbstractCore implements IGest
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.readUrlProperties(inRequestPAMessage.getUrlProtocolContext().getParametersFormBased(), 
 						integrazione);	
@@ -121,10 +125,13 @@ public class GestoreIntegrazionePAUrlBased extends AbstractCore implements IGest
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			if( 
-					(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
-					||
-					(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+			if(
+					BackwardCompatibilityStartup.initialized &&
+					(
+						(!this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa())
+						||
+						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
+					)
 				){
 				this.utilities.setRequestUrlProperties(integrazione, outRequestPAMessage.getProprietaUrlBased());		
 			}
