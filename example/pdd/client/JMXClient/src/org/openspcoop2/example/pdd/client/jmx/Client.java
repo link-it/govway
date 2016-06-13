@@ -174,8 +174,9 @@ public class Client {
 			
 			MBeanServerConnection mconn = null;
 			if(args[0].equals("jboss7") ||
-					args[0].equals("jboss8") ||
 					args[0].equals("wildfly8") ||
+					args[0].equals("wildfly9") ||
+					args[0].equals("wildfly10") ||
 					args[0].startsWith("tomcat")){
 				JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);  
 				Hashtable<String, Object> env = null;
@@ -210,7 +211,7 @@ public class Client {
 			
 			// AutorizzazioneSPCoop
 			System.out.println();
-			name = new ObjectName("org.openspcoop2.pdd:type=AutorizzazioneBuste");
+			name = new ObjectName("org.openspcoop2.pdd:type=DatiAutorizzazione");
 			invoke(mconn,name,propertiesAutorizzazioneBuste,resetCacheAutorizzazioneBuste);
 			
 			// AutorizzazioneSPCoop

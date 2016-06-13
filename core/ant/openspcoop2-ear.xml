@@ -110,8 +110,7 @@
 				<if>
 					<or>
 						<equals arg1="${as}" arg2="jboss7"/>
-						<equals arg1="${as}" arg2="jboss8"/>
-						<equals arg1="${as}" arg2="wildfly8"/>
+						<matches string="${as}" pattern="wildfly.*"/>
 					</or>
 					<then>
 						<copy file="${src}/META-INF/ejb-jar.xml.ejb3.threads" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
@@ -138,14 +137,26 @@
 				<if>
 					<or>
 						<equals arg1="${as}" arg2="jboss7"/>
-						<equals arg1="${as}" arg2="jboss8"/>
-						<equals arg1="${as}" arg2="wildfly8"/>
+						<matches string="${as}" pattern="wildfly.*"/>
 					</or>
 					<then>
 						<copy file="${src}/META-INF/ejb-jar.xml.ejb3" tofile="${build}/tmpEJB/META-INF/ejb-jar.xml" />
 						<copy file="${src}/META-INF/jboss.xml.ejb3" tofile="${build}/tmpEJB/META-INF/jboss-ejb3.xml" />
 						<var name="ejb_jar_xml" value="ejb-jar.xml"/>
 						<var name="jboss_xml" value="jboss-ejb3.xml"/>
+						<if>
+							<or>
+								<equals arg1="${as}" arg2="jboss7"/>
+								<equals arg1="${as}" arg2="wildfly8"/>
+								<equals arg1="${as}" arg2="wildfly9"/>
+							</or>
+							<then>
+								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="hornetq-ra-openspcoop2"/>
+							</then>
+							<else>
+								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="activemq-ra-openspcoop2"/>
+							</else>
+						</if>
 					</then>
 				</if>
 			</else>
@@ -156,8 +167,7 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="mailcap_info" value="mailcap"/>
@@ -189,8 +199,7 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="mailcap_info" value="mailcap"/>
@@ -236,8 +245,7 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="mailcap_info" value="mailcap"/>
@@ -297,10 +305,24 @@
 
 		<!-- costruzione application.xml -->
 		<delete file="${build}/application.xml" />
-		<concat destfile="${build}/application.xml" append="yes">
-			<filelist dir="${src}/META-INF"
-                           files="application.xml.${as}"/>
-		</concat>
+		<if>
+			<matches string="${as}" pattern="jboss.*"/>
+			<then>
+				<concat destfile="${build}/application.xml" append="yes">
+					<filelist dir="${src}/META-INF"
+		                           files="application.xml.${as}"/>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<concat destfile="${build}/application.xml" append="yes">
+					<filelist dir="${src}/META-INF"
+		                           files="application.xml.wildfly"/>
+				</concat>
+			</then>
+		</if>
 		<if>
 			<not>
 				<istrue value="${forceDisableJ2eeMode}"/>
@@ -400,13 +422,12 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
 
-# ----- Personalizzazione per JBoss 7.x/8.x -------------
+# ----- Personalizzazione per JBoss7.x/WildFly -------------
 				</concat>
 				<antcall target="set_property">
 				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
@@ -415,7 +436,7 @@
 				</antcall>	
 				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
 
-# ----- Personalizzazione Timer EJB Name per JBoss 7.x/8.x -------------
+# ----- Personalizzazione Timer EJB Name per JBoss7.x/WildFly -------------
 				</concat>
 				<antcall target="set_property">
 				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
@@ -457,8 +478,7 @@
 			<or>
 				<equals arg1="${as}" arg2="jboss6"/>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.logger.org.openspcoop2" value="log4j.logger.org.openspcoop2"/>
@@ -477,8 +497,7 @@
 				<equals arg1="${as}" arg2="jboss4"/>
 				<equals arg1="${as}" arg2="jboss6"/>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="xalan_jar" value="xalan-2.7.1.jar"/>
@@ -491,8 +510,7 @@
 			<or>
 				<equals arg1="${as}" arg2="jboss6"/>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="log4j_jar" value="log4j-1.2.16.jar"/>
@@ -522,8 +540,7 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
@@ -534,8 +551,7 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="concurrent_jar" value="concurrent-1.0.jar"/>
@@ -546,8 +562,7 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<var name="com_sun_xml_security_jar" value="xml-security-impl-1.0.jar"/>
@@ -571,11 +586,21 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<copy file="${src}/META-INF/jboss-deployment-structure.xml.${as}" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+				<if>
+					<equals arg1="${as}" arg2="jboss7"/>
+					<then>
+						<copy file="${src}/META-INF/jboss-deployment-structure.xml.${as}" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+					</then>
+				</if>
+				<if>
+					<matches string="${as}" pattern="wildfly.*"/>
+					<then>
+						<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+					</then>
+				</if>
 				<var name="jboss_deployment_structure_xml" value="jboss-deployment-structure.xml"/>
 				
 				<if>
@@ -630,11 +655,10 @@
 		<var name="jboss_all_xml" value=""/>
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<copy file="${src}/META-INF/jboss-all.xml.${as}" tofile="${build}/tmp/jboss-all.xml" />
+				<copy file="${src}/META-INF/jboss-all.xml.wildfly" tofile="${build}/tmp/jboss-all.xml" />
 				<var name="jboss_all_xml" value="jboss-all.xml"/>
 			</then>
 		</if>

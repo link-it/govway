@@ -5,7 +5,7 @@
       <property name="openspcoop2" location="../../../../.." />
 
 	  <!-- ApplicationServer version -->
-	  <property name="as" value="jboss/tomcat" />
+	  <property name="as" value="jboss/wildfly/tomcat" />
 
 	  <property name="ws_validazione_lib" value="${openspcoop2}/lib"/>
 	  <property name="required_lib" value="${ws_validazione_lib}" />

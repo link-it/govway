@@ -11,10 +11,7 @@
 		
 		<!-- Istruzioni -->
 		<if>
-			<or>
-				<matches string="${antinstaller_as}" pattern="jboss.*"/>
-				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
-			</or>	
+			<matches string="${antinstaller_as}" pattern="jboss.*"/>
 			<then>
 				<if>
 					<or>
@@ -26,13 +23,22 @@
 						<copy file="${deploy_resources}/INSTALL_JBOSS_v4_v5_v6" tofile="${dist}/INSTALL.txt" />
 					</then>
 					<else>
-						<copy file="${deploy_resources}/INSTALL_JBOSS_v7_v8" tofile="${dist}/INSTALL.txt" />
+						<copy file="${deploy_resources}/INSTALL_JBOSS_v7" tofile="${dist}/INSTALL.txt" />
 					</else>
 				</if>
 			</then>
-			<else>
+		</if>		
+		<if>
+			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			<then>
+				<copy file="${deploy_resources}/INSTALL_WILDFLY" tofile="${dist}/INSTALL.txt" />
+			</then>
+		</if>
+		<if>
+			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+			<then>
 				<copy file="${deploy_resources}/INSTALL_TOMCAT" tofile="${dist}/INSTALL.txt" />
-			</else>
+			</then>
 		</if>
 		
 		<!-- Datasource -->
@@ -195,8 +201,7 @@
 			<and>
 				<or>
 					<equals arg1="${antinstaller_as}" arg2="jboss7" />
-					<equals arg1="${antinstaller_as}" arg2="jboss8" />
-					<equals arg1="${antinstaller_as}" arg2="wildfly8" />
+					<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 				</or>
 				<or>
 					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
@@ -295,8 +300,7 @@
 				<if>
 					<or>
 						<equals arg1="${antinstaller_as}" arg2="jboss7" />
-						<equals arg1="${antinstaller_as}" arg2="jboss8" />
-						<equals arg1="${antinstaller_as}" arg2="wildfly8" />
+						<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 					</or>
 					<then>
 						<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>

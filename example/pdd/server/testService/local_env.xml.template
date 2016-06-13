@@ -3,7 +3,7 @@
 <project name="TestServicer_LocalEnv" basedir=".">
 
 	<!-- ApplicationServer version -->
-	<property name="as" value="jboss/tomcat" />
+	<property name="as" value="jboss/wildfly/tomcat" />
 	
 	<!-- RootDir -->  
 	<property name="rootDir" location="../../../../" />

@@ -43,7 +43,7 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
 
 
 
-Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly 8.x:
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly:
 
 
     <management>

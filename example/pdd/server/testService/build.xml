@@ -84,13 +84,23 @@
 	<if>
 		<or>
 			<equals arg1="${as}" arg2="jboss7"/>
-			<equals arg1="${as}" arg2="jboss8"/>
-			<equals arg1="${as}" arg2="wildfly8"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
 		</then>
 	</if>
+	<!-- neethi -->
+	<var name="neethi_jar" value="" />
+	<if>
+		<or>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="neethi_jar" value="neethi-3.0.2.jar"/>
+		</then>
+	</if>
+	
 
 	<!-- Creazione del modulo .WAR -->
 	<target name="build" depends="compile" description="Crea la struttura del modulo WAR">
@@ -120,6 +130,9 @@
 			</lib>
 			<lib dir="${libs}/log">
 				<include name="${log4j_jar}"/>
+			</lib>
+			<lib dir="${required_lib}/security">
+				<include name="${neethi_jar}" />
 			</lib>
 		</war>
 

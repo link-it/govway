@@ -50,10 +50,10 @@ public class WSStartup implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		if(WSStartup.log!=null)
-			WSStartup.log.info("Undeploy loader in corso...");
+			WSStartup.log.info("Undeploy webService in corso...");
 
 		if(WSStartup.log!=null)
-			WSStartup.log.info("Undeploy loader effettuato.");
+			WSStartup.log.info("Undeploy webService effettuato.");
 
 	}
 

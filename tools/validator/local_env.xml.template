@@ -6,7 +6,7 @@
 	<property name="jdbc_lib" location="JDBC_LIB" />
 	
 	<!-- ApplicationServer version -->
-	<property name="as" value="jboss/tomcat" />
+	<property name="as" value="jboss/wildfly/tomcat" />
 
 	<!-- common.properties -->
 	<property name="proprietaComuni" location="deploy/properties/commons.properties" />

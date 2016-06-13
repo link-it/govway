@@ -1,0 +1,59 @@
+/* ***** jboss 7.x, WildFly 8.x, 9.x e 10.x *****
+
+1) Creazione di una utenza
+
+In jboss7 e wildfly è obbligatoria l'autenticazione per accedere alle code.
+Di seguito vengono fornite le indicazioni.
+
+E' necessario creare un application user:
+Also you need to create a user for “Application User” using the “/AS_DIR/bin/add-user.sh” which would be used for getting the connection with the JBoss on remote box
+
+Fornire anche un ruolo (o group), es. 'testrole' poi da personalizzare nel file di configurazione in standalone/configuration/standalone-full.xml
+
+NOTA: per la testsuite è necessario creare una utenza 'openspcoop2' con password 'op3n.spc00p'
+
+L'application user viene creato nei files:
+Added user 'openspcoop2' to file 'jboss-as-7.x/standalone/configuration/application-users.properties'
+Added user 'openspcoop2' to file 'jboss-as-7.x/domain/configuration/application-users.properties'
+Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/standalone/configuration/application-roles.properties'
+Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/domain/configuration/application-roles.properties'
+
+
+2) Associazione dei permessi all'utenza
+
+Per Jboss 7.x, WildFly 8.x e WildFly 9.x nel file standalone/configuration/standalone-full.xml aggiungere il ruolo ai vari permessi:
+
+<subsystem xmlns="urn:jboss:domain:messaging:3.0">
+  <hornetq-server>
+     <security-settings>
+        <security-setting match="#">
+          <permission type="send" roles="guest testrole"/>
+          <permission type="consume" roles="guest testrole"/>
+          <permission type="createNonDurableQueue" roles="guest testrole"/>
+          <permission type="deleteNonDurableQueue" roles="guest testrole"/>
+          ...
+        </security-setting>
+     </security-settings>
+  </hornetq-server>
+</subsystem>
+
+Per WildFly 10.x nel file standalone/configuration/standalone-full.xml aggiungere il ruolo ai vari permessi:
+
+<subsystem xmlns="urn:jboss:domain:messaging-activemq:1.x">
+    <server name="default">
+        <security-setting name="#">
+             <role name="guest" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+	     <role name="testrole" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+        </security-setting>
+	...
+    </server>
+</subsystem>
+
+
+3) Note Finali
+
+!! NOTA !!: in wildfly non avviare il server con binding su 0.0.0.0, altrimenti la connessione remota non funziona e si ottiene l'errore:
+Caused by: HornetQNotConnectedException[errorType=NOT_CONNECTED message=HQ119007: Cannot connect to server(s). Tried with all available servers.]
+Se non si vuole fare il binding su localhost, indicare esattamente l'indirizzo ip della macchina.
+
+Per avviare l'as su di un particolare binding usare -Djboss.bind.address=10.10.10.10

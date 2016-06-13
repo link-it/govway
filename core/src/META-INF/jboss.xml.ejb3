@@ -39,34 +39,34 @@
 	<!-- Moduli di Imbustamento -->
 	<mdb:resource-adapter-binding>
 	    <ejb-name>Imbustamento</ejb-name>
-	    <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+	    <mdb:resource-adapter-name>RA_OPENSPCOOP2</mdb:resource-adapter-name>
 	</mdb:resource-adapter-binding>
 	<mdb:resource-adapter-binding>
             <ejb-name>ImbustamentoRisposte</ejb-name>
-            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+            <mdb:resource-adapter-name>RA_OPENSPCOOP2</mdb:resource-adapter-name>
         </mdb:resource-adapter-binding>
 	<!-- Moduli di Sbustamento -->
 	<mdb:resource-adapter-binding>
             <ejb-name>Sbustamento</ejb-name>
-            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+            <mdb:resource-adapter-name>RA_OPENSPCOOP2</mdb:resource-adapter-name>
         </mdb:resource-adapter-binding>
         <mdb:resource-adapter-binding>
             <ejb-name>SbustamentoRisposte</ejb-name>
-            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+            <mdb:resource-adapter-name>RA_OPENSPCOOP2</mdb:resource-adapter-name>
         </mdb:resource-adapter-binding>
 	<!-- Moduli di Inoltro buste -->
 	<mdb:resource-adapter-binding>
             <ejb-name>InoltroBuste</ejb-name>
-            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+            <mdb:resource-adapter-name>RA_OPENSPCOOP2</mdb:resource-adapter-name>
         </mdb:resource-adapter-binding>
         <mdb:resource-adapter-binding>
             <ejb-name>InoltroRisposte</ejb-name>
-            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+            <mdb:resource-adapter-name>RA_OPENSPCOOP2</mdb:resource-adapter-name>
         </mdb:resource-adapter-binding>
 	<!-- Moduli di consegna contenuti applicativi -->
 	<mdb:resource-adapter-binding>
             <ejb-name>ConsegnaContenutiApplicativi</ejb-name>
-            <mdb:resource-adapter-name>hornetq-ra-openspcoop2</mdb:resource-adapter-name>
+            <mdb:resource-adapter-name>RA_OPENSPCOOP2</mdb:resource-adapter-name>
         </mdb:resource-adapter-binding>
 
     </assembly-descriptor>

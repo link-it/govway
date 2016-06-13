@@ -45,12 +45,15 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 
 
 	/** Variabile che indica il Nome del modulo attuale di OpenSPCoop */
+	@SuppressWarnings("unused")
 	private static final String ID_MODULO = "Inizializzazione Risorse OpenSPCoop (Pools)";
 
 	/** Logger utilizzato per segnalazione di errori. */
-	private static Logger logger = Logger.getLogger("InizializzazioneOpenSPCoop");
+	private static Logger logger = //Logger.getLogger("InizializzazioneOpenSPCoop");
+			Logger.getLogger("openspcoop2Pools");
 	
-	private static Logger loggerConsole = Logger.getLogger(OpenSPCoop2PoolsStartup.ID_MODULO);
+	private static Logger loggerConsole = //Logger.getLogger(OpenSPCoop2PoolsStartup.ID_MODULO);
+			Logger.getLogger("openspcoop2Pools");
 
 	
 	/** Context della Servlet */

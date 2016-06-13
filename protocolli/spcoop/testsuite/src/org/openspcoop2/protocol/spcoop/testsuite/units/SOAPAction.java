@@ -308,7 +308,7 @@ public class SOAPAction {
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
-				if("jboss8".equals(version_jbossas) || "wildfly8".equals(version_jbossas)){
+				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
 					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
 					msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
 				}
@@ -335,7 +335,7 @@ public class SOAPAction {
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		if("jboss8".equals(version_jbossas) || "wildfly8".equals(version_jbossas)){
+		if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
 			// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
 			err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
 		}else{
@@ -391,7 +391,7 @@ public class SOAPAction {
 					new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
 				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
-				if("jboss8".equals(version_jbossas) || "wildfly8".equals(version_jbossas)){
+				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
 					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
 					ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
 				}else{
@@ -426,7 +426,7 @@ public class SOAPAction {
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		if("jboss8".equals(version_jbossas) || "wildfly8".equals(version_jbossas)){
+		if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
 			// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
 			err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
 		}else{

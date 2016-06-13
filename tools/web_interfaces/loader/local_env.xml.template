@@ -7,7 +7,7 @@
       <property name="openspcoop2_jars" location="${openspcoop2}/core/dist"/>
 
 	  <!-- ApplicationServer version -->
-	  <property name="as" value="jboss/tomcat" />
+	  <property name="as" value="jboss/wildfly/tomcat" />
 	  
       <property name="required_lib_loaderConsole" location="${openspcoop2}/lib/"/>
       <property name="required_lib" value="${required_lib_loaderConsole}"/>

@@ -1,4 +1,6 @@
-AS_VERSION=jboss4,jboss5,jboss6,jboss7,wildfly8,tomcat
+AS_VERSION=jboss4,jboss5,jboss6,jboss7,wildfly8,wildfly9,wildfly10,tomcat5
+# Per tomcat qualsiasi versione venga generata è uguale.
+# L'importante che anche il setup associo alla label abbia la solita versione
 
 ROOT=../../
 CORE=${ROOT}/core
@@ -14,7 +16,7 @@ SPCOOP_BACKWARD_COMPATIBILITY=${ROOT}/protocolli/spcoop/tools/backward_compatibi
 if [ ! -f ${CORE}/local_env.xml  ]
 then
 	cp ${CORE}/local_env.xml.template ${CORE}/local_env.xml
-	perl -pi -e "s#jboss/tomcat#jboss5#g" ${CORE}/local_env.xml;
+	perl -pi -e "s#jboss/wildfly/tomcat#jboss5#g" ${CORE}/local_env.xml;
 fi
 
 # WebLib-MVC

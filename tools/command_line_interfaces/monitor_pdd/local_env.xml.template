@@ -3,7 +3,7 @@
 <project name="cli.monitor_LocalEnv" basedir=".">
 
 	<!-- ApplicationServer version -->
-	<property name="as" value="jboss/tomcat" />
+	<property name="as" value="jboss/wildfly/tomcat" />
 	
 	<!-- DriverJDBC -->
 	<property name="jdbc_lib" location="JDBC_DRIVER.jar" />

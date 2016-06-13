@@ -97,6 +97,11 @@
 		
 		<pathelement path="${jdbc_lib}"/>
 		
+		<!-- deve essere prima degli altri jar, in modo che se si porta dietro dei jar aggiornati vengono utilizzati quelli previsti dall'a.s. -->
+		<fileset dir="${openspcoop2_lib}/${jboss_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+		
 		<fileset dir="${openspcoop2_lib}/ant" >
 			<include name="*.jar"/>
 		</fileset>
@@ -127,9 +132,6 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/httpcore" >
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="${openspcoop2_lib}/${jboss_jars}" >
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/cxf" >
@@ -175,8 +177,7 @@
 			<or>
 				<matches string="${as}" pattern="tomcat.*"/>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<copy file="deploy/properties/database_testunits_connections.properties" todir="${build_testunits}/NG_UNITS" />
@@ -234,13 +235,12 @@
 		
 		<if>
 			<or>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<concat destfile="${build_testunits}/NG_UNITS/testsuite_testunits.properties" append="yes" >
 
-# ----- Personalizzazione JMS (jboss/wildfly 8.x) -------------
+# ----- Personalizzazione JMS (wildfly) -------------
 				</concat>
 				<antcall target="set_property">
 				    <param name="file" value="${build_testunits}/NG_UNITS/testsuite_testunits.properties"/>

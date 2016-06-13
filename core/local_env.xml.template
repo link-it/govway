@@ -9,7 +9,7 @@
 		<property name="openspcoop2" location="${rootDir}" />
 
 		<!-- ApplicationServer version -->
-		<property name="as" value="jboss/tomcat" />
+		<property name="as" value="jboss/wildfly/tomcat" />
 
 		<!-- Build-Options -->
 		<property name="buildAsRelease" value="false" />

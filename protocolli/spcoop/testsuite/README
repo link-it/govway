@@ -218,7 +218,7 @@ Batterie di test che verificano i connettori presenti nella Porta di Dominio
 
 !! Pre-requisiti!!
 a. Il test richiede l'installazione delle code jms presenti in ./protocolli/spcoop/testsuite/deploy/code_jms
-In jboss7 e wildfly8 (jboss8) è necessario seguire le indicazioni presenti in ./protocolli/spcoop/testsuite/deploy/code_jms/jbossX_HornetQ/README
+In jboss7 e wildfly è necessario seguire le indicazioni presenti in ./protocolli/spcoop/testsuite/deploy/code_jms/jbossX_TipoBrokerJMS/README
 b. Aggiunta di connettori https specifici per i test nella configurazione web (in jboss in server.xml del tomcat integrato)
 - Un connettore HTTPS che non esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8443)
   Esempio in ./protocolli/spcoop/testsuite/deploy/https_examples/ConnettoreHTTPS_noClientAuth.xml

@@ -28,33 +28,85 @@
 							<equals arg1="${as}" arg2="jboss5"/>
 							<equals arg1="${as}" arg2="jboss6"/>
 							<equals arg1="${as}" arg2="jboss7"/>
-							<equals arg1="${as}" arg2="jboss8"/>
 						</or>
 					</not>
 					<then>
-						<fail message="OpenSPCoop2 supporta, per quanto concerne l'application server jboss, le versioni 4.x (jboss4), 5.x (jboss5), 6.x (jboss6), 7.x (jboss7) e WildFly 8.x (jboss8), versione fornita: [${as}]"/>
+						<fail message="OpenSPCoop2 supporta, per quanto concerne l'application server jboss, le versioni 4.x (jboss4), 5.x (jboss5), 6.x (jboss6) e 7.x (jboss7), versione fornita: [${as}]"/>
 					</then>
 				</if>
 			</then>
 			<elseif>
 				<matches string="${as}" pattern="wildfly.*"/>
 				<then>
+					<!-- 
 					<if>
 						<not>
 							<or>
 								<equals arg1="${as}" arg2="wildfly8"/>
+								<equals arg1="${as}" arg2="wildfly9"/>
+								<equals arg1="${as}" arg2="wildfly10"/>
 							</or>
 						</not>
 						<then>
-							<fail message="OpenSPCoop2 supporta, per quanto concerne l'application server wildFly, le versioni 8.x (wildfly8), versione fornita: [${as}]"/>
+							<fail message="OpenSPCoop2 supporta, per quanto concerne l'application server wildFly, le versioni 8.x (wildfly8), 9.x (wildfly9) e 10.x (wildfly10), versione fornita: [${as}]"/>
 						</then>
 					</if>
+					-->
+				    <propertyregex property="asVersionNumber"
+				              input="${as}"
+				              regexp="wildfly(.*)"
+				              select="\1"
+				              casesensitive="false" />
+					<script language="javascript">
+					    <![CDATA[
+					        var asVersionNumber = project.getProperty("asVersionNumber");
+					        var required = "8";
+					        project.setProperty('as.valid-version', parseInt(asVersionNumber) < parseInt(required) ? "false" : "true");
+					    ]]>
+					</script>
+					<fail message="Versione fornita dell'application server wildFly non supportata: [${asVersionNumber}]">
+					    <condition>
+					        <isfalse value="${as.valid-version}"/>
+					    </condition>
+					</fail>
 				</then>	
 			</elseif>
 			<elseif>
 				<matches string="${as}" pattern="tomcat.*"/>
 				<then>
-					
+					<!-- 
+					<if>
+						<not>
+							<or>
+								<equals arg1="${as}" arg2="tomcat5"/>
+								<equals arg1="${as}" arg2="tomcat6"/>
+								<equals arg1="${as}" arg2="tomcat7"/>
+								<equals arg1="${as}" arg2="tomcat8"/>
+								<equals arg1="${as}" arg2="tomcat9"/>
+							</or>
+						</not>
+						<then>
+							<fail message="OpenSPCoop2 supporta, per quanto concerne l'application server tomcat, le versioni 5.x (tomcat5), 6.x (tomcat6), 7.x (tomcat7), 8.x (tomcat8) e 9.x (tomcat9), versione fornita: [${as}]"/>
+						</then>
+					</if>
+					-->
+				    <propertyregex property="asVersionNumber"
+				              input="${as}"
+				              regexp="tomcat(.*)"
+				              select="\1"
+				              casesensitive="false" />
+					<script language="javascript">
+					    <![CDATA[
+					        var asVersionNumber = project.getProperty("asVersionNumber");
+					        var required = "5";
+					        project.setProperty('as.valid-version', parseInt(asVersionNumber) < parseInt(required) ? "false" : "true");
+					    ]]>
+					</script>
+					<fail message="Versione fornita dell'application server tomcat non supportata: [${asVersionNumber}]">
+					    <condition>
+					        <isfalse value="${as.valid-version}"/>
+					    </condition>
+					</fail>
 				</then>	
 			</elseif>
 			<else>

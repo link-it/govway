@@ -4,7 +4,7 @@ jmx.factory=org.jnp.interfaces.NamingContextFactory
 # Server 
 # jboss 4.x, 5.x, 6.x
 #jmx.server=jnp://127.0.0.1:1099
-# jboss 7.x e 8.x
+# jboss 7.x e WildFly
 jmx.server=service:jmx:remoting-jmx://127.0.0.1:9999
 # tomcat
 #jmx.server=service:jmx:rmi:///jndi/rmi://:9999/jmxrmi
@@ -39,10 +39,10 @@ configurazionePdD.resetCache=true
 
 
 
-# ----- org.openspcoop2.pdd:AutorizzazioneBuste --------
+# ----- org.openspcoop2.pdd:DatiAutorizzazione --------
 
 # Lettura proprieta' (elencare i nomi separati da virgole)
-autorizzazioneBuste.readProperties=tipoAutorizzazioneBuste,cacheAbilitata
+autorizzazioneBuste.readProperties=cacheAbilitata
 
 # Invocazione 'resetCache'
 autorizzazioneBuste.resetCache=true

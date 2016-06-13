@@ -171,8 +171,7 @@ public class RisorseEsterne {
 			
 			MBeanServerConnection jmxconn = null;
 			if("jboss7".equals(version_jbossas) || 
-					"jboss8".equals(version_jbossas) || 
-					"wildfly8".equals(version_jbossas) || 
+					(version_jbossas!=null && version_jbossas.startsWith("wildfly")) || 
 					version_jbossas.startsWith("tomcat")){
 				
 				String as = version_jbossas;

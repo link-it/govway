@@ -370,10 +370,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	<target name="setup_datasource" depends="_setup_datasource"/>
 	<target name="_setup_datasource">
 		<if>
-			<or>
-				<matches string="${antinstaller_as}" pattern="jboss.*"/>
-				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
-			</or>
+			<matches string="${antinstaller_as}" pattern="jboss.*"/>
 			<then>
 				<var name="jboss_datasource_dir_name" value=""/>
 				<if>
@@ -386,7 +383,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 						<var name="jboss_datasource_dir_name" value="v4_v5_v6"/>
 					</then>
 					<else>
-						<var name="jboss_datasource_dir_name" value="v7_v8"/>
+						<var name="jboss_datasource_dir_name" value="v7"/>
 					</else>
 				</if>		
 				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/openspcoop2-ds.xml" todir="${tmp_ds}"/>
@@ -398,7 +395,23 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				    <param name="file" value="${tmp_ds}/openspcoop2_console-ds.xml"/>
 				</antcall>
 			</then>
-			<else>
+		</if>
+		<if>
+			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			<then>		
+				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/openspcoop2-ds.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/openspcoop2-ds.xml"/>
+				</antcall>
+				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/openspcoop2_console-ds.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/openspcoop2_console-ds.xml"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+			<then>	
 				<copy file="${deploy_ds}/tomcat/${antinstaller_tipo_database}/openspcoop2.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/openspcoop2.xml"/>
@@ -411,7 +424,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/pddConsole.xml"/>
 				</antcall>
-			</else>
+			</then>
 		</if>
 	</target>
 

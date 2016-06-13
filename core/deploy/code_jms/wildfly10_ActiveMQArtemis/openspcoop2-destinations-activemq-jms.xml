@@ -1,0 +1,33 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:messaging-activemq:1.X">
+		<server name="default">
+			...
+			<address-setting name="jms.queue.toImbustamento" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toInoltroBuste" redelivery-delay="60000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toInoltroRisposte" redelivery-delay="60000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toSbustamento" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toConsegnaContenutiApplicativi" redelivery-delay="60000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toImbustamentoRisposte" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toSbustamentoRisposte" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toRicezioneBuste" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toRicezioneContenutiApplicativi" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			...
+			<jms-queue name="toImbustamento" entries="/queue/toImbustamento"/>
+			<jms-queue name="toInoltroBuste" entries="/queue/toInoltroBuste"/>
+			<jms-queue name="toInoltroRisposte" entries="/queue/toInoltroRisposte"/>
+			<jms-queue name="toSbustamento" entries="/queue/toSbustamento"/>
+			<jms-queue name="toConsegnaContenutiApplicativi" entries="/queue/toConsegnaContenutiApplicativi"/>
+			<jms-queue name="toImbustamentoRisposte" entries="/queue/toImbustamentoRisposte"/>
+			<jms-queue name="toSbustamentoRisposte" entries="/queue/toSbustamentoRisposte"/>
+			<jms-queue name="toRicezioneBuste" entries="/queue/toRicezioneBuste"/>
+			<jms-queue name="toRicezioneContenutiApplicativi" entries="/queue/toRicezioneContenutiApplicativi"/>
+			...
+		</server>
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>
