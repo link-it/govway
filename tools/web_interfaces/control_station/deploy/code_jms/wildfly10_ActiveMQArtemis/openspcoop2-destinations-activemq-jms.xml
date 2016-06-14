@@ -1,0 +1,39 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:messaging-activemq:1.X">
+		<server name="default">
+			...
+			<!--  toSmistatoreConfigurazioni -->
+			<address-setting name="jms.queue.toSmistatoreConfigurazioni" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<!-- Gestori Componenti Centrali -->
+			<address-setting name="jms.queue.toConfigurazioneRegistro" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toConfigurazioneGestoreAutorizzazioni" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.toConfigurazioneGestoreEventi" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<!--  Gestori Porte di Dominio -->
+			<address-setting name="jms.queue.pdd1" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			<address-setting name="jms.queue.pdd2" redelivery-delay="120000" max-delivery-attempts="-1"/>
+			...
+			<address-setting name="jms.queue.pddN" redelivery-delay="120000" max-delivery-attempts="-1"/>
+
+			...
+
+			<!--  toSmistatoreConfigurazioni -->
+			<jms-queue name="toSmistatoreConfigurazioni" entries="/queue/toSmistatoreConfigurazioni"/>
+			<!-- Gestori Componenti Centrali -->
+			<jms-queue name="toConfigurazioneRegistro" entries="/queue/toConfigurazioneRegistro"/>
+			<jms-queue name="toConfigurazioneGestoreAutorizzazioni" entries="/queue/toConfigurazioneGestoreAutorizzazioni"/>
+			<jms-queue name="toConfigurazioneGestoreEventi" entries="/queue/toConfigurazioneGestoreEventi"/>
+			<!--  Gestori Porte di Dominio -->			
+			<jms-queue name="pdd1" entries="/queue/pdd1"/>
+			<jms-queue name="pdd2" entries="/queue/pdd2"/>
+			...
+			<jms-queue name="pddN" entries="/queue/pddN"/>
+			...
+		</server>
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>

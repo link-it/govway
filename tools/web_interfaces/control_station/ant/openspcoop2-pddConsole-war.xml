@@ -23,14 +23,27 @@
 		<if>
 			<or>
 				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
+				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<concat destfile="${build_pddConsole}/tmp/queue.properties" append="yes" >
+				<if>
+					<or>
+						<equals arg1="${as}" arg2="jboss7"/>
+						<equals arg1="${as}" arg2="wildfly8"/>
+						<equals arg1="${as}" arg2="wildfly9"/>
+					</or>
+					<then>
+						<concat destfile="${build_pddConsole}/tmp/queue.properties" append="yes" >
 
 # ----- Personalizzazione BrokerJMS HornetQ -------------
-				</concat>
+						</concat>
+					</then>
+					<else>
+						<concat destfile="${build_pddConsole}/tmp/queue.properties" append="yes" >
+# ----- Personalizzazione BrokerJMS ActiveMQArtemis -------------
+						</concat>
+					</else>
+				</if>
 				<antcall target="set_property">
 				    <param name="file" value="${build_pddConsole}/tmp/queue.properties"/>
 					<param name="token" value="ConnectionFactory"/>
@@ -203,13 +216,15 @@
 		</if>
 		
 		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss7"/>
-				<equals arg1="${as}" arg2="jboss8"/>
-				<equals arg1="${as}" arg2="wildfly8"/>
-			</or>
+			<equals arg1="${as}" arg2="jboss7"/>
 			<then>
 				<copy file="${src_pddConsole}/WEB-INF/${jboss_deployment_structure}.${as}" tofile="${build_pddConsole}/tmp/${jboss_deployment_structure}" />
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<copy file="${src_pddConsole}/WEB-INF/${jboss_deployment_structure}.wildfly" tofile="${build_pddConsole}/tmp/${jboss_deployment_structure}" />
 			</then>
 		</if>
 		
@@ -236,6 +251,7 @@
 		<var name="pddConsoleRemota_cxf_xmlschema-core" value="" />
 		<var name="pddConsoleRemota_cxf_woodstox-core-asl" value="" />
 		<var name="pddConsoleRemota_cxf_stax2-api" value="" />
+		<var name="pddConsoleRemota_cxf_geronimo_ws_metadata_spec" value="" />
 		<if>
 			<or>
 				<isfalse value="${singlePdD}" />
@@ -247,8 +263,15 @@
 				<var name="pddConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.0.3.jar" />
 				<var name="pddConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-asl-4.2.0.jar" />
 				<var name="pddConsoleRemota_cxf_stax2-api" value="stax2-api-3.1.1.jar" />
+				<if>
+					<matches string="${as}" pattern="wildfly.*"/>
+					<then>
+						<var name="pddConsoleRemota_cxf_geronimo_ws_metadata_spec" value="geronimo-ws-metadata_2.0_spec-1.1.3.jar" />
+					</then>
+				</if>
 			</then>
 		</if>
+		
 		
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
 		<if>
@@ -334,9 +357,11 @@
 			<lib dir="${required_lib_pddConsole}/cxf">
 				<include name="saaj-impl-1.3.19.jar" />
 				<include name="cxf-2.7.4.jar" />
+				<include name="${geronimo_jaxws_spec_jar}" />
 				<include name="${pddConsoleRemota_cxf_xmlschema-core}" />
 				<include name="${pddConsoleRemota_cxf_woodstox-core-asl}" />
 				<include name="${pddConsoleRemota_cxf_stax2-api}" />
+				<include name="${pddConsoleRemota_cxf_geronimo_ws_metadata_spec}" />
 			</lib>
 			<lib dir="${required_lib_pddConsole}/jax">
 				<include name="${jaxp_ri_jar}" />
@@ -348,8 +373,9 @@
 				<include name="${javax_jms_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="${pddConsoleRemota_security_neethi}"/>
 				<include name="xmlsec-1.5.4.jar"/>
+				<include name="${neethi_jar}" />
+				<include name="${pddConsoleRemota_security_neethi}"/>
 			</lib>
 			<lib dir="${required_lib}/httpcore">
 				<include name="${pddConsoleRemota_httpcore}"/>

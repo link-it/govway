@@ -1,0 +1,20 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:messaging-activemq:1.X">
+		<server name="default">
+			...
+			<connection-factory name="activemq-ra-openspcoop2-pddConsole" connectors="in-vm" entries="org.openspcoop2.jms.pddConsole"
+				consumer-window-size="0"/>
+			<!--
+                                By default, ActiveMQArtemis consumers buffer messages from the server in a client side buffer before the client consumes them.
+                                This improves performance but don't work with filter implemented in pddConsole
+                                org.openspcoop2.web.ctrlstat.gestori.GestoreGeneral.filterOperations (messageSelector)
+                        -->
+		 </server>
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>

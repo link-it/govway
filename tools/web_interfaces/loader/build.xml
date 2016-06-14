@@ -78,8 +78,7 @@
 			<equals arg1="${as}" arg2="jboss4"/>
 			<equals arg1="${as}" arg2="jboss6"/>
 			<equals arg1="${as}" arg2="jboss7"/>
-			<equals arg1="${as}" arg2="jboss8"/>
-			<equals arg1="${as}" arg2="wildfly8"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="xalan_jar" value="xalan-2.7.1.jar" />
@@ -92,8 +91,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 			<equals arg1="${as}" arg2="jboss6"/>
 			<equals arg1="${as}" arg2="jboss7"/>
-			<equals arg1="${as}" arg2="jboss8"/>
-			<equals arg1="${as}" arg2="wildfly8"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="log4j_jar" value="log4j-1.2.16.jar" />
@@ -112,8 +110,7 @@
 	<if>
 		<or>
 			<equals arg1="${as}" arg2="jboss7"/>
-			<equals arg1="${as}" arg2="jboss8"/>
-			<equals arg1="${as}" arg2="wildfly8"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
@@ -124,8 +121,7 @@
 		<or>
 			<equals arg1="${as}" arg2="jboss6"/>
 			<equals arg1="${as}" arg2="jboss7"/>
-			<equals arg1="${as}" arg2="jboss8"/>
-			<equals arg1="${as}" arg2="wildfly8"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="jboss_classloading" value="jboss-classloading.xml" />
@@ -136,8 +132,7 @@
 		<or>
 			<equals arg1="${as}" arg2="jboss6"/>
 			<equals arg1="${as}" arg2="jboss7"/>
-			<equals arg1="${as}" arg2="jboss8"/>
-			<equals arg1="${as}" arg2="wildfly8"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="jboss_scanning" value="jboss-scanning.xml" />
@@ -147,8 +142,7 @@
 	<if>
 		<or>
 			<equals arg1="${as}" arg2="jboss7"/>
-			<equals arg1="${as}" arg2="jboss8"/>
-			<equals arg1="${as}" arg2="wildfly8"/>
+			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
 			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
