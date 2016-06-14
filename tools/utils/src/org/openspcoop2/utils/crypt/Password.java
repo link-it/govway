@@ -34,6 +34,13 @@ import java.util.Random;
 
 public class Password {
 
+	public static void main(String[] args) {
+		String pwsu = (String) args[0];
+		Password procToCall = new Password();
+		System.out.println(procToCall.cryptPw(pwsu));
+	}
+	
+	
 	public int number;
 	public String[][] datiConf = new String[20][2];
 
@@ -94,7 +101,7 @@ public class Password {
         String pw = new String(arrByte);
         return pw;
     }
-	
+		
 	public String cryptPw(String password) {
 		String mypwcryptS = "";
 

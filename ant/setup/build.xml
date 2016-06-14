@@ -360,8 +360,23 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<delete file="${tmp_sql}/init_soggetto_trasparente.sql" failonerror="false"/>
 			</then>
 		</if>
-		
+			
+		<!-- Imposto corretti valori nei threshold -->
 		<antcall target="sql_settings">
+		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
+		</antcall>
+		
+		<!-- password cifrata per l'utenza -->
+		<java classname="org.openspcoop2.utils.crypt.Password" fork="true" outputproperty="antinstaller_pddconsole_password_md5">
+			<arg value="${antinstaller_pddconsole_password}" />
+			<classpath>
+				<path id="classpath_run">
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
+			   </path>				
+			</classpath>
+		</java>
+		<copy file="${deploy_sql}/init_utenzaPddConsole.sql" tofile="${tmp_sql}/init_utenzaPddConsole.sql" overwrite="true"/>
+		<antcall target="sql_settings_users">
 		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
 		</antcall>
 		

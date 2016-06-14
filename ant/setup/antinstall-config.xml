@@ -108,6 +108,22 @@
          <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="openspcoop2" regex="^.+$" textMask="true"/>-->
     </page>
 
+ 	<page name="utenzaAmministrazione" type="input" displayText="Configurazione Utenza Amministrazione">
+
+		<validated defaultValue="amministratore" property="antinstaller_pddconsole_username" displayText="Username Amministratore" regex="^[0-9A-Za-z]+$"/>
+		<comment displayText=""/>	
+		<comment displayText="Raccomandazioni sulla password sono indicate di seguito:" bold="true"/>
+		<comment displayText="- differente dall'username"/>
+		<comment displayText="- contenga almeno 8 caratteri"/>
+		<comment displayText="- contenga almeno un carattere alfabetico, un numero ed un simbolo non alfanumerico"/>
+
+        <!-- 
+        <password property="antinstaller_pddconsole_password" displayText="Password" regex="^[^ ]+$" />
+        <password-confirm origField="antinstaller_pddconsole_password" property="antinstaller_pddconsole_conferma_password" displayText="Conferma password" regex="^[^ ]+$" />
+        -->
+        <validated property="antinstaller_pddconsole_password" displayText="Password" regex="^[^ ]+$" />
+
+    </page>
 
     <page name="preinstallazione4" type="input" displayText="Cooperazione Applicativa">
 

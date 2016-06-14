@@ -57,9 +57,36 @@
 			<param name="token" value="@DATABASE@"/>
 			<param name="value" value="${antinstaller_dbname}"/>
 		</antcall>
-	
+			
 	</target>
 	
+	<target name="sql_settings_users">
+	
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="INSERT INTO users"/>
+			<param name="value" value="-- INSERT INTO users"/>
+		</antcall>
+		<concat destfile="${file}" append="yes" >
+			<header filtering="no" trimleading="yes">
+	
+-- Utenza pddConsole
+							      	
+			</header>					
+			<filelist dir="${tmp_sql}"
+				files="init_utenzaPddConsole.sql"/>
+		</concat>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PDDCONSOLE_USERNAME@"/>
+			<param name="value" value="${antinstaller_pddconsole_username}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PDDCONSOLE_PASSWORD@"/>
+			<param name="value" value="${antinstaller_pddconsole_password_md5}"/>
+		</antcall>
+	</target>
 	
 	<target name="sql_settings_by_protocol">
 					
