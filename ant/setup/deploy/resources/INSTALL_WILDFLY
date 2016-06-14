@@ -12,13 +12,13 @@ Per completare il processo di installazione si devono effettuare i seguenti pass
 
    4. Eseguire lo script sql/OpenSPCoop2.sql per la creazione dello schema del database. Ad esempio, nel caso di PostgreSQL, si potrà eseguire il comando psql <hostname> <username> -f sql/OpenSPCoop2.sql
 
-   5. Copiare i files datasource/openspcoop2_console-ds.xml e datasource/openspcoop2-ds.xml, contenenti le definizioni dei datasources, nella directory <JBOSS_HOME>/standalone/deployments/
+   5. Copiare i files datasource/openspcoop2_console-ds.xml e datasource/openspcoop2-ds.xml, contenenti le definizioni dei datasources, nella directory <WILDFLY_HOME>/standalone/deployments/
 
-   6. Copiare le applicazioni presenti in archivi nella directory <JBOSS_HOME>/standalone/deployments/
+   6. Copiare le applicazioni presenti in archivi nella directory <WILDFLY_HOME>/standalone/deployments/
 
-   7. Installare il DriverJDBC, relativo al tipo di RDBMS indicato in fase di setup, nella directory <JBOSS_HOME>/standalone/deployments/
+   7. Installare il DriverJDBC, relativo al tipo di RDBMS indicato in fase di setup, nella directory <WILDFLY_HOME>/standalone/deployments/
 
    8. Editare i datasources installati al punto 5. sostituendo la keyword 'NOME_DRIVER_JDBC.jar' con il nome del driver jdbc gestito al punto 7.
 
-   9. Avviare JBoss (ad esempio su Linux con il comando <JBOSS_HOME>/bin/standalone.sh oppure utilizzando il relativo service)
+   9. Avviare JBoss (ad esempio su Linux con il comando <WILDFLY_HOME>/bin/standalone.sh oppure utilizzando il relativo service)
 
