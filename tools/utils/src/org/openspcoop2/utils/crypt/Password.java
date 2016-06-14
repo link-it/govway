@@ -35,6 +35,7 @@ import java.util.Random;
 public class Password {
 
 	public static void main(String[] args) {
+		// Metodo utilizzato dal setup antinstaller
 		String pwsu = (String) args[0];
 		Password procToCall = new Password();
 		System.out.println(procToCall.cryptPw(pwsu));

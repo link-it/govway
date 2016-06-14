@@ -1,3 +1,11 @@
+2016-06-14  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-508
+	L'utenza utilizzabile per accedere alla console di gestione 'pddConsole'
+	è adesso configurabile durante il setup grafico.
+	L'utente può fornire l'username e la password che preferisce.
+
 2016-06-13  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

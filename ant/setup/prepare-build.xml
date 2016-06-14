@@ -80,10 +80,12 @@
 		<delete dir="${deploy_sw}" />
 		<copy file="${deploy_sql}/init.sql" todir="." />
 		<copy file="${deploy_sql}/init_soggetto.sql" todir="." />
+		<copy file="${deploy_sql}/init_utenzaPddConsole.sql" todir="." />
 		<delete dir="${deploy_sql}" />
 		<mkdir dir="${deploy_sql}" />
 		<move file="./init.sql" todir="${deploy_sql}" />
 		<move file="./init_soggetto.sql" todir="${deploy_sql}" />
+		<move file="./init_utenzaPddConsole.sql" todir="${deploy_sql}" />
 	</target>
 
 	
