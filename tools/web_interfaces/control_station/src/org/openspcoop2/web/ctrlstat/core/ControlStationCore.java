@@ -31,15 +31,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.naming.InitialContext;
-
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -1651,72 +1642,6 @@ public class ControlStationCore {
 	/* ----- SMISTAMENTO OPERAZIONE ------ */
 
 	/**
-	 * Inoltra l'operazione nella coda dello smistatore in caso di errori lancia
-	 * un'eccezione che verra' gestita dal chiamante
-	 * 
-	 * @param operazioneDaSmistare
-	 * @throws Exception
-	 */
-	private void setDati(OperazioneDaSmistare operazioneDaSmistare) throws Exception {
-
-		QueueConnection qc = null;
-		QueueSession qs = null;
-
-		// try{
-
-		// Estraggo i dati dall'Operazione da smistare, che tanto mi servono
-		// per settare la StringProperty
-		int idTable = operazioneDaSmistare.getIDTable();
-		Operazione operazione = operazioneDaSmistare.getOperazione();
-		String pdd = operazioneDaSmistare.getPdd();
-		TipoOggettoDaSmistare oggettoDaSmistare = operazioneDaSmistare.getOggetto();
-
-		ControlStationCore.log.debug("[ControlStationCore::setDati] id[" + idTable + "] operazione[" + operazione.name() + 
-				"] pdd[" + pdd + "] oggetto[" + oggettoDaSmistare.name() + "]");
-
-		InitialContext ctx = new InitialContext(this.cfProp);
-		Queue queue = (Queue) ctx.lookup(this.smistatoreQueue);
-		QueueConnectionFactory qcf = (QueueConnectionFactory) ctx.lookup(this.cfName);
-		qc = qcf.createQueueConnection();
-		qs = qc.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-		QueueSender sender = qs.createSender(queue);
-		ctx.close();
-
-		// Create a message
-		ObjectMessage message = qs.createObjectMessage(operazioneDaSmistare);
-
-		// Preparo la StringProperty, che serve per il filtro
-		StringBuffer idOperazione = new StringBuffer();
-		idOperazione.append("[" + operazione.name() + "]");
-		idOperazione.append("[" + oggettoDaSmistare.name() + "]");
-
-		Hashtable<OperationsParameter, Vector<String>> params = operazioneDaSmistare.getParameters();
-		Enumeration<OperationsParameter> keys = params.keys();
-
-		// aggiungo informazioni il filtro
-		while (keys.hasMoreElements()) {
-			OperationsParameter key = keys.nextElement();
-
-			Vector<String> values = params.get(key);
-			for (String value : values) {
-				idOperazione.append("[" + value + "]");
-			}
-
-		}
-
-		ControlStationCore.log.debug("[ControlStationCore::setDati] id=[" + idOperazione.toString() + "]");
-		message.setStringProperty("ID", idOperazione.toString());
-
-		// send a message
-		sender.send(message);
-
-		// fix: 19/01
-		qs.close();
-		qc.close();
-
-	}
-
-	/**
 	 * Effettua transazionalmente le operazioni utilizzando il driver Ogni
 	 * oggetto passato ha un corrispondente tipo di operazione che deve essere
 	 * effettuato su di esso in modo tale da poter effettuare diverse operazioni
@@ -3120,7 +3045,7 @@ public class ControlStationCore {
 						// il rollback viene gestito da dal blocco di catch
 						throw new ControlStationCoreException("[ControlStationCore::performOperation]Operazione da smistare non valida.");
 					} else {
-						this.setDati(operazione);
+						ControlStationJMSCore.setDati(operazione, this.smistatoreQueue, this.cfName, this.cfProp);
 					}
 				}
 
