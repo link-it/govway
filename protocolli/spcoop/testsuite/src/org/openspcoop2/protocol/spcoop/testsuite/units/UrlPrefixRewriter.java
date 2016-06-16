@@ -754,7 +754,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/openspcoop/testPD]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(location: http://localhost:8080/openspcoop/testPD/openspcoop2/spcoop/PA)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(404) Not Found"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(404)"));
 			
 		}catch(Exception e){
 			throw e;
@@ -929,7 +929,7 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/openspcoop/testPA]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhost:8080/openspcoop/testPA/OpenSPCoop2TestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(404) Not Found"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(404)"));
 			
 		}catch(Exception e){
 			throw e;

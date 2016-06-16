@@ -1,9 +1,20 @@
-Esempio di connettore da impostare in apache tomcat:
+Esempio di connettore da impostare in apache tomcat 5.x, 6.x, 7.x e 8.x:
 
 <Connector port="8444" protocol="HTTP/1.1" SSLEnabled="true"
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
            emptySessionPath="true"
            scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
+           keystoreFile="/etc/openspcoop2/keys/erogatore.jks"
+           keystorePass="openspcoop"/>
+
+
+Esempio di connettore da impostare in apache tomcat 9.x (viene aggiunto l'attributo keyAlias):
+
+<Connector port="8444" protocol="HTTP/1.1" SSLEnabled="true"
+           maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
+           emptySessionPath="true"
+           scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
+	   keyAlias="erogatore"
            keystoreFile="/etc/openspcoop2/keys/erogatore.jks"
            keystorePass="openspcoop"/>
 
