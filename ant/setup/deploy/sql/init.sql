@@ -11,6 +11,7 @@ INSERT INTO msgdiag_appender_prop (id_appender,nome,valore) VALUES ((select id f
 
 -- PdD
 UPDATE pdd set nome='PdD@NOME_SOGGETTO@';
+UPDATE pdd set superuser='@PDDCONSOLE_USERNAME@';
 
 -- Configurazione Cache Registro
 UPDATE configurazione set statocache='abilitato';
