@@ -1749,7 +1749,7 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Riscontrato errore durante l'inizializzazione: [SchemaXSD] L'acccordo di servizio parte comune non contiene schemi");
+		err.setMsgErrore("Riscontrato errore durante l'inizializzazione: [SchemaXSD] L'accordo di servizio parte comune non contiene schemi");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
@@ -1807,7 +1807,7 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Riscontrato errore durante l'inizializzazione: [SchemaXSD] L'acccordo di servizio parte comune non contiene schemi");
+		err.setMsgErrore("Riscontrato errore durante l'inizializzazione: [SchemaXSD] L'accordo di servizio parte comune non contiene schemi");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
@@ -1865,7 +1865,7 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Riscontrato errore durante l'inizializzazione: [SchemaXSD] L'acccordo di servizio parte comune non contiene schemi");
+		err.setMsgErrore("Riscontrato errore durante l'inizializzazione: [SchemaXSD] L'accordo di servizio parte comune non contiene schemi");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
@@ -1946,18 +1946,16 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
+		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL style:document use:literal)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		err2.setMsgErrore("Validazione WSDL del contenuto della richiesta fallita: Riscontrato messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL)");
+		err2.setMsgErrore("[ValidazioneContenutiApplicativi Richiesta] Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL style:document use:literal)");
 		this.erroriAttesiOpenSPCoopCore.add(err2);
 		
 	}
-	
-	
 	
 	
 	
@@ -2030,13 +2028,13 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione XSD del contenuto della risposta fallita:");
+		err.setMsgErrore("Validazione fallita (elemento {http://schemas.xmlsoap.org/soap/envelope/}AlterazioneMessaggio) [<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:AlterazioneMessaggio xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"/>]: cvc-elt.1: Cannot find the declaration of element 'soapenv:AlterazioneMessaggio'.");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		err2.setMsgErrore("Validazione fallita (elemento AlterazioneMessaggio)");
+		err2.setMsgErrore("Riscontrata non conformità rispetto agli schemi XSD");
 		this.erroriAttesiOpenSPCoopCore.add(err2);
 	}
 	
