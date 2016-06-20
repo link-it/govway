@@ -51,6 +51,7 @@
             <option value="jboss4" text="JBoss 4.x"/>
             
             <!-- Il valore viene mappato sempre in tomcat 5 -->
+            <!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
             <option value="tomcat5" text="Apache Tomcat 9.x"/>
             <option value="tomcat5" text="Apache Tomcat 8.x"/>
             <option value="tomcat5" text="Apache Tomcat 7.x"/>
@@ -153,7 +154,7 @@
 
     </page>
 
-    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_as}=tomcat) AND (${antinstaller_backward_compatibility}=true)">
+    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_as}=tomcat5) AND (${antinstaller_backward_compatibility}=true)">
 
 	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat impedisce l'attivazione delle interfacce di compatibilità."/>
 	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>
