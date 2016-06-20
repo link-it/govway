@@ -1,3 +1,12 @@
+2016-06-20  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole, PddLoader, ...]
+	Aggiunta funzionalità OP-451
+	Completato supporto per nuove versione dei seguenti application server:
+	- WildFly9
+	- WildFly10 (e JBossEAP 7.x)
+	- Tomcat9
+
 2016-06-14  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
