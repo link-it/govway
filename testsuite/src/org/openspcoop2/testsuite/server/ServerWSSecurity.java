@@ -222,7 +222,7 @@ public class ServerWSSecurity extends ServerCore{
 
 		}catch(Exception e){
 			this.log.error("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
-			throw new ServletException("Errore durante la gestione di una richiesta: "+e.getMessage());
+			throw new ServletException("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
 		}
 	}
 

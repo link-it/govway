@@ -116,8 +116,8 @@ public class ServerAsincronoSimmetrico_modalitaSincrona extends ServerCore{
 			tR.start();
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la gestione di una richiesta asincrona simmetrica modalita sincrona: "+e.getMessage());
-			throw new ServletException("Errore durante la gestione di una richiesta asincrona simmetrica modalita sincrona: "+e.getMessage());
+			this.log.error("Errore durante la gestione di una richiesta asincrona simmetrica modalita sincrona: "+e.getMessage(),e);
+			throw new ServletException("Errore durante la gestione di una richiesta asincrona simmetrica modalita sincrona: "+e.getMessage(),e);
 		}
 	}
 

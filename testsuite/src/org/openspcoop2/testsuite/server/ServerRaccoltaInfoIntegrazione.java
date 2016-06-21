@@ -640,7 +640,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.info("Gestione richiesta con id="+idTrasporto+" effettata, messaggio gestito:\n"+bout.toString());
 
 		}catch(Exception e){
-			this.log.error("Errore durante la gestione di una richiesta: "+e.getMessage());
+			this.log.error("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
 			try{
 				returnSOAPFault(response.getOutputStream(),"Errore durante la gestione di una richiesta: "+e.getMessage());
 			}catch(Exception eFinal){

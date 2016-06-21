@@ -129,8 +129,8 @@ public class ServerGenerico extends ServerCore{
 			this.log.info("Gestione richiesta con id="+id+" effettata");
 
 		}catch(Exception e){
-			this.log.error("Errore durante la gestione di una richiesta: "+e.getMessage());
-			throw new ServletException("Errore durante la gestione di una richiesta: "+e.getMessage());
+			this.log.error("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
+			throw new ServletException("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
 		}
 	}
 
