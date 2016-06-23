@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
 /**
@@ -66,7 +67,7 @@ public class LoggerProperties {
 		}
 
 		// File Local Implementation
-		java.util.Properties loggerPropertiesRidefinito =  
+		CollectionProperties loggerPropertiesRidefinito =  
 				PropertiesUtilities.searchLocalImplementation(ConstantsEnv.OPENSPCOOP2_LOCAL_HOME,logConsole, ConstantsEnv.OPENSPCOOP2_LOGGER_PROPERTIES, ConstantsEnv.OPENSPCOOP2_LOGGER_LOCAL_PATH,  rootDirectory);
 		if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
 			Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();

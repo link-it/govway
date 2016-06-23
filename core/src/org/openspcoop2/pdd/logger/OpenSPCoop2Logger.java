@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppende
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpOpenSPCoopAppender;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
@@ -148,7 +149,7 @@ public class OpenSPCoop2Logger {
 			}
 			
 			// Cerco eventuale ridefinizione
-			java.util.Properties loggerPropertiesRidefinito =  
+			CollectionProperties loggerPropertiesRidefinito =  
 					PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,Logger.getLogger(OpenSPCoop2Logger.class), 
 							CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES, CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, 
 							confDir);
@@ -211,7 +212,7 @@ public class OpenSPCoop2Logger {
 			}
 			
 			// File Local Implementation
-			java.util.Properties loggerPropertiesRidefinito =  
+			CollectionProperties loggerPropertiesRidefinito =  
 				PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole, CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES ,CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, rootDirectory);
 			if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
 				Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();

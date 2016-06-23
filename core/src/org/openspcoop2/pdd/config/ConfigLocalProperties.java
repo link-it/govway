@@ -63,6 +63,7 @@ import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.InstanceProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
@@ -83,7 +84,8 @@ public class ConfigLocalProperties extends InstanceProperties {
 		
 		super(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,new Properties(), log);  // L'originale del file config non esiste, e' su file XML o su database
 		
-		Properties properties = PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,log, CostantiPdD.OPENSPCOOP2_CONFIG_PROPERTIES , CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH, confDir);
+		CollectionProperties properties = 
+				PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,log, CostantiPdD.OPENSPCOOP2_CONFIG_PROPERTIES , CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH, confDir);
 		if(properties!=null){
 			this.configLocal = true;
 			this.setLocalFileImplementation(properties);

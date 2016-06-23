@@ -44,7 +44,7 @@ import org.openspcoop2.utils.UtilsException;
 public abstract class InstanceProperties {
 
 	private PropertiesReader propertiesOriginale;
-	private PropertiesReader propertiesRidefinitoFile;
+	private CollectionProperties propertiesRidefinitoFile;
 	private PropertiesReader propertiesRidefinitoObject;
 	protected Logger log;
 	private String OPENSPCOOP2_LOCAL_HOME;
@@ -64,13 +64,13 @@ public abstract class InstanceProperties {
 	}
 	
 	public void setLocalFileImplementation(String variable,String path,String confDirectory){
-		Properties prop = PropertiesUtilities.searchLocalImplementation(this.OPENSPCOOP2_LOCAL_HOME,this.log, variable, path, confDirectory);
+		CollectionProperties prop = PropertiesUtilities.searchLocalImplementation(this.OPENSPCOOP2_LOCAL_HOME,this.log, variable, path, confDirectory, this.readCallsNotSynchronized);
 		if(prop!=null)
-			this.propertiesRidefinitoFile = new PropertiesReader(prop,this.readCallsNotSynchronized);
+			this.propertiesRidefinitoFile = prop;
 	}
 	
-	public void setLocalFileImplementation(Properties prop){
-		this.propertiesRidefinitoFile = new PropertiesReader(prop,this.readCallsNotSynchronized);
+	public void setLocalFileImplementation(CollectionProperties prop){
+		this.propertiesRidefinitoFile = prop;
 	}
 	
 	public void setLocalObjectImplementation(Properties prop){
@@ -109,7 +109,7 @@ public abstract class InstanceProperties {
 		
 		if(this.propertiesRidefinitoFile!=null){
 			java.util.Enumeration<?> enumPropRidefinito = this.propertiesRidefinitoFile.propertyNames();
-			while(enumPropRidefinito.hasMoreElements()){
+			while(enumPropRidefinito!=null && enumPropRidefinito.hasMoreElements()){
 				String ridefinito = (String)enumPropRidefinito.nextElement();
 				if(object.contains(ridefinito)==false){
 					object.add(ridefinito);		
@@ -119,7 +119,7 @@ public abstract class InstanceProperties {
 		
 		if(this.propertiesRidefinitoObject!=null){
 			java.util.Enumeration<?> enumPropRidefinito = this.propertiesRidefinitoObject.propertyNames();
-			while(enumPropRidefinito.hasMoreElements()){
+			while(enumPropRidefinito!=null && enumPropRidefinito.hasMoreElements()){
 				String ridefinito = (String)enumPropRidefinito.nextElement();
 				if(object.contains(ridefinito)==false){
 					object.add(ridefinito);		
@@ -138,7 +138,9 @@ public abstract class InstanceProperties {
 	/* ------------ UTILITY INTERNE ----------------- */
 	private String getValueEngine(String key,boolean convertEnvProperties) throws UtilsException{
 		
-		
+		// NOTA: La logica di append "+," vale solo rispetto agli elementi PropertiesOriginale, CollectionProperties, PropertiesObject
+		//		 Mentre il valore indicato per una proprietà dei files locali all'interno del CollectionProperties non va in append, ma viene utilizzato solamente il primo incontrato (che poi sarà utilizzato per come valore del 2. File).
+				
 		try{
 					
 			// 1. Object

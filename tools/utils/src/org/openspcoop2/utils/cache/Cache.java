@@ -44,6 +44,7 @@ import org.apache.jcs.engine.memory.behavior.IMemoryCache;
 import org.apache.log4j.Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
 /**
@@ -79,7 +80,7 @@ public class Cache {
 			}
 			
 			// File Local Implementation
-			java.util.Properties cachePropertiesRidefinito =  
+			CollectionProperties cachePropertiesRidefinito =  
 				PropertiesUtilities.searchLocalImplementation(OPENSPCOOP2_LOCAL_HOME,logConsole, OPENSPCOOP2_CACHE_PROPERTIES ,OPENSPCOOP2_CACHE_LOCAL_PATH, rootDirectory);
 			if(cachePropertiesRidefinito!=null && cachePropertiesRidefinito.size()>0){
 				Enumeration<?> ridefinito = cachePropertiesRidefinito.keys();

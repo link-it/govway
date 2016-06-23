@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
 /**
@@ -68,7 +69,7 @@ public class LoaderLogger {
 		}
 
 		// File Local Implementation
-		java.util.Properties loggerPropertiesRidefinito =  
+		CollectionProperties loggerPropertiesRidefinito =  
 				PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole, Costanti.OPENSPCOOP2_LOGGER_PROPERTIES, Costanti.OPENSPCOOP2_LOGGER_LOCAL_PATH,  rootDirectory);
 		if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
 			Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();

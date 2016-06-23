@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiUtilities;
@@ -69,7 +70,7 @@ public class ControlStationLogger {
 		}
 
 		// File Local Implementation
-		java.util.Properties loggerPropertiesRidefinito =  
+		CollectionProperties loggerPropertiesRidefinito =  
 				PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole,
 						CostantiUtilities.get_PROPERTY_NAME(TipoProperties.LOGGER, confPropertyName),
 						CostantiUtilities.get_LOCAL_PATH(TipoProperties.LOGGER, confLocalPathPrefix),

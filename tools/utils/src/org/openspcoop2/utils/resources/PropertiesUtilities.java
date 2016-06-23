@@ -49,32 +49,36 @@ public class PropertiesUtilities {
 		// 5. CLASSPATH con nome path
 		// 6. (DIRECTORY DI CONFIGURAZIONE)/path
 	*/
-	
-	public static Properties searchLocalImplementation(String OPENSPCOOP2_LOCAL_HOME, Logger log,String variabile,String path,String confDirectory){	
+	public static CollectionProperties searchLocalImplementation(String OPENSPCOOP2_LOCAL_HOME, Logger log,String variabile,String path,String confDirectory){	
+		return searchLocalImplementation(OPENSPCOOP2_LOCAL_HOME, log, variabile, path, confDirectory, true);
+	}
+	public static CollectionProperties searchLocalImplementation(String OPENSPCOOP2_LOCAL_HOME, Logger log,String variabile,String path,String confDirectory,boolean readCallsNotSynchronized){	
+		
+		CollectionProperties cp = new CollectionProperties();
 		
 		Properties p1 = PropertiesUtilities.examineStep1(log,variabile);
 		if(p1!=null){
-			return p1;
+			cp.setSystemVariable(new PropertiesReader(p1,readCallsNotSynchronized));
 		}
 		
 		Properties p2 = PropertiesUtilities.examineStep2(log,variabile);
 		if(p2!=null){
-			return p2;
+			cp.setJavaVariable(new PropertiesReader(p2,readCallsNotSynchronized));
 		}
 		
 		Properties p3 = PropertiesUtilities.examineStep3(OPENSPCOOP2_LOCAL_HOME,log,path);
 		if(p3!=null){
-			return p3;
+			cp.setSystemOpenSPCoopHome(new PropertiesReader(p3,readCallsNotSynchronized));
 		}
 		
 		Properties p4 = PropertiesUtilities.examineStep4(OPENSPCOOP2_LOCAL_HOME,log,path);
 		if(p4!=null){
-			return p4;
+			cp.setJavaOpenSPCoopHome(new PropertiesReader(p4,readCallsNotSynchronized));
 		}
 			
 		Properties p5 = PropertiesUtilities.examineStep5(log,path);
 		if(p5!=null){
-			return p5;
+			cp.setClasspath(new PropertiesReader(p5,readCallsNotSynchronized));
 		}
 				
 		File fConfDirectory = null;
@@ -84,11 +88,11 @@ public class PropertiesUtilities {
 		if(fConfDirectory!=null && fConfDirectory.exists() && fConfDirectory.isDirectory() ){
 			Properties p6 = PropertiesUtilities.examineStep6(log,path,fConfDirectory);
 			if(p6!=null){
-				return p6;
+				cp.setConfigDir(new PropertiesReader(p6,readCallsNotSynchronized));
 			}
 		}
 			
-		return null;
+		return cp;
 	}
 	
 	private static Properties examineStep1(Logger log,String variabile){

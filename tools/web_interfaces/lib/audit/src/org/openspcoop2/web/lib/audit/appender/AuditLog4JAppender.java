@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 import org.openspcoop2.utils.xml.JiBXUtils;
 import org.openspcoop2.web.lib.audit.AuditException;
@@ -124,7 +125,7 @@ public class AuditLog4JAppender implements IAuditAppender {
 			
 			// File Local Implementation
 			if(nomeFileLoaderInstance!=null && nomeProprietaLoaderInstance!=null){
-				java.util.Properties loggerPropertiesRidefinito =  
+				CollectionProperties loggerPropertiesRidefinito =  
 						PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,Logger.getLogger(AuditLog4JAppender.class), 
 								nomeProprietaLoaderInstance, nomeFileLoaderInstance, confDirectory);
 				if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
