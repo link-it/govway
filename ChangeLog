@@ -1,3 +1,20 @@
+2016-06-23  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-522
+	Modificato metodo org.openspcoop2.utils.resources.PropertiesUtilities.searchLocalImplementation in modo da implementare 
+	una ridefinizione delle proprietà (tramite file di properties esterni) non più basata sulla ricerca del file di proprietà
+	ma attraverso una ricerca più fine basata sul nome della proprietà stessa.
+	Possono adesso quindi essere ridefiniti più file di properties esterni con stesso nome (es. openspcoop2_local.properties)
+	situati in posizioni differenti (una delle sei posizioni di seguito indicate). 
+	Verrà utilizzato il valore della proprietà presente nel primo file di properties locale che la contiene, rispetto al seguente ordine:
+	1. VARIABILE DI SISTEMA che identifica il singolo file di properties (es. OPENSPCOOP_PROPERTIES o OPENSPCOOP_LOGGER_PROPERTIES)
+	2. PROPRIETA' JAVA che identifica il singolo file di properties (es. OPENSPCOOP_PROPERTIES o OPENSPCOOP_LOGGER_PROPERTIES)
+	3. VARIABILE DI SISTEMA: OPENSPCOOP_HOME dove deve essere specificata una directory in cui verra' cercato il file path
+	4. PROPRIETA' JAVA (es. ApplicationServer o Java con -D): OPENSPCOOP_HOME dove deve essere specificata una directory in cui verra' cercato il file path
+	5. CLASSPATH con nome path
+	6. (DIRECTORY DI CONFIGURAZIONE)/path
+
 2016-06-20  Andrea Poli <apoli@link.it>
 
 	* [Pdd, PddConsole, PddLoader, ...]
