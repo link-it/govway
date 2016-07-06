@@ -130,7 +130,7 @@
 
         <comment displayText="Protocolli attivi" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
-        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="Trasparente"/>
+        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="Proxy Trasparente"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="SdI (Fatturazione Elettronica)"/>
          
 

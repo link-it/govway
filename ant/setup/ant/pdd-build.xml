@@ -93,7 +93,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-					<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+					<!-- <param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/> -->
+					<param name="value" value="OpenSPCoopSPCoopIT"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -113,7 +114,8 @@
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
 							<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-							<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+							<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
+							<param name="value" value="OpenSPCoopPdD"/>
 						</antcall>
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
@@ -133,7 +135,8 @@
 								<antcall target="set_property">
 								    <param name="file" value="${file}"/>
 									<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-									<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+									<!-- <param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/> -->
+									<param name="value" value="OpenSPCoopSPCoopIT"/>
 								</antcall>
 								<antcall target="set_property">
 								    <param name="file" value="${file}"/>
@@ -153,7 +156,8 @@
 										<antcall target="set_property">
 										    <param name="file" value="${file}"/>
 											<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-											<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+											<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
+											<param name="value" value="OpenSPCoopPdD"/>
 										</antcall>
 										<antcall target="set_property">
 										    <param name="file" value="${file}"/>
@@ -173,7 +177,8 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.identificativoPorta.nome"/>
-			<param name="value" value="${antinstaller_nomesoggetto}"/>
+			<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
+			<param name="value" value="OpenSPCoop"/>
 		</antcall>
 		
 		<!-- PROTOCOL SOGGETTO DEFAULT -->
@@ -183,7 +188,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.spcoop.identificativoPorta.dominio"/>
-					<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>-->
+					<param name="value" value="OpenSPCoopSPCoopIT"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -193,7 +199,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.spcoop.identificativoPorta.nome"/>
-					<param name="value" value="${antinstaller_nomesoggetto}"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
+					<param name="value" value="OpenSPCoop"/>
 				</antcall>
 			</then>
 		</if>
@@ -203,7 +210,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.trasparente.identificativoPorta.dominio"/>
-					<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
+					<param name="value" value="OpenSPCoopPdD"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -213,7 +221,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.trasparente.identificativoPorta.nome"/>
-					<param name="value" value="${antinstaller_nomesoggetto}"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
+					<param name="value" value="OpenSPCoop"/>
 				</antcall>
 			</then>
 		</if>
@@ -223,7 +232,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.sdi.identificativoPorta.dominio"/>
-					<param name="value" value="${antinstaller_nomesoggetto}PdD"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
+					<param name="value" value="OpenSPCoopPdD"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -233,7 +243,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.sdi.identificativoPorta.nome"/>
-					<param name="value" value="${antinstaller_nomesoggetto}"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
+					<param name="value" value="OpenSPCoop"/>
 				</antcall>
 			</then>
 		</if>
