@@ -1,3 +1,11 @@
+2016-07-07  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-524
+	Se il servizio di Porta Delegata riceveva una richiesta senza header HTTP SOAPAction, in comunicazioni SOAP 1.1,
+	l'esito generato per l'handler PostOutResponseHandler era erroneamente catalogato come FaultApplicativo.
+	Il problema è stato risolto, l'esito generato adesso è ERRORE_4XX (Richiesta Client Rifiutata)
+
 2016-06-23  Andrea Poli <apoli@link.it>
 
 	* [Utils]
