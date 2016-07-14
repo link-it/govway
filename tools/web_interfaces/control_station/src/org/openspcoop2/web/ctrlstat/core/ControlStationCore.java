@@ -638,6 +638,7 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = new Hashtable<String, String>();
@@ -742,6 +743,9 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.get(alias);
@@ -1195,6 +1199,7 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava = core.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = core.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = core.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = core.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = core.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio;
@@ -1497,6 +1502,7 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_versioneJava.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_tipoDatabase(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias));

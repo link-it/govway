@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.message.MailcapActivationReader;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -437,9 +438,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// Log
 				OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
+				// stampo comunque saaj factory
+				OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+"): "+factory.getClass().getName());
 				if(propertiesReader.isPrintInfoFactory()){
-					OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory: "+factory.getClass().getName());
 					OpenSPCoop2Startup.log.info("OpenSPCoop Message: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getClass().getName());
+					OpenSPCoop2Startup.log.info("OpenSPCoop Message: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP12).getClass().getName());
 					if( OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11()!=null)
 						OpenSPCoop2Startup.log.info("SOAP1.1 Factory: "+ OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11().getClass().getName());
 					else
@@ -1176,7 +1179,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			OpenSPCoop2Logger.getLoggerOpenSPCoopConfigurazioneSistema().
 				info(informazioniStatoPorta.formatStatoPorta(infoConfigSistema.getVersionePdD(), 
 						infoConfigSistema.getVersioneBaseDati(), infoConfigSistema.getDirectoryConfigurazione(), 
-						infoConfigSistema.getVersioneJava(), 
+						infoConfigSistema.getVersioneJava(), infoConfigSistema.getMessageFactory(),
 						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici(),true),
 						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici(),true),
 						OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato, OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato, OpenSPCoop2Logger.loggerIntegrationManagerAbilitato,

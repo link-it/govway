@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXParseException;
 
@@ -379,4 +380,6 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 
     public abstract Element convertoForXPathSearch(Element contenutoAsElement);
+    
+    public abstract void normalizeDocument(Document document);
 }

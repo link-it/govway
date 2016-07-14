@@ -150,6 +150,16 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String messageFactory = null;
+		try{
+			messageFactory = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
+			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String livelloSeveritaDiagnostici = null;
 		try{
 			livelloSeveritaDiagnostici = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -360,7 +370,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, 
+		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, messageFactory,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
 				"true".equals(tracciamento), "true".equals(dumpApplicativo), "true".equals(dumpPD), "true".equals(dumpPA),

@@ -116,7 +116,7 @@ public abstract class AbstractXMLDiff {
 	
 	public abstract AbstractXMLUtils getXMLUtils();
 	public abstract Element readXPathElement(Element contenutoAsElement);
-	
+	public abstract void normalizeDocument(Document document);
 
 	
 	/* ***** EXCEPTION METHOD ***** */
@@ -164,8 +164,8 @@ public abstract class AbstractXMLDiff {
 			Document docOriginal = this._getDiffW3cDomDocument(original, "original");
 			Document docCompare = this._getDiffW3cDomDocument(compare, "compare");
 			if(AbstractXMLDiff.xmlDiffOptions.isNormalize()){
-				docOriginal.normalizeDocument();
-				docCompare.normalizeDocument();
+				normalizeDocument(docOriginal);
+				normalizeDocument(docCompare);
 			}
 			diff = new DetailedDiff(XMLUnit.compareXML(docOriginal,docCompare));
 		}
@@ -254,8 +254,8 @@ public abstract class AbstractXMLDiff {
 			Document docOriginal = this._getDiffW3cDomDocument(original, "original");
 			Document docCompare = this._getDiffW3cDomDocument(compare, "compare");
 			if(AbstractXMLDiff.xmlDiffOptions.isNormalize()){
-				docOriginal.normalizeDocument();
-				docCompare.normalizeDocument();
+				normalizeDocument(docOriginal);
+				normalizeDocument(docCompare);
 			}
 			diff = new DetailedDiff(XMLUnit.compareXML(docOriginal,docCompare));
 		}
@@ -286,8 +286,8 @@ public abstract class AbstractXMLDiff {
 		Document docOriginal = this._getDiffW3cDomDocument(original, "original");
 		Document docCompare = this._getDiffW3cDomDocument(compare, "compare");
 		if(AbstractXMLDiff.xmlDiffOptions.isNormalize()){
-			docOriginal.normalizeDocument();
-			docCompare.normalizeDocument();
+			normalizeDocument(docOriginal);
+			normalizeDocument(docCompare);
 		}
 		return docOriginal.isEqualNode(docCompare);
 	}

@@ -3237,6 +3237,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
+		
+		String messageFactory = null;
+		try{
+			messageFactory = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
+			if(this.isErroreHttp(messageFactory, "message factory")){
+				// e' un errore
+				messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
+			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		if(messageFactory!=null){
+			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
+		}
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
+		de.setValue(messageFactory);
+		de.setType(DataElementType.TEXT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		
+		
+		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA);
 		de.setType(DataElementType.TITLE);

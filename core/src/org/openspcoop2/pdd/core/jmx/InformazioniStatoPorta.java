@@ -32,14 +32,14 @@ public class InformazioniStatoPorta {
 
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
-			String confDir, String versioneJava,
+			String confDir, String versioneJava, String messageFactory,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
-		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, 
+		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, messageFactory,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
 				tracciamento, dumpApplicativo, dumpPD, dumpPA,
@@ -51,7 +51,7 @@ public class InformazioniStatoPorta {
 	
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
-			String confDir, String versioneJava,
+			String confDir, String versioneJava, String messageFactory,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA, 
@@ -76,6 +76,8 @@ public class InformazioniStatoPorta {
 		format(bf, confDir, "Directory Configurazione");
 		bf.append("\n");
 		format(bf, versioneJava, "Versione Java");
+		bf.append("\n");
+		format(bf, messageFactory, "Message Factory");
 		bf.append("\n");
 		
 		bf.append("===========================\n");

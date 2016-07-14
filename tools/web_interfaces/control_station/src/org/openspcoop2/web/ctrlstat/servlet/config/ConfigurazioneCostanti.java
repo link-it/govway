@@ -380,6 +380,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "versionePdD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "versioneBaseDati";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA = "versioneJava";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY = "messageFactory";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "directoryConfigurazione";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "infoDatabase_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "infoProtocollo_";
@@ -449,6 +450,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "Versione PdD";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "Versione BaseDati";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA = "Versione Java";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY = "Message Factory";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "Directory di Configurazione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "Protocollo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "contesti: ";

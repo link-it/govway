@@ -47,6 +47,8 @@ import javax.management.ReflectionException;
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -70,7 +72,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String VERSIONE_BASE_DATI = "getVersioneBaseDati";
 	public final static String VERSIONE_JAVA = "getVersioneJava";
 	public final static String TIPO_DATABASE = "getTipoDatabase";	
-	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";	
+	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
+	public final static String MESSAGE_FACTORY = "getMessageFactory";
 	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
 	public final static String PROTOCOLS = "getPluginProtocols";
 
@@ -171,6 +174,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			return this.getInformazioniDatabase();
 		}
 		
+		else if(actionName.equals(MESSAGE_FACTORY)){
+			return this.getMessageFactory();
+		}
+		
 		else if(actionName.equals(DIRECTORY_CONFIGURAZIONE)){
 			return this.getDirectoryConfigurazione();
 		}
@@ -225,6 +232,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
+
+		// MESSAGE_FACTORY
+		MBeanOperationInfo messageFactoryOp = new MBeanOperationInfo(MESSAGE_FACTORY,"Visualizza la MessageFactory utilizzata dal prodotto",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
 		
 		// DIRECTORY_CONFIGURAZIONE
 		MBeanOperationInfo confDirectoryOp = new MBeanOperationInfo(DIRECTORY_CONFIGURAZIONE,"Visualizza la directory di configurazione",
@@ -232,7 +246,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
-		
+				
 		// PROTOCOLS
 		MBeanOperationInfo protocolsOp = new MBeanOperationInfo(PROTOCOLS,"Visualizza i protocolli installati",
 						null,
@@ -251,7 +265,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{versionePddOp,versioneBaseDatiOp,versioneJavaOp,versioneTipoDatabaseOp,informazioniDatabaseOp,confDirectoryOp,protocolsOp};
+		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{versionePddOp,versioneBaseDatiOp,versioneJavaOp,versioneTipoDatabaseOp,informazioniDatabaseOp,
+				messageFactoryOp,confDirectoryOp,protocolsOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -511,6 +526,16 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				}catch(Exception eClose){}
 			}
 
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getMessageFactory(){
+		try{
+			OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
+			return "OpenSPCoopMessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+") "+factory.getClass().getName();
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

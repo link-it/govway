@@ -22,6 +22,7 @@
 package org.openspcoop2.utils.xml;
 
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**	
@@ -41,6 +42,11 @@ public class XMLDiff extends org.openspcoop2.utils.xml.AbstractXMLDiff {
 	@Override
 	public Element readXPathElement(Element contenutoAsElement){
 		return contenutoAsElement;
+	}
+
+	@Override
+	public void normalizeDocument(Document document) {
+		document.normalizeDocument();
 	}
 	
 }

@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
@@ -139,6 +140,11 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
     @Override
 	public Element convertoForXPathSearch(Element contenutoAsElement){
     	return contenutoAsElement;
+    }
+    
+    @Override
+	public void normalizeDocument(Document document){
+    	document.normalizeDocument();
     }
 	
 }
