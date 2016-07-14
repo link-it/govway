@@ -416,7 +416,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				// MessageFactory
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
-				OpenSPCoop2MessageFactory.initMessageFactory();
+				OpenSPCoop2MessageFactory.initMessageFactory(true);
 				
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));

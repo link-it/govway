@@ -78,9 +78,16 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 	
 	public static void initMessageFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null){
+		initMessageFactory(false);
+	}
+	public static void initMessageFactory(boolean force) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null || force){
 			OpenSPCoop2MessageFactory.openspcoopMessageFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.messageFactoryImpl);
+			//System.out.println("CREATOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");
 		}
+//		else{
+//			System.out.println("GIA ESISTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"]");
+//		}
 	}
 	
 	protected static SOAPFactory soapFactory11 = null;
