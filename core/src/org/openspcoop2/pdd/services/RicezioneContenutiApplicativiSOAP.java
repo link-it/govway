@@ -209,6 +209,7 @@ public class RicezioneContenutiApplicativiSOAP {
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setIdModulo(idModulo);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+			context.setProprietaErroreAppl(proprietaErroreAppl);
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			pddContext = context.getPddContext();
 			
