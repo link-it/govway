@@ -75,9 +75,31 @@ public class JSonSerializer implements ISerializer {
 	public String getObject(Object o) throws IOException{
 		try{
 			Utilities.normalizeDateObjects(o);
-			if( (o instanceof Enum) || (o != null && o.getClass().isArray()) || (o instanceof List) || (o instanceof Set) ){
+			if( (o instanceof Enum) ){
 				JSONArray jsonObject = JSONArray.fromObject( o , this.jsonConfig );
 				return jsonObject.toString();
+			}
+			else if( (o != null && o.getClass().isArray()) ){
+				JSONArray jsonObject = new JSONArray();
+				Object[] array = (Object[]) o;
+				for (int i = 0; i < array.length; i++) {
+					Object object = array[i];
+					jsonObject.add(JSONObject.fromObject( object , this.jsonConfig ));
+				}
+				return jsonObject.toString();
+			}
+			else if( (o instanceof List) ){
+				JSONArray jsonObject = new JSONArray();
+				List<?> list = (List<?>) o;
+				for (int i = 0; i < list.size(); i++) {
+					Object object = list.get(i);
+					jsonObject.add(JSONObject.fromObject( object , this.jsonConfig ));
+				}
+				return jsonObject.toString();
+			}
+			else if( (o instanceof Set) ){
+				Set<?> set = (Set<?>) o;
+				return this.getObject(set.toArray());
 			}
 			else if((o instanceof Annotation) || o != null && o.getClass().isAnnotation())
 				throw new IOException("'object' is an Annotation.");
@@ -94,7 +116,7 @@ public class JSonSerializer implements ISerializer {
 	@Override
 	public void writeObject(Object o,OutputStream out) throws IOException{
 		try{
-			Utilities.normalizeDateObjects(o);
+			//Utilities.normalizeDateObjects(o);
 			String s = this.getObject(o);
 			out.write(s.getBytes());
 		}catch(Exception e){
@@ -105,7 +127,7 @@ public class JSonSerializer implements ISerializer {
 	@Override
 	public void writeObject(Object o,Writer out) throws IOException{
 		try{
-			Utilities.normalizeDateObjects(o);
+			//Utilities.normalizeDateObjects(o);
 			String s = this.getObject(o);
 			out.write(s);
 		}catch(Exception e){

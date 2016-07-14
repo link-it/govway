@@ -26,15 +26,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 
+import net.sf.ezmorph.MorpherRegistry;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
+import net.sf.json.util.JSONUtils;
 
 /**	
  * Contiene utility per effettuare la de-serializzazione di un oggetto
@@ -48,6 +52,8 @@ public class XMLDeserializer implements IDeserializer{
 
 	private net.sf.json.xml.XMLSerializer xmlSerializer;
 	private JsonConfig jsonConfig;
+	private List<String> morpherPackage = new ArrayList<String>();
+	private boolean throwExceptionMorpherFailed = true;
 	
 	public XMLDeserializer(){
 		this(null);
@@ -60,6 +66,18 @@ public class XMLDeserializer implements IDeserializer{
 			jsonConfig.setJavaPropertyFilter(new ExclusionPropertyFilter(excludes));
 		} 
 		this.jsonConfig = jsonConfig;
+		this.addMorpherPackage("org.openspcoop2");
+	}
+	
+	public void addMorpherPackage(String p){
+		this.morpherPackage.add(p);
+	}
+	
+	public boolean isThrowExceptionMorpherFailed() {
+		return this.throwExceptionMorpherFailed;
+	}
+	public void setThrowExceptionMorpherFailed(boolean throwExceptionMorpherFailed) {
+		this.throwExceptionMorpherFailed = throwExceptionMorpherFailed;
 	}
 	
 	
@@ -213,8 +231,7 @@ public class XMLDeserializer implements IDeserializer{
 					Object key = it.next();
 					Object value = jsonObject.get(key);
 					JSONObject json = (JSONObject) value;
-					this.jsonConfig.setRootClass(classType.getComponentType());
-					array[i] = JSONObject.toBean( json, this.jsonConfig );
+					array[i] =  fromJSONObjectToOriginalObject(classType.getComponentType(), json);
 					i++;
 				}
 				return array;
@@ -224,8 +241,7 @@ public class XMLDeserializer implements IDeserializer{
 				Object[] array = new Object[oarray.length];
 				for(int i=0; i<oarray.length;i++){
 					JSONObject json = (JSONObject) oarray[i];
-					this.jsonConfig.setRootClass(classType.getComponentType());
-					array[i] = JSONObject.toBean( json, this.jsonConfig );
+					array[i] =  fromJSONObjectToOriginalObject(classType.getComponentType(), json);
 				}
 				return array;
 			}
@@ -248,8 +264,7 @@ public class XMLDeserializer implements IDeserializer{
 					Object key = it.next();
 					Object value = jsonObject.get(key);
 					JSONObject json = (JSONObject) value;
-					this.jsonConfig.setRootClass(elementsTypes);
-					Object o = JSONObject.toBean( json, this.jsonConfig );
+					Object o =  fromJSONObjectToOriginalObject(elementsTypes, json);
 					listReturn.add(o);
 				}
 				return listReturn;
@@ -260,8 +275,7 @@ public class XMLDeserializer implements IDeserializer{
 				List<Object> listReturn = (List<Object>) classType.newInstance();		
 				for(int i=0; i<oarray.length;i++){
 					JSONObject json = (JSONObject) oarray[i];
-					this.jsonConfig.setRootClass(elementsTypes);
-					Object o = JSONObject.toBean( json, this.jsonConfig );
+					Object o =  fromJSONObjectToOriginalObject(elementsTypes, json);
 					listReturn.add(o);
 				}
 				return listReturn;
@@ -285,8 +299,7 @@ public class XMLDeserializer implements IDeserializer{
 					Object key = it.next();
 					Object value = jsonObject.get(key);
 					JSONObject json = (JSONObject) value;
-					this.jsonConfig.setRootClass(elementsTypes);
-					Object o = JSONObject.toBean( json, this.jsonConfig );
+					Object o =  fromJSONObjectToOriginalObject(elementsTypes, json);
 					setReturn.add(o);
 				}
 				return setReturn;
@@ -297,8 +310,7 @@ public class XMLDeserializer implements IDeserializer{
 				Set<Object> setReturn = (Set<Object>) classType.newInstance();			
 				for(int i=0; i<oarray.length;i++){
 					JSONObject json = (JSONObject) oarray[i];
-					this.jsonConfig.setRootClass(elementsTypes);
-					Object o = JSONObject.toBean( json, this.jsonConfig );
+					Object o =  fromJSONObjectToOriginalObject(elementsTypes, json);
 					setReturn.add(o);
 				}
 				return setReturn;
@@ -308,8 +320,20 @@ public class XMLDeserializer implements IDeserializer{
 		
 		else{
 			JSONObject jsonObject = (JSONObject) this.xmlSerializer.read( object );
-			this.jsonConfig.setRootClass(classType);
-			return  JSONObject.toBean( jsonObject, this.jsonConfig );
+			return fromJSONObjectToOriginalObject(classType, jsonObject);
 		}
+	}
+	
+	private Object fromJSONObjectToOriginalObject(Class<?> classType, JSONObject jsonObject) throws UtilsException{
+		this.jsonConfig.setRootClass(classType);
+		
+		MorpherRegistry morpherRegistry = JSONUtils.getMorpherRegistry();
+		org.openspcoop2.utils.serialization.Utilities.registerMorpher(classType, morpherRegistry, new ArrayList<String>(), this.morpherPackage);
+		
+		Object o = JSONObject.toBean( jsonObject, this.jsonConfig );
+
+		org.openspcoop2.utils.serialization.Utilities.morpher(o, morpherRegistry, this.morpherPackage, this.throwExceptionMorpherFailed);
+		
+		return o;
 	}
 }

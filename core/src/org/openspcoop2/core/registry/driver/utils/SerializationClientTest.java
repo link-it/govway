@@ -27,20 +27,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.JavaDate;
@@ -1060,12 +1059,6 @@ public class SerializationClientTest {
 		
 		
 		
-	}
-	
-	
-	private enum TestEnumerations implements Serializable{
-		
-		VALORE1,VALORE2,VALORE3
 	}
 	
 	
