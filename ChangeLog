@@ -1,3 +1,11 @@
+2016-07-14  Andrea Poli <apoli@link.it>
+
+	* [Pdd,PdDConsole]
+	Aggiunta funzionalità OP-529
+	Aggiunta l'informazione della MessageFactory utilizzata dalla PdD per i messaggi SOAP,
+	sia nel bean JMX ConfigurazioneSistema che nella pddConsole nella sezione riguardanti le informazioni di Runtime.
+	Migliorato inoltre metodi di normalizzazione dei Documents utilizzati nell'utility XMLDiff.
+
 2016-07-07  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
