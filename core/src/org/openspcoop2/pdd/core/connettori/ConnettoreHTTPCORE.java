@@ -559,15 +559,18 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			boolean encodingRFC2047 = false;
 			Charset charsetRFC2047 = null;
 			RFC2047Encoding encodingAlgorithmRFC2047 = null;
+			boolean validazioneHeaderRFC2047 = false;
 			if(this.idModulo!=null){
 				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
 					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
 				}else{
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
 					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
+					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
 				}
 			}
 			if(this.propertiesTrasporto != null){
@@ -577,7 +580,6 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 					String value = (String) this.propertiesTrasporto.get(key);
 					if(this.debug)
 						this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
-					httppost.setHeader(key,value);
 					
 					if(encodingRFC2047){
 						if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
@@ -585,14 +587,14 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 							//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
 							if(this.debug)
 								this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
-							httppost.setHeader(key,encoded);
+							setRequestHeader(httppost,validazioneHeaderRFC2047, key, encoded, this.logger);
 						}
 						else{
-							httppost.setHeader(key,value);
+							setRequestHeader(httppost,validazioneHeaderRFC2047, key, value, this.logger);
 						}
 					}
 					else{
-						httppost.setHeader(key,value);
+						setRequestHeader(httppost,validazioneHeaderRFC2047, key, value, this.logger);
 					}
 				}
 			}
@@ -1057,5 +1059,21 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
     	}catch(Exception e){
     		throw new ConnettoreException("Chiusura risorse non riuscita: "+e.getMessage(),e);
     	}
+    }
+	
+    private void setRequestHeader(HttpPost httppost, boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger) {
+    	
+    	if(validazioneHeaderRFC2047){
+    		try{
+        		RFC2047Utilities.validHeader(key, value);
+        		httppost.setHeader(key,value);
+        	}catch(UtilsException e){
+        		logger.error(e.getMessage(),e);
+        	}
+    	}
+    	else{
+    		httppost.setHeader(key,value);
+    	}
+    	
     }
 }

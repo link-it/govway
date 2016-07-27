@@ -93,6 +93,37 @@ public class RFC2047Utilities {
 		}
 	}
 	
+	
+	
+	public static void validHeader(String key, String value) throws UtilsException{
+		
+		// jdk/openjdk/6-b14/sun/net/www/protocol/http/HttpURLConnection.java
+		
+        char LF = '\n';
+        int index = key.indexOf(LF);
+        if (index != -1) {
+        	throw new UtilsException("Found illegal character(s) in message header field ["+key+"]");
+        }
+        else {
+            if (value == null) {
+                return;
+            }
+
+            index = value.indexOf(LF);
+            while (index != -1) {
+                index++;
+                if (index < value.length()) {
+                    char c = value.charAt(index);
+                    if ((c==' ') || (c=='\t')) {
+                        // ok, check the next occurrence
+                        index = value.indexOf(LF, index);
+                        continue;
+                    }
+                }
+                throw new UtilsException("Found Illegal character(s) in message header ["+key+"]. Found value: ["+value+"]");
+            }
+        }
+    }
 }
 
 

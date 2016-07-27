@@ -24,10 +24,12 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.RFC2047Encoding;
 import org.openspcoop2.utils.resources.RFC2047Utilities;
@@ -91,6 +93,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			boolean encodingRFC2047 = false;
 			Charset charsetRFC2047 = null;
 			RFC2047Encoding encodingAlgorithmRFC2047 = null;
+			boolean validazioneHeaderRFC2047 = false;
 			if(this.idModuloAsIDService!=null){
 				switch (this.idModuloAsIDService) {
 				case PORTA_DELEGATA_SOAP:
@@ -100,12 +103,14 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
 					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_ricezioneContenutiApplicativi();
+					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneContenutiApplicativi();
 					break;
 				case PORTA_APPLICATIVA_SOAP:
 				case PORTA_APPLICATIVA_API:
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_ricezioneBuste();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_ricezioneBuste();
 					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_ricezioneBuste();
+					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneBuste();
 					break;
 				default:
 					break;
@@ -116,20 +121,41 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 				if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
 					String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
 					//System.out.println("@@@@ RESPONSE CODIFICA ["+value+"] in ["+encoded+"]");
-					this.res.setHeader(key,encoded);
+					this.setResponseHeader(validazioneHeaderRFC2047, key, encoded);
 				}
 				else{
-					this.res.setHeader(key,value);
+					this.setResponseHeader(validazioneHeaderRFC2047, key, value);
 				}
 			}
 			else{
-				this.res.setHeader(key,value);
+				this.setResponseHeader(validazioneHeaderRFC2047, key, value);
 			}	
 			
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
+	
+	private void setResponseHeader(boolean validazioneHeaderRFC2047, String key, String value) {
+    	
+    	if(validazioneHeaderRFC2047){
+    		try{
+        		RFC2047Utilities.validHeader(key, value);
+        		this.res.setHeader(key,value);
+        	}catch(UtilsException e){
+        		if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null){
+        			this.protocolFactory.getLogger().error(e.getMessage(),e);
+        		}
+        		else{
+        			Logger.getLogger(HttpServletConnectorOutMessage.class).error(e.getMessage(),e);		
+        		}
+        	}
+    	}
+    	else{
+    		this.res.setHeader(key,value);
+    	}
+    	
+    }
 	
 	@Override
 	public void setContentLength(int length) throws ConnectorException{

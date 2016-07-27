@@ -46,6 +46,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.RFC2047Encoding;
@@ -265,15 +266,18 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					boolean encodingRFC2047 = false;
 					Charset charsetRFC2047 = null;
 					RFC2047Encoding encodingAlgorithmRFC2047 = null;
+					boolean validazioneHeaderRFC2047 = false;
 					if(this.idModulo!=null){
 						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
 							encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
 							charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
 							encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+							validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
 						}else{
 							encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
 							charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
 							encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
+							validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
 						}
 					}
 					if(this.propertiesTrasporto != null){
@@ -291,14 +295,14 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 										//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
 										if(this.debug)
 											this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
-										this.requestMsg.getMimeHeaders().addHeader(key,encoded);
+										setRequestHeader(validazioneHeaderRFC2047, key, encoded, this.logger);
 									}
 									else{
-										this.requestMsg.getMimeHeaders().addHeader(key,value);
+										setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger);
 									}
 								}
 								else{
-									this.requestMsg.getMimeHeaders().addHeader(key,value);
+									setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger);
 								}
 							}
 						}
@@ -444,6 +448,22 @@ public class ConnettoreSAAJ extends ConnettoreBase {
     	}catch(Exception e){
     		throw new ConnettoreException("Chiusura connessione non riuscita: "+e.getMessage(),e);
     	}	
+    }
+    
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger) {
+    	
+    	if(validazioneHeaderRFC2047){
+    		try{
+        		RFC2047Utilities.validHeader(key, value);
+        		this.requestMsg.getMimeHeaders().addHeader(key,value);
+        	}catch(UtilsException e){
+        		logger.error(e.getMessage(),e);
+        	}
+    	}
+    	else{
+    		this.requestMsg.getMimeHeaders().addHeader(key,value);
+    	}
+    	
     }
     
 }
