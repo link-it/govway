@@ -1,3 +1,24 @@
+2016-07-27  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-527
+	In caso di messaggi malformati veniva emesso un messaggio diagnostico generico, senza uno specifico codice.
+	Anche lo stesso testo riportato era differente tra il servizio PD e PA.
+	Inoltre anche il fault di integrazione ritornato al client presentava un codice generico.
+	Per migliorare gli aspetti sopra riportati è stata introdotta una codifica dell’errore di integrazione riguardante
+	errori dovuti al parsing di un messaggio. La codifica è stata differenziata rispetto al fatto che il problema risieda nella richiesta o nella risposta:
+	- ORG_OPENSPCOOP2_432: richiesta malformata
+	- ORG_OPENSPCOOP2_440: risposta malformata
+	Anche la diagnostica è stata estesa per codificare con dei messaggi diagnostici specifici gli errori di parsing.
+	E' stato infine ampliata anche la classificazione degli esiti (handler PostOutResponseHandler) al fine di riconoscere i seguenti nuovi casi:
+	- Contenuto Richiesta Non Riconosciuto: rientrano in questa classe tutte le transazioni per cui la PdD
+                                        non è riuscita a processare il messaggio di richiesta per problemi dovuti alla struttura del messaggio
+                                        (xml malformato, content-type sconosciuto, soap namespace errato ...)
+	- Contenuto Risposta Non Riconosciuto: simile all’esito precedente, ma con problemi che hanno riguardato la risposta applicativa
+	- Connessione Client Interrotta: rientra in questo caso una transazione in cui la PdD non è riuscita a restituire la risposta applicativa al mittente
+                               poiché la connessione è stata chiusa prematuramente dal mittente stesso
+                               (servizio applicativo fruitore in caso di PD o PdD Mittente in caso di PA).
+
 2016-07-14  Andrea Poli <apoli@link.it>
 
 	* [Pdd,PdDConsole]
