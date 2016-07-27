@@ -1,5 +1,27 @@
 2016-07-27  Andrea Poli <apoli@link.it>
 
+	* [Pdd, ProtocolloSDI]
+	Risolto Bug OP-534
+	Come indicato nella specifica HTTP 1.1 (RFC 7230 section 3.2. Header Fields) i nome ed i valori degli header http sono soggetti alla seguente regola:
+	"Each header field consists of a case-insensitive field name followed by a colon (":"), optional leading whitespace, the field value, 
+	and optional trailing whitespace. Header fields can be extended over multiple lines by preceding each extra line with at least one SP or HT. 
+	Applications ought to follow "common form", where one is known or indicated, when generating HTTP constructs, 
+	since there might exist some implementations that fail to accept anything"
+	Se i protocolli (come ad esempio lo sdi), causavano la generazione di header che non rispettavano la regola di cui sopra, la PdD generava il seguente errore:
+	"Found Illegal character(s) in message header value ..."
+	Per risolvere la problematica è stato introdotta una validazione dei valori e dei nomi degli header http prima che la PdD li imposti 
+	nei 4 connettori di ingresso e uscita (ricezioneContenutiApplicativi, ricezioneBuste, consegnaContenutiApplicativi, inoltroBuste). 
+	Sono state aggiunte delle proprietà nel file openspcoop2.properties che permettono di abilitare o meno tale validazione (per default è abilitata).
+	Se la validazione è abilitata e riscontra un header non valido, tale header non viene emesso nella comunicazione http e 
+	viene segnalato un errore nei file di log della PdD.
+	Le proprietà sono le seguenti:
+	- org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerNameValue.validazione.enabled=true
+	- org.openspcoop2.pdd.services.ricezioneBuste.headerNameValue.validazione.enabled=true
+	- org.openspcoop2.pdd.connettori.inoltroBuste.headerNameValue.validazione.enabled=true
+	- org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerNameValue.validazione.enabled=true
+
+2016-07-27  Andrea Poli <apoli@link.it>
+
 	* [Pdd]
 	Aggiunta funzionalità OP-527
 	In caso di messaggi malformati veniva emesso un messaggio diagnostico generico, senza uno specifico codice.
