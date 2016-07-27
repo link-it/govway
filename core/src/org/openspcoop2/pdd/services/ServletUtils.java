@@ -68,6 +68,17 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class ServletUtils {
 
+	public static boolean isConnessioneClientNonDisponibile(Throwable t){
+		if(t instanceof java.net.SocketException){
+			return true;
+		}
+		else if(Utilities.existsInnerException(t, java.net.SocketException.class)){
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public static InformazioniErroriInfrastrutturali readInformazioniErroriInfrastrutturali(PdDContext pddContext){
 		
 		InformazioniErroriInfrastrutturali informazioniErrori = new InformazioniErroriInfrastrutturali();
@@ -89,6 +100,24 @@ public class ServletUtils {
 			}
 		}
 		informazioniErrori.setRicevutoSoapFaultServerPortaDelegata(erroreSOAPFaultServerPortaDelegata);
+		
+		boolean erroreContenutoRichiestaNonRiconosciuto = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
+			if(o!=null && (o instanceof Boolean)){
+				erroreContenutoRichiestaNonRiconosciuto = (Boolean) o;
+			}
+		}
+		informazioniErrori.setContenutoRichiestaNonRiconosciuto(erroreContenutoRichiestaNonRiconosciuto);
+		
+		boolean erroreContenutoRispostaNonRiconosciuto = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);
+			if(o!=null && (o instanceof Boolean)){
+				erroreContenutoRispostaNonRiconosciuto = (Boolean) o;
+			}
+		}
+		informazioniErrori.setContenutoRispostaNonRiconosciuto(erroreContenutoRispostaNonRiconosciuto);
 		
 		return informazioniErrori;
 	}
@@ -459,4 +488,5 @@ public class ServletUtils {
 			}
 		}
 	}
+	
 }

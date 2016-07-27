@@ -56,8 +56,10 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.MailcapActivationReader;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -985,7 +987,7 @@ public class ConnettoreHTTP extends ConnettoreBase {
 							soapVersionRisposta==null ||
 							!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap()) || 
 							!ServletUtils.isContentTypeSupported(this.requestMsg.getVersioneSoap(), this.getProtocolFactory())){
-						
+												
 						boolean checkContentType = true;
 						if(this.idModulo!=null){
 							if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
@@ -1012,7 +1014,11 @@ public class ConnettoreHTTP extends ConnettoreBase {
 						}
 						
 						if(checkContentType){
-							throw new Exception(msgErrore);
+							Exception e = new Exception(msgErrore);
+							this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+							this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
+									MessageUtils.buildParseException(e));
+							throw e;
 						}else{
 							this.logger.warn(msgErrore+"; viene utilizzato forzatamente il tipo: "+SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments());
 							tipoRisposta = SOAPVersion.SOAP11.getContentTypeForMessageWithoutAttachments();
@@ -1042,12 +1048,16 @@ public class ConnettoreHTTP extends ConnettoreBase {
 								this.logger.debug("Ricostruzione normale...");
 							
 							// Ricostruzione messaggio soap: secondo parametro a false, indica che il messaggio e' gia un SOAPMessage
-							tipoLetturaRisposta = "Costruzione messaggio SOAP";
+							tipoLetturaRisposta = "Parsing Risposta SOAP";
 							
 							
 							
 							if(contentLenght>0){
-								this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.is,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+								OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.is,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+								if(pr.getParseException()!=null){
+									this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+								}
+								this.responseMsg = pr.getMessage_throwParseException();
 							}
 							else if(contentLenght==0){
 								this.responseMsg = null;
@@ -1061,7 +1071,11 @@ public class ConnettoreHTTP extends ConnettoreBase {
 									if(letti==1){
 										// Per evitare il propblema del 'Premature end of file' che causa una system.out sul server.log di jboss
 										SequenceInputStream sInput = new SequenceInputStream(new ByteArrayInputStream(buffer), this.is);
-										this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(sInput,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+										OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(sInput,notifierInputStreamParams,false,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+										if(pr.getParseException()!=null){
+											this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+										}
+										this.responseMsg = pr.getMessage_throwParseException();
 									}
 								}catch(Exception e){
 									this.responseMsg=null;
@@ -1127,7 +1141,11 @@ public class ConnettoreHTTP extends ConnettoreBase {
 											byteBuffer.write(readB,0,readByte);
 										}
 										if(byteBuffer.size()>0){
-											this.responseMsg = SoapUtils.imbustamentoMessaggio(notifierInputStreamParams,byteBuffer.toByteArray(),this.openspcoopProperties.isDeleteInstructionTargetMachineXml(), this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+											OpenSPCoop2MessageParseResult pr = SoapUtils.imbustamentoMessaggio(notifierInputStreamParams,byteBuffer.toByteArray(),this.openspcoopProperties.isDeleteInstructionTargetMachineXml(), this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+											if(pr.getParseException()!=null){
+												this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+											}
+											this.responseMsg = pr.getMessage_throwParseException();
 										}
 									}else{
 										
@@ -1135,7 +1153,11 @@ public class ConnettoreHTTP extends ConnettoreBase {
 											this.logger.debug("Imbustamento messaggio...");
 										// Imbustamento di un messaggio normale: secondo parametro a true, indica che il messaggio deve essere imbustato in un msg SOAP
 										tipoLetturaRisposta = "Imbustamento messaggio xml in un messaggio SOAP";
-										this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(cis,notifierInputStreamParams,true,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+										OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(cis,notifierInputStreamParams,true,tipoRisposta,locationRisposta, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+										if(pr.getParseException()!=null){
+											this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+										}
+										this.responseMsg = pr.getMessage_throwParseException();
 									}
 		
 								}

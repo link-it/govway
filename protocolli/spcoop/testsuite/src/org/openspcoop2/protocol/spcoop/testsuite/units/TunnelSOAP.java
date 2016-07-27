@@ -204,6 +204,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -305,6 +308,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -404,6 +410,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -530,6 +539,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -635,6 +647,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -731,6 +746,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -828,6 +846,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -929,6 +950,9 @@ public class TunnelSOAP {
 			client.setContentType("multipart/related; type=\"text/xml\"; start=\"<56D2051AED8F9598BB61721D8C95BA6F>\";         boundary=\"----=_Part_0_6330713.1171639717331\"");
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1059,6 +1083,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1159,6 +1186,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1261,6 +1291,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1364,6 +1397,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1464,6 +1500,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1565,6 +1604,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1671,6 +1713,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1774,6 +1819,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;
@@ -1873,6 +1921,9 @@ public class TunnelSOAP {
 			}
 			try {
 				client.run();
+				
+				Assert.assertTrue(client.getCodiceStatoHTTP()==202);
+				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				throw error;

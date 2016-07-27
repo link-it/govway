@@ -55,6 +55,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.message.mtom.MtomXomReference;
@@ -785,6 +786,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		msgRequest.setOneWayVersione11(oneWayVersione11);
 
+		OpenSPCoop2Message responseMessage = null;
 
 
 		try{
@@ -936,7 +938,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO),
-								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+								(responseMessage!=null ? responseMessage.getParseException() : null));
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "imbustatore.buildID(idMessageResponse)");
 					}catch(Exception sendError){
@@ -1094,7 +1097,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_509_READ_REQUEST_MSG),
-							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 					
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "msgRequest.getMessage()");
 					esito.setEsitoInvocazione(true);
@@ -1261,7 +1265,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			IConnettore connectorSender = null;
 
 			// Risposte del connettore
-			OpenSPCoop2Message responseMessage = null;
 			int codiceRitornato = -1;
 			TransportResponseContext transportResponseContext = null;
 
@@ -1468,7 +1471,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							erroreIntegrazione,
-							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -1563,74 +1567,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				errorConsegna = !connectorSender.send(connettoreMsg);
-				
-				// nota per lo stato si intende un esito di errore connettore quando è proprio il connettore a restituire errore.
-				// se invece il connettore esce "bene" e restituisce poi un codice http e/o una risposta, si rientra nei casi sottostanti
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE, errorConsegna);
-				
-				ejbUtils.setRicezioneMsgRisposta(DateManager.getTimestamp());
-				motivoErroreConsegna = connectorSender.getErrore();
-				eccezioneProcessamentoConnettore = connectorSender.getEccezioneProcessamento();
-				if(errorConsegna && motivoErroreConsegna==null){
-					motivoErroreConsegna = "Errore durante la consegna";
-				}
-				//	interpretazione esito consegna
-				GestoreErroreConnettore gestoreErrore = new GestoreErroreConnettore();
-				errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender.getCodiceTrasporto(),connectorSender.getResponse());
-				if(errorConsegna){
-					motivoErroreConsegna = gestoreErrore.getErrore();
-					riconsegna = gestoreErrore.isRiconsegna();
-					dataRiconsegna = gestoreErrore.getDataRispedizione();
-				}
-				// raccolta risultati del connettore
-				fault = gestoreErrore.getFault();
-				codiceRitornato = connectorSender.getCodiceTrasporto();
-				transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
-						connectorSender.getCodiceTrasporto()+"", connectorSender.getContentLength(), 
-						motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
-				responseMessage = connectorSender.getResponse();
-				if(responseMessage!=null){
-					responseMessage.setTransportRequestContext(consegnaMessage.getTransportRequestContext());
-					responseMessage.setTransportResponseContext(transportResponseContext);
-				}
-				// gestione connessione connettore
-				if(existsModuloInAttesaRispostaApplicativa) {
-					if(localForward){
-						RepositoryConnettori.salvaConnettorePD(idMessaggioConsegna, connectorSender);
-					}else{
-						RepositoryConnettori.salvaConnettorePA(idMessaggioConsegna, connectorSender);
-					}
-				}else{
-					// Sono nella casistica di messaggio preso in carico.
-					// Non si deve chiudere immediatamente la connessione, poiche' nel resto del modulo, il messaggio puo' ancora essere utilizzato (es. dump)
-					connectorSenderForDisconnect = connectorSender;
-				}			
-				msgDiag.addKeyword(CostantiPdD.KEY_CODICE_CONSEGNA, codiceRitornato+"");
-				if(motivoErroreConsegna!=null)
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
-				
-				// Il Connettore potrebbe aggiungere informazioni alla location.
-				String tmpLocation = connectorSender.getLocation();
-				if(tmpLocation!=null){
-					// aggiorno
-					location = tmpLocation;
-				
-					if(connectorSender instanceof ConnettoreHTTP){
-						if(((ConnettoreHTTP)connectorSender).isSbustamentoApi()){
-							location = org.openspcoop2.core.api.utils.Utilities.updateLocation(((ConnettoreHTTP)connectorSender).getHttpMethod(), location);
-						}
-					}
-					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
-				}
 			}
-
-
-
-
 			
 			
 			
-	
+			Utilities.printFreeMemory("ConsegnaContenuti - Richiesta risorsa per la gestione della risposta...");
+			
 			
 			
 			
@@ -1667,11 +1609,103 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			
 			
+			/* ------------  Analisi Risposta -------------- */
+			if(invokerNonSupportato==false){
+			
+				try {
+					msgDiag.mediumDebug("Analisi Risposta");
+				
+					// nota per lo stato si intende un esito di errore connettore quando è proprio il connettore a restituire errore.
+					// se invece il connettore esce "bene" e restituisce poi un codice http e/o una risposta, si rientra nei casi sottostanti
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE, errorConsegna);
+					
+					ejbUtils.setRicezioneMsgRisposta(DateManager.getTimestamp());
+					motivoErroreConsegna = connectorSender.getErrore();
+					eccezioneProcessamentoConnettore = connectorSender.getEccezioneProcessamento();
+					if(errorConsegna && motivoErroreConsegna==null){
+						motivoErroreConsegna = "Errore durante la consegna";
+					}
+					//	interpretazione esito consegna
+					GestoreErroreConnettore gestoreErrore = new GestoreErroreConnettore();
+					errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender.getCodiceTrasporto(),connectorSender.getResponse());
+					if(errorConsegna){
+						motivoErroreConsegna = gestoreErrore.getErrore();
+						riconsegna = gestoreErrore.isRiconsegna();
+						dataRiconsegna = gestoreErrore.getDataRispedizione();
+					}
+					// raccolta risultati del connettore
+					fault = gestoreErrore.getFault();
+					codiceRitornato = connectorSender.getCodiceTrasporto();
+					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
+							connectorSender.getCodiceTrasporto()+"", connectorSender.getContentLength(), 
+							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
+					responseMessage = connectorSender.getResponse();
+					if(responseMessage!=null){
+						responseMessage.setTransportRequestContext(consegnaMessage.getTransportRequestContext());
+						responseMessage.setTransportResponseContext(transportResponseContext);
+					}
+					// gestione connessione connettore
+					if(existsModuloInAttesaRispostaApplicativa) {
+						if(localForward){
+							RepositoryConnettori.salvaConnettorePD(idMessaggioConsegna, connectorSender);
+						}else{
+							RepositoryConnettori.salvaConnettorePA(idMessaggioConsegna, connectorSender);
+						}
+					}else{
+						// Sono nella casistica di messaggio preso in carico.
+						// Non si deve chiudere immediatamente la connessione, poiche' nel resto del modulo, il messaggio puo' ancora essere utilizzato (es. dump)
+						connectorSenderForDisconnect = connectorSender;
+					}			
+					msgDiag.addKeyword(CostantiPdD.KEY_CODICE_CONSEGNA, codiceRitornato+"");
+					if(motivoErroreConsegna!=null)
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
+					
+					// Il Connettore potrebbe aggiungere informazioni alla location.
+					String tmpLocation = connectorSender.getLocation();
+					if(tmpLocation!=null){
+						// aggiorno
+						location = tmpLocation;
+					
+						if(connectorSender instanceof ConnettoreHTTP){
+							if(((ConnettoreHTTP)connectorSender).isSbustamentoApi()){
+								location = org.openspcoop2.core.api.utils.Utilities.updateLocation(((ConnettoreHTTP)connectorSender).getHttpMethod(), location);
+							}
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
+					}
+				} catch (Exception e) {
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Analisi risposta fallita, "+e.getMessage() );
+					msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");
+					String msgErrore = "Analisi risposta del connettore ha provocato un errore: "+e.getMessage();
+					this.log.error(msgErrore,e);
+					if(existsModuloInAttesaRispostaApplicativa) {
+						
+						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null));
+						
+						esito.setEsitoInvocazione(true); 
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
+					}else{
+						ejbUtils.rollbackMessage(msgErrore,servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+				}
+			}
+
+
+
+
 			
 			
 			
-			
-			
+	
+
 			
 			/* -------- OpenSPCoop2Message Update ------------- */
 			try {
@@ -1694,7 +1728,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -1781,7 +1816,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								erroreIntegrazione,
-								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+								(responseMessage!=null ? responseMessage.getParseException() : null));
 						
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -1821,7 +1857,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA.getErroreIntegrazione(),
-							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1914,7 +1951,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_515_CONNETTORE_NON_REGISTRATO),
-							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato);
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErroreConnettoreNonSupportato);
@@ -1954,7 +1992,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 										ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
 											get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),
-										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato);
+										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato,
+										(responseMessage!=null ? responseMessage.getParseException() : null));
 								
 								esito.setEsitoInvocazione(true); 
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErroreSituazioneAnomale);
@@ -1971,36 +2010,51 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				
 				String messaggioErroreConsegnaConnettore = "Consegna ["+tipoConnector+"] con errore: "+motivoErroreConsegna;
 				if(existsModuloInAttesaRispostaApplicativa) {
-					if(connettoreMsg.getRequestMessage().getParsingError() != null){
+					if(connettoreMsg.getRequestMessage().getParseException() != null){
 						
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(true, connettoreMsg.getRequestMessage().getParsingError()),
-								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, connettoreMsg.getRequestMessage().getParsingError());
+								ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(connettoreMsg.getRequestMessage().getParseException().getParseException()),
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
+								connettoreMsg.getRequestMessage().getParseException().getParseException(),connettoreMsg.getRequestMessage().getParseException());
 						
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,connettoreMsg.getRequestMessage().getParsingError().getMessage());
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,connettoreMsg.getRequestMessage().getParseException().getParseException().getMessage());
 						return esito;
-					} else if(responseMessage==null){
+					} else if(responseMessage==null && 
+							!pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
 						// Genero una risposta di errore
 						
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.get516_ServizioApplicativoNonDisponibile(),
-								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eccezioneProcessamentoConnettore);
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eccezioneProcessamentoConnettore,
+								(responseMessage!=null ? responseMessage.getParseException() : null));
 					
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,messaggioErroreConsegnaConnettore);
 						return esito;
-					} else if(responseMessage.getParsingError() != null){
+					} else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION) ||
+							responseMessage.getParseException() != null){
 						
+						ParseException parseException = null;
+						if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
+							parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+						}
+						else{
+							parseException = responseMessage.getParseException();
+						}
+						
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.getErrore432_MessaggioRichiestaMalformato(false, responseMessage.getParsingError()),
-								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, responseMessage.getParsingError());
+								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
+								parseException.getParseException(),parseException);
 						
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,responseMessage.getParsingError().getMessage());
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,parseException.getParseException().getMessage());
 						return esito;
 					}
 					
@@ -2213,7 +2267,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_511_READ_RESPONSE_MSG),
-									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
 						
 							esito.setEsitoInvocazione(true); 
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "risposta per riferimento non costruita, "+e.getMessage());
@@ -2250,7 +2305,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA),
-									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, null);
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, null,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
 							
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true); 
@@ -2339,7 +2395,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ex.getErrore(),
-											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, ex);
+											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, ex,
+											(responseMessage!=null ? responseMessage.getParseException() : null));
 									
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -2357,7 +2414,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 												get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA),
-											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, ex);
+											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, ex,
+											(responseMessage!=null ? responseMessage.getParseException() : null));
 								
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -2466,7 +2524,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 											
 								this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 										errore,
-										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+										(responseMessage!=null ? responseMessage.getParseException() : null));
 								
 								esito.setEsitoInvocazione(true); 
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -2527,7 +2586,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_425_SCARTA_BODY.getErrore425_ScartaBody(e.getMessage()),
-											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+											(responseMessage!=null ? responseMessage.getParseException() : null));
 									
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -2560,7 +2620,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_424_ALLEGA_BODY.getErrore424_AllegaBody(e.getMessage()),
-											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+											(responseMessage!=null ? responseMessage.getParseException() : null));
 									
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -2601,7 +2662,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_556_LOCAL_FORWARD_PROCESS_RESPONSE_ERROR),
-									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
 							
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true); 
@@ -2620,26 +2682,30 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						msgResponse.registraMessaggio(responseMessage,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta);
 						msgResponse.aggiornaRiferimentoMessaggio(idMessaggioConsegna);
 						msgResponse.aggiornaProprietarioMessaggio(ImbustamentoRisposte.ID_MODULO);
-						if(responseMessage!=null && responseMessage.getParsingError()!= null)
-							throw responseMessage.getParsingError();
+						if(responseMessage!=null && responseMessage.getParseException()!= null)
+							throw responseMessage.getParseException().getSourceException(); // gestito nel cacth
 					}catch(Exception e){
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("salvataggio risposta, "+e.getMessage()));
 						msgDiag.logPersonalizzato("consegnaConErrore");
 						msgResponse.deleteMessageFromFileSystem(); // elimino eventuale risposta salvata su fileSystem
 						msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-						if(responseMessage.getParsingError() == null){
+						if(responseMessage.getParseException() == null){
 							
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_510_SAVE_RESPONSE_MSG),
-									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
 							
 						} else {
 							
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-									ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-										getErrore432_MessaggioRichiestaMalformato(false,responseMessage.getParsingError()),
-									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, responseMessage.getParsingError());
+									ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
+										getErrore440_MessaggioRispostaMalformato(responseMessage.getParseException().getParseException()),
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
+									responseMessage.getParseException().getParseException(),
+									responseMessage.getParseException());
 							
 						}
 						openspcoopstate.releaseResource();
@@ -2685,7 +2751,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),
-										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+										(responseMessage!=null ? responseMessage.getParseException() : null));
 								
 								openspcoopstate.releaseResource();
 								esito.setEsitoInvocazione(true); 
@@ -2747,7 +2814,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				msgResponse.addProprietariIntoCache_readFromTable(ConsegnaContenutiApplicativi.ID_MODULO, "risposta",idMessaggioConsegna,false);
 
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error("ErroreGenerale",e);
 			msgDiag.logErroreGenerico(e, "Generale");
 
@@ -2761,7 +2828,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								getErroreIntegrazione(),
-							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e);
+							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "ErroreGenerale");
@@ -2833,12 +2901,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 	private void sendErroreProcessamento(boolean localForward,LocalForwardEngine localForwardEngine, EJBUtils ejbUtils, ErroreIntegrazione errore,
 			String idModuloInAttesa,Busta bustaRichiesta,String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta,
-			String servizioApplicativoFruitore, Exception e) throws LocalForwardException, EJBUtilsException, ProtocolException{
+			String servizioApplicativoFruitore, Throwable e, ParseException parseException) throws LocalForwardException, EJBUtilsException, ProtocolException{
 		if(localForward){
-			localForwardEngine.sendErrore(errore,e);
+			localForwardEngine.sendErrore(errore,e,parseException);
 		}else{
 			ejbUtils.sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,bustaRichiesta,
-					errore,	idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e);
+					errore,	idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,parseException);
 		}
 	}
 

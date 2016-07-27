@@ -3422,19 +3422,23 @@ public class RicezioneBuste {
 		List<String> tipiSoggettiSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 		List<String> tipiServiziSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiServizi();
 		ErroreIntegrazione erroreVerificaTipoByProtocol = null;
-		if(tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())==false){
+		// Nota: se qualche informazione e' null verranno segnalati altri errori
+		if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && 
+				tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
 			erroreVerificaTipoByProtocol = ErroriIntegrazione.ERRORE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL.
 					getErrore436_TipoSoggettoFruitoreNotSupportedByProtocol(soggettoFruitore,protocolFactory);
 		}
-		else if(tipiSoggettiSupportatiCanale.contains(idServizio.getSoggettoErogatore().getTipo())==false){
+		else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null && idServizio.getSoggettoErogatore().getTipo()!=null &&
+				tipiSoggettiSupportatiCanale.contains(idServizio.getSoggettoErogatore().getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.erogatore.unsupported");
 			erroreVerificaTipoByProtocol = ErroriIntegrazione.ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL.
 					getErrore437_TipoSoggettoErogatoreNotSupportedByProtocol(idServizio.getSoggettoErogatore(),protocolFactory);
 		}
-		else if(tipiServiziSupportatiCanale.contains(idServizio.getTipoServizio())==false){
+		else if(idServizio!=null && idServizio.getTipoServizio()!=null && 
+				tipiServiziSupportatiCanale.contains(idServizio.getTipoServizio())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
-			ErroriIntegrazione.ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.
+			erroreVerificaTipoByProtocol = ErroriIntegrazione.ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.
 				getErrore438_TipoServizioNotSupportedByProtocol(idServizio,protocolFactory);
 		}
 			
@@ -4099,13 +4103,9 @@ public class RicezioneBuste {
 			msgDiag.logErroreGenerico(e,"msgRequest.registraMessaggio");
 			if(this.msgContext.isGestioneRisposta()){
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				if(requestMessage.getParsingError()==null){
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_508_SAVE_REQUEST_MSG));
-				} else {
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-							getErrore432_MessaggioRichiestaMalformato(true,requestMessage.getParsingError()));
-				}
+				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_508_SAVE_REQUEST_MSG));
+
 				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -4817,6 +4817,9 @@ public class RicezioneBuste {
 			else {
 				responseMessage = ((OpenSPCoopStateless)openspcoopstate).getRispostaMsg();
 				idCorrelazioneApplicativaRisposta = ((OpenSPCoopStateless)openspcoopstate).getIDCorrelazioneApplicativaRisposta();
+				if(responseMessage!=null){
+					parametriGenerazioneBustaErrore.setParseException(responseMessage.getParseException());
+				}
 				/*tempiAttraversamentoGestioneMessaggi = 
 					((OpenSPCoopStateless) openspcoopstate).getTempiAttraversamentoPDD();
 				dimensioneMessaggiAttraversamentoGestioneMessaggi = 
@@ -5565,6 +5568,10 @@ public class RicezioneBuste {
 			// Nota: la bustaRichiesta e' stata trasformata (invertita)
 			msgDiag.setIdMessaggioRisposta(parametriGenerazioneBustaErrore.getBusta().getID());
 			this.msgContext.getProtocol().setIdRisposta(parametriGenerazioneBustaErrore.getBusta().getID());
+			
+			if(parametriGenerazioneBustaErrore.getParseException()!=null){
+				responseErrorMessage.setParseException(parametriGenerazioneBustaErrore.getParseException());
+			}
 			
 			//responseErrorMessage.writeTo(System.out, false);
 			return responseErrorMessage;

@@ -51,13 +51,18 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	private static Logger logger = Logger.getLogger(OpenSPCoop2MessageFactory_impl.class);
 	
 	@Override
-	public OpenSPCoop2Message createMessage(SOAPMessage msg)throws SOAPException, IOException {
-		OpenSPCoop2Message omsg = new OpenSPCoop2Message_11_impl(msg);
+	public OpenSPCoop2Message _createMessage(SOAPVersion versioneSoap,SOAPMessage msg) {
+		OpenSPCoop2Message omsg = null;
+		if(SOAPVersion.SOAP11.equals(versioneSoap)){
+			omsg = new OpenSPCoop2Message_11_impl(msg);
+		} else {
+			omsg = new OpenSPCoop2Message_12_impl(msg);
+		}
 		return omsg;
 	}
 	
 	@Override
-	public OpenSPCoop2Message createMessage(SOAPVersion versioneSoap) throws SOAPException, IOException {
+	public OpenSPCoop2Message _createMessage(SOAPVersion versioneSoap) {
 		OpenSPCoop2Message msg = null;
 		if(SOAPVersion.SOAP11.equals(versioneSoap)){
 	        msg = new OpenSPCoop2Message_11_impl();

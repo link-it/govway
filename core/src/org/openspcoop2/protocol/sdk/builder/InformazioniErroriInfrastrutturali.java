@@ -32,6 +32,8 @@ public class InformazioniErroriInfrastrutturali {
 
 	boolean erroreUtilizzoConnettore = false;
 	boolean ricevutoSoapFaultServerPortaDelegata = false;
+	boolean contenutoRichiestaNonRiconosciuto = false;
+	boolean contenutoRispostaNonRiconosciuto = false;
 	
 	public boolean isErroreUtilizzoConnettore() {
 		return this.erroreUtilizzoConnettore;
@@ -44,5 +46,17 @@ public class InformazioniErroriInfrastrutturali {
 	}
 	public void setRicevutoSoapFaultServerPortaDelegata(boolean ricevutoSoapFaultServerPortaDelegata) {
 		this.ricevutoSoapFaultServerPortaDelegata = ricevutoSoapFaultServerPortaDelegata;
+	}
+	public boolean isContenutoRichiestaNonRiconosciuto() {
+		return this.contenutoRichiestaNonRiconosciuto;
+	}
+	public void setContenutoRichiestaNonRiconosciuto(boolean contenutoRichiestaNonRiconosciuto) {
+		this.contenutoRichiestaNonRiconosciuto = contenutoRichiestaNonRiconosciuto;
+	}
+	public boolean isContenutoRispostaNonRiconosciuto() {
+		return this.contenutoRispostaNonRiconosciuto;
+	}
+	public void setContenutoRispostaNonRiconosciuto(boolean contenutoRispostaNonRiconosciuto) {
+		this.contenutoRispostaNonRiconosciuto = contenutoRispostaNonRiconosciuto;
 	}
 }

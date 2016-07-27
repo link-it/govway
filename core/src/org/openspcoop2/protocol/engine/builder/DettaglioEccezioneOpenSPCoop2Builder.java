@@ -173,7 +173,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 			String modulo,
 			String servizioApplicativoErogatore,
 			Busta busta,
-			Exception eProcessamento) throws ProtocolException{
+			Throwable eProcessamento) throws ProtocolException{
 
 		DettaglioEccezione dettaglioEccezione = new DettaglioEccezione();
 
@@ -226,17 +226,17 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 	}
 
 
-	public void gestioneDettaglioEccezioneIntegrazione(Exception eProcessamento,DettaglioEccezione dettaglioEccezione,boolean generaInformazioniGeneriche){
+	public void gestioneDettaglioEccezioneIntegrazione(Throwable eProcessamento,DettaglioEccezione dettaglioEccezione,boolean generaInformazioniGeneriche){
 		gestioneDettaglioEccezioneProcessamento_engine(eProcessamento, dettaglioEccezione,
 				this.protocolManager.isGenerazioneDetailsSOAPFaultIntegrationeConStackTrace(),
 				generaInformazioniGeneriche);
 	}
-	public void gestioneDettaglioEccezioneProcessamento(Exception eProcessamento,DettaglioEccezione dettaglioEccezione){
+	public void gestioneDettaglioEccezioneProcessamento(Throwable eProcessamento,DettaglioEccezione dettaglioEccezione){
 		gestioneDettaglioEccezioneProcessamento_engine(eProcessamento, dettaglioEccezione, 
 				this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConStackTrace(),
 				this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche());
 	}
-	private void gestioneDettaglioEccezioneProcessamento_engine(Exception eProcessamento,DettaglioEccezione dettaglioEccezione,
+	private void gestioneDettaglioEccezioneProcessamento_engine(Throwable eProcessamento,DettaglioEccezione dettaglioEccezione,
 			boolean generaStackTrace,boolean generaInformazioniGeneriche){
 		if(eProcessamento!=null){
 

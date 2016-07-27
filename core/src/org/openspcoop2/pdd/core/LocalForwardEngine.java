@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.message.XMLUtils;
@@ -347,7 +348,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException);
+					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
 							this.localForwardParameter.getProtocolFactory());
@@ -527,7 +528,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException);
+					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = eccezioniSicurezza.get(0); // prendo la prima disponibile.
 					if(logDiagnosticError){
@@ -770,7 +771,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException);
+					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
 							this.localForwardParameter.getProtocolFactory());
@@ -924,7 +926,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException);
+					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,
+							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
 							this.localForwardParameter.getProtocolFactory());
@@ -963,12 +966,12 @@ public class LocalForwardEngine {
 	
 	/* ***** SEND RESPONSE ******** */
 	
-	public void sendErrore(ErroreIntegrazione errore,Exception eErrore) throws LocalForwardException{
+	public void sendErrore(ErroreIntegrazione errore,Throwable eErrore,ParseException parseException) throws LocalForwardException{
 	
 		try{
 		
 			OpenSPCoop2Message responseMessageError = 
-					this.erroreApplicativoBuilder.toMessage(errore,eErrore);
+					this.erroreApplicativoBuilder.toMessage(errore,eErrore,parseException);
 			this.sendErrore(responseMessageError);
 			
 		}catch(Exception e){
@@ -976,12 +979,12 @@ public class LocalForwardEngine {
 		}	
 	}
 	
-	public void sendErrore(Eccezione errore,IDSoggetto dominio,Exception eErrore) throws LocalForwardException{
+	public void sendErrore(Eccezione errore,IDSoggetto dominio,ParseException parseException) throws LocalForwardException{
 		
 		try{
 		
 			OpenSPCoop2Message responseMessageError = 
-					this.erroreApplicativoBuilder.toMessage(errore,dominio,eErrore);
+					this.erroreApplicativoBuilder.toMessage(errore,dominio,parseException);
 			this.sendErrore(responseMessageError);
 			
 		}catch(Exception e){

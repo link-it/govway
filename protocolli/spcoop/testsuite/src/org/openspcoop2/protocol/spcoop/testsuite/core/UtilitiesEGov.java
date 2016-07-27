@@ -73,6 +73,22 @@ public class UtilitiesEGov {
 		StringBuffer busta = new StringBuffer();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
+		busta.append(buildBustaEGov(tipoMittente, mittente, tipoDestinatario, destinatario, 
+				profiloCollaborazione, tipoServizio, servizio, idEGov, 
+				confermaRicezione, inoltro, scadenza, azione, 
+				collaborazione, tipo_tempo, oraRegistrazione));
+		busta.append("</soapenv:Header>\n");
+		busta.append("<soapenv:Body>\n");
+		busta.append(contenutoBody);
+		busta.append("</soapenv:Body>\n");
+		busta.append("</soapenv:Envelope>\n");
+
+		return busta.toString();
+	}
+	public static String buildBustaEGov(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,
+			String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione,
+			String collaborazione,String tipo_tempo,Date oraRegistrazione){
+		StringBuffer busta = new StringBuffer();
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
 		busta.append("<eGov_IT:IntestazioneMessaggio>\n");
 		busta.append("<eGov_IT:Mittente><eGov_IT:IdentificativoParte tipo=\""+tipoMittente+"\">"+mittente+"</eGov_IT:IdentificativoParte></eGov_IT:Mittente>\n");
@@ -103,14 +119,9 @@ public class UtilitiesEGov {
 		busta.append("</eGov_IT:Trasmissione>\n");
 		busta.append("</eGov_IT:ListaTrasmissioni>\n");
 		busta.append("</eGov_IT:Intestazione>\n");
-		busta.append("</soapenv:Header>\n");
-		busta.append("<soapenv:Body>\n");
-		busta.append(contenutoBody);
-		busta.append("</soapenv:Body>\n");
-		busta.append("</soapenv:Envelope>\n");
-
 		return busta.toString();
 	}
+	
 	
 	public static synchronized String getIDEGov(String mittente,String pddMittente){
 		return getIDEGov(mittente,pddMittente,new Date());

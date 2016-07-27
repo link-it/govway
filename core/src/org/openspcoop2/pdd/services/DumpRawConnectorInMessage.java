@@ -22,13 +22,16 @@
 package org.openspcoop2.pdd.services;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 
 import org.apache.log4j.Logger;
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.MessageUtils;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.ConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.HttpServletConnectorInMessage;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -47,7 +50,7 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	private ConnectorInMessage connectorInMessage;
 	private Logger log;
 	private ByteArrayOutputStream bout = null;
-	private OpenSPCoop2Message message = null;
+	private OpenSPCoop2MessageParseResult parseResult = null;
 	private String contentType;
 	private Integer contentLength;
 	private Identity identity;
@@ -74,42 +77,90 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		}
 		return null;
 	}
+	public boolean isParsingRequestError(){
+		return this.parseResult!=null && this.parseResult.getParseException()!=null;
+	}
+	public String getParsingRequestErrorAsString(){
+		if(this.parseResult!=null && this.parseResult.getParseException()!=null){
+			try{
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				PrintWriter pw = new PrintWriter(bout);
+				this.parseResult.getParseException().getSourceException().printStackTrace(pw);
+				pw.flush();
+				bout.flush();
+				pw.close();
+				bout.close();
+				return bout.toString();
+			}catch(Exception e){
+				return "ParsingRequestError, serializazione eccezione non riuscita: "+e.getMessage();
+			}
+		}
+		return null;
+	}
 	
 	
 	@Override
-	public OpenSPCoop2Message getRequest(
+	public OpenSPCoop2MessageParseResult getRequest(
 			NotifierInputStreamParams notifierInputStreamParams,
 			String contentType) throws ConnectorException {
 		
-		if(this.message!=null){
-			return this.message;
+		if(this.parseResult!=null){
+			return this.parseResult;
 		}
 
-		this.message = this.connectorInMessage.getRequest(notifierInputStreamParams, contentType);
-		
-		try{
+		if(this.connectorInMessage instanceof HttpServletConnectorInMessage){
+			HttpServletConnectorInMessage http = (HttpServletConnectorInMessage) this.connectorInMessage;
 			this.bout = new ByteArrayOutputStream();
-			this.message.writeTo(this.bout, false);
-		}catch(Throwable t){
 			try{
-				this.bout = new ByteArrayOutputStream();
-				this.bout.write(("getRequest ("+contentType+") error: "+t.getMessage()).getBytes());
-			}catch(Throwable tWrite){}
-			this.log.error("getRequest ("+contentType+") error: "+t.getMessage(),t);
-		}finally{
-			try{
-				if(this.bout!=null){
-					this.bout.flush();
+				this.parseResult = http.getRequest(this.bout,notifierInputStreamParams, contentType); // il bout viene chiuso nel metodo interno
+				if(this.bout.size()<=0){
+					this.bout = null;
 				}
-			}catch(Throwable close){}
-			try{
-				if(this.bout!=null){
-					this.bout.close();
+			}finally{
+				try{
+					if(this.bout!=null){
+						this.bout.flush();
+					}
+				}catch(Throwable close){}
+				try{
+					if(this.bout!=null){
+						this.bout.close();
+					}
+				}catch(Throwable close){}
+			}
+		}
+		else{
+			this.parseResult = this.connectorInMessage.getRequest(notifierInputStreamParams, contentType);
+			if(this.parseResult.getMessage()!=null){
+				try{
+					this.bout = new ByteArrayOutputStream();
+					this.parseResult.getMessage().writeTo(this.bout, false);
+				}catch(Throwable t){
+					this.bout = null;
+					OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
+					if(this.parseResult.getMessage().getParseException()!=null){
+						result.setParseException(this.parseResult.getMessage().getParseException());
+					}
+					else{
+						result.setParseException(MessageUtils.buildParseException(t));
+					}
+					return result;
+				}finally{
+					try{
+						if(this.bout!=null){
+							this.bout.flush();
+						}
+					}catch(Throwable close){}
+					try{
+						if(this.bout!=null){
+							this.bout.close();
+						}
+					}catch(Throwable close){}
 				}
-			}catch(Throwable close){}
+			}
 		}
 		
-		return this.message;
+		return this.parseResult;
 		
 	}
 

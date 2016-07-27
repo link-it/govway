@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Date;
 import java.util.Properties;
 
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -33,6 +34,7 @@ import org.openspcoop2.pdd.core.handlers.PostOutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInResponseContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
@@ -273,6 +275,66 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		return "unknown host '"+e.getMessage()+"'";
     	}
     	
-    	return e.getMessage();
+    	// 2. java.net.SocketException
+    	if(e instanceof java.net.SocketException){
+    		java.net.SocketException s = (java.net.SocketException) e;
+    		if(isNotNullMessageException(s)){
+    			return s.getMessage();
+    		}
+    	}
+    	if(Utilities.existsInnerException(e, java.net.SocketException.class)){
+    		Throwable internal = Utilities.getInnerException(e, java.net.SocketException.class);
+    		if(isNotNullMessageException(internal)){
+    			return this.buildException(e, internal);
+    		}
+    	}
+    	
+    	// 3. java.io.IOException
+    	if(e instanceof java.io.IOException){
+    		java.io.IOException io = (java.io.IOException) e;
+    		if(isNotNullMessageException(io)){
+    			return io.getMessage();
+    		}
+    	}
+    	if(Utilities.existsInnerException(e, java.io.IOException.class)){
+    		Throwable internal = Utilities.getInnerException(e, java.io.IOException.class);
+    		if(isNotNullMessageException(internal)){
+    			return this.buildException(e, internal);
+    		}
+    	}
+    	
+    	// 4. ClientAbortException (Succede nel caso il buffer del client non sia più disponibile)
+    	if(Utilities.existsInnerException(e, "org.apache.catalina.connector.ClientAbortException")){
+    		Throwable internal = Utilities.getInnerException(e, "org.apache.catalina.connector.ClientAbortException");
+    		if(isNotNullMessageException(internal)){
+    			return "ClientAbortException - "+ this.buildException(e, internal);
+    		}
+    	}
+    	
+    	// Check Null Message
+    	if(this.isNotNullMessageException(e)){
+    		return e.getMessage();
+    	}
+    	else{
+    		Throwable tNotEmpty = MessageUtils.getInnerNotEmptyMessageException(e);
+    		if(tNotEmpty!=null){
+    			return tNotEmpty.getMessage();
+    		}
+    		else{
+    			return "ErrorOccurs - "+ e.getMessage();
+    		}
+    	}
+    	
+    }
+    private String buildException(Throwable original,Throwable internal){
+    	if(isNotNullMessageException(original)){
+    		return internal.getMessage() + " (sourceException: "+original.getMessage()+")";
+    	}
+    	else{
+    		return internal.getMessage();
+    	}
+    }
+    private boolean isNotNullMessageException(Throwable tmp){
+    	return tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage());
     }
 }

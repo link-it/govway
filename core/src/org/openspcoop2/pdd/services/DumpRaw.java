@@ -181,10 +181,12 @@ public class DumpRaw {
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
 		}
 		
-		this.serializeRequest(contentType, contentLength, identity, urlProtocolContext, req.getRequestAsString());
+		this.serializeRequest(contentType, contentLength, identity, urlProtocolContext, req.getRequestAsString(),
+				req.getParsingRequestErrorAsString());
 	}
 	
-	public void serializeRequest(String contentType, Integer contentLength, Identity identity, URLProtocolContext urlProtocolContext, String rawMessage) {
+	public void serializeRequest(String contentType, Integer contentLength, Identity identity, URLProtocolContext urlProtocolContext, String rawMessage,
+			String parsingError) {
 		
 
 		this.bfRequest.append("------ Request ("+this.idTransaction+") ------\n");
@@ -332,6 +334,11 @@ public class DumpRaw {
 			this.bfRequest.append("\n");
 			
 		}
+		else if(parsingError!=null){
+			this.bfRequest.append("Parsing Request Exception: \n");
+			this.bfRequest.append(parsingError);
+			this.bfRequest.append("\n");
+		}
 		else{
 			this.bfRequest.append("Binary Request Length: ");
 			this.bfRequest.append(0);
@@ -349,11 +356,12 @@ public class DumpRaw {
 	
 	public void serializeResponse(DumpRawConnectorOutMessage res) {
 		
-		this.serializeResponse(res.getResponseAsString(),res.getTrasporto(),res.getContentLenght(),res.getContentType(),res.getStatus());
+		this.serializeResponse(res.getResponseAsString(),res.getParsingResponseErrorAsString(),
+				res.getTrasporto(),res.getContentLenght(),res.getContentType(),res.getStatus());
 		
 	}
 	
-	public void serializeResponse(String rawMessage,Properties transportHeader,Integer contentLength, String contentType, Integer status) {
+	public void serializeResponse(String rawMessage,String parsingError,Properties transportHeader,Integer contentLength, String contentType, Integer status) {
 		
 		this.bfResponse.append("------ Response ("+this.idTransaction+") ------\n");
 		
@@ -417,6 +425,11 @@ public class DumpRaw {
 			this.bfResponse.append(rawMessage);
 			this.bfResponse.append("\n");
 			
+		}
+		else if(parsingError!=null){
+			this.bfRequest.append("Parsing Response Exception: \n");
+			this.bfRequest.append(parsingError);
+			this.bfRequest.append("\n");
 		}
 		else{
 			this.bfResponse.append("Binary Response Length: ");

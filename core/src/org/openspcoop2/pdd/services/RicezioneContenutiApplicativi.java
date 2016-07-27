@@ -752,7 +752,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),null,null)));
 			}
 			return;
 		}
@@ -767,7 +767,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI),null,null)));
 			}
 			return;
 		}
@@ -782,7 +782,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO),null,null)));
 			}
 			return;
 		}
@@ -798,7 +798,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE),null,null)));
 			}
 			return;
 		}
@@ -814,7 +814,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.debug("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE),null,null)));
 			}
 			return;
 		}
@@ -830,7 +830,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE),null,null)));
 			}
 			return;
 		}
@@ -849,7 +849,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),null,null)));
 			}
 			return;
 		}
@@ -868,7 +868,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),null,null)));
 			}
 			return;
 		}
@@ -894,7 +894,7 @@ public class RicezioneContenutiApplicativi {
 			msgDiag.logErroreGenerico(e,"InizializzazioneRisorseServizioRicezioneContenutiApplicativi");
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),e,null)));
 			}
 			return;
 		}
@@ -930,7 +930,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION), e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION), e,null)));
 			}
 			return;
 		}
@@ -968,7 +968,7 @@ public class RicezioneContenutiApplicativi {
 			msgDiag.logPersonalizzato("portaDelegataNonEsistente");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
-				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(identificazione.getErroreIntegrazione(),null)));
+				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(identificazione.getErroreIntegrazione(),null,null)));
 			}
 			return;
 		}
@@ -1019,7 +1019,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
 			}
 			return;
 		}
@@ -1143,7 +1143,7 @@ public class RicezioneContenutiApplicativi {
 					}
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
-						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,e)));
+						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,e,null)));
 					}
 					return;
 				}
@@ -1183,7 +1183,7 @@ public class RicezioneContenutiApplicativi {
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
 						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 					}
 					return;
 				}
@@ -1194,7 +1194,7 @@ public class RicezioneContenutiApplicativi {
 					if (this.msgContext.isGestioneRisposta()) {
 						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.
 								getErrore402_AutenticazioneFallita("L'identità del servizio applicativo fornita ["+servizioApplicativo+"] non esiste nella configurazione della Porta di Dominio"),
-								null)));
+								null,null)));
 					}
 					return;
 				}
@@ -1215,7 +1215,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE),e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE),e,null)));
 				}
 				return;
 			}
@@ -1240,7 +1240,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(auth.getErrore(),
-							auth.getException())));
+							auth.getException(),null)));
 				}
 				return;
 			}
@@ -1275,7 +1275,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 				}
 				return;
 			}
@@ -1296,7 +1296,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 			}
 			return;
 		}
@@ -1373,7 +1373,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_403_PD_PATTERN_NON_VALIDO.
-						getErrore403_IdentificazioneDinamicaPortaDelgata(e.getPosizione().name()),e)));
+						getErrore403_IdentificazioneDinamicaPortaDelgata(e.getPosizione().name()),e,null)));
 			}
 			return;
 		} catch (Exception e) {
@@ -1383,7 +1383,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
 			}
 			return;
 		}
@@ -1405,30 +1405,37 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Verifica canale utilizzato...");
 		List<String> tipiSoggettiSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 		List<String> tipiServiziSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiServizi();
-		if(tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())==false){
+		// Nota: se qualche informazione e' null verranno segnalati altri errori
+		if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && 
+				tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL.
-						getErrore436_TipoSoggettoFruitoreNotSupportedByProtocol(soggettoFruitore,protocolFactory),null)));
+						getErrore436_TipoSoggettoFruitoreNotSupportedByProtocol(soggettoFruitore,protocolFactory),null,null)));
 			}
 			return;
 		}
-		if(tipiSoggettiSupportatiCanale.contains(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo())==false){
+		if(richiestaDelegata!=null && richiestaDelegata.getIdServizio()!=null &&
+				richiestaDelegata.getIdServizio().getSoggettoErogatore()!=null && 
+				richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo()!=null &&
+				tipiSoggettiSupportatiCanale.contains(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.erogatore.unsupported");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL.
-						getErrore437_TipoSoggettoErogatoreNotSupportedByProtocol(richiestaDelegata.getIdServizio().getSoggettoErogatore(),protocolFactory),null)));
+						getErrore437_TipoSoggettoErogatoreNotSupportedByProtocol(richiestaDelegata.getIdServizio().getSoggettoErogatore(),protocolFactory),null,null)));
 			}
 			return;
 		}
-		if(tipiServiziSupportatiCanale.contains(richiestaDelegata.getIdServizio().getTipoServizio())==false){
+		if(richiestaDelegata!=null && richiestaDelegata.getIdServizio()!=null &&
+				richiestaDelegata.getIdServizio().getTipoServizio()!=null && 
+				tipiServiziSupportatiCanale.contains(richiestaDelegata.getIdServizio().getTipoServizio())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.
-						getErrore438_TipoServizioNotSupportedByProtocol(richiestaDelegata.getIdServizio(),protocolFactory),null)));
+						getErrore438_TipoServizioNotSupportedByProtocol(richiestaDelegata.getIdServizio(),protocolFactory),null,null)));
 			}
 			return;
 		}
@@ -1451,7 +1458,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE),null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE),null,null)));
 			}
 			return;
 		}
@@ -1484,7 +1491,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 			}
 			return;
 		}
@@ -1529,7 +1536,7 @@ public class RicezioneContenutiApplicativi {
 
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
-					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,e)));
+					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,e,null)));
 				}
 				return;
 			}
@@ -1559,7 +1566,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO), e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO), e,null)));
 				}
 				return;
 			}
@@ -1589,7 +1596,7 @@ public class RicezioneContenutiApplicativi {
 					
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
-						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,null)));
+						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,null,null)));
 					}
 					return;
 				}
@@ -1741,7 +1748,7 @@ public class RicezioneContenutiApplicativi {
 
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,
-							eAutorizzazione)));
+							eAutorizzazione,null)));
 				}
 				return;
 			}
@@ -1781,7 +1788,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR), e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR), e,null)));
 			}
 			return;
 		}
@@ -1973,7 +1980,7 @@ public class RicezioneContenutiApplicativi {
 			}
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
-				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(erroreIntegrazione,eServiceNotFound)));
+				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(erroreIntegrazione,eServiceNotFound,null)));
 			}
 			return;
 		}
@@ -2003,7 +2010,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,null)));
 			}
 			return;
 		}
@@ -2022,7 +2029,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,null)));
 			}
 			return;
 		}
@@ -2066,7 +2073,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,null)));
 				}
 				return;
 			}
@@ -2126,7 +2133,7 @@ public class RicezioneContenutiApplicativi {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
 				}
-				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(erroreIntegrazione,e)));
+				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(erroreIntegrazione,e,null)));
 			}
 			return;
 		}
@@ -2159,7 +2166,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),e,null)));
 			}
 			return;
 		}
@@ -2182,7 +2189,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 			}
 			return;
 		}
@@ -2241,7 +2248,7 @@ public class RicezioneContenutiApplicativi {
 					// validazione abilitata
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
-						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ex.getErrore(),ex)));
+						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ex.getErrore(),ex,null)));
 					}
 					return;
 				}
@@ -2254,7 +2261,7 @@ public class RicezioneContenutiApplicativi {
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
 						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA),ex)));
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA),ex,null)));
 					}
 					return;
 				}
@@ -2342,7 +2349,7 @@ public class RicezioneContenutiApplicativi {
 
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(errore,
-							eAutorizzazione)));
+							eAutorizzazione,null)));
 				}
 				return;
 			}
@@ -2380,7 +2387,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 			}
 			return;
 		}
@@ -2390,7 +2397,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO.
-							getErroreIntegrazione(),null)));
+							getErroreIntegrazione(),null,null)));
 				}
 				return;
 			}
@@ -2411,7 +2418,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 				}
 				return;		
 			}
@@ -2422,7 +2429,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO.
-							getErroreIntegrazione(),null)));
+							getErroreIntegrazione(),null,null)));
 				}
 				return;
 			}
@@ -2462,7 +2469,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,null)));
 			}
 			return;
 		} finally {
@@ -2471,7 +2478,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA.
-							getErroreIntegrazione(),null)));
+							getErroreIntegrazione(),null,null)));
 				}
 				return;
 			}
@@ -2545,7 +2552,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_541_GESTIONE_HEADER_INTEGRAZIONE),e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_541_GESTIONE_HEADER_INTEGRAZIONE),e,null)));
 				}
 				return;
 			}
@@ -2576,7 +2583,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 			}
 			return;
 		}
@@ -2592,7 +2599,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_425_SCARTA_BODY.
-							getErrore425_ScartaBody(e.getMessage()),e)));
+							getErrore425_ScartaBody(e.getMessage()),e,null)));
 				}
 				return;
 			}
@@ -2626,7 +2633,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_424_ALLEGA_BODY.
-							getErrore424_AllegaBody(e.getMessage()), e)));
+							getErrore424_AllegaBody(e.getMessage()), e,null)));
 				}
 				return;
 			}
@@ -2694,7 +2701,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,null)));
 			}
 			return;
 		}
@@ -2774,7 +2781,7 @@ public class RicezioneContenutiApplicativi {
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
 						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_435_LOCAL_FORWARD_CONFIG_NON_VALIDA.
-								getErrore435_LocalForwardConfigNonValida(erroreConfigurazione),null)));
+								getErrore435_LocalForwardConfigNonValida(erroreConfigurazione),null,null)));
 					}
 					return;
 				}
@@ -2808,7 +2815,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_554_LOCAL_FORWARD_ERROR),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_554_LOCAL_FORWARD_ERROR),e,null)));
 			}
 			return;
 		}
@@ -2828,7 +2835,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_555_LOCAL_FORWARD_PROCESS_REQUEST_ERROR),e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_555_LOCAL_FORWARD_PROCESS_REQUEST_ERROR),e,null)));
 				}
 				return;
 			}
@@ -2885,7 +2892,7 @@ public class RicezioneContenutiApplicativi {
 					openspcoopstate.releaseResource(); 
 					if (this.msgContext.isGestioneRisposta()) {
 						this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(
-								ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(idMessageRequest),null)));
+								ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(idMessageRequest),null,null)));
 					}
 					return;
 				}
@@ -2896,7 +2903,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_537_BUSTA_GIA_RICEVUTA), e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_537_BUSTA_GIA_RICEVUTA), e,null)));
 			}
 			return;
 		}
@@ -2971,13 +2978,8 @@ public class RicezioneContenutiApplicativi {
 			// Rilascio Connessione DB
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
-				if(requestMessage.getParsingError() != null){
-					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-							getErrore432_MessaggioRichiestaMalformato(true,requestMessage.getParsingError()),e)));
-				} else {
-					this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_508_SAVE_REQUEST_MSG), e)));
-				}
+				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_508_SAVE_REQUEST_MSG), e,null)));
 			}
 			return;
 		}
@@ -3062,7 +3064,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO), e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO), e,null)));
 			}
 			return;
 		}
@@ -3164,7 +3166,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),e,null)));
 			}
 			return;
 		}
@@ -3190,7 +3192,7 @@ public class RicezioneContenutiApplicativi {
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_506_COMMIT_JDBC),e)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_506_COMMIT_JDBC),e,null)));
 			}
 			return;
 		}
@@ -3405,14 +3407,14 @@ public class RicezioneContenutiApplicativi {
 						else
 							throw new Exception("Errore non gestito");
 					}
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					msgDiag.logErroreGenerico(e,"Stateless.ConsegnaContenutiApplicativi");
 					logCore.error("Errore Generale durante la gestione stateless: "+e.getMessage(),e);
 					msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata precedentemente
 					openspcoopstate.setUseConnection(true);
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
-						this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e)));
+						this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,null)));
 					}
 					return false;
 				}
@@ -3444,14 +3446,14 @@ public class RicezioneContenutiApplicativi {
 					else
 						throw new Exception("Errore non gestito");
 				}
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				msgDiag.logErroreGenerico(e,"Stateless.Imbustamento");
 				logCore.error("Errore Generale durante la gestione stateless: "+e.getMessage(),e);
 				msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata precedentemente
 				openspcoopstate.setUseConnection(true);
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
-					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e)));
+					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,null)));
 				}
 				return false;
 			}
@@ -3500,14 +3502,14 @@ public class RicezioneContenutiApplicativi {
 					else
 						throw new Exception("Errore non gestito");
 				}
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				msgDiag.logErroreGenerico(e,"Stateless.InoltroBuste");
 				logCore.error("Errore Generale durante la gestione stateless: "+e.getMessage(),e);
 				msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata precedentemente
 				openspcoopstate.setUseConnection(true);
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
-					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e)));
+					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,null)));
 				}
 				return false;
 			}
@@ -3553,7 +3555,7 @@ public class RicezioneContenutiApplicativi {
 					else
 						throw new Exception("Errore non gestito");
 				}
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				erroreSbustamentoRisposta = true;
 				msgDiag.logErroreGenerico(e,"Stateless.SbustamentoRisposte");
 				logCore.error("Errore Generale durante la gestione stateless: "+e.getMessage(),e);
@@ -3561,7 +3563,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.setUseConnection(true);
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
-					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e)));
+					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,null)));
 				}
 				return false;
 			}finally{
@@ -3640,6 +3642,7 @@ public class RicezioneContenutiApplicativi {
 		
 		Loader loader = Loader.getInstance();
 		
+		boolean errorOccurs_setResponse = false;
 
 		/* ------------ GestioneRisposta ------------- */
 		String idMessageResponse = null;
@@ -3745,7 +3748,8 @@ public class RicezioneContenutiApplicativi {
 						} catch (Exception eDB) {
 							msgDiag.logErroreGenerico(e,"openspcoopstate.updateResource()");
 							this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),eDB)));
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),eDB,
+									((responseMessage!=null && responseMessage.getParseException()!=null)?responseMessage.getParseException():null))));
 							return;
 						}
 
@@ -3762,7 +3766,8 @@ public class RicezioneContenutiApplicativi {
 					}
 
 					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_513_RECEIVE), e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_513_RECEIVE), e, 
+							((responseMessage!=null && responseMessage.getParseException()!=null)?responseMessage.getParseException():null))));
 					return;
 				}
 
@@ -3777,7 +3782,8 @@ public class RicezioneContenutiApplicativi {
 				} catch (Exception e) {
 					msgDiag.logErroreGenerico(e,"openspcoopstate.updateResource()");
 					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION), e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION), e,
+							((responseMessage!=null && responseMessage.getParseException()!=null)?responseMessage.getParseException():null))));
 					return;
 				}
 				msgRequest.updateOpenSPCoopState(openspcoopstate);
@@ -3806,7 +3812,8 @@ public class RicezioneContenutiApplicativi {
 					msgDiag.logErroreGenerico(e,"msgResponse.getMessage()");
 					openspcoopstate.releaseResource();
 					this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_511_READ_RESPONSE_MSG), e)));
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_511_READ_RESPONSE_MSG), e,
+							((responseMessage!=null && responseMessage.getParseException()!=null)?responseMessage.getParseException():null))));
 					return;
 				}
 
@@ -3815,7 +3822,10 @@ public class RicezioneContenutiApplicativi {
 			logCore.error("ErroreGenerale", e);
 			msgDiag.logErroreGenerico(e,"ErroreGenerale");
 			openspcoopstate.releaseResource();
-			this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e)));
+			this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e,
+					((responseMessage!=null && responseMessage.getParseException()!=null)?responseMessage.getParseException():null))
+					));
+			errorOccurs_setResponse = true;
 		}
 
 		
@@ -3986,7 +3996,9 @@ public class RicezioneContenutiApplicativi {
 				logCore.error("Errore durante l'aggiornamento del proprietario al GestoreMessaggi (Stateless)", e);
 				msgDiag.logErroreGenerico(e, "openspcoopstate.commit(stateless risposta)");
 				openspcoopstate.releaseResource();
-				this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e)));
+				this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e,
+						((responseMessage!=null && responseMessage.getParseException()!=null)?responseMessage.getParseException():null))));
+				errorOccurs_setResponse = true;
 			}
 		}
 
@@ -4003,7 +4015,9 @@ public class RicezioneContenutiApplicativi {
 				logCore.error("Riscontrato errore durante il commit della gestione oneWay stateful/stateless", e);
 				msgDiag.logErroreGenerico(e, "openspcoopstate.commit(oneway1.1 risposta)");
 				openspcoopstate.releaseResource();
-				this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e)));
+				this.msgContext.setMessageResponse((xmlBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e,
+						((responseMessage!=null && responseMessage.getParseException()!=null)?responseMessage.getParseException():null))));
+				errorOccurs_setResponse = true;
 			}
 		}
 
@@ -4047,7 +4061,9 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		msgDiag.mediumDebug("Imposto risposta nel context...");
-		this.msgContext.setMessageResponse(responseMessage);
+		if(errorOccurs_setResponse==false){
+			this.msgContext.setMessageResponse(responseMessage);
+		}
 
 	}
 

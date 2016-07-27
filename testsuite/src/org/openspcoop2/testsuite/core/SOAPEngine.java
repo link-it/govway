@@ -218,7 +218,7 @@ public class SOAPEngine {
 		}
 		
 		try {
-			this.call.setTimeout(CostantiTestSuite.TIMEOUT);
+			this.call.setTimeout(CostantiTestSuite.READ_TIMEOUT);
 			this.call.invoke(this.sentMessage);
 		} catch (AxisFault e) {
 			if(e.getHeaders() != null) {

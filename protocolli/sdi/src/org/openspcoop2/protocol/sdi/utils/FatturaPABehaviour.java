@@ -28,6 +28,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.message.SoapUtilsBuildParameter;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -203,7 +204,8 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 					SoapUtilsBuildParameter params = new SoapUtilsBuildParameter(xml,true,
 							true,false,
 							openspcoop2Properties.isFileCacheEnable(), openspcoop2Properties.getAttachmentRepoDir(), openspcoop2Properties.getFileThreshold());
-					OpenSPCoop2Message msgForwardTo = SoapUtils.build(params,null);
+					OpenSPCoop2MessageParseResult pr = SoapUtils.build(params,null);
+					OpenSPCoop2Message msgForwardTo = pr.getMessage_throwParseException();
 					
 					if(listForwardToObjectList!=null && (j<listForwardToObjectList.size())){
 						Object fatturaSingola = listForwardToObjectList.get(j);

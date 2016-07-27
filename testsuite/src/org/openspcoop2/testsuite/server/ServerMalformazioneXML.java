@@ -68,6 +68,11 @@ public class ServerMalformazioneXML extends ServerCore{
 			if(prop!=null)
 				malformazioneHeader = Boolean.parseBoolean(prop.trim());
 			
+			boolean malformazioneContentTypeRisposta = false;
+			String propMalformazioneContentTypeRisposta = request.getParameter("contentTypeRisposta"); // Lasciare eGov, questa servlet e' specifica per il protocollo SPC
+			if(propMalformazioneContentTypeRisposta!=null)
+				malformazioneContentTypeRisposta = Boolean.parseBoolean(propMalformazioneContentTypeRisposta.trim());
+			
 			String malformazioneBody = "";
 			malformazioneBody = request.getParameter("body");
 			
@@ -115,7 +120,11 @@ public class ServerMalformazioneXML extends ServerCore{
 			byte [] bytes = msgS.getBytes();
 			
 			response.setContentLength(bytes.length);
-			response.setContentType("text/xml");
+			if(malformazioneContentTypeRisposta){
+				response.setContentType("text/ERRATO_CT");
+			}else{
+				response.setContentType("text/xml");
+			}
 			response.getOutputStream().write(bytes);
 			response.getOutputStream().flush();
 			response.getOutputStream().close();

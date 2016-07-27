@@ -28,6 +28,8 @@ import java.io.File;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.xml.soap.SOAPException;
+
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.message.MessageElement;
@@ -2228,17 +2230,16 @@ public class RichiesteApplicativeScorrette {
 			}
 			try {
 				client.run();
-			} catch (AxisFault error) {
 				
-				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
+				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiHTTP", 
+						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiHTTP", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA), 
-						CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);
 				
 			}finally{
 				dbComponentFruitore.close();
@@ -3017,23 +3018,18 @@ public class RichiesteApplicativeScorrette {
 			try {
 				client.run();
 
-				Reporter.log("Invocazione porta delegata (432/426) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (432/426) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				Reporter.log("Invocazione porta delegata (432) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new FatalTestSuiteException("Invocazione porta delegata (432) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
-				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_432_MESSAGGIO_XML_MALFORMATO).equals(error.getFaultCode().getLocalPart()))
+				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
 							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
-							Utilities.toString(CodiceErroreIntegrazione.CODICE_432_MESSAGGIO_XML_MALFORMATO), 
+							Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA), 
 							CostantiErroriIntegrazione.MSG_432_MESSAGGIO_XML_MALFORMATO_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
-				else if(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR).equals(error.getFaultCode().getLocalPart()))
-					Utilities.verificaFaultIntegrazione(error, 
-							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
-							Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR), 
-							CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
-				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (426/432): " + error.getFaultCode().getLocalPart());
+				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (432): " + error.getFaultCode().getLocalPart());
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -3066,6 +3062,12 @@ public class RichiesteApplicativeScorrette {
 		err3.setIntervalloSuperiore(dataFineTest);
 		err3.setMsgErrore("Generale(richiesta): com.ctc.wstx.exc.WstxUnexpectedCharException: Unexpected character '-' (code 45) in prolog; expected '<'");
 		this.erroriAttesiOpenSPCoopCore.add(err3);
+		
+		ErroreAttesoOpenSPCoopLogCore err4 = new ErroreAttesoOpenSPCoopLogCore();
+		err4.setIntervalloInferiore(dataInizioTest);
+		err4.setIntervalloSuperiore(dataFineTest);
+		err4.setMsgErrore("parsingExceptionRichiesta");
+		this.erroriAttesiOpenSPCoopCore.add(err4);
 	}
 	
 	
@@ -3304,5 +3306,107 @@ public class RichiesteApplicativeScorrette {
 				dbComponentErogatore.close();
 			}catch(Exception eClose){}
 		}
+	}
+	
+	
+	
+	/*
+	
+	OPENSPCOOP2_ORG_436: Tipo del Soggetto Fruitore non supportato dal Protocollo
+
+	OPENSPCOOP2_ORG_437: Tipo del Soggetto Erogatore non supportato dal Protocollo
+
+	OPENSPCOOP2_ORG_438: Tipo di Servizio non supportato dal Protocollo
+
+	OPENSPCOOP2_ORG_439: Funzionalità non supportato dal Protocollo (es. profiloAsincrono sul protocollo trasparente
+	
+	NON VERIFICABILI
+	
+	*/
+	
+	
+	Repository repositoryStrutturaXMLBodyRispostaPdDErrato=new Repository();
+	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".440"})
+	public void strutturaXMLRispostaErrata()throws FatalTestSuiteException,SOAPException, Exception{
+		Date dataInizioTest = DateManager.getDate();
+
+		// costruzione busta
+		String xml = org.openspcoop2.utils.resources.FileSystemUtilities.readFile(Utilities.testSuiteProperties.getSoap11FileName());
+		Message msg=new Message(new ByteArrayInputStream(xml.getBytes()));
+		msg.getSOAPPartAsBytes();
+
+		DatabaseComponent dbComponentErogatore = null;
+		try{
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryStrutturaXMLBodyRispostaPdDErrato);
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_XML_ERRATO_BODY_RISPOSTA_PDD);
+			client.connectToSoapEngine();
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+
+			try {
+				client.run();
+				throw new Exception("Attesa eccezione per controllo soapAction");
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT con Busta codice["+error.getFaultCode().getLocalPart()+"] actor ["+error.getFaultActor()+"]: "+error.getFaultString());
+				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA).equals(error.getFaultCode().getLocalPart())){
+					Reporter.log("Controllo fault code. Atteso ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA)
+						+"] - Trovato [" + error.getFaultCode().getLocalPart() + "]");
+					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA).equals(error.getFaultCode().getLocalPart()));
+					String msgErrore = "Unexpected close tag </soapenv:Envelope>; expected </soapenv:Body>";
+					String msgErrore2 = "Unexpected close tag";
+					String msgErrore3 = "The element type \"soapenv:Body\" must be terminated by the matching end-tag \"</soapenv:Body>\"";
+					Reporter.log("Controllo fault string. Trovato [" + error.getFaultString() + "]");
+					Assert.assertTrue(error.getFaultString().contains(msgErrore) || error.getFaultString().contains(msgErrore2) || error.getFaultString().contains(msgErrore3));
+				} else {
+					Assert.assertTrue(false, "FaultCode non atteso");
+				}
+
+				Reporter.log("Controllo fault actor. Atteso [OpenSPCoop] - Trovato [" + error.getFaultActor() + "]");
+				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+			}finally{
+				dbComponentErogatore.close();
+			}
+
+		}catch(Exception e){
+			throw e;
+		}finally{
+			dbComponentErogatore.close();
+		}
+
+		Date dataFineTest = DateManager.getDate();
+
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP (Parsing Risposta SOAP)");
+		this.erroriAttesiOpenSPCoopCore.add(err);
+
+		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
+		err2.setIntervalloInferiore(dataInizioTest);
+		err2.setIntervalloSuperiore(dataFineTest);
+		err2.setMsgErrore("com.ctc.wstx.exc.WstxParsingException: Unexpected close tag </soapenv:Envelope>; expected </soapenv:Body>");
+		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
+		ErroreAttesoOpenSPCoopLogCore err3 = new ErroreAttesoOpenSPCoopLogCore();
+		err3.setIntervalloInferiore(dataInizioTest);
+		err3.setIntervalloSuperiore(dataFineTest);
+		err3.setMsgErrore("ErroreGenerale");
+		this.erroriAttesiOpenSPCoopCore.add(err3);
+		
+		ErroreAttesoOpenSPCoopLogCore err4 = new ErroreAttesoOpenSPCoopLogCore();
+		err4.setIntervalloInferiore(dataInizioTest);
+		err4.setIntervalloSuperiore(dataFineTest);
+		err4.setMsgErrore("parsingExceptionRisposta");
+		this.erroriAttesiOpenSPCoopCore.add(err4);
+
+
 	}
 }

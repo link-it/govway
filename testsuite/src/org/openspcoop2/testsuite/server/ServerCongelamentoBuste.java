@@ -36,6 +36,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.message.SoapUtilsBuildParameter;
 import org.openspcoop2.pdd.services.ServletUtils;
@@ -102,7 +103,8 @@ public class ServerCongelamentoBuste extends ServerCore{
 			}
 			
 			SoapUtilsBuildParameter param = new SoapUtilsBuildParameter(bout.toByteArray(), false,false,null,null);
-			OpenSPCoop2Message msg = SoapUtils.build(param,null);
+			OpenSPCoop2MessageParseResult pr = SoapUtils.build(param,null);
+			OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 			msg.setProperty("SOAPAction", ServletUtils.getSoapAction(request,msg.getVersioneSoap(),msg.getContentType()));
 			msg.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION,  ServletUtils.getSoapAction(request,msg.getVersioneSoap(),msg.getContentType()));
 			// ??? Serve ancora ??? Configurazione.init(checkInterval, gestoreRepositoryBuste, sqlQueryObject, this.log);
@@ -129,7 +131,7 @@ public class ServerCongelamentoBuste extends ServerCore{
 			SOAPConnection connection = OpenSPCoop2MessageFactory.getMessageFactory().getSOAPConnectionFactory().createConnection();
 			javax.xml.messaging.URLEndpoint urlConnection = new  javax.xml.messaging.URLEndpoint(urlForward);
 			SOAPMessage responseMsgSoap = (SOAPMessage) connection.call((SOAPMessage)msg,urlConnection);
-			OpenSPCoop2Message responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(responseMsgSoap);
+			OpenSPCoop2Message responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap(),responseMsgSoap);
 
 			if(responseMsg!=null){
 				ByteArrayOutputStream boutResponse=new ByteArrayOutputStream();

@@ -1987,6 +1987,12 @@
             <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/([^/]*).*" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" autenticazione="basic" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" />
@@ -2756,6 +2762,11 @@
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="TestContentTypeErratoRisposta" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="malformazioneContentTypeRisposta"/>
         </porta-delegata>
         
         <porta-delegata gestione-manifest="abilitato" nome="TestXMLErratoHeaderRisposta_Stateful" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="disabilitato">

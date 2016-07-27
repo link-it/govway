@@ -27,6 +27,7 @@ package org.openspcoop2.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -56,31 +57,72 @@ public class Utilities {
 	public static final int DIMENSIONE_BUFFER = 65536;
 
 	public static byte[] getAsByteArray(URL url) throws UtilsException{
+		return getAsByteArray(url, true);
+	}
+	public static byte[] getAsByteArray(URL url,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
 			InputStream openStream = null;
 			byte[] content = null;
 			try{
 				openStream = url.openStream();
-				content = Utilities.getAsByteArray(openStream);
+				content = Utilities.getAsByteArray(openStream,throwExceptionInputStreamEmpty);
 			}finally{
 				try{
 					openStream.close();
 				}catch(Exception e){}
 			}
 			return content;
-		}catch (java.lang.Exception e) {
+		}
+		catch (UtilsException e) {
+			throw e;
+		}
+		catch (java.lang.Exception e) {
 			throw new UtilsException("Utilities.readBytes error "+e.getMessage(),e);
 		}
 	}
 	public static byte[] getAsByteArray(InputStream is) throws UtilsException{
+		return getAsByteArray(is,true);
+	}
+	public static byte[] getAsByteArray(InputStream is,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
-			return Utilities.getAsByteArrayOuputStream(is).toByteArray();
-		} catch (java.lang.Exception e) {
+			return Utilities.getAsByteArrayOuputStream(is,throwExceptionInputStreamEmpty).toByteArray();
+		}
+		catch (UtilsException e) {
+			throw e;
+		}
+		catch (java.lang.Exception e) {
 			throw new UtilsException("Utilities.readBytes error "+e.getMessage(),e);
 		}
 	}
-	public static ByteArrayOutputStream getAsByteArrayOuputStream(InputStream is) throws UtilsException{
+	public static ByteArrayOutputStream getAsByteArrayOuputStream(InputStream isParam) throws UtilsException{
+		return getAsByteArrayOuputStream(isParam, true);
+	}
+	public static ByteArrayOutputStream getAsByteArrayOuputStream(InputStream isParam,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
+			if(isParam==null){
+				if(throwExceptionInputStreamEmpty){
+					throw new UtilsException("InputStream is null");
+				}
+				else{
+					return null;
+				}
+			}
+			
+			byte[] b = new byte[1];
+			InputStream is = null;
+			if(isParam.read(b) == -1) {
+				if(throwExceptionInputStreamEmpty){
+					throw new UtilsException("InputStream is empty");
+				}
+				else{
+					return null;
+				}
+			} else {
+				// Metodo alternativo: java.io.PushbackInputStream
+				is = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
+			}
+			
+			
 			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
 			int letti = 0;
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -91,7 +133,26 @@ public class Utilities {
 			bout.close();
 			return bout;
 		} catch (java.lang.Exception e) {
-			throw new UtilsException("Utilities.readBytes error "+e.getMessage(),e);
+			if(e instanceof java.io.IOException){
+				if(isEmpytMessageException(e)==false){
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
+			else if(existsInnerException(e, java.io.IOException.class)){
+				Throwable tInternal = getInnerException(e, java.io.IOException.class);
+				if(isEmpytMessageException(tInternal)==false){
+					throw new UtilsException(tInternal.getMessage(),e);
+				}
+			}
+
+			Throwable tInternal = getInnerNotEmptyMessageException(e);
+			if(tInternal!=null){
+				throw new UtilsException(tInternal.getMessage(),e);
+			}
+			else{
+				throw new UtilsException("Utilities.readBytes error",e);
+			}
+		
 		}
 	}
 
@@ -729,6 +790,18 @@ public class Utilities {
 
 
 	// Gestione eccezioni
+	
+	public static boolean isEmpytMessageException(Throwable e){
+		if(e.getMessage()==null ||
+				"".equals(e.getMessage()) || 
+				"null".equalsIgnoreCase(e.getMessage()) ){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	public static boolean existsInnerException(Throwable e,Class<?> found){
 		return Utilities.existsInnerException(e,found.getName());
 	}
@@ -826,7 +899,7 @@ public class Utilities {
 
 
 	public static Throwable getInnerNotEmptyMessageException(Throwable e){
-		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
+		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+e.getMessage()+")");
 		if(e.getMessage()!=null && !"".equals(e.getMessage()) && !"null".equalsIgnoreCase(e.getMessage())){
 			return e;
 		}
@@ -841,7 +914,25 @@ public class Utilities {
 	}
 
 
-
+	public static boolean isExceptionInstanceOf(Class<?> c,Throwable t){
+		return isExceptionInstanceOf(c.getName(), t);
+	}
+	public static boolean isExceptionInstanceOf(String className,Throwable t){
+		if(t.getClass().getName().equals(className)){
+			return true;
+		}
+//		else if(t.getClass().getSuperclass()!=null && t.getClass().getSuperclass().equals(className)){
+//			return true;
+//		}
+		else{
+			try{
+				Class<?> c = Class.forName(className); 
+				return c.isInstance(t);
+			}catch(Throwable tException){
+				return false;
+			}
+		}
+	}
 
 
 

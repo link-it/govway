@@ -215,7 +215,13 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 			}
 			
 			
-			if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
+			if(informazioniErroriInfrastrutturali.isContenutoRichiestaNonRiconosciuto()){
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, tipoContext);
+			}
+			else if(informazioniErroriInfrastrutturali.isContenutoRispostaNonRiconosciuto()){
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, tipoContext);
+			}
+			else if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
 			else if(body==null){

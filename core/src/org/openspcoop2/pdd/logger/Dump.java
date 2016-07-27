@@ -433,43 +433,47 @@ public class Dump {
 			}
 		}
 		
-		for(int i=0; i<this.loggerDumpOpenSPCoopAppender.size();i++){
-			try{
-				Messaggio messaggioDump = new Messaggio();
-				messaggioDump.setGdo(this.gdo);
-				messaggioDump.setIdBusta(this.idMessaggio);
-				messaggioDump.setIdPorta(this.dominio);
-				messaggioDump.setIdFunzione(this.idModulo);
-				messaggioDump.setFruitore(this.fruitore);
-				messaggioDump.setServizio(this.servizio);
-				messaggioDump.setMsg(msg);
-				messaggioDump.setLocation(location);
-				messaggioDump.setTransportHeader(transportHeader);
-				messaggioDump.setTipoPdD(this.tipoPdD);
-				messaggioDump.setProtocollo(this.protocolFactory.getProtocol());
-				messaggioDump.setTipoMessaggio(tipoMessaggio);
-				
-				if(this.pddContext!=null){
-					String [] key = org.openspcoop2.core.constants.Costanti.CONTEXT_OBJECT;
-					if(key!=null){
-						for (int j = 0; j < key.length; j++) {
-							Object o = this.pddContext.getObject(key[j]);
-							if(o!=null && o instanceof String){
-								messaggioDump.addProperty(key[j], (String)o);
+		// Il dump via API lo effettuo solamente se ho davvero un messaggio OpenSPCoop
+		// Senno ottengo errori all'interno delle implementazioni degli appender dump
+		if(msg!=null){
+			for(int i=0; i<this.loggerDumpOpenSPCoopAppender.size();i++){
+				try{
+					Messaggio messaggioDump = new Messaggio();
+					messaggioDump.setGdo(this.gdo);
+					messaggioDump.setIdBusta(this.idMessaggio);
+					messaggioDump.setIdPorta(this.dominio);
+					messaggioDump.setIdFunzione(this.idModulo);
+					messaggioDump.setFruitore(this.fruitore);
+					messaggioDump.setServizio(this.servizio);
+					messaggioDump.setMsg(msg);
+					messaggioDump.setLocation(location);
+					messaggioDump.setTransportHeader(transportHeader);
+					messaggioDump.setTipoPdD(this.tipoPdD);
+					messaggioDump.setProtocollo(this.protocolFactory.getProtocol());
+					messaggioDump.setTipoMessaggio(tipoMessaggio);
+					
+					if(this.pddContext!=null){
+						String [] key = org.openspcoop2.core.constants.Costanti.CONTEXT_OBJECT;
+						if(key!=null){
+							for (int j = 0; j < key.length; j++) {
+								Object o = this.pddContext.getObject(key[j]);
+								if(o!=null && o instanceof String){
+									messaggioDump.addProperty(key[j], (String)o);
+								}
 							}
 						}
 					}
+					this.loggerDumpOpenSPCoopAppender.get(i).dump(messaggioDump);
+				}catch(Exception e){
+					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio.getTipo()+") con identificativo ["+this.idMessaggio+"]: "+e.getMessage(),e);
+					try{
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getTipo());
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoDumpOpenSPCoopAppender.get(i));
+						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita.openspcoopAppender");
+					}catch(Exception eMsg){}
+					gestioneErroreDump(e);
 				}
-				this.loggerDumpOpenSPCoopAppender.get(i).dump(messaggioDump);
-			}catch(Exception e){
-				OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio.getTipo()+") con identificativo ["+this.idMessaggio+"]: "+e.getMessage(),e);
-				try{
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getTipo());
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoDumpOpenSPCoopAppender.get(i));
-					this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita.openspcoopAppender");
-				}catch(Exception eMsg){}
-				gestioneErroreDump(e);
 			}
 		}
 	}

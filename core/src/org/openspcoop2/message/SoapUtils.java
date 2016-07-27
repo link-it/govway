@@ -722,9 +722,10 @@ public class SoapUtils {
 	 * @return msg Messaggio Soap imbustato
 	 * 
 	 */
-	public static OpenSPCoop2Message imbustamentoMessaggio(NotifierInputStreamParams notifierInputStreamParams, byte [] body,boolean eraserXMLTag, boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) throws UtilsException{
+	public static OpenSPCoop2MessageParseResult imbustamentoMessaggio(NotifierInputStreamParams notifierInputStreamParams, byte [] body,boolean eraserXMLTag, boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) throws UtilsException{
 		return SoapUtils.build(new SoapUtilsBuildParameter(body,true,eraserXMLTag,fileCacheEnable,attachmentRepoDir,fileThreshold),notifierInputStreamParams);
 	}
+	
 	
 	
 	
@@ -747,7 +748,7 @@ public class SoapUtils {
 	 * 
 	 */
 
-	public static OpenSPCoop2Message build(SoapUtilsBuildParameter param,NotifierInputStreamParams notifierInputStreamParams) throws UtilsException{
+	public static OpenSPCoop2MessageParseResult build(SoapUtilsBuildParameter param,NotifierInputStreamParams notifierInputStreamParams) throws UtilsException{
 
 		try{
 			byte[] byteMsg = param.getByteMsg();
@@ -860,44 +861,47 @@ public class SoapUtils {
 			
 			ByteArrayInputStream messageInput = new ByteArrayInputStream(byteMsg,offset,byteMsg.length);
 			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			OpenSPCoop2Message message = mf.createMessage(messageInput,notifierInputStreamParams,isBodyStream,contentType,null, param.isFileCacheEnable(), param.getAttachmentRepoDir(), param.getFileThreshold());
-			/*
-			// save changes.
-			// N.B. il countAttachments serve per il msg con attachments come saveMessage!
-			if(message.countAttachments()==0){
-				message.getSOAPPartAsBytes();
-			}
-			
-			// checkConsistenza Msg
-			try{
-				message.getSOAPEnvelope().getAsString();
-			}catch(Exception e){
-				throw new Exception("Costruzione di un msg soap non riuscita per il pacchetto ["+new String(byteMsg)+"]: "+e.getMessage(),e);
-			}
-			*/
-			if(param.isCheckEmptyBody()){
-				if (message.getSOAPBody()==null || message.getSOAPBody().hasChildNodes()==false){
-					throw new Exception("Costruzione di un msg soap non riuscita: soap body senza contenuto");
+			OpenSPCoop2MessageParseResult pr = mf.createMessage(messageInput,notifierInputStreamParams,isBodyStream,contentType,null, param.isFileCacheEnable(), param.getAttachmentRepoDir(), param.getFileThreshold());
+			OpenSPCoop2Message message = pr.getMessage();
+			if(message!=null){
+				/*
+				// save changes.
+				// N.B. il countAttachments serve per il msg con attachments come saveMessage!
+				if(message.countAttachments()==0){
+					message.getSOAPPartAsBytes();
 				}
-			}
-			
-			// TODO: gestire come parametro la soap Action: OP-437
-			String soapAction = null;
-			if(message.getMimeHeaders()!=null){
-				String [] hdrs = message.getMimeHeaders().getHeader(Costanti.SOAP_ACTION);
-				if(hdrs!=null && hdrs.length>0){
-					soapAction = hdrs[0];
+				
+				// checkConsistenza Msg
+				try{
+					message.getSOAPEnvelope().getAsString();
+				}catch(Exception e){
+					throw new Exception("Costruzione di un msg soap non riuscita per il pacchetto ["+new String(byteMsg)+"]: "+e.getMessage(),e);
 				}
-			}
-			if(soapAction==null){
-				soapAction="\"OpenSPCoop\"";
-				message.setProperty(Costanti.SOAP_ACTION, soapAction);
+				*/
+				if(param.isCheckEmptyBody()){
+					if (message.getSOAPBody()==null || message.getSOAPBody().hasChildNodes()==false){
+						throw new Exception("Costruzione di un msg soap non riuscita: soap body senza contenuto");
+					}
+				}
+				
+				// TODO: gestire come parametro la soap Action: OP-437
+				String soapAction = null;
 				if(message.getMimeHeaders()!=null){
-					message.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION, soapAction);
+					String [] hdrs = message.getMimeHeaders().getHeader(Costanti.SOAP_ACTION);
+					if(hdrs!=null && hdrs.length>0){
+						soapAction = hdrs[0];
+					}
+				}
+				if(soapAction==null){
+					soapAction="\"OpenSPCoop\"";
+					message.setProperty(Costanti.SOAP_ACTION, soapAction);
+					if(message.getMimeHeaders()!=null){
+						message.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION, soapAction);
+					}
 				}
 			}
 			
-			return message;
+			return pr;
 			
 		}catch(Exception e){
 			throw new UtilsException("Build msg non riuscito: "+e.getMessage(),e);

@@ -103,6 +103,7 @@ public class ClientHttpGenerico extends ClientCore{
 	/** MessaggioXML in byte */
 	private byte[] messaggioXMLRichiesta;
 	private byte[] messaggioXMLRisposta;
+	private boolean forceResponseAsSOAPProcessor;
 	/** ContentType */
 	private String contentType;
 	/** ContentType Risposta*/
@@ -441,12 +442,12 @@ public class ClientHttpGenerico extends ClientCore{
 		if(this.connectTimedOut>0){
 			this.conn.setConnectTimeout(this.connectTimedOut); // attendo X secondi l'istanziazione della connessione
 		}else{
-			this.conn.setConnectTimeout(CostantiTestSuite.TIMEOUT); // attendo X secondi l'istanziazione della connessione
+			this.conn.setConnectTimeout(CostantiTestSuite.CONNECTION_TIMEOUT); // attendo X secondi l'istanziazione della connessione
 		}
 		if(this.connectionReadTimeout>0){
 			this.conn.setReadTimeout(this.connectionReadTimeout); // attendo X secondi la risposta
 		}else{
-			this.conn.setReadTimeout(CostantiTestSuite.TIMEOUT); // attendo X secondi la risposta
+			this.conn.setReadTimeout(CostantiTestSuite.READ_TIMEOUT); // attendo X secondi la risposta
 		}
 		
 		// SoapAction
@@ -542,7 +543,7 @@ public class ClientHttpGenerico extends ClientCore{
 			
 			// Ricezione messaggio
 			if(is!=null){
-				if(this.messaggioXMLRichiesta==null){
+				if(this.messaggioXMLRichiesta==null || this.forceResponseAsSOAPProcessor){
 					// gestione SOAP
 					try{
 						this.receivedMessage = new org.apache.axis.Message(is,false,tipoRisposta,locationRisposta);	
@@ -838,5 +839,11 @@ public class ClientHttpGenerico extends ClientCore{
 	}
 	public void setConnectionReadTimeout(int connectionReadTimeout) {
 		this.connectionReadTimeout = connectionReadTimeout;
+	}
+	public boolean isForceResponseAsSOAPProcessor() {
+		return this.forceResponseAsSOAPProcessor;
+	}
+	public void setForceResponseAsSOAPProcessor(boolean forceResponseAsSOAPProcessor) {
+		this.forceResponseAsSOAPProcessor = forceResponseAsSOAPProcessor;
 	}
 }

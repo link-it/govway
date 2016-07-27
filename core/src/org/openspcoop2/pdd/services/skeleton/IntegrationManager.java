@@ -39,7 +39,10 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.message.SoapUtilsBuildParameter;
@@ -1686,13 +1689,12 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 		
 		// PddContext
-		PdDContext pddContext = context.getPddContext();
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,pddContext); 
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.TIPO_OPERAZIONE_IM, tipoOperazione.toString());
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO, idInvocazionePerRiferimento);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, portaDelegata);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,context.getPddContext()); 
+		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
+		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.TIPO_OPERAZIONE_IM, tipoOperazione.toString());
+		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO, idInvocazionePerRiferimento);
+		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, portaDelegata);
+		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 		
 		EsitoTransazione esito = null;
 		String errore = null;
@@ -1707,7 +1709,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			/* ------------  PreInHandler ------------- */
 			
 			// build context
-			PreInRequestContext preInRequestContext = new PreInRequestContext(pddContext);
+			PreInRequestContext preInRequestContext = new PreInRequestContext(context.getPddContext());
 			preInRequestContext.setTipoPorta(TipoPdD.DELEGATA);
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
@@ -1735,7 +1737,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			GestoreHandlers.preInRequest(preInRequestContext, msgDiag, logCore);
 			
 			// aggiungo eventuali info inserite nel preInHandler
-			pddContext.addAll(preInRequestContext.getPddContext(), false);
+			context.getPddContext().addAll(preInRequestContext.getPddContext(), false);
 			
 			// Lettura risposta parametri NotifierInputStream
 			NotifierInputStreamParams notifierInputStreamParams = preInRequestContext.getNotifierInputStreamParams();
@@ -1874,7 +1876,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					}catch(Throwable t){
 						logCore.error("Dump Identity error: "+t.getMessage(),t);
 					}
-					dumpRaw.serializeRequest(contentTypeRichiesta, contentLengthRichiesta, identity, urlProtocolContext, rawMessage);
+					dumpRaw.serializeRequest(contentTypeRichiesta, contentLengthRichiesta, identity, urlProtocolContext, rawMessage, null);
 				}
 				
 				stato = new OpenSPCoopStateful();
@@ -1883,7 +1885,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				
 				// Leggo Messaggio
 				try{
-					GestoreMessaggi gestoreMessaggio = new GestoreMessaggi(stato, true,idInvocazionePerRiferimento,Costanti.INBOX,msgDiag,pddContext);
+					GestoreMessaggi gestoreMessaggio = new GestoreMessaggi(stato, true,idInvocazionePerRiferimento,Costanti.INBOX,msgDiag,context.getPddContext());
 					msgRequest = gestoreMessaggio.getMessage();	
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggio.getMessagePerRiferimento("+idInvocazionePerRiferimento+")");
@@ -1915,34 +1917,56 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					}catch(Throwable t){
 						logCore.error("Dump Identity error: "+t.getMessage(),t);
 					}
-					dumpRaw.serializeRequest(contentTypeRichiesta, contentLengthRichiesta, identity, urlProtocolContext, rawMessage);
+					dumpRaw.serializeRequest(contentTypeRichiesta, contentLengthRichiesta, identity, urlProtocolContext, rawMessage, null);
 				}
 				
 				// Ricostruzione Messaggio
 				try{
-					msgRequest = SoapUtils.build(new SoapUtilsBuildParameter(msg.getMessage(), msg.getImbustamento(), 
+					OpenSPCoop2MessageParseResult pr = SoapUtils.build(new SoapUtilsBuildParameter(msg.getMessage(), msg.getImbustamento(), 
 							this.propertiesReader.isDeleteInstructionTargetMachineXml(), 
 							this.propertiesReader.isFileCacheEnable(), 
 							this.propertiesReader.getAttachmentRepoDir(), 
 							this.propertiesReader.getFileThreshold()),
 							notifierInputStreamParams);
+					if(pr.getParseException()!=null){
+						context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+					}
+					msgRequest = pr.getMessage_throwParseException();
 					msgRequest.setTransportRequestContext(urlProtocolContext);
 				}catch(Exception e){
+					
+					Throwable tParsing = null;
+					if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
+						tParsing = ((ParseException) context.getPddContext().removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)).getParseException();
+					}
+					if(tParsing==null){
+						tParsing = MessageUtils.getParseException(e);
+					}
+					if(tParsing==null){
+						tParsing = e;
+					}
+					
+					String msgErrore = tParsing.getMessage();
+					if(msgErrore==null){
+						msgErrore = tParsing.toString();
+					}
+					
+					context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 					if(ConfigurazionePdDManager.getInstance().dumpMessaggi()){
 						Dump dumpApplicativo = new Dump(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),
-								IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,pddContext,null,null);
+								IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,context.getPddContext(),null,null);
 						dumpApplicativo.dumpRichiestaIngresso(msg.getMessage(),buildInfoConnettoreIngresso(req, credenziali, urlProtocolContext));
 					}
 					if(msg.getImbustamento()==false){
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 						msgDiag.logPersonalizzato("buildMsg.nonRiuscito");
 						throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_421_MSG_SOAP_NON_COSTRUIBILE_TRAMITE_RICHIESTA_APPLICATIVA.
-								getErrore421_MessaggioSOAPNonGenerabile(e.getMessage()));
+								getErrore421_MessaggioSOAPNonGenerabile(msgErrore));
 					} else {
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 						msgDiag.logPersonalizzato("buildMsg.imbustamentoSOAP.nonRiuscito");
 						throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA.
-								getErrore422_MessaggioSOAPNonGenerabileTramiteImbustamentoSOAP(e.getMessage()));
+								getErrore422_MessaggioSOAPNonGenerabileTramiteImbustamentoSOAP(msgErrore));
 					}
 				}
 			}
@@ -2016,8 +2040,43 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgResponse = context.getMessageResponse();
 			if(context.getMsgDiagnostico()!=null){
 				msgDiag = context.getMsgDiagnostico();
+				// Aggiorno informazioni
+				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 			}
 
+			// Check parsing request
+			if((msgRequest!=null && msgRequest.getParseException() != null) || 
+					(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+			
+				// Senno l'esito viene forzato essere 5XX
+				try{
+					esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext,EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
+				}catch(Exception eBuildError){
+					esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+				}
+				
+				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				ParseException parseException = null;
+				if( msgRequest!=null && msgRequest.getParseException() != null ){
+					parseException = msgRequest.getParseException();
+				}
+				else{
+					parseException = (ParseException) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+				}
+				String msgErrore = parseException.getParseException().getMessage();
+				if(msgErrore==null){
+					msgErrore = parseException.getParseException().toString();
+				}	
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
+//				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
+//				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
+//						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()));
+				// Per l'IntegrationManager esiste un codice specifico
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER,"buildMsg.nonRiuscito");
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_421_MSG_SOAP_NON_COSTRUIBILE_TRAMITE_RICHIESTA_APPLICATIVA.
+						getErrore421_MessaggioSOAPNonGenerabile(msgErrore));
+			}
 			
 			// Raccolgo l'eventuale header di integrazione
 			java.util.Properties headerIntegrazioneRisposta = context.getHeaderIntegrazioneRisposta();
@@ -2049,15 +2108,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				
 				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
 						context.getProprietaErroreAppl(), informazioniErrori, 
-						(pddContext!=null ? pddContext.getContext() : null));			
-				
-				if(msgResponse.getSOAPBody().hasFault()){
+						(context.getPddContext()!=null ? context.getPddContext().getContext() : null));			
+												
+				IntegrationManagerException exc = null;
+				try{
+					if(msgResponse.getSOAPBody().hasFault()){
 
-					
-					descrizioneSoapFault = " ("+SoapUtils.toString(msgResponse.getSOAPBody().getFault(), false)+")";
-										
-					IntegrationManagerException exc = null;
-					try{	
+						descrizioneSoapFault = " ("+SoapUtils.toString(msgResponse.getSOAPBody().getFault(), false)+")";
+						
 						// Potenziale MsgErroreApplicativo
 						SOAPFault fault = msgResponse.getSOAPBody().getFault();
 						ProprietaErroreApplicativo pea = context.getProprietaErroreAppl();
@@ -2076,23 +2134,81 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 							if(exc== null)
 								throw new Exception("Costruzione Eccezione fallita: null");
 						}
-					}catch(Exception e){
-						msgDiag.logErroreGenerico(e,"buildProtocolException("+tipoOperazione+")");
-						throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_524_CREAZIONE_PROTOCOL_EXCEPTION));
-					}	
-					if(exc!=null){
-						throw exc;
 					}
+				}catch(Exception e){
+					try{
+						if( (msgResponse!=null && msgResponse.getParseException() != null) ||
+								(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+							informazioniErrori.setContenutoRispostaNonRiconosciuto(true);
+							ParseException parseException = null;
+							if( msgResponse!=null && msgResponse.getParseException() != null ){
+								parseException = msgResponse.getParseException();
+							}
+							else{
+								parseException = (ParseException) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+							}
+							String msgErrore = parseException.getParseException().getMessage();
+							if(msgErrore==null){
+								msgErrore = parseException.getParseException().toString();
+							}
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+							logCore.error("parsingExceptionRisposta",parseException.getSourceException());
+							msgDiag.logPersonalizzato("parsingExceptionRisposta");
+							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
+									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
+						}
+						else{
+							msgDiag.logErroreGenerico(e,"buildProtocolException("+tipoOperazione+")");
+							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_524_CREAZIONE_PROTOCOL_EXCEPTION));
+						}
+					}finally{
+						// ricalcolo esito
+						esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+								context.getProprietaErroreAppl(), informazioniErrori, 
+								(context.getPddContext()!=null ? context.getPddContext().getContext() : null));		
+					}
+				}	
+				if(exc!=null){
+					throw exc;
 				}
 
 				// Se non ho lanciato l'eccezione, costruisco una risposta
 				try{
 					msgReturn = new IntegrationManagerMessage(msgResponse,false);
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"buildMessage_response("+tipoOperazione+")");
-					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE));
+					try{
+						if( (msgResponse!=null && msgResponse.getParseException() != null) ||
+								(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+							informazioniErrori.setContenutoRispostaNonRiconosciuto(true);
+							ParseException parseException = null;
+							if( msgResponse!=null && msgResponse.getParseException() != null ){
+								parseException = msgResponse.getParseException();
+							}
+							else{
+								parseException = (ParseException) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+							}
+							String msgErrore = parseException.getParseException().getMessage();
+							if(msgErrore==null){
+								msgErrore = parseException.getParseException().toString();
+							}
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+							logCore.error("parsingExceptionRisposta",parseException.getSourceException());
+							msgDiag.logPersonalizzato("parsingExceptionRisposta");
+							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
+									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
+						}
+						else{
+							msgDiag.logErroreGenerico(e,"buildMessage_response("+tipoOperazione+")");
+							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE));
+						}
+					}finally{
+						// ricalcolo esito
+						esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+								context.getProprietaErroreAppl(), informazioniErrori, 
+								(context.getPddContext()!=null ?context.getPddContext().getContext() : null));		
+					}
 				}
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, descrizioneSoapFault);
@@ -2110,7 +2226,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				
 				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
 						context.getProprietaErroreAppl(), informazioniErrori, 
-						(pddContext!=null ? pddContext.getContext() : null));	
+						(context.getPddContext()!=null ? context.getPddContext().getContext() : null));	
 				// ok oneway
 				
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"integrationManager.consegnaRispostaApplicativaVuota");
@@ -2130,7 +2246,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						logCore.error("Dump error: "+t.getMessage(),t);
 					}
 				}
-				dumpRaw.serializeResponse(rawMessage, null, contentLengthRisposta, contentTypeRisposta, 200);
+				dumpRaw.serializeResponse(rawMessage, null, null, contentLengthRisposta, contentTypeRisposta, 200);
 			}
 			
 			return msgReturn;
@@ -2139,9 +2255,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			if(dumpRaw!=null){
 				String contentTypeRisposta = "text/xml"; // per ora e' cablato.
-				String rawMessage = "[Exception "+e.getClass().getName()+"]: "+ e.getMessage();
+				String rawMessage = "[Exception "+e.getClass().getName()+"]: "+ e.getMessage(); // Non riesco ad avere il marshal xml della risposta ritornata
 				Integer contentLengthRisposta = null;
-				dumpRaw.serializeResponse(rawMessage, null, contentLengthRisposta, contentTypeRisposta, 500);
+				dumpRaw.serializeResponse(rawMessage, null,null, contentLengthRisposta, contentTypeRisposta, 500);
 			}
 			
 			errore = e.getMessage();
@@ -2217,8 +2333,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			/* ------------  PostOutResponseHandler ------------- */
 			PostOutResponseContext postOutResponseContext = new PostOutResponseContext(logCore, protocolFactory);
 			try{
-				pddContext.addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
-				postOutResponseContext.setPddContext(pddContext);
+				context.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
+				postOutResponseContext.setPddContext(context.getPddContext());
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setMessaggio(msgResponse);
@@ -2241,16 +2357,16 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}else{
 					postOutResponseContext.setReturnCode(200);
 				}
-				if(context!=null){
-					if(context.getTipoPorta()!=null)
-						postOutResponseContext.setTipoPorta(context.getTipoPorta());
-					else
-						postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
-					postOutResponseContext.setProtocollo(context.getProtocol());
-					postOutResponseContext.setIntegrazione(context.getIntegrazione());
-				}else{
+//				if(context!=null){
+				if(context.getTipoPorta()!=null)
+					postOutResponseContext.setTipoPorta(context.getTipoPorta());
+				else
 					postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
-				}
+				postOutResponseContext.setProtocollo(context.getProtocol());
+				postOutResponseContext.setIntegrazione(context.getIntegrazione());
+//				}else{
+//					postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
+//				}
 				postOutResponseContext.setIdModulo(idModulo);
 								
 			}catch(Exception e){

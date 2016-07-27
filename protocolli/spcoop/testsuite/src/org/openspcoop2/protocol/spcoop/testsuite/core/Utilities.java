@@ -518,10 +518,13 @@ public class Utilities {
 					}
 					identificativoModuloOk = true;
 					String idModuloValue = modulo.getTextContent();
-					Reporter.log("Controllo identificativoFunzione presente["+idModuloValue+"] atteso["+identificativoModuloAtteso+"]");
 					boolean match=false;
 					for(int h=0;h<identificativoModuloAtteso.length;h++){
-						if(idModuloValue.equals(identificativoModuloAtteso[h])) match = true;
+						Reporter.log("Controllo identificativoFunzione presente["+idModuloValue+"] atteso("+h+")["+identificativoModuloAtteso[h]+"]");
+						if(idModuloValue.equals(identificativoModuloAtteso[h])){ 
+							match = true;
+							break;
+						}
 					}
 					Assert.assertTrue(match);
 					

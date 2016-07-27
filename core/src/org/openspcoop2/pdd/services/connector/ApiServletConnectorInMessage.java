@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.core.api.utils.Imbustamento;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.services.ServletUtils;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -106,12 +106,14 @@ public class ApiServletConnectorInMessage extends HttpServletConnectorInMessage 
 	}
 	
 	@Override
-	public OpenSPCoop2Message getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException{
+	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException{
 		try{
 			if(this.message==null){
 				this.initMessage(null);
 			}
-			return this.message;
+			OpenSPCoop2MessageParseResult pr = new OpenSPCoop2MessageParseResult();
+			pr.setMessage(this.message);
+			return pr;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	

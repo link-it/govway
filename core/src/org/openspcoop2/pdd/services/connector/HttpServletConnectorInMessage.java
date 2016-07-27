@@ -20,13 +20,17 @@
  */
 package org.openspcoop2.pdd.services.connector;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
@@ -131,13 +135,35 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public OpenSPCoop2Message getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException{
+	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException{
 		try{
-			this.message = factory.createMessage(this.is,notifierInputStreamParams,false,contentType,this.req.getContextPath(), 
+			return factory.createMessage(this.is,notifierInputStreamParams,false,contentType,this.req.getContextPath(), 
 					this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
-			return this.message;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
+		}	
+	}
+	// Metodo utile per il dump
+	public OpenSPCoop2MessageParseResult getRequest(ByteArrayOutputStream buffer,NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException{
+		try{
+			byte[] b = null;
+			ByteArrayInputStream bin = null;
+			try{
+				b = Utilities.getAsByteArray(this.is);
+				bin = new ByteArrayInputStream(b);
+			}catch(Throwable t){
+				OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
+				result.setParseException(MessageUtils.buildParseException(t));
+				return result;
+			}
+			buffer.write(b);
+			return factory.createMessage(bin,notifierInputStreamParams,false,contentType,this.req.getContextPath(), 
+					this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+		}catch(Throwable t){
+			//throw new ConnectorException(e.getMessage(),e);
+			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
+			result.setParseException(MessageUtils.buildParseException(t));
+			return result;
 		}	
 	}
 	

@@ -54,6 +54,8 @@ public class Costanti {
 	public final static String DATA_PRESA_IN_CARICO = "DATA_PRESA_IN_CARICO";
 	public final static String ERRORE_UTILIZZO_CONNETTORE = "ERRORE_UTILIZZO_CONNETTORE";
 	public final static String ERRORE_SOAP_FAULT_SERVER = "ERRORE_SOAP_FAULT_SERVER";
+	public final static String CONTENUTO_RICHIESTA_NON_RICONOSCIUTO = "CONTENUTO_RICHIESTA_NON_RICONOSCIUTO";
+	public final static String CONTENUTO_RISPOSTA_NON_RICONOSCIUTO = "CONTENUTO_RISPOSTA_NON_RICONOSCIUTO";
 	public final static String URL_INVOCAZIONE = "URL_INVOCAZIONE";
 	public final static String CREDENZIALI_INVOCAZIONE = "CREDENZIALI_INVOCAZIONE";
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
@@ -65,9 +67,14 @@ public class Costanti {
 			Costanti.STATELESS,Costanti.DATA_PRESA_IN_CARICO,
 			Costanti.ERRORE_UTILIZZO_CONNETTORE,
 			Costanti.ERRORE_SOAP_FAULT_SERVER,
+			Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO,
+			Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO,
 			Costanti.URL_INVOCAZIONE,
 			Costanti.CREDENZIALI_INVOCAZIONE};
     
+	public final static String CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION = "CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION";
+	public final static String CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION = "CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION";
+	
 	public final static String dateFormat = "yyyy-MM-dd_HH:mm:ss.SSS"; 
 	public static SimpleDateFormat newSimpleDateFormat(){
 		return new SimpleDateFormat(dateFormat); // SimpleDateFormat non e' thread-safe

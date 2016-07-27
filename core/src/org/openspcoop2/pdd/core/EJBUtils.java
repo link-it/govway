@@ -46,6 +46,7 @@ import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.utils.EsitoRichiestaXMLUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -2058,22 +2059,22 @@ public class EJBUtils {
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			ErroreIntegrazione errore,String idCorrelazioneApplicativa,
 			String servizioApplicativoFruitore,
-			Exception eProcessamento)throws EJBUtilsException,ProtocolException{ 
+			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),
 				false,this.idModulo,this.protocolFactory);
 		Vector<Eccezione> errs = new Vector<Eccezione>();
 		errs.add(ecc);
-		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento);
+		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento,parseException);
 	}
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			ErroreIntegrazione errore,
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore,
-			Exception eProcessamento)throws EJBUtilsException,ProtocolException{ 
+			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),false,this.idModulo,this.protocolFactory);
 		Vector<Eccezione> errs = new Vector<Eccezione>();
 		errs.add(ecc);
-		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento);
+		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento,parseException);
 	}
 
 
@@ -2092,7 +2093,7 @@ public class EJBUtils {
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			Vector<Eccezione> errs,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore,
-			Exception eProcessamento)throws EJBUtilsException,ProtocolException{ 
+			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 		SOAPVersion versioneSoap = (SOAPVersion) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
@@ -2131,6 +2132,9 @@ public class EJBUtils {
 			imbustatore.buildSoapMsgErroreProtocollo_Processamento(dettaglioEccezione, versioneSoap, this.propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
 		if(errorMsg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
+		}
+		if(parseException!=null){
+			errorMsg.setParseException(parseException);
 		}
 		sendAsRispostaBustaErrore(idModuloInAttesa,busta,errorMsg,false,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 	}

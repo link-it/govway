@@ -1794,7 +1794,11 @@ public class LocalForward {
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
 							CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (516): " + error.getFaultCode().getLocalPart());
-
+				
+				try{
+					Thread.sleep(3000); // versione streaming necessita di un po di tempo
+				}catch(Exception e){}
+				
 				msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
 
 				String id = r.getNext();
@@ -1981,13 +1985,17 @@ public class LocalForward {
 				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOAP_FAULT_STATELESS+") non ha causato errori.");
 
 			} catch (AxisFault error) {
-
+				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 
 				if("Server.faultExample".equals(error.getFaultCode().getLocalPart()))
 					Assert.assertTrue("Fault ritornato dalla servlet di esempio di OpenSPCoop".equals(error.getFaultString()));
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (FaultExample): " + error.getFaultCode().getLocalPart());
 
+				try{
+					Thread.sleep(3000); // versione streaming necessita di un po di tempo
+				}catch(Exception e){}
+				
 				msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
 
 				String id = r.getNext();

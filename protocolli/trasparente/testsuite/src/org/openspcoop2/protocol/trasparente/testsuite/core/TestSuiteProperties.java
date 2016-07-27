@@ -234,6 +234,29 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	
+	@Override
+	public int getConnectionTimeout(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("connection.timeout").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'connection.timeout':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
+	
+	@Override
+	public int getReadConnectionTimeout(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("readConnection.timeout").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
+	
 	/**
 	 * Ritorna la location del file da utilizzare per la spedizione di messaggi Soap
 	 *

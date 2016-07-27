@@ -30,6 +30,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -135,7 +136,7 @@ public class ErroreApplicativoBuilder  {
 	}
 	
 	private void setEccezioneBuilderParameter(AbstractEccezioneBuilderParameter parameters,
-			DettaglioEccezione dettaglio,Exception exception){
+			DettaglioEccezione dettaglio, ParseException parseException){
 		
 		parameters.setDettaglioEccezionePdD(dettaglio);
 		
@@ -145,8 +146,6 @@ public class ErroreApplicativoBuilder  {
 		
 		parameters.setIdFunzione(this.idFunzione);
 		
-		parameters.setException(exception);
-		
 		parameters.setProprieta(this.proprietaErroreApplicato);
 		
 		parameters.setVersioneSoap(this.soapVersion);
@@ -155,15 +154,17 @@ public class ErroreApplicativoBuilder  {
 		
 		parameters.setServizioApplicativo(this.servizioApplicativo);
 		
+		parameters.setParseException(parseException);
+		
 	}
 	
 	private EccezioneProtocolloBuilderParameters getEccezioneProtocolloBuilderParameters(
 			Eccezione eccezioneProtocollo,IDSoggetto soggettoProduceEccezione,
-			DettaglioEccezione dettaglio,Exception exception){
+			DettaglioEccezione dettaglio, ParseException parseException){
 		
 		EccezioneProtocolloBuilderParameters parameters = new EccezioneProtocolloBuilderParameters();
 		
-		this.setEccezioneBuilderParameter(parameters, dettaglio, exception);
+		this.setEccezioneBuilderParameter(parameters, dettaglio, parseException);
 		
 		parameters.setEccezioneProtocollo(eccezioneProtocollo);
 		parameters.setSoggettoProduceEccezione(soggettoProduceEccezione);
@@ -173,11 +174,11 @@ public class ErroreApplicativoBuilder  {
 	
 	private EccezioneIntegrazioneBuilderParameters getEccezioneIntegrazioneBuilderParameters(
 			ErroreIntegrazione erroreIntegrazione,
-			DettaglioEccezione dettaglio,Exception exception){
+			DettaglioEccezione dettaglio, ParseException parseException){
 		
 		EccezioneIntegrazioneBuilderParameters parameters = new EccezioneIntegrazioneBuilderParameters();
 				
-		this.setEccezioneBuilderParameter(parameters, dettaglio, exception);
+		this.setEccezioneBuilderParameter(parameters, dettaglio, parseException);
 		
 		parameters.setErroreIntegrazione(erroreIntegrazione);
 		
@@ -196,7 +197,7 @@ public class ErroreApplicativoBuilder  {
 
 	public Element toElement(ErroreIntegrazione errore)throws ProtocolException{
 		EccezioneIntegrazioneBuilderParameters parameters = 
-			this.getEccezioneIntegrazioneBuilderParameters(errore, null,null);
+			this.getEccezioneIntegrazioneBuilderParameters(errore, null, null);
 		return this.erroreApplicativoBuilder.toElement(parameters);
 	}
 
@@ -234,13 +235,8 @@ public class ErroreApplicativoBuilder  {
 
 
 	/* ---------------- UTILITY PER LA COSTRUZIONE DI MESSAGGI DI ERRORE APPLICATIVO --------------------- */
-	
 	public OpenSPCoop2Message toMessage(ErroreIntegrazione errore,
-			Exception eParsing){
-		return this.toMessage(errore, null, eParsing);
-	}
-	public OpenSPCoop2Message toMessage(ErroreIntegrazione errore,
-			Exception eProcessamento, Exception eParsing){
+			Throwable eProcessamento, ParseException parseException){
 		try{
 			
 			boolean produciDettaglioEccezione = false;
@@ -270,17 +266,19 @@ public class ErroreApplicativoBuilder  {
 			}
 			
 			EccezioneIntegrazioneBuilderParameters parameters = 
-				this.getEccezioneIntegrazioneBuilderParameters(errore, dettaglioEccezione, eParsing);
-			return this.erroreApplicativoBuilder.toMessage(parameters);
+				this.getEccezioneIntegrazioneBuilderParameters(errore, dettaglioEccezione, parseException);
+			OpenSPCoop2Message msg = this.erroreApplicativoBuilder.toMessage(parameters);
+			
+			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
 			return this.fac.createFaultMessage(this.soapVersion, "ErroreDiProcessamento");
 		}
 	}
 
-	public OpenSPCoop2Message toMessage(Eccezione eccezione,IDSoggetto soggettoProduceEccezione,Exception eParsing){
+	public OpenSPCoop2Message toMessage(Eccezione eccezione,IDSoggetto soggettoProduceEccezione, ParseException parseException){
 		EccezioneProtocolloBuilderParameters parameters =
-			this.getEccezioneProtocolloBuilderParameters(eccezione, soggettoProduceEccezione , null, eParsing);
+			this.getEccezioneProtocolloBuilderParameters(eccezione, soggettoProduceEccezione , null, parseException);
 		try{
 			return this.erroreApplicativoBuilder.toMessage(parameters);
 		}catch(Exception e){
@@ -289,10 +287,10 @@ public class ErroreApplicativoBuilder  {
 		}
 	}
 	
-	public OpenSPCoop2Message toMessage(Eccezione eccezione,IDSoggetto soggettoProduceEccezione,DettaglioEccezione dettaglioEccezione, Exception eParsing){
+	public OpenSPCoop2Message toMessage(Eccezione eccezione,IDSoggetto soggettoProduceEccezione,DettaglioEccezione dettaglioEccezione, ParseException parseException){
 		try{
 			EccezioneProtocolloBuilderParameters parameters =
-				this.getEccezioneProtocolloBuilderParameters(eccezione, soggettoProduceEccezione, dettaglioEccezione, eParsing);
+				this.getEccezioneProtocolloBuilderParameters(eccezione, soggettoProduceEccezione, dettaglioEccezione, parseException);
 			return this.erroreApplicativoBuilder.toMessage(parameters);
 		} catch (Exception e) {
 			this.log.error("Errore durante la costruzione del messaggio di eccezione busta",e);

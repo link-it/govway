@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -214,9 +215,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public OpenSPCoop2Message getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException{
+	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException{
 		try{
-			return this.message;
+			OpenSPCoop2MessageParseResult pr = new OpenSPCoop2MessageParseResult();
+			pr.setMessage(this.message);
+			return pr;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	

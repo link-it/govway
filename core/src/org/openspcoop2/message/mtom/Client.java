@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.XMLUtils;
 import org.w3c.dom.Document;
@@ -93,7 +94,8 @@ public class Client {
 			bout.write(xmlOriginale);
 			bout.write(soap12Suffix.getBytes());
 		}
-		OpenSPCoop2Message msg  = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(soapVersion, bout.toByteArray());
+		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(soapVersion, bout.toByteArray());
+		OpenSPCoop2Message msg  = pr.getMessage_throwParseException();
 		//OpenSPCoop2Message msg = SoapUtils.imbustamentoMessaggio(null, xmlOriginale, true, false, null, null);
 		
 		// usare addAttachInMsgOriginale PER TEST CON ATTACH PER VERIFICARE CHE VENGA LASCIATO INALTERATO L'ATTACHMENT ORIGINALE

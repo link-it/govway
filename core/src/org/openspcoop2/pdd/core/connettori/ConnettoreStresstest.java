@@ -33,6 +33,7 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -288,7 +289,11 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			}
 			String messaggio = SOAP_ENVELOPE_RISPOSTA.replace("@HDR@", protocolHeader) + SOAP_ENVELOPE_RISPOSTA_END;
 			byte [] messaggioArray = messaggio.getBytes();
-			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11,messaggioArray,notifierInputStreamParams);
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11,messaggioArray,notifierInputStreamParams);
+			if(pr.getParseException()!=null){
+				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+			}
+			this.responseMsg = pr.getMessage_throwParseException();
 			//this.responseMsg = OpenSPCoopMessageFactory.getMessageFactory().createMessage(new SequenceInputStream(new ByteArrayInputStream(messaggio.getBytes()),new FileInputStream("/tmp/eGovResponseTail.xml")),false,"text/xml",null,false,"/tmp","1024");
 			
 			// content length

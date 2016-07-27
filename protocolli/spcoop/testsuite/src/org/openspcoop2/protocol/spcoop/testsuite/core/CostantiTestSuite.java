@@ -147,6 +147,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_XML_ERRATO_BODY_RISPOSTA_PDD="TestXMLErratoBodyRisposta";
 	/** Porte Delegate per il test dei profili di collaborazione: XMLErrato dell'header come risposta della PdD */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_XML_ERRATO_HEADER_RISPOSTA_PDD="TestXMLErratoHeaderRisposta";
+	/** Porte Delegate per il test dei profili di collaborazione: ContentTypeRisposta errato della PdD */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_CONTENT_TYPE_ERRATO_HEADER_RISPOSTA_PDD="TestContentTypeErratoRisposta";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: AsincronoAsimmetrico modalita' asincrona, richiesta */
 	public static final String PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA="CooperazioneAsincronaAsimmetrica_richiestaAsincrona";
@@ -419,6 +421,8 @@ public class CostantiTestSuite {
 	
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL */
 	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA="PDValWSDL";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL in warning only mode */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_WARNING_ONLY="PDValWSDL_WarningOnly";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL specifica per richiesta asincrona simmetrica */
 	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_RICHIESTA_ASINCRONA_SIMMETRICA="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL specifica per risposta asincrona simmetrica */

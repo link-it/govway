@@ -29,6 +29,7 @@ import java.util.Date;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.message.SoapUtilsBuildParameter;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -231,12 +232,16 @@ public abstract class AbstractContext implements java.io.Serializable{
 	public OpenSPCoop2Message getMessageRequestFromByte() throws Exception {
 		OpenSPCoop2Message requestSOAPMessage = null;
 		try{
-			requestSOAPMessage = SoapUtils.build(new SoapUtilsBuildParameter(this.messageRequest_ByteArray,false,
+			OpenSPCoop2MessageParseResult pr = SoapUtils.build(new SoapUtilsBuildParameter(this.messageRequest_ByteArray,false,
 					AbstractContext.openspcoopProperties.isDeleteInstructionTargetMachineXml(), 
 					AbstractContext.openspcoopProperties.isFileCacheEnable(), 
 					AbstractContext.openspcoopProperties.getAttachmentRepoDir(), 
 					AbstractContext.openspcoopProperties.getFileThreshold()),
 					this.getNotifierInputStreamParams());
+			if(pr.getParseException()!=null){
+				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+			}
+			requestSOAPMessage = pr.getMessage_throwParseException();
 			return requestSOAPMessage;
 		}catch(Exception e){
 			throw new Exception("Struttura del messaggio di richiesta Soap, per la ricostruzione, non valida: "+e.getMessage());
@@ -280,15 +285,19 @@ public abstract class AbstractContext implements java.io.Serializable{
 	 * con il metodo setMessageResponseAsByte
 	 */
 	public OpenSPCoop2Message getMessageResponseFromByte() throws Exception {
-		OpenSPCoop2Message requestSOAPMessage = null;
+		OpenSPCoop2Message responseSOAPMessage = null;
 		try{
-			requestSOAPMessage = SoapUtils.build(new SoapUtilsBuildParameter(this.messageResponse_ByteArray,false,
+			OpenSPCoop2MessageParseResult pr = SoapUtils.build(new SoapUtilsBuildParameter(this.messageResponse_ByteArray,false,
 					AbstractContext.openspcoopProperties.isDeleteInstructionTargetMachineXml(), 
 					AbstractContext.openspcoopProperties.isFileCacheEnable(), 
 					AbstractContext.openspcoopProperties.getAttachmentRepoDir(), 
 					AbstractContext.openspcoopProperties.getFileThreshold()),
 					this.getNotifierInputStreamParams());
-			return requestSOAPMessage;
+			if(pr.getParseException()!=null){
+				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+			}
+			responseSOAPMessage = pr.getMessage_throwParseException();
+			return responseSOAPMessage;
 		}catch(Exception e){
 			throw new Exception("Struttura del messaggio di risposta Soap, per la ricostruzione non valida: "+e.getMessage());
 		}		

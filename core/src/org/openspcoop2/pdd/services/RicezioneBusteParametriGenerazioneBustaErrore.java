@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.services;
 
 import java.util.List;
 
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -41,6 +42,8 @@ import org.openspcoop2.security.message.MessageSecurityContext;
  */
 public class RicezioneBusteParametriGenerazioneBustaErrore  extends RicezioneBusteParametriGestioneBustaErrore{
 
+	private ParseException parseException;
+	
 	private Tracciamento tracciamento;
 	private boolean isErroreProcessamento;
 	
@@ -115,5 +118,10 @@ public class RicezioneBusteParametriGenerazioneBustaErrore  extends RicezioneBus
 			ErroreIntegrazione msgErroreIntegrazione) {
 		this.erroreIntegrazione = msgErroreIntegrazione;
 	}
-
+	public ParseException getParseException() {
+		return this.parseException;
+	}
+	public void setParseException(ParseException parseException) {
+		this.parseException = parseException;
+	}
 }

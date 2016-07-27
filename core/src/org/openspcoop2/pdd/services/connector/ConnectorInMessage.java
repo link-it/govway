@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.pdd.services.connector;
 
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -54,7 +54,7 @@ public interface ConnectorInMessage {
 	
 	public String getSOAPAction(SOAPVersion versioneSoap, String contentType) throws ConnectorException;
 	
-	public OpenSPCoop2Message getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException;
+	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams, String contentType) throws ConnectorException;
 	
 	public byte[] getRequest() throws ConnectorException;
 	

@@ -41,6 +41,7 @@ import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPFaultCode;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
@@ -533,7 +534,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
    
     
 	public OpenSPCoop2Message buildSoapFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, 
-			ErroreIntegrazione errore,Exception eProcessamento, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+			ErroreIntegrazione errore,Throwable eProcessamento, SOAPVersion versioneSoap, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		try{
 			DettaglioEccezione dettaglioEccezione = null;
 			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()){
@@ -543,10 +544,11 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			String soapFaultCodePrefix = this.getFaultCodePrefix(versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 			QName faultCode = SOAPFaultCode.Receiver.toQName(versioneSoap, soapFaultCodePrefix); 
-			return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, SoapUtils.build_Soap_Fault(versioneSoap, this.protocolFactory.createTraduttore().toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO),null,
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, SoapUtils.build_Soap_Fault(versioneSoap, this.protocolFactory.createTraduttore().toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO),null,
 					faultCode, 
 					this.xmlUtils.newElement(org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezione(dettaglioEccezione)), 
 					this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()));
+			return pr.getMessage_throwParseException();
 		}catch(Exception e){
 			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(versioneSoap, "Errore buildSoapFaultProtocollo_processamento(exception): "+e.getMessage());
 		}
@@ -562,12 +564,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			String soapFaultCodePrefix = this.getFaultCodePrefix(versioneSoap, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 			QName faultCode = SOAPFaultCode.Receiver.toQName(versioneSoap, soapFaultCodePrefix); 
-			return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, 
+			OpenSPCoop2MessageParseResult pr =  OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, 
 					SoapUtils.build_Soap_Fault(versioneSoap, 
 					this.protocolFactory.createTraduttore().toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO),null,
 					faultCode, 
 					this.xmlUtils.newElement(org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezione(dettaglioEccezione)), 
 					this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()));
+			return pr.getMessage_throwParseException();
 		}catch(Exception e){
 			if(this.log!=null)
 				this.log.error("Errore buildSoapFault_processamento: "+e.getMessage(),e);
@@ -606,11 +609,12 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				elementDetail = this.xmlUtils.newElement(bytesElement);
 			}
 			
-			return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, 
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, 
 					SoapUtils.build_Soap_Fault(versioneSoap, 
 					this.protocolFactory.createTraduttore().toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE),null,
 					faultCode, 
 					elementDetail, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione()));
+			return pr.getMessage_throwParseException();
 		}catch(Exception e){
 			if(this.log!=null)
 				this.log.error("Errore buildSoapFaultProtocollo_intestazione: "+e.getMessage(),e);

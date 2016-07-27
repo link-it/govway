@@ -213,18 +213,18 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_425_SCARTA_BODY(425),
     /** String che contiene un codice di errore OpenSPCoop: Errore della Servlet, 426*/
     CODICE_426_SERVLET_ERROR(426),
-    /** String che contiene un codice di errore OpenSPCoop: Errore della Servlet, 427*/
+    /** String che contiene un codice di errore OpenSPCoop: MustUnderstand Error, 427*/
     CODICE_427_MUSTUNDERSTAND_ERROR(427),
     /** String che contiene un codice di errore OpenSPCoop: AutorizzazioneFallita, 428*/
     CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA(428),
     /** String che contiene un codice di errore OpenSPCoop: 429*/
     CODICE_429_CONTENT_TYPE_NON_SUPPORTATO(429),
-    /** String che contiene un codice di errore OpenSPCoop: Errore della Servlet, 430*/
+    /** String che contiene un codice di errore OpenSPCoop: SOPAEnvelope namespace errato, 430*/
     CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR(430),
-    /** String che contiene un codice di errore OpenSPCoop: Errore della Servlet, 431*/
+    /** String che contiene un codice di errore OpenSPCoop: Errore generato dal gestore delle credenziali, 431*/
     CODICE_431_GESTORE_CREDENZIALI_ERROR(431),
-    /** String che contiene un codice di errore OpenSPCoop: Errore della Servlet, 432*/
-    CODICE_432_MESSAGGIO_XML_MALFORMATO(432),
+    /** String che contiene un codice di errore OpenSPCoop: Errore avvenuto durante il parsing della richiesta, 432*/
+    CODICE_432_PARSING_EXCEPTION_RICHIESTA(432),
     /** String che contiene un codice di errore OpenSPCoop: 433*/
     CODICE_433_CONTENT_TYPE_NON_PRESENTE(433),
     /** String che contiene un codice di errore OpenSPCoop: Errore, Correlazione Applicativa errore, 434*/
@@ -239,6 +239,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL(438),
     /** String che contiene un codice di errore OpenSPCoop: Errore, FunzionalitaNotSupported, 439*/
     CODICE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL(439),
+    /** String che contiene un codice di errore OpenSPCoop: Errore avvenuto durante il parsing della risposta, 432*/
+    CODICE_440_PARSING_EXCEPTION_RISPOSTA(440),
     
     
     /* ---- errori spediti in buste errore ---- */
@@ -285,111 +287,112 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     	// recupero il codice
     	try{
 	    	switch (codice) {
-				case 401: return CODICE_401_PD_INESISTENTE;
-				case 402: return CODICE_402_AUTENTICAZIONE_FALLITA;
-				case 403: return CODICE_403_PD_PATTERN_NON_VALIDO;
-				case 404: return CODICE_404_AUTORIZZAZIONE_FALLITA;
-				case 405: return CODICE_405_SERVIZIO_NON_TROVATO;
-				case 406: return CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI;
-				case 407: return CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO;
-				case 408: return CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO;
-				case 409: return CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA;
-				case 410: return CODICE_410_AUTENTICAZIONE_RICHIESTA;
-				case 411: return CODICE_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA;
-				case 412: return CODICE_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO;
-				case 413: return CODICE_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO;
-				case 414: return CODICE_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY;
-				case 415: return CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI;
-				case 416: return CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE;
-				case 417: return CODICE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA;
-				case 418: return CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA;
-				case 419: return CODICE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA;
-				case 420: return CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA;
-				case 421: return CODICE_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA;
-				case 422: return CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA;
-				case 423: return CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA;
-				case 424: return CODICE_424_ALLEGA_BODY;
-				case 425: return CODICE_425_SCARTA_BODY;
-				case 426: return CODICE_426_SERVLET_ERROR;
-				case 427: return CODICE_427_MUSTUNDERSTAND_ERROR;
-				case 428: return CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA;
-				case 429: return CODICE_429_CONTENT_TYPE_NON_SUPPORTATO;
-				case 430: return CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR;
-				case 431: return CODICE_431_GESTORE_CREDENZIALI_ERROR;
-				case 432: return CODICE_432_MESSAGGIO_XML_MALFORMATO;
-				case 433: return CODICE_433_CONTENT_TYPE_NON_PRESENTE;
-				case 434: return CODICE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE;
-				case 435: return CODICE_435_LOCAL_FORWARD_CONFIG_ERROR;
-				case 436: return CODICE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL;
-				case 437: return CODICE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL;
-				case 438: return CODICE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL;
-				case 439: return CODICE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL;
-				case 450: return CODICE_450_PA_INESISTENTE;
-				case 451: return CODICE_451_SOGGETTO_INESISTENTE;
-				case 452: return CODICE_452_BUSTA_GIA_RICEVUTA;
-				case 453: return CODICE_453_SA_INESISTENTE;
-				case 500: return CODICE_500_ERRORE_INTERNO;
-				case 501: return CODICE_501_PDD_NON_INIZIALIZZATA;
-				case 502: return CODICE_502_IDENTIFICAZIONE_PD;
-				case 503: return CODICE_503_AUTENTICAZIONE;
-				case 504: return CODICE_504_AUTORIZZAZIONE;
-				case 505: return CODICE_505_GET_DB_CONNECTION;
-				case 506: return CODICE_506_COMMIT_JDBC;
-				case 507: return CODICE_507_COSTRUZIONE_IDENTIFICATIVO;
-				case 508: return CODICE_508_SAVE_REQUEST_MSG;
-				case 509: return CODICE_509_READ_REQUEST_MSG;
-				case 510: return CODICE_510_SAVE_RESPONSE_MSG;
-				case 511: return CODICE_511_READ_RESPONSE_MSG;
-				case 512: return CODICE_512_SEND;
-				case 513: return CODICE_513_RECEIVE;
-				case 514: return CODICE_514_ROUTING_CONFIGURATION_ERROR;
-				case 515: return CODICE_515_CONNETTORE_NON_REGISTRATO;
-				case 516: return CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE;
-				case 517: return CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA;
-				case 518: return CODICE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT;
-				case 519: return CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR;
-				case 520: return CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER;
-				case 521: return CODICE_521_SAVE_MSG_FROM_INTEGRATION_MANAGER;
-				case 522: return CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER;
-				case 523: return CODICE_523_CREAZIONE_PROTOCOL_MESSAGE;
-				case 524: return CODICE_524_CREAZIONE_PROTOCOL_EXCEPTION;
-				case 525: return CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO;
-				case 526: return CODICE_526_GESTIONE_IMBUSTAMENTO;
-				case 527: return CODICE_527_GESTIONE_SBUSTAMENTO;
-				case 528: return CODICE_528_RISPOSTA_RICHIESTA_NON_VALIDA;
-				case 529: return CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA;
-				case 530: return CODICE_530_COSTRUZIONE_WSDL_FALLITA;
-				case 531: return CODICE_531_VALIDAZIONE_WSDL_FALLITA;
-				case 532: return CODICE_532_RISORSE_NON_DISPONIBILI;
-				case 533: return CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO;
-				case 534: return CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE;
-				case 535: return CODICE_535_BUSTA_SENZA_ECCEZIONI_CON_UTILIZZO_CONNETTORE_CON_ERRORE;
-				case 536: return CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE;
-				case 537: return CODICE_537_BUSTA_GIA_RICEVUTA;
-				case 538: return CODICE_538_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO;
-				case 539: return CODICE_539_RICEVUTA_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO;
-				case 540: return CODICE_540_REGISTRO_SERVIZI_MAL_CONFIGURATO;
-				case 541: return CODICE_541_GESTIONE_HEADER_INTEGRAZIONE;
-				case 542: return CODICE_542_AUTORIZZAZIONE_CONTENUTO;
-				case 543: return CODICE_543_HANDLER_OUT_REQUEST;
-				case 544: return CODICE_544_HANDLER_IN_RESPONSE;
-				case 545: return CODICE_545_TRACCIATURA_NON_FUNZIONANTE;
-				case 546: return CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE;
-				case 547: return CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE;
-				case 548: return CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE;
-				case 549: return CODICE_549_SECURITY_INFO_READER_ERROR;
-				case 550: return CODICE_550_PD_SERVICE_NOT_ACTIVE;
-				case 551: return CODICE_551_PA_SERVICE_NOT_ACTIVE;
-				case 552: return CODICE_552_IM_SERVICE_NOT_ACTIVE;
-				case 553: return CODICE_553_CORRELAZIONE_APPLICATIVA_RISPOSTA_NON_RIUSCITA;
-				case 554: return CODICE_554_LOCAL_FORWARD_ERROR;
-				case 555: return CODICE_555_LOCAL_FORWARD_PROCESS_REQUEST_ERROR;
-				case 556: return CODICE_556_LOCAL_FORWARD_PROCESS_RESPONSE_ERROR;
-				case 557: return CODICE_557_MTOM_PROCESSOR_ERROR;
-				case 558: return CODICE_558_HANDLER_IN_PROTOCOL_REQUEST;
-				case 559: return CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO;
+				case 401: return CodiceErroreIntegrazione.CODICE_401_PD_INESISTENTE;
+				case 402: return CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA;
+				case 403: return CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO;
+				case 404: return CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA;
+				case 405: return CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO;
+				case 406: return CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI;
+				case 407: return CodiceErroreIntegrazione.CODICE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO;
+				case 408: return CodiceErroreIntegrazione.CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO;
+				case 409: return CodiceErroreIntegrazione.CODICE_409_RISPOSTA_ASINCRONA_NON_CORRELATA_ALLA_RICHIESTA;
+				case 410: return CodiceErroreIntegrazione.CODICE_410_AUTENTICAZIONE_RICHIESTA;
+				case 411: return CodiceErroreIntegrazione.CODICE_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA;
+				case 412: return CodiceErroreIntegrazione.CODICE_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO;
+				case 413: return CodiceErroreIntegrazione.CODICE_413_PD_INVOCABILE_SOLO_SENZA_RIFERIMENTO;
+				case 414: return CodiceErroreIntegrazione.CODICE_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY;
+				case 415: return CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI;
+				case 416: return CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE;
+				case 417: return CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA;
+				case 418: return CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA;
+				case 419: return CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA;
+				case 420: return CodiceErroreIntegrazione.CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA;
+				case 421: return CodiceErroreIntegrazione.CODICE_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA;
+				case 422: return CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA;
+				case 423: return CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA;
+				case 424: return CodiceErroreIntegrazione.CODICE_424_ALLEGA_BODY;
+				case 425: return CodiceErroreIntegrazione.CODICE_425_SCARTA_BODY;
+				case 426: return CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR;
+				case 427: return CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR;
+				case 428: return CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA;
+				case 429: return CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO;
+				case 430: return CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR;
+				case 431: return CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR;
+				case 432: return CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA;
+				case 433: return CodiceErroreIntegrazione.CODICE_433_CONTENT_TYPE_NON_PRESENTE;
+				case 434: return CodiceErroreIntegrazione.CODICE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE;
+				case 435: return CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR;
+				case 436: return CodiceErroreIntegrazione.CODICE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL;
+				case 437: return CodiceErroreIntegrazione.CODICE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL;
+				case 438: return CodiceErroreIntegrazione.CODICE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL;
+				case 439: return CodiceErroreIntegrazione.CODICE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL;
+				case 440: return CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA;
+				case 450: return CodiceErroreIntegrazione.CODICE_450_PA_INESISTENTE;
+				case 451: return CodiceErroreIntegrazione.CODICE_451_SOGGETTO_INESISTENTE;
+				case 452: return CodiceErroreIntegrazione.CODICE_452_BUSTA_GIA_RICEVUTA;
+				case 453: return CodiceErroreIntegrazione.CODICE_453_SA_INESISTENTE;
+				case 500: return CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO;
+				case 501: return CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA;
+				case 502: return CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD;
+				case 503: return CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE;
+				case 504: return CodiceErroreIntegrazione.CODICE_504_AUTORIZZAZIONE;
+				case 505: return CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION;
+				case 506: return CodiceErroreIntegrazione.CODICE_506_COMMIT_JDBC;
+				case 507: return CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO;
+				case 508: return CodiceErroreIntegrazione.CODICE_508_SAVE_REQUEST_MSG;
+				case 509: return CodiceErroreIntegrazione.CODICE_509_READ_REQUEST_MSG;
+				case 510: return CodiceErroreIntegrazione.CODICE_510_SAVE_RESPONSE_MSG;
+				case 511: return CodiceErroreIntegrazione.CODICE_511_READ_RESPONSE_MSG;
+				case 512: return CodiceErroreIntegrazione.CODICE_512_SEND;
+				case 513: return CodiceErroreIntegrazione.CODICE_513_RECEIVE;
+				case 514: return CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR;
+				case 515: return CodiceErroreIntegrazione.CODICE_515_CONNETTORE_NON_REGISTRATO;
+				case 516: return CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE;
+				case 517: return CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA;
+				case 518: return CodiceErroreIntegrazione.CODICE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT;
+				case 519: return CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR;
+				case 520: return CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER;
+				case 521: return CodiceErroreIntegrazione.CODICE_521_SAVE_MSG_FROM_INTEGRATION_MANAGER;
+				case 522: return CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER;
+				case 523: return CodiceErroreIntegrazione.CODICE_523_CREAZIONE_PROTOCOL_MESSAGE;
+				case 524: return CodiceErroreIntegrazione.CODICE_524_CREAZIONE_PROTOCOL_EXCEPTION;
+				case 525: return CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO;
+				case 526: return CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO;
+				case 527: return CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO;
+				case 528: return CodiceErroreIntegrazione.CODICE_528_RISPOSTA_RICHIESTA_NON_VALIDA;
+				case 529: return CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA;
+				case 530: return CodiceErroreIntegrazione.CODICE_530_COSTRUZIONE_WSDL_FALLITA;
+				case 531: return CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA;
+				case 532: return CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI;
+				case 533: return CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO;
+				case 534: return CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE;
+				case 535: return CodiceErroreIntegrazione.CODICE_535_BUSTA_SENZA_ECCEZIONI_CON_UTILIZZO_CONNETTORE_CON_ERRORE;
+				case 536: return CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE;
+				case 537: return CodiceErroreIntegrazione.CODICE_537_BUSTA_GIA_RICEVUTA;
+				case 538: return CodiceErroreIntegrazione.CODICE_538_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO;
+				case 539: return CodiceErroreIntegrazione.CODICE_539_RICEVUTA_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO;
+				case 540: return CodiceErroreIntegrazione.CODICE_540_REGISTRO_SERVIZI_MAL_CONFIGURATO;
+				case 541: return CodiceErroreIntegrazione.CODICE_541_GESTIONE_HEADER_INTEGRAZIONE;
+				case 542: return CodiceErroreIntegrazione.CODICE_542_AUTORIZZAZIONE_CONTENUTO;
+				case 543: return CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST;
+				case 544: return CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE;
+				case 545: return CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE;
+				case 546: return CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE;
+				case 547: return CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE;
+				case 548: return CodiceErroreIntegrazione.CODICE_548_GESTORE_CREDENZIALI_NON_FUNZIONANTE;
+				case 549: return CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR;
+				case 550: return CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE;
+				case 551: return CodiceErroreIntegrazione.CODICE_551_PA_SERVICE_NOT_ACTIVE;
+				case 552: return CodiceErroreIntegrazione.CODICE_552_IM_SERVICE_NOT_ACTIVE;
+				case 553: return CodiceErroreIntegrazione.CODICE_553_CORRELAZIONE_APPLICATIVA_RISPOSTA_NON_RIUSCITA;
+				case 554: return CodiceErroreIntegrazione.CODICE_554_LOCAL_FORWARD_ERROR;
+				case 555: return CodiceErroreIntegrazione.CODICE_555_LOCAL_FORWARD_PROCESS_REQUEST_ERROR;
+				case 556: return CodiceErroreIntegrazione.CODICE_556_LOCAL_FORWARD_PROCESS_RESPONSE_ERROR;
+				case 557: return CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR;
+				case 558: return CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST;
+				case 559: return CodiceErroreIntegrazione.CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO;
 			default:
-				return CODICE_500_ERRORE_INTERNO;
+				return CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO;
 			}
     	} catch (Exception e) {
     		return UNKNOWN;

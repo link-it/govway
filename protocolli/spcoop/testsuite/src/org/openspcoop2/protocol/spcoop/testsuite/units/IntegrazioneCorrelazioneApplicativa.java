@@ -5308,6 +5308,9 @@ public class IntegrazioneCorrelazioneApplicativa {
 	public Object[][]testSincronoCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESS()throws Exception{
 		String id=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESS.getNext();
 		String idUnivoco=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESSIDUnivoco.getNext();
+		try{
+			Thread.sleep(3000);
+		}catch(Exception e){}
 		return new Object[][]{
 				{idUnivoco,DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{idUnivoco,DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),DatabaseProperties.getDatabaseComponentErogatore(),id,false}	

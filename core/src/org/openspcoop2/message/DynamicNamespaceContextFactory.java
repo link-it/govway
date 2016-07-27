@@ -103,7 +103,7 @@ public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.Dy
 			String prefix = null;
 			try {
 				prefix = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap).getFirstChildElement(body).getPrefix();
-			} catch (IOException e) {
+			} catch (Throwable e) {
 				prefix = body.getFirstChild().getPrefix();
 			}
 			if(prefix==null)

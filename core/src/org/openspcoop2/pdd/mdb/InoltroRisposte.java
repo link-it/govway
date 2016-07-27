@@ -1359,7 +1359,7 @@ public class InoltroRisposte extends GenericLib{
 			esito.setStatoInvocazione(EsitoLib.OK, null);
 			return esito; 
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error("ErroreGenerale",e);
 			msgDiag.logErroreGenerico(e, "Generale");
 

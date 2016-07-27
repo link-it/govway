@@ -236,6 +236,30 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	
+	@Override
+	public int getConnectionTimeout(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("connection.timeout").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'connection.timeout':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
+	
+	@Override
+	public int getReadConnectionTimeout(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("readConnection.timeout").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
+	
+	
 	/**
 	 * Ritorna la location del file da utilizzare per la spedizione di messaggi Soap
 	 *
@@ -466,6 +490,36 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 			return this.reader.getProperty("org.openspcoop2.testsuite.files.testWSSecuritySoapBox.allegatoBin").trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testWSSecuritySoapBox.allegatoBin':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	
+	
+	public String getSoapTestSOAPScorretto_erroreInCima(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testSOAPScorretto.erroreInCima").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testSOAPScorretto.erroreInCima':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	public String getSoapTestSOAPScorretto_erroreInMezzo(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testSOAPScorretto.erroreInMezzo").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testSOAPScorretto.erroreInMezzo':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	public String getSoapTestSOAPScorretto_erroreInFondo(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testSOAPScorretto.erroreInFondo").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testSOAPScorretto.erroreInFondo':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}

@@ -35,6 +35,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
@@ -195,10 +196,14 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			}
 			
 			ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(bin,notifierInputStreamParams,false,request.getRequestMessage().getContentType(),
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(bin,notifierInputStreamParams,false,request.getRequestMessage().getContentType(),
 					null, 
 					properties.isFileCacheEnable(), properties.getAttachmentRepoDir(), properties.getFileThreshold());
 			// Non funziona con gli attachments: this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getVersioneSoap(),(bout.toByteArray()),notifierInputStreamParams);
+			if(pr.getParseException()!=null){
+				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+			}
+			this.responseMsg = pr.getMessage_throwParseException();
 			
 			validatoreSintattico = new ValidazioneSintattica(state,this.responseMsg, properties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
 

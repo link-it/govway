@@ -68,6 +68,9 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 			throw new RuntimeException(e.getMessage(),e);
 		}
 		
+		org.openspcoop2.testsuite.core.CostantiTestSuite.setREAD_TIMEOUT(TestSuiteProperties.getInstance().getReadConnectionTimeout());
+		org.openspcoop2.testsuite.core.CostantiTestSuite.setCONNECTION_TIMEOUT(TestSuiteProperties.getInstance().getConnectionTimeout());
+		
 		if(testMethod!=null){
 			@SuppressWarnings("unused")
 			String methodName = testMethod.getName();

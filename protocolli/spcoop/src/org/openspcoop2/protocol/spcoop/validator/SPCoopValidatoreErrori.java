@@ -83,12 +83,16 @@ public class SPCoopValidatoreErrori implements IValidatoreErrori {
 					eccezioneProcessamento = true;
 				}
 			}
-			
-			protocolManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
-			
 		}catch(Exception e){
 			if(this.log!=null){
 				this.log.error("Errore durante l'analisi per comprendere se un msg e' una busta SPCoop Errore: "+e.getMessage(),e);
+			}
+		}
+		try{
+			protocolManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
+		}catch(Exception e){
+			if(this.log!=null){
+				this.log.error("Errore durante la createProtocolVersionManager: "+e.getMessage(),e);
 			}
 		}
 		
@@ -152,12 +156,17 @@ public class SPCoopValidatoreErrori implements IValidatoreErrori {
 					eccezioneProcessamento = true;
 				}
 			}
-			
-			protocolManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
-			
 		}catch(Exception e){
 			if(this.log!=null){
 				this.log.error("Errore durante l'analisi per comprendere se un msg e' una busta SPCoop Errore: "+e.getMessage(),e);
+			}
+		}
+		
+		try{
+			protocolManager = this.protocolFactory.createProtocolVersionManager(proprietaValidazioneErrori.getVersioneProtocollo());
+		}catch(Exception e){
+			if(this.log!=null){
+				this.log.error("Errore durante la createProtocolVersionManager: "+e.getMessage(),e);
 			}
 		}
 		

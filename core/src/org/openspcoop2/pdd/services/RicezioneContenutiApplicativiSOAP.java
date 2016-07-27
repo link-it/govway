@@ -35,8 +35,11 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.Costanti;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -72,8 +75,6 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-
-import com.ctc.wstx.exc.WstxException;
 
 /**
  * Servlet di ingresso al servizio DirectPD che costruisce il SOAPMessage gli applica gli handlers
@@ -286,11 +287,17 @@ public class RicezioneContenutiApplicativiSOAP {
 			
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
 			
-			String contentTypeReq = req.getContentType();
-			versioneSoap = ServletUtils.getVersioneSoap(logCore,contentTypeReq);
+			String contentTypeReq = null;
+			try{
+				contentTypeReq = req.getContentType();
+				versioneSoap = ServletUtils.getVersioneSoap(logCore,contentTypeReq);
+			}catch(Exception e){
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				throw e;
+			}
 			
 			boolean contentTypeSupportato = ServletUtils.isContentTypeSupported(versioneSoap, protocolFactory);
-			
+
 			// Imposto la versione soap di gestione visto che quella della richiesta non e' stata rilevata.
 			if(versioneSoap==null)
 				if(protocolFactory.createProtocolConfiguration().isSupportoSOAP11())
@@ -327,37 +334,61 @@ public class RicezioneContenutiApplicativiSOAP {
 			}
 			if(!contentTypeSupportato){
 				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				
 				// Leggo content Type dall'header HTTP per capire se l'header proprio non esiste o se e' il valore errato.
 				if(CostantiPdD.CONTENT_TYPE_NON_PRESENTE.equals(contentTypeReq)){
 					//ContentType del messaggio non presente
 					msgDiag.logPersonalizzato("contentType.notDefined");
 					responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_433_CONTENT_TYPE_NON_PRESENTE.
-							getErrore433_ContentTypeNonPresente(versioneSoap,supportedContentTypes),null);
+							getErrore433_ContentTypeNonPresente(versioneSoap,supportedContentTypes),null,null);
 				}
 				else{
 					//ContentType del messaggio non supportato
 					msgDiag.logPersonalizzato("contentType.unsupported");
 					responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_429_CONTENT_TYPE_NON_SUPPORTATO.
 							getErrore429_ContentTypeNonSupportato(versioneSoap, 
-									req.getContentType(),supportedContentTypes),null);
+									req.getContentType(),supportedContentTypes),null,null);
 				}
 			}
 			else{
 				/* ------------  SoapAction check 1 (controlla che non sia null e ne ritorna il valore) ------------- */			
-				String soapAction = req.getSOAPAction(versioneSoap, contentTypeReq);
+				String soapAction = null;
+				try{
+					soapAction = req.getSOAPAction(versioneSoap, contentTypeReq);
+				}catch(Exception e){
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+					throw e;
+				}
 				
 				/* ------------ Costruzione Messaggio -------------------- */
 				msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.inCorso");
 				Utilities.printFreeMemory("RicezioneContenutiApplicativi - Pre costruzione richiesta");
-				requestMessage = req.getRequest(notifierInputStreamParams, contentTypeReq);
+				OpenSPCoop2MessageParseResult pr = req.getRequest(notifierInputStreamParams, contentTypeReq);
+				if(pr.getParseException()!=null){
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
+				}
+				requestMessage = pr.getMessage_throwParseException();
 				Utilities.printFreeMemory("RicezioneContenutiApplicativi - Post costruzione richiesta");
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
 				
 				/* ------------ Controllo MustUnderstand -------------------- */
-				String mustUnderstandError = ServletUtils.checkMustUnderstand((SOAPMessage) requestMessage,protocolFactory);
+				String mustUnderstandError = null;
+				try{
+					mustUnderstandError = ServletUtils.checkMustUnderstand((SOAPMessage) requestMessage,protocolFactory);
+				}catch(Exception e){
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+					throw e;
+				}
 				
 				/* ------------ Controllo Soap namespace -------------------- */
-				String soapEnvelopeNamespaceVersionMismatch = ServletUtils.checkSOAPEnvelopeNamespace((SOAPMessage) requestMessage, versioneSoap);
+				String soapEnvelopeNamespaceVersionMismatch = null;
+				try{
+					soapEnvelopeNamespaceVersionMismatch = ServletUtils.checkSOAPEnvelopeNamespace((SOAPMessage) requestMessage, versioneSoap);
+				}catch(Exception e){
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+					throw e;
+				}
 
 				/* ------------  Raccolta Parametri Porta Delegata ------------- */		
 				URLProtocolContext urlProtocolContext = req.getURLProtocolContext();
@@ -372,7 +403,12 @@ public class RicezioneContenutiApplicativiSOAP {
 				/* ------------  SoapAction check 2 ------------- */
 				if(soapAction!=null){
 					if(openSPCoopProperties.checkSoapActionQuotedString_ricezioneContenutiApplicativi()){
-						ServletUtils.checkSoapActionQuotedString(soapAction,versioneSoap);
+						try{
+							ServletUtils.checkSoapActionQuotedString(soapAction,versioneSoap);
+						}catch(Exception e){
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+							throw e;
+						}
 					}
 					context.setSoapAction(soapAction);
 					requestMessage.setProperty(Costanti.SOAP_ACTION, soapAction);
@@ -401,16 +437,18 @@ public class RicezioneContenutiApplicativiSOAP {
 				}	
 				else{
 					if(mustUnderstandError!=null){
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, mustUnderstandError);
 						msgDiag.logPersonalizzato("mustUnderstand.unknown");
 						responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_427_MUSTUNDERSTAND_ERROR.
-								getErrore427_MustUnderstandHeaders(mustUnderstandError),null);
+								getErrore427_MustUnderstandHeaders(mustUnderstandError),null,null);
 					}
 					else{
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, soapEnvelopeNamespaceVersionMismatch);
 						msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
 						responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
-								getErrore430_SoapNamespaceNonSupportato(versioneSoap,  soapEnvelopeNamespaceVersionMismatch),null);
+								getErrore430_SoapNamespaceNonSupportato(versioneSoap,  soapEnvelopeNamespaceVersionMismatch),null,null);
 					}
 				}
 			}
@@ -439,12 +477,12 @@ public class RicezioneContenutiApplicativiSOAP {
 				msgDiag.setPddContext(pddContext, protocolFactory);
 				msgDiag.logErroreGenerico(e, "MessaggioRichiestaMalformato");
 				
-				responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(true, e),e);
+				responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(true, e),e,null);
 			}catch(ProtocolException ep){
 				throw new ConnectorException(ep.getMessage(),ep);
 			}
 		}
-		catch (Exception e) {
+		catch (Throwable e) {
 			
 			if(context==null){
 				// Errore durante la generazione dell'id
@@ -459,11 +497,15 @@ public class RicezioneContenutiApplicativiSOAP {
 				msgDiag.setPddContext(pddContext, protocolFactory);
 			}
 			
-			// La risposta dovra' essere un msg di errore applicativo 
-			//System.out.println(e.getMessage());
-			logCore.error("ErroreGenerale",e);
-			msgDiag.logErroreGenerico(e, "Generale(richiesta)");
-			
+			// Se viene lanciata una eccezione, riguarda la richiesta, altrimenti è gestita dopo nel finally.
+			Throwable tParsing = null;
+			if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
+				tParsing = ((ParseException) pddContext.removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)).getParseException();
+			}
+			if(tParsing==null && (requestMessage==null || requestMessage.getParseException() == null)){
+				tParsing = MessageUtils.getParseException(e);
+			}
+
 			// Verifico se e' stato instanziato l'erroreApplicativoBuilder (es. eccezione lanciata da PreInRequestHandler non fa inizializzare l'oggetto)
 			if(erroreApplicativoBuilder==null){
 				erroreApplicativoBuilder = newErroreApplicativoBuilder(req, logCore, protocolFactory, openSPCoopProperties, idModulo, proprietaErroreAppl);
@@ -474,41 +516,88 @@ public class RicezioneContenutiApplicativiSOAP {
 			if(msgErrore==null){
 				msgErrore = e.toString();
 			}
-			if(msgErrore.equals("Transport level information does not match with SOAP Message namespace URI") || msgErrore.equals("I dati ricevuti non rappresentano un messaggio SOAP 1.1 valido: ")){
+			if(		// Messaggio lanciato dallo streaming engine
+					msgErrore.equals("Transport level information does not match with SOAP Message namespace URI") ||
+					// ?
+					msgErrore.equals("I dati ricevuti non rappresentano un messaggio SOAP 1.1 valido: ") ||
+					// I seguenti due errori invece vengono lanciati dalle classi 'com/sun/xml/messaging/saaj/soap/ver1_2/SOAPPart1_2Impl.java' e com/sun/xml/messaging/saaj/soap/ver1_1/SOAPPart1_1Impl.java
+					// Proprio nel caso il namespace non corrisponde al tipo atteso.
+					msgErrore.equals("InputStream does not represent a valid SOAP 1.1 Message") || 
+					msgErrore.equals("InputStream does not represent a valid SOAP 1.2 Message")){
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, "Impossibile recuperare il valore del namespace");
 				msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
 				responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
-						getErrore430_SoapNamespaceNonSupportato(versioneSoap,  "Impossibile recuperare il valore del namespace"),e);
-			} else if(e instanceof WstxException || e.getCause() instanceof WstxException){
-				responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-						getErrore432_MessaggioRichiestaMalformato(true,e),e);
+						getErrore430_SoapNamespaceNonSupportato(versioneSoap,  "Impossibile recuperare il valore del namespace"),e,null);
+			} else if(tParsing!=null){
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				msgErrore = tParsing.getMessage();
+				if(msgErrore==null){
+					msgErrore = tParsing.toString();
+				}
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+				logCore.error("parsingExceptionRichiesta",e);
+				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
+				responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
+						getErrore432_MessaggioRichiestaMalformato(tParsing),tParsing,null);
 			} else {
-				responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(true, e),e);
+				logCore.error("ErroreGenerale",e);
+				msgDiag.logErroreGenerico(e, "Generale(richiesta)");
+				responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(true, e),e,null);
 			}
 		}
 		finally{
 			
-			if(requestMessage!=null){ 
-				if(requestMessage.getParsingError() != null){
-					String msgErrore = requestMessage.getParsingError().getMessage();
-					if(msgErrore==null){
-						msgErrore = requestMessage.getParsingError().toString();
-					}
-					msgDiag.logErroreGenerico(requestMessage.getParsingError(), "MessaggioRichiestaMalformato");
-					responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-							getErrore432_MessaggioRichiestaMalformato(true,requestMessage.getParsingError()),
-							requestMessage.getParsingError());
-				} else if(responseMessage!=null){ 
-					if(responseMessage.getParsingError() != null){
-						String msgErrore = responseMessage.getParsingError().getMessage();
-						if(msgErrore==null){
-							msgErrore = responseMessage.getParsingError().toString();
-						}
-						msgDiag.logErroreGenerico(responseMessage.getParsingError(), "MessaggioRispostaMalformato");
-						responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-								getErrore432_MessaggioRichiestaMalformato(false,responseMessage.getParsingError()),
-								responseMessage.getParsingError());
-					}
+			if((requestMessage!=null && requestMessage.getParseException() != null) || 
+					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				ParseException parseException = null;
+				if( requestMessage!=null && requestMessage.getParseException() != null ){
+					parseException = requestMessage.getParseException();
+				}
+				else{
+					parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+				}
+				String msgErrore = parseException.getParseException().getMessage();
+				if(msgErrore==null){
+					msgErrore = parseException.getParseException().toString();
+				}
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
+				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
+				try{
+					responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
+							getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()),
+							parseException.getParseException(),null);
+				}catch(Exception eBuildError){
+					logCore.error("Creazione del messaggio di fault 432 fallita",eBuildError);
+					responseMessage = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(versioneSoap, eBuildError);
+				}
+			}
+			else if( (responseMessage!=null && responseMessage.getParseException() != null) ||
+					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+				ParseException parseException = null;
+				if( responseMessage!=null && responseMessage.getParseException() != null ){
+					parseException = responseMessage.getParseException();
+				}
+				else{
+					parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+				}
+				String msgErrore = parseException.getParseException().getMessage();
+				if(msgErrore==null){
+					msgErrore = parseException.getParseException().toString();
+				}
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+				logCore.error("parsingExceptionRisposta",parseException.getSourceException());
+				msgDiag.logPersonalizzato("parsingExceptionRisposta");
+				try{
+					responseMessage = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
+							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
+							parseException.getParseException(),null);
+				}catch(Exception eBuildError){
+					logCore.error("Creazione del messaggio di fault 440 fallita",eBuildError);
+					responseMessage = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(versioneSoap, eBuildError);
 				}
 			}
 			
@@ -613,8 +702,9 @@ public class RicezioneContenutiApplicativiSOAP {
 		EsitoTransazione esito = null;
 		String descrizioneSoapFault = "";
 		int statoServletResponse = 200;
-		Exception erroreConsegnaRisposta = null;
+		Throwable erroreConsegnaRisposta = null;
 		boolean httpEmptyResponse = false;
+		boolean erroreConnessioneClient = false;
 		try{
 			if(responseMessage!=null){
 				
@@ -642,7 +732,9 @@ public class RicezioneContenutiApplicativiSOAP {
 				body = responseMessage.getSOAPBody();
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
+				boolean consume = true;
 				if(body!=null && body.hasFault()){
+					consume = false; // può essere usato nel post out response handler
 					statoServletResponse = 500;
 					descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
 				}
@@ -657,7 +749,7 @@ public class RicezioneContenutiApplicativiSOAP {
 				if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi())){
 					res.sendResponse(responseMessage, false);
 				} else {
-					res.sendResponse(responseMessage, true);
+					res.sendResponse(responseMessage, consume);
 				}
 				Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Post scrittura risposta");
 
@@ -670,23 +762,39 @@ public class RicezioneContenutiApplicativiSOAP {
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
 			}
-		}catch(Exception e){			
+		}catch(Throwable e){			
 			logCore.error("ErroreGenerale",e);
 			erroreConsegnaRisposta = e;
 						
+			erroreConnessioneClient = ServletUtils.isConnessioneClientNonDisponibile(e);
+			
 			// Genero risposta con errore
 			try{
-				if(responseMessage.getParsingError() != null){
-					String msgErrore = responseMessage.getParsingError().getMessage();
-					if(msgErrore==null){
-						msgErrore = responseMessage.getParsingError().toString();
+				InformazioniErroriInfrastrutturali informazioniErrori_error = new InformazioniErroriInfrastrutturali();
+				if( (responseMessage!=null && responseMessage.getParseException() != null) ||
+						(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+					informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
+					ParseException parseException = null;
+					if( responseMessage!=null && responseMessage.getParseException() != null ){
+						parseException = responseMessage.getParseException();
 					}
-					msgDiag.logErroreGenerico(responseMessage.getParsingError(), "MessaggioRispostaMalformato");
-					responseMessageError = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_432_MESSAGGIO_XML_MALFORMATO.
-							getErrore432_MessaggioRichiestaMalformato(false,responseMessage.getParsingError()),e);
-				} else
+					else{
+						parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+					}
+					String msgErrore = parseException.getParseException().getMessage();
+					if(msgErrore==null){
+						msgErrore = parseException.getParseException().toString();
+					}
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+					logCore.error("parsingExceptionRisposta",parseException.getSourceException());
+					msgDiag.logPersonalizzato("parsingExceptionRisposta");
+					responseMessageError = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
+							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
+							parseException.getParseException(),null);
+				} else{
 					responseMessageError = erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e),
-							responseMessage.getParsingError());
+							e,null);
+				}
 				
 				// transfer length
 				ServletUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
@@ -701,7 +809,7 @@ public class RicezioneContenutiApplicativiSOAP {
 				
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				body = responseMessageError.getSOAPBody();
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),responseMessageError, context.getProprietaErroreAppl(), null,
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),responseMessageError, context.getProprietaErroreAppl(), informazioniErrori_error,
 						(pddContext!=null ? pddContext.getContext() : null));
 				if(body!=null && body.hasFault()){
 					statoServletResponse = 500;
@@ -716,10 +824,16 @@ public class RicezioneContenutiApplicativiSOAP {
 				if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi())){
 					res.sendResponse(responseMessageError, false);
 				} else {
-					res.sendResponse(responseMessageError, true);
+					//res.sendResponse(responseMessageError, true);
+					res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
 				}
 																
 			}catch(Exception error){
+				
+				if(!erroreConnessioneClient){
+					erroreConnessioneClient = ServletUtils.isConnessioneClientNonDisponibile(error);
+				}
+				
 				logCore.error("Generazione di un risposta errore non riuscita",error);
 				statoServletResponse = 500;
 				try{
@@ -728,12 +842,17 @@ public class RicezioneContenutiApplicativiSOAP {
 					logCore.error("Response.setStatus(500) error: "+eStatus.getMessage(),eStatus);
 				}
 				try{
-					OpenSPCoop2Message m = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(versioneSoap, error);
-					res.sendResponse(m, true);
+					responseMessageError = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(versioneSoap, error);
+					//res.sendResponse(responseMessageError, true);
+					res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
 				}catch(Exception  eError){
+					if(!erroreConnessioneClient){
+						erroreConnessioneClient = ServletUtils.isConnessioneClientNonDisponibile(eError);
+					}
 					try{
 						res.sendResponse(error.toString().getBytes());
 					}catch(Exception erroreStreamChiuso){ 
+						erroreConnessioneClient = true;
 						//se lo stream non e' piu' disponibile non si potra' consegnare alcuna risposta
 					}
 				}
@@ -781,6 +900,8 @@ public class RicezioneContenutiApplicativiSOAP {
 				
 			}catch(Exception e){
 				
+				erroreConnessioneClient = true;
+				
 				logCore.error("Chiusura stream non riuscita",e);
 				
 				// Risposta non ritornata al servizio applicativo, il socket verso il servizio applicativo era chiuso o cmq inutilizzabile
@@ -811,7 +932,14 @@ public class RicezioneContenutiApplicativiSOAP {
 			}
 		}
 		
-		
+		if(erroreConnessioneClient){
+			// forzo esito errore connessione client
+			try{
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
+			}catch(Exception eBuildError){
+				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+			}
+		}
 		
 		
 		

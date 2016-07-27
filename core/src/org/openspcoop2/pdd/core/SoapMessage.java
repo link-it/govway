@@ -34,6 +34,7 @@ import java.sql.ResultSet;
 import org.apache.log4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
@@ -457,8 +458,9 @@ public class SoapMessage implements java.io.Serializable {
 						
 						OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
 						NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
-						msg = mf.createMessage(is,notifierInputStreamParams,false,contentType,contentLocation, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
-						
+						OpenSPCoop2MessageParseResult pr = mf.createMessage(is,notifierInputStreamParams,false,contentType,contentLocation, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+						msg = pr.getMessage_throwParseException();
+								
 						// SoapAction
 						try{
 							String soapAction = rs.getString("SOAP_ACTION");

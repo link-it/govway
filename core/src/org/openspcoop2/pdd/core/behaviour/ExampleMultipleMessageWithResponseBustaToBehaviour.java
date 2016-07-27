@@ -28,6 +28,7 @@ import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -51,7 +52,8 @@ public class ExampleMultipleMessageWithResponseBustaToBehaviour implements IBeha
 			
 			String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"+
 					"<soapenv:Body><prova>CIAO</prova></soapenv:Body></soapenv:Envelope>";
-			OpenSPCoop2Message msgReplyTo = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11, xml);
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11, xml);
+			OpenSPCoop2Message msgReplyTo = pr.getMessage_throwParseException();
 			responseTo.setMessage(msgReplyTo);
 			
 			Busta bustaRisposta = busta.invertiBusta(busta.getTipoOraRegistrazione(), busta.getTipoOraRegistrazioneValue());

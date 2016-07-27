@@ -33,7 +33,10 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.Text;
 import javax.xml.transform.TransformerException;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
+
+import com.ctc.wstx.exc.WstxException;
 
 
 /**
@@ -420,4 +423,177 @@ public class MessageUtils {
 		return bout.toString();
 	}
 	
+		
+	// Parse-Exception
+	
+	public static ParseException buildParseException(Throwable e){
+		
+		ParseException pe = new ParseException();
+		pe.setSourceException(e);
+		
+		if(e==null){
+			pe.setParseException(new Exception("Occurs Parsing Error"));
+			pe.setSourceException(new Exception("Occurs Parsing Error"));
+			return pe;
+		}
+		
+		Throwable tmp = MessageUtils.getParseException(e);
+		if(tmp!=null){
+			pe.setParseException(tmp);
+			return pe;
+		}
+		
+		pe.setParseException(getInnerNotEmptyMessageException(e));
+		return pe;
+	}
+	
+	public static Throwable getParseException(Throwable e){
+		
+		// Prima verifico presenza di eccezioni che sicuramente non evidenziano problemi di parsing
+		if(e instanceof java.net.SocketException){
+			return null;
+		}
+		else if(Utilities.existsInnerException(e, java.net.SocketException.class)){
+			return null;
+		}
+		
+		
+		// Cerco eccezione di parsing
+		
+		boolean found = false;
+		
+		Throwable tmp = null;		
+				
+		if(tmp==null){
+			if(Utilities.isExceptionInstanceOf("org.apache.axiom.om.OMException", e)){
+				tmp = e;
+			}
+			else if(Utilities.existsInnerException(e, "org.apache.axiom.om.OMException")){
+				tmp = Utilities.getInnerException(e, "org.apache.axiom.om.OMException");
+			}
+			if(tmp!=null){
+				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
+					// cerco prossima eccezione, in questa c'è null come message
+					tmp = null;
+					found = true;
+				}
+			}
+		}
+		
+		if(tmp==null){
+			if(e instanceof WstxException){
+				tmp = e;
+			}
+			else if(Utilities.existsInnerException(e, WstxException.class)){
+				tmp = Utilities.getInnerException(e, WstxException.class);
+			}
+			if(tmp!=null){
+				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
+					// cerco prossima eccezione, in questa c'è null come message
+					tmp = null;
+					found = true;
+				}
+			}
+		}
+		
+		if(tmp==null){
+			if(Utilities.isExceptionInstanceOf("com.ctc.wstx.exc.WstxIOException", e)){
+				tmp = e;
+			}
+			else if(Utilities.existsInnerException(e, "com.ctc.wstx.exc.WstxIOException")){
+				tmp = Utilities.getInnerException(e, "com.ctc.wstx.exc.WstxIOException");
+			}
+			if(tmp!=null){
+				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
+					// cerco prossima eccezione, in questa c'è null come message
+					tmp = null;
+					found = true;
+				}
+			}
+		}
+		
+		if(tmp==null){
+			if(Utilities.isExceptionInstanceOf("com.ctc.wstx.exc.WstxParsingException", e)){
+				tmp = e;
+			}
+			else if(Utilities.existsInnerException(e, "com.ctc.wstx.exc.WstxParsingException")){
+				tmp = Utilities.getInnerException(e, "com.ctc.wstx.exc.WstxParsingException");
+			}
+			if(tmp!=null){
+				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
+					// cerco prossima eccezione, in questa c'è null come message
+					tmp = null;
+					found = true;
+				}
+			}
+		}
+		
+		if(tmp==null){
+			if(Utilities.isExceptionInstanceOf("com.ctc.wstx.exc.WstxUnexpectedCharException", e)){
+				tmp = e;
+			}
+			else if(Utilities.existsInnerException(e, "com.ctc.wstx.exc.WstxUnexpectedCharException")){
+				tmp = Utilities.getInnerException(e, "com.ctc.wstx.exc.WstxUnexpectedCharException");
+			}
+			if(tmp!=null){
+				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
+					// cerco prossima eccezione, in questa c'è null come message
+					tmp = null;
+					found = true;
+				}
+			}
+		}
+		
+		if(tmp==null){
+			if(Utilities.isExceptionInstanceOf("org.xml.sax.SAXParseException", e)){
+				tmp = e;
+			}
+			else if(Utilities.existsInnerException(e, "org.xml.sax.SAXParseException")){
+				tmp = Utilities.getInnerException(e, "org.xml.sax.SAXParseException");
+			}
+			if(tmp!=null){
+				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
+					// cerco prossima eccezione, in questa c'è null come message
+					tmp = null;
+					found = true;
+				}
+			}
+		}
+
+		if(tmp!=null){
+			return tmp;
+		}
+		if(found){
+			return getInnerNotEmptyMessageException(e);
+		}
+		return null;
+		
+	}
+	
+	public static boolean isEmpytMessageException(Throwable e){
+		if(e.getMessage()==null ||
+				"".equals(e.getMessage()) || 
+				"null".equalsIgnoreCase(e.getMessage()) || 
+				"com.ctc.wstx.exc.WstxIOException: null".equalsIgnoreCase(e.getMessage())){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	public static Throwable getInnerNotEmptyMessageException(Throwable e){
+		if(!isEmpytMessageException(e)){
+			return e;
+		}
+		
+		if(e.getCause()!=null){
+			//System.out.println("INNER ["+e.getClass().getName()+"]...");
+			return getInnerNotEmptyMessageException(e.getCause());
+		}
+		else{
+			return e; // sono nella foglia, ritorno comunque questa eccezione
+		}
+	}
+
 }

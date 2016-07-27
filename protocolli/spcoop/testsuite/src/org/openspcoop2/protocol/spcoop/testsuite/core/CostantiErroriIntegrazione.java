@@ -193,9 +193,7 @@ public class CostantiErroriIntegrazione {
 	
 	/** String che contiene un codice di errore per messaggi malformati */
 	public final static String MSG_432_MESSAGGIO_XML_MALFORMATO_RICHIESTA =  
-			"Errore durante la lettura del messaggio di richiesta: ";
-	public final static String MSG_432_MESSAGGIO_XML_MALFORMATO_RISPOSTA =  
-			"Errore durante la lettura del messaggio di risposta: ";
+			"Il contenuto applicativo della richiesta ricevuta non è processabile dalla Porta di Dominio";
 	
 	/** String che contiene un codice di errore OpenSPCoop2: Content Type non presente*/
 	public final static String MSG_433_CONTENT_TYPE_NON_PRESENTE = 

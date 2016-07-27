@@ -66,11 +66,11 @@ public class AttachmentsUtils {
 	 */
 	@Deprecated public static void findHRef(byte [] soapEnvelope , java.util.Vector<String> href){
 		try{
-			OpenSPCoop2Message msg = 
-				(OpenSPCoop2MessageFactory.getMessageFactory()).createMessage(SOAPVersion.SOAP11, soapEnvelope);
+			OpenSPCoop2MessageParseResult pr = (OpenSPCoop2MessageFactory.getMessageFactory()).createMessage(SOAPVersion.SOAP11, soapEnvelope);
+			OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 			SOAPEnvelope env = (msg.getSOAPPart()).getEnvelope();
 			AttachmentsUtils.findHRef(env.getBody(),href);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			//log.info("ERROR["+e.getMessage()+"]");
 			return;
 		}

@@ -45,6 +45,7 @@ import org.apache.log4j.Logger;
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.reference.Reference;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -71,7 +72,8 @@ public class EngineTest {
 			QName otherName = new QName("other");
 			QName body = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Body");
 			
-			OpenSPCoop2Message openspcoop2Message = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageInput, null, false, null, null, true, "/tmp", "1024");	
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageInput, null, false, null, null, true, "/tmp", "1024");
+			OpenSPCoop2Message openspcoop2Message = pr.getMessage_throwParseException();
 
 			/* text/plain */
 			AttachmentPart attachmentPart = openspcoop2Message.createAttachmentPart();
@@ -230,7 +232,8 @@ public class EngineTest {
 			//String envelope = openspcoop2Message.getAsString(openspcoop2Message.getSOAPPart().getEnvelope(),false);
 			//String envelope = XMLUtils.getInstance().toString(openspcoop2Message.getSOAPPart().getEnvelope());
 			//InputStream is2 = new ByteArrayInputStream(envelope.getBytes());
-			openspcoop2Message = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(is2, null, false, contentType, null, true, "/tmp", "1024");	
+			pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(is2, null, false, contentType, null, true, "/tmp", "1024");	
+			openspcoop2Message = pr.getMessage_throwParseException();
 			
 			
 			

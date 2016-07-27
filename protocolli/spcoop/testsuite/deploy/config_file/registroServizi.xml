@@ -166,6 +166,7 @@
         <azione nome="malformazioneXMLBody_Body_Stateful"/>
         <azione nome="malformazioneXMLBody_BodyFirstChild_Stateful"/>
         <azione nome="malformazioneXMLBody_InsideBody_Stateful"/>
+	<azione nome="malformazioneContentTypeRisposta"/>
         <!-- Correlazione Applicativa Risposta -->
         <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateless"/>
         <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateful"/>
@@ -970,6 +971,13 @@
                     <connettore tipo="http" nome="malformazioneXMLBody">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?body=body"
+                        />
+                    </connettore>
+                </parametri-azione>
+                <parametri-azione nome="malformazioneContentTypeRisposta">
+                    <connettore tipo="http" nome="malformazioneContentTypeRisposta">
+                        <property nome="location"
+                            valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?contentTypeRisposta=true"
                         />
                     </connettore>
                 </parametri-azione>

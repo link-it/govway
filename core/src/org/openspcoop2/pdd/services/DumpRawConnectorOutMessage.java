@@ -22,10 +22,13 @@
 package org.openspcoop2.pdd.services;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.ParseException;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.ConnectorOutMessage;
 
@@ -41,6 +44,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	private Logger log;
 	private ConnectorOutMessage connectorOutMessage;
 	private ByteArrayOutputStream bout = null;
+	private ParseException parseException = null;
 	private Properties trasporto = new Properties();
 	private Integer contentLenght;
 	private String contentType;
@@ -67,6 +71,27 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		}
 		return null;
 	}
+	public boolean isParsingResponseError(){
+		return this.parseException!=null;
+	}
+	public String getParsingResponseErrorAsString(){
+		if(this.parseException!=null){
+			try{
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				PrintWriter pw = new PrintWriter(bout);
+				this.parseException.getSourceException().printStackTrace(pw);
+				pw.flush();
+				bout.flush();
+				pw.close();
+				bout.close();
+				return bout.toString();
+			}catch(Exception e){
+				return "ParsingResponseError, serializazione eccezione non riuscita: "+e.getMessage();
+			}
+		}
+		return null;
+	}
+	
 	public Properties getTrasporto() {
 		return this.trasporto;
 	}
@@ -98,11 +123,16 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			}
 			message.writeTo(this.bout, consume);
 		}catch(Throwable t){
-			try{
-				this.bout = new ByteArrayOutputStream();
-				this.bout.write(("SendResponse error: "+t.getMessage()).getBytes());
-			}catch(Throwable tWrite){}
+			this.bout = null;
+			if(message.getParseException()!=null){
+				this.parseException = message.getParseException();
+			}
+			else{
+				this.parseException = MessageUtils.buildParseException(t);
+			}
 			this.log.error("SendResponse error: "+t.getMessage(),t);
+			// Devo lanciare l'eccezione senno il servizio esce con 200
+			throw new ConnectorException(this.parseException.getSourceException());
 		}finally{
 			try{
 				if(this.bout!=null){
@@ -118,7 +148,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		
 		// wrapped method
 		//this.connectorOutMessage.sendResponse(message, consume); Nel caso di attachments genera un nuovo boundary
-		this.connectorOutMessage.sendResponse(this.bout.toByteArray());
+		if(this.bout!=null){
+			this.connectorOutMessage.sendResponse(this.bout.toByteArray());
+		}
 	}
 
 	@Override

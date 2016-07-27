@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.spcoop.testsuite.units.SOAPMessageScorretti;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.testng.annotations.ITestAnnotation;
@@ -68,7 +69,15 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 			throw new RuntimeException(e.getMessage(),e);
 		}
 		
+		org.openspcoop2.testsuite.core.CostantiTestSuite.setREAD_TIMEOUT(TestSuiteProperties.getInstance().getReadConnectionTimeout());
+		org.openspcoop2.testsuite.core.CostantiTestSuite.setCONNECTION_TIMEOUT(TestSuiteProperties.getInstance().getConnectionTimeout());
+		
 		if(testMethod!=null){
+			
+			if(SOAPMessageScorretti.class.getName().equals(testMethod.getDeclaringClass().getName())){
+				annotation.setSequential(true);
+			}
+			
 			String methodName = testMethod.getName();
 			if("startServerRicezioneRispostaAsincronaSimmetrica_modalitaAsincrona".equals(methodName)==false &&
 			   "startServerRicezioneRispostaAsincronaSimmetrica_modalitaSincrona".equals(methodName)==false &&

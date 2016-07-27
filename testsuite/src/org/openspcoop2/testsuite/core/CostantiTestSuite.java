@@ -40,8 +40,14 @@ public class CostantiTestSuite {
 	
 	
 	/** Timeout */
-	public static final int TIMEOUT=6000;
-	
+	public static int CONNECTION_TIMEOUT=6000;
+	public static void setCONNECTION_TIMEOUT(int cONNECTION_TIMEOUT) {
+		CONNECTION_TIMEOUT = cONNECTION_TIMEOUT;
+	}
+	public static int READ_TIMEOUT=6000;
+	public static void setREAD_TIMEOUT(int rEAD_TIMEOUT) {
+		READ_TIMEOUT = rEAD_TIMEOUT;
+	}
 	
 	/** Tag inserito nell'header per la gestione di interazioni sincrone */
 	public static final String TAG_NAME="ID_VALUE";

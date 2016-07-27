@@ -77,6 +77,11 @@ public interface UnitsTestSuiteProperties {
 	
 	
 	
+	public int getConnectionTimeout();
+	public int getReadConnectionTimeout();
+	
+	
+	
 	public String getLogDirectoryOpenSPCoop();
 	
 	

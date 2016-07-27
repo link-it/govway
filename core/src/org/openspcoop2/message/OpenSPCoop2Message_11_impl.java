@@ -78,6 +78,8 @@ import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
 
 public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements org.openspcoop2.message.OpenSPCoop2Message
 {
+	private ParseException parseException;
+	
 	private long outgoingsize = -1;
 	private long incomingsize = -1;
 	private Long incomingSizeForced = null;
@@ -94,7 +96,7 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 	
 	private String forcedResponseCode;
 	
-	public OpenSPCoop2Message_11_impl() throws SOAPException, IOException{	
+	public OpenSPCoop2Message_11_impl() {	
 		super();
 	}
 	
@@ -104,7 +106,7 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 		this.incomingsize = super.getCountingInputStream().getByteCount() - overhead;
 	}
 	
-	public OpenSPCoop2Message_11_impl(SOAPMessage msg) throws SOAPException, IOException{	
+	public OpenSPCoop2Message_11_impl(SOAPMessage msg) {	
 		//TODO questo costruttore non funziona con messaggi con attachment. 
 		//C'e' un bug nell'implementazione della sun che non copia gli attachment
 		//In particolare il parametro super.mimePart (protetto non accessibile).
@@ -563,12 +565,19 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 	}
 
 	@Override
-	public Exception getParsingError() {
-		return null;
+	public ParseException getParseException(){
+		return this.parseException;
 	}
 
 	@Override
-	public void setParsingError(Exception eParsing) { }
+	public void setParseException(ParseException e){
+		this.parseException = e;
+	}
+	
+	@Override
+	public void setParseException(Throwable e){
+		this.parseException = MessageUtils.buildParseException(e);
+	}
 
 	@Override
 	public void setProtocolName(String protocolName) {

@@ -270,6 +270,13 @@ public class BusteEGovScorrette {
 		err2.setIntervalloSuperiore(dataFineTest);
 		err2.setMsgErrore("Unexpected close tag </eGov_IT:Mittente>; expected </eGov_IT:IntestazioneMessaggio>.");
 		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
+		ErroreAttesoOpenSPCoopLogCore err4 = new ErroreAttesoOpenSPCoopLogCore();
+		err4.setIntervalloInferiore(dataInizioTest);
+		err4.setIntervalloSuperiore(dataFineTest);
+		err4.setMsgErrore("parsingExceptionRichiesta");
+		this.erroriAttesiOpenSPCoopCore.add(err4);	
+		
 	}
 	
 	
@@ -358,6 +365,12 @@ public class BusteEGovScorrette {
 		err3.setIntervalloSuperiore(dataFineTest);
 		err3.setMsgErrore("Duplicate attribute 'tipo'.");
 		this.erroriAttesiOpenSPCoopCore.add(err3);	
+		
+		ErroreAttesoOpenSPCoopLogCore err4 = new ErroreAttesoOpenSPCoopLogCore();
+		err4.setIntervalloInferiore(dataInizioTest);
+		err4.setIntervalloSuperiore(dataFineTest);
+		err4.setMsgErrore("parsingExceptionRichiesta");
+		this.erroriAttesiOpenSPCoopCore.add(err4);	
 	}
 	
 	

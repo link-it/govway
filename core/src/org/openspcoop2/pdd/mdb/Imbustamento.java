@@ -408,7 +408,8 @@ public class Imbustamento extends GenericLib{
 				msgDiag.logPersonalizzato("protocolli.funzionalita.unsupported");
 				OpenSPCoop2Message responseMessageError = 
 						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
-								getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory),e);
+								getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory),e,
+								null);
 				ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true); 
@@ -433,7 +434,8 @@ public class Imbustamento extends GenericLib{
 					msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, traduttore.toString(infoServizio.getProfiloDiCollaborazione()));
 					msgDiag.logPersonalizzato("consegnaInOrdine.profiloNonOneway");
 					OpenSPCoop2Message responseMessageError = 
-						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY.getErroreIntegrazione(),null);
+						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY.getErroreIntegrazione(),null,
+								null);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
@@ -444,7 +446,8 @@ public class Imbustamento extends GenericLib{
 				if(this.propertiesReader.isGestioneRiscontri(implementazionePdDDestinatario)==false){
 					msgDiag.logPersonalizzato("consegnaInOrdine.confermaRicezioneNonRichiesta");
 					OpenSPCoop2Message responseMessageError = 
-						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI.getErroreIntegrazione(),null);
+						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI.getErroreIntegrazione(),null,
+								null);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
@@ -455,7 +458,8 @@ public class Imbustamento extends GenericLib{
 				if(this.propertiesReader.isGestioneElementoCollaborazione(implementazionePdDDestinatario)==false){
 					msgDiag.logPersonalizzato("consegnaInOrdine.idCollaborazioneNonRichiesto");
 					OpenSPCoop2Message responseMessageError = 
-							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI.getErroreIntegrazione(),null);
+							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI.getErroreIntegrazione(),null,
+									null);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
@@ -466,7 +470,8 @@ public class Imbustamento extends GenericLib{
 				if(infoServizio.getCollaborazione()==false || infoServizio.getConfermaRicezione()==false || Inoltro.SENZA_DUPLICATI.equals(infoServizio.getInoltro())==false){
 					msgDiag.logPersonalizzato("consegnaInOrdine.funzionalitaMancanti");
 					OpenSPCoop2Message responseMessageError = 
-							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI.getErroreIntegrazione(),null);
+							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI.getErroreIntegrazione(),null,
+									null);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
@@ -558,7 +563,8 @@ public class Imbustamento extends GenericLib{
 					msgDiag.logErroreGenerico(e, "profiloDiCollaborazione.registraBustaInviata");
 					OpenSPCoop2Message responseMessageError = 
 						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e);
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
+								null);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
@@ -601,7 +607,8 @@ public class Imbustamento extends GenericLib{
 					if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())){
 						msgDiag.logPersonalizzato("profiloAsincronoSimmetrico.saAnonimo");
 						OpenSPCoop2Message responseMessageError = 
-							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_410_AUTENTICAZIONE_RICHIESTA.getErroreIntegrazione(),null);
+							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_410_AUTENTICAZIONE_RICHIESTA.getErroreIntegrazione(),null,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource();
 
@@ -620,7 +627,8 @@ public class Imbustamento extends GenericLib{
 						msgDiag.logErroreGenerico(e, "existsConsegnaRispostaAsincrona("+sa+")");
 						OpenSPCoop2Message responseMessageError = 
 							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e);
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource();	
 						esito.setEsitoInvocazione(true); 
@@ -631,7 +639,8 @@ public class Imbustamento extends GenericLib{
 					if (existsConsegnaRispostaAsincrona == false){
 						msgDiag.logPersonalizzato("profiloAsincronoSimmetrico.saSenzaRispostaAsincrona");
 						OpenSPCoop2Message responseMessageError = 
-							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA.getErroreIntegrazione(),null);
+							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA.getErroreIntegrazione(),null,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -646,7 +655,8 @@ public class Imbustamento extends GenericLib{
 					if(infoServizio.getServizioCorrelato()==null || infoServizio.getTipoServizioCorrelato()==null){
 						msgDiag.logPersonalizzato("profiloAsincronoSimmetrico.servizioCorrelatoNonEsistente");
 						OpenSPCoop2Message responseMessageError = 
-							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_408_SERVIZIO_CORRELATO_NON_TROVATO.getErroreIntegrazione(),null);
+							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_408_SERVIZIO_CORRELATO_NON_TROVATO.getErroreIntegrazione(),null,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -694,7 +704,8 @@ public class Imbustamento extends GenericLib{
 						openspcoopstate.releaseResource();
 						OpenSPCoop2Message responseMessageError = 
 							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e);
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -776,7 +787,8 @@ public class Imbustamento extends GenericLib{
 						}
 
 						OpenSPCoop2Message responseMessageError = 
-							erroreApplicativoBuilder.toMessage(erroreIntegrazione,e);
+							erroreApplicativoBuilder.toMessage(erroreIntegrazione,e,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -847,7 +859,8 @@ public class Imbustamento extends GenericLib{
 						msgDiag.logErroreGenerico(e, "profiloDiCollaborazione.asincronoAsimmetrico_registraRichiestaInviata");
 						OpenSPCoop2Message responseMessageError = 
 							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e);
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -927,7 +940,8 @@ public class Imbustamento extends GenericLib{
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO);
 						}
 						OpenSPCoop2Message responseMessageError = 
-							erroreApplicativoBuilder.toMessage(erroreIntegrazione,e);
+							erroreApplicativoBuilder.toMessage(erroreIntegrazione,e,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource(); 
 						esito.setEsitoInvocazione(true); 
@@ -952,7 +966,8 @@ public class Imbustamento extends GenericLib{
 				msgDiag.logErroreGenerico("Profilo di Collaborazione ["+infoServizio.getProfiloDiCollaborazione()+"] non gestito", "gestioneProfiloCollaborazione");
 				OpenSPCoop2Message responseMessageError = 
 					erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),null);
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),null,
+							null);
 				ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true); 
@@ -980,7 +995,8 @@ public class Imbustamento extends GenericLib{
 					msgDiag.logErroreGenerico(e, "repositoryBuste.aggiornaBusta/InfoIntegrazione_IntoOutBox");
 					OpenSPCoop2Message responseMessageError = 
 						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e);
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
+								null);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
@@ -1006,7 +1022,8 @@ public class Imbustamento extends GenericLib{
 						msgDiag.logErroreGenerico(e, "gestoreRiscontri.registraRiscontroDaRicevere");
 						OpenSPCoop2Message responseMessageError = 
 							erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e);
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
+									null);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -1058,7 +1075,8 @@ public class Imbustamento extends GenericLib{
 					msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(InoltroBuste)");
 					OpenSPCoop2Message responseMessageError = 
 						erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),e);
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),e,
+								null);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 					openspcoopstate.releaseResource(); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1135,12 +1153,13 @@ public class Imbustamento extends GenericLib{
 			return esito; 
 
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error("ErroreGenerale",e);
 			msgDiag.logErroreGenerico(e, "Generale");
 			
 			OpenSPCoop2Message responseMessageError = 
-				erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e);
+				erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,
+						null);
 			try{
 				ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,pd,sa);
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"ErroreGenerale");

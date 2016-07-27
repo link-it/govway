@@ -505,7 +505,7 @@ public class GestoreHandlers  {
 	private static void emitDiagnosticInvokeHandlerStart(Object object, MsgDiagnostico msgDiag,Logger log){
 		try{
 			if(object!=null && msgDiag!=null){
-				msgDiag.highDebug("["+object.getClass().getName()+"] invocazione in corso");
+				msgDiag.mediumDebug("["+object.getClass().getName()+"] invocazione in corso");
 			}
 		}catch(Throwable t){
 			if(log!=null){
@@ -516,7 +516,7 @@ public class GestoreHandlers  {
 	private static void emitDiagnosticInvokeHandlerEnd(Object object, MsgDiagnostico msgDiag,Logger log){
 		try{
 			if(object!=null && msgDiag!=null){
-				msgDiag.highDebug("["+object.getClass().getName()+"] invocazione terminata");
+				msgDiag.mediumDebug("["+object.getClass().getName()+"] invocazione terminata");
 			}
 		}catch(Throwable t){
 			if(log!=null){

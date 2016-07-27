@@ -415,7 +415,8 @@ public class Sbustamento extends GenericLib{
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
 						getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory),
-						idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+						idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+						null);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true);    
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -548,7 +549,7 @@ public class Sbustamento extends GenericLib{
 				gestioneErroreProtocollo(configurazionePdDManager,ejbUtils,profiloCollaborazione,repositoryBuste,
 						bustaRichiesta,identitaPdD,eccezioneDaInviareServizioApplicativo,erroreIntegrazioneDaInviareServizioApplicativo,
 						new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente()),
-						dettaglioEccezione, null, versioneSoap,protocolManager);
+						dettaglioEccezione, versioneSoap,protocolManager);
 
 				// Commit modifiche
 				openspcoopstate.commit();
@@ -651,7 +652,7 @@ public class Sbustamento extends GenericLib{
 							msgDiag.mediumDebug("Invio eventuale messaggio di errore al servizio applicativo (gestione errore)...");
 							gestioneErroreProtocollo(configurazionePdDManager, ejbUtils, profiloCollaborazione, repositoryBuste,
 									bustaNonValida, identitaPdD, eccezioneDaInviareServizioApplicativo,null,
-									identitaPdD, null, null, versioneSoap,protocolManager);
+									identitaPdD, null, versioneSoap,protocolManager);
 
 							// Commit modifiche
 							openspcoopstate.commit();
@@ -731,7 +732,8 @@ public class Sbustamento extends GenericLib{
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-						idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+						idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+						null);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true);    
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -743,7 +745,8 @@ public class Sbustamento extends GenericLib{
 				msgDiag.logPersonalizzato("soggettoDestinatarioNonGestito");
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_451_SOGGETTO_INESISTENTE.getErroreIntegrazione(),
-						idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+						idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+						null);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true);    
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1185,7 +1188,8 @@ public class Sbustamento extends GenericLib{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"existsPA(richiestaApplicativa,oneway)");
@@ -1195,7 +1199,8 @@ public class Sbustamento extends GenericLib{
 					msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1223,7 +1228,8 @@ public class Sbustamento extends GenericLib{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1242,7 +1248,8 @@ public class Sbustamento extends GenericLib{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"existsPA(richiestaApplicativa,sincrono)");
@@ -1252,7 +1259,8 @@ public class Sbustamento extends GenericLib{
 					msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1272,7 +1280,8 @@ public class Sbustamento extends GenericLib{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"profiloCollaborazione.registraBustaRicevuta("+bustaRichiesta.getID()+")");
@@ -1297,7 +1306,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"existsPA(richiestaApplicativa,asincronoSimmetricoRichiesta)"); 
@@ -1307,7 +1317,8 @@ public class Sbustamento extends GenericLib{
 						msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1330,7 +1341,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"ricevutaAsincronaSimmetricaAbilitata(pa)"); 
@@ -1377,7 +1389,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"SalvataggioInformazioniProfiloAsincronoSimmetrico"); 
@@ -1431,7 +1444,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1453,7 +1467,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"RaccoltaDatiIntegrazioneProfiloAsincronoSimmetrico"); 
@@ -1478,7 +1493,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"existsPA(richiestaApplicativa,asincronoAsimmetricoRichiesta)"); 
@@ -1490,7 +1506,8 @@ public class Sbustamento extends GenericLib{
 								msgDiag.getCodice("portaApplicativaNonEsistente"));
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1519,7 +1536,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true);  
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"LetturaServizioApplicatiProfiloAsincronoAsimmetrico"); 
@@ -1536,7 +1554,8 @@ public class Sbustamento extends GenericLib{
 						msgDiag.logErroreGenerico("Servizio applicativo ["+servizioApplicativo[0]+"] non esistente", "getServizioApplicativoProfiloAsincronoAsimmetrico");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_453_SA_INESISTENTE.getErroreIntegrazione(),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Servizio applicativo ["+servizioApplicativo[0]+"] non esistente"); 
@@ -1547,7 +1566,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"getServizioApplicativoProfiloAsincronoAsimmetrico"); 
@@ -1565,7 +1585,8 @@ public class Sbustamento extends GenericLib{
 						msgDiag.logErroreGenerico(e, "existsConsegnaRispostaAsincrona_ProfiloAsincronoAsimmetrico");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"existsConsegnaRispostaAsincrona_ProfiloAsincronoAsimmetrico"); 
@@ -1575,7 +1596,8 @@ public class Sbustamento extends GenericLib{
 						msgDiag.logPersonalizzato("profiloAsincronoAsimmetrico.saSenzaRispostaAsincrona");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_411_RICEZIONE_CONTENUTI_ASINCRONA_RICHIESTA.getErroreIntegrazione(),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1589,7 +1611,8 @@ public class Sbustamento extends GenericLib{
 						msgDiag.logPersonalizzato("profiloAsincronoAsimmetrico.servizioCorrelatoNonEsistente");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_408_SERVIZIO_CORRELATO_NON_TROVATO.getErroreIntegrazione(),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1605,7 +1628,8 @@ public class Sbustamento extends GenericLib{
 						msgDiag.logErroreGenerico(e, "ricevutaAsincronaAsimmetricaAbilitata(pa)");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"ricevutaAsincronaAsimmetricaAbilitata(pa)"); 
@@ -1637,7 +1661,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"SalvataggioInformazioniProfiloAsincronoAsimmetrico"); 
@@ -1689,7 +1714,8 @@ public class Sbustamento extends GenericLib{
 							ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-									idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+									idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+									null);
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true); 
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta"); 
@@ -1710,7 +1736,8 @@ public class Sbustamento extends GenericLib{
 							ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
-									idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+									idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+									null);
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true);  
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"existsPA(richiestaApplicativa,asincronoAsimmetricoRichiestaStato)"); 
@@ -1722,7 +1749,8 @@ public class Sbustamento extends GenericLib{
 									msgDiag.getCodice("portaApplicativaNonEsistente"));
 							ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 									ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
-									idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+									idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+									null);
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true);  
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1757,7 +1785,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,null);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,null,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true);  
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1778,7 +1807,8 @@ public class Sbustamento extends GenericLib{
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-								idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+								idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+								null);
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"RaccoltaDatiIntegrazioneProfiloAsincronoAsimmetrico"); 
@@ -1928,7 +1958,8 @@ public class Sbustamento extends GenericLib{
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-						idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+						idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+						null);
 				openspcoopstate.releaseResource();	
 				esito.setEsitoInvocazione(true); 
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"GestioneConsegnaProfiloAsincrono"); 
@@ -1961,7 +1992,8 @@ public class Sbustamento extends GenericLib{
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
-						idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+						idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+						null);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true); 
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"repository.aggiornaInfoIntegrazioneIntoInBox_Scenario"); 
@@ -2015,7 +2047,8 @@ public class Sbustamento extends GenericLib{
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),
-						idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+						idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+						null);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true); 
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,e.getMessaggio()); 
@@ -2027,7 +2060,8 @@ public class Sbustamento extends GenericLib{
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),
-						idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+						idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+						null);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(true); 
 				esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Abilitazione modulo ConsegnaMessaggio non riuscita (Busta "+bustaRichiesta.getID()+"): "+e.getMessage()); 
@@ -2100,7 +2134,8 @@ public class Sbustamento extends GenericLib{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"GenerazioneMsgOK(Riscontro/Ricevuta/Sblocco)"); 
@@ -2123,7 +2158,8 @@ public class Sbustamento extends GenericLib{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+							null);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"SendSbloccoDopoRicezione("+ricevutaAsincrona+")"); 
@@ -2161,7 +2197,7 @@ public class Sbustamento extends GenericLib{
 			openspcoopstate.commit();
 
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.log.error("ErroreGenerale",e);
 			msgDiag.logErroreGenerico(e, "Generale");
 			
@@ -2169,7 +2205,8 @@ public class Sbustamento extends GenericLib{
 				try{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
-							idCorrelazioneApplicativa,servizioApplicativoFruitore,e);
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+							null);
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"ErroreGenerale");
 				}catch(Exception er){
@@ -2241,7 +2278,7 @@ public class Sbustamento extends GenericLib{
 	 */
 	private void gestioneErroreProtocollo(ConfigurazionePdDManager configurazionePdDManager, EJBUtils ejbUtils, ProfiloDiCollaborazione profiloCollaborazione, RepositoryBuste repositoryBuste,
 			Busta busta, IDSoggetto identitaPdD, Eccezione eccezioneProtocollo, ErroreIntegrazione erroreIntegrazione, IDSoggetto soggettoProduttoreEccezione, DettaglioEccezione dettaglioEccezione, 
-			Exception eParsing, SOAPVersion versioneSoap,IProtocolManager protocolManager) throws Exception{
+			SOAPVersion versioneSoap,IProtocolManager protocolManager) throws Exception{
 
 		// Gestione ERRORE
 		if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(busta.getProfiloDiCollaborazione()) && busta.getRiferimentoMessaggio()!=null){
@@ -2305,9 +2342,10 @@ public class Sbustamento extends GenericLib{
 						this.erroreApplicativoBuilder.setDominio(consegnaApplicativaAsincrona.getDominio());
 						OpenSPCoop2Message responseMessageError = null;
 						if(eccezioneProtocollo!=null){
-							responseMessageError = this.erroreApplicativoBuilder.toMessage(eccezioneProtocollo,soggettoProduttoreEccezione,dettaglioEccezione,eParsing);
+							responseMessageError = this.erroreApplicativoBuilder.toMessage(eccezioneProtocollo,soggettoProduttoreEccezione,dettaglioEccezione,
+									null);
 						}else{
-							responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,eParsing);
+							responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,null,null);
 						}
 						//	Aggiorno l'id di sessione al riferimento Messaggio, id utilizzato dal servizio
 						// RicezioneContenutiApplicativi per l'attesa di una risposta

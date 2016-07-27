@@ -166,8 +166,9 @@ public interface OpenSPCoop2Message {
 	
 	/* Errors */
 	
-	public abstract Exception getParsingError();
-	public abstract void setParsingError(Exception eParsing);
+	public abstract ParseException getParseException();
+	public abstract void setParseException(Throwable eParsing);
+	public abstract void setParseException(ParseException eParsing);
 	
 	/* Protocol Plugin */
 	

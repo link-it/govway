@@ -35,7 +35,7 @@ public class EsitoLib {
 	public final static int ERRORE_GESTITO = 2;
 	public final static int ERRORE_NON_GESTITO = 3;
 	
-	private Exception erroreNonGestito = null;
+	private Throwable erroreNonGestito = null;
 	private String motivazioneErroreNonGestito = null;
 	
 	private int statoInvocazione = 0;
@@ -64,7 +64,7 @@ public class EsitoLib {
 		return this.motivazioneErroreNonGestito;
 	}
 
-	public Exception getErroreNonGestito() {
+	public Throwable getErroreNonGestito() {
 		return this.erroreNonGestito;
 	}
 
@@ -102,7 +102,7 @@ public class EsitoLib {
 		this.statoInvocazione = statoInvocazione;
 	}
 	
-	public void setStatoInvocazioneErroreNonGestito(Exception e) {
+	public void setStatoInvocazioneErroreNonGestito(Throwable e) {
 		this.statoInvocazione = EsitoLib.ERRORE_NON_GESTITO;
 		this.erroreNonGestito = e;
 	}

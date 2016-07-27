@@ -335,7 +335,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				if(this.debug)
 					this.logger.debug("Send...");
 				
-				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(connection.call((SOAPMessage) this.requestMsg,urlConnection));
+				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.requestMsg.getVersioneSoap(),connection.call((SOAPMessage) this.requestMsg,urlConnection));
 				
 			}catch(javax.xml.soap.SOAPException sendError){
 				this.eccezioneProcessamento = sendError;

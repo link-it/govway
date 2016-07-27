@@ -689,15 +689,13 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 					d.appendChild(d.getOwnerDocument().importNode(this.xmlUtils.newDocument(dettaglioEccezioneBytes).getDocumentElement(), true));
 				}
 			}
-
-			// Exception
-			Exception e = null;
-			if(eccezioneIntegrazione!=null){
-				e = eccezioneIntegrazione.getException();
-			}else{
-				e = eccezioneProtocollo.getException();
+			
+			if(eccezioneProtocollo!=null){
+				responseSOAPMessageError.setParseException(eccezioneProtocollo.getParseException());
 			}
-			responseSOAPMessageError.setParsingError(e);
+			else if(eccezioneIntegrazione!=null){
+				responseSOAPMessageError.setParseException(eccezioneIntegrazione.getParseException());
+			}
 			
 			return responseSOAPMessageError;
 

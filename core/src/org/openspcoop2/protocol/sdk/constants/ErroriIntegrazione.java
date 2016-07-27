@@ -169,9 +169,9 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_GESTORE_CREDENZIALI+"]: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR),
 
-	ERRORE_432_MESSAGGIO_XML_MALFORMATO("Errore durante la lettura del messaggio di "+
-			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_MESSAGGIO+": "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
-			CodiceErroreIntegrazione.CODICE_432_MESSAGGIO_XML_MALFORMATO),
+	ERRORE_432_PARSING_EXCEPTION_RICHIESTA("Il contenuto applicativo della richiesta ricevuta non è processabile dalla Porta di Dominio: "+
+			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
+			CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA),
 			
 	ERRORE_433_CONTENT_TYPE_NON_PRESENTE("Il messaggio non contiene l'header HTTP Content-Type richiesto dalla specifica SOAP (valori ammessi: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_CONTENT_TYPE_SUPPORTATI+")",
 			CodiceErroreIntegrazione.CODICE_433_CONTENT_TYPE_NON_PRESENTE),			
@@ -202,6 +202,10 @@ public enum ErroriIntegrazione {
 	ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL("Il servizio richiede una funzionalità non supportata dal protocollo "+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL+": "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL),
+	
+	ERRORE_440_PARSING_EXCEPTION_RISPOSTA("Il contenuto applicativo della risposta ricevuta non è processabile dalla Porta di Dominio: "+
+			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
+			CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA),
 
 	 /* ---- errori spediti in buste errore ---- */
 	
@@ -280,7 +284,7 @@ public enum ErroriIntegrazione {
 			this.equals(ERRORE_429_CONTENT_TYPE_NON_SUPPORTATO) ||
 			this.equals(ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR) ||
 			this.equals(ERRORE_431_GESTORE_CREDENZIALI_ERROR) ||
-			this.equals(ERRORE_432_MESSAGGIO_XML_MALFORMATO) ||
+			this.equals(ERRORE_432_PARSING_EXCEPTION_RICHIESTA) ||
 			this.equals(ERRORE_433_CONTENT_TYPE_NON_PRESENTE) ||
 			this.equals(ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE) ||
 			this.equals(ERRORE_435_LOCAL_FORWARD_CONFIG_NON_VALIDA) ||
@@ -551,13 +555,13 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore426_ServletError(boolean isRichiesta,Exception eProcessamento) {
+	public ErroreIntegrazione getErrore426_ServletError(boolean isRichiesta,Throwable eProcessamento) {
 		return getErrore426_ServletError(isRichiesta, null, eProcessamento);
 	}
 	public ErroreIntegrazione getErrore426_ServletError(boolean isRichiesta,String error) {
 		return getErrore426_ServletError(isRichiesta, error);
 	}
-	public ErroreIntegrazione getErrore426_ServletError(boolean isRichiesta,String error,Exception eProcessamento) {
+	public ErroreIntegrazione getErrore426_ServletError(boolean isRichiesta,String error,Throwable eProcessamento) {
 		if(!this.equals(ERRORE_426_SERVLET_ERROR)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_426_SERVLET_ERROR.name());
 		}
@@ -651,17 +655,11 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore432_MessaggioRichiestaMalformato(boolean isRichiesta,Exception e) {
-		if(!this.equals(ERRORE_432_MESSAGGIO_XML_MALFORMATO)){
-			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_432_MESSAGGIO_XML_MALFORMATO.name());
+	public ErroreIntegrazione getErrore432_MessaggioRichiestaMalformato(Throwable e) {
+		if(!this.equals(ERRORE_432_PARSING_EXCEPTION_RICHIESTA)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_432_PARSING_EXCEPTION_RICHIESTA.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		if(isRichiesta){
-			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_MESSAGGIO,"richiesta"));
-		}
-		else{
-			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_MESSAGGIO,"risposta"));
-		}
 		if(e.getMessage()!=null)
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,e.getMessage()));
 		else
@@ -755,6 +753,18 @@ public enum ErroriIntegrazione {
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,msgErrore));
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
+		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
+	}
+	
+	public ErroreIntegrazione getErrore440_MessaggioRispostaMalformato(Throwable e) {
+		if(!this.equals(ERRORE_440_PARSING_EXCEPTION_RISPOSTA)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_440_PARSING_EXCEPTION_RISPOSTA.name());
+		}
+		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
+		if(e.getMessage()!=null)
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,e.getMessage()));
+		else
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,e.toString()));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 
