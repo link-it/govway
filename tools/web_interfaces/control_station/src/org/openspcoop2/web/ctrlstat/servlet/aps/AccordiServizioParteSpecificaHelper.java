@@ -1106,16 +1106,18 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				String tipoSoggetto = servizio.getTipoSoggettoErogatore();
 				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
 
-				de = new DataElement();
-				if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){ 
-					de.setValue((TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio()) ?
-							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
-								AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
-
-				}else {
-					de.setValue("-");
+				if(showRuoli){
+					de = new DataElement();
+					if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){ 
+						de.setValue((TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio()) ?
+								AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
+									AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
+	
+					}else {
+						de.setValue("-");
+					}
+					e.addElement(de);
 				}
-				e.addElement(de);
 
 				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 					de = new DataElement();
