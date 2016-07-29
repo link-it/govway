@@ -60,6 +60,7 @@ import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.w3c.dom.Comment;
 
 /**
  * Gestione della correlazione applicativa con gli id
@@ -234,7 +235,7 @@ public class GestoreCorrelazioneApplicativa {
 		if(checkBody){
 			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
 				Node nodeInEsame =  nListSoapBody.item(elem);
-				if(nodeInEsame instanceof Text){
+				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
 					continue;
 				}
 				posizioneUltimoNodo = elem;
@@ -257,7 +258,7 @@ public class GestoreCorrelazioneApplicativa {
 							getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
 					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 				}
-				if(nodeInEsame instanceof Text){
+				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
 					continue;
 				}
 				if(elementName==null){
@@ -557,7 +558,7 @@ public class GestoreCorrelazioneApplicativa {
 		if(checkBody){
 			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
 				Node nodeInEsame =  nListSoapBody.item(elem);
-				if(nodeInEsame instanceof Text){
+				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
 					continue;
 				}
 				posizioneUltimoNodo = elem;
@@ -580,7 +581,7 @@ public class GestoreCorrelazioneApplicativa {
 							getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
 					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
 				}
-				if(nodeInEsame instanceof Text){
+				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
 					continue;
 				}
 				if(elementName==null){

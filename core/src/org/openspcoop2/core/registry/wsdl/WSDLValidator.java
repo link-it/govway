@@ -55,6 +55,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+import org.w3c.dom.Comment;
 
 
 /**
@@ -190,7 +191,7 @@ public class WSDLValidator {
 			org.w3c.dom.NodeList nl = this.body.getChildNodes();
 			for(int i=0; i<nl.getLength(); i++){
 				//if (nl.item(i) instanceof Text && ((Text) nl.item(i)).getData().trim().length() == 0) { continue; }
-				if (nl.item(i) instanceof Text){
+				if ( (nl.item(i) instanceof Text) || (nl.item(i) instanceof Comment) ){
 					continue;
 				}
 				String nomeElemento = null;
@@ -273,7 +274,7 @@ public class WSDLValidator {
 					int children=0;
 					for(int i=0; i<nl.getLength(); i++){
 						//if (nl.item(i) instanceof Text && ((Text) nl.item(i)).getData().trim().length() == 0) { continue; }
-						if (nl.item(i) instanceof Text){
+						if ( (nl.item(i) instanceof Text) || (nl.item(i) instanceof Comment) ){
 							continue;
 						}
 						children++;
@@ -287,7 +288,7 @@ public class WSDLValidator {
 				if(errorMsgValidazioneXSD.length()==0){
 					for(int i=0; i<nl.getLength(); i++){
 						//if (nl.item(i) instanceof Text && ((Text) nl.item(i)).getData().trim().length() == 0) { continue; }
-						if (nl.item(i) instanceof Text){
+						if ( (nl.item(i) instanceof Text) || (nl.item(i) instanceof Comment) ){
 							continue;
 						}
 						String nomeElemento = null;
@@ -320,7 +321,7 @@ public class WSDLValidator {
 								for(int j=0; j<nlChilds.getLength(); j++){
 									//this.logger.debug("Tipo["+j+"]: "+nlChilds.item(j).getClass().getName());
 									//if (nlChilds.item(j) instanceof Text && ((Text) nlChilds.item(j)).getData().trim().length() == 0) { continue; }
-									if (nlChilds.item(j) instanceof Text){
+									if ( (nlChilds.item(j) instanceof Text) || (nlChilds.item(j) instanceof Comment) ){
 										continue;
 									}
 									nChild = nlChilds.item(j);
@@ -669,7 +670,7 @@ public class WSDLValidator {
 						for(int ii=0;ii<nodiContenutoApplicativo.getLength();ii++){
 //							if (!(nodiContenutoApplicativo.item(ii) instanceof Text && 
 //									((Text) nodiContenutoApplicativo.item(ii)).getData().trim().length() == 0)) { 
-							if (!(nodiContenutoApplicativo.item(ii) instanceof Text)){
+							if (! ( (nodiContenutoApplicativo.item(ii) instanceof Text) || (nodiContenutoApplicativo.item(ii) instanceof Comment) )){
 								nodoPossiedeContenutoApplicativo = nodiContenutoApplicativo.item(ii);
 								rpcElement = nodoPossiedeContenutoApplicativo;
 								nodiContenutoApplicativo = nodoPossiedeContenutoApplicativo.getChildNodes();
@@ -692,7 +693,7 @@ public class WSDLValidator {
 					for(int ii=0;ii<nodiContenutoApplicativo.getLength();ii++){
 //						if (!(nodiContenutoApplicativo.item(ii) instanceof Text && 
 //								((Text) nodiContenutoApplicativo.item(ii)).getData().trim().length() == 0)) { 
-						if (!(nodiContenutoApplicativo.item(ii) instanceof Text)){
+						if (! ( (nodiContenutoApplicativo.item(ii) instanceof Text) || (nodiContenutoApplicativo.item(ii) instanceof Comment) )){
 							
 							if(nodiMessaggioErrore.length()>0){
 								nodiMessaggioErrore.append(", ");
@@ -732,7 +733,7 @@ public class WSDLValidator {
 						for(int indexBody = 0 ; indexBody<nodiContenutoApplicativo.getLength(); indexBody++){
 //							if (nodiContenutoApplicativo.item(indexBody) instanceof Text && 
 //									((Text) nodiContenutoApplicativo.item(indexBody)).getData().trim().length() == 0) { 
-							if (nodiContenutoApplicativo.item(indexBody) instanceof Text){
+							if ( (nodiContenutoApplicativo.item(indexBody) instanceof Text) || (nodiContenutoApplicativo.item(indexBody) instanceof Comment) ){
 								continue;
 							}
 							
