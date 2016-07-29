@@ -1063,6 +1063,7 @@ public class RicezioneBuste {
 				String tipoProprietario = null;
 				String nomeProprietario = null;
 				List<PortaApplicativa> listaPA = null;
+				boolean nomePAEsattamenteUgualeURLInvocata = false;
 				try {
 					nomePA = is.getPaInfo().getNomePA();
 					tipoProprietario = is.getPaInfo().getTipoSoggetto();
@@ -1071,6 +1072,7 @@ public class RicezioneBuste {
 						try{
 							// prima provo a cercare la PA con anche l'azione finale.
 							listaPA = configurazionePdDReader.getPorteApplicative(nomePA+"/"+is.getPaInfo().getAzione(), tipoProprietario, nomeProprietario);
+							nomePAEsattamenteUgualeURLInvocata = true;
 						}catch(DriverConfigurazioneNotFound dNotFoud){}
 					}
 					if(listaPA==null){
@@ -1126,6 +1128,10 @@ public class RicezioneBuste {
 					throw new ProtocolException("Identificate piu' di una Porta Applicativa con i seguenti filtri: nomePA( "+nomeError+" ) tipoSoggetto( "+tipoProprietario+" ) nomeSoggetto( "+nomeProprietario+" )");
 				}
 				pa = listaPA.get(0);
+				if(nomePAEsattamenteUgualeURLInvocata){
+					is.getPaInfo().setNomePA(pa.getNome());
+					is.getPaInfo().setAzione(null);
+				}
 			}
 			
 			// Read Identity
