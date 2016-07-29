@@ -1,3 +1,16 @@
+2016-07-29  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-536
+	Nel caso di richieste SOAP come la seguente, che contenevano tra i nodi figli del body dei commenti,
+	il riconoscimento WsdlBased e/o la Correlazione Applicativa non funzionava.
+	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	  <soapenv:Body>
+	    <!-- Commento di Esempio -->
+	    <datiApplicativi>...</datiApplicativi>
+	  </soapenv:Body>
+	</soapenv:Envelope>
+
 2016-07-27  Andrea Poli <apoli@link.it>
 
 	* [Pdd, ProtocolloSDI]
