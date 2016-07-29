@@ -1,5 +1,31 @@
 2016-07-29  Andrea Poli <apoli@link.it>
 
+	* [Pdd, ProtocolloSPCoop, ProtocolloTrasparente]
+	Aggiunta funzionalità OP-540
+	Nel caso di protocollo spcoop, l'errore applicativo restituito dalla PdD al client originale, 
+	è esattamente l'errore applicativo che la PdD ha ricevuto dal server applicativo 
+	arricchito di un elemento detail del formato richiesto dalla specifica SPCoop. 
+	Rif. pagina 41 (sezione A3 - Formato XML Eccezione) del documento:
+	- http://www.openspcoop.org/openspcoop/doc/spcoop/SPCoop-PortaDominio_v1.0_20051014.pdf
+	Nel caso di protocollo trasparente l'elemento inserito nel detail del SOAPFault è proprietario di OpenSPCoop.
+	Il detail aggiuntivo non crea problemi alle applicazioni, che possono continuare a gestire gli errori applicativi 
+	con gli stub generati a partire dai WSDL originali.
+	Per essere precisi la specifica 'spcoop' prevedeva di restituire un messaggio proprio uguale a quanto specificato nella sezione A3 sopra citata, 
+	e non di aggiungerlo come detail del messaggio originale. 
+	Quest'ultima scelta è stata un compromesso del progetto OpenSPCoop, proprio per evitare l'impatto sulle applicazioni.
+	Si è ritenuto comunque utile prevedere di scegliere se avere o meno la modifica del fault, 
+	in modo da diventare anche completamente trasparenti rispetto all'applicazione.
+	E' stato quindi aggiunta la possiblità di personalizzare l'arricchimento dei fault 
+	(differenziati tra fault applicativi e fault generati dalla PdD di destinazione)
+	sia globalmente a livello della PdD agendo sul file openspcoop2.properties:
+	- org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails=true/false (default:true)
+	- org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails=true/false (default:true)
+	che agendo sul singolo protocollo, all'interno del properties spcoop.properties o trasparente.properties:
+	- org.openspcoop2.protocol.<spcoop/trasparente>.erroreApplicativo.faultApplicativo.enrichDetails=true
+	- org.openspcoop2.protocol.<spcoop/trasparente>.erroreApplicativo.faultPdD.enrichDetails=true
+
+2016-07-29  Andrea Poli <apoli@link.it>
+
 	* [Pdd]
 	Risolto Bug OP-538
 	L'identificazione Dinamica dell'azione con modalità wsdlBased non funzionava con Porte Applicative che contenevano lo '/' nel nome. 
