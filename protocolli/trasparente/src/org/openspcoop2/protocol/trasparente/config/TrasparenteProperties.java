@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -108,7 +109,7 @@ public class TrasparenteProperties {
 	/**
 	 * Ritorna l'istanza di questa classe
 	 *
-	 * @return Istanza di OpenSPCoopProperties
+	 * @return Istanza di OpenTrasparenteProperties
 	 * @throws Exception 
 	 * 
 	 */
@@ -127,6 +128,9 @@ public class TrasparenteProperties {
 		try{  
 
 			generateIDasUUID();
+			
+			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo trasparente, "+e.getMessage();
@@ -167,6 +171,81 @@ public class TrasparenteProperties {
 		}
 
 		return TrasparenteProperties.generateIDasUUID;
+	}
+	
+	
+	
+	
+	
+	
+	/* **** SOAP FAULT **** */
+	
+    /**
+     * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+     *   
+     * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+     * 
+     */
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
+    public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
+    	if(TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
+					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = null;
+				}
+				
+				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
+				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = null;
+				
+				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+			}
+    	}
+    	
+    	return TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
+	}
+    
+    /**
+     * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+     *   
+     * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+     * 
+     */
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
+    public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
+    	if(TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails"); 
+				
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails)");
+					TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = null;
+				}
+				
+				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails), errore:"+e.getMessage());
+				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = null;
+				
+				TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+			}
+    	}
+    	
+    	return TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
 
 }

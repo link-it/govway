@@ -139,6 +139,18 @@ public abstract class BasicManager implements IProtocolManager {
 		return SOAPFaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
 	}
 	
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
+		return null; // default in openspcoop2.properties
+	}
+	
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
+		return null; // default in openspcoop2.properties
+	}
+	
+	
+	
 	
 	
 	/* *********** INTEGRAZIONE ******************* */

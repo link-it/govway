@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.trasparente.config;
 
+import org.apache.log4j.Logger;
 import org.openspcoop2.protocol.basic.config.BasicVersionManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -36,10 +37,25 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class TrasparenteProtocolVersionManager extends BasicVersionManager {
 	
+	protected TrasparenteProperties trasparenteProperties = null;
+	protected Logger logger = null;
 	protected String versione;
 	public TrasparenteProtocolVersionManager(IProtocolFactory protocolFactory,String versione) throws ProtocolException{
 		super(protocolFactory);
 		this.versione = versione;
+		this.logger = this.getProtocolFactory().getLogger();
+		this.trasparenteProperties = TrasparenteProperties.getInstance(this.logger);
+	}
+	
+	
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo() {
+		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+	}
+
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD() {
+		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
 	
 }

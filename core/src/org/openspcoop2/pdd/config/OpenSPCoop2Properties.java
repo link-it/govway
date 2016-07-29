@@ -4254,6 +4254,10 @@ public class OpenSPCoop2Properties {
 			gestione.setFaultPrefixCode(faultPrefix);
 
 			gestione.setInsertAsDetails(this.isErroreApplicativoIntoDetails());
+			
+			gestione.setAggiungiDetailErroreApplicativo_SoapFaultApplicativo(this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo());
+			
+			gestione.setAggiungiDetailErroreApplicativo_SoapFaultPdD(this.isAggiungiDetailErroreApplicativo_SoapFaultPdD());
 
 			OpenSPCoop2Properties.proprietaGestioneErrorePD = gestione;
 		}
@@ -4266,6 +4270,8 @@ public class OpenSPCoop2Properties {
 		pNew.setFaultPrefixCode(OpenSPCoop2Properties.proprietaGestioneErrorePD.getFaultPrefixCode());
 		pNew.setIdModulo(OpenSPCoop2Properties.proprietaGestioneErrorePD.getIdModulo());
 		pNew.setInsertAsDetails(OpenSPCoop2Properties.proprietaGestioneErrorePD.isInsertAsDetails());
+		pNew.setAggiungiDetailErroreApplicativo_SoapFaultApplicativo(OpenSPCoop2Properties.proprietaGestioneErrorePD.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo());
+		pNew.setAggiungiDetailErroreApplicativo_SoapFaultPdD(OpenSPCoop2Properties.proprietaGestioneErrorePD.isAggiungiDetailErroreApplicativo_SoapFaultPdD());
 		if(protocolManager!=null){
 			SOAPFaultIntegrationGenericInfoMode sf = protocolManager.getModalitaGenerazioneInformazioniGeneriche_DetailsSOAPFaultIntegrazione();
 			if(SOAPFaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO.equals(sf)){
@@ -4277,6 +4283,17 @@ public class OpenSPCoop2Properties {
 			else if(SOAPFaultIntegrationGenericInfoMode.DISABILITATO.equals(sf)){
 				pNew.setInformazioniGenericheDetailsOpenSPCoop(false);
 			} 
+			
+			Boolean enrich = protocolManager.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+			if(enrich!=null){
+				pNew.setAggiungiDetailErroreApplicativo_SoapFaultApplicativo(enrich);
+			}
+			
+			enrich = protocolManager.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+			if(enrich!=null){
+				pNew.setAggiungiDetailErroreApplicativo_SoapFaultPdD(enrich);
+			}
+			
 		}else{
 			pNew.setInformazioniGenericheDetailsOpenSPCoop(null); // default
 		}
@@ -4312,6 +4329,64 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isErroreApplicativoIntoDetails;
+	}
+	
+	
+	/**
+	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+	 * 
+	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+	 */
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = null;
+	public boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
+		if(OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
+	}
+	
+	
+	/**
+	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+	 * 
+	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+	 */
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD = null;
+	public boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
+		if(OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
 
 

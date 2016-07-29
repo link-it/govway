@@ -178,6 +178,20 @@ public interface IProtocolManager {
      */
 	public SOAPFaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsSOAPFaultIntegrazione();
 	
+	/**
+	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+	 * 
+	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+	 */
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+	
+	/**
+	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+	 * 
+	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+	 */
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+	
 	
 	
 	

@@ -45,4 +45,15 @@ public class TrasparenteProtocolManager extends BasicManager {
 		this.trasparenteProperties = TrasparenteProperties.getInstance(this.logger);
 	}
 	
+	
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo() {
+		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+	}
+
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD() {
+		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+	}
+	
 }

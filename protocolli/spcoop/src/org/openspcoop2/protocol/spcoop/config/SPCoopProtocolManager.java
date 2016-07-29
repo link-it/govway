@@ -168,6 +168,17 @@ public class SPCoopProtocolManager implements IProtocolManager {
 		}
 	}
 	
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo() {
+		return this.spcoopProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+	}
+
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD() {
+		return this.spcoopProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+	}
+	
+	
 	
 	
 	/* *********** INTEGRAZIONE ******************* */
@@ -217,5 +228,6 @@ public class SPCoopProtocolManager implements IProtocolManager {
 	public boolean isBlockedTransaction_responseMessageWithTransportCodeError(){
     	return this.spcoopProperties.isResponseMessageWithTransportCodeError_blockedTransaction();
     }
+
 
 }

@@ -709,6 +709,14 @@ public class InoltroBuste extends GenericLib{
 			proprietaErroreAppl.setIdModulo(InoltroBuste.ID_MODULO);
 		}
 
+		// Enrich SOAPFault
+		boolean enrichSoapFaultApplicativo = this.propertiesReader.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+		boolean enrichSoapFaultPdD = this.propertiesReader.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+		if(proprietaErroreAppl!=null){
+			enrichSoapFaultApplicativo = proprietaErroreAppl.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+			enrichSoapFaultPdD = proprietaErroreAppl.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+		}
+		
 		// Modalita' gestione risposta (Sia per PdD normale che per Router)
 		// - connectionReply per profilo sincrono
 		// - parametro configurabile per altri profili
@@ -3306,9 +3314,11 @@ public class InoltroBuste extends GenericLib{
 					if(functionAsRouter==false){
 						if(fault!=null){
 							if (!isMessaggioErroreProtocollo) {
-								this.erroreApplicativoBuilder.insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
-										get516_ServizioApplicativoNonDisponibile(), 
-										responseMessage);
+								if(enrichSoapFaultApplicativo){
+									this.erroreApplicativoBuilder.insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
+											get516_ServizioApplicativoNonDisponibile(), 
+											responseMessage);
+								}
 							}
 						}
 					}
@@ -3885,8 +3895,10 @@ public class InoltroBuste extends GenericLib{
 					msgDiag.mediumDebug("Gestione punto 4 (SoapFault senza una busta associata) [router] ...");
 
 					if(fault!=null){
-						this.erroreApplicativoBuilder.insertRoutingErrorInSOAPFault(identitaPdD,InoltroBuste.ID_MODULO,
-								msgDiag.getMessaggio_replaceKeywords("ricezioneSoapFault"), responseMessage);
+						if(enrichSoapFaultPdD){
+							this.erroreApplicativoBuilder.insertRoutingErrorInSOAPFault(identitaPdD,InoltroBuste.ID_MODULO,
+									msgDiag.getMessaggio_replaceKeywords("ricezioneSoapFault"), responseMessage);
+						}
 						
 						if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
 								newConnectionForResponse ) {
@@ -3952,9 +3964,11 @@ public class InoltroBuste extends GenericLib{
 						 }
 					}
 					else{
-						this.erroreApplicativoBuilder.insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
-								get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+bustaRichiesta.getDestinatario()), 
-								responseMessage);
+						if(enrichSoapFaultPdD){
+							this.erroreApplicativoBuilder.insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
+									get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+bustaRichiesta.getDestinatario()), 
+									responseMessage);
+						}
 						ejbUtils.sendRispostaApplicativaErrore(responseMessage,richiestaDelegata,rollbackRichiesta,pd,sa);
 					}
 					
