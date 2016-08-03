@@ -1,0 +1,22 @@
+La versione binaria della PdD OpenSPCoop è ottenibile accedendo al sito openspcoop.org al seguente indirizzo:
+	http://www.openspcoop.org/openspcoop/download/openspcoop2-pdd-<versione>.tgz
+I jar che realizzano le funzionalità fornite dalla PdD OpenSPCoop sono situati all'interno del package della versione binaria in:
+- installer/setup/deploy/sw/openspcoop2_*
+- installer/setup/deploy/sw/jars/openspcoop2_*
+
+Per ottenere i jar sopra indicati a partire dalla versione sorgente si deve:
+1) Scaricare le librerie esterne relative alla versione sorgente che si desidera compilare dal sito openspcoop.org: 
+   http://www.openspcoop.org/openspcoop/download/openspcoop2-external-lib-<versione>.tgz
+2) Scaricare la versione sorgente:
+   - I sorgenti della versione rilasciata sul sito sono disponibili in svn://openspcoop.org/gov4j/openspcoop2/tags/<versione>
+     (es. svn://openspcoop.org/gov4j/openspcoop2/tags/2.2.1)
+   - Ultimo trunk di sviluppo della versione in svn://openspcoop.org/gov4j/openspcoop2/branches/<versioneSenzaMinor>/<versioneSenzaMinor>.dev 
+     (es. svn://openspcoop.org/gov4j/openspcoop2/branches/2.2/2.2.dev)
+3) Copiare le librerie esterni nei sorgenti all'interno della directory lib
+   - cd SRC-DIR
+   - tar xzf openspcoop2-external-lib-<versione>.tgz
+4) Avviare la compilazione
+    - cd SRC-DIR
+    - ant
+   Tutti i jar del prodotto saranno disponibili al termine della compilazione nella directory SRC-DIR/dist
+   Per utilizzarli con l'installer della versione binaria, copiarli al posto degli omonimi jar presenti nella versione binaria in installer/setup/deploy/sw e installer/setup/deploy/sw/jars

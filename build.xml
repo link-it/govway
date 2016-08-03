@@ -1,0 +1,319 @@
+<project name="OpenSPCoop2_build_jar" default="build">
+		
+	<description>
+        Ambiente di compilazione dei jar della PdD
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="lib/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- Env -->
+	<property name="rootDir" location="." />
+	<property name="openspcoop2" value="${rootDir}" />
+	<property name="utils" location="tools/utils"/>
+	<property name="genericProject" location="tools/generic_project"/>
+	<property name="dist" location="dist" />
+	<property name="build" location="build" />
+	<property name="buildAPI" location="false" />
+	<property name="buildAsRelease" value="false" />
+	<property name="as" value="jboss7" />
+	<property name="debug" value="true" />
+
+		
+	<!-- Core -->
+	<property name="core.dir" location="core" />
+	<available file="${core.dir}/local_env.xml" property="core_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${core_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			  <copy file="${core.dir}/local_env.xml.template" tofile="${core.dir}/local_env.xml"/>
+			  <replace file="${core.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${core.dir}/build.xml" />
+	
+	<!-- Protocollo SPCoop -->
+	<property name="protocolli.spcoop.dir" location="protocolli/spcoop" />
+	<available file="${protocolli.spcoop.dir}/local_env.xml" property="spcoop_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${spcoop_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${protocolli.spcoop.dir}/local_env.xml.template" tofile="${protocolli.spcoop.dir}/local_env.xml"/>
+			<replace file="${protocolli.spcoop.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${protocolli.spcoop.dir}/build.xml" />
+	
+	<!-- Protocollo SPCoop (Backward Compatibility) -->
+	<property name="protocolli.spcoop.backwardCompatibility.dir" location="protocolli/spcoop/tools/backward_compatibility" />
+	<available file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml" property="spcoop-backwardCompatibility_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${spcoop-backwardCompatibility_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml.template" tofile="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml"/>
+			<replace file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${protocolli.spcoop.backwardCompatibility.dir}/build.xml" />
+	
+	<!-- Protocollo ProxyTrasparente -->
+	<property name="protocolli.trasparente.dir" location="protocolli/trasparente" />
+	<available file="${protocolli.trasparente.dir}/local_env.xml" property="trasparente_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${trasparente_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${protocolli.trasparente.dir}/local_env.xml.template" tofile="${protocolli.trasparente.dir}/local_env.xml"/>
+			<replace file="${protocolli.trasparente.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${protocolli.trasparente.dir}/build.xml" />
+	
+	<!-- Protocollo SDI Fatturazione Elettronica -->
+	<property name="protocolli.sdi.dir" location="protocolli/sdi" />
+	<available file="${protocolli.sdi.dir}/local_env.xml" property="sdi_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${sdi_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${protocolli.sdi.dir}/local_env.xml.template" tofile="${protocolli.sdi.dir}/local_env.xml"/>
+			<replace file="${protocolli.sdi.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${protocolli.sdi.dir}/build.xml" />
+	
+	<!-- Tools - WebInterfaces - Lib - Users -->
+	<property name="web.lib.users.dir" location="tools/web_interfaces/lib/users" />
+	<property name="users" value="${web.lib.users.dir}" />
+	<available file="${web.lib.users.dir}/local_env.xml" property="web_lib_users_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${web_lib_users_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${web.lib.users.dir}/local_env.xml.template" tofile="${web.lib.users.dir}/local_env.xml"/>
+			<replace file="${web.lib.users.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${web.lib.users.dir}/build.xml" />
+	
+	<!-- Tools - WebInterfaces - Lib - MVC -->
+	<property name="web.lib.mvc.dir" location="tools/web_interfaces/lib/mvc" />
+	<property name="mvc" value="${web.lib.mvc.dir}" />
+	<available file="${web.lib.mvc.dir}/local_env.xml" property="web_lib_mvc_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${web_lib_mvc_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${web.lib.mvc.dir}/local_env.xml.template" tofile="${web.lib.mvc.dir}/local_env.xml"/>
+			<replace file="${web.lib.mvc.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${web.lib.mvc.dir}/build.xml" />
+	
+	<!-- Tools - WebInterfaces - Lib - Audit -->
+	<property name="web.lib.audit.dir" location="tools/web_interfaces/lib/audit" />
+	<property name="audit" value="${web.lib.audit.dir}" />
+	<available file="${web.lib.audit.dir}/local_env.xml" property="web_lib_audit_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${web_lib_audit_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${web.lib.audit.dir}/local_env.xml.template" tofile="${web.lib.audit.dir}/local_env.xml"/>
+			<replace file="${web.lib.audit.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${web.lib.audit.dir}/build.xml" />
+	
+	<!-- Tools - WebInterfaces - Lib - Queue -->
+	<property name="web.lib.queue.dir" location="tools/web_interfaces/lib/queue" />
+	<property name="queue" value="${web.lib.queue.dir}" />
+	<available file="${web.lib.queue.dir}/local_env.xml" property="web_lib_queue_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${web_lib_queue_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${web.lib.queue.dir}/local_env.xml.template" tofile="${web.lib.queue.dir}/local_env.xml"/>
+			<replace file="${web.lib.queue.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${web.lib.queue.dir}/build.xml" />
+	
+	<!-- Tools - WebInterfaces - pddConsole -->
+	<property name="web.pddConsole.dir" location="tools/web_interfaces/control_station" />
+	<available file="${web.pddConsole.dir}/local_env.xml" property="web_pddConsole_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${web_pddConsole_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${web.pddConsole.dir}/local_env.xml.template" tofile="${web.pddConsole.dir}/local_env.xml"/>
+			<replace file="${web.pddConsole.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${web.pddConsole.dir}/build.xml" />
+	
+	<!-- Tools - WebInterfaces - pddLoader -->
+	<property name="web.pddLoader.dir" location="tools/web_interfaces/loader" />
+	<available file="${web.pddLoader.dir}/local_env.xml" property="web_pddLoader_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${web_pddLoader_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${web.pddLoader.dir}/local_env.xml.template" tofile="${web.pddLoader.dir}/local_env.xml"/>
+			<replace file="${web.pddLoader.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${web.pddLoader.dir}/build.xml" />
+	
+	
+	
+	<!-- Classpath -->
+	<path id="classpath_compile" >
+		<fileset dir="lib" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+			<exclude name="axis14/*"/>
+			<exclude name="cxf/geronimo-servlet_3.0_spec-1.0.jar"/>
+			<exclude name="faces2/javax.servlet-api-3.0.1.jar"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="jax/jaxb*"/>
+			<include name="javax/*"/>
+			<include name="jibx/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/cxf/*"/>
+			<include name="httpcore/*"/>
+			<include name="wadl/*"/>
+			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	<target name="build">
+			
+		<delete dir="${dist}"/>	
+		<delete dir="${build}"/>
+		
+		<antcall target="compile_genericProject" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="build_openspcoop2_all" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+				
+		<antcall target="compile_spcoop_plugin" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_spcoop" value="${protocolli.spcoop.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_backwardCompatibility" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_backwardCompatibility" value="${protocolli.spcoop.backwardCompatibility.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+
+		<antcall target="compile_trasparente_plugin" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_trasparente" value="${protocolli.trasparente.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_sdi_plugin" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_sdi" value="${protocolli.sdi.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_users" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_users" value="${web.lib.users.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_mvc" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_mvc" value="${web.lib.mvc.dir}/src"/>
+			<param name="src_users" value="${web.lib.users.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_audit" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_audit" value="${web.lib.audit.dir}/src"/>
+			<param name="src_mvc" value="${web.lib.mvc.dir}/src"/>
+			<param name="src_users" value="${web.lib.users.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_queue" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_queue" value="${web.lib.queue.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_openspcoop2_pddConsole" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_pddConsole" value="${web.pddConsole.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+		
+		<antcall target="compile_openspcoop2_loaderConsole" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_loaderConsole" value="${web.pddLoader.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+		</antcall>
+
+		<delete dir="${build}"/>		
+		<delete includeEmptyDirs="true">
+			<fileset dir="${dist}" excludes="*.jar"/>
+		</delete>
+		
+	</target>
+	
+	
+</project>
