@@ -3719,7 +3719,8 @@ public class ControlStationCore {
 		}
 	}
 
-	public <Type> void performAuditError(IDOperazione[] idOperazione,String motivoErrore,TipoOperazione[] operationTypes,String user, Type... obj){
+	@SafeVarargs
+	public final <Type> void performAuditError(IDOperazione[] idOperazione,String motivoErrore,TipoOperazione[] operationTypes,String user, Type... obj){
 
 		for (int i = 0; i < obj.length; i++) {
 			TipoOperazione tipoOperazione = operationTypes[i];

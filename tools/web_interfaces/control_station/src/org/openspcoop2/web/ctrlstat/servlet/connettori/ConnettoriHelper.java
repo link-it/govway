@@ -103,6 +103,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 	
 	@SuppressWarnings("deprecation")
+	private static String getParametroAccordoServizio(String tipo,String appendChar){
+		return AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipo, appendChar);
+	}
+	
 	public void setTitleProprietaConnettoriCustom(PageData pd,TipoOperazione tipoOperazione,
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio,
 			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
@@ -123,12 +127,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 					// t2
 					new Parameter(
 						Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo, "?")), 
+						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+getParametroAccordoServizio(tipoAccordo, "?")), 
 					// t3
 					new Parameter(
 						AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI_DI+ uriAccordo, 
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST+
-						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id+AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo, "&")), 
+						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id+getParametroAccordoServizio(tipoAccordo, "&")), 
 					// t4
 					new Parameter(
 						"Fruitori del servizio " + tipoprov + "/" + nomeprov + " - " + tiposervizio + "/" + nomeservizio,
@@ -139,7 +143,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO+"=" + nomeservizio + 
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO+"=" + tiposervizio + 
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO+"=" + correlato+
-						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo, "&")),
+						getParametroAccordoServizio(tipoAccordo, "&")),
 					// t5
 					new Parameter(
 						"Connettore del fruitore "+tipofru + "/" + nomefru,
@@ -151,7 +155,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO+"=" + tiposervizio + 
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID+"=" + myId + 
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO+"=" + 
-						correlato+AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo, "&"))
+						correlato+getParametroAccordoServizio(tipoAccordo, "&"))
 					);
 
 		}
