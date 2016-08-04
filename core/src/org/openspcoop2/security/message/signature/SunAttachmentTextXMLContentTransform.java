@@ -37,38 +37,13 @@ import com.sun.org.apache.xml.internal.security.transforms.Transform;
  */
 public class SunAttachmentTextXMLContentTransform extends com.sun.org.apache.xml.internal.security.transforms.implementations.TransformC14NExclusive {
 
-	@SuppressWarnings("all")
-	protected void setTransform(Transform transform) {
-		super.setTransform(transform);
-	}
-		
-	/* 
-	 * Metodi che ridefiniscono quelli presenti in com.sun.org.apache.xml.internal.security.transforms.implementations.TransformC14NExclusive
-	 * relativamente a Java 1.6
-	 * 
-	 **/
-	@SuppressWarnings("all")		 
-	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput)
-			throws CanonicalizationException {
-		return performTransform_engine(xmlsignatureinput, null, this._transformObject);
-	}
-	@SuppressWarnings("all")
-	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput,
-			OutputStream outputstream) throws CanonicalizationException {
-		return performTransform_engine(xmlsignatureinput, outputstream, this._transformObject);
-	}
 
-	/* 
-	 * Metodi che ridefiniscono quelli presenti in com.sun.org.apache.xml.internal.security.transforms.implementations.TransformC14NExclusive
-	 * relativamente a Java 1.7
-	 * 
-	 **/
-	@SuppressWarnings("all")		 
+	@Override
 	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput,
 			Transform _transformObject) throws CanonicalizationException {
 		return performTransform_engine(xmlsignatureinput, null, _transformObject);
 	}
-	@SuppressWarnings("all")		 
+	@Override
 	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput,
 			OutputStream os, Transform _transformObject)
 			throws CanonicalizationException {

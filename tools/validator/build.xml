@@ -35,8 +35,8 @@
 		<fileset dir="${openspcoop2_lib}/${jboss_jars}" >
 			<include name="*.jar"/>
 		</fileset>
-		<pathelement path="${openspcoop2_lib}/jibx/jibx-run-1.2.3.jar"/>
-		<pathelement path="${openspcoop2_lib}/jibx/xpp3-1.2.3.jar"/>
+		<pathelement path="${openspcoop2_lib}/jibx/jibx-run-1.2.6.jar"/>
+		<pathelement path="${openspcoop2_lib}/jibx/xpp3-1.2.6.jar"/>
 		<pathelement path="${openspcoop2_lib}/log/log4j-1.2.16.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/soap.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/uddi4j-2.0.5.jar"/>

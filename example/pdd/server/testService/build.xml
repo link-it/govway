@@ -39,7 +39,7 @@
 	<!-- Compilazione del Servizio -->
 	<target name="compile" depends="init_compile" description="compila il servizio">
 		<!-- Compile the java code  -->
-		<javac destdir="${build}" debug="${debug}">
+		<javac includeantruntime="false" destdir="${build}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
 			<src path="${src}" />

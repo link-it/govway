@@ -62,7 +62,7 @@
 	<!-- Compilazione del Servizio -->
 	<target name="-compile_compile_sdi_riceviFile_v10" depends="-init_compile_sdi_riceviFile_v10" description="compila il servizio">
 		<!-- Compile the java code  -->
-		<javac destdir="${build_sdi_riceviFile_v10}" debug="${debug}">
+		<javac includeantruntime="false" destdir="${build_sdi_riceviFile_v10}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
 			<src path="${src_sdi_riceviFile_v10}" />

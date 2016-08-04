@@ -32,7 +32,8 @@ import java.util.List;
  */
 public class UtilsTemplate<T> {
 
-    public List<T> newList(T ... object){
+	@SafeVarargs
+    public final List<T> newList(T ... object){
         List<T> list = new ArrayList<T>();
         for (int i = 0; i < object.length; i++) {
                 list.add(object[i]);

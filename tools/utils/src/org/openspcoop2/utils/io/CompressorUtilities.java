@@ -123,15 +123,23 @@ public class CompressorUtilities {
  				break;
  			case ZIP:
  				File f = File.createTempFile("unzip", "zip");
+ 				ZipFile zf = null;
  				try{
  					FileSystemUtilities.writeFile(f, bytes);
- 					ZipFile zf = new ZipFile(f);
+ 					zf = new ZipFile(f);
  					ZipEntry ze = zf.entries().nextElement();
  					in = zf.getInputStream(ze);
  	 	            while((len = in.read(buffer))>0)
  	 	                baos.write(buffer, 0, len);
  				}finally{
- 					f.delete();
+ 					try{
+ 						f.delete();
+ 					}catch(Exception eClose){}
+ 					try{
+ 						if(zf!=null){
+ 							zf.close();
+ 						}
+ 					}catch(Exception eClose){}
  				}
  				break;
  			}

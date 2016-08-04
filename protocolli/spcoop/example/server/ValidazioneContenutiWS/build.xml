@@ -138,7 +138,7 @@
 	<!-- Compilazione del Servizio Axis-->
 	<target name="compile" depends="init_compile" description="compila il servizio">
 		<!-- Compile the java code  -->
-		<javac destdir="${build}" debug="${debug}">
+		<javac includeantruntime="false" destdir="${build}" debug="${debug}">
 			<src path="${src}" />
 			<classpath>
 				<path refid="classpath_ws_validazione"/>
@@ -295,7 +295,7 @@
 	<!-- Compilazione stub -->
 	<target name="compile_stub">
 		<!-- Compilazione classi -->
-		<javac destdir="${build}/stub" debug="${debug}">
+		<javac includeantruntime="false" destdir="${build}/stub" debug="${debug}">
 			<src path="org" />
 			<classpath>
 				<path refid="classpath_ws_validazione"/>

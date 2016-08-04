@@ -141,9 +141,9 @@
 				<include name="soap.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jibx">
-				<include name="jibx-bind-1.2.3.jar"/>
-				<include name="jibx-run-1.2.3.jar"/>
-				<include name="xpp3-1.2.3.jar"/>
+				<include name="jibx-bind-1.2.6.jar"/>
+				<include name="jibx-run-1.2.6.jar"/>
+				<include name="xpp3-1.2.6.jar"/>
 				<include name="bcel-5.2.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/commons">

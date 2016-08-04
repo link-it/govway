@@ -27,7 +27,7 @@
 	<target name="build" depends="init_compile"
         description="compila il Client" >
 		<!-- Compile the java code  -->
-		<javac destdir="build" debug="true">
+		<javac includeantruntime="false" destdir="build" debug="true">
 			<src path="src"/>
 			<classpath>
 				<path refid="classpath"/>
@@ -63,7 +63,7 @@
 		<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-logging-1.1.1.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-discovery-0.5.jar"/>
-		<fileset dir="${required_lib}/jibx" includes="jibx-run-1.2.3.jar"/>
+		<fileset dir="${required_lib}/jibx" includes="jibx-run-1.2.6.jar"/>
 		<fileset dir="${required_lib}/javax" includes="*.jar"/>
 		<fileset dir="${dist_openspcoop}" includes="*.jar"/>
 		<fileset dir="${dist_spcoop}" includes="*.jar"/>

@@ -24,6 +24,7 @@ package org.openspcoop2.utils.datasource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
@@ -279,6 +281,11 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 			return ((java.sql.Wrapper)this.datasource).isWrapperFor(iface);
 		}
 		return false;
+	}
+
+	@Override
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		return this.datasource.getParentLogger();
 	}
 	
 

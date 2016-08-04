@@ -96,8 +96,8 @@
 			</lib>
 			<lib dir="${required_lib}/jibx">
 				<include name="bcel-5.2.jar"/>
-				<include name="jibx-run-1.2.3.jar"/>
-				<include name="xpp3-1.2.3.jar"/>
+				<include name="jibx-run-1.2.6.jar"/>
+				<include name="xpp3-1.2.6.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="log4j-1.2.16.jar"/> <!-- (non necessario in A.S.) -->

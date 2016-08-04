@@ -147,8 +147,8 @@ public enum FormatoTrasmissioneType implements IEnumeration , Serializable , Clo
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
@@ -168,8 +168,8 @@ public enum FormatoTrasmissioneType implements IEnumeration , Serializable , Clo
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

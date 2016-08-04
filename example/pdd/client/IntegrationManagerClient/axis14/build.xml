@@ -22,7 +22,7 @@
 	<target name="build"  depends="clean,init"
         description="compila il Client" >
 		<!-- Compile the java code  -->
-		<javac destdir="${build_client}" debug="true">
+		<javac includeantruntime="false" destdir="${build_client}" debug="true">
 			<src path="${src_client}"/>
 			<classpath>
 				<path refid="classpath_compile"/>

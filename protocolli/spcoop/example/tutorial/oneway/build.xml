@@ -52,7 +52,7 @@
 	<!-- Compilazione del Servizio -->
 	<target name="-compile_compile_spcoop_tutorial_oneway" depends="-init_compile_spcoop_tutorial_oneway" description="compila il servizio">
 		<!-- Compile the java code  -->
-		<javac destdir="${build_spcoop_tutorial_oneway}" debug="${debug}">
+		<javac includeantruntime="false" destdir="${build_spcoop_tutorial_oneway}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
 			<src path="${src_spcoop_tutorial_oneway}" />

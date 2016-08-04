@@ -154,8 +154,9 @@ public class ZipUtilities {
 
 			OutputStream out = null;
 			InputStream iZip = null;
-			ZipFile zf = new ZipFile(zipFile);
+			ZipFile zf = null;
 			try{
+				zf = new ZipFile(zipFile);
 				for(Enumeration<?> em = zf.entries(); em.hasMoreElements();){
 					ZipEntry ze = (ZipEntry) em.nextElement();
 					String targetfile = destFile.getAbsolutePath()+File.separatorChar+ze.getName();
@@ -192,12 +193,21 @@ public class ZipUtilities {
 					}
 				}
 			}finally{
-				if(out!=null){
-					out.close();
-				}
-				if(iZip!=null){
-					iZip.close();
-				}
+				try{
+					if(out!=null){
+						out.close();
+					}
+				}catch(Exception eClose){}
+				try{
+					if(iZip!=null){
+						iZip.close();
+					}
+				}catch(Exception eClose){}
+				try{
+					if(zf!=null){
+						zf.close();
+					}
+				}catch(Exception eClose){}
 			}
 
 		}catch(Exception e){

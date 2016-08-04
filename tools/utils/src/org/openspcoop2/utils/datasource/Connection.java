@@ -38,6 +38,7 @@ import java.sql.Struct;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
@@ -384,6 +385,36 @@ public class Connection implements java.sql.Connection {
 	@Override
 	public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
 		return this.connection.createStruct(typeName,attributes);
+	}
+
+
+	@Override
+	public void setSchema(String schema) throws SQLException {
+		this.connection.setSchema(schema);
+	}
+
+
+	@Override
+	public String getSchema() throws SQLException {
+		return this.connection.getSchema();
+	}
+
+
+	@Override
+	public void abort(Executor executor) throws SQLException {
+		this.connection.abort(executor);
+	}
+
+
+	@Override
+	public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+		this.connection.setNetworkTimeout(executor, milliseconds);
+	}
+
+
+	@Override
+	public int getNetworkTimeout() throws SQLException {
+		return this.connection.getNetworkTimeout();
 	}
 
 }

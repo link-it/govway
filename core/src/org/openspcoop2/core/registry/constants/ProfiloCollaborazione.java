@@ -153,8 +153,8 @@ public enum ProfiloCollaborazione implements IEnumeration , Serializable , Clone
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
@@ -174,8 +174,8 @@ public enum ProfiloCollaborazione implements IEnumeration , Serializable , Clone
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

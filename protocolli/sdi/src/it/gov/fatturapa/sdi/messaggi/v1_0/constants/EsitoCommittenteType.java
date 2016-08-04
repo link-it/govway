@@ -149,8 +149,8 @@ public enum EsitoCommittenteType implements IEnumeration , Serializable , Clonea
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
@@ -170,8 +170,8 @@ public enum EsitoCommittenteType implements IEnumeration , Serializable , Clonea
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

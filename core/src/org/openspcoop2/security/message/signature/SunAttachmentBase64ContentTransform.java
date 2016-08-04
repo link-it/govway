@@ -38,45 +38,7 @@ import com.sun.org.apache.xml.internal.security.transforms.TransformationExcepti
  */
 public class SunAttachmentBase64ContentTransform extends com.sun.org.apache.xml.internal.security.transforms.implementations.TransformBase64Decode {
 
-	@SuppressWarnings("all")
-	protected void setTransform(Transform transform) {
-		super.setTransform(transform);
-	}
-	
-	/* 
-	 * Metodi che ridefiniscono quelli presenti in com.sun.org.apache.xml.internal.security.transforms.implementations.TransformC14NExclusive
-	 * relativamente a Java 1.6
-	 * 
-	 **/
-	protected XMLSignatureInput sunEnginePerformTransform(XMLSignatureInput input)
-			throws IOException, CanonicalizationException,
-			TransformationException {
-		try{
-			Method m = this.getClass().getSuperclass().
-					getDeclaredMethod("enginePerformTransform", XMLSignatureInput.class);
-			return (XMLSignatureInput) m.invoke(this, input);
-		}catch(Exception e){
-			throw new TransformationException(e.getMessage(),e);
-		}
-	}
-	protected XMLSignatureInput sunEnginePerformTransform(XMLSignatureInput input,
-			OutputStream os) throws IOException, CanonicalizationException,
-			TransformationException {
-		try{
-			Method m = this.getClass().getSuperclass().
-					getDeclaredMethod("enginePerformTransform", XMLSignatureInput.class);
-			return (XMLSignatureInput) m.invoke(this, input);
-		}catch(Exception e){
-			throw new TransformationException(e.getMessage(),e);
-		}
-	}
 
-
-	/* 
-	 * Metodi che ridefiniscono quelli presenti in com.sun.org.apache.xml.internal.security.transforms.implementations.TransformC14NExclusive
-	 * relativamente a Java 1.7
-	 * 
-	 **/
 	protected XMLSignatureInput sunEnginePerformTransform(XMLSignatureInput input,
 			Transform _transformObject) throws IOException,
 			CanonicalizationException, TransformationException {

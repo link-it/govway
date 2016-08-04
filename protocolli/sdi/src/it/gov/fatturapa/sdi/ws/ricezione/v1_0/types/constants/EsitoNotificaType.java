@@ -151,8 +151,8 @@ public enum EsitoNotificaType implements IEnumeration , Serializable , Cloneable
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
@@ -172,8 +172,8 @@ public enum EsitoNotificaType implements IEnumeration , Serializable , Cloneable
 				break;
 			}
 		}
-		if(throwNotFoundException){
-			throw new NotFoundException("Enum with value ["+value+"]] not found");
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

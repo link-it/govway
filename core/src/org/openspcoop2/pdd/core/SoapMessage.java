@@ -394,6 +394,7 @@ public class SoapMessage implements java.io.Serializable {
 
 		if( !portaDiTipoStateless ) {
 
+			@SuppressWarnings("resource")
 			Connection connectionDB = (isRichiesta) ? 
 					((StateMessage)this.openspcoopstate.getStatoRichiesta()).getConnectionDB() :
 						((StateMessage)this.openspcoopstate.getStatoRisposta()).getConnectionDB();

@@ -65,7 +65,7 @@ public class SunAttachmentContentTransform extends TransformSpi {
 	
 	
 	// RIDEFINIZIONE DEI METODI DELLA CLASSE  com.sun.org.apache.xml.internal.security.transforms.TransformSpi PRESENTE IN JAVA 1.7
-	@SuppressWarnings("all")	
+	@Override
 	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input,
 			OutputStream os, Transform _transformObject) throws IOException,
 			CanonicalizationException, InvalidCanonicalizerException,
@@ -92,8 +92,9 @@ public class SunAttachmentContentTransform extends TransformSpi {
 			}
 		}
 	}
-    @SuppressWarnings("all")		 
-    protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input,
+	 
+    @Override
+	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input,
 			Transform _transformObject) throws IOException,
 			CanonicalizationException, InvalidCanonicalizerException,
 			TransformationException, ParserConfigurationException, SAXException {
@@ -122,70 +123,7 @@ public class SunAttachmentContentTransform extends TransformSpi {
 	
 	
 	
-	
-	// *** RIDEFINIZIONE DEI METODI DELLA CLASSE  com.sun.org.apache.xml.internal.security.transforms.TransformSpi PRESENTE IN JAVA 1.6 ***
-	@SuppressWarnings("all")		 
-	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input,
-			OutputStream os) throws IOException, CanonicalizationException,
-			InvalidCanonicalizerException, TransformationException,
-			ParserConfigurationException, SAXException {
-		//System.out.println("XMLSignatureInput 1 JAVA 1.6");
-		if("text/xml".equals(input.getMIMEType())){
-			//System.out.println("XMLContent 1 JAVA 1.6");
-			SunAttachmentTextXMLContentTransform t =
-					new SunAttachmentTextXMLContentTransform();
-			t.setTransform(this._transformObject);
-			try {
-				return t.enginePerformTransform(getTextXMLSignatureInput(input), os);
-			} catch (XMLException e) {
-				throw new SAXException(e.getMessage(),e);
-			}
-		}
-		else{
-			//System.out.println("Base64Content 1 JAVA 1.6");
-			SunAttachmentBase64ContentTransform t =
-					new SunAttachmentBase64ContentTransform();
-			t.setTransform(this._transformObject);
-			try {
-				return t.sunEnginePerformTransform(getBase64SignatureInput(input), os);
-			} catch (Exception e) {
-				throw new SAXException(e.getMessage(),e);
-			}
-		}
-	}
-	@SuppressWarnings("all")		 
-	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input)
-			throws IOException, CanonicalizationException,
-			InvalidCanonicalizerException, TransformationException,
-			ParserConfigurationException, SAXException {
-		//System.out.println("XMLSignatureInput 2 JAVA 1.6");
-		if("text/xml".equals(input.getMIMEType())){
-			//System.out.println("XMLContent 2 JAVA 1.6");
-			SunAttachmentTextXMLContentTransform t =
-					new SunAttachmentTextXMLContentTransform();
-			t.setTransform(this._transformObject);
-			try {
-				return t.enginePerformTransform(getTextXMLSignatureInput(input));
-			} catch (XMLException e) {
-				throw new SAXException(e.getMessage(),e);
-			}
-		}
-		else{
-			//System.out.println("Base64Content 2 JAVA 1.6");
-			SunAttachmentBase64ContentTransform t =
-					new SunAttachmentBase64ContentTransform();
-			t.setTransform(this._transformObject);
-			try {
-				return t.sunEnginePerformTransform(getBase64SignatureInput(input));
-			} catch (Exception e) {
-				throw new SAXException(e.getMessage(),e);
-			}
-		}		
-	}
-	
-	
-	
-	
+
 	
 	private XMLSignatureInput getTextXMLSignatureInput(XMLSignatureInput input) throws CanonicalizationException, IOException, SAXException, ParserConfigurationException, XMLException{
 		Element signElement = this.xmlUtils.newElement(input.getBytes());

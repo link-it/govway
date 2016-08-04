@@ -52,7 +52,7 @@
 	<!-- Compilazione del Servizio -->
 	<target name="-compile_compile_spcoop_tutorial_asincronoAsimmetrico" depends="-init_compile_spcoop_tutorial_asincronoAsimmetrico" description="compila il servizio">
 		<!-- Compile the java code  -->
-		<javac destdir="${build_spcoop_tutorial_asincronoAsimmetrico}" debug="${debug}">
+		<javac includeantruntime="false" destdir="${build_spcoop_tutorial_asincronoAsimmetrico}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
 			<src path="${src_spcoop_tutorial_asincronoAsimmetrico}" />

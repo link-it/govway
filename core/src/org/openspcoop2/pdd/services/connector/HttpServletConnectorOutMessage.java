@@ -217,8 +217,6 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 					}
 				}
 			}
-		}catch(ConnectorException e){
-			throw e;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
@@ -237,8 +235,6 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 					}
 				}
 			}
-		}catch(ConnectorException e){
-			throw e;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	

@@ -2106,6 +2106,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(idReferente>0){
 					Soggetto soggettoReferente = this.getSoggetto(idReferente,con);
 					if(soggettoReferente==null){
+						try{
+							if(rs!=null){
+								rs.close();
+								rs = null;
+							}
+						}catch (Exception e) {}
+						try{
+							if(stm!=null){
+								stm.close();
+								stm=null;
+							}
+						}catch (Exception e) {}
 						throw new Exception("Soggetto referente ["+idReferente+"] presente nell'accordo ["+rs.getString("nome")+"] (versione ["+rs.getString("versione")+"]) non presente?");
 					}
 					idSoggettoReferente = new IDSoggetto(soggettoReferente.getTipo(),soggettoReferente.getNome());
@@ -2132,10 +2144,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			//Chiudo statement and resultset
 			try{
 				if(rs!=null) rs.close();
+			}catch (Exception e) {}
+			try{
 				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			}catch (Exception e) {}
 
 			try {
 				if (this.atomica) {
@@ -5664,6 +5676,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(idReferente>0){
 					Soggetto soggettoReferente = this.getSoggetto(idReferente,con);
 					if(soggettoReferente==null){
+						try{
+							if(rs!=null){
+								rs.close();
+								rs = null;
+							}
+						}catch (Exception e) {}
+						try{
+							if(stm!=null){
+								stm.close();
+								stm=null;
+							}
+						}catch (Exception e) {}
 						throw new Exception("Soggetto referente ["+idReferente+"] presente nell'accordo ["+rs.getString("aps_nome")+"] (versione ["+rs.getString("aps_versione")+"]) non presente?");
 					}
 					idSoggettoReferente = new IDSoggetto(soggettoReferente.getTipo(),soggettoReferente.getNome());
@@ -5689,11 +5713,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			//Chiudo statement and resultset
 			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+			}catch (Exception e) {}
+			try{
+				if(stm!=null){
+					stm.close();
+					stm=null;
+				}
+			}catch (Exception e) {}
 
 			try {
 				if (this.atomica) {
@@ -10693,8 +10723,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 	public boolean isAzioneInUso(String nomeAzione) throws DriverRegistroServiziException {
 		String nomeMetodo = "isAzioneInUso";
 		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
+		PreparedStatement stmtPD = null;
+		PreparedStatement stmtPA = null;
+		ResultSet risultatoPD = null;
+		ResultSet risultatoPA = null;
 
 		if (this.atomica) {
 			try {
@@ -10716,21 +10748,22 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("azione = ?");
 			String queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, nomeAzione);
-			risultato = stmt.executeQuery();
-			if (risultato.next())
+			stmtPA = con.prepareStatement(queryString);
+			stmtPA.setString(1, nomeAzione);
+			risultatoPA = stmtPA.executeQuery();
+			if (risultatoPA.next()){
 				return true;
+			}
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("nome_azione = ?");
 			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, nomeAzione);
-			risultato = stmt.executeQuery();
-			if (risultato.next())
+			stmtPD = con.prepareStatement(queryString);
+			stmtPD.setString(1, nomeAzione);
+			risultatoPD = stmtPD.executeQuery();
+			if (risultatoPD.next())
 				return true;
 
 			return false;
@@ -10740,8 +10773,22 @@ IDriverWS ,IMonitoraggioRisorsa{
 		} finally {
 			//Chiudo statement and resultset
 			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
+				if(risultatoPA!=null) risultatoPA.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(risultatoPD!=null) risultatoPD.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmtPA!=null) stmtPA.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmtPD!=null) stmtPD.close();
 			}catch (Exception e) {
 				//ignore
 			}

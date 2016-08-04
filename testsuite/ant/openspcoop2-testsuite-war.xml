@@ -100,7 +100,7 @@
 				<include name="${xalan_serializer_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/jibx">
-				<include name="jibx-run-1.2.3.jar"/>
+				<include name="jibx-run-1.2.6.jar"/>
 			</lib>
 			<lib dir="${required_lib}/commons">
 				<include name="commons-codec-1.5.jar"/>
