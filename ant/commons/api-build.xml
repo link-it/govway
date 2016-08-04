@@ -31,12 +31,37 @@
 					<param name="doc" value="${doc}"/>
 				</antcall>
 				
+			    <!-- 
+			   			Java8 introduced a HTML checker 'doclint' which is very strict and breaks 
+			   			 the build if there is a HTML error in the JavaDoc.
+			    -->
+			    <condition property="javadoc.doclint.none" value="-Xdoclint:none" else="">
+			    	<not>
+				      	<or>
+							<equals arg1="${ant.java.version}" arg2="1.3" />
+							<equals arg1="${ant.java.version}" arg2="1.4" />
+				     		<equals arg1="${ant.java.version}" arg2="1.5" />
+							<equals arg1="${ant.java.version}" arg2="1.6" />
+				      		<equals arg1="${ant.java.version}" arg2="1.7" />
+						</or>
+			     	</not>
+				</condition>
+				<if>
+					<not>
+						<equals arg1="${javadoc.doclint.none}" arg2=""/>
+					</not>
+					<then>
+						<echo message="WARN: Java8 ${javadoc.doclint.none}"/>
+					</then>
+				</if>	
+				
 				<echo message="build API for packages: ${compile_src_openspcoop2.PACKAGES}"/>
 				<!-- <echo message="build DEST API for packages: ${compile_src_openspcoop2.API_DIR_NAME}"/> -->
 				<javadoc destdir="${compile_src_openspcoop2.API_DIR_NAME}" 
 					sourcepath="${src}" author="true" version="true" Private="false" use="true" 
 					windowtitle="API OpenSPCoop2 [${compile_src_openspcoop2.DIST_DIR_NAME}]" 
-					packagenames="${compile_src_openspcoop2.PACKAGES}">
+					packagenames="${compile_src_openspcoop2.PACKAGES}"
+					additionalparam="${javadoc.doclint.none}">
 					<doctitle>
 						<![CDATA[<h1>API OpenSPCoop2 [${compile_src_openspcoop2.DIST_DIR_NAME}]</h1>]]>
 					</doctitle>
