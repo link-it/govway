@@ -67,7 +67,7 @@
         <archive path="/op2_2.3.dev/lib/jibx/xpp3-1.2.6.jar"/>
         <archive path="/op2_2.3.dev/lib/jibx/jibx-run-1.2.6.jar"/>
         <archive path="/op2_2.3.dev/lib/jibx/jibx-bind-1.2.6.jar"/>
-        <archive path="/op2_2.3.dev/lib/jibx/bcel-5.2.jar"/>
+        <archive path="/op2_2.3.dev/lib/jibx/bcel-6.0.jar"/>
 	<!-- log -->
         <archive path="/op2_2.3.dev/lib/log/slf4j-jdk14-1.6.2.jar"/>
         <archive path="/op2_2.3.dev/lib/log/slf4j-api-1.6.2.jar"/>

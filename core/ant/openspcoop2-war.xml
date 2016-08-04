@@ -95,7 +95,7 @@
 				<include name="commons-beanutils-1.8.3.jar"/> <!--jmx mini console -->
 			</lib>
 			<lib dir="${required_lib}/jibx">
-				<include name="bcel-5.2.jar"/>
+				<include name="bcel-6.0.jar"/>
 				<include name="jibx-run-1.2.6.jar"/>
 				<include name="xpp3-1.2.6.jar"/>
 			</lib>

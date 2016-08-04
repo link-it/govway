@@ -19,7 +19,7 @@
 		
 		<var name="tmp_prefix" value="lib" />
 		<var name="tmp" value="${tmp_prefix}/addressing-1.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcel-5.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcel-6.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-152.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-152.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.5.jar"/>
@@ -729,7 +729,7 @@
 				<include name="commons-beanutils-1.8.3.jar"/> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset dir="${required_lib}/jibx" prefix="lib" >
-				<include name="bcel-5.2.jar"/>
+				<include name="bcel-6.0.jar"/>
 				<include name="jibx-run-1.2.6.jar"/>
 				<include name="xpp3-1.2.6.jar"/>
 			</zipfileset>
