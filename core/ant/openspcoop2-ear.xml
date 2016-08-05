@@ -22,13 +22,13 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcel-6.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-152.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-152.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.10.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-httpclient-3.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-2.7.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-annotation_1.0_spec-1.1.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-jaxws_2.2_spec-1.1.jar"/>
@@ -719,14 +719,14 @@
 			</zipfileset>
 			<!-- Librerie richieste a run-time da OpenSPCoop (Shared Lib) -->
 			<zipfileset dir="${required_lib}/commons" prefix="lib" >
-				<include name="commons-codec-1.5.jar"/>
+				<include name="commons-codec-1.10.jar"/>
 				<include name="commons-collections-3.2.1.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-httpclient-3.1.jar"/>
-				<include name="commons-io-2.1.jar"/>
+				<include name="commons-io-2.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-net-3.0.1.jar"/>
-				<include name="commons-beanutils-1.8.3.jar"/> <!--jmx mini console -->
+				<include name="commons-net-3.5.jar"/>
+				<include name="commons-beanutils-1.9.2.jar"/> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset dir="${required_lib}/jibx" prefix="lib" >
 				<include name="bcel-6.0.jar"/>

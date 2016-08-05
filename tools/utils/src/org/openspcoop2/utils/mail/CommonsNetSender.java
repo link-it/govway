@@ -22,6 +22,7 @@
 package org.openspcoop2.utils.mail;
 
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -207,7 +208,7 @@ public class CommonsNetSender extends Sender {
 					writer.write(mail.getBody().getMessage());
 				}
 				else{
-					WriterOutputStream ww = new WriterOutputStream(writer);
+					WriterOutputStream ww = new WriterOutputStream(writer,Charset.forName("UTF-8"));
 					multipart.writeTo(ww);
 					ww.flush();
 					ww.close();

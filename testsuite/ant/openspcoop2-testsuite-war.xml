@@ -103,10 +103,10 @@
 				<include name="jibx-run-1.2.6.jar"/>
 			</lib>
 			<lib dir="${required_lib}/commons">
-				<include name="commons-codec-1.5.jar"/>
+				<include name="commons-codec-1.10.jar"/>
 				<include name="commons-httpclient-3.1.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-io-2.1.jar"/>
+				<include name="commons-io-2.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-collections-3.2.1.jar"/>
 				<include name="${commons_logging_jar}"/>

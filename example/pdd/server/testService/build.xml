@@ -113,7 +113,7 @@
 			</classes>
 			<lib dir="${libs}/commons">
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-io-2.1.jar"/>
+				<include name="commons-io-2.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 			</lib>
 			<lib dir="${libs}/cxf">

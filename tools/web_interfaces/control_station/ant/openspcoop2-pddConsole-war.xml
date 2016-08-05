@@ -328,13 +328,13 @@
 				<include name="queue.properties" />
 			</classes>
 			<lib dir="${required_lib_pddConsole}/commons">
-				<include name="commons-beanutils-1.8.3.jar" />
+				<include name="commons-beanutils-1.9.2.jar" />
 				<include name="commons-chain-1.2.jar" />
 				<include name="commons-collections-3.2.1.jar" />
 				<include name="commons-digester-2.1.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-fileupload-1.2.1.jar" />
-				<include name="commons-io-2.1.jar" />
+				<include name="commons-fileupload-1.3.2.jar" />
+				<include name="commons-io-2.5.jar" />
 				<include name="commons-lang-2.6.jar" />
 				<include name="${commons_logging_jar}"/>
 			</lib>

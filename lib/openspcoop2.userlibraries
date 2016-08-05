@@ -5,23 +5,23 @@
         <archive path="/op2_2.3.dev/lib/ant/ant-contrib-1.0b3.jar"/>
 	<!-- commons -->
         <archive path="/op2_2.3.dev/lib/commons/commons-pool-1.5.6.jar"/>
-        <archive path="/op2_2.3.dev/lib/commons/commons-net-3.0.1.jar"/>
-        <archive path="/op2_2.3.dev/lib/commons/commons-logging-1.1.1.jar"/>
+        <archive path="/op2_2.3.dev/lib/commons/commons-net-3.5.jar"/>
+        <archive path="/op2_2.3.dev/lib/commons/commons-logging-1.2.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-lang-2.6.jar"/>
-	<archive path="/op2_2.3.dev/lib/commons/commons-lang3-3.1.jar"/>
-        <archive path="/op2_2.3.dev/lib/commons/commons-io-2.1.jar"/>
+	<archive path="/op2_2.3.dev/lib/commons/commons-lang3-3.4.jar"/>
+        <archive path="/op2_2.3.dev/lib/commons/commons-io-2.5.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-httpclient-3.1.jar"/>
-        <archive path="/op2_2.3.dev/lib/commons/commons-fileupload-1.2.1.jar"/>
+        <archive path="/op2_2.3.dev/lib/commons/commons-fileupload-1.3.2.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-discovery-0.5.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-digester-2.1.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-dbcp-1.4.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-collections-3.2.1.jar"/>
-        <archive path="/op2_2.3.dev/lib/commons/commons-codec-1.5.jar"/>
+        <archive path="/op2_2.3.dev/lib/commons/commons-codec-1.10.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-chain-1.2.jar"/>
-        <archive path="/op2_2.3.dev/lib/commons/commons-beanutils-1.8.3.jar"/>
+        <archive path="/op2_2.3.dev/lib/commons/commons-beanutils-1.9.2.jar"/>
 	<archive path="/op2_2.3.dev/lib/commons/commons-email-1.4.jar"/>
 	<archive path="/op2_2.3.dev/lib/commons/commons-cli-1.3.1.jar"/>
-	<archive path="/op2_2.3.dev/lib/commons/commons-csv-1.2.jar"/>
+	<archive path="/op2_2.3.dev/lib/commons/commons-csv-1.4.jar"/>
 	<!-- cxf -->
         <archive path="/op2_2.3.dev/lib/cxf/xmlschema-core-2.0.3.jar"/>
         <archive path="/op2_2.3.dev/lib/cxf/xml-resolver-1.2.jar"/>
