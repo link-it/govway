@@ -339,43 +339,7 @@
 
 	
 	
-	
-	<!-- Effettua la costruzione della Versione 'JRat' di OpenSPCoop. -->
-	<target name="jrat" description="Costruisce la versione 'JRat' di OpenSPCoop2.">
-		<if>
-			<or>
-				<matches string="${as}" pattern="jboss.*"/>
-				<matches string="${as}" pattern="wildfly.*"/>
-			</or>
-			<then>
-				<java jar="${jrat_lib}/shiftone-jrat.jar" fork="true">
-					<arg value="inject" />
-					<arg value="${dist}/OpenSPCoop2.ear" />
-					<classpath>
-						<fileset dir="${jrat_lib}" />
-					</classpath>
-				</java>	
-			</then>
-			<elseif>
-				<or>
-					<matches string="${as}" pattern="tomcat.*"/>
-				</or>
-				<then>
-					<java jar="${jrat_lib}/shiftone-jrat.jar" fork="true">
-						<arg value="inject" />
-						<arg value="${dist}/openspcoop2.war" />
-						<classpath>
-							<fileset dir="${jrat_lib}" />
-						</classpath>
-					</java>
-				</then>	
-			</elseif>
-		</if>
-	</target>
 
-	
-
-		
 
 	<!-- Effettua un touch dell'OpenSPCoop.ear deployato nell'application server -->
 	<target name="touch">

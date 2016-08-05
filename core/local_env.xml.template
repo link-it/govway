@@ -76,10 +76,7 @@
         <property name="plugins" location="deploy/plugins" />
         <property name="application_plugins" location="deploy/application_plugins" />
 
-        <!-- Librerie necessarie all'analisi con jrat -->
-        <property name="jrat_lib" value="${required_lib}/analysis_toolkit/shiftone-jrat.jar" />
-
-		<!-- Specifica se inserire le informazioni di debug nelle classi -->
+        <!-- Specifica se inserire le informazioni di debug nelle classi -->
 		<property name="debug" value="true" />
 		<property name="printServerInfo" value="false" />
 
