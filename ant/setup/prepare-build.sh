@@ -1,4 +1,4 @@
-AS_VERSION=jboss4,jboss5,jboss6,jboss7,wildfly8,wildfly9,wildfly10,tomcat5
+AS_VERSION=jboss4,jboss5,jboss6,jboss7,wildfly8,wildfly9,wildfly10,tomcat6
 # Per tomcat qualsiasi versione venga generata è uguale.
 # L'importante che anche il setup associo alla label abbia la solita versione
 

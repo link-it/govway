@@ -40,23 +40,29 @@
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
         <large-select defaultValue="wildfly10" property="antinstaller_as" displayText="Application Server">
         
-        	<!-- il valore viene mappato sempre in wildfly 8 -->
-        	<option value="wildfly10" text="WildFly 10.x"/>
-        	<option value="wildfly9" text="WildFly 9.x"/>
-        	<option value="wildfly8" text="WildFly 8.x"/>
-        
-        	<option value="jboss7" text="JBoss 7.x"/>
-        	<option value="jboss6" text="JBoss 6.x"/>
-        	<option value="jboss5" text="JBoss 5.x"/>
-            <option value="jboss4" text="JBoss 4.x"/>
+		<!-- il valore viene mappato sempre in wildfly 8 -->
+		<option value="wildfly10" text="WildFly 10.x"/>
+		<option value="wildfly9" text="WildFly 9.x"/>
+		<option value="wildfly8" text="WildFly 8.x"/>
+
+		<option value="jboss7" text="JBoss 7.x"/>
+		<!--
+			 Deprecati 
+			<option value="jboss6" text="JBoss 6.x"/>
+			<option value="jboss5" text="JBoss 5.x"/>
+	    		<option value="jboss4" text="JBoss 4.x"/>
+		-->
             
-            <!-- Il valore viene mappato sempre in tomcat 5 -->
-            <!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
-            <option value="tomcat5" text="Apache Tomcat 9.x"/>
-            <option value="tomcat5" text="Apache Tomcat 8.x"/>
-            <option value="tomcat5" text="Apache Tomcat 7.x"/>
-            <option value="tomcat5" text="Apache Tomcat 6.x"/>
-            <option value="tomcat5" text="Apache Tomcat 5.x"/>
+            	<!-- Il valore viene mappato sempre in tomcat 6 -->
+           	 <!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
+            	<option value="tomcat6" text="Apache Tomcat 9.x"/>
+            	<option value="tomcat6" text="Apache Tomcat 8.x"/>
+            	<option value="tomcat6" text="Apache Tomcat 7.x"/>
+            	<option value="tomcat6" text="Apache Tomcat 6.x"/>
+            	<!-- 
+			Deprecati
+			<option value="tomcat6" text="Apache Tomcat 5.x"/> 
+		-->
         </large-select>
         
      </page> 
@@ -154,7 +160,7 @@
 
     </page>
 
-    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_as}=tomcat5) AND (${antinstaller_backward_compatibility}=true)">
+    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_as}=tomcat6) AND (${antinstaller_backward_compatibility}=true)">
 
 	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat impedisce l'attivazione delle interfacce di compatibilità."/>
 	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>
