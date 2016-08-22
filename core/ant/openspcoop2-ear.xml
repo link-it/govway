@@ -23,7 +23,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-152.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-152.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.10.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-httpclient-3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.5.jar"/>
@@ -721,7 +721,7 @@
 			<!-- Librerie richieste a run-time da OpenSPCoop (Shared Lib) -->
 			<zipfileset dir="${required_lib}/commons" prefix="lib" >
 				<include name="commons-codec-1.10.jar"/>
-				<include name="commons-collections-3.2.1.jar"/>
+				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-httpclient-3.1.jar"/>
 				<include name="commons-io-2.5.jar"/>

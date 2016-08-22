@@ -85,7 +85,7 @@
 			</lib>
 			<lib dir="${required_lib}/commons">
 				<include name="commons-codec-1.10.jar"/>
-				<include name="commons-collections-3.2.1.jar"/>
+				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-httpclient-3.1.jar"/>
 				<include name="commons-lang-2.6.jar"/>

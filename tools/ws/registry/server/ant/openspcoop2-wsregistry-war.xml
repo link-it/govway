@@ -199,7 +199,7 @@
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-beanutils-1.9.2.jar"/>
-				<include name="commons-collections-3.2.1.jar"/>
+				<include name="commons-collections-3.2.2.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">

@@ -15,7 +15,7 @@
         <archive path="/op2_2.3.dev/lib/commons/commons-discovery-0.5.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-digester-2.1.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-dbcp-1.4.jar"/>
-        <archive path="/op2_2.3.dev/lib/commons/commons-collections-3.2.1.jar"/>
+        <archive path="/op2_2.3.dev/lib/commons/commons-collections-3.2.2.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-codec-1.10.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-chain-1.2.jar"/>
         <archive path="/op2_2.3.dev/lib/commons/commons-beanutils-1.9.2.jar"/>
