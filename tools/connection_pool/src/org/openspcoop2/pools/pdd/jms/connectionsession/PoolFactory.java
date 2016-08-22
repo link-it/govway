@@ -44,7 +44,7 @@ import javax.jms.ConnectionFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PoolFactory extends BasePoolableObjectFactory{	
+public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools.pdd.jms.connectionsession.Connection>{	
 
 	/** ConnectionFactory */
 	private ConnectionFactory qcf;
@@ -225,7 +225,7 @@ public class PoolFactory extends BasePoolableObjectFactory{
 	 * @return Un oggetto JMSObject contenente una connessione e sessione appena creata
 	 * 
 	 */
-	@Override public Object makeObject() throws Exception{	
+	@Override public org.openspcoop2.pools.pdd.jms.connectionsession.Connection makeObject() throws Exception{	
 		Connection con = null;
 		Session s = null;
 		this.logger.debug("MAKE OBJECT pool ["+this.jndiName+"]");
@@ -298,14 +298,13 @@ public class PoolFactory extends BasePoolableObjectFactory{
 	 * @param obj Un oggetto JMSObject contenente una connessione e sessione appena creata
 	 * 
 	 */
-	@Override public void activateObject(Object obj) throws Exception{ 
+	@Override public void activateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception{ 
 		this.logger.debug("ACTIVATE OBJECT pool ["+this.jndiName+"]");
 		try{
 			// Controllo dell'oggetto ricevuto
-			if(obj == null){
+			if(jms == null){
 				throw new OpenSPCoopFactoryException("JMSObjectNull");
 			}
-			org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = (org.openspcoop2.pools.pdd.jms.connectionsession.Connection) obj;
 			if(jms.getConnection()==null){
 				throw new OpenSPCoopFactoryException("ConnectionNull");
 			}
@@ -323,14 +322,13 @@ public class PoolFactory extends BasePoolableObjectFactory{
 	 * @param obj Un oggetto JMSObject contenente una connessione e sessione attiva
 	 * 
 	 */
-	@Override public void passivateObject(Object obj) throws Exception {
+	@Override public void passivateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception {
 		this.logger.debug("PASSIVATE OBJECT pool ["+this.jndiName+"]");
 		try{
 			// Controllo dell'oggetto ricevuto
-			if(obj == null){
+			if(jms == null){
 				throw new OpenSPCoopFactoryException("JMSObjectNull");
 			}
-			org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = (org.openspcoop2.pools.pdd.jms.connectionsession.Connection) obj;
 			if(jms.getConnection()==null){
 				throw new OpenSPCoopFactoryException("ConnectionNull");
 			}
@@ -368,16 +366,15 @@ public class PoolFactory extends BasePoolableObjectFactory{
 	 * @param obj Un oggetto JMSObject contenente una connessione e sessione attiva
 	 * 
 	 */
-	@Override public boolean validateObject(Object obj){
+	@Override public boolean validateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms){
 		this.logger.debug("VALIDATE OBJECT pool ["+this.jndiName+"]");
 		if(this.validationJMSObject){
 			try{
 				// Controllo dell'oggetto ricevuto
-				if(obj == null){
+				if(jms == null){
 					this.logger.error("VALIDAZIONE non riuscita pool ["+this.jndiName+"]: risorsa is null");
 					return false;
 				}
-				org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = (org.openspcoop2.pools.pdd.jms.connectionsession.Connection) obj;
 				if(jms.getConnection()==null){
 					this.logger.error("VALIDAZIONE non riuscita pool ["+this.jndiName+"]: connessione is null");
 					return false;
@@ -434,17 +431,16 @@ public class PoolFactory extends BasePoolableObjectFactory{
 		}
 	}
 
-	@Override public void destroyObject(Object obj) throws Exception{
+	@Override public void destroyObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception{
 		this.logger.debug("DESTROY OBJECT pool ["+this.jndiName+"]");
 		try{
 			StringBuffer eccezioni = new StringBuffer();
 			
 			// Controllo dell'oggetto ricevuto
-			if(obj == null){
+			if(jms == null){
 				throw new OpenSPCoopFactoryException("JMSObjectNull");
 			}
-			
-			org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = (org.openspcoop2.pools.pdd.jms.connectionsession.Connection) obj;
+
 			if(jms.getConnection()==null){
 				throw new OpenSPCoopFactoryException("ConnectionNull");
 			}
@@ -490,7 +486,7 @@ public class PoolFactory extends BasePoolableObjectFactory{
 				eccezioni.append(" Connection.Close["+e.getMessage()+"] ");
 			}	
 
-			obj = null;
+			jms = null;
 			if(eccezioni.length()>0){
 				this.logger.error("DestroyObject chiusure JMS non riuscite pool ["+this.jndiName+"] ["+eccezioni.toString()+"]");
 			}

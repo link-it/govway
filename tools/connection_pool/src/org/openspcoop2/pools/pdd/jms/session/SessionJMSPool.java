@@ -68,7 +68,8 @@ public class SessionJMSPool implements java.io.Serializable  {
 
 	
 	/** Hash Pool utilizzato ed indirizzato con il nome JNDI */
-	private static Hashtable<String,GenericObjectPool> pool = new Hashtable<String,GenericObjectPool>();
+	private static Hashtable<String,GenericObjectPool<org.openspcoop2.pools.pdd.jms.session.Connection>> pool = 
+			new Hashtable<String,GenericObjectPool<org.openspcoop2.pools.pdd.jms.session.Connection>>();
 	private static Hashtable<String,PoolFactory> poolFactory = new Hashtable<String,PoolFactory>();
 	/** NomeJNDI di questo oggetto */
 	private String jndiName;
@@ -171,7 +172,7 @@ public class SessionJMSPool implements java.io.Serializable  {
 	  As the name says, this is a generic pool; it returns
 	  basic Object-class objects.
 		 */
-		SessionJMSPool.pool.put(this.jndiName,new GenericObjectPool(pf,configPool));
+		SessionJMSPool.pool.put(this.jndiName,new GenericObjectPool<org.openspcoop2.pools.pdd.jms.session.Connection>(pf,configPool));
 		SessionJMSPool.poolFactory.put(this.jndiName,pf);
 
 		/*

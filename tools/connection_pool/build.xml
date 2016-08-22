@@ -89,7 +89,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="commons_pool_jar" value="commons-pool-1.5.6.jar"/>
+			<var name="commons_pool_jar" value="commons-pool-1.6.jar"/>
 		</then>
 	</if>
 	<!-- commons_dbcp -->
