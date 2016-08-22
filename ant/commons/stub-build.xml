@@ -159,6 +159,7 @@
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
 						<fileset dir="${required_lib}/cxf" includes="*.jar"/>
+						<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 						<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
 						<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
 						<fileset dir="${required_lib}/shared" includes="velocity-1.6.4.jar"/>
@@ -176,6 +177,7 @@
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
 						<fileset dir="${required_lib}/cxf" includes="*.jar"/>
+						<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 						<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
 						<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
 						<fileset dir="${required_lib}/shared" includes="velocity-1.6.4.jar"/>
@@ -217,6 +219,7 @@
 			<src path="${stubBuild.srcDir}" />
 			<classpath>
 				<fileset dir="${required_lib}/cxf" includes="*.jar"/>
+				<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 				<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
 				<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
 				<fileset dir="${required_lib}/shared" includes="velocity-1.6.4.jar"/>

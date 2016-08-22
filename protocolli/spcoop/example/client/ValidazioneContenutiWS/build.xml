@@ -11,6 +11,7 @@
 	<path id="classpath_ws_validazione_client" >
 		<fileset dir="${ws_validazione_lib_client}" >
 			<exclude name="**/cxf/*"/>
+			<exclude name="**/saaj/*"/>
 			<exclude name="**/jax/*"/>
 		</fileset>
 		<fileset file="${ws_validazione_lib_client}/jax/jaxb-api-2.2.6.jar" />

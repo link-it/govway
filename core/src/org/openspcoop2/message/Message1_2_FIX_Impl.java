@@ -62,7 +62,6 @@ public class Message1_2_FIX_Impl extends Message1_2Impl {
    		this.msg = (Message1_2Impl) msg;
     }
 
-    // unused. can we delete this? - Kohsuke
     public Message1_2_FIX_Impl(MimeHeaders headers, CountingInputStream in)
         throws IOException, SOAPExceptionImpl {
         super(headers, in);

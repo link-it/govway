@@ -120,6 +120,9 @@
 				<include name="*.jar"/>
 				<exclude name="geronimo-servlet*.jar"/>
 			</lib>
+			<lib dir="${openspcoop2.lib}/saaj">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${openspcoop2.lib}/httpcore">
 				<include name="*.jar"/>
 			</lib>

@@ -195,6 +195,7 @@
 			<exclude name="faces2/javax.servlet-api-3.0.1.jar"/>
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
+			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
 			<include name="jibx/*"/>

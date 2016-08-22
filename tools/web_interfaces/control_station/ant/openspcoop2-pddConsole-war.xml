@@ -355,13 +355,15 @@
 				<include name="xmlunit-1.6.jar" />
 			</lib>
 			<lib dir="${required_lib_pddConsole}/cxf">
-				<include name="saaj-impl-1.3.19.jar" />
 				<include name="cxf-2.7.4.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
 				<include name="${pddConsoleRemota_cxf_xmlschema-core}" />
 				<include name="${pddConsoleRemota_cxf_woodstox-core-asl}" />
 				<include name="${pddConsoleRemota_cxf_stax2-api}" />
 				<include name="${pddConsoleRemota_cxf_geronimo_ws_metadata_spec}" />
+			</lib>
+			<lib dir="${required_lib_pddConsole}/saaj">
+				<include name="*.jar" />
 			</lib>
 			<lib dir="${required_lib_pddConsole}/jax">
 				<include name="${jaxp_ri_jar}" />

@@ -61,6 +61,7 @@
 			<exclude name="openspcoop2.userlibraries"/>
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
+			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
 			<include name="jibx/*"/>

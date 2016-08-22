@@ -53,6 +53,7 @@
 			<exclude name="**/axis14/*"/>
 			<include name="stub/cxf/*"/>
 			<include name="cxf/*.jar"/>
+			<include name="saaj/*.jar"/>
 			<include name="jax/jaxb*.jar"/>
 		</fileset>
 	</path>
@@ -61,6 +62,7 @@
 			<exclude name="**/axis14/*"/>
 			<include name="stub/cxf/*.jar"/>
 			<include name="cxf/*.jar"/>
+			<include name="saaj/*.jar"/>
 			<include name="jax/jaxb*.jar"/>
 			<include name="security/*.jar"/>
 			<include name="shared/*.jar"/>

@@ -220,6 +220,12 @@ public class SPCoopSbustamento {
 				org.w3c.dom.Node n = nl.item(i);
 				if(n instanceof Element) {
 					Element element = (Element) n;
+					if(SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_EMPTY_BODY.equals(element.getLocalName()) && 
+							SPCoopCostanti.NAMESPACE_MANIFEST_EGOV_EMPTY_BODY.equals(element.getNamespaceURI())){
+						// Body Empty
+						//System.out.println("SBUSTAMENTO EMPTY PATCH");
+						continue;
+					}
 					msg.getSOAPBody().addChildElement(SoapUtils.getSoapFactory(SOAPVersion.SOAP11).createElement(element));
 				}
 				if(n instanceof Text) {

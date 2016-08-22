@@ -42,8 +42,9 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.0.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-2.5.1-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/openws-1.4.2-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-api-1.3.4.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.3.25.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.7.7.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/soap.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.aop-3.1.1.RELEASE.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.asm-3.1.1.RELEASE.jar"/>
@@ -769,6 +770,9 @@
 			<zipfileset dir="${required_lib}/cxf" prefix="lib">
 				<include name="*.jar"/>
 				<exclude name="geronimo-servlet_3.0_spec-1.0.jar"/>
+			</zipfileset>
+			<zipfileset dir="${required_lib}/saaj" prefix="lib">
+				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="${required_lib}/jax" prefix="lib">
 				<include name="jaxb*.jar"/>

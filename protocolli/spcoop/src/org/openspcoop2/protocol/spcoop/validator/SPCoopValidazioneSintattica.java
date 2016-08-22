@@ -3797,8 +3797,8 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				//log.info("Validazione DescrizioneMessaggio...");
 				Node descrizioneMessaggio = descrizioneMessaggi.get(i);
 				//log.info("esamino["+descrizioneMessaggio.getNodeName()+"]");
-				//if(!(descrizioneMessaggio.getNodeName().equals(prefixManifest+"DescrizioneMessaggio"))){
-				if(!(SoapUtils.matchLocalName(descrizioneMessaggio, "DescrizioneMessaggio", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
+				//if(!(descrizioneMessaggio.getNodeName().equals(prefixManifest+SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO))){
+				if(!(SoapUtils.matchLocalName(descrizioneMessaggio, SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO, prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
 					//	Elemento DescrizioneMessaggio non esistente
 					Eccezione ecc = new Eccezione();
 					ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);

@@ -23,7 +23,6 @@
 
 package org.openspcoop2.protocol.spcoop.builder;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,7 +36,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.log4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -71,6 +70,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
 
 
 /**
@@ -94,7 +94,7 @@ public class SPCoopImbustamento {
 	private List<String> tipiServizi = null;
 	private SPCoopValidazioneSemantica validazioneSemantica = null;
 	private SPCoopValidazioneSintattica validazioneSintattica = null;
-//	private AbstractXMLUtils xmlUtils = null;
+	private AbstractXMLUtils xmlUtils = null;
 	private ITraduttore traduttore = null;
 	private IProtocolManager protocolManager = null;
 
@@ -109,7 +109,7 @@ public class SPCoopImbustamento {
 		this.validazioneSemantica = (SPCoopValidazioneSemantica) this.factory.createValidazioneSemantica();
 		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.factory.createValidazioneSintattica();
 		
-//		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
 		
 		this.traduttore = this.factory.createTraduttore();
 		
@@ -800,7 +800,8 @@ public class SPCoopImbustamento {
 				//String fileName = p.getAttachmentFile();
 				String contentType = p.getContentType();
 				// Costruzione DescrizioneMessaggio
-				SOAPElement descrizioneMessaggio =  descrizione.addChildElement("DescrizioneMessaggio",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
+				SOAPElement descrizioneMessaggio =  descrizione.addChildElement(SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO,
+						SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				// Costruzione Riferimento
 				SOAPElement riferimento =  descrizioneMessaggio.addChildElement("Riferimento",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				
@@ -863,7 +864,13 @@ public class SPCoopImbustamento {
 //					String xmlBody = new String(body);
 				//xmlBody = StringEscapeUtils.unescapeXml(xmlBody);
 //					Reader stringReader = new StringReader(xmlBody);
-				Source streamSource = new StreamSource(new ByteArrayInputStream(body));
+				//Source streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(body)); FIX: StreamSource instances may only be used once.
+				//System.out.println("BODY IS :["+new String(body)+"] ["+body.length+"]");
+				if(body==null || body.length==0){
+					body = SPCoopCostanti.XML_MANIFEST_EGOV_EMPTY_BODY.getBytes();
+					//System.out.println("PATCH ["+new String(body)+"]");
+				}
+				Source streamSource = new DOMSource(this.xmlUtils.newElement(body));
 				ap.setContent(streamSource, "text/xml");
 				ap.setContentId(msg.createContentID(SPCoopCostanti.NAMESPACE_EGOV));
 				//ap.setContentLocation("provaOpenSPCoop"); // Test Sbustamento con ContentLocation
@@ -871,7 +878,8 @@ public class SPCoopImbustamento {
 				//isContent.close();
 				// add OriginalMsg in Manifest
 				// Costruzione DescrizioneMessaggio
-				SOAPElement descrizioneMessaggio = descrizione.addChildElement("DescrizioneMessaggio",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
+				SOAPElement descrizioneMessaggio = descrizione.addChildElement(SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO,
+						SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				// Costruzione Riferimento
 				SOAPElement riferimento = descrizioneMessaggio.addChildElement("Riferimento",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				riferimento.setAttribute("href","cid:" + msg.getContentID(ap)); // xsd:anyURI

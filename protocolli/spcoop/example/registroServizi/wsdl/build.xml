@@ -53,6 +53,7 @@
 	<!-- Classpath -->
 	<path id="classpath">
 		<fileset dir="${required_lib}/cxf" includes="*.jar"/>
+		<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 		<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
 		<fileset dir="${required_lib}/axis14" includes="axis-1.4.jar"/>
 		<fileset dir="${required_lib}/axis14" includes="axis-jaxrpc-1.4.jar"/>

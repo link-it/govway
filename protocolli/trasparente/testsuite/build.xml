@@ -137,6 +137,9 @@
 		<fileset dir="${openspcoop2_lib}/cxf" >
 			<include name="*.jar"/>
 		</fileset>
+		<fileset dir="${openspcoop2_lib}/saaj">
+			<include name="*.jar"/>
+		</fileset>
 		<fileset dir="${openspcoop2_lib}/jax" >
 			<include name="jaxb*.jar"/>
 		</fileset>

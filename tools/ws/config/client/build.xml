@@ -41,6 +41,7 @@
 	<path id="classpath_compile" >
 		<fileset dir="${openspcoop2.lib}" >
             <include name="cxf/*"/>
+			<include name="saaj/*"/>
             <include name="jetty/*"/>
             <include name="security/*"/>
             <include name="httpcore/*"/>

@@ -554,7 +554,7 @@ public class SoapUtils {
 	 * 
 	 */
 	public static byte[] sbustamentoSOAPEnvelope(SOAPEnvelope env) throws UtilsException{
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();		
+		ByteArrayOutputStream bout = null;
 		
 		try{
 			SOAPBody bd = env.getBody();
@@ -563,28 +563,32 @@ public class SoapUtils {
 				SOAPFault fault = bd.getFault();
 				body = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11).getAsByte(fault, true);
 			}else{
+				bout = new ByteArrayOutputStream();
 				java.util.Iterator<?> it = bd.getChildElements();
-				
 				while(it.hasNext()){
 					Object bodyElementObj = it.next();
 					if(!(bodyElementObj instanceof SOAPElement)){
 						continue;
 					}
 					SOAPElement bodyElement = (SOAPElement) bodyElementObj;
-					stream.write(OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11).getAsByte(bodyElement, true));
+					bout.write(OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11).getAsByte(bodyElement, true));
 				}
-				body = stream.toByteArray();
+				bout.flush();
+				bout.close();
+				body = bout.toByteArray();
+				bout = null;
 			}
 
-			stream.close();
-			
 			return body;
 
 		}catch (Exception e){
-			try{
-				stream.close();
-			}catch(Exception eis){}
 			throw new UtilsException("Sbustamento SoapEnvelope non riuscito: "+e.getMessage(),e);
+		}
+		finally{
+			try{
+				if(bout!=null)
+					bout.close();
+			}catch(Exception eis){}
 		}
 	}
 	

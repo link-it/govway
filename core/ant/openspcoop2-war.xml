@@ -141,6 +141,9 @@
 				<include name="*.jar" />
 				<exclude name="geronimo-servlet_3.0_spec-1.0.jar"/>
 			</lib>
+			<lib dir="${required_lib}/saaj">
+				<include name="*.jar" />
+			</lib>
 			<lib dir="${required_lib}/jax">
 				<include name="jaxb*.jar" />
 			</lib>

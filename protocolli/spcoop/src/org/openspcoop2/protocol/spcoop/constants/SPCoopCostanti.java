@@ -58,6 +58,15 @@ public class SPCoopCostanti {
     /** Definisce il namespace utilizzato per buste di eccezione */
     public static final String NAMESPACE_ECCEZIONE_APPLICATIVA_EGOV = "http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/";
     
+    /** Definisce il local name del manifest eGov */
+    public static final String LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO = "DescrizioneMessaggio";
+    
+    /** Definisce il local name dell'attachments che contenenva un body vuoto */
+    public static final String LOCAL_NAME_MANIFEST_EGOV_EMPTY_BODY = "SoapBodyEmpty";
+    /** Definisce il namespace utilizzato nelle buste eGov, per indicare un soapBody vuoto indirizzato dal manifest eGov */
+    public static final String NAMESPACE_MANIFEST_EGOV_EMPTY_BODY = "http://www.openspcoop2.org/spcoop/manifest/body";
+    public static final String XML_MANIFEST_EGOV_EMPTY_BODY = "<"+PREFIX_EGOV+":"+LOCAL_NAME_MANIFEST_EGOV_EMPTY_BODY+" xmlns:"+PREFIX_EGOV+"=\""+NAMESPACE_MANIFEST_EGOV_EMPTY_BODY+"\" />";
+    
     /** Massimo numero assumibile dal numero seriale utilizzato in un Identificativo eGov. */
     public static final int MAX_VALUE_ID_EGOV_COUNTER = 9999999;
     /** Massimo numero assumibile dal numero seriale utilizzato in un Identificativo eGov, se il prefisso e' di lunghezza 1. */

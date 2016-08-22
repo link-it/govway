@@ -51,6 +51,7 @@
 			<include name="jax/jaxb*"/>
 			<include name="cxf/*"/>
 			<exclude name="cxf/geronimo-servlet_3.0_spec-1.0.jar"/>
+			<include name="saaj/*"/>
 			<include name="javax/*"/>
 			<include name="jibx/*"/>
 			<include name="log/*"/>
