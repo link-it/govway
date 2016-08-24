@@ -29,6 +29,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.utils.resources.Loader;
+
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al WebServices.
  * 
@@ -129,6 +132,13 @@ public class WSStartup implements ServletContextListener {
 			}
 			
 			if(DriverConfigurazione.initialize(WSStartup.log)==false){
+				return;
+			}
+			
+			try{
+				ExtendedInfoManager.initialize(new Loader(WSStartup.class.getClassLoader()), null, null, null);
+			}catch(Exception e){
+				WSStartup.log.error("Inizializzazione [ExtendedInfoManager] failed",e);
 				return;
 			}
 			
