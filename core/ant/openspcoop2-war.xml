@@ -100,8 +100,8 @@
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="log4j-1.2.16.jar"/> <!-- (non necessario in A.S.) -->
-				<include name="slf4j-api-1.6.2.jar"/>
-				<include name="slf4j-jdk14-1.6.2.jar"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="slf4j-jdk14-1.7.21.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
 				<include name="bcprov-ext-jdk15on-155.jar"/>

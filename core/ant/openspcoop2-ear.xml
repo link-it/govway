@@ -90,8 +90,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.1.7.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.1.7.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-asl-4.4.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-api-1.6.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-jdk14-1.6.2.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-api-1.7.21.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-jdk14-1.7.21.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
 		<!-- <echo message="3PARTI: ${manifest.classpath.3parti}"/> -->
 		
@@ -789,8 +789,8 @@
 				<include name="xom-1.2.10.jar" /> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
-				<include name="slf4j-api-1.6.2.jar"/>
-				<include name="slf4j-jdk14-1.6.2.jar"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="slf4j-jdk14-1.7.21.jar"/>
 				<include name="${log4j_jar}"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jminix">

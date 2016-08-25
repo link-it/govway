@@ -204,7 +204,7 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
-				<include name="slf4j-api-1.6.2.jar"/>
+				<include name="slf4j-api-1.7.21.jar"/>
 				<include name="${log4j_jar}"/>
 			</lib>
 			

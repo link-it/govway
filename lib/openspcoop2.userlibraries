@@ -86,8 +86,8 @@
 	<archive path="/op2_2.3.dev/lib/jminix/org.restlet.ext.servlet-2.1.4.jar"/>
 	<archive path="/op2_2.3.dev/lib/jminix/org.restlet.ext.velocity-2.1.4.jar"/>
 	<!-- log -->
-        <archive path="/op2_2.3.dev/lib/log/slf4j-jdk14-1.6.2.jar"/>
-        <archive path="/op2_2.3.dev/lib/log/slf4j-api-1.6.2.jar"/>
+        <archive path="/op2_2.3.dev/lib/log/slf4j-jdk14-1.7.21.jar"/>
+        <archive path="/op2_2.3.dev/lib/log/slf4j-api-1.7.21.jar"/>
         <archive path="/op2_2.3.dev/lib/log/log4j-1.2.16.jar"/>
 	<!-- lucene -->
         <archive path="/op2_2.3.dev/lib/lucene/lucene-core-6.1.0.jar"/>
