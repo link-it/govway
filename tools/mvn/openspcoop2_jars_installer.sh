@@ -119,7 +119,6 @@ pushd ../web_generic_project/impl
 echo "Generazione dei JAR in corso..."
 
 WEB_GENERIC_PROJECT_IMPL_JSF1_JAR="openspcoop2_web-generic-project-impl-jsf1"
-WEB_GENERIC_PROJECT_IMPL_JSF2_JAR="openspcoop2_web-generic-project-impl-jsf2"
 
 echo "Deploy del JAR $WEB_GENERIC_PROJECT_IMPL_JSF1_JAR in corso..."
 
@@ -143,30 +142,7 @@ mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=jsf1/dist/$WEB_G
 
 echo "Deploy del JAR $WEB_GENERIC_PROJECT_IMPL_JSF1_JAR completato."
 
-#echo "Deploy del JAR $WEB_GENERIC_PROJECT_IMPL_JSF2_JAR in corso..."
-
-#echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
-#        xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
-#        <artifactId>$WEB_GENERIC_PROJECT_IMPL_JSF2_JAR</artifactId>
-#        <groupId>org.openspcoop2</groupId>
-#        <version>$MVN_VERSION</version>
-#        <modelVersion>4.0.0</modelVersion>
-#        <name>Openspcoop2 Web Generic Project</name>
-#        <dependencies> 
-#                <dependency>
-#                        <groupId>org.openspcoop2</groupId>
-#                        <artifactId>$WEB_GENERIC_PROJECT_JAR</artifactId>
-#                        <version>$MVN_VERSION</version>
-#                </dependency>
-#        </dependencies>
-#</project>" > "jsf2/dist/${WEB_GENERIC_PROJECT_IMPL_JSF2_JAR}_${MVN_VERSION}.pom"
-
-#mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=jsf2/dist/$WEB_GENERIC_PROJECT_IMPL_JSF2_JAR"_"$MVN_VERSION.pom -Dfile=jsf2/dist/$WEB_GENERIC_PROJECT_IMPL_JSF2_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
-
-#echo "Deploy del JAR $WEB_GENERIC_PROJECT_IMPL_JSF2_JAR completato."
-
 rm -f "jsf1/dist/${WEB_GENERIC_PROJECT_IMPL_JSF1_JAR}_${MVN_VERSION}.pom"
-#rm -f "jsf2/dist/${WEB_GENERIC_PROJECT_IMPL_JSF2_JAR}_${MVN_VERSION}.pom"
 
 popd 
 

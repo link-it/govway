@@ -221,18 +221,6 @@
         <archive path="/op2_2.3.dev/lib/faces/richfaces-ui-3.3.4.Final.jar"/>
         <archive path="/op2_2.3.dev/lib/faces/javax.faces-2.2.3.jar"/>
     </library>
-    <library name="openspcoop2_2.3_lib_faces2" systemlibrary="false">
-        <archive path="/op2_2.3.dev/lib/faces2/all-themes-1.0.10.jar"/>
-        <archive path="/op2_2.3.dev/lib/faces2/javax.servlet-api-3.0.1.jar"/>
-        <archive path="/op2_2.3.dev/lib/faces2/jsf-api-2.2.9.jar"/>
-        <archive path="/op2_2.3.dev/lib/faces2/jsf-impl-2.2.9.jar"/>
-        <archive path="/op2_2.3.dev/lib/faces2/primefaces-5.1.jar"/>
-        <archive path="/op2_2.3.dev/lib/faces2/primefaces-extensions-3.0.0.jar"/>
-	<archive path="/op2_2.3.dev/lib/faces2/richfaces-components-api-4.3.7.Final.jar"/>
-	<archive path="/op2_2.3.dev/lib/faces2/richfaces-components-ui-4.3.7.Final.jar"/>
-	<archive path="/op2_2.3.dev/lib/faces2/richfaces-core-api-4.3.7.Final.jar"/>
-	<archive path="/op2_2.3.dev/lib/faces2/richfaces-core-impl-4.3.7.Final.jar"/>
-    </library>
     <library name="openspcoop2_2.3_lib_jboss4" systemlibrary="false">
         <archive path="/op2_2.3.dev/lib/applicationServer/jboss4/jbossall-client.jar"/>
     </library>

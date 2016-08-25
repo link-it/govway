@@ -32,7 +32,6 @@
 	<!-- CLASSPATH -->
 	<path id="classpath_compile" >
 		<fileset dir="${required_lib}" >
-			<exclude name="**/faces2/*"/>
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
