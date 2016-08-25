@@ -24,7 +24,7 @@
 package org.openspcoop2.security.message.wss4j;
 
 import org.apache.log4j.Logger;
-import org.apache.ws.security.WSSConfig;
+import org.apache.wss4j.dom.engine.WSSConfig;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -56,7 +56,7 @@ public class MessageSecurityContext_wss4j implements IMessageSecurityContext{
 
 
 	/** WSS Id Allocator */
-	private static org.apache.ws.security.WsuIdAllocator wsuIdAllocator = null;
+	private static org.apache.wss4j.dom.WsuIdAllocator wsuIdAllocator = null;
 	private static String prefixWsuId = null;
 	private static synchronized void initWsuIdAllocator(String prefixWsuIdParam,Logger log) throws Exception{
 		if(MessageSecurityContext_wss4j.wsuIdAllocator==null){

@@ -29,7 +29,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.ws.security.handler.WSHandlerConstants;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -106,10 +105,10 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			// ** Verifico presenza header sicurezza ** /
 			if(this.messageSecurityContext.existsSecurityHeader(message, actor)==false){
 				this.msgErrore =  "Header Message Security, richiesto dalla configurazione (action:"+action+"), non riscontrato nella SOAPEnvelope ricevuta";
-				if(action.contains(WSHandlerConstants.SIGNATURE)){
+				if(action.contains(SecurityConstants.ACTION_SIGNATURE)){
 					this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE;
 				}
-				else if(action.contains(WSHandlerConstants.ENCRYPT)){
+				else if(action.contains(SecurityConstants.ACTION_ENCRYPT)){
 					this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE;
 				}
 				else{

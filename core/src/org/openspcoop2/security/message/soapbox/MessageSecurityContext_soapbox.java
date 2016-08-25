@@ -123,9 +123,9 @@ public class MessageSecurityContext_soapbox implements IMessageSecurityContext{
 
 
 	/** WSS Id Allocator */
-	private static org.apache.ws.security.WsuIdAllocator wsuIdAllocator = null;
+	private static org.apache.wss4j.dom.WsuIdAllocator wsuIdAllocator = null;
 	private static String prefixWsuId = null;
-	public static org.apache.ws.security.WsuIdAllocator getWsuIdAllocator() {
+	public static org.apache.wss4j.dom.WsuIdAllocator getWsuIdAllocator() {
 		return MessageSecurityContext_soapbox.wsuIdAllocator;
 	}
 	private static synchronized void initWsuIdAllocator(String prefixWsuIdParam,Logger log) throws Exception{

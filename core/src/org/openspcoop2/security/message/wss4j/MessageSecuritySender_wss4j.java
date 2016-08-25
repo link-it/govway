@@ -36,6 +36,8 @@ import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
+import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
@@ -67,7 +69,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        ex.setInMessage(msgCtx);
 	        msgCtx.setContent(SOAPMessage.class, message);
 	        List<?> results = new ArrayList<Object>();
-	        msgCtx.put(org.apache.ws.security.handler.WSHandlerConstants.RECV_RESULTS, results);
+	        msgCtx.put(WSHandlerConstants.RECV_RESULTS, results);
 	        setOutgoingProperties(wssContext,msgCtx);
 	        
 	        
@@ -95,9 +97,9 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			}
 			
 			// L'if scopre l'eventuale motivo preciso riguardo al fallimento della cifratura/firma.
-			if(Utilities.existsInnerException(e, org.apache.ws.security.WSSecurityException.class)){
+			if(Utilities.existsInnerException(e, WSSecurityException.class)){
 				Throwable t = Utilities.getLastInnerException(e);
-				if(t instanceof org.apache.ws.security.WSSecurityException){
+				if(t instanceof WSSecurityException){
 					messaggio = messaggio + " ; " + t.getMessage();
 				}
 			}

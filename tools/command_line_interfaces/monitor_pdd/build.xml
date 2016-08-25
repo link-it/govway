@@ -75,11 +75,11 @@
 		<pathelement path="${openspcoop2.lib}/log/log4j-1.2.16.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/soap.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/uddi4j-2.0.5.jar"/>
-		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.4.4.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.5.6.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/activation-1.1.1.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-logging-1.2.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-discovery-0.5.jar"/>
-		<pathelement path="${openspcoop2.lib}/shared/wsdl4j-1.6.2.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/wsdl4j-1.6.3.jar"/>
 		<pathelement path="${openspcoop2.lib}/stub/cxf/*"/>
 		<fileset dir="${openspcoop2.dist}" includes="**/*.jar"/>
 		<pathelement path="${jdbc_lib}"/>
@@ -145,8 +145,9 @@
 		</if>
 		<antcall target="compile_api_openspcoop2">
 			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
-			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="monitor-cli"/>
-			<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api"/>
+			<param name="compile_src_openspcoop2.API_NAME" value="monitor-cli"/>
+			<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 			<param name="src" value="${src_monitor_cli}"/>
 		</antcall>
 			

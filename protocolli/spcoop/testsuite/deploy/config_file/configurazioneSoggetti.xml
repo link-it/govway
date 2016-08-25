@@ -2103,6 +2103,34 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressingSAAJ" />
         </porta-delegata>
+
+	<!-- Profilo OneWay -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneOnewayHTTPCORE" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneHTTPCORE" />
+        </porta-delegata>
+        
+        <!-- Profilo Sincrono -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneSincronaHTTPCORE" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneHTTPCORE" />
+        </porta-delegata>
+        
+        <!-- Profilo OneWay (con WSAddressing) -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingHTTPCORE" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap,wsa">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
+        </porta-delegata>
+        
+        <!-- Profilo Sincrono (con WSAddressing) -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingHTTPCORE" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap,wsa">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
+        </porta-delegata>
         
         <!-- URL Based -->
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneURLBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
@@ -2746,6 +2774,21 @@
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="saaj"/>
+        </porta-delegata>
+
+
+
+
+        <!-- Connettore httpCore -->
+        <porta-delegata gestione-manifest="abilitato" nome="HTTPCOREOneway" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="httpCore"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="HTTPCORESincrono" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="httpCore"/>
         </porta-delegata>
         
         
@@ -4965,6 +5008,34 @@
             <azione nome="testIntegrazioneWithWSAddressingSAAJ" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingSAAJ" /> 
         </porta-applicativa>
+
+	<!-- Profilo OneWay -->
+        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOnewayHTTPCORE" integrazione="trasporto,urlBased,soap">
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneHTTPCORE" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneHTTPCORE" /> 
+        </porta-applicativa>
+        
+        <!-- Profilo Sincrono -->
+        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaHTTPCORE" integrazione="trasporto,urlBased,soap">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneHTTPCORE" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneHTTPCORE" /> 
+        </porta-applicativa>
+        
+        <!-- Profilo OneWay (WSAddressing) -->
+        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingHTTPCORE" integrazione="trasporto,urlBased,soap,wsa">
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" /> 
+        </porta-applicativa>
+        
+        <!-- Profilo Sincrono  (WSAddressing) -->
+        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingHTTPCORE" integrazione="trasporto,urlBased,soap,wsa">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" /> 
+        </porta-applicativa>
         
         <!-- Test Integrazione PA -->
         <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedPortaApplicativa" integrazione="trasporto,urlBased,soap">
@@ -5359,6 +5430,21 @@
             <azione nome="saaj"/>
             <servizio-applicativo nome="SAAJ" />
         </porta-applicativa>
+
+
+        <!-- HTTPCORE -->
+        <porta-applicativa gestione-manifest="abilitato" nome="HTTPCOREOneway">
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="httpCore"/>
+            <servizio-applicativo nome="HTTPCORE" />
+        </porta-applicativa>
+
+        <!-- Profilo Sincrono -->
+        <porta-applicativa gestione-manifest="abilitato" nome="HTTPCORESincrono" >
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="httpCore"/>
+            <servizio-applicativo nome="HTTPCORE" />
+        </porta-applicativa>
         
         
         
@@ -5504,6 +5590,20 @@
         <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingSAAJ" > 
             <invocazione-servizio>
                 <connettore tipo="saaj" nome="testSuiteOpenSPCoop">
+                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/server_checkInfoIntegrazione?checkWSA=true&#38;checkUserAgent=false"/>
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+	<servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneHTTPCORE" > 
+            <invocazione-servizio>
+                <connettore tipo="httpcore" nome="testSuiteOpenSPCoop">
+                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/server_checkInfoIntegrazione?checkUserAgent=false"/>
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" > 
+            <invocazione-servizio>
+                <connettore tipo="httpcore" nome="testSuiteOpenSPCoop">
                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/server_checkInfoIntegrazione?checkWSA=true&#38;checkUserAgent=false"/>
                 </connettore>
             </invocazione-servizio>  
@@ -5856,6 +5956,16 @@
                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/server" />
                 </connettore>
             </invocazione-servizio>  
+        </servizio-applicativo>
+
+
+        <!-- ConnettoreHTTPCORE -->
+        <servizio-applicativo nome="HTTPCORE" >
+            <invocazione-servizio>
+                <connettore tipo="httpcore" nome="httpcore">
+                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/server" />
+                </connettore>
+            </invocazione-servizio>
         </servizio-applicativo>
         
         

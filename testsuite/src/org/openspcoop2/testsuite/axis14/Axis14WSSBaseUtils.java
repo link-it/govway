@@ -103,7 +103,7 @@ public class Axis14WSSBaseUtils {
     			wsuIdAllocator = config.getIdAllocator(); // Default di wss4j
     		}
     		else{
-    			wsuIdAllocator = new org.openspcoop2.security.message.WsuIdAllocator(prefixWsuIdParam);
+    			wsuIdAllocator = new Axis14WsuIdAllocator(prefixWsuIdParam);
     			config.setIdAllocator(wsuIdAllocator);
     		}
     		log.info("WsuIdAllocator="+config.getIdAllocator().getClass().getName());

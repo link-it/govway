@@ -25,7 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.ws.security.WSSecurityEngineResult;
+import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.apache.wss4j.dom.handler.WSHandlerResult;
 
 /**
  * WSSUtilities
@@ -41,8 +42,8 @@ public class WSSUtilities {
 			Iterator<?> it = results.iterator();
 			while (it.hasNext()) {
 				Object object = it.next();
-				if(object instanceof org.apache.ws.security.handler.WSHandlerResult){
-					org.apache.ws.security.handler.WSHandlerResult wsResult = (org.apache.ws.security.handler.WSHandlerResult) object;
+				if(object instanceof WSHandlerResult){
+					WSHandlerResult wsResult = (WSHandlerResult) object;
 					log.debug("Actor ["+wsResult.getActor()+"]");
 					List<WSSecurityEngineResult> wsResultList =  wsResult.getResults();
 					if(wsResultList!=null){

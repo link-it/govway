@@ -32,7 +32,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.log4j.Logger;
-import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.wss4j.common.ConfigurationConstants;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -178,12 +178,12 @@ public abstract class MessageSecurityContext{
 				String value = (String) securityProperties.get(key);
 				//System.out.println(key + " -> " + value );
 				// check actor
-				if(WSHandlerConstants.ACTOR.equals(key)){
+				if(ConfigurationConstants.ACTOR.equals(key)){
 					this.actor = value;
 				}
 				
 				// Check Fix Bug#18 Test-1
-				if(WSHandlerConstants.MUST_UNDERSTAND.equals(key)){
+				if(ConfigurationConstants.MUST_UNDERSTAND.equals(key)){
 					if("true".equals(value)){
 						mustUnderstandTrue = true;
 					}

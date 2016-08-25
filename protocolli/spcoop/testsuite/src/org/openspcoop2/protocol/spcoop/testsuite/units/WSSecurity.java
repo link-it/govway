@@ -494,7 +494,7 @@ public class WSSecurity {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Generatosi errore durante il processamento Message-Security(Receiver): Element with'Id' attribute value"); // Element with'Id' attribute value (#ED-21) not found [EncryptSearch]?
+		err.setMsgErrore("Generatosi errore durante il processamento Message-Security(Receiver): Element with 'Id' attribute value"); // Element with 'Id' attribute value (#ED-21) not found [EncryptSearch]?
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
 	}
@@ -563,6 +563,14 @@ public class WSSecurity {
 		err2.setIntervalloSuperiore(dataFineTest);
 		err2.setMsgErrore("Generatosi errore durante il processamento Message-Security(Receiver): The signature or decryption was invalid");
 		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
+		ErroreAttesoOpenSPCoopLogCore err3 = new ErroreAttesoOpenSPCoopLogCore();
+		err3.setIntervalloInferiore(dataInizioTest);
+		err3.setIntervalloSuperiore(dataFineTest);
+		err3.setMsgErrore("A security error was encountered when verifying the message");
+		this.erroriAttesiOpenSPCoopCore.add(err3);
+		
+		
 	}
 	
 	

@@ -23,6 +23,8 @@
 
 package org.openspcoop2.testsuite.server;
 
+import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -32,8 +34,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseProperties;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.DataContentHandlerManager;
-
 
 
 /**
@@ -88,6 +90,12 @@ public class OpenSPCoop2TestsuiteStartup implements ServletContextListener {
 			DataContentHandlerManager dchManager = new DataContentHandlerManager(this.log);
 			
 			dchManager.initMailcap();	
+		}
+		
+		try{
+			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), this.log);
+		}catch(Exception e){
+			this.log.error("Inizializzazione [DateManager] failed",e);
 		}
 
 	}

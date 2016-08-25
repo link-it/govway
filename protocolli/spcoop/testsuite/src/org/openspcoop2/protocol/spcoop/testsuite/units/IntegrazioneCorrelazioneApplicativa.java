@@ -117,18 +117,15 @@ public class IntegrazioneCorrelazioneApplicativa {
 	private static final String MSG_CORRELAZIONE = "Il contenuto applicativo della richiesta, con identificativo applicativo [@IDAPPLICATIVO@], è già stato precedentemente correlato ad una busta con identificativo @IDEGOV@";
 	
 	private void checkHttpRisposta(Properties risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
-		Integrazione integrazione = new Integrazione();
-		integrazione.checkHttpRisposta(risposta, tipoServizio, servizio, azione, idEGov);
+		Integrazione.checkHttpRisposta(this.collaborazioneSPCoopBase,risposta, tipoServizio, servizio, azione, idEGov);
 	}
 	
 	private void checkMessaggioRisposta(Message risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
-		Integrazione integrazione = new Integrazione();
-		integrazione.checkMessaggioRisposta(risposta, tipoServizio, servizio, azione, idEGov);
+		Integrazione.checkMessaggioRisposta(this.collaborazioneSPCoopBase,risposta, tipoServizio, servizio, azione, idEGov);
 	}
 	
 	private void checkMessaggioRispostaWSAddressing(Message risposta,String tipoServizio,String nomeServizio,String azione,String idEGov)throws Exception{
-		Integrazione integrazione = new Integrazione();
-		integrazione.checkMessaggioRispostaWSAddressing(risposta, tipoServizio, nomeServizio, azione, idEGov);
+		Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,risposta, tipoServizio, nomeServizio, azione, idEGov);
 	}
 	
 	

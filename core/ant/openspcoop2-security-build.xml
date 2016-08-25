@@ -119,8 +119,9 @@
 				<!-- API -->
 				<antcall target="compile_api_openspcoop2">
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>
-					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api/security"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="security"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 				</antcall>
 
 			</then>

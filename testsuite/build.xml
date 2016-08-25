@@ -199,20 +199,5 @@
 	<!-- alias -->
 	<target name="build" depends="build_testsuite"/>
 	<target name="clean" depends="clean_testsuite"/>
-	
-	<!-- Selenium Server -->
-	<target name="start_selenium_server">
-		<java jar="${required_lib}/testsuite/selenium-server-1.0.1.jar" fork="true">
-			<!-- Parametri da utilizzare nel caso si utilizza un server proxy  
-				<jvmarg value="-Dhttp.proxyHost=proxy"/>
-				<jvmarg value="-Dhttp.proxyPort=8080"/>
-			-->
-
-			<!-- Parametri per il selenium server-->
-			<arg value="-port"/>
-			<arg value="6666"/>
-			<arg value="-avoidProxy"/>
-		</java>
-	</target>
 
 </project>

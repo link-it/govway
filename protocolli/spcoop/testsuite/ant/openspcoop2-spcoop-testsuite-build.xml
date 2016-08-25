@@ -73,8 +73,9 @@
 				</if>
 				<antcall target="compile_api_openspcoop2">
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
-					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_testunits}/api"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="spcoop-testsuite"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_testunits}/api"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="src" value="${src_testunits}"/>
 					<param name="doc" value="${doc_testunits}"/>
 					<param name="dist" value="${dist_testunits}"/>

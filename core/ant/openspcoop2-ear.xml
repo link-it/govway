@@ -18,53 +18,78 @@
 	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
 		
 		<var name="tmp_prefix" value="lib" />
-		<var name="tmp" value="${tmp_prefix}/addressing-1.0.jar"/>
+		<var name="tmp" value="${tmp_prefix}/addressing-1.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcel-6.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-152.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-152.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-155.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-155.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.10.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-httpclient-3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.5.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-2.7.4.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-annotation_1.0_spec-1.1.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-jaxws_2.2_spec-1.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/geronimo-ws-metadata_2.0_spec-1.1.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.2.5.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.2.5.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.1.7.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.1.7.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.1.7.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.2.11.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.2.11.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.2.11.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.2.11.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.2.11.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jcs-1.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jibx-run-1.2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.0.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-2.5.1-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/openws-1.4.2-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.0.3.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-profile-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-profile-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-saml-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-saml-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-soap-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-soap-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-storage-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-storage-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-saml-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-saml-impl-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-api-3.2.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-impl-3.2.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.3.25.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.7.7.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/soap.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.aop-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.asm-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.beans-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.context-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.core-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.expression-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.transaction-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/org.springframework.web-3.1.1.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-3.1.0.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-4.3.2.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-4.1.3.RELEASE.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xercesImpl-2.9.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xercesImpl-2.11.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.0.3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-1.5.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.2.1.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-2.0.7.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.1.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xpp3-1.2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wsdl4j-1.6.2.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-1.6.10.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-asl-4.2.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wsdl4j-1.6.3.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-bindings-2.1.7.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-integration-2.1.7.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-policy-2.1.7.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-common-2.1.7.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-2.1.7.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.1.7.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.1.7.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-asl-4.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-api-1.6.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-jdk14-1.6.2.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
@@ -533,7 +558,7 @@
 				<equals arg1="${as}" arg2="jboss6"/>
 			</or>
 			<then>
-				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.2.5.1.jar"/>
+				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.2.11.jar"/>
 			</then>
 		</if>
 		<!-- jaxp_ri -->
@@ -711,87 +736,93 @@
 				<include name="OpenSPCoop2Threads.war" />
 			</zipfileset>
 			<!-- Librerie di OpenSPCoop2 -->
-			<zipfileset dir="${dist}" prefix="lib">
+			<zipfileset prefix="lib" dir="${dist}">
 				<include name="openspcoop2_*.jar" />
 			</zipfileset>
 			<!-- Stub di OpenSPCoop2 -->
-			<zipfileset dir="${required_lib}" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}">
 				<include name="openspcoop2_management_registro_search_stub.jar" />
 			</zipfileset>
 			<!-- Librerie richieste a run-time da OpenSPCoop (Shared Lib) -->
-			<zipfileset dir="${required_lib}/commons" prefix="lib" >
+			<zipfileset prefix="lib" dir="${required_lib}/commons">
 				<include name="commons-codec-1.10.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-httpclient-3.1.jar"/>
 				<include name="commons-io-2.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.5.jar"/>
 				<include name="commons-beanutils-1.9.2.jar"/> <!--jmx mini console -->
 			</zipfileset>
-			<zipfileset dir="${required_lib}/jibx" prefix="lib" >
+			<zipfileset prefix="lib" dir="${required_lib}/jibx">
 				<include name="bcel-6.0.jar"/>
 				<include name="jibx-run-1.2.6.jar"/>
 				<include name="xpp3-1.2.6.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/security" prefix="lib" >
-				<include name="bcprov-ext-jdk15on-152.jar"/>
-				<include name="bcpkix-jdk15on-152.jar"/>
-				<include name="neethi-3.0.2.jar"/>
-				<include name="opensaml-2.5.1-1.jar"/>
-				<include name="openws-1.4.2-1.jar"/>
-				<include name="wss4j-1.6.10.jar"/>
-				<include name="xmlsec-1.5.4.jar"/>
+			<zipfileset prefix="lib" dir="${required_lib}/security">
+				<include name="bcprov-ext-jdk15on-155.jar"/>
+				<include name="bcpkix-jdk15on-155.jar"/>
+				<include name="neethi-3.0.3.jar"/>
+				<include name="xmlsec-2.0.7.jar"/>
+				<include name="cryptacular-1.1.1.jar"/>
+				<include name="jasypt-1.9.2.jar"/>
 				<include name="${com_sun_xml_security_jar}"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/shared" prefix="lib" >
-				<include name="addressing-1.0.jar"/>
+			<zipfileset prefix="lib" dir="${required_lib}/wss4j">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/opensaml">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/shared">
+				<include name="addressing-1.1.jar"/>
 				<include name="jcs-1.3.jar"/>
 				<include name="soap.jar"/>
-				<include name="wsdl4j-1.6.2.jar"/>
+				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>				
-				<include name="velocity-1.6.4.jar"/>
+				<include name="velocity-1.7.jar"/>
 				<include name="urlrewritefilter-4.0.3.jar"/>
 				<include name="${concurrent_jar}"/>
 				<include name="json-lib-2.4-jdk15.jar" /> <!--jmx mini console -->
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
-				<include name="xom-1.2.7.jar" /> <!--jmx mini console -->
+				<include name="xom-1.2.10.jar" /> <!--jmx mini console -->
 			</zipfileset>
-			<zipfileset dir="${required_lib}/log" prefix="lib" >
+			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.6.2.jar"/>
 				<include name="slf4j-jdk14-1.6.2.jar"/>
 				<include name="${log4j_jar}"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/jminix" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/jminix">
 				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/cxf" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/cxf">
 				<include name="*.jar"/>
+				<exclude name="cxf-tools-*.jar"/>
 				<exclude name="geronimo-servlet_3.0_spec-1.0.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/saaj" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/saaj">
 				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/jax" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/jax">
 				<include name="jaxb*.jar"/>
+				<include name="jaxws-api-2.2.11.jar"/>
 				<exclude name="${jaxb_xjc_jar}"/>
 				<include name="${jaxp_ri_jar}"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/spring" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/spring">
 				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/spring-security" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/spring-security">
 				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/soapbox" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/soapbox">
 				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/httpcore" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/httpcore">
 				<include name="*.jar"/>
 			</zipfileset>
-			<zipfileset dir="${required_lib}/stub/cxf" prefix="lib">
+			<zipfileset prefix="lib" dir="${required_lib}/stub/cxf">
 				<include name="openspcoop2_registrySearchStub_cxf.jar"/>
 			</zipfileset>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
@@ -816,7 +847,7 @@
 				<include name="threads.properties" />
 			</zipfileset>
 			<!-- Plugins -->
-			<zipfileset dir="${plugins}" prefix="lib">
+			<zipfileset prefix="lib" dir="${plugins}">
 				<include name="**/*.jar"/>
 			</zipfileset>
 			<zipfileset dir="${plugins}" prefix="properties">

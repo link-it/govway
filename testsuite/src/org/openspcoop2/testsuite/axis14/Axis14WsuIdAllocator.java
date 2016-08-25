@@ -20,41 +20,41 @@
  */
 
 
-package org.openspcoop2.security.message;
+package org.openspcoop2.testsuite.axis14;
 
-import org.apache.xml.security.stax.impl.util.IDGenerator;
-
+import org.apache.ws.security.util.UUIDGenerator;
 
 /**
- * WsuIdAllocator 
+ * Axis14WsuIdAllocator 
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 11423 $, $Date: 2016-01-25 16:58:18 +0100 (Mon, 25 Jan 2016) $
  */
-public class WsuIdAllocator implements org.apache.wss4j.dom.WsuIdAllocator {
+public class Axis14WsuIdAllocator implements org.apache.ws.security.WsuIdAllocator {
 	
 	private String prefixComponent;
-	public WsuIdAllocator(String prefix){
+	public Axis14WsuIdAllocator(String prefix){
 		this.prefixComponent=prefix;
 	}
-	    
+	
+	int i;
+    private synchronized String next() {
+        return Integer.toString(++this.i);
+    }
     @Override
 	public String createId(String prefix, Object o) {
         if (prefix == null) {
-            return IDGenerator.generateID(this.prefixComponent);
+            return this.prefixComponent+next();
         }
-
-        return IDGenerator.generateID(this.prefixComponent+prefix);
+        return this.prefixComponent+prefix + next();
     }
 
     @Override
 	public String createSecureId(String prefix, Object o) {
-    	if (prefix == null) {
-            return IDGenerator.generateID(this.prefixComponent);
+        if (prefix == null) {
+            return this.prefixComponent+UUIDGenerator.getUUID();
         }
-
-        return IDGenerator.generateID(this.prefixComponent+prefix);
+        return this.prefixComponent+prefix + UUIDGenerator.getUUID();
     }
-
 }

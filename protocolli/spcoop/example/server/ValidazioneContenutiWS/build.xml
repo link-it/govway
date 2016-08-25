@@ -16,7 +16,7 @@
 			<exclude name="**/saaj/*"/>
 			<exclude name="**/jax/*"/>
 		</fileset>
-		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.2.6.jar" />
+		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.2.11.jar" />
 	</path>
 	
 	<!-- estensione di ant (if .... ) -->
@@ -192,7 +192,7 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/shared">
-				<include name="wsdl4j-1.6.2.jar"/>
+				<include name="wsdl4j-1.6.3.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/log">
 				<include name="${log4j_jar}"/>

@@ -161,6 +161,8 @@ a. Devono essere abilitate le seguenti opzioni nel file openspcoop2.properties:
 	.org.openspcoop2.pdd.repository.tipoDatabase deve essere impostato
 b. file wsdl/xsd (presenti in protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/wsdl) dell'applicazione da installare in /etc/openspcoop2
 - 'Integrazione' vengono testate le funzionalita di integrazione: header soap, header di trasporto, url, identificazione content/url/input based.
+- 'IntegrazioneConnettoreHTTPCORE': vengono testate le funzionalita di integrazione  header di trasporto, url, header soap e header wsa con connettore httpcore
+- 'IntegrazioneConnettoreSAAJ': vengono testate le funzionalita di integrazione  header di trasporto, url, header soap e header wsa con connettore saaj
 - 'IntegrazioneCorrelazioneApplicativa' viene verificata la funzionalita' di integrazione riguardante la correlazione applicativa
 - 'RichiesteApplicativeScorrette' vengono generate richieste applicative scorrette che la Porta di Dominio deve riconoscere e gestire
 

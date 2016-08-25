@@ -36,16 +36,14 @@ import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
-import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -122,35 +120,11 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 	private OpenSPCoop2Properties openspcoopProperties = null;
 	
 	
-	private static PoolingClientConnectionManager cm = null;
+	private static PoolingHttpClientConnectionManager cm = null;
 	private static synchronized void initialize(){
 		if(ConnettoreHTTPCORE.cm==null){
-			
-			// LEGGERE ARTICOLO http://restclient-tool.eclipselabs.org.codespot.com/svn-history/r14/trunk/standalone/src/code/google/restclient/core/Hitter.java
-			// PER THREAD SAFE
-			
-			//System.out.println("INIT POOL");
-			
-			/*2.8.4. Pooling connection manager
-	
-			PoolingClientConnectionManager is a more complex implementation that manages a pool of client connections and 
-			is able to service connection requests from multiple execution threads. Connections are pooled on a per route basis. 
-			A request for a route for which the manager already has a persistent connection available in the pool will be 
-			serviced by leasing a connection from the pool rather than creating a brand new connection.
-	
-			PoolingClientConnectionManager maintains a maximum limit of connections on a per route basis and in total. 
-			Per default this implementation will create no more than 2 concurrent connections per given route and 
-			no more 20 connections in total. 
-			For many real-world applications these limits may prove too constraining, 
-			especially if they use HTTP as a transport protocol for their services. 
-			Connection limits can be adjusted using the appropriate HTTP parameters.
-			 */
-			
-			SchemeRegistry schemeRegistry = new SchemeRegistry();
-			schemeRegistry.register(
-			         new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-			
-			ConnettoreHTTPCORE.cm = new PoolingClientConnectionManager(schemeRegistry);
+						
+			ConnettoreHTTPCORE.cm = new PoolingHttpClientConnectionManager();
 			// Increase max total connection to 200
 			ConnettoreHTTPCORE.cm.setMaxTotal(10000);
 			// Increase default max connection per route to 20
@@ -162,11 +136,18 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 		}
 	}
-	private static HttpClient getHttpClient(){
+	private static HttpClient getHttpClient(ConnectionKeepAliveStrategy keepAliveStrategy){
 		// Caso senza pool
-		return new DefaultHttpClient();
+		
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		
+		if(keepAliveStrategy!=null){
+			httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
+		}
+		
+		return httpClientBuilder.build();
 	}
-	private static HttpClient getHttpClientFromPool(){
+	private static HttpClient getHttpClientFromPool(ConnectionKeepAliveStrategy keepAliveStrategy){
 		// Caso con pool
 		if(ConnettoreHTTPCORE.cm==null){
 			ConnettoreHTTPCORE.initialize();
@@ -178,7 +159,15 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 		ConnettoreHTTPCORE.cm.closeIdleConnections(30, TimeUnit.SECONDS);
 		//System.out.println("DOPO CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
 		//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
-		DefaultHttpClient http = new DefaultHttpClient(ConnettoreHTTPCORE.cm);
+		
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		httpClientBuilder.setConnectionManager(ConnettoreHTTPCORE.cm);
+		if(keepAliveStrategy!=null){
+			httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
+		}
+		
+		HttpClient http = httpClientBuilder.build();
+		
 		//System.out.println("PRESA LA CONNESSIONE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
 		//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
 		//System.out.println("-----GET CONNECTION [END] ----");
@@ -258,55 +247,22 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			URL url = new URL( this.location );	
 			
 			
+			// Keep-alive
+			ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategyCustom();
+			
+			
 			// Creazione Connessione
 			if(this.debug)
 				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
 			if(ConnettoreHTTPCORE.USE_POOL){
-				this.httpClient = ConnettoreHTTPCORE.getHttpClientFromPool();
+				this.httpClient = ConnettoreHTTPCORE.getHttpClientFromPool(keepAliveStrategy);
 			}
 			else{
-				this.httpClient = ConnettoreHTTPCORE.getHttpClient();
+				this.httpClient = ConnettoreHTTPCORE.getHttpClient(keepAliveStrategy);
 			}
 			HttpPost httppost = new HttpPost(url.toString());
+			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 			
-			
-			
-			// Keep-alive
-			((DefaultHttpClient) this.httpClient).setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
-
-			    @Override
-				public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-			        // Honor 'keep-alive' header
-			        HeaderElementIterator it = new BasicHeaderElementIterator(
-			                response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-			        while (it.hasNext()) {
-			            HeaderElement he = it.nextElement();
-			            String param = he.getName(); 
-			            String value = he.getValue();
-			            if (value != null && param.equalsIgnoreCase("timeout")) {
-			                try {
-			                	//System.out.println("RETURN HEADER ["+ (Long.parseLong(value) * 1000)+"]");
-			                    return Long.parseLong(value) * 1000;
-			                } catch(NumberFormatException ignore) {
-			                }
-			            }
-			        }
-//			        HttpHost target = (HttpHost) context.getAttribute(
-//			                ExecutionContext.HTTP_TARGET_HOST);
-//			        if ("www.naughty-server.com".equalsIgnoreCase(target.getHostName())) {
-//			            // Keep alive for 5 seconds only
-//			            return 5 * 1000;
-//			        } else {
-//			            // otherwise keep alive for 30 seconds
-//			            return 30 * 1000;
-//			        }
-			        // otherwise keep alive for 2 minutes
-			        //System.out.println("RETURN 2 minuti");
-		            return 2 * 60 * 1000;
-			    }
-			    
-			});
-
 			
 			
 			// Alcune implementazioni richiedono di aggiornare il Content-Type
@@ -354,7 +310,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			}
 			HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
 			httppost.setEntity(httpEntity);
-			
+
 			
 			
 			// Impostazione transfer-length
@@ -408,98 +364,11 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			}
 			if(this.debug)
 				this.logger.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]",false);
-			this.httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
-			this.httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, readConnectionTimeout);
-			//this.httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_LINGER, 0);
-			//this.httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_KEEPALIVE, true);
-			//this.httpConn.setReadTimeout(readConnectionTimeout);
-			//this.httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 3000);
-            //this.httpClient.getParams().setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024);
-            //this.httpClient.getParams().setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true);
-		
-			// 2.1. Connection parameters
-			//These are parameters that can influence connection operations:
-		
-			//  * CoreConnectionPNames.SO_KEEPALIVE
-			// When the keepalive option is set for a TCP socket and no data has been exchanged across the socket in 
-			// Beither direction for 2 hours (NOTE: the actual value is implementation dependent), 
-			// TCP automatically sends a keepalive probe to the peer. 
-			// This probe is a TCP segment to which the peer must respond. 
-			// One of three responses is expected: 
-			// 1. The peer responds with the expected ACK. 
-			// 		The application is not notified (since everything is OK). 
-			// 		TCP will send another probe following another 2 hours of inactivity. 
-			// 2. The peer responds with an RST, which tells the local TCP that the peer host has crashed and rebooted. 
-			//		The socket is closed. 
-			// 3. There is no response from the peer. The socket is closed. 
-			// 		The purpose of this option is to detect if the peer host crashes. Valid only for TCP socket: SocketImpl 
+			requestConfigBuilder.setConnectionRequestTimeout(connectionTimeout);
+			requestConfigBuilder.setConnectTimeout(connectionTimeout);
+			requestConfigBuilder.setSocketTimeout(readConnectionTimeout);
 			
-			//  * CoreConnectionPNames.SO_TIMEOUT='http.socket.timeout':  
-			//  	defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, 
-			//		put differently, a maximum period inactivity between two consecutive data packets). 
-			//		A timeout value of zero is interpreted as an infinite timeout. 
-			//		This parameter expects a value of type java.lang.Integer. 
-			//		If this parameter is not set, read operations will not time out (infinite timeout).
-			    
-			// * CoreConnectionPNames.TCP_NODELAY='http.tcp.nodelay':  
-			//		determines whether Nagle's algorithm is to be used. 
-			//		Nagle's algorithm tries to conserve bandwidth by minimizing the number of segments that are sent. 
-			//		When applications wish to decrease network latency and increase performance, 
-			//		they can disable Nagle's algorithm (that is enable TCP_NODELAY. 
-			//		Data will be sent earlier, at the cost of an increase in bandwidth consumption. 
-			//		This parameter expects a value of type java.lang.Boolean. 
-			//		If this parameter is not set, TCP_NODELAY will be enabled (no delay).
-			 
-			// * CoreConnectionPNames.SOCKET_BUFFER_SIZE='http.socket.buffer-size':  
-			//		determines the size of the internal socket buffer used to buffer data while receiving / transmitting HTTP messages. 
-			//		This parameter expects a value of type java.lang.Integer. 
-			//		If this parameter is not set, HttpClient will allocate 8192 byte socket buffers.
-			
-			// * CoreConnectionPNames.SO_LINGER='http.socket.linger':  
-			//		sets SO_LINGER with the specified linger time in seconds. 
-			//		The maximum timeout value is platform specific. Value 0 implies that the option is disabled. 
-			//		Value -1 implies that the JRE default is used. The setting only affects the socket close operation. 
-			//		If this parameter is not set, the value -1 (JRE default) will be assumed.
-			
-			// * CoreConnectionPNames.CONNECTION_TIMEOUT='http.connection.timeout':  
-			//		determines the timeout in milliseconds until a connection is established. 
-			//		A timeout value of zero is interpreted as an infinite timeout. 
-			//		This parameter expects a value of type java.lang.Integer. 
-			//		If this parameter is not set, connect operations will not time out (infinite timeout).
-			  
-			// * CoreConnectionPNames.STALE_CONNECTION_CHECK='http.connection.stalecheck':  
-			//		determines whether stale connection check is to be used. 
-			//		Disabling stale connection check may result in a noticeable performance improvement 
-			//		(the check can cause up to 30 millisecond overhead per request) at the risk of getting an I/O error
-			//		when executing a request over a connection that has been closed at the server side. 
-			//		This parameter expects a value of type java.lang.Boolean. 
-			//		For performance critical operations the check should be disabled. 
-			//		If this parameter is not set, the stale connection check will be performed before each request execution.
-			  
-			// * CoreConnectionPNames.MAX_LINE_LENGTH='http.connection.max-line-length': 
-			//		determines the maximum line length limit. If set to a positive value, 
-			//		any HTTP line exceeding this limit will cause an java.io.IOException. 
-			//		A negative or zero value will effectively disable the check. 
-			//		This parameter expects a value of type java.lang.Integer. 
-			//		If this parameter is not set, no limit will be enforced.
-			   
-			// * CoreConnectionPNames.MAX_HEADER_COUNT='http.connection.max-header-count':  
-			//		determines the maximum HTTP header count allowed. 
-			//		If set to a positive value, the number of HTTP headers received from the data stream 
-			//		exceeding this limit will cause an java.io.IOException. 
-			//		A negative or zero value will effectively disable the check. 
-			//		This parameter expects a value of type java.lang.Integer. 
-			//		If this parameter is not set, no limit will be enforced.
-			    
-			//	* ConnConnectionPNames.MAX_STATUS_LINE_GARBAGE='http.connection.max-status-line-garbage':  
-			//		defines the maximum number of ignorable lines before we expect a HTTP response's status line. 
-			//		With HTTP/1.1 persistent connections, the problem arises that broken scripts could return a wrong Content-Length 
-			//		(there are more bytes sent than specified). Unfortunately, in some cases, 
-			//		this cannot be detected after the bad response, but only before the next one. 
-			//		So HttpClient must be able to skip those surplus lines this way. 
-			//		This parameter expects a value of type java.lang.Integer. 0 disallows all garbage/empty lines before the status line. 
-			//		Use java.lang.Integer#MAX_VALUE for unlimited number. 
-			//		If this parameter is not set, unlimited number will be assumed.
+
 
 			
 			
@@ -599,6 +468,11 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 				}
 			}
 			
+			
+			
+			
+			// Imposto Configurazione
+			httppost.setConfig(requestConfigBuilder.build());
 			
 			
 			
@@ -1076,4 +950,41 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
     	}
     	
     }
+}
+
+class ConnectionKeepAliveStrategyCustom implements ConnectionKeepAliveStrategy{
+
+	@Override
+	public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+		
+		 // Honor 'keep-alive' header
+        HeaderElementIterator it = new BasicHeaderElementIterator(
+                response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+        while (it.hasNext()) {
+            HeaderElement he = it.nextElement();
+            String param = he.getName(); 
+            String value = he.getValue();
+            if (value != null && param.equalsIgnoreCase("timeout")) {
+                try {
+                	//System.out.println("RETURN HEADER ["+ (Long.parseLong(value) * 1000)+"]");
+                    return Long.parseLong(value) * 1000;
+                } catch(NumberFormatException ignore) {
+                }
+            }
+        }
+//        HttpHost target = (HttpHost) context.getAttribute(
+//                ExecutionContext.HTTP_TARGET_HOST);
+//        if ("www.naughty-server.com".equalsIgnoreCase(target.getHostName())) {
+//            // Keep alive for 5 seconds only
+//            return 5 * 1000;
+//        } else {
+//            // otherwise keep alive for 30 seconds
+//            return 30 * 1000;
+//        }
+        // otherwise keep alive for 2 minutes
+        //System.out.println("RETURN 2 minuti");
+        return 2 * 60 * 1000;
+		
+	}
+	
 }

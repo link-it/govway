@@ -59,8 +59,8 @@
 		<fileset dir="${required_lib}/axis14" includes="axis-jaxrpc-1.4.jar"/>
 		<fileset dir="${required_lib}/axis14" includes="axis-saaj-1.4.jar"/>
 		<fileset dir="${required_lib}/log" includes="log4j-1.2.16.jar"/>
-		<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.2.jar"/>
-		<fileset dir="${required_lib}/shared" includes="xercesImpl-2.9.1.jar"/>
+		<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
+		<fileset dir="${required_lib}/shared" includes="xercesImpl-2.11.0.jar"/>
 		<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-logging-1.2.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-discovery-0.5.jar"/>

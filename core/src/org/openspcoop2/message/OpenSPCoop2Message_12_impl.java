@@ -44,14 +44,13 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.log4j.Logger;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSSecurityException;
-import org.apache.ws.security.util.WSSecurityUtil;
+import org.apache.wss4j.common.WSS4JConstants;
+import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.dom.util.WSSecurityUtil;
 import org.openspcoop2.message.mtom.MTOMUtilities;
 import org.openspcoop2.message.mtom.MtomXomPackageInfo;
 import org.openspcoop2.message.mtom.MtomXomReference;
@@ -119,14 +118,17 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 	
 	@Override
 	public String getAsString(Node ele, boolean consume){
-		String eletxt = org.apache.cxf.helpers.XMLUtils.toString(ele);
-		return eletxt.replaceFirst("^<\\?.*\\?>", "");
+		try {
+			return XMLUtils.getInstance().toString(ele,true);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} 
 	}
 	
 	@Override
 	public byte[] getAsByte(Node ele, boolean consume){
 		try {
-			return org.apache.cxf.helpers.XMLUtils.toString(new DOMSource(ele), null).getBytes();
+			return XMLUtils.getInstance().toByteArray(ele,true);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} 
@@ -316,10 +318,10 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
         //TODO verificare se actor==null && mustUnderstand==false?
         if(security!=null){
 		    // Prendo i riferimenti agli elementi cifrati
-		    Iterator<?> it = security.getChildElements(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+		    Iterator<?> it = security.getChildElements(new QName(WSS4JConstants.ENC_NS, WSS4JConstants.ENC_KEY_LN));
 		    if(it.hasNext()){ 
 		    	SOAPElement encryptedKey = (SOAPElement) it.next();
-		    	SOAPElement referenceList = (SOAPElement) encryptedKey.getChildElements(new QName(WSConstants.ENC_NS, WSConstants.REF_LIST_LN)).next();
+		    	SOAPElement referenceList = (SOAPElement) encryptedKey.getChildElements(new QName(WSS4JConstants.ENC_NS, WSS4JConstants.REF_LIST_LN)).next();
 		    	Vector<SOAPElement> referenceListElements = SoapUtils.getNotEmptyChildSOAPElement(referenceList);
 	        	for (int i = 0; i < referenceListElements.size(); i++) {
 	        		String referenceWithSharp = referenceListElements.get(i).getAttributeValue(new QName("URI"));
@@ -327,17 +329,17 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 		    		if(referenceWithSharp.startsWith("#")){
 			    		String reference = referenceWithSharp.substring(1);
 			    		// Vado a vedere se ' cifrato {Content} o {Element}
-			    		SOAPElement encryptedElement = (SOAPElement) WSSecurityUtil.findElementById(this.soapPartImpl.getEnvelope(), reference, true);
+			    		SOAPElement encryptedElement = (SOAPElement) org.apache.wss4j.common.util.XMLUtils.findElementById(this.soapPartImpl.getEnvelope(), reference, true);
 			    		if(encryptedElement==null){
-			    			throw new SOAPException("Element with'Id' attribute value ("+referenceWithSharp+") not found [EncryptSearch]?");
+			    			throw new SOAPException("Element with 'Id' attribute value ("+referenceWithSharp+") not found "+Costanti.FIND_ERROR_ENCRYPTED_REFERENCES);
 			    		}
 			    		
 		        		// Verifico se sto cifrando un attachment
-		        		QName qName = new QName(WSConstants.ENC_NS, "CipherData");
+		        		QName qName = new QName(WSS4JConstants.ENC_NS, "CipherData");
 		        		Iterator<?> childElements = encryptedElement.getChildElements(qName);
 		        		if(childElements!=null && childElements.hasNext()){
 		        			
-		        			QName qNameReference = new QName(WSConstants.ENC_NS, "CipherReference");
+		        			QName qNameReference = new QName(WSS4JConstants.ENC_NS, "CipherReference");
 			        		Iterator<?> childElementsReference = ((SOAPElement)childElements.next()).getChildElements(qNameReference);
 			        		if(childElementsReference!=null && childElementsReference.hasNext()){
 			        			
@@ -347,20 +349,20 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 			 	        			String referenceCID = referenceWithSharp.substring(4);
 			 		        		references.add(new AttachmentReference (AttachmentReference.TYPE_ENCRYPT_ATTACHMENT, referenceCID));
 			 	        		}else{
-				        			throw new SOAPException("Element 'CipherReference' with attribute 'cid' wrong");
+				        			throw new SOAPException("Element 'CipherReference' with attribute 'cid' wrong "+Costanti.FIND_ERROR_ENCRYPTED_REFERENCES);
 			        			}
 			        			
 			        		}else{
 			        			
 			        			// Elemento cifrato
-				        		if(encryptedElement.getAttributeNS(null, "Type").equals(WSConstants.ENC_NS + "Content"))
+				        		if(encryptedElement.getAttributeNS(null, "Type").equals(WSS4JConstants.ENC_NS + "Content"))
 				        			references.add(new ElementReference(encryptedElement.getParentElement(), ElementReference.TYPE_ENCRYPT_CONTENT, reference));
 				        		else
 				        			references.add(new ElementReference (encryptedElement.getParentElement(), ElementReference.TYPE_ENCRYPT_ELEMENT, reference));	
 			        		}
 		        		}
 		        		else{
-		        			throw new SOAPException("Element 'CipherData' not found");
+		        			throw new SOAPException("Element 'CipherData' not found "+Costanti.FIND_ERROR_ENCRYPTED_REFERENCES);
 		        		}
 			    		
 		    		} 
@@ -368,20 +370,20 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 		    }
 		    
 		    // Prendo i riferimenti agli elementi firmati
-		    it = security.getChildElements(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+		    it = security.getChildElements(new QName(WSS4JConstants.SIG_NS, WSS4JConstants.SIG_LN));
 		    if(it.hasNext()){ 
 		    	SOAPElement signature = (SOAPElement) it.next();
-		    	SOAPElement signatureInfo = (SOAPElement) signature.getChildElements(new QName(WSConstants.SIG_NS, "SignedInfo")).next();
-		    	Iterator<?> referenceIterator = signatureInfo.getChildElements(new QName(WSConstants.SIG_NS, "Reference"));
+		    	SOAPElement signatureInfo = (SOAPElement) signature.getChildElements(new QName(WSS4JConstants.SIG_NS, "SignedInfo")).next();
+		    	Iterator<?> referenceIterator = signatureInfo.getChildElements(new QName(WSS4JConstants.SIG_NS, "Reference"));
 		    	while (referenceIterator.hasNext()) {
 		    		String referenceWithSharp = ((SOAPElement) referenceIterator.next()).getAttributeValue(new QName("URI"));
 		    		// Il riferimento presenta un # prima dell'identificativo se e' un elemento o cid: se e' un attachment
 		    		if(referenceWithSharp.startsWith("#")){
 			    		String reference = referenceWithSharp.substring(1);
 			    		
-			    		SOAPElement signedElement = (SOAPElement) WSSecurityUtil.findElementById(this.soapPartImpl.getEnvelope(), reference, true);
+			    		SOAPElement signedElement = (SOAPElement) org.apache.wss4j.common.util.XMLUtils.findElementById(this.soapPartImpl.getEnvelope(), reference, true);
 			    		if(signedElement==null){
-			    			throw new SOAPException("Element with'Id' attribute value ("+referenceWithSharp+") not found [SignatureSearch]?");
+			    			throw new SOAPException("Element with 'Id' attribute value ("+referenceWithSharp+") not found "+Costanti.FIND_ERROR_SIGNATURE_REFERENCES);
 			    		}
 			   			references.add(new ElementReference (signedElement, ElementReference.TYPE_SIGNATURE, reference));
 		    		} else if(referenceWithSharp.startsWith("cid:")){
@@ -415,15 +417,15 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 				case ElementReference.TYPE_SIGNATURE:
 					// Devo vedere se altri hanno firmato l'elemento ed in tal caso lasciar fare l'id ed il namespace
 					found = false;
-					NodeList securities = this.getSOAPHeader().getElementsByTagNameNS(WSConstants.WSSE_NS, WSConstants.WSSE_LN);
+					NodeList securities = this.getSOAPHeader().getElementsByTagNameNS(WSS4JConstants.WSSE_NS, WSS4JConstants.WSSE_LN);
 					for(int s=0; s<securities.getLength(); s++){
 						security = (SOAPElement) securities.item(s);
 						// Prendo i riferimenti agli elementi firmati
-				        Iterator<?>  it = security.getChildElements(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+				        Iterator<?>  it = security.getChildElements(new QName(WSS4JConstants.SIG_NS, WSS4JConstants.SIG_LN));
 				        if(it.hasNext()){ 
 				        	SOAPElement signature = (SOAPElement) it.next();
-				        	SOAPElement signatureInfo = (SOAPElement) signature.getChildElements(new QName(WSConstants.SIG_NS, "SignedInfo")).next();
-				        	Iterator<?> referenceIterator = signatureInfo.getChildElements(new QName(WSConstants.SIG_NS, "Reference"));
+				        	SOAPElement signatureInfo = (SOAPElement) signature.getChildElements(new QName(WSS4JConstants.SIG_NS, "SignedInfo")).next();
+				        	Iterator<?> referenceIterator = signatureInfo.getChildElements(new QName(WSS4JConstants.SIG_NS, "Reference"));
 				        	while (referenceIterator.hasNext()) {
 				        		String referenceWithSharp = ((SOAPElement) referenceIterator.next()).getAttributeValue(new QName("URI"));
 				        		if(reference.getReference().equals(referenceWithSharp.substring(1))) {
@@ -434,7 +436,7 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 					}
 					if(!found) {
 						
-						String valoreRefSignature = elementToClean.getAttributeNS(WSConstants.WSU_NS, "Id");
+						String valoreRefSignature = elementToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
 						// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
 						//System.out.println("CHECK TYPE_SIGNATURE ["+valoreRefSignature+"] ["+reference.getReference()+"]");
 						boolean removeIdRefSignature = false;
@@ -443,14 +445,14 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 						}
 						
 						if(removeIdRefSignature){
-							elementToClean.removeAttributeNS(WSConstants.WSU_NS, "Id");
+							elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
 						}
 									
 						Iterator<?> prefixes = elementToClean.getNamespacePrefixes();
 						while(prefixes.hasNext()){
 							String prefix = (String) prefixes.next();
 							String namespace = elementToClean.getNamespaceURI(prefix);
-							if(namespace.equals(WSConstants.WSU_NS)) {
+							if(namespace.equals(WSS4JConstants.WSU_NS)) {
 								if(removeIdRefSignature){
 									elementToClean.removeNamespaceDeclaration(prefix);
 								}
@@ -465,14 +467,14 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 					while(prefixesContent.hasNext()){
 						String prefix = (String) prefixesContent.next();
 						String namespace = elementToClean.getNamespaceURI(prefix);
-						if(namespace.equals(WSConstants.ENC_NS) ||  namespace.equals(elementToClean.getNamespaceURI(prefix))){
+						if(namespace.equals(WSS4JConstants.ENC_NS) ||  namespace.equals(elementToClean.getNamespaceURI(prefix))){
 							prefixesToRemoveContent.add(prefix);
 						}
 					}
 					for(int y=0; y<prefixesToRemoveContent.size(); y++)
 						elementToClean.removeNamespaceDeclaration(prefixesToRemoveContent.get(y));
 					
-					String valoreRefEncContent = elementToClean.getAttributeNS(WSConstants.WSU_NS, "Id");
+					String valoreRefEncContent = elementToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
 					// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
 					//System.out.println("CHECK TYPE_ENCRYPT_CONTENT ["+valoreRefEncContent+"] ["+reference.getReference()+"]");
 					boolean removeIdRefEncContent = false;
@@ -481,14 +483,14 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 					}
 					
 					if(removeIdRefEncContent){
-						elementToClean.removeAttributeNS(WSConstants.WSU_NS, "Id");
+						elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
 					}
 										
 					prefixesContent = elementToClean.getNamespacePrefixes();
 					while(prefixesContent.hasNext()){
 						String prefix = (String) prefixesContent.next();
 						String namespace = elementToClean.getNamespaceURI(prefix);
-						if(namespace.equals(WSConstants.WSU_NS)) {
+						if(namespace.equals(WSS4JConstants.WSU_NS)) {
 							if(removeIdRefEncContent){
 								elementToClean.removeNamespaceDeclaration(prefix);
 							}
@@ -511,14 +513,14 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 							while(prefixesElement.hasNext()){
 								String prefix = (String) prefixesElement.next();
 								String namespace = childToClean.getNamespaceURI(prefix);
-								if(namespace.equals(WSConstants.WSU_NS)){
+								if(namespace.equals(WSS4JConstants.WSU_NS)){
 									prefixesToRemoveElement.add(prefix);
 								}
 							}
 							for(int y=0; y<prefixesToRemoveElement.size(); y++)
 								childToClean.removeNamespaceDeclaration(prefixesToRemoveElement.get(y));
 							
-							String valoreRefEncElement = childToClean.getAttributeNS(WSConstants.WSU_NS, "Id");
+							String valoreRefEncElement = childToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
 							// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
 							//System.out.println("CHECK TYPE_ENCRYPT_ELEMENT ["+valoreRefEncElement+"] ["+reference.getReference()+"]");
 							boolean removeIdRefEncElement = false;
@@ -527,14 +529,14 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 							}
 							
 							if(removeIdRefEncElement){
-								childToClean.removeAttributeNS(WSConstants.WSU_NS, "Id");
+								childToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
 							}
 												
 							prefixesElement = childToClean.getNamespacePrefixes();
 							while(prefixesElement.hasNext()){
 								String prefix = (String) prefixesElement.next();
 								String namespace = childToClean.getNamespaceURI(prefix);
-								if(namespace.equals(WSConstants.WSU_NS)) {
+								if(namespace.equals(WSS4JConstants.WSU_NS)) {
 									if(removeIdRefEncElement){
 										childToClean.removeNamespaceDeclaration(prefix);
 									}

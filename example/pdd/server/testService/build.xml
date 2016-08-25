@@ -62,11 +62,13 @@
 	</if>
 	
 	<!-- cxf -->
-	<var name="cxf_jar" value="cxf-2.7.4.jar"/>
+	<var name="cxf_jar" value="cxf-core-*.jar"/>
+	<var name="cxf_rt_jar" value="cxf-rt-*.jar"/>
 	<if>
 		<matches string="${as}" pattern="jboss6"/>
 		<then>
 			<var name="cxf_jar" value=""/>
+			<var name="cxf_rt_jar" value=""/>
 		</then>
 	</if>
 	<!-- log -->
@@ -97,7 +99,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="neethi_jar" value="neethi-3.0.2.jar"/>
+			<var name="neethi_jar" value="neethi-3.0.3.jar"/>
 		</then>
 	</if>
 	
@@ -118,6 +120,7 @@
 			</lib>
 			<lib dir="${libs}/cxf">
 				<include name="${cxf_jar}"/>
+				<include name="${cxf_rt_jar}"/>
 			</lib>
 			<lib dir="${libs}/saaj">
 				<include name="*.jar"/>

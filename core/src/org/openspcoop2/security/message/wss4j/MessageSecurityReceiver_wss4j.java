@@ -38,9 +38,10 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSSecurityEngineResult;
-import org.apache.ws.security.handler.WSHandlerResult;
+import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -83,7 +84,7 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 	        
 	        // ** Applico sicurezza tramite CXF **/
 			inHandler.handleMessage(msgCtx);
-			List<?> results = (List<?>) msgCtx.getContextualProperty(org.apache.ws.security.handler.WSHandlerConstants.RECV_RESULTS);
+			List<?> results = (List<?>) msgCtx.getContextualProperty(WSHandlerConstants.RECV_RESULTS);
 			wssContext.getLog().debug("Print wssRecever results...");
 			org.openspcoop2.security.message.wss4j.WSSUtilities.printWSResult(wssContext.getLog(), results);
 			
@@ -127,16 +128,16 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 				bout.close();
 				printStream.close();
 				
-				if(bout.toString().contains("org.apache.ws.security.processor.SignatureProcessor")){
+				if(bout.toString().contains(".processor.SignatureProcessor")){
 					signature = true;
 				}
-				else if(bout.toString().contains("org.apache.ws.security.processor.SignatureConfirmationProcessor")){
+				else if(bout.toString().contains(".processor.SignatureConfirmationProcessor")){
 					signature = true;
 				}
-				else if(bout.toString().contains("org.apache.ws.security.processor.EncryptedKeyProcessor")){
+				else if(bout.toString().contains(".processor.EncryptedKeyProcessor")){
 					encrypt = true;
 				}
-				else if(bout.toString().contains("org.apache.ws.security.processor.EncryptedDataProcessor")){
+				else if(bout.toString().contains(".processor.EncryptedDataProcessor")){
 					encrypt = true;
 				}
 				
@@ -148,7 +149,7 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 			else if(encrypt){
 				wssException.setCodiceErrore(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_VALIDA);
 			}
-			else if(e.getMessage()!=null && e.getMessage().contains("The signature or decryption was invalid")){
+			else if(Utilities.existsInnerMessageException(e, "The signature or decryption was invalid", true)){
 				wssException.setCodiceErrore(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA);
 			} else {
 				wssException.setCodiceErrore(CodiceErroreCooperazione.SICUREZZA);
@@ -189,7 +190,7 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 		
 		
 		String principal = null;
-		List<?> results = (List<?>) msgCtx.get(org.apache.ws.security.handler.WSHandlerConstants.RECV_RESULTS);
+		List<?> results = (List<?>) msgCtx.get(WSHandlerConstants.RECV_RESULTS);
 		//System.out.println("Potential number of usernames: " + results.size());
 		for (int i = 0; results != null && i < results.size(); i++) {
 			WSHandlerResult hResult = (WSHandlerResult)results.get(i);

@@ -82,7 +82,7 @@ public class XMLSecAttachmentTextXMLContentTransform extends TransformC14NExclus
 	            xmlsignatureinput1.setOutputStream(outputstream);
 	        return xmlsignatureinput1;
 		}catch(Exception e){
-			throw new CanonicalizationException(e.getMessage(),e);
+			throw new CanonicalizationException(e);
 		}
 	}
 }

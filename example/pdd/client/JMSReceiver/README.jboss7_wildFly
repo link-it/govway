@@ -10,7 +10,7 @@ Also you need to create a user for “Application User” using the “/AS_DIR/b
 
 Fornire anche un ruolo (o group), es. 'testrole' poi da personalizzare nel file di configurazione in standalone/configuration/standalone-full.xml
 
-NOTA: per la testsuite è necessario creare una utenza 'openspcoop2' con password 'op3n.spc00p'
+NOTA: per la testsuite è necessario creare una utenza 'openspcoop2', password 'op3n.spc00p' e gruppo 'testrole'
 
 L'application user viene creato nei files:
 Added user 'openspcoop2' to file 'jboss-as-7.x/standalone/configuration/application-users.properties'

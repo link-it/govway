@@ -32,18 +32,26 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointMultiBinding_Server{
 
+	private ClassPathXmlApplicationContext context;
+	
     protected ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointMultiBinding_Server() throws java.lang.Exception {
     	System.out.println("Starting Server");
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("configurazionePdD/server/cxf.xml");
-        context.toString();
+        this.context = new ClassPathXmlApplicationContext("configurazionePdD/server/cxf.xml");
+        this. context.toString();
+    }
+    
+    public void close(){
+    	this.context.close();
     }
     
     public static void main(String args[]) throws java.lang.Exception { 
-        new ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointMultiBinding_Server();
+    	ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointMultiBinding_Server server = new ComunicazioneVariazione_ComunicazioneVariazioneInterfaceEndpointMultiBinding_Server();
         System.out.println("Server ready..."); 
         
         Thread.sleep(5 * 60 * 1000); 
         System.out.println("Server exiting");
+        server.close();
         System.exit(0);
+              
     }
 }

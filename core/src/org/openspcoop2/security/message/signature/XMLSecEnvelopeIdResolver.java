@@ -66,8 +66,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
-	@Override
+	@SuppressWarnings("deprecation")
 	public XMLSignatureInput engineResolve(Attr uri, String BaseURI) throws ResourceResolverException {
 
     	//System.out.println("@ engineResolve DEPRECATED @");
@@ -80,7 +79,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
         	wsuId = uri.getNodeValue().substring(4);
         	attach = true;
         }else{
-        	throw new ResourceResolverException("Cannot resoulve uri "+uri.getNodeValue(),uri,BaseURI);
+        	throw new ResourceResolverException("Cannot resoulve uri "+uri.getNodeValue(),uri.getLocalName(),BaseURI);
         }
         Document doc = uri.getOwnerDocument();
 
@@ -104,7 +103,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 						result.setMIMEType(ap.getContentType());
 						return result;
 					}catch(Exception e){
-						throw new ResourceResolverException(e.getMessage(),e,uri,BaseURI);
+						throw new ResourceResolverException(e.getMessage(),e,uri.getLocalName(),BaseURI);
 					}
 //					try{
 ////						String contentType = ap.getContentType();
@@ -134,7 +133,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 				}
 			}
         	
-        	throw new ResourceResolverException("Cannot resoulve attachment uri "+uri.getNodeValue(),uri,BaseURI);
+        	throw new ResourceResolverException("Cannot resoulve attachment uri "+uri.getNodeValue(),uri.getLocalName(),BaseURI);
         }
         else{
         	Element refElem = null;
@@ -144,7 +143,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 		            refElem = EnvelopeIdResolverUtilities.findElementById(doc, wsuId, "");
 		        }
         	}catch(Exception e){
-        		throw new ResourceResolverException("Cannot resoulve uri "+uri.getNodeValue()+" : "+e.getMessage(),e,uri,BaseURI);
+        		throw new ResourceResolverException("Cannot resoulve uri "+uri.getNodeValue()+" : "+e.getMessage(),e,uri.getLocalName(),BaseURI);
         	}
 	
 	        XMLSignatureInput result = new XMLSignatureInput(refElem);
@@ -180,8 +179,6 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
      * @param BaseURI
      * @return true if this attribute can be resolved
      */
-    @SuppressWarnings("deprecation")
-	@Override
 	public boolean engineCanResolve(Attr uri, String BaseURI) {
     	//System.out.println("@ engineCanResolve DEPRECATED @");
         if (uri == null) {

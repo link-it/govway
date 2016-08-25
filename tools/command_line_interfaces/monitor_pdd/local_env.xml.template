@@ -16,7 +16,7 @@
 
     <!-- Build-Options -->
     <property name="buildAsRelease" value="false"/>
-    <property name="buildAPI" value="false"/>
+    <property name="buildAPI" value="true"/>
 
     <!-- Specifica se inserire le informazioni di debug nelle classi -->
     <property name="debug" value="true" />

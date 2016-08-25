@@ -295,7 +295,7 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 	/**
 	 * activateObject
 	 *
-	 * @param obj Un oggetto JMSObject contenente una connessione e sessione appena creata
+	 * @param jms Un oggetto JMSObject contenente una connessione e sessione appena creata
 	 * 
 	 */
 	@Override public void activateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception{ 
@@ -319,7 +319,7 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 	/**
 	 * passivateObject
 	 *
-	 * @param obj Un oggetto JMSObject contenente una connessione e sessione attiva
+	 * @param jms Un oggetto JMSObject contenente una connessione e sessione attiva
 	 * 
 	 */
 	@Override public void passivateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception {
@@ -363,7 +363,7 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 	/**
 	 * validateObject
 	 *
-	 * @param obj Un oggetto JMSObject contenente una connessione e sessione attiva
+	 * @param jms Un oggetto JMSObject contenente una connessione e sessione attiva
 	 * 
 	 */
 	@Override public boolean validateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms){

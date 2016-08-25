@@ -14,7 +14,7 @@
 			<exclude name="**/saaj/*"/>
 			<exclude name="**/jax/*"/>
 		</fileset>
-		<fileset file="${ws_validazione_lib_client}/jax/jaxb-api-2.2.6.jar" />
+		<fileset file="${ws_validazione_lib_client}/jax/jaxb-api-2.2.11.jar" />
 		<fileset file="deploy/stub_ws/validazioneContenutiWS_stub.jar" />
 	</path>
 

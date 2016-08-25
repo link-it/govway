@@ -118,6 +118,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/cxf">
 				<include name="*.jar"/>
+				<exclude name="cxf-tools-*.jar"/>
 				<exclude name="geronimo-servlet*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/saaj">
@@ -130,16 +131,16 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
-				<include name="neethi-3.0.2.jar"/>
-				<include name="xmlsec-1.5.4.jar"/>
+				<include name="neethi-3.0.3.jar"/>
+				<include name="xmlsec-2.0.7.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jax">
 				<include name="${jaxp_ri_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/shared">
-				<include name="wsdl4j-1.6.2.jar"/>
+				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="ezmorph-1.0.6.jar"/>
-				<include name="xom-1.2.7.jar"/>
+				<include name="xom-1.2.10.jar"/>
 				<include name="json-lib-2.4-jdk15.jar"/>
 				<include name="soap.jar"/>
 			</lib>

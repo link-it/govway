@@ -41,7 +41,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPPart;
 
-import org.apache.ws.security.WSSecurityException;
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.openspcoop2.message.mtom.MtomXomPackageInfo;
 import org.openspcoop2.message.mtom.MtomXomReference;
 import org.openspcoop2.message.reference.Reference;

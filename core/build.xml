@@ -65,8 +65,11 @@
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
 			<include name="jibx/*"/>
+			<include name="jminix/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
+			<include name="opensaml/*"/>
+			<include name="wss4j/*"/>
 			<include name="shared/*"/>
 			<include name="soapbox/*"/>
 			<include name="spring/*"/>
@@ -210,8 +213,9 @@
 				<!-- API -->
 				<antcall target="compile_api_openspcoop2">
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="all-packages"/>
-					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc}/api/all-packages"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="all-packages"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 				</antcall>
 			</then>
 		</if>

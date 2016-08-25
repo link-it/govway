@@ -73,7 +73,7 @@ import org.adroitlogic.soapbox.SBConstants;
 import org.adroitlogic.soapbox.SecurityConfig;
 import org.adroitlogic.soapbox.SecurityFailureException;
 import org.adroitlogic.soapbox.SignatureRequest;
-import org.apache.ws.security.WSConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
@@ -196,7 +196,7 @@ public class SignPartialMessageProcessor implements Processor {
         // NOTA:
         // Vi sono fondamentalmente due versioni di XMLSignature con classi correlate.
         // - com.sun.org.apache.xml.internal.security.signature: presente nel runtime di java
-        // - org.apache.xml.security.signature: presente in xmlsec-1.5.4.jar
+        // - org.apache.xml.security.signature: presente in xmlsec-2.0.7.jar
         //
         // A seconda della versione utilizzata devono essere implementate delle classi a corredo:
         // - com.sun.org.apache.xml.internal.security.transforms.TransformSpi implementato tramite org.openspcoop2.security.message.signature.SunAttachmentContentTransform
@@ -429,7 +429,7 @@ public class SignPartialMessageProcessor implements Processor {
             NamedNodeMap attributes = parent.getAttributes();
             for (int i = 0; i < attributes.getLength(); i++) {
                 Node attribute = attributes.item(i);
-                if (WSConstants.XMLNS_NS.equals(attribute.getNamespaceURI())) {
+                if (WSS4JConstants.XMLNS_NS.equals(attribute.getNamespaceURI())) {
                     if ("xmlns".equals(attribute.getNodeName())) {
                         //System.out.println("FOUND #default per "+parent.getLocalName());
                     	result.add("#default");
@@ -447,7 +447,7 @@ public class SignPartialMessageProcessor implements Processor {
             NamedNodeMap attributes = target.getAttributes();
             for (int i = 0; i < attributes.getLength(); i++) {
                 Node attribute = attributes.item(i);
-                if (WSConstants.XMLNS_NS.equals(attribute.getNamespaceURI())) {
+                if (WSS4JConstants.XMLNS_NS.equals(attribute.getNamespaceURI())) {
                     if ("xmlns".equals(attribute.getNodeName())) {
                     	//System.out.println("REMOVE #default per "+target.getLocalName());
                     	result.remove("#default");

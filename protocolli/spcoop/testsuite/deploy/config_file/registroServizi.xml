@@ -26,6 +26,8 @@
         <azione nome="sendTextOnTopicJMS_Sbustato"/>
         <!-- SAAJ -->
         <azione nome="saaj"/>
+	<!-- HTTP-CORE -->
+	<azione nome="httpCore"/>
         <!-- Altre funzionalita' -->
         <azione nome="Sbustamento"/>
         <azione nome="ConsegnaMultipla"/>
@@ -50,6 +52,8 @@
         <azione nome="testIntegrazioneWithWSAddressing"/>
         <azione nome="testIntegrazioneSAAJ"/>
         <azione nome="testIntegrazioneWithWSAddressingSAAJ"/>
+	<azione nome="testIntegrazioneHTTPCORE"/>
+	<azione nome="testIntegrazioneWithWSAddressingHTTPCORE"/>
         <!-- Filtro duplicati con riscontro -->
         <azione nome="FiltroDuplicatiConRiscontroStateless" filtro-duplicati="abilitato"
             conferma-ricezione="abilitato"/>
@@ -128,6 +132,8 @@
         <azione nome="testIntegrazioneWithWSAddressing"/>
         <azione nome="testIntegrazioneSAAJ"/>
         <azione nome="testIntegrazioneWithWSAddressingSAAJ"/>
+        <azione nome="testIntegrazioneHTTPCORE"/>
+        <azione nome="testIntegrazioneWithWSAddressingHTTPCORE"/>
         <azione nome="testIntegrazionePA"/>
         <azione nome="BEGIN-ID_testIntegrazione_END-ID"/>
         <azione nome="gestioneManifestDisabilitata"/>
@@ -157,6 +163,8 @@
         <azione nome="scartaBody"/>
         <!-- SAAJ -->
         <azione nome="saaj"/>
+        <!-- HTTP-CORE -->
+        <azione nome="httpCore"/>
         <!-- XML Malformati -->
         <azione nome="malformazioneXMLHeaderEGov"/>
         <azione nome="malformazioneXMLBody"/>

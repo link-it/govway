@@ -56,6 +56,10 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_SAAJ="IntegrazioneOnewaySAAJ";
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay con integrazione con WSAddressing con connettore SAAJ */
 	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING_SAAJ="IntegrazioneOnewayWithWSAddressingSAAJ";
+	/** Porte Delegate per il test dei profili di collaborazione: OneWay con integrazione con connettore HTTPCORE */
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_HTTPCORE="IntegrazioneOnewayHTTPCORE";
+	/** Porte Delegate per il test dei profili di collaborazione: OneWay con integrazione con WSAddressing con connettore HTTPCORE */
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING_HTTPCORE="IntegrazioneOnewayWithWSAddressingHTTPCORE";
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay tramissione risposta completamente vuota */
 	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_RISPOSTA_VUOTA="OnewayCompletamenteNullRisposta";
 	
@@ -71,6 +75,10 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SAAJ="IntegrazioneSincronaSAAJ";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione con WSAddressing per connettore SAAJ */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING_SAAJ="IntegrazioneSincronaWithWSAddressingSAAJ";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione per connettore HTTPCORE */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_HTTPCORE="IntegrazioneSincronaHTTPCORE";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione con WSAddressing per connettore HTTPCORE */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING_HTTPCORE="IntegrazioneSincronaWithWSAddressingHTTPCORE";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione url based */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_URL_BASED="IntegrazioneURLBased";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione url-form based  */
@@ -750,6 +758,11 @@ public class CostantiTestSuite {
 	/** Porta delegata per verifica connettore SAAJ: sincrono */
 	public static final String PORTA_DELEGATA_SAAJ_SINCRONO = "SAAJSincrono";
 	
+	/** Porta delegata per verifica connettore HTTPCORE: oneway */
+	public static final String PORTA_DELEGATA_HTTPCORE_ONEWAY = "HTTPCOREOneway";
+	/** Porta delegata per verifica connettore HTTPCORE: sincrono */
+	public static final String PORTA_DELEGATA_HTTPCORE_SINCRONO = "HTTPCORESincrono";
+	
 	/** Porta delegata per verifica url prefix rewriter:  TestUrlPrefixRewriter1*/
 	public static final String PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_1 = "TestUrlPrefixRewriter1";
 	public static final String PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_2 = "TestUrlPrefixRewriter2";
@@ -1086,6 +1099,10 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_SAAJ="testIntegrazioneSAAJ";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione con WSAddressing per connettore SAAJ  */
     public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ="testIntegrazioneWithWSAddressingSAAJ";
+    /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione per connettore HTTPCORE */
+    public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_HTTPCORE="testIntegrazioneHTTPCORE";
+    /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione con WSAddressing per connettore HTTPCORE  */
+    public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_HTTPCORE="testIntegrazioneWithWSAddressingHTTPCORE";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione per funzione concat */
     public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_CONCAT="BEGIN-ID_testIntegrazione_END-ID";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con ConsegnaInOrdine */
@@ -1116,6 +1133,8 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_ONEWAY_JMS_SBUSTAMENTO_SOAP_TOPIC = "sendTextOnTopicJMS_Sbustato";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore SAAJ */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_SAAJ = "saaj";
+	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore HTTPCORE */
+	public static final String SPCOOP_SERVIZIO_ONEWAY_HTTPCORE = "httpCore";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay risposta vuota */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_RISPOSTA_VUOTA="OnewayCompletamenteNullRisposta";
 	
@@ -1206,6 +1225,10 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_SAAJ="testIntegrazioneSAAJ";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Integrazione con WSAddressing per connettore SAAJ */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ="testIntegrazioneWithWSAddressingSAAJ";
+    /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Integrazione per connettore HTTPCORE */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_HTTPCORE="testIntegrazioneHTTPCORE";
+    /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Integrazione con WSAddressing per connettore HTTPCORE */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_HTTPCORE="testIntegrazioneWithWSAddressingHTTPCORE";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione PA */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_LATO_PA="testIntegrazionePA";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con GestioneManifestDisabilitata */
@@ -1242,6 +1265,8 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_HEADER_EMTPY_STATEFUL="soapHeaderEmptyStateful";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore SAAJ */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_SAAJ = "saaj";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore HTTPCORE */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_HTTPCORE = "httpCore";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica messaggio malformati nell'header egov */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_HEADER_EGOV = "malformazioneXMLHeaderEGov";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica messaggio malformati nel body */

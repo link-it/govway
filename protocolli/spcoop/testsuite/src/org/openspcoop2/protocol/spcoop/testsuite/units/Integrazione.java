@@ -125,7 +125,7 @@ public class Integrazione {
 	//private static final String MSG_ERRORE_IDENTIFICAZIONE_SERVIZIO="Riscontrato errore durante l'identificazione del servizio associato alla porta delegata, utilizzando il pattern specificato nella configurazione";
 	private static final String MSG_ERRORE_SERVIZIO_ERRATO = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:@AZIONE@) azione [@AZIONE@] non trovata nell'accordo di servizio @ACCORDO_SERVIZIO@";
 		
-	public void checkHttpRisposta(Properties risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
+	public static void checkHttpRisposta(CooperazioneBase collaborazioneSPCoopBase,Properties risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
 		if(risposta==null){
 			throw new Exception("Risposta is null");
 		}
@@ -150,8 +150,8 @@ public class Integrazione {
 				if(value==null){
 					throw new Exception("Attributo ["+key+"] con valore null");
 				}
-				if(value.equals(this.collaborazioneSPCoopBase.getMittente().getTipo())==false){
-					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getMittente().getTipo()+"]");
+				if(value.equals(collaborazioneSPCoopBase.getMittente().getTipo())==false){
+					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getMittente().getTipo()+"]");
 				}
 				findTipoMittente = true;
 			}
@@ -159,8 +159,8 @@ public class Integrazione {
 				if(value==null){
 					throw new Exception("Attributo ["+key+"] con valore null");
 				}
-				if(value.equals(this.collaborazioneSPCoopBase.getMittente().getNome())==false){
-					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getMittente().getNome()+"]");
+				if(value.equals(collaborazioneSPCoopBase.getMittente().getNome())==false){
+					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getMittente().getNome()+"]");
 				}
 				findMittente = true;
 			}
@@ -168,8 +168,8 @@ public class Integrazione {
 				if(value==null){
 					throw new Exception("Attributo ["+key+"] con valore null");
 				}
-				if(value.equals(this.collaborazioneSPCoopBase.getDestinatario().getTipo())==false){
-					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"]");
+				if(value.equals(collaborazioneSPCoopBase.getDestinatario().getTipo())==false){
+					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getDestinatario().getTipo()+"]");
 				}
 				findTipoDestinatario = true;
 			}
@@ -177,8 +177,8 @@ public class Integrazione {
 				if(value==null){
 					throw new Exception("Attributo ["+key+"] con valore null");
 				}
-				if(value.equals(this.collaborazioneSPCoopBase.getDestinatario().getNome())==false){
-					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getDestinatario().getNome()+"]");
+				if(value.equals(collaborazioneSPCoopBase.getDestinatario().getNome())==false){
+					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getDestinatario().getNome()+"]");
 				}
 				findDestinatario = true;
 			}
@@ -247,7 +247,7 @@ public class Integrazione {
 		checkHttpRispostaPddVersioneDetails(risposta);
 	}
 	
-	public void checkHttpRispostaPddVersioneDetails(Properties risposta)throws Exception{
+	public static void checkHttpRispostaPddVersioneDetails(Properties risposta)throws Exception{
 		if(risposta==null){
 			throw new Exception("Risposta is null");
 		}
@@ -288,7 +288,7 @@ public class Integrazione {
 		}
 	}
 	
-	public void checkMessaggioRisposta(Message risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
+	public static void checkMessaggioRisposta(CooperazioneBase collaborazioneSPCoopBase,Message risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
 		if(risposta==null){
 			throw new Exception("Risposta is null");
 		}
@@ -328,8 +328,8 @@ public class Integrazione {
 						if(v==null){
 							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
 						}
-						if(v.equals(this.collaborazioneSPCoopBase.getMittente().getTipo())==false){
-							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getMittente().getTipo()+"]");
+						if(v.equals(collaborazioneSPCoopBase.getMittente().getTipo())==false){
+							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getMittente().getTipo()+"]");
 						}
 						findTipoMittente = true;
 					}else if(testsuiteProperties.getMittenteSoap().equals(attr.getLocalName())){
@@ -337,8 +337,8 @@ public class Integrazione {
 						if(v==null){
 							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
 						}
-						if(v.equals(this.collaborazioneSPCoopBase.getMittente().getNome())==false){
-							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getMittente().getNome()+"]");
+						if(v.equals(collaborazioneSPCoopBase.getMittente().getNome())==false){
+							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getMittente().getNome()+"]");
 						}
 						findMittente = true;
 					}else if(testsuiteProperties.getTipoDestinatarioSoap().equals(attr.getLocalName())){
@@ -346,8 +346,8 @@ public class Integrazione {
 						if(v==null){
 							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
 						}
-						if(v.equals(this.collaborazioneSPCoopBase.getDestinatario().getTipo())==false){
-							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"]");
+						if(v.equals(collaborazioneSPCoopBase.getDestinatario().getTipo())==false){
+							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getDestinatario().getTipo()+"]");
 						}
 						findTipoDestinatario = true;
 					}else if(testsuiteProperties.getDestinatarioSoap().equals(attr.getLocalName())){
@@ -355,8 +355,8 @@ public class Integrazione {
 						if(v==null){
 							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
 						}
-						if(v.equals(this.collaborazioneSPCoopBase.getDestinatario().getNome())==false){
-							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+this.collaborazioneSPCoopBase.getDestinatario().getNome()+"]");
+						if(v.equals(collaborazioneSPCoopBase.getDestinatario().getNome())==false){
+							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+collaborazioneSPCoopBase.getDestinatario().getNome()+"]");
 						}
 						findDestinatario = true;
 					}else if(testsuiteProperties.getTipoServizioSoap().equals(attr.getLocalName())){
@@ -455,7 +455,7 @@ public class Integrazione {
 		}
 	}
 	
-	public void checkMessaggioRispostaWSAddressing(Message risposta,String tipoServizio,String nomeServizio,String azione,String idEGov)throws Exception{
+	public static void checkMessaggioRispostaWSAddressing(CooperazioneBase collaborazioneSPCoopBase,Message risposta,String tipoServizio,String nomeServizio,String azione,String idEGov)throws Exception{
 		if(risposta==null){
 			throw new Exception("Risposta is null");
 		}
@@ -481,7 +481,7 @@ public class Integrazione {
 				if(v==null){
 					throw new Exception("Valore dell'elemento WSA-To non definito");
 				}else{
-					String test = "http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+"" +
+					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+"" +
 							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio;
 					if(test.equals(v)==false){
 						throw new Exception("WSATo con valore ["+v+"] diverso da quello atteso ["+test+"]");
@@ -507,7 +507,7 @@ public class Integrazione {
 				if(v==null){
 					throw new Exception("Valore dell'elemento WSA-From non definito");
 				}else{
-					String test = "http://"+this.collaborazioneSPCoopBase.getMittente().getTipo()+"_"+this.collaborazioneSPCoopBase.getMittente().getNome()+".openspcoop2.org";
+					String test = "http://"+collaborazioneSPCoopBase.getMittente().getTipo()+"_"+collaborazioneSPCoopBase.getMittente().getNome()+".openspcoop2.org";
 					if(test.equals(v)==false){
 						throw new Exception("WSAFrom con valore ["+v+"] diverso da quello atteso ["+test+"]");
 					}
@@ -521,7 +521,7 @@ public class Integrazione {
 				if(v==null){
 					throw new Exception("Valore dell'elemento WSA-Action non definito");
 				}else{
-					String test = "http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
+					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+
 							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+azione;
 					if(test.equals(v)==false){
 						throw new Exception("WSAAction con valore ["+v+"] diverso da quello atteso ["+test+"]");
@@ -618,7 +618,7 @@ public class Integrazione {
 			client.run();
 			
 			// VERIFICA RESPONSE
-			this.checkHttpRispostaPddVersioneDetails(client.getPropertiesTrasportoRisposta());
+			checkHttpRispostaPddVersioneDetails(client.getPropertiesTrasportoRisposta());
 			
 		}catch(Exception e){
 			throw e;
@@ -706,7 +706,7 @@ public class Integrazione {
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
 			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWaySAAJ);
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWay);
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE);
@@ -746,12 +746,14 @@ public class Integrazione {
 		    }
 			
 		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 		    
 		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -768,7 +770,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="OneWay")
 	public Object[][]testOneWay() throws Exception{
-		String id=this.repositoryOneWaySAAJ.getNext();
+		String id=this.repositoryOneWay.getNext();
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
 				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
@@ -819,7 +821,7 @@ public class Integrazione {
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
 			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithWSASAAJ);
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithWSA);
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING);
@@ -859,17 +861,20 @@ public class Integrazione {
 		    }
 			
 		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 		    
 		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
+			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -885,7 +890,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="OneWayWithWSA")
 	public Object[][]testOneWayWithWSA() throws Exception{
-		String id=this.repositoryOneWayWithWSASAAJ.getNext();
+		String id=this.repositoryOneWayWithWSA.getNext();
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
 				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
@@ -937,7 +942,7 @@ public class Integrazione {
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
 			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoSAAJ);
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincrono);
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE);
@@ -964,12 +969,14 @@ public class Integrazione {
 			//Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 			
 			 // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
 		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -986,7 +993,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="Sincrono")
 	public Object[][]testSincrono()throws Exception{
-		String id=this.repositorySincronoSAAJ.getNext();
+		String id=this.repositorySincrono.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1037,7 +1044,7 @@ public class Integrazione {
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
 			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoWithWSASAAJ);
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoWithWSA);
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING);
@@ -1064,17 +1071,20 @@ public class Integrazione {
 			//Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 			
 			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1090,7 +1100,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="SincronoWithWSA")
 	public Object[][]testSincronoWithWSA()throws Exception{
-		String id=this.repositorySincronoWithWSASAAJ.getNext();
+		String id=this.repositorySincronoWithWSA.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1166,17 +1176,20 @@ public class Integrazione {
 			//Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 			
 			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1255,7 +1268,7 @@ public class Integrazione {
 			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
 			msg.getSOAPPartAsBytes();
 			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithAttachmentsSAAJ);
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithAttachments);
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE);
@@ -1295,12 +1308,14 @@ public class Integrazione {
 		    }
 			
 		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 		    
 		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -1317,7 +1332,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="OneWayWithAttachments")
 	public Object[][]testOneWayWithAttachments() throws Exception{
-		String id=this.repositoryOneWayWithAttachmentsSAAJ.getNext();
+		String id=this.repositoryOneWayWithAttachments.getNext();
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
 				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
@@ -1376,7 +1391,7 @@ public class Integrazione {
 			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
 			msg.getSOAPPartAsBytes();
 			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithAttachmentsAndWSAddressingSAAJ);
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithAttachmentsAndWSAddressing);
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING);
@@ -1416,17 +1431,20 @@ public class Integrazione {
 		    }
 				
 		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 		    
 			// Check header proprietario OpenSPCoop
-		    checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+		    checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,   CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
+			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,   CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1442,7 +1460,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="OneWayWithAttachmentsAndWSAddressing")
 	public Object[][]testOneWayWithAttachmentsAndWSAddressing() throws Exception{
-		String id=this.repositoryOneWayWithAttachmentsAndWSAddressingSAAJ.getNext();
+		String id=this.repositoryOneWayWithAttachmentsAndWSAddressing.getNext();
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
 				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
@@ -1502,7 +1520,7 @@ public class Integrazione {
 			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
 			msg.getSOAPPartAsBytes();
 			
-			ClientSincrono client=new ClientSincrono(this.repositorySincronoWithAttachmentsSAAJ);
+			ClientSincrono client=new ClientSincrono(this.repositorySincronoWithAttachments);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE);
 			client.connectToSoapEngine();
@@ -1514,12 +1532,14 @@ public class Integrazione {
 			Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 			
 			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
 		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -1537,7 +1557,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="SincronoWithAttachments")
 	public Object[][]testSincronoWithAttachments()throws Exception{
-		String id=this.repositorySincronoWithAttachmentsSAAJ.getNext();
+		String id=this.repositorySincronoWithAttachments.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1597,7 +1617,7 @@ public class Integrazione {
 			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
 			msg.getSOAPPartAsBytes();
 			
-			ClientSincrono client=new ClientSincrono(this.repositorySincronoWithAttachmentsAndWSAddressingSAAJ);
+			ClientSincrono client=new ClientSincrono(this.repositorySincronoWithAttachmentsAndWSAddressing);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING);
 			client.connectToSoapEngine();
@@ -1609,17 +1629,20 @@ public class Integrazione {
 			Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 			
 			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+		    checkHttpRisposta(this.collaborazioneSPCoopBase,
+		    		client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());		
 			
 			
@@ -1637,7 +1660,7 @@ public class Integrazione {
 	}
 	@DataProvider (name="SincronoWithAttachmentsAndWSAddressing")
 	public Object[][]testSincronoWithAttachmentsAndWSAddressing()throws Exception{
-		String id=this.repositorySincronoWithAttachmentsAndWSAddressingSAAJ.getNext();
+		String id=this.repositorySincronoWithAttachmentsAndWSAddressing.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1663,979 +1686,6 @@ public class Integrazione {
 	
 	
 	
-	
-	
-	
-	// ************************ CONNETTORE SAAJ **************************
-	
-	/***
-	 * Test per il profilo di collaborazione OneWay
-	 */
-	Repository repositoryOneWaySAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_SAAJ"})
-	public void oneWaySAAJ() throws FatalTestSuiteException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
-
-			Message msg=new Message(fin);
-			msg.getSOAPPartAsBytes();
-			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWaySAAJ);
-			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.setRispostaDaGestire(true);
-			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
-
-				client.setAttesaTerminazioneMessaggi(true);
-				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			}
-			try {
-				client.run();
-			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				throw error;
-			}finally{
-				dbComponentFruitore.close();
-			}
-			
-			// Preleva l'id Egov dal body della risposta
-		    try{
-		    	// Il body puo' essere null in caso si voglia che il oneway non ritorna contenuto applicativo.
-			    if(client.getResponseMessage().getSOAPBody()!=null && client.getResponseMessage().getSOAPBody().hasChildNodes()){
-				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
-				    // Controlla che sia uguale a quello ritornato nell'header della risposta
-				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
-				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
-					
-			    }
-		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
-		    }
-			
-		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-		    
-		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="OneWaySAAJ")
-	public Object[][]testOneWaySAAJ() throws Exception{
-		String id=this.repositoryOneWaySAAJ.getNext();
-		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
-			try {
-				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_SAAJ"},dataProvider="OneWaySAAJ",dependsOnMethods={"oneWaySAAJ"})
-	public void testOneWaySAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_SAAJ, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione OneWay
-	 */
-	Repository repositoryOneWayWithWSASAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_WSADDRESSING_SAAJ"})
-	public void oneWayWithWSASAAJ() throws FatalTestSuiteException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
-
-			Message msg=new Message(fin);
-			msg.getSOAPPartAsBytes();
-			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithWSASAAJ);
-			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.setRispostaDaGestire(true);
-			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
-
-				client.setAttesaTerminazioneMessaggi(true);
-				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			}
-			try {
-				client.run();
-			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				throw error;
-			}finally{
-				dbComponentFruitore.close();
-			}
-			
-			// Preleva l'id Egov dal body della risposta
-		    try{
-		    	// Il body puo' essere null in caso si voglia che il oneway non ritorna contenuto applicativo.
-			    if(client.getResponseMessage().getSOAPBody()!=null && client.getResponseMessage().getSOAPBody().hasChildNodes()){
-				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
-				    // Controlla che sia uguale a quello ritornato nell'header della risposta
-				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
-				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
-					
-			    }
-		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
-		    }
-			
-		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-		    
-		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="OneWayWithWSASAAJ")
-	public Object[][]testOneWayWithWSASAAJ() throws Exception{
-		String id=this.repositoryOneWayWithWSASAAJ.getNext();
-		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
-			try {
-				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_WSADDRESSING_SAAJ"},dataProvider="OneWayWithWSASAAJ",dependsOnMethods={"oneWayWithWSASAAJ"})
-	public void testOneWayWithWSASAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione Sincrono
-	 */
-	Repository repositorySincronoSAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoSAAJ() throws FatalTestSuiteException, IOException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
-
-			Message msg=new Message(fin);
-			msg.getSOAPPartAsBytes();
-			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoSAAJ);
-			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.setRispostaDaGestire(true);
-			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
-
-				client.setAttesaTerminazioneMessaggi(true);
-				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			}
-			try {
-				client.run();
-			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				throw error;
-			}finally{
-				dbComponentFruitore.close();
-			}
-			
-			Assert.assertTrue(client.isEqualsSentAndResponseMessage());
-			//Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
-			
-			 // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-			
-		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="SincronoSAAJ")
-	public Object[][]testSincronoSAAJ()throws Exception{
-		String id=this.repositorySincronoSAAJ.getNext();
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_SAAJ"},dataProvider="SincronoSAAJ",dependsOnMethods={"sincronoSAAJ"})
-	public void testSincronoSAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_SAAJ, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione Sincrono
-	 */
-	Repository repositorySincronoWithWSASAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_WSADDRESSING_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithWSASAAJ() throws FatalTestSuiteException, IOException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
-
-			Message msg=new Message(fin);
-			msg.getSOAPPartAsBytes();
-			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoWithWSASAAJ);
-			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.setRispostaDaGestire(true);
-			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
-
-				client.setAttesaTerminazioneMessaggi(true);
-				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			}
-			try {
-				client.run();
-			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				throw error;
-			}finally{
-				dbComponentFruitore.close();
-			}
-			
-			Assert.assertTrue(client.isEqualsSentAndResponseMessage());
-			//Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
-			
-			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="SincronoWithWSASAAJ")
-	public Object[][]testSincronoWithWSASAAJ()throws Exception{
-		String id=this.repositorySincronoWithWSASAAJ.getNext();
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_WSADDRESSING_SAAJ"},dataProvider="SincronoWithWSASAAJ",dependsOnMethods={"sincronoWithWSASAAJ"})
-	public void testSincronoWithWSASAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione Sincrono
-	 */
-	Repository repositorysincronoWithWSAVerificaClientSincronoSAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_WSADDRESSING_VERIFICA_CLIENT_SINCRONO_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithWSAVerificaClientSincronoSAAJ() throws FatalTestSuiteException, IOException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
-
-			Message msg=new Message(fin);
-			msg.getSOAPPartAsBytes();
-			
-			ClientSincrono client=new ClientSincrono(this.repositorysincronoWithWSAVerificaClientSincronoSAAJ);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
-
-				client.setAttesaTerminazioneMessaggi(true);
-				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			}
-			try {
-				client.run();
-			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				throw error;
-			}finally{
-				dbComponentFruitore.close();
-			}
-			
-			Assert.assertTrue(client.isEqualsSentAndResponseMessage());
-			//Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
-			
-			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="sincronoWithWSAVerificaClientSincronoSAAJ")
-	public Object[][]testsincronoWithWSAVerificaClientSincronoSAAJ()throws Exception{
-		String id=this.repositorysincronoWithWSAVerificaClientSincronoSAAJ.getNext();
-		try{
-			Thread.sleep(2000);
-		}catch(Exception e){}
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_WSADDRESSING_VERIFICA_CLIENT_SINCRONO_SAAJ"},
-			dataProvider="sincronoWithWSAVerificaClientSincronoSAAJ",
-			dependsOnMethods={"sincronoWithWSAVerificaClientSincronoSAAJ"})
-	public void testsincronoWithWSAVerificaClientSincronoSAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione OneWayWithAttachments
-	 */
-	Repository repositoryOneWayWithAttachmentsSAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_ATTACHMENTS_SAAJ"})
-	public void oneWayWithAttachmentsSAAJ() throws FatalTestSuiteException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName()));
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			byte[]bytes = new byte[2048];
-			int letti = 0;
-			while( (letti = fin.read(bytes)) != -1 ){
-				bout.write(bytes, 0, letti);
-			}
-			bout.flush();
-			bout.close();
-
-			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
-			msg.getSOAPPartAsBytes();
-			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithAttachmentsSAAJ);
-			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.setRispostaDaGestire(true);
-			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
-
-				client.setAttesaTerminazioneMessaggi(true);
-				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			}
-			try {
-				client.run();
-			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				throw error;
-			}finally{
-				dbComponentFruitore.close();
-			}
-			
-			// Preleva l'id Egov dal body della risposta
-		    try{
-		    	// Il body puo' essere null in caso si voglia che il oneway non ritorna contenuto applicativo.
-			    if(client.getResponseMessage().getSOAPBody()!=null && client.getResponseMessage().getSOAPBody().hasChildNodes()){
-				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
-				    // Controlla che sia uguale a quello ritornato nell'header della risposta
-				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
-				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
-					
-			    }
-		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
-		    }
-			
-		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-		    
-		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="OneWayWithAttachmentsSAAJ")
-	public Object[][]testOneWayWithAttachmentsSAAJ() throws Exception{
-		String id=this.repositoryOneWayWithAttachmentsSAAJ.getNext();
-		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
-			try {
-				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_ATTACHMENTS_SAAJ"},dataProvider="OneWayWithAttachmentsSAAJ",dependsOnMethods={"oneWayWithAttachmentsSAAJ"})
-	public void testOneWayWithAttachmentsSAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_SAAJ, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione OneWayWithAttachments
-	 */
-	Repository repositoryOneWayWithAttachmentsAndWSAddressingSAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_ATTACHMENTS_WSADDRESSING_SAAJ"})
-	public void oneWayWithAttachmentsAndWSAddressingSAAJ() throws FatalTestSuiteException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName()));
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			byte[]bytes = new byte[2048];
-			int letti = 0;
-			while( (letti = fin.read(bytes)) != -1 ){
-				bout.write(bytes, 0, letti);
-			}
-			bout.flush();
-			bout.close();
-
-			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
-			msg.getSOAPPartAsBytes();
-			
-			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayWithAttachmentsAndWSAddressingSAAJ);
-			client.setSoapAction("\"TEST\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.setRispostaDaGestire(true);
-			// AttesaTerminazioneMessaggi
-			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
-				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
-
-				client.setAttesaTerminazioneMessaggi(true);
-				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
-			}
-			try {
-				client.run();
-			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				throw error;
-			}finally{
-				dbComponentFruitore.close();
-			}
-			
-			// Preleva l'id Egov dal body della risposta
-		    try{
-		    	// Il body puo' essere null in caso si voglia che il oneway non ritorna contenuto applicativo.
-			    if(client.getResponseMessage().getSOAPBody()!=null && client.getResponseMessage().getSOAPBody().hasChildNodes()){
-				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
-				    // Controlla che sia uguale a quello ritornato nell'header della risposta
-				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
-				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
-					
-			    }
-		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
-		    }
-				
-		    // Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-		    
-			// Check header proprietario OpenSPCoop
-		    checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="OneWayWithAttachmentsAndWSAddressingSAAJ")
-	public Object[][]testOneWayWithAttachmentsAndWSAddressingSAAJ() throws Exception{
-		String id=this.repositoryOneWayWithAttachmentsAndWSAddressingSAAJ.getNext();
-		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
-			try {
-				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_ATTACHMENTS_WSADDRESSING_SAAJ"},
-			dataProvider="OneWayWithAttachmentsAndWSAddressingSAAJ",dependsOnMethods={"oneWayWithAttachmentsAndWSAddressingSAAJ"})
-	public void testOneWayWithAttachmentsAndWSAddressingSAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione SincronoWithAttachments
-	 */
-	Repository repositorySincronoWithAttachmentsSAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_ATTACHMENTS_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithAttachmentsSAAJ() throws FatalTestSuiteException, IOException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName()));
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			byte[]bytes = new byte[2048];
-			int letti = 0;
-			while( (letti = fin.read(bytes)) != -1 ){
-				bout.write(bytes, 0, letti);
-			}
-			bout.flush();
-			bout.close();
-
-			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
-			msg.getSOAPPartAsBytes();
-			
-			ClientSincrono client=new ClientSincrono(this.repositorySincronoWithAttachmentsSAAJ);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.run();
-
-			// Test uguaglianza Body (e attachments)
-			Assert.assertTrue(client.isEqualsSentAndResponseMessage());
-			Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
-			
-			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-			
-		    // Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_SAAJ,client.getIdMessaggio());
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				if(dbComponentFruitore!=null)
-					dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="SincronoWithAttachmentsSAAJ")
-	public Object[][]testSincronoWithAttachmentsSAAJ()throws Exception{
-		String id=this.repositorySincronoWithAttachmentsSAAJ.getNext();
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_ATTACHMENTS_SAAJ"},dataProvider="SincronoWithAttachmentsSAAJ",dependsOnMethods={"sincronoWithAttachmentsSAAJ"})
-	public void testSincronoWithAttachmentsSAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_SAAJ, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/***
-	 * Test per il profilo di collaborazione SincronoWithAttachments
-	 */
-	Repository repositorySincronoWithAttachmentsAndWSAddressingSAAJ=new Repository();
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_ATTACHMENTS_WSADDRESSING_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithAttachmentsAndWSAddressingSAAJ() throws FatalTestSuiteException, IOException, Exception{
-		java.io.FileInputStream fin = null;
-		DatabaseComponent dbComponentFruitore = null;
-		try{
-			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName()));
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			byte[]bytes = new byte[2048];
-			int letti = 0;
-			while( (letti = fin.read(bytes)) != -1 ){
-				bout.write(bytes, 0, letti);
-			}
-			bout.flush();
-			bout.close();
-
-			Message msg=Axis14SoapUtils.build(bout.toByteArray(), false);
-			msg.getSOAPPartAsBytes();
-			
-			ClientSincrono client=new ClientSincrono(this.repositorySincronoWithAttachmentsAndWSAddressingSAAJ);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING_SAAJ);
-			client.connectToSoapEngine();
-			client.setMessage(msg);
-			client.run();
-
-			// Test uguaglianza Body (e attachments)
-			Assert.assertTrue(client.isEqualsSentAndResponseMessage());
-			Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
-			
-			// Header HTTP
-		    checkHttpRisposta(client.getPropertiesTrasportoRisposta(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
-			
-			// Check header WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());		
-			
-			
-		}catch(Exception e){
-			throw e;
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-			try{
-				if(dbComponentFruitore!=null)
-					dbComponentFruitore.close();
-			}catch(Exception e){}
-		}
-	}
-	@DataProvider (name="SincronoWithAttachmentsAndWSAddressingSAAJ")
-	public Object[][]testSincronoWithAttachmentsAndWSAddressingSAAJ()throws Exception{
-		String id=this.repositorySincronoWithAttachmentsAndWSAddressingSAAJ.getNext();
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO_ATTACHMENTS_WSADDRESSING_SAAJ"},
-			dataProvider="SincronoWithAttachmentsAndWSAddressingSAAJ",dependsOnMethods={"sincronoWithAttachmentsAndWSAddressingSAAJ"})
-	public void testSincronoWithAttachmentsAndWSAddressingSAAJ(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
 	
 	
 	
@@ -2689,7 +1739,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -2773,7 +1824,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -2948,7 +2000,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -3032,7 +2085,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -3213,7 +2267,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_CONCAT,client.getIdMessaggio());
 			
@@ -3394,7 +2449,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_CONCAT,client.getIdMessaggio());
 			
@@ -3579,7 +2635,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -3669,7 +2726,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -3773,7 +2831,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
@@ -3898,12 +2957,14 @@ public class Integrazione {
 			}
 			
 			// Check header proprietario OpenSPCoop
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
 			// Check header proprietario WSAddressing
-			checkMessaggioRispostaWSAddressing(client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -4081,7 +3142,8 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			checkMessaggioRisposta(client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			

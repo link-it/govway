@@ -78,7 +78,7 @@
 			</lib>
 			<!--
 			<lib dir="${required_lib}/cxf">
-				<include name="${cxf_jar}"/>
+				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>

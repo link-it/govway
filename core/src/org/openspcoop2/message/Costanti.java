@@ -69,4 +69,7 @@ public class Costanti {
 	public static final String SOAP_TUNNEL_ATTACHMENT_ELEMENT_OPENSPCOOP2_TYPE = "SOAPTunnel";
 	public static final String SOAP_TUNNEL_ATTACHMENT_ELEMENT = "Attachments";
 	
+	/** Costanti per posizione errore degli id WSSecurity */
+	public static final String FIND_ERROR_ENCRYPTED_REFERENCES = "[WSS-Encrypt ReferencesSearch]";
+	public static final String FIND_ERROR_SIGNATURE_REFERENCES = "[WSS-Signature ReferencesSearch]";
 }

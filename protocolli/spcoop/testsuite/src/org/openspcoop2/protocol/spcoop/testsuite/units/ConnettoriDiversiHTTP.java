@@ -1013,4 +1013,93 @@ public class ConnettoriDiversiHTTP {
 			data.close();
 		}
 	}
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test Connettore HTTPCORE Oneway
+	 */
+	Repository repositoryHTTPCOREOneway=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".HTTPCORE_ONEWAY"})
+	public void httpCoreOneway() throws FatalTestSuiteException, Exception{
+		
+		// Invocazione SPCoop
+		this.collaborazioneSPCoopBase.oneWay(this.repositoryHTTPCOREOneway,CostantiTestSuite.PORTA_DELEGATA_HTTPCORE_ONEWAY,addIDUnivoco);
+		
+	}
+	@DataProvider (name="httpCoreOneway")
+	public Object[][]testHttpCoreOnewayTest() throws Exception{
+		String id=this.repositoryHTTPCOREOneway.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".HTTPCORE_ONEWAY"},dataProvider="httpCoreOneway",dependsOnMethods={"httpCoreOneway"})
+	public void testHttpCoreOnewayTest(DatabaseComponent data,String id) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
+					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_HTTPCORE, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test Connettore HTTPCORE Sincrono
+	 */
+	Repository repositoryHTTPCORESincrono=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".HTTPCORE_SINCRONO"})
+	public void httpCoreSincrono() throws FatalTestSuiteException, Exception{
+		
+		// Invocazione SPCoop
+		this.collaborazioneSPCoopBase.sincrono(this.repositoryHTTPCORESincrono,CostantiTestSuite.PORTA_DELEGATA_HTTPCORE_SINCRONO,addIDUnivoco);
+		
+	}
+	@DataProvider (name="httpCoreSincrono")
+	public Object[][]testHttpCoreSincronoTest() throws Exception{
+		String id=this.repositoryHTTPCORESincrono.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".HTTPCORE_SINCRONO"},dataProvider="httpCoreSincrono",dependsOnMethods={"httpCoreSincrono"})
+	public void testHttpCoreSincronoTest(DatabaseComponent data,String id) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_HTTPCORE, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
 }

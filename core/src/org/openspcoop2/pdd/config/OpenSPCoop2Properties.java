@@ -1529,6 +1529,9 @@ public class OpenSPCoop2Properties {
 			// Datasource Wrapped
 			this.isDSOp2UtilsEnabled();
 			
+			// JminixConsole
+			this.getPortJminixConsole();
+			
 			// NotifierInputStreamCallback
 			String notifierClass = null;
 			try{
@@ -10150,6 +10153,33 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isDSOp2UtilsEnabled;
+	}
+	
+	
+	
+	
+	
+	
+	/* ------------- JMINIX Console  ---------------------*/
+	
+	private static Integer portJminixConsole = null;
+	private static Boolean portJminixConsoleReaded = null;
+	public Integer getPortJminixConsole() {	
+		if(OpenSPCoop2Properties.portJminixConsoleReaded==null){
+			try{ 
+				String p = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.jminix.port");
+				if(p!=null){
+					p = p.trim();
+					OpenSPCoop2Properties.portJminixConsole = Integer.parseInt(p);
+				}
+				OpenSPCoop2Properties.portJminixConsoleReaded = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.jminix.port': "+e.getMessage());
+				OpenSPCoop2Properties.portJminixConsoleReaded = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.portJminixConsole;
 	}
 	
 	

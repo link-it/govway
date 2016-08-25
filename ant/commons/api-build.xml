@@ -12,10 +12,9 @@
 	</taskdef>	
 		
 	<target name="init_compile-api">
-		<mkdir dir="${doc}" />
-		<mkdir dir="${doc}/api" />
-		<delete dir="${doc}/api/${compile_src_openspcoop2.DIST_DIR_NAME}" failonerror="false" />
-		<mkdir dir="${doc}/api/${compile_src_openspcoop2.DIST_DIR_NAME}" />
+		<mkdir dir="${compile_src_openspcoop2.API_DIR}" />
+		<delete dir="${compile_src_openspcoop2.API_DIR}/${compile_src_openspcoop2.API_NAME}" failonerror="false" />
+		<mkdir dir="${compile_src_openspcoop2.API_DIR}/${compile_src_openspcoop2.API_NAME}" />
 	</target>
 
 	
@@ -27,8 +26,8 @@
 			<then>
 
 				<antcall target="init_compile-api">
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="${compile_src_openspcoop2.DIST_DIR_NAME}"/>
-					<param name="doc" value="${doc}"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${compile_src_openspcoop2.API_DIR}"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="${compile_src_openspcoop2.API_NAME}"/>
 				</antcall>
 				
 			    <!-- 
@@ -56,14 +55,14 @@
 				</if>	
 				
 				<echo message="build API for packages: ${compile_src_openspcoop2.PACKAGES}"/>
-				<!-- <echo message="build DEST API for packages: ${compile_src_openspcoop2.API_DIR_NAME}"/> -->
-				<javadoc destdir="${compile_src_openspcoop2.API_DIR_NAME}" 
+				<!-- <echo message="build DEST API for packages: ${compile_src_openspcoop2.API_NAME}"/> -->
+				<javadoc destdir="${compile_src_openspcoop2.API_DIR}/${compile_src_openspcoop2.API_NAME}" 
 					sourcepath="${src}" author="true" version="true" Private="false" use="true" 
-					windowtitle="API OpenSPCoop2 [${compile_src_openspcoop2.DIST_DIR_NAME}]" 
+					windowtitle="API OpenSPCoop2 [${compile_src_openspcoop2.API_NAME}]" 
 					packagenames="${compile_src_openspcoop2.PACKAGES}"
 					additionalparam="${javadoc.doclint.none}">
 					<doctitle>
-						<![CDATA[<h1>API OpenSPCoop2 [${compile_src_openspcoop2.DIST_DIR_NAME}]</h1>]]>
+						<![CDATA[<h1>API OpenSPCoop2 [${compile_src_openspcoop2.API_NAME}]</h1>]]>
 					</doctitle>
 					<bottom>
 						<![CDATA[<i>Copyright 2005-2016 Link.it srl, http://link.it.</i>]]>
@@ -80,8 +79,105 @@
 					</classpath>
 				</javadoc>
 				
-				<concat destfile="${compile_src_openspcoop2.API_DIR_NAME}/package-list.info">${compile_src_openspcoop2.PACKAGES}</concat>
+				<concat destfile="${compile_src_openspcoop2.API_DIR}/${compile_src_openspcoop2.API_NAME}/package-list.info">${compile_src_openspcoop2.PACKAGES}</concat>
 				
+				
+				
+				<!-- **** PRODUZIONE JavaDocJar ***** -->
+				
+				<!-- SVN Info -->
+				<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}] ROOT_DIR[${svn_rootDir}]"/> -->
+				<if>
+					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<then>
+						<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+						
+						<if>
+							<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+							<then>
+								<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+							</then>
+						</if>
+						
+						<svnSetting
+					          svnkit="true"
+					          username="${svnant.repository.user}"
+					          password="${svnant.repository.passwd}"
+					          id="svn.settings"
+						      javahl="false"
+					      />
+						<svn refid="svn.settings" >
+							<status path="${svn_rootDir}"
+		                                		revisionProperty="svn.actualRevision"
+		                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
+		                                		lastChangedRevisionProperty="svn.lastChangedRev"
+		                                		lastChangedDateProperty="svn.lastChangedDate" 
+												urlProperty="svn.url"/>
+						</svn>
+					</then>
+				</if>
+				<!--
+				<echo message="ACTUAL:[${svn.actualRevision}]"/>
+				<echo message="LAST_COMMIT[${svn.lastCommitAuthor}]"/>
+				<echo message="LAST_CHANGE[${svn.lastChangedRev}]"/>
+				<echo message="DATE:[${svn.lastChangedDate}]"/>
+				-->
+				
+				<!-- JavaDocJar -->
+				<if>
+					<isfalse value="${buildAsRelease}"/>
+					<then>
+						<if>
+							<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+							<then>
+									<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+							</then>
+							<else>					
+		                        <if>
+									<isset property="env.BUILD_VERSION"/>
+		                            <then>
+		                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+		                            </then>
+		                            <else>
+		                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+		                            </else>
+		                        </if>
+							</else>
+						</if>
+					</then>
+					<else>
+						<if>
+							<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+							<then>
+								<!-- <echo message="URL [${svn.url}]"/> -->
+								<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
+								<!-- <echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/> -->
+								<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
+								<!-- <echo message="Versione [${compileVersion}]"/> -->
+								<!-- <propertyregex property="compileVersion"
+												input="${compileVersionTmp2}"
+												regexp="/"
+												replace="_" /> -->
+								<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+							</then>
+							<else>
+								<if>
+									<isset property="env.RELEASE_VERSION"/>
+									<then>
+										<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
+									</then>
+									<else>
+										<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
+									</else>
+								</if>
+							</else>
+						</if>
+					</else>
+				</if>
+				<property name="build.jar.api.name" value="openspcoop2_${compile_src_openspcoop2.API_NAME}_${compile_src_openspcoop2.ReleaseName}-javadoc.jar" />
+				<jar jarfile="${compile_src_openspcoop2.API_DIR}/${build.jar.api.name}"
+					basedir="${compile_src_openspcoop2.API_DIR}/${compile_src_openspcoop2.API_NAME}"/>
+
 			</then>
 		</if>
 		

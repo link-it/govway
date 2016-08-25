@@ -161,8 +161,9 @@
 				</if>
 				<antcall target="compile_api_openspcoop2">
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
-					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_config_ws_client}/api"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="ws-config-client"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_config_ws_client}/api"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="src" value="${src_config_ws_client}"/>
 					<param name="doc" value="${doc_config_ws_client}"/>
 					<param name="dist" value="${dist_config_ws_client}"/>

@@ -32,18 +32,25 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpointMultiBinding_Server{
 
+	private ClassPathXmlApplicationContext context = null;
+	
     protected RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpointMultiBinding_Server() throws java.lang.Exception {
         System.out.println("Starting Server");
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("configurazionePdD/server/cxf.xml");
-        context.toString();
+        this.context = new ClassPathXmlApplicationContext("configurazionePdD/server/cxf.xml");
+        this.context.toString();
+    }
+    
+    public void close(){
+    	this.context.close();
     }
     
     public static void main(String args[]) throws java.lang.Exception { 
-        new RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpointMultiBinding_Server();
+    	RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpointMultiBinding_Server server = new RichiestaStatoFamiglia_RichiestaStatoFamigliaInterfaceEndpointMultiBinding_Server();
         System.out.println("Server ready..."); 
         
         Thread.sleep(5 * 60 * 1000); 
         System.out.println("Server exiting");
+        server.close();
         System.exit(0);
     }
 }

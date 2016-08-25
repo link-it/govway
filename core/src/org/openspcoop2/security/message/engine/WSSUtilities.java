@@ -23,11 +23,14 @@ package org.openspcoop2.security.message.engine;
 
 import java.util.List;
 
+import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * WSSUtilities
@@ -54,7 +57,14 @@ public class WSSUtilities {
 			return message.getWSSDirtyElements(actor, mustUnderstandValue);
 			
 		}catch(Exception e){
-			throw new SecurityException(e.getMessage(),e);
+			SecurityException sec = new SecurityException(e.getMessage(),e);
+			if(Utilities.existsInnerMessageException(e, Costanti.FIND_ERROR_SIGNATURE_REFERENCES, true)){
+				sec.setCodiceErrore(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA);
+			}
+			else if(Utilities.existsInnerMessageException(e, Costanti.FIND_ERROR_ENCRYPTED_REFERENCES, true)){
+				sec.setCodiceErrore(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_VALIDA);
+			}
+			throw sec;
 		}
 	}
 	

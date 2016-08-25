@@ -132,7 +132,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="neethi_jar" value="neethi-3.0.2.jar"/>
+			<var name="neethi_jar" value="neethi-3.0.3.jar"/>
 		</then>
 	</if>
 	<!-- geronimo_jaxws_spec -->
@@ -142,7 +142,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="geronimo_jaxws_spec_jar" value="geronimo-jaxws_2.2_spec-1.1.jar"/>
+			<var name="geronimo_jaxws_spec_jar" value="DADEFINIREMEGLIOgeronimo-jaxws_2.2_spec-1.1.jar"/>
 		</then>
 	</if>
 	<!-- jboss_classloading -->

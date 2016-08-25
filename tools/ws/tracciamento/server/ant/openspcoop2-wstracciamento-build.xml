@@ -179,8 +179,9 @@
 				</if>
 				<antcall target="compile_api_openspcoop2">
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
-					<param name="compile_src_openspcoop2.API_DIR_NAME" value="${doc_tracciamento_ws}/api"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="ws-tracciamento-server"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_tracciamento_ws}/api"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="src" value="${src_tracciamento_ws}"/>
 					<param name="doc" value="${doc_tracciamento_ws}"/>
 					<param name="dist" value="${dist_tracciamento_ws}"/>

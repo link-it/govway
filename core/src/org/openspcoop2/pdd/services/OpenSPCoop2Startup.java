@@ -33,6 +33,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -165,6 +166,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** OpenSPCoopStartupThread */
 	private OpenSPCoopStartupThread th;
+	
+	/** Jminix StandaloneMiniConsole */
+	private static StandaloneMiniConsole jminixStandaloneConsole;
 
 	/**
 	 * Startup dell'applicazione WEB di OpenSPCoop
@@ -1571,7 +1575,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 
-
+			/* ------------ Jminix StandaloneMiniConsole  ------------ */
+			if(propertiesReader.getPortJminixConsole()!=null){
+				try{
+					jminixStandaloneConsole = new StandaloneMiniConsole(propertiesReader.getPortJminixConsole());
+					log.info("JminixStandaloneConsole correttamente avviata");
+					logCore.info("JminixStandaloneConsole correttamente avviata");
+				}catch(Throwable e){
+					logCore.error("Errore durante l'avvio della jminixStandaloneConsole: "+e.getMessage(),e);
+				}
+			}
+			
 
 
 
@@ -1675,6 +1689,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		// DataManger
 		DateManager.close();
 
+		// Jminix StandaloneMiniConsole
+		try{
+			if(jminixStandaloneConsole!=null){
+				jminixStandaloneConsole.shutdown();
+			}
+		}catch (Throwable e) {}
+		
 		// Attendo qualche secondo
 		try{
 			Thread.sleep(2000);
