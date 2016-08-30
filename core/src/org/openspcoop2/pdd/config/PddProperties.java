@@ -27,9 +27,10 @@ package org.openspcoop2.pdd.config;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -55,7 +56,7 @@ public class PddProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'pdd.properties' */
+	/** Reader delle proprieta' impostate nel file 'openspcoop2.pdd.properties' */
 	private PddInstanceProperties reader;
 
 	/** Copia Statica */
@@ -74,7 +75,7 @@ public class PddProperties {
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = Logger.getLogger(PddProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(PddProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
@@ -83,14 +84,14 @@ public class PddProperties {
 			if(location!=null){
 				properties = new FileInputStream(location);
 			}else{
-				properties = PddProperties.class.getResourceAsStream("/pdd.properties");
+				properties = PddProperties.class.getResourceAsStream("/openspcoop2.pdd.properties");
 			}
 			if(properties==null){
-				throw new Exception("File '/pdd.properties' not found");
+				throw new Exception("File '/openspcoop2.pdd.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'pdd.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.pdd.properties': \n\n"+e.getMessage());
 		    throw new Exception("PddProperties initialize error: "+e.getMessage());
 		}finally{
 		    try{

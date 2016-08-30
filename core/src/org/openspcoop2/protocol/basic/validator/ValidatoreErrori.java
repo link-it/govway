@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.basic.validator;
 
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;

@@ -205,16 +205,16 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
 				<include name="slf4j-api-1.7.21.jar"/>
-				<include name="${log4j_jar}"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			
 			<classes dir="${build_config_ws}/properties">
 				<include name="wsconfig.backend.properties"/>
 			</classes>			
 			<classes dir="${properties_config_ws}">
-				<include name="wsconfig.log4j.properties"/>
+				<include name="wsconfig.log4j2.properties"/>
 				<include name="wsconfig.properties"/>
-				<include name="${log4j_properties}"/>
+				<include name="log4j2.properties"/>
 			</classes>
 			
 			<classes dir="${build_dir_config_ws}/wsdl"/>								

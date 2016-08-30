@@ -30,7 +30,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.constants.Costanti;
 import org.openspcoop2.message.ValidatoreXSD;

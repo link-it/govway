@@ -29,7 +29,7 @@ import java.util.Enumeration;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;

@@ -22,7 +22,7 @@
 
 package org.openspcoop2.pdd.core.handlers;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;

@@ -30,14 +30,14 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.Message;
 import org.apache.axis.attachments.AttachmentPart;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.testsuite.clients.ClientAsincronoAsimmetrico_ModalitaAsincrona;
 import org.openspcoop2.testsuite.clients.ClientAsincronoAsimmetrico_ModalitaSincrona;
 import org.openspcoop2.testsuite.clients.ClientAsincronoSimmetrico_ModalitaAsincrona;
 import org.openspcoop2.testsuite.clients.ClientAsincronoSimmetrico_ModalitaSincrona;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
@@ -169,7 +169,7 @@ public class CooperazioneBase {
 				}
 			}catch(Exception e){
 				this.log.error("Errore durante la verifica degli attachments: "+e.getMessage(),e);
-				throw new  FatalTestSuiteException(e.getMessage());
+				throw new  TestSuiteException(e.getMessage());
 			}
 		}
 	}
@@ -238,7 +238,7 @@ public class CooperazioneBase {
 				}
 			}catch(Exception e){
 				this.log.error("Errore durante la verifica degli attachments: "+e.getMessage(),e);
-				throw new  FatalTestSuiteException(e.getMessage());
+				throw new  TestSuiteException(e.getMessage());
 			}
 		}
 	}
@@ -254,16 +254,16 @@ public class CooperazioneBase {
 	/***
 	 * Test per il profilo di collaborazione OneWay
 	 */
-	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco) throws FatalTestSuiteException, Exception{
+	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco) throws TestSuiteException, Exception{
 		this.oneWay(repository, portaDelegata, addIDUnivoco, null, null, null);
 	}
-	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,Boolean attesaTerminazioneMessaggi) throws FatalTestSuiteException, Exception{
+	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,Boolean attesaTerminazioneMessaggi) throws TestSuiteException, Exception{
 		this.oneWay(repository, portaDelegata, addIDUnivoco, null, null,attesaTerminazioneMessaggi);
 	}
-	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws FatalTestSuiteException, Exception{
+	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws TestSuiteException, Exception{
 		this.oneWay(repository, portaDelegata, addIDUnivoco, username, password, null);
 	}
-	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password,Boolean attesaTerminazioneMessaggi) throws FatalTestSuiteException, Exception{
+	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password,Boolean attesaTerminazioneMessaggi) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -318,23 +318,23 @@ public class CooperazioneBase {
 			}catch(Exception eClose){}
 		}
 	}
-	public void testOneWay(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws FatalTestSuiteException{
+	public void testOneWay(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws TestSuiteException{
 		testOneWay(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, null, null, false, null, null);
 	}
-	public void testOneWay(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,boolean manifestAbilitato) throws FatalTestSuiteException{
+	public void testOneWay(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,boolean manifestAbilitato) throws TestSuiteException{
 		testOneWay(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, null, null, manifestAbilitato, null, null);
 	}
 	public void testOneWay(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testOneWay(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk, false, null, null);
 	}
 	public void testOneWay(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws TestSuiteException{
 		testOneWay(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk,manifestAbilitato,null,null);
 	}
 	public void testOneWay(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
 			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato, 
-			Integer numeroAttachments,Message msg) throws FatalTestSuiteException{
+			Integer numeroAttachments,Message msg) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta con id: " +id);
@@ -382,16 +382,16 @@ public class CooperazioneBase {
 	/***
 	 * Test per il profilo di collaborazione Sincrono
 	 */
-	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco) throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco) throws TestSuiteException, IOException, SOAPException{
 		sincrono(repository,portaDelegata,addIDUnivoco,false);
 	}
-	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws TestSuiteException, IOException, SOAPException{
 		sincrono(repository,portaDelegata,addIDUnivoco,false, username, password);
 	}
-	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay) throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay) throws TestSuiteException, IOException, SOAPException{
 		this.sincrono(repository, portaDelegata, addIDUnivoco, isOneWay, null, null);
 	}
-	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay,String username,String password) throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay,String username,String password) throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(repository);
 		client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
@@ -432,26 +432,26 @@ public class CooperazioneBase {
 
 	}
 	public void testSincrono(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String collaborazione) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String collaborazione) throws TestSuiteException{
 		testSincrono(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, null, null,false);
 	}
 	public void testSincrono(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String collaborazione,
-			boolean manifestAbilitato) throws FatalTestSuiteException{
+			boolean manifestAbilitato) throws TestSuiteException{
 		testSincrono(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, null, null,manifestAbilitato);
 	}
 	public void testSincrono(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String collaborazione,String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String collaborazione,String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testSincrono(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione,tipoTempoAtteso,tipoTempoAttesoSdk,false);
 	}
 	public void testSincrono(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String collaborazione,String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,
-			boolean manifestAbilitato) throws FatalTestSuiteException{
+			boolean manifestAbilitato) throws TestSuiteException{
 		testSincrono(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk, manifestAbilitato,null,null);
 	}
 	public void testSincrono(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String collaborazione,String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,
-			boolean manifestAbilitato, Integer numeroAttachments, Message msg) throws FatalTestSuiteException{
+			boolean manifestAbilitato, Integer numeroAttachments, Message msg) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta con id: " +id);
@@ -595,24 +595,24 @@ public class CooperazioneBase {
 		}
 	}
 	public void testAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaAsincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione,null,null,false,null,null);
 	}
 	public void testAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaAsincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione,null,null,manifestAbilitato,null,null);
 	}
 	public void testAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaAsincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk,false,null,null);
 	}
 	public void testAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaAsincrona(data,id,tipoServizio,servizio,azione,
 				checkServizioApplicativo,tipoServizioCorrelato,servizioCorrelato,collaborazione,
 				tipoTempoAtteso,tipoTempoAttesoSdk,manifestAbilitato, null,null);
@@ -620,7 +620,7 @@ public class CooperazioneBase {
 	public void testAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
 			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato, 
-			Integer numeroAttachments, Message msg) throws FatalTestSuiteException{
+			Integer numeroAttachments, Message msg) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta con id: " +id);
@@ -703,21 +703,21 @@ public class CooperazioneBase {
 	}
 	public void testRispostaAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione, boolean checkServizioApplicativo,
-			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,String collaborazione) throws FatalTestSuiteException{
+			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,String collaborazione) throws TestSuiteException{
 		testRispostaAsincronoSimmetrico_ModalitaAsincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, 
 				repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona, collaborazione,null,null,false);
 	}
 	public void testRispostaAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione, boolean checkServizioApplicativo,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,String collaborazione,
-			boolean manifestAbilitato) throws FatalTestSuiteException{
+			boolean manifestAbilitato) throws TestSuiteException{
 		testRispostaAsincronoSimmetrico_ModalitaAsincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, 
 				repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona, collaborazione,null,null,manifestAbilitato);
 	}
 	public void testRispostaAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione, boolean checkServizioApplicativo,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testRispostaAsincronoSimmetrico_ModalitaAsincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, 
 				repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona, collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk, false);
 	}
@@ -725,7 +725,7 @@ public class CooperazioneBase {
 			String tipoServizio,String servizio,String azione, boolean checkServizioApplicativo,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,String collaborazione,
 			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,
-			boolean manifestAbilitato) throws FatalTestSuiteException{
+			boolean manifestAbilitato) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta risposta con id: " +id);
@@ -848,24 +848,24 @@ public class CooperazioneBase {
 			Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 	}
 	public void testAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaSincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione, null, null,false,null,null);
 	}
 	public void testAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaSincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione, null, null,manifestAbilitato,null,null);
 	}
 	public void testAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaSincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk,false,null,null);
 	}
 	public void testAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoSimmetrico_ModalitaSincrona(data,id,tipoServizio,servizio,azione,
 				checkServizioApplicativo,tipoServizioCorrelato,servizioCorrelato,collaborazione,
 				tipoTempoAtteso,tipoTempoAttesoSdk,manifestAbilitato,null,null);
@@ -873,7 +873,7 @@ public class CooperazioneBase {
 	public void testAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
 			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato,
-			Integer numeroAttachments, Message msg) throws FatalTestSuiteException{
+			Integer numeroAttachments, Message msg) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta con id: " +id);
@@ -953,24 +953,24 @@ public class CooperazioneBase {
 		}
 	}
 	public void testRispostaAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
-			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws FatalTestSuiteException{
+			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws TestSuiteException{
 		testRispostaAsincronoSimmetrico_ModalitaSincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione,null,null,
 				false);
 	}
 	public void testRispostaAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
-			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,boolean manifestAbilitato) throws TestSuiteException{
 		testRispostaAsincronoSimmetrico_ModalitaSincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione,null,null,
 				manifestAbilitato);
 	}
 	public void testRispostaAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testRispostaAsincronoSimmetrico_ModalitaSincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, 
 				tipoTempoAtteso, tipoTempoAttesoSdk, false);
 	}
 	public void testRispostaAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta risposta con id: " +id);
@@ -1055,7 +1055,7 @@ public class CooperazioneBase {
 	 * Test per il profilo di collaborazione Asincrono Asimmetrico, modalita asincrona
 	 */
 	public void asincronoAsimmetrico_modalitaAsincrona(String portaDelegata, String portaDelegataCorrelata, 
-			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona,boolean addIDUnivoco) throws FatalTestSuiteException, Exception{
+			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona,boolean addIDUnivoco) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		try{
@@ -1109,24 +1109,24 @@ public class CooperazioneBase {
 		}
 	}
 	public void testAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,
-			String servizio,String azione, boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws FatalTestSuiteException{
+			String servizio,String azione, boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws TestSuiteException{
 		testAsincronoAsimmetrico_ModalitaAsincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, collaborazione, null, null,
 				false,null,null);
 	}
 	public void testAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,
-			String servizio,String azione, boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String servizio,String azione, boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoAsimmetrico_ModalitaAsincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, collaborazione, null, null,
 				manifestAbilitato,null,null);
 	}
 	public void testAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,
 			String servizio,String azione, boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testAsincronoAsimmetrico_ModalitaAsincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk,false,null,null);
 	}
 	public void testAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,
 			String servizio,String azione, boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoAsimmetrico_ModalitaAsincrona(data,id,tipoServizio,
 				servizio,azione, checkServizioApplicativo,tipoServizioCorrelato,servizioCorrelato,collaborazione,
 				tipoTempoAtteso,tipoTempoAttesoSdk,manifestAbilitato,null,null);
@@ -1134,7 +1134,7 @@ public class CooperazioneBase {
 	public void testAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String tipoServizio,
 			String servizio,String azione, boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
 			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato,
-			Integer numeroAttachments, Message msg) throws FatalTestSuiteException{
+			Integer numeroAttachments, Message msg) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta con id: " +id);
@@ -1214,24 +1214,24 @@ public class CooperazioneBase {
 		}
 	}
 	public void testRispostaAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
-			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws FatalTestSuiteException{
+			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws TestSuiteException{
 		testRispostaAsincronoAsimmetrico_ModalitaAsincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione,null,null,
 				false);
 	}
 	public void testRispostaAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
-			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione, boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione, boolean manifestAbilitato) throws TestSuiteException{
 		testRispostaAsincronoAsimmetrico_ModalitaAsincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione,null,null,
 				manifestAbilitato);
 	}
 	public void testRispostaAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testRispostaAsincronoAsimmetrico_ModalitaAsincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione, 
 				tipoTempoAtteso, tipoTempoAttesoSdk, false);
 	}
 	public void testRispostaAsincronoAsimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk, boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk, boolean manifestAbilitato) throws TestSuiteException{
 		
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
@@ -1319,7 +1319,7 @@ public class CooperazioneBase {
 	 * Test per il profilo di collaborazione Asincrono Asimmetrico, modalita sincrona
 	 */
 	public void asincronoAsimmetrico_modalitaSincrona(String portaDelegata,String portaDelegataCorrelata,
-			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona,boolean addIDUnivoco) throws FatalTestSuiteException, IOException, SOAPException{
+			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona,boolean addIDUnivoco) throws TestSuiteException, IOException, SOAPException{
 		ClientAsincronoAsimmetrico_ModalitaSincrona client = new ClientAsincronoAsimmetrico_ModalitaSincrona(repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona);
 		client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 		client.setPortaDelegata(portaDelegata);
@@ -1354,24 +1354,24 @@ public class CooperazioneBase {
 			Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 	}
 	public void testAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione) throws TestSuiteException{
 		testAsincronoAsimmetrico_modalitaSincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, collaborazione, 
 				null,null,false,null,null);
 	}
 	public void testAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
-			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws FatalTestSuiteException{
+			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoAsimmetrico_modalitaSincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, collaborazione, 
 				null,null,manifestAbilitato,null,null);
 	}
 	public void testAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testAsincronoAsimmetrico_modalitaSincrona(data, id, tipoServizio, servizio, azione, checkServizioApplicativo, tipoServizioCorrelato, servizioCorrelato, 
 				collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk, false,null,null);
 	}
 	public void testAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws TestSuiteException{
 		testAsincronoAsimmetrico_modalitaSincrona(data,id,tipoServizio,servizio,azione,
 				checkServizioApplicativo,tipoServizioCorrelato,servizioCorrelato,collaborazione,
 				tipoTempoAtteso,tipoTempoAttesoSdk,manifestAbilitato,null,null);
@@ -1379,7 +1379,7 @@ public class CooperazioneBase {
 	public void testAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String tipoServizio,String servizio,String azione,
 			boolean checkServizioApplicativo,String tipoServizioCorrelato,String servizioCorrelato,String collaborazione,
 			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato,
-			Integer numeroAttachments, Message msg) throws FatalTestSuiteException{
+			Integer numeroAttachments, Message msg) throws TestSuiteException{
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("["+this.tipoCooperazione+"] Controllo valore Mittente Busta con id: " +id);
@@ -1459,24 +1459,24 @@ public class CooperazioneBase {
 		}
 	}
 	public void testRispostaAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
-			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws FatalTestSuiteException{
+			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione) throws TestSuiteException{
 		testRispostaAsincronoAsimmetrico_modalitaSincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione,null,null,
 				false);
 	}
 	public void testRispostaAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
-			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,boolean manifestAbilitato) throws TestSuiteException{
 		testRispostaAsincronoAsimmetrico_modalitaSincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, collaborazione,null,null,
 				manifestAbilitato);
 	}
 	public void testRispostaAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk) throws TestSuiteException{
 		testRispostaAsincronoAsimmetrico_modalitaSincrona(data, id, idCorrelazioneAsincrona, tipoServizio, servizio, azione, checkServizioApplicativo, 
 				collaborazione, tipoTempoAtteso, tipoTempoAttesoSdk, false);
 	}
 	public void testRispostaAsincronoAsimmetrico_modalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,
 			String tipoServizio,String servizio,String azione,boolean checkServizioApplicativo,String collaborazione,
-			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws FatalTestSuiteException{
+			String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,boolean manifestAbilitato) throws TestSuiteException{
 		
 		Reporter.log("["+this.tipoCooperazione+"] Controllo tracciamento risposta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));

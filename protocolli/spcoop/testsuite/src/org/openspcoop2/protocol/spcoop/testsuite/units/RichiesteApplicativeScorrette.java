@@ -48,7 +48,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
@@ -142,7 +142,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata inesistente ("+portaDelegata+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata inesistente ("+portaDelegata+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata inesistente ("+portaDelegata+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -228,7 +228,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con credenziali non fornite (user: "+username+" password:"+password+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con credenziali non fornite (user: "+username+" password:"+password+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con credenziali non fornite (user: "+username+" password:"+password+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -291,7 +291,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con credenziali scorrette (user: "+username+" password:"+password+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con credenziali scorrette (user: "+username+" password:"+password+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con credenziali scorrette (user: "+username+" password:"+password+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -348,7 +348,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identita ServizioApplicativo non esistente non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identita ServizioApplicativo non esistente non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identita ServizioApplicativo non esistente non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -412,7 +412,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -462,7 +462,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -512,7 +512,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -562,7 +562,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -623,7 +623,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata per controllo autorizzazione non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata per controllo autorizzazione non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata per controllo autorizzazione non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -681,7 +681,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con servizio non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_INESISTENTE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con servizio non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_INESISTENTE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con servizio non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_INESISTENTE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -893,7 +893,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con servizio correlato non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_CORRELATO_NON_ESISTENTE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con servizio correlato non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_CORRELATO_NON_ESISTENTE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con servizio correlato non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_CORRELATO_NON_ESISTENTE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -941,7 +941,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con servizio correlato non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_ASIMMETRICO_CORRELATO_NON_ESISTENTE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con servizio correlato non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_ASIMMETRICO_CORRELATO_NON_ESISTENTE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con servizio correlato non esistente (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_ASIMMETRICO_CORRELATO_NON_ESISTENTE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1005,7 +1005,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata per risposta asincrona simmetrica non preceduta da richiesta (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata per risposta asincrona simmetrica non preceduta da richiesta (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata per risposta asincrona simmetrica non preceduta da richiesta (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1078,7 +1078,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata per risposta asincrona asimmetrica non preceduta da richiesta (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata per risposta asincrona asimmetrica non preceduta da richiesta (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata per risposta asincrona asimmetrica non preceduta da richiesta (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1155,7 +1155,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (errore 410) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_PD_SENZA_AUTENTICAZIONE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata errore 410) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_PD_SENZA_AUTENTICAZIONE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata errore 410) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_ASINCRONO_SIMMETRICO_PD_SENZA_AUTENTICAZIONE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1217,7 +1217,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (411) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (411) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (411) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1278,7 +1278,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (412) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_MESSAGE_BOX_INVOCAZIONE_PER_RIFERIMENTO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (412) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_MESSAGE_BOX_INVOCAZIONE_PER_RIFERIMENTO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (412) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_MESSAGE_BOX_INVOCAZIONE_PER_RIFERIMENTO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1419,7 +1419,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (414) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_PROFILO_SINCRONO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (414) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (414) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_PROFILO_SINCRONO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1485,7 +1485,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_CONFERMA_RICEZIONE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_CONFERMA_RICEZIONE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_CONFERMA_RICEZIONE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1532,7 +1532,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_FILTRO_DUPLICATI+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_FILTRO_DUPLICATI+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_FILTRO_DUPLICATI+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1579,7 +1579,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_ID_COLLABORAZIONE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_ID_COLLABORAZIONE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (415) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_CONSEGNA_IN_ORDINE_CONFIGURAZIONE_ERRATA_ID_COLLABORAZIONE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1649,7 +1649,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (416) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_URL_BASED+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (416) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_URL_BASED+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (416) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_URL_BASED+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1726,7 +1726,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_XSD+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_XSD+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_XSD+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1784,7 +1784,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_WSDL+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_WSDL+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_WSDL+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1842,7 +1842,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_OPENSPCOOP+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_OPENSPCOOP+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (417) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_APPLICATIVA_SENZA_XSD_TIPO_OPENSPCOOP+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -1923,7 +1923,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (418) (PortaDelegata: "+portaDelegata+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (418) (PortaDelegata: "+portaDelegata+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (418) (PortaDelegata: "+portaDelegata+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2005,7 +2005,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata (419) (PortaDelegata: "+portaDelegata+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (419) (PortaDelegata: "+portaDelegata+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (419) (PortaDelegata: "+portaDelegata+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2104,7 +2104,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con messaggio contenente gia' una busta egov non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con messaggio contenente gia' una busta egov non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con messaggio contenente gia' una busta egov non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2361,7 +2361,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (423) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_NON_INVOCABILE_SENZA_AZIONE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (423) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_NON_INVOCABILE_SENZA_AZIONE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (423) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_SERVIZIO_NON_INVOCABILE_SENZA_AZIONE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2424,7 +2424,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (424) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ALLEGA_BODY+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (424) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ALLEGA_BODY+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (424) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ALLEGA_BODY+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2487,7 +2487,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (425) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_SCARTA_BODY+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (425) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_SCARTA_BODY+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (425) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_SCARTA_BODY+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2554,7 +2554,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (426) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (426) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (426) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2641,7 +2641,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (427) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (427) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (427) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2700,7 +2700,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (428) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (428) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (428) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2761,7 +2761,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (429) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (429) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (429) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2829,7 +2829,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (430) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (430) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (430) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -2897,7 +2897,7 @@ public class RichiesteApplicativeScorrette {
 	Repository repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PD = null;
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".431"})
-	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD() throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3019,7 +3019,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (432) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (432) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (432) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -3121,7 +3121,7 @@ public class RichiesteApplicativeScorrette {
 //				client.run();
 //
 //				Reporter.log("Invocazione porta delegata (433) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
-//				throw new FatalTestSuiteException("Invocazione porta delegata (433) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
+//				throw new TestSuiteException("Invocazione porta delegata (433) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO+") non ha causato errori.");
 //			} catch (AxisFault error) {
 //				
 //				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -3203,7 +3203,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata (434) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED_SOAP_STATELESS_ERRORE_CONFIGURAZIONE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (434) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED_SOAP_STATELESS_ERRORE_CONFIGURAZIONE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (434) (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED_SOAP_STATELESS_ERRORE_CONFIGURAZIONE+") non ha causato errori.");
 			} catch (AxisFault error) {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
@@ -3252,7 +3252,7 @@ public class RichiesteApplicativeScorrette {
 	 * "OPENSPCOOP_ORG_435";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".435"})
-	public void localForward_invokePD_ASINCRONI() throws FatalTestSuiteException, Exception{
+	public void localForward_invokePD_ASINCRONI() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -3279,7 +3279,7 @@ public class RichiesteApplicativeScorrette {
 				client.run();
 				
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
 	
 			} catch (AxisFault error) {
 				
@@ -3327,7 +3327,7 @@ public class RichiesteApplicativeScorrette {
 	
 	Repository repositoryStrutturaXMLBodyRispostaPdDErrato=new Repository();
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".440"})
-	public void strutturaXMLRispostaErrata()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLRispostaErrata()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 
 		// costruzione busta

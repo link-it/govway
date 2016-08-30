@@ -8,6 +8,13 @@
   <display-name>TestService</display-name>
   <description> Semplice applicazione di test</description>
 
+  <!--  Startup -->
+  <listener>
+         <listener-class>
+                  org.openspcoop2.example.pdd.server.testservice.Startup
+         </listener-class>
+  </listener>
+
   <servlet>
     <servlet-name>EchoService</servlet-name>
     <servlet-class>org.openspcoop2.example.pdd.server.testservice.EchoService</servlet-class>

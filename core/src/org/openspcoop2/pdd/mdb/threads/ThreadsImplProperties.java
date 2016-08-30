@@ -24,8 +24,9 @@ package org.openspcoop2.pdd.mdb.threads;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.PropertiesReader;
 
 /**
@@ -71,7 +72,7 @@ public class ThreadsImplProperties {
 		if(ThreadsStartup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = Logger.getLogger(ThreadsImplProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(ThreadsImplProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();

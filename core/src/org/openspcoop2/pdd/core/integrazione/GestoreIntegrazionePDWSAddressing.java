@@ -23,12 +23,13 @@ package org.openspcoop2.pdd.core.integrazione;
 
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Classe utilizzata per la ricezione di informazioni di integrazione 
@@ -53,7 +54,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	public GestoreIntegrazionePDWSAddressing(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(this.log==null){
-			this.log = Logger.getLogger(GestoreIntegrazionePDWSAddressing.class);
+			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePDWSAddressing.class);
 		}
 
 		try{

@@ -25,7 +25,7 @@ package org.openspcoop2.utils.resources;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 
 /**

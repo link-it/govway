@@ -39,7 +39,7 @@ import org.apache.commons.net.smtp.AuthenticatingSMTPClient;
 import org.apache.commons.net.smtp.SMTPClient;
 import org.apache.commons.net.smtp.SMTPReply;
 import org.apache.commons.net.smtp.SimpleSMTPHeader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.SSLUtilities;
 

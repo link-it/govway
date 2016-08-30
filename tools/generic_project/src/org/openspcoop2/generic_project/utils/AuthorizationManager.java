@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.Identity;

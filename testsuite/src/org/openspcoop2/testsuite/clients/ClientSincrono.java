@@ -22,7 +22,7 @@
 
 package org.openspcoop2.testsuite.clients;
 import org.apache.axis.AxisFault;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 
 /**
@@ -35,13 +35,13 @@ import org.openspcoop2.testsuite.core.Repository;
 
 public class ClientSincrono extends ClientCore {
 
-	public ClientSincrono(Repository rep) throws FatalTestSuiteException{
+	public ClientSincrono(Repository rep) throws TestSuiteException{
 		super();
 		this.repository=rep;
 	}
 
 
-	public void run() throws FatalTestSuiteException, AxisFault{
+	public void run() throws TestSuiteException, AxisFault{
 
 		// imposta la url e l'autenticazione per il soapEngine
 		this.soapEngine.setConnectionParameters();

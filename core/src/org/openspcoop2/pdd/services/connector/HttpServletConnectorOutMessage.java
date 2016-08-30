@@ -24,11 +24,11 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.RFC2047Encoding;
@@ -147,7 +147,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
         			this.protocolFactory.getLogger().error(e.getMessage(),e);
         		}
         		else{
-        			Logger.getLogger(HttpServletConnectorOutMessage.class).error(e.getMessage(),e);		
+        			LoggerWrapperFactory.getLogger(HttpServletConnectorOutMessage.class).error(e.getMessage(),e);		
         		}
         	}
     	}

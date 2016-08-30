@@ -23,7 +23,7 @@ package org.openspcoop2.generic_project.web.impl.jsf1.input.factory.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.form.Form;
@@ -61,6 +61,7 @@ import org.openspcoop2.generic_project.web.input.Spinner;
 import org.openspcoop2.generic_project.web.input.Text;
 import org.openspcoop2.generic_project.web.input.TextArea;
 import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

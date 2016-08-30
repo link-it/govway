@@ -36,7 +36,7 @@ import java.util.Vector;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
@@ -176,6 +176,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 
@@ -429,7 +430,7 @@ public class RicezioneBuste {
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null){
-			logCore = Logger.getLogger(RicezioneBuste.ID_MODULO);
+			logCore = LoggerWrapperFactory.getLogger(RicezioneBuste.ID_MODULO);
 		}
 	
 		// MsgDiagnostico
@@ -865,7 +866,7 @@ public class RicezioneBuste {
 		// OpenSPCoop Properties
 		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
 		
-		// Classi registrate nel className.properties
+		// Classi registrate
 		ClassNameProperties className = ClassNameProperties.getInstance();
 
 		// protocollo

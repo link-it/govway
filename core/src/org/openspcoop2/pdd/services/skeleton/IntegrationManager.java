@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
@@ -103,6 +103,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -513,7 +514,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
-			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
+			logCore = LoggerWrapperFactory.getLogger(IntegrationManager.ID_MODULO);
 		
 		// check Autorizzazione
 		checkIMAuthorization(logCore);
@@ -800,7 +801,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
-			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
+			logCore = LoggerWrapperFactory.getLogger(IntegrationManager.ID_MODULO);
 
 		// check Autorizzazione
 		checkIMAuthorization(logCore);
@@ -1147,7 +1148,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
-			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
+			logCore = LoggerWrapperFactory.getLogger(IntegrationManager.ID_MODULO);
 
 		// check Autorizzazione
 		checkIMAuthorization(logCore);
@@ -1395,7 +1396,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
-			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
+			logCore = LoggerWrapperFactory.getLogger(IntegrationManager.ID_MODULO);
 
 		// check Autorizzazione
 		checkIMAuthorization(logCore);
@@ -1622,7 +1623,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
-			logCore = Logger.getLogger(IntegrationManager.ID_MODULO);
+			logCore = LoggerWrapperFactory.getLogger(IntegrationManager.ID_MODULO);
 
 		// check Autorizzazione
 		checkIMAuthorization(logCore);

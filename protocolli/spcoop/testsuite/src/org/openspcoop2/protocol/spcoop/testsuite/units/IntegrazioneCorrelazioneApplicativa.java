@@ -39,7 +39,7 @@ import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
@@ -197,7 +197,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaUrlBased=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaUrlBasedIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaUrlBased() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaUrlBased() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaUrlBasedIDUnivoco.add(idUnivoco);
@@ -275,7 +275,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaUrlBased"})
-	public void sincronoCorrelazioneApplicativaUrlBasedSenzaRiusoIDEGov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaUrlBasedSenzaRiusoIDEGov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaUrlBasedSenzaRiusoIDEGovIDUnivoco.add(idUnivoco);
@@ -374,7 +374,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 */
 	Repository repositorySincronoCorrelazioneApplicativaUrlBasedDatiMancanti=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaUrlBasedDatiMancanti() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaUrlBasedDatiMancanti() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -531,7 +531,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaUrlBased_erroreAccettato=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaUrlBasedIDUnivoco_erroreAccettato=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_URL_BASED_ACCETTA_IDENTIFICAZIONE_NON_RIUSCITA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaUrlBased_erroreAccettato() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaUrlBased_erroreAccettato() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaUrlBasedIDUnivoco_erroreAccettato.add(idUnivoco);
@@ -708,7 +708,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBased=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBased() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBased() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivoco.add(idUnivoco);
@@ -787,7 +787,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaContentBased"})
-	public void sincronoCorrelazioneApplicativaContentBasedSenzaRiusoIDEgov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedSenzaRiusoIDEgov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedSenzaRiusoIDEgovIDUnivoco.add(idUnivoco);
@@ -880,7 +880,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 */
 	Repository repositorySincronoCorrelazioneApplicativaContentBasedDatiMancanti=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedDatiMancanti() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedDatiMancanti() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1075,7 +1075,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBased_erroreAccettato=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivoco_erroreAccettato=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_ACCETTA_IDENTIFICAZIONE_NON_RIUSCITA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBased_erroreAccettato() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBased_erroreAccettato() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivoco_erroreAccettato.add(idUnivoco);
@@ -1250,7 +1250,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedConcat=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcat=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedConcat() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedConcat() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcat.add(idUnivoco);
@@ -1329,7 +1329,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaContentBasedConcat"})
-	public void sincronoCorrelazioneApplicativaContentBasedConcatSenzaRiusoIDEgov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedConcatSenzaRiusoIDEgov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedSenzaRiusoIDEgovIDUnivocoConcat.add(idUnivoco);
@@ -1483,7 +1483,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedConcat_erroreIdentificazione=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcat_erroreIdentificazione=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT_IDENTIFICAZIONE_ERRATA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedConcat_erroreIdentificazione() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedConcat_erroreIdentificazione() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcat_erroreIdentificazione.add(idUnivoco);
@@ -1651,7 +1651,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedConcatOpenSPCoop=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcatOpenSPCoop=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT_OPENSPCOOP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcatOpenSPCoop.add(idUnivoco);
@@ -1730,7 +1730,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT_OPENSPCOOP"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop"})
-	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoopSenzaRiusoIDEgov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoopSenzaRiusoIDEgov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcatOpenSPCoopSenzaRiusoIDEgov.add(idUnivoco);
@@ -1882,7 +1882,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivocoConcatOpenSPCoop_erroreIdentificazione=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_CONCAT_OPENSPCOOP_ERRORE_IDENTIFICAZIONE"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedConcatOpenSPCoop_erroreIdentificazione() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1981,7 +1981,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedUrl=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedUrlIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_URL"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedUrl() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedUrl() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedUrlIDUnivoco.add(idUnivoco);
@@ -2059,7 +2059,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_URL"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaInputBasedUrl"})
-	public void sincronoCorrelazioneApplicativaInputBasedUrlSenzaRiusoIDEGov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedUrlSenzaRiusoIDEGov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedUrlSenzaRiusoIDEGovIDUnivoco.add(idUnivoco);
@@ -2207,7 +2207,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedUrl_erroreAccettato=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedUrlIDUnivoco_erroreAccettato=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_URL_IDENTIFICAZIONE_NON_RIUSCITA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedUrl_erroreAccettato() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedUrl_erroreAccettato() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedUrlIDUnivoco_erroreAccettato.add(idUnivoco);
@@ -2377,7 +2377,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedTrasporto=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedTrasportoIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_TRASPORTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedTrasporto() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedTrasporto() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedTrasportoIDUnivoco.add(idUnivoco);
@@ -2454,7 +2454,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_TRASPORTO"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaInputBasedTrasporto"})
-	public void sincronoCorrelazioneApplicativaInputBasedTrasportoSenzaRiusoIDEGov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedTrasportoSenzaRiusoIDEGov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedTrasportoSenzaRiusoIDEGovIDUnivoco.add(idUnivoco);
@@ -2619,7 +2619,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedSoapHeader=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedSoapHeaderIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_SOAP_HEADER"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedSoapHeader() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedSoapHeader() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedSoapHeaderIDUnivoco.add(idUnivoco);
@@ -2696,7 +2696,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_SOAP_HEADER"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaInputBasedSoapHeader"})
-	public void sincronoCorrelazioneApplicativaInputBasedSoapHeaderSenzaRiusoIDEGov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedSoapHeaderSenzaRiusoIDEGov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedSoapHeaderSenzaRiusoIDEGovIDUnivoco.add(idUnivoco);
@@ -2869,7 +2869,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedWSAddressing=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedWSAddressingIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_WSADDRESSING"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedWSAddressing() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedWSAddressing() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedWSAddressingIDUnivoco.add(idUnivoco);
@@ -2947,7 +2947,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_WSADDRESSING"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaInputBasedWSAddressing"})
-	public void sincronoCorrelazioneApplicativaInputBasedWSAddressingSenzaRiusoIDEGov() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedWSAddressingSenzaRiusoIDEGov() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedWSAddressingSenzaRiusoIDEGovIDUnivoco.add(idUnivoco);
@@ -3044,7 +3044,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	 */
 	Repository repositorySincronoCorrelazioneApplicativaInputBasedDatiMancanti=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_DATI_MANCANTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedDatiMancanti() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedDatiMancanti() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3203,7 +3203,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaDisabilitata=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaDisabilitataIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_DISABILITATA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaDisabilitata() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaDisabilitata() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaDisabilitataIDUnivoco.add(idUnivoco);
@@ -3395,7 +3395,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso1=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso1IDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_1"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso1() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso1() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso1IDUnivoco.add(idUnivoco);
@@ -3473,7 +3473,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_1"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso1"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3627,7 +3627,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso2=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso2IDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_2"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso2() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso2() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso2IDUnivoco.add(idUnivoco);
@@ -3765,7 +3765,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_2"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso2"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso2_erroreAccettato() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso2_erroreAccettato() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso2IDUnivoco_erroreAccettato.add(idUnivoco);
@@ -3921,7 +3921,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaMultipleCaso3=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaMultipleCaso3IDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_3"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaMultipleCaso3() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaMultipleCaso3() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaMultipleCaso3IDUnivoco.add(idUnivoco);
@@ -4081,7 +4081,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso4=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso4IDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_4"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso4() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso4() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso4IDUnivoco.add(idUnivoco);
@@ -4159,7 +4159,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_4"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso4"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso4DatiMancanti() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4315,7 +4315,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso5=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso5IDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_5"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso5() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso5() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso5IDUnivoco.add(idUnivoco);
@@ -4393,7 +4393,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_5"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso5"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso5DatiMancanti() throws TestSuiteException, IOException, Exception{
 	
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4550,7 +4550,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso6IDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_6"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso6() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso6() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso6IDUnivoco.add(idUnivoco);
@@ -4628,7 +4628,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_SCELTE_MULTIPLE_CASO_6"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali",
 			dependsOnMethods={"testSincronoCorrelazioneApplicativaScelteMultipleCaso6"})
-	public void sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaScelteMultipleCaso6DatiMancanti() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4808,7 +4808,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedLatoPortaApplicativaIDUnivocoPA=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_PA"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedLatoPortaApplicativa() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedLatoPortaApplicativa() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivocoPD = "XXXXXXXIDPORTADELEGATAXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedLatoPortaApplicativaIDUnivocoPD.add(idUnivocoPD);
@@ -4926,7 +4926,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_DATI_MANCANTI_PA"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedDatiMancantiLatoPortaApplicativa() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -5131,7 +5131,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivoco_erroreAccettatoLatoPortaApplicativa=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_CONTENT_BASED_ACCETTA_IDENTIFICAZIONE_NON_RIUSCITA_PA"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBased_erroreAccettatoLatoPortaApplicativa() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBased_erroreAccettatoLatoPortaApplicativa() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedIDUnivoco_erroreAccettatoLatoPortaApplicativa.add(idUnivoco);
@@ -5290,7 +5290,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESS=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESSIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED_SOAP_STATELESS"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESS() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESS() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATELESSIDUnivoco.add(idUnivoco);
@@ -5429,7 +5429,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATEFUL=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATEFULIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED_SOAP_STATEFUL"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaContentBasedRisposta_SOAP_STATEFUL() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaContentBasedRisposta_SOAP_STATEFUL() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaContentBasedRisposta_SOAP_STATEFULIDUnivoco.add(idUnivoco);
@@ -5557,7 +5557,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_TRASPORTO_STATELESS=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_TRASPORTO_STATELESSIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED_TRASPORTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedRisposta_TRASPORTO_STATELESS() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedRisposta_TRASPORTO_STATELESS() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_TRASPORTO_STATELESSIDUnivoco.add(idUnivoco);
@@ -5725,7 +5725,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_SOAP_STATELESS=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_SOAP_STATELESSIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED_SOAP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedRisposta_SOAP_STATELESS() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedRisposta_SOAP_STATELESS() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_SOAP_STATELESSIDUnivoco.add(idUnivoco);
@@ -5893,7 +5893,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_WSA_STATELESS=new Repository();
 	Repository repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_WSA_STATELESSIDUnivoco=new Repository();
 	@Test(groups={IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED_WSA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoCorrelazioneApplicativaInputBasedRisposta_WSA_STATELESS() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoCorrelazioneApplicativaInputBasedRisposta_WSA_STATELESS() throws TestSuiteException, IOException, Exception{
 		
 		String idUnivoco = "XXXXXXXIDXXXXXXXX_"+System.currentTimeMillis();
 		this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaInputBasedRisposta_WSA_STATELESSIDUnivoco.add(idUnivoco);

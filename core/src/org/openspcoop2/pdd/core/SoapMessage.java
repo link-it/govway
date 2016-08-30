@@ -31,7 +31,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -141,7 +142,7 @@ public class SoapMessage implements java.io.Serializable {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(SoapMessage.class);
+			this.log = LoggerWrapperFactory.getLogger(SoapMessage.class);
 		}
 		try{
 			this.keyMsg = this.hash(idMsg);

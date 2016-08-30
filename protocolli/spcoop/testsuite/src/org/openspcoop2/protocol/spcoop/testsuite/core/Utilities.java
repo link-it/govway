@@ -27,7 +27,6 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.axis.AxisFault;
-import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.constants.Costanti;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -44,6 +43,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.testng.Assert;
@@ -215,7 +215,7 @@ public class Utilities {
 			xsdResourceResolver.addResource("Busta.xsd", Utilities.class.getResourceAsStream("/Busta.xsd"));
 			xsdResourceResolver.addResource("soapEnvelope.xsd", Utilities.class.getResourceAsStream("/soapEnvelope.xsd"));
 			xsdResourceResolver.addResource("wssecurityUtility.xsd", Utilities.class.getResourceAsStream("/wssecurityUtility.xsd"));
-			ValidatoreXSD validatoreXSD = new ValidatoreXSD(Logger.getLogger(Utilities.class),
+			ValidatoreXSD validatoreXSD = new ValidatoreXSD(LoggerWrapperFactory.getLogger(Utilities.class),
 					xsdResourceResolver,Utilities.class.getResourceAsStream("/EccezioneCNIPA.xsd"));
 			validatoreXSD.valida(erroreApplicativo);
 			
@@ -467,7 +467,7 @@ public class Utilities {
 			
 			Reporter.log("Validazione xsd");
 			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
-			ValidatoreXSD validatoreXSD = new ValidatoreXSD(Logger.getLogger(Utilities.class),
+			ValidatoreXSD validatoreXSD = new ValidatoreXSD(LoggerWrapperFactory.getLogger(Utilities.class),
 					xsdResourceResolver,Utilities.class.getResourceAsStream("/openspcoopDetail.xsd"));
 			validatoreXSD.valida(dettaglioOpenSPCoop);
 			

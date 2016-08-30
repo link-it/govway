@@ -37,7 +37,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
@@ -59,7 +60,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public abstract String getDocumentBuilderFactoryClass();
 	public abstract String getProcessPartialEncryptedMessageClass();
 	public abstract String getSignPartialMessageProcessorClass();
-	private static Logger logger = Logger.getLogger(OpenSPCoop2MessageFactory.class);
+	private static Logger logger = LoggerWrapperFactory.getLogger(OpenSPCoop2MessageFactory.class);
 	public static String messageFactoryImpl = org.openspcoop2.message.OpenSPCoop2MessageFactory_impl.class.getName();
 	
 	public static void setMessageFactoryImpl(String messageFactoryImpl) {

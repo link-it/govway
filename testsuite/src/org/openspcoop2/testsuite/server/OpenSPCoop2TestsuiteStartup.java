@@ -29,11 +29,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.DataContentHandlerManager;
 
@@ -70,7 +71,11 @@ public class OpenSPCoop2TestsuiteStartup implements ServletContextListener {
 			// Server Properties
 			TestSuiteProperties.initialize();
 			// Logger
-			PropertyConfigurator.configure(ServerGenerico.class.getResource("/"+CostantiTestSuite.LOGGER_PROPERTIES));
+			try{
+				LoggerWrapperFactory.setLogConfiguration(OpenSPCoop2TestsuiteStartup.class.getResource("/"+CostantiTestSuite.LOGGER_PROPERTIES));
+			}catch(Exception e){
+				throw new TestSuiteException("InitLogger",e);
+			}
 		}
 		
 		// Inizializzazione DatabaseProperties
@@ -82,7 +87,7 @@ public class OpenSPCoop2TestsuiteStartup implements ServletContextListener {
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
 		
 		// Istanza di logger
-		this.log=Logger.getLogger("TestSuite.tracer");
+		this.log=LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
 		
 		
 		if(this.testsuiteProperties.loadMailcap()){

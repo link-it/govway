@@ -27,13 +27,14 @@ package org.openspcoop2.protocol.engine.driver;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -97,7 +98,7 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 		if(aLog!=null)
 			this.log = aLog;
 		else
-			this.log = Logger.getLogger(RollbackRepositoryBuste.class.getName());
+			this.log = LoggerWrapperFactory.getLogger(RollbackRepositoryBuste.class.getName());
 		//this.oneWay11 = oneWay11;
 	}
 

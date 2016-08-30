@@ -39,7 +39,7 @@ import org.openspcoop2.utils.Utilities;
  */
 public class JDBCSqlLogger {
 
-	private org.apache.log4j.Logger log = null;
+	private org.slf4j.Logger log = null;
 	private SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
 
 	/**
@@ -47,7 +47,7 @@ public class JDBCSqlLogger {
 	 * 
 	 * @param log logger
 	 */
-	public JDBCSqlLogger(org.apache.log4j.Logger log){
+	public JDBCSqlLogger(org.slf4j.Logger log){
 		this.log = log;
 	}
 

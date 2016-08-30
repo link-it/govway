@@ -21,7 +21,7 @@
 
 package org.openspcoop2.pdd.core;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;

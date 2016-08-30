@@ -43,7 +43,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
@@ -142,7 +142,7 @@ public class BusteEGovScorrette {
 	Repository repositorybustaNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BNP"},
 			dependsOnMethods="init")
-			public void EGovConbustaNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConbustaNonPresente()throws TestSuiteException, SOAPException, Exception{
 
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaNonPresente.xml");
 		this.repositorybustaNonPresente.add(this.busteEGovErrate.getID(index));
@@ -169,7 +169,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -207,7 +207,7 @@ public class BusteEGovScorrette {
 	Repository repositorybustaSintatticamenteErrata1=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ErroreSintattico1"},
 			dependsOnMethods="init")
-			public void EGovConbustaSintatticamenteErrata1()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConbustaSintatticamenteErrata1()throws TestSuiteException, SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -232,7 +232,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -302,7 +302,7 @@ public class BusteEGovScorrette {
 	Repository repositorybustaSintatticamenteErrata2=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ErroreSintattico2"},
 			dependsOnMethods="init")
-			public void EGovConbustaSintatticamenteErrata2()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConbustaSintatticamenteErrata2()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -327,7 +327,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -395,7 +395,7 @@ public class BusteEGovScorrette {
 	Repository repositorySoloActorCorretto=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SAC"},
 			dependsOnMethods="init")
-			public void EGovConSoloActorCorretto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConSoloActorCorretto()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaConSoloActorCorretto.xml");
 		this.repositorySoloActorCorretto.add(this.busteEGovErrate.getID(index));
 
@@ -422,7 +422,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Destinatario Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Destinatario Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Destinatario Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -495,7 +495,7 @@ public class BusteEGovScorrette {
 	Repository repositorySoloNamespaceCorretto=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SNC"},
 			dependsOnMethods="init")
-			public void EGovConSoloNamespaceCorretto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConSoloNamespaceCorretto()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaConSoloNamespaceCorretto.xml");
 		this.repositorySoloNamespaceCorretto.add(this.busteEGovErrate.getID(index));
 
@@ -522,7 +522,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Destinatario Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Destinatario Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Destinatario Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -593,7 +593,7 @@ public class BusteEGovScorrette {
 	Repository repositoryIntestazioneCorretta_ActorENamespaceErrati=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ICANE"},
 			dependsOnMethods="init")
-			public void EGovConIntestazioneCorretta_ActorENamespaceErrati()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConIntestazioneCorretta_ActorENamespaceErrati()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaConIntestazioneCorretta_ActorENamespaceErrati.xml");
 		this.repositoryIntestazioneCorretta_ActorENamespaceErrati.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -619,7 +619,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Con Intestazione Corretta Actor e Namespace Errati.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Con Intestazione Corretta Actor e Namespace Errati, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Con Intestazione Corretta Actor e Namespace Errati, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -654,7 +654,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaActor_MustUnderstand0=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SACMU"},
 			dependsOnMethods="init")
-			public void EGovSenzaActor_MustUnderstand0()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaActor_MustUnderstand0()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -682,7 +682,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Senza Actor MustUnderstand 0.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Senza Actor MustUnderstand 0, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Senza Actor MustUnderstand 0, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -827,7 +827,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaActor=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SAc"},
 			dependsOnMethods="init")
-			public void EGovSenzaActor()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaActor()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -856,7 +856,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Actor.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Actor, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Actor, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -992,7 +992,7 @@ public class BusteEGovScorrette {
 	Repository repositoryActorScorretto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".AcS"},
 			dependsOnMethods="init")
-			public void EGovActorScorretto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovActorScorretto()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1021,7 +1021,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Actor Scorretto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Actor Scorretto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Actor Scorretto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1158,7 +1158,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaMustUnderstand=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SMU"},
 			dependsOnMethods="init")
-			public void EGovSenzaMustUnderstand()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaMustUnderstand()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaSenzaMustUnderstand.xml");
 		this.repositorySenzaMustUnderstand.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -1184,7 +1184,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza MustUnderstand.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza MustUnderstand, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza MustUnderstand, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1310,7 +1310,7 @@ public class BusteEGovScorrette {
 	Repository repositoryConMustUnderstandZero=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".MUgualeZERO"},
 			dependsOnMethods="init")
-			public void EGovConMustUnderstandZero()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConMustUnderstandZero()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaMustUnderstand0.xml");
 		this.repositoryConMustUnderstandZero.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -1336,7 +1336,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza MustUnderstand.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza MustUnderstand, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza MustUnderstand, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1461,7 +1461,7 @@ public class BusteEGovScorrette {
 	Repository repositoryNamespaceScorretto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".NS"},
 			dependsOnMethods="init")
-			public void EGovNamespaceScorretto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovNamespaceScorretto()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaNamespaceScorretto.xml");
 		this.repositoryNamespaceScorretto.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -1487,7 +1487,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Namespace Scorretto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Namespace Scorretto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Namespace Scorretto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1611,7 +1611,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaIntestazioneMessaggio=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SIM"},
 			dependsOnMethods="init")
-			public void EGovSenzaIntestazioneMessaggio()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaIntestazioneMessaggio()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaSenzaIntestazioneMessaggio.xml");
 		this.repositorySenzaIntestazioneMessaggio.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -1637,7 +1637,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1717,7 +1717,7 @@ public class BusteEGovScorrette {
 	Repository repositoryConSoloIntestazioneMessaggio=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SoIM"},
 			dependsOnMethods="init")
-			public void EGovConSoloIntestazioneMessaggio()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConSoloIntestazioneMessaggio()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1746,7 +1746,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Solo Intestazione Messaggio.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Solo Intestazione Messaggio, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Solo Intestazione Messaggio, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1854,7 +1854,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaMittente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SM"},
 			dependsOnMethods="init")
-			public void EGovSenzaMittente()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovSenzaMittente()throws TestSuiteException, SOAPException, Exception{	
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1885,7 +1885,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Mittente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Mittente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Mittente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2025,7 +2025,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaDestinatario=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SD"},
 			dependsOnMethods="init")
-			public void EGovSenzaDestinatario()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovSenzaDestinatario()throws TestSuiteException, SOAPException, Exception{	
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2056,7 +2056,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Destinatario.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Destinatario, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Destinatario, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2195,7 +2195,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaIdentificativoParteMittente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SIPM"},
 			dependsOnMethods="init")
-			public void EGovSenzaIdentificativoParteMittente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaIdentificativoParteMittente()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2224,7 +2224,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2360,7 +2360,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaIdentificativoParteDestinatario=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SIPD"},
 			dependsOnMethods="init")
-			public void EGovSenzaIdentificativoParteDestinatario()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaIdentificativoParteDestinatario()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2389,7 +2389,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2524,7 +2524,7 @@ public class BusteEGovScorrette {
 	Repository repositoryMittenteSconosciuto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".MS"},
 			dependsOnMethods="init")
-			public void EGovConMittenteSconosciuto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConMittenteSconosciuto()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2553,7 +2553,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2677,7 +2677,7 @@ public class BusteEGovScorrette {
 	Repository repositoryDestinatarioSconosciuto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".DS"},
 			dependsOnMethods="init")
-			public void EGovConDestinatarioSconosciuto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConDestinatarioSconosciuto()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaDestinatarioSconosciuto.xml");
 		this.repositoryDestinatarioSconosciuto.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -2703,7 +2703,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Destinatario Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Destinatario Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Destinatario Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2824,7 +2824,7 @@ public class BusteEGovScorrette {
 	Repository repositoryMittenteSenzaValoreIdentificativoParte=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".MittenteSenzaValoreIdentificativoParte"},
 			dependsOnMethods="init")
-			public void EGovConMittenteSenzaValoreIdentificativoParte()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConMittenteSenzaValoreIdentificativoParte()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaMittenteSenzaValoreIdentificativoParte.xml");
 		this.repositoryMittenteSenzaValoreIdentificativoParte.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -2850,7 +2850,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2971,7 +2971,7 @@ public class BusteEGovScorrette {
 	Repository repositoryDestinatarioSenzaValoreIdentificativoParte=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".DestinatarioSenzaValoreIdentificativoParte"},
 			dependsOnMethods="init")
-			public void EGovConDestinatarioSenzaValoreIdentificativoParte()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConDestinatarioSenzaValoreIdentificativoParte()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaDestinatarioSenzaValoreIdentificativoParte.xml");
 		this.repositoryDestinatarioSenzaValoreIdentificativoParte.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -2997,7 +2997,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Mittent Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3119,7 +3119,7 @@ public class BusteEGovScorrette {
 	Repository repositoryPiuMittenti=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PM"},
 			dependsOnMethods="init")
-			public void EGovConPiuMittenti()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConPiuMittenti()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaConPiuMittenti.xml");
 		this.repositoryPiuMittenti.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -3145,7 +3145,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Piu Mittenti.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Piu Mittenti, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Piu Mittenti, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3276,7 +3276,7 @@ public class BusteEGovScorrette {
 	Repository repositoryPiuDestinatari=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PD"},
 			dependsOnMethods="init")
-			public void EGovConPiuDestinatari()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConPiuDestinatari()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaConPiuDestinatari.xml");
 		this.repositoryPiuDestinatari.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -3302,7 +3302,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Piu Destinatari .");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Piu Destinatari , non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Piu Destinatari , non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3432,7 +3432,7 @@ public class BusteEGovScorrette {
 	Repository repositoryPiuMittenti_mittenteSconosciuto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PMMS"},
 			dependsOnMethods="init")
-			public void EGovConPiuMittenti_mittenteSconosciuto()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConPiuMittenti_mittenteSconosciuto()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaConPiuMittenti_mittenteSconosciuto.xml");
 		this.repositoryPiuMittenti_mittenteSconosciuto.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -3457,7 +3457,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Piu Mittenti mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Con Piu Mittenti mittente Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Con Piu Mittenti mittente Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3589,7 +3589,7 @@ public class BusteEGovScorrette {
 	Repository repositoryPiuDestinatari_destinatarioSconosciuto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PDDS"},
 			dependsOnMethods="init")
-			public void EGovConPiuDestinatari_destinatarioSconosciuto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConPiuDestinatari_destinatarioSconosciuto()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaConPiuDestinatari_destinatarioSconosciuto.xml");
 		this.repositoryPiuDestinatari_destinatarioSconosciuto.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -3615,7 +3615,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Piu Destinatari destinatarioSconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Piu Destinatari destinatario Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Piu Destinatari destinatario Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3746,7 +3746,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoMittenteNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".TMNP"},
 			dependsOnMethods="init")
-			public void EGovTipoMittenteNonPresente()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovTipoMittenteNonPresente()throws TestSuiteException, SOAPException, Exception{	
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3778,7 +3778,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Tipo Mittente Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Tipo Mittente Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Tipo Mittente Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3915,7 +3915,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoDestinatarioNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".TDNP"},
 			dependsOnMethods="init")
-			public void EGovTipoDestinatarioNonPresente()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovTipoDestinatarioNonPresente()throws TestSuiteException, SOAPException, Exception{	
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3947,7 +3947,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Senza Tipo Destinatario.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Senza Tipo Destinatario, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Senza Tipo Destinatario, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4084,7 +4084,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoMittenteSconosciuto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TMS"},
 			dependsOnMethods="init")
-			public void EGovTipoMittenteSconosciuto()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovTipoMittenteSconosciuto()throws TestSuiteException, SOAPException, Exception{	
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4116,7 +4116,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Tipo Mittente Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Tipo Mittente Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Tipo Mittente Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4246,7 +4246,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoDestinatarioSconosciuto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TDS"},
 			dependsOnMethods="init")
-			public void EGovTipoDestinatarioSconosciuto()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovTipoDestinatarioSconosciuto()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaTipoDestinatarioSconosciuto.xml");
 		this.repositoryTipoDestinatarioSconosciuto.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -4274,7 +4274,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Tipo Destinatario Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Tipo Destinatario Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Tipo Destinatario Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4392,7 +4392,7 @@ public class BusteEGovScorrette {
 	Repository repositoryProfiloDiCollaborazioneNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PCNP"},
 			dependsOnMethods="init")
-			public void EGovConProfiloDiCollaborazioneNonPresente()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConProfiloDiCollaborazioneNonPresente()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaProfiloDiCollaborazioneNonPresente.xml");
 		this.repositoryProfiloDiCollaborazioneNonPresente.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -4417,7 +4417,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Profilo Di Collaborazione Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4538,7 +4538,7 @@ public class BusteEGovScorrette {
 	Repository repositoryProfiloDiCollaborazioneNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PCNV"},
 			dependsOnMethods="init")
-			public void EGovConProfiloDiCollaborazioneNonValido()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConProfiloDiCollaborazioneNonValido()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaProfiloDiCollaborazioneNonValido.xml");
 		this.repositoryProfiloDiCollaborazioneNonValido.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -4563,7 +4563,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Profilo Di Collaborazione Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4693,7 +4693,7 @@ public class BusteEGovScorrette {
 	Repository repositoryProfiloDiCollaborazioneTipoServizioCorrelatoNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PCTSCNV"},
 			dependsOnMethods="init")
-			public void EGovConProfiloDiCollaborazioneTipoServizioCorrelatoNonValido()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConProfiloDiCollaborazioneTipoServizioCorrelatoNonValido()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaProfiloCollaborazione_tipoServizioCorrelatoNonValido.xml");
 		this.repositoryProfiloDiCollaborazioneTipoServizioCorrelatoNonValido.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -4718,7 +4718,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Profilo Di Collaborazione TipoServizioCorrelato Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione TipoServizioCorrelato Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione TipoServizioCorrelato Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4852,7 +4852,7 @@ public class BusteEGovScorrette {
 	Repository repositoryProfiloDiCollaborazioneDiversoRegistrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PCDR"},
 			dependsOnMethods="init")
-			public void EGovConProfiloDiCollaborazioneDiversoRegistrato()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConProfiloDiCollaborazioneDiversoRegistrato()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaProfiloCollaborazioneDiversoRegistrato.xml");
 		this.repositoryProfiloDiCollaborazioneDiversoRegistrato.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -4877,7 +4877,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Profilo Di Collaborazione con Diverso Registrato.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione con Diverso Registrato, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Profilo Di Collaborazione con Diverso Registrato, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4995,7 +4995,7 @@ public class BusteEGovScorrette {
 	Repository repositoryCollaborazioneNonValida=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".CNV"},
 			dependsOnMethods="init")
-			public void EGovConCollaborazioneNonValida()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConCollaborazioneNonValida()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaCollaborazioneNonValida.xml");
 		this.repositoryCollaborazioneNonValida.add(this.busteEGovErrate.getID(index));
 
@@ -5022,7 +5022,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Collaborazione Non Valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Collaborazione Non Valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Collaborazione Non Valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -5149,7 +5149,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaServizio=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SSe"},
 			dependsOnMethods="init")
-			public void EGovSenzaServizio()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovSenzaServizio()throws TestSuiteException, SOAPException, Exception{	
 		
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaSenzaServizio.xml");
 		this.repositorySenzaServizio.add(this.busteEGovErrate.getID(index));
@@ -5175,7 +5175,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Servizio.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Servizio, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Servizio, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -5295,7 +5295,7 @@ public class BusteEGovScorrette {
 	Repository repositoryServizioSconosciuto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SS"},
 			dependsOnMethods="init")
-			public void EGovConServizioSconosciuto()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConServizioSconosciuto()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaServizioSconosciuto.xml");
 		this.repositoryServizioSconosciuto.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -5320,7 +5320,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Servizio Sconosciuto.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Servizio Sconosciuto, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Servizio Sconosciuto, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -5438,7 +5438,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoServizioNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".TSNP"},
 			dependsOnMethods="init")
-			public void EGovConTipoServizioNonPresente()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConTipoServizioNonPresente()throws TestSuiteException, SOAPException, Exception{	
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -5469,7 +5469,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Tipo Servizio Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Tipo Servizio Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Tipo Servizio Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -5606,7 +5606,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoServizioErrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TSE"},
 			dependsOnMethods="init")
-			public void EGovConTipoServizioErrato()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovConTipoServizioErrato()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaTipoServizioErrato.xml");
 		this.repositoryTipoServizioErrato.add(this.busteEGovErrate.getID(index));
 
@@ -5633,7 +5633,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Tipo Servizio Errato.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Tipo Servizio Errato, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Tipo Servizio Errato, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -5748,7 +5748,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaAzione_servizioNonPermetteInvocazioneSenzaAzione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SA"},
 			dependsOnMethods="init")
-			public void EGovSenzaAzione_servizioNonPermetteInvocazioneSenzaAzione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaAzione_servizioNonPermetteInvocazioneSenzaAzione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaSenzaAzione_servizioNonPermetteInvocazioneSenzaAzione.xml");
 		this.repositorySenzaAzione_servizioNonPermetteInvocazioneSenzaAzione.add(this.busteEGovErrate.getID(index));
 
@@ -5775,7 +5775,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Azione dove il servizio Non Permette Invocazione Senza Azione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Azione dove servizio Non Permette Invocazione Senza Azione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Azione dove servizio Non Permette Invocazione Senza Azione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -5898,7 +5898,7 @@ public class BusteEGovScorrette {
 	Repository repositoryAzioneSconosciuta=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".AS"},
 			dependsOnMethods="init")
-			public void EGovConAzioneSconosciuta()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConAzioneSconosciuta()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaAzioneSconosciuta.xml");
 		this.repositoryAzioneSconosciuta.add(this.busteEGovErrate.getID(index));
 
@@ -5925,7 +5925,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Azione Sconosciuta.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Azione Sconosciuta, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Azione Sconosciuta, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -6049,7 +6049,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaMessaggio=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SMe"},
 			dependsOnMethods="init")
-			public void EGovSenzaMessaggio()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaMessaggio()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -6079,7 +6079,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Messaggio.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Messaggio, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Messaggio, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -6170,7 +6170,7 @@ public class BusteEGovScorrette {
 	Repository repositoryScadenzaNonValida=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SNV"},
 			dependsOnMethods="init")
-			public void EGovConScadenzaNonValida()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConScadenzaNonValida()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaScadenzaNonValida.xml");
 
 		this.repositoryScadenzaNonValida.add(this.busteEGovErrate.getID(index));
@@ -6198,7 +6198,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Scadenza Non Valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Scadenza Non Valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Scadenza Non Valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -6320,7 +6320,7 @@ public class BusteEGovScorrette {
 	Repository repositoryScaduta=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".S"},
 			dependsOnMethods="init")
-			public void EGovScaduta()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovScaduta()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaScaduta.xml");
 		this.repositoryScaduta.add(this.busteEGovErrate.getID(index));
 
@@ -6347,7 +6347,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Scaduta.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Scaduta, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Scaduta, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -6467,7 +6467,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaIdentificatore=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SI"},
 			dependsOnMethods="init")
-			public void EGovSenzaIdentificatore()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaIdentificatore()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -6497,7 +6497,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Identificatore.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Identificatore, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Identificatore, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -6586,7 +6586,7 @@ public class BusteEGovScorrette {
 	Repository repositoryIdentificatoreNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".INV"},
 			dependsOnMethods="init")
-			public void EGovConIdentificatoreNonValido()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConIdentificatoreNonValido()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaIdentificatoreNonValido.xml");
 		this.repositoryIdentificatoreNonValido.add(this.busteEGovErrate.getID(index));
 
@@ -6613,7 +6613,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Identificatore Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Identificatore Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Identificatore Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -6735,7 +6735,7 @@ public class BusteEGovScorrette {
 	Repository repositoryIdentificatoreDuplicato=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".ID"},
 			dependsOnMethods="init")
-			public void EGovConIdentificatoreDuplicato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConIdentificatoreDuplicato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaIdentificatoreDuplicato.xml");
 
 		this.repositoryIdentificatoreDuplicato.add(this.busteEGovErrate.getID(index));
@@ -6871,7 +6871,7 @@ public class BusteEGovScorrette {
 	Repository repositoryIdentificatoreDuplicato_ServizioSincrono=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".IDSS"},
 			dependsOnMethods="init")
-			public void EGovConIdentificatoreDuplicato_ServizioSincrono()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConIdentificatoreDuplicato_ServizioSincrono()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaIdentificatoreDuplicato_ServizioSincrono.xml");
 
 		this.repositoryIdentificatoreDuplicato_ServizioSincrono.add(this.busteEGovErrate.getID(index));
@@ -7022,7 +7022,7 @@ public class BusteEGovScorrette {
 	Repository repositorySenzaOraRegistrazione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SOR"},
 			dependsOnMethods="init")
-			public void EGovSenzaOraRegistrazione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaOraRegistrazione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaSenzaOraRegistrazione.xml");
 		this.repositorySenzaOraRegistrazione.add(this.busteEGovErrate.getID(index));
 
@@ -7049,7 +7049,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Senza Ora Registrazione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Senza Ora Registrazione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Senza Ora Registrazione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -7169,7 +7169,7 @@ public class BusteEGovScorrette {
 	Repository repositoryOraRegistrazioneNonValida=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ORNV"},
 			dependsOnMethods="init")
-			public void EGovConOraRegistrazioneNonValida()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConOraRegistrazioneNonValida()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaOraRegistrazioneNonValida.xml");
 		this.repositoryOraRegistrazioneNonValida.add(this.busteEGovErrate.getID(index));
 
@@ -7196,7 +7196,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Ora Registrazione Non Valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Ora Registrazione Non Valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Ora Registrazione Non Valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -7318,7 +7318,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoOraRegistrazioneNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TORNonPresente"},
 			dependsOnMethods="init")
-			public void EGovConTipoOraRegistrazioneNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConTipoOraRegistrazioneNonPresente()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaSenzaTipoOraRegistrazione.xml");
 		this.repositoryTipoOraRegistrazioneNonPresente.add(this.busteEGovErrate.getID(index));
 
@@ -7345,7 +7345,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Ora Registrazione Non Valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Ora Registrazione Non Valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Ora Registrazione Non Valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -7475,7 +7475,7 @@ public class BusteEGovScorrette {
 	Repository repositoryTipoOraRegistrazioneNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TORNonValido"},
 			dependsOnMethods="init")
-			public void EGovConTipoOraRegistrazioneNonValido()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConTipoOraRegistrazioneNonValido()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaTipoOraRegistrazioneNonValida.xml");
 		this.repositoryTipoOraRegistrazioneNonValido.add(this.busteEGovErrate.getID(index));
 
@@ -7502,7 +7502,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Ora Registrazione Non Valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Ora Registrazione Non Valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Ora Registrazione Non Valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -7633,7 +7633,7 @@ public class BusteEGovScorrette {
 	Repository repositoryProfiloTramissioneInoltroNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PTINV"},
 			dependsOnMethods="init")
-			public void EGovConProfiloTramissioneInoltroNonValido()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConProfiloTramissioneInoltroNonValido()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaProfiloTramissioneInoltroNonValido.xml");
 
 		this.repositoryProfiloTramissioneInoltroNonValido.add(this.busteEGovErrate.getID(index));
@@ -7661,7 +7661,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Profilo Tramissione Inoltro Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con ProfiloTramissione Inoltro Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con ProfiloTramissione Inoltro Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -7793,7 +7793,7 @@ public class BusteEGovScorrette {
 	Repository repositoryProfiloTramissioneConfermaRicezioneNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".PTCRNV"},
 			dependsOnMethods="init")
-			public void EGovConProfiloTramissioneConfermaRicezioneNonValido()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConProfiloTramissioneConfermaRicezioneNonValido()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaProfiloTramissioneConfermaRicezioneNonValido.xml");
 		this.repositoryProfiloTramissioneConfermaRicezioneNonValido.add(this.busteEGovErrate.getID(index));
 
@@ -7820,7 +7820,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Profilo Tramissione Conferma Ricezione Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Profilo Tramissione Conferma Ricezione Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Profilo Tramissione Conferma Ricezione Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -7939,7 +7939,7 @@ public class BusteEGovScorrette {
 	Repository repositorySequenzaSenzaNumeroProgressivo=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SSNP"},
 			dependsOnMethods="init")
-			public void EGovConSequenzaSenzaNumeroProgressivo()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConSequenzaSenzaNumeroProgressivo()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -7969,7 +7969,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Sequenza Senza Numero Progressivo.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Sequenza Senza Numero Progressivo, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Sequenza Senza Numero Progressivo, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -8108,7 +8108,7 @@ public class BusteEGovScorrette {
 	Repository repositorySequenzaErratoNumeroProgressivo=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SENP"},
 			dependsOnMethods="init")
-			public void EGovConSequenzaErratoNumeroProgressivo()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConSequenzaErratoNumeroProgressivo()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaSequenzaErratoNumeroProgressivo.xml");
 		this.repositorySequenzaErratoNumeroProgressivo.add(this.busteEGovErrate.getID(index));
 
@@ -8135,7 +8135,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Sequenza Errato Numero Progressivo.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con SequenzaErratoNumeroProgressivo, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con SequenzaErratoNumeroProgressivo, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -8255,7 +8255,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_trasmissioneNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTTNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_trasmissioneNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_trasmissioneNonPresente()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_trasmissioneNonPresente.xml");
 		this.repositoryListaTrasmissione_trasmissioneNonPresente.add(this.busteEGovErrate.getID(index));
 
@@ -8282,7 +8282,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione trasmissione Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione trasmissione Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione trasmissione Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -8408,7 +8408,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_origineTrasmissioneNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTOTNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_origineTrasmissioneNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_origineTrasmissioneNonPresente()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -8437,7 +8437,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione origine Trasmissione Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -8581,7 +8581,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_origineTrasmissionePresenteMaVuota=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTOTNP_OrigineVuota"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_origineTrasmissionePresenteMaVuota()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_origineTrasmissionePresenteMaVuota()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -8610,7 +8610,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione origine Trasmissione Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -8755,7 +8755,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_destinazioneTrasmissioneNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTDTNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_destinazioneTrasmissioneNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_destinazioneTrasmissioneNonPresente()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -8784,7 +8784,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione destinazione trasmissione Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione trasmissione Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione trasmissione Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -8925,7 +8925,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_oraRegistrazioneTrasmissioneNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTORTNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneNonPresente()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -8954,7 +8954,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione ora Registrazione trasmissione Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione trasmissione Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione trasmissione Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -9099,7 +9099,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_origineTrasmissioneNonValida=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTOTNV"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_origineTrasmissioneNonValida()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_origineTrasmissioneNonValida()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_origineTrasmissioneNonValida.xml");
 		this.repositoryListaTrasmissione_origineTrasmissioneNonValida.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -9125,7 +9125,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione origine trasmissione Non Valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione origine trasmissione Non valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione origine trasmissione Non valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -9256,7 +9256,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_destinazioneTrasmissioneNonValida=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTDTNV"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_destinazioneTrasmissioneNonValida()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_destinazioneTrasmissioneNonValida()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_destinazioneTrasmissioneNonValida.xml");
 		this.repositoryListaTrasmissione_destinazioneTrasmissioneNonValida.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -9282,7 +9282,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione destinazione trasmissione Non valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione trasmissione Non valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione trasmissione Non valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -9413,7 +9413,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_oraRegistrazioneTrasmissioneNonValida=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTORTNV"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneNonValida()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneNonValida()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_oraRegistrazioneTrasmissioneNonValida.xml");
 		this.repositoryListaTrasmissione_oraRegistrazioneTrasmissioneNonValida.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -9439,7 +9439,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione ora Registrazione trasmissione Non valida.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione trasmissione Non valida, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione trasmissione Non valida, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -9568,7 +9568,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_origineTrasmissioneIdentificativoParteNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTOTIPNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteNonPresente()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -9597,7 +9597,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione trasmissione Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione trasmissione Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione trasmissione Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -9736,7 +9736,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_destinazioneTrasmissioneIdentificativoParteNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTDTIPNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteNonPresente()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -9765,7 +9765,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione destinazione trasmissione identificativo parte  Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione trasmissione identificativo parte Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione trasmissione identificativo parte Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -9906,7 +9906,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTOTIPTNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonPresente()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonPresente.xml");
 		this.repositoryListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonPresente.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -9932,7 +9932,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione origine Trasmissione Identificativo Parte Tipo Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Identificativo Parte Tipo Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Identificativo Parte Tipo Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -10064,7 +10064,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTDTIPTNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonPresente()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonPresente.xml");
 		this.repositoryListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonPresente.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -10090,7 +10090,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione destinazione Trasmissione Identificativo Parte Tipo Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione Trasmissione Identificativo Parte Tipo Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione Trasmissione Identificativo Parte Tipo Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -10221,7 +10221,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTOTIPTNV"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonValido()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonValido()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonValido.xml");
 		this.repositoryListaTrasmissione_origineTrasmissioneIdentificativoParteTipoNonValido.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -10247,7 +10247,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione origine Trasmissione Identificativo Parte Tipo Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Identificativo Parte Tipo Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Identificativo Parte Tipo Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -10376,7 +10376,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTDTIPTNV"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonValido()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonValido()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonValido.xml");
 		this.repositoryListaTrasmissione_destinazioneTrasmissioneIdentificativoParteTipoNonValido.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -10402,7 +10402,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione destinazione Trasmissione Identificativo Parte Tipo Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione Trasmissione Identificativo Parte Tipo Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione Trasmissione Identificativo Parte Tipo Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -10533,7 +10533,7 @@ public class BusteEGovScorrette {
 	Repository repositoryMittenteIndirizzoTelematicoErrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".MITE"},
 			dependsOnMethods="init")
-			public void EGovMittenteIndirizzoTelematicoErrato()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovMittenteIndirizzoTelematicoErrato()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaMittenteIndirizzoTelematicoErrato.xml");
 		this.repositoryMittenteIndirizzoTelematicoErrato.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -10561,7 +10561,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Mittente Indirizzo Telematico Errato.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Mittente Indirizzo Telematico Errato, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Mittente Indirizzo Telematico Errato, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -10690,7 +10690,7 @@ public class BusteEGovScorrette {
 	Repository repositoryDestinatarioIndirizzoTelematicoErrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".DITE"},
 			dependsOnMethods="init")
-			public void EGovDestinatarioIndirizzoTelematicoErrato()throws FatalTestSuiteException, SOAPException, Exception{	
+			public void EGovDestinatarioIndirizzoTelematicoErrato()throws TestSuiteException, SOAPException, Exception{	
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaDestinatarioIndirizzoTelematicoErrato.xml");
 		this.repositoryDestinatarioIndirizzoTelematicoErrato.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -10718,7 +10718,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta Destinatario Indirizzo Telematico Errato.");
-					throw new FatalTestSuiteException("Invocazione PA con busta Destinatario Indirizzo Telematico Errato, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta Destinatario Indirizzo Telematico Errato, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -10843,7 +10843,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_origineTrasmissioneIdentificativoParteIndirizzoTelematicoErrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTOTIPITE"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteIndirizzoTelematicoErrato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_origineTrasmissioneIdentificativoParteIndirizzoTelematicoErrato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_origineTrasmissioneIdentificativoParteIndirizzoTelematicoErrato.xml");
 		this.repositoryListaTrasmissione_origineTrasmissioneIdentificativoParteIndirizzoTelematicoErrato.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -10869,7 +10869,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione origin eTrasmissione Identificativo Parte Indirizzo Telematico Errato.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Identificativo Parte Indirizzo Telematico Errato, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione origine Trasmissione Identificativo Parte Indirizzo Telematico Errato, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -10996,7 +10996,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_destinazioneTrasmissioneIdentificativoParteIndirizzoTelematicoErrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTDTIPITE"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteIndirizzoTelematicoErrato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_destinazioneTrasmissioneIdentificativoParteIndirizzoTelematicoErrato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_destinazioneTrasmissioneIdentificativoParteIndirizzoTelematicoErrato.xml");
 		this.repositoryListaTrasmissione_destinazioneTrasmissioneIdentificativoParteIndirizzoTelematicoErrato.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -11022,7 +11022,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione destinazione Trasmissione IdentificativoParte Indirizzo Telematico Errato.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione Trasmissione IdentificativoParte Indirizzo Telematico Errato, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione destinazione Trasmissione IdentificativoParte Indirizzo Telematico Errato, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -11148,7 +11148,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonPresente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTORTTNP"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonPresente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonPresente()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonPresente.xml");
 		this.repositoryListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonPresente.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -11174,7 +11174,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione ora Registrazione Trasmissione Tempo Non Presente.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione Trasmissione Tempo Non Presente, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione Trasmissione Tempo Non Presente, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -11304,7 +11304,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonValido=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LTORTTNV"},
 			dependsOnMethods="init")
-			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonValido()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonValido()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonValido.xml");
 		this.repositoryListaTrasmissione_oraRegistrazioneTrasmissioneTempoNonValido.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -11330,7 +11330,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Trasmissione ora Registrazione Trasmissione Tempo Non Valido.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione Trasmissione Tempo Non Valido, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Trasmissione ora Registrazione Trasmissione Tempo Non Valido, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -11461,7 +11461,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListeRiscontri_senzaRiscontro=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LRSR"},
 			dependsOnMethods="init")
-			public void EGovConListeRiscontri_senzaRiscontro()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListeRiscontri_senzaRiscontro()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListeRiscontri_senzaRiscontro.xml");
 		this.repositoryListeRiscontri_senzaRiscontro.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -11487,7 +11487,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Riscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -11612,7 +11612,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListeRiscontri_RiscontroSenzaIdentificatore=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LRRSI"},
 			dependsOnMethods="init")
-			public void EGovConListeRiscontri_RiscontroSenzaIdentificatore()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListeRiscontri_RiscontroSenzaIdentificatore()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -11642,7 +11642,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Riscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -11782,7 +11782,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListeRiscontri_RiscontroIdentificatoreErrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LRRIE"},
 			dependsOnMethods="init")
-			public void EGovConListeRiscontri_RiscontroIdentificatoreErrato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListeRiscontri_RiscontroIdentificatoreErrato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListeRiscontri_RiscontroIdentificatoreErrato.xml");
 		this.repositoryListeRiscontri_RiscontroIdentificatoreErrato.add(this.busteEGovErrate.getID(index));
 
@@ -11809,7 +11809,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Riscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -11937,7 +11937,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListeRiscontri_RiscontroOraRegistrazioneErrato=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".LRRORE"},
 			dependsOnMethods="init")
-			public void EGovConListeRiscontri_RiscontroOraRegistrazioneErrato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListeRiscontri_RiscontroOraRegistrazioneErrato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListeRiscontri_RiscontroOraRegistrazioneErrato.xml");
 		this.repositoryListeRiscontri_RiscontroOraRegistrazioneErrato.add(this.busteEGovErrate.getID(index));
 
@@ -11964,7 +11964,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Riscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -12091,7 +12091,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListeRiscontri_RiscontroSenzaOraRegistrazione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LRRSOR"},
 			dependsOnMethods="init")
-			public void EGovConListeRiscontri_RiscontroSenzaOraRegistrazione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListeRiscontri_RiscontroSenzaOraRegistrazione()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -12121,7 +12121,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Riscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -12266,7 +12266,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListeRiscontri_RiscontroOraRegistrazioneSenzaTempo=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LRRORST"},
 			dependsOnMethods="init")
-			public void EGovConListeRiscontri_RiscontroOraRegistrazioneSenzaTempo()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListeRiscontri_RiscontroOraRegistrazioneSenzaTempo()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -12296,7 +12296,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Riscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -12438,7 +12438,7 @@ public class BusteEGovScorrette {
 	Repository repositoryListeRiscontri_RiscontroOraRegistrazioneTempoErrato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".LRRORTE"},
 			dependsOnMethods="init")
-			public void EGovConListeRiscontri_RiscontroOraRegistrazioneTempoErrato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConListeRiscontri_RiscontroOraRegistrazioneTempoErrato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("bustaListeRiscontri_RiscontroOraRegistrazioneTempoErrato.xml");
 		this.repositoryListeRiscontri_RiscontroOraRegistrazioneTempoErrato.add(this.busteEGovErrate.getID(index));
 
@@ -12465,7 +12465,7 @@ public class BusteEGovScorrette {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con Lista Riscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con Lista Riscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());

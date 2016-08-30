@@ -33,7 +33,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -60,6 +60,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 
 
@@ -238,7 +239,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public DriverRegistroServiziXML(String path,Logger alog){
 
 		if(alog==null)
-			this.log = Logger.getLogger(DriverRegistroServiziXML.class);
+			this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziXML.class);
 		else
 			this.log = alog;
 

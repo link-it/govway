@@ -35,7 +35,7 @@ import java.util.Vector;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
@@ -52,6 +52,7 @@ import org.openspcoop2.pdd.monitor.constants.CostantiMonitoraggio;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -99,9 +100,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	public DriverMonitoraggio(String nomeDataSource, String tipoDatabase, Properties prop,Logger log) throws DriverMonitoraggioException {
 		// Logger
 		try {
-			//PropertyConfigurator.configure(DriverRegistroServiziDB.class.getResource("/tracer.log4j.properties"));
 			if(log==null)
-				this.log = Logger.getLogger(CostantiMonitoraggio.MONITORAGGIO_DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(CostantiMonitoraggio.MONITORAGGIO_DRIVER_DB_LOGGER);
 			else
 				this.log = log;
 		} catch (Exception e) {
@@ -153,9 +153,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					throws DriverMonitoraggioException {
 		// Logger
 		try {
-			//PropertyConfigurator.configure(DriverRegistroServiziDB.class.getResource("/tracer.log4j.properties"));
 			if(log==null)
-				this.log = Logger.getLogger(CostantiMonitoraggio.MONITORAGGIO_DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(CostantiMonitoraggio.MONITORAGGIO_DRIVER_DB_LOGGER);
 			else
 				this.log = log;
 		} catch (Exception e) {

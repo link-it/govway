@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.xml.security.utils.RFC2253Parser;
 
 
@@ -1027,4 +1027,7 @@ public class Utilities {
 			return false;
 		}
 	}
+	
+	
+
 }

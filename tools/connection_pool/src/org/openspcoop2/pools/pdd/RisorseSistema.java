@@ -24,7 +24,7 @@
 package org.openspcoop2.pools.pdd;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.util.Vector;
 
@@ -32,6 +32,7 @@ import org.openspcoop2.pools.core.ConnectionFactory;
 import org.openspcoop2.pools.core.Datasource;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.core.driver.IDriverRisorseSistemaGet;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.pools.core.driver.DriverRisorseSistemaXML;
 import org.openspcoop2.pools.core.driver.DriverRisorseSistemaException;
 
@@ -78,7 +79,7 @@ public class RisorseSistema  {
 		if(aLog!=null)
 			this.log = aLog;
 		else
-			this.log = Logger.getLogger("Configurazione delle Risorse di Sistema");
+			this.log = LoggerWrapperFactory.getLogger("Configurazione delle Risorse di Sistema");
 		
 		try{ 
 			// inizializzazione XML

@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.units;
 
 import java.util.Date;
 
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -89,7 +89,7 @@ public class VersionamentoAccordiServizio {
 	 */
 	Repository repositoryOneWay=new Repository();
 	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".ONEWAY"})
-	public void oneWay() throws FatalTestSuiteException, Exception{
+	public void oneWay() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryOneWay,CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY,addIDUnivoco);
 	}
 	@DataProvider (name="OneWay")
@@ -137,7 +137,7 @@ public class VersionamentoAccordiServizio {
 	 */
 	Repository repositoryVersionamento1=new Repository();
 	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".SINCRONO_SOGGREFERENTE_NOME_VERSIONE"})
-	public void sincronoVersionamento1() throws FatalTestSuiteException, Exception{
+	public void sincronoVersionamento1() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryVersionamento1,CostantiTestSuite.PORTA_DELEGATA_VERSIONAMENTO_SOGGREFERENTE_NOME_VERSIONE,addIDUnivoco,false);
 	}
 	@DataProvider (name="sincronoVersionamento1")
@@ -182,7 +182,7 @@ public class VersionamentoAccordiServizio {
 	 */
 	Repository repositoryVersionamento2=new Repository();
 	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".SINCRONO_SOGGREFERENTE_NOME"})
-	public void sincronoVersionamento2() throws FatalTestSuiteException, Exception{
+	public void sincronoVersionamento2() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryVersionamento2,CostantiTestSuite.PORTA_DELEGATA_VERSIONAMENTO_SOGGREFERENTE_NOME,addIDUnivoco,false);
 	}
 	@DataProvider (name="sincronoVersionamento2")
@@ -235,7 +235,7 @@ public class VersionamentoAccordiServizio {
 	 */
 	Repository repositoryVersionamento3=new Repository();
 	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".SINCRONO_NOME_VERSIONE"})
-	public void sincronoVersionamento3() throws FatalTestSuiteException, Exception{
+	public void sincronoVersionamento3() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryVersionamento3,CostantiTestSuite.PORTA_DELEGATA_VERSIONAMENTO_NOME_VERSIONE,addIDUnivoco,false);
 	}
 	@DataProvider (name="sincronoVersionamento3")

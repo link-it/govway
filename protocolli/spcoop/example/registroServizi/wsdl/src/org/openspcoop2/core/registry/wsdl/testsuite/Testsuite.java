@@ -74,9 +74,7 @@ public class Testsuite {
 			return;
 		}
 		
-		// init logger
-		Validatore.initResources();
-		
+
 		
 
 		// STANDARD 2 SPCOOP

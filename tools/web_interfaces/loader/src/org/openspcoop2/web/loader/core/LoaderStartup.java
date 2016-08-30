@@ -28,8 +28,9 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.loader.config.DatasourceProperties;
 import org.openspcoop2.web.loader.config.LoaderProperties;
@@ -53,7 +54,7 @@ public class LoaderStartup implements ServletContextListener {
 	private static Logger log = null;
 	private static boolean initialized = false;
 	static {
-		LoaderStartup.log = Logger.getLogger("openspcoop2_loader");
+		LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
 	}
 
 	public static boolean isInitialized() {
@@ -97,7 +98,7 @@ public class LoaderStartup implements ServletContextListener {
 		
 		try{
 			LoaderLogger.initialize(LoaderStartup.log, confDir, null);
-			LoaderStartup.log = Logger.getLogger("openspcoop2_loader");
+			LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}

@@ -42,7 +42,7 @@ import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
@@ -104,6 +104,7 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
@@ -184,9 +185,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			boolean useOp2UtilsDatasource, boolean bindJMX){
 
 		try {
-			//PropertyConfigurator.configure(DriverRegistroServiziDB.class.getResource("/tracer.log4j.properties"));
 			if(alog==null)
-				this.log = Logger.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
 			else{
 				this.log = alog;
 				DriverRegistroServiziDB_LIB.initStaticLogger(this.log);
@@ -240,9 +240,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 	public DriverRegistroServiziDB(Connection connection,Logger alog,String tipoDB) throws DriverRegistroServiziException {
 
-		//PropertyConfigurator.configure(DriverRegistroServiziDB.class.getResource("/tracer.log4j.properties"));
 		if(alog==null)
-			this.log = Logger.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
+			this.log = LoggerWrapperFactory.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
 		else{
 			this.log = alog;
 			DriverRegistroServiziDB_LIB.initStaticLogger(this.log);
@@ -3318,12 +3317,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.UPDATE, documenti, idAccordoLong, ProprietariDocumento.accordoServizio, connection, this.tipoDB);
 
 		}catch (SQLException se) {
-			this.log.error(se);
+			this.log.error(se.getMessage(),se);
 			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizio] SQLException [" + se.getMessage() + "].",se);
 		} 
 		catch (Exception se) {
-			this.log.error(se);
+			this.log.error(se.getMessage(),se);
 			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateAccordoServizio] Exception [" + se.getMessage() + "].",se);
 		}finally {
@@ -3557,7 +3556,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 //			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updatePortType] SQLException [" + se.getMessage() + "].",se);
 //		} 
 		catch (Exception se) {
-			this.log.error(se);
+			this.log.error(se.getMessage(),se);
 			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updatePortType] Exception [" + se.getMessage() + "].",se);
 		}finally {

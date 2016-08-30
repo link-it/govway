@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.Dettagli;
 import org.openspcoop2.core.eccezione.details.Dettaglio;
@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -68,7 +69,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 		if(aLog!=null)
 			this.log = aLog;
 		else
-			this.log = Logger.getLogger(DettaglioEccezioneOpenSPCoop2Builder.class);
+			this.log = LoggerWrapperFactory.getLogger(DettaglioEccezioneOpenSPCoop2Builder.class);
 		this.protocolFactory = protocolFactory;
 		this.traduttore = this.protocolFactory.createTraduttore();
 

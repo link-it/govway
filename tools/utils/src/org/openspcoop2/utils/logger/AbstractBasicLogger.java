@@ -20,13 +20,11 @@
  */
 package org.openspcoop2.utils.logger;
 
-import java.io.File;
-import java.util.Properties;
-
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 import org.openspcoop2.utils.logger.beans.Diagnostic;
+import org.openspcoop2.utils.logger.config.DiagnosticConfig;
 import org.openspcoop2.utils.logger.constants.LowSeverity;
 import org.openspcoop2.utils.logger.constants.Severity;
 
@@ -41,14 +39,8 @@ public abstract class AbstractBasicLogger extends AbstractBaseDiagnosticManagerC
 
 	protected String idTransaction;
 		
-	public AbstractBasicLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution);
-	}
-	public AbstractBasicLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution);
-	}
-	public AbstractBasicLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution);
+	public AbstractBasicLogger(DiagnosticConfig diagnosticConfig) throws UtilsException{
+		super(diagnosticConfig);
 	}
 
 	@Override

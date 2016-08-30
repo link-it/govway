@@ -26,7 +26,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
 /**
@@ -78,7 +79,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			if(this.log==null)
-				this.log = Logger.getLogger(DirectVMConnectorInMessage.class);
+				this.log = LoggerWrapperFactory.getLogger(DirectVMConnectorInMessage.class);
 			
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;

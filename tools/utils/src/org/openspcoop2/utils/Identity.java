@@ -26,7 +26,7 @@ import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
 
 /**

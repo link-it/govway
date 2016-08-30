@@ -23,7 +23,7 @@ package org.openspcoop2.utils.wadl;
 
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;

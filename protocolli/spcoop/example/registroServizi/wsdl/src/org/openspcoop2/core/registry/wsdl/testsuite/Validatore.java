@@ -24,6 +24,7 @@ package org.openspcoop2.core.registry.wsdl.testsuite;
 
 import it.gov.spcoop.sica.dao.Costanti;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -40,13 +41,10 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 
-import org.apache.axis.utils.ByteArrayOutputStream;
-import org.apache.axis.utils.CLArgsParser;
-import org.apache.axis.utils.CLOption;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.WSDL2Java;
+import org.apache.cxf.tools.common.ToolContext;
 import org.apache.cxf.tools.common.toolspec.ToolSpec;
 import org.apache.cxf.tools.validator.WSDLValidator;
+import org.apache.cxf.tools.wsdlto.WSDLToJava;
 import org.openspcoop2.core.registry.wsdl.SplitWSDL;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -65,10 +63,6 @@ import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 public class Validatore {
 
 	
-	public static void initResources(){
-		try{ Validatore.generazioneVerificaStubSkeleton(".","NONESISTENTE",
-				null,null,false); } catch(Exception e){}
-	}
 	
 	
 	public static void verificaFileAttesi(File baseDir,boolean checkErogatore,boolean checkFruitore,boolean checkImplementativo,
@@ -424,6 +418,7 @@ public class Validatore {
 			org.apache.cxf.tools.validator.WSDLValidator validator = new WSDLValidator(toolSpec);
 			String[] args = {"-quiet",src};
 			validator.setArguments(args);
+			validator.setContext(new ToolContext());
 			ByteArrayOutputStream errorOutput = new ByteArrayOutputStream();
 			validator.setErrOutputStream(errorOutput);
 			ByteArrayOutputStream infoOutput = new ByteArrayOutputStream();
@@ -436,11 +431,11 @@ public class Validatore {
 				String msg2 = " not found in wsdl:binding.";
 				if(concettuale){
 					if(errorOutput.toString().contains(msg)==false || errorOutput.toString().contains(msg2)==false){
-						throw new Exception(errorOutput.toString());
+						throw new Exception(errorOutput.toString()+infoOutput.toString());
 					}
 				}
 				else{
-					throw new Exception(errorOutput.toString());
+					throw new Exception(errorOutput.toString()+infoOutput.toString());
 				}
 			}
 			
@@ -474,43 +469,37 @@ public class Validatore {
 		System.out.println("\t\t validazione wsdl ok");
 	}
 
-
+	
 	public static void generazioneVerificaStubSkeleton(String dirName,String fileWSDL,String [] listaFilesAttesi,String [] listaFilesAttesiBinding,boolean print) throws Exception{
 		
 		if(print)
 			System.out.println("\t\t generazione stub/skeleton ...");
-		WSDL2JAVA wsdl2java = new WSDL2JAVA();
 		
-		// Genero STUB e SKELETON PER VERIFICARE CORRETTEZZA DEI WSDL
-		String [] args = new String[5];
-		args[0] = "-S";
-		args[1] = "true";
-		args[2] = "-o";
-		args[3] = "STUB_SKELETON_"+dirName;
+		String outputDir = "STUB_SKELETON_"+dirName;
 
-		// Delete directory dove vengono prodotte le classi prima di produrre il test.
-		FileSystemUtilities.deleteDir(args[3]);
-		
-		// Interfaccia Concettuale
-		args[4] = fileWSDL;
+        // Delete directory dove vengono prodotte le classi prima di produrre il test.
+        FileSystemUtilities.deleteDir(outputDir);
 		
 		FileOutputStream fosInfo= null,fosError = null;
 		PrintStream psInfo= null,psError= null;	
 		PrintStream infoOriginal = System.out;
 		PrintStream errorOriginal = System.err;
+		File fInfoLog = new File("generazione.info.log");
+		File fErrorLog = new File("generazione.error.log");
 		try{
-			fosInfo = new FileOutputStream("validazione.info.log");
+			fosInfo = new FileOutputStream(fInfoLog);
 			psInfo = new PrintStream(fosInfo);
-			fosError = new FileOutputStream("validazione.error.log");
+			fosError = new FileOutputStream(fErrorLog);
 			psError = new PrintStream(fosError);
 			System.setErr(psError);
 			System.setOut(psInfo);
+
+           
+			ToolContext toolCtx = new ToolContext();
+			String[] args = {"-quiet","-all","-d",outputDir,fileWSDL};
+			org.apache.cxf.tools.wsdlto.WSDLToJava wsdl2java = new WSDLToJava(args);
+			wsdl2java.run(toolCtx);
 			
-			wsdl2java.run(args);
-			
-		}finally{
-			System.setErr(errorOriginal);
-			System.setOut(infoOriginal);
 			try{
 				psError.flush();
 				psError.close();
@@ -527,23 +516,31 @@ public class Validatore {
 				fosInfo.flush();
 				fosInfo.close();
 			}catch(Exception eClose){}
+			try{
+				fInfoLog.deleteOnExit();
+			}catch(Exception eClose){}
+			try{
+				fErrorLog.deleteOnExit();
+			}catch(Exception eClose){}
+				
+		}finally{
+			System.setErr(errorOriginal);
+			System.setOut(infoOriginal);
 		}
+	
 		try{
-			if(wsdl2java.getError()!=null){
-				throw wsdl2java.getError();
-			}
 			if(print)System.out.println("\t\t generazione stub/skeleton ok");
 			
 			if(print)System.out.println("\t\t validazione stub/skeleton ...");
 			
 			for(int i=0;i<listaFilesAttesi.length;i++){
-				String checkFile = args[3]+File.separatorChar+listaFilesAttesi[i];
+				String checkFile = outputDir+File.separatorChar+listaFilesAttesi[i];
 				Validatore.isFileExists(checkFile,"axis.WSDL2Java");
 			}
 			
 			if(listaFilesAttesiBinding!=null){
 				for(int i=0;i<listaFilesAttesiBinding.length;i++){
-					String checkFile = args[3]+File.separatorChar+listaFilesAttesiBinding[i];
+					String checkFile = outputDir+File.separatorChar+listaFilesAttesiBinding[i];
 					Validatore.isFileExists(checkFile,"axis.WSDL2Java");
 				}
 			}
@@ -551,7 +548,7 @@ public class Validatore {
 		}finally{
 		
 			// 	Delete directory dove vengono prodotte le classi.
-			FileSystemUtilities.deleteDir(args[3]);
+			FileSystemUtilities.deleteDir(outputDir);
 		
 		}
 		
@@ -559,56 +556,14 @@ public class Validatore {
 	
 	private static void isFileExists(String file,String actor) throws Exception{
 		if ((new File(file)).exists()==false){
-			throw new Exception(file+" non esistente? "+actor+" non ha prodotto l'output atteso");
+			throw new Exception((new File(file)).getAbsolutePath()+" non esistente? "+actor+" non ha prodotto l'output atteso");
 		}
 	}
 	
 	private static void isFileNotExists(String file,String actor) throws Exception{
 		if ((new File(file)).exists()){
-			throw new Exception(file+" esistente? "+actor+" non ha prodotto l'output atteso (il file non doveva essere generato)");
+			throw new Exception((new File(file)).getAbsolutePath()+" esistente? "+actor+" non ha prodotto l'output atteso (il file non doveva essere generato)");
 		}
 	}
 	
-	private static class WSDL2JAVA extends WSDL2Java {
-
-		private Exception error;
-
-		public Exception getError() {
-			return this.error;
-		}
-
-		@Override
-		public void run(String[] args) {
-
-			// Parse the arguments
-			CLArgsParser argsParser = new CLArgsParser(args, WSDL2Java.options);
-
-			// Print parser errors, if any
-			if (null != argsParser.getErrorString()) {
-				printUsage();
-				this.error = new Exception(Messages.getMessage("error01", argsParser.getErrorString()));
-				return;
-			}
-
-			// Get a list of parsed options
-			List<?> clOptions = argsParser.getArguments();
-			int size = clOptions.size();
-
-			try {
-
-				// Parse the options and configure the emitter as appropriate.
-				for (int i = 0; i < size; i++) {
-					parseOption((CLOption) clOptions.get(i));
-				}
-
-				// validate argument combinations
-				// 
-				validateOptions();
-				this.parser.run(this.wsdlURI);
-
-			} catch (Throwable t) {
-				this.error = new Exception("Generazione Stub/Skeleton tramite WSDL2Java fallita: "+t.getMessage(),t);
-			}
-		}   
-	}
 }

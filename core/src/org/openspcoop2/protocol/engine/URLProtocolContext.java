@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.engine;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;

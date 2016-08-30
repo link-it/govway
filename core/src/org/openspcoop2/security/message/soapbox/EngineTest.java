@@ -41,7 +41,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.soapbox.SecurityRequest;
 import org.adroitlogic.ultraesb.core.MessageImpl;
-import org.apache.log4j.Logger;
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -53,6 +52,7 @@ import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.engine.MessageUtilities;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * EngineTest
@@ -109,7 +109,7 @@ public class EngineTest {
 			MessageSecurityContextParameters wssContextParameters = new MessageSecurityContextParameters();
 			wssContextParameters.setUseActorDefaultIfNotDefined(true);
 			wssContextParameters.setActorDefault("prova");
-			wssContextParameters.setLog(Logger.getLogger(EngineTest.class));
+			wssContextParameters.setLog(LoggerWrapperFactory.getLogger(EngineTest.class));
 			wssContextParameters.setFunctionAsClient(true);
 			wssContextParameters.setPrefixWsuId("prefix");
 			org.openspcoop2.security.message.MessageSecurityContext wssContext = new MessageSecurityContext_impl(wssContextParameters);

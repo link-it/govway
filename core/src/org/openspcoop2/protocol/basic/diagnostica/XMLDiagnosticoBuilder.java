@@ -21,7 +21,7 @@
 
 package org.openspcoop2.protocol.basic.diagnostica;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.diagnostica.utils.XMLUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;

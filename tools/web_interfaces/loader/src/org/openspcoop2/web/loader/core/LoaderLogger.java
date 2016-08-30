@@ -26,10 +26,11 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
@@ -43,17 +44,17 @@ import org.openspcoop2.utils.resources.PropertiesUtilities;
  */
 public class LoaderLogger {
 
-	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException{
+	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException, UtilsException{
 
 		// Originale
 		java.util.Properties loggerProperties = new java.util.Properties();
 		java.io.File loggerFile = null;
 		if(rootDirectory!=null)
-			loggerFile = new java.io.File(rootDirectory+"loader.log4j.properties");
+			loggerFile = new java.io.File(rootDirectory+"loader.log4j2.properties");
 		else
-			loggerFile = new java.io.File("loader.log4j.properties");
+			loggerFile = new java.io.File("loader.log4j2.properties");
 		if(loggerFile .exists() == false ){
-			loggerProperties.load(OpenSPCoop2Logger.class.getResourceAsStream("/loader.log4j.properties"));
+			loggerProperties.load(OpenSPCoop2Logger.class.getResourceAsStream("/loader.log4j2.properties"));
 		}else{
 			FileInputStream fin = null;
 			try{
@@ -100,7 +101,7 @@ public class LoaderLogger {
 			}
 		}
 
-		PropertyConfigurator.configure(loggerProperties);
+		LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 
 
 	}

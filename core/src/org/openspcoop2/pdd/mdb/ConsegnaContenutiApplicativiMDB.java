@@ -30,7 +30,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -176,7 +177,7 @@ public class ConsegnaContenutiApplicativiMDB implements MessageDrivenBean, Messa
 			}
 		
 			if (lib.inizializzazioneUltimata==false){
-				this.log = Logger.getLogger(ConsegnaContenutiApplicativiMDB.class);
+				this.log = LoggerWrapperFactory.getLogger(ConsegnaContenutiApplicativiMDB.class);
 				this.log.error("["+ConsegnaContenutiApplicativi.ID_MODULO+"] Inizializzazione MDB non riuscita");
 				this.ctxMDB.setRollbackOnly();
 				return;

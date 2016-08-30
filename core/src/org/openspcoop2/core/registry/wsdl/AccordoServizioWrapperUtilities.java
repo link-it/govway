@@ -36,7 +36,7 @@ import javax.wsdl.extensions.soap.SOAPHeaderFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
@@ -48,6 +48,7 @@ import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
@@ -77,7 +78,7 @@ public class AccordoServizioWrapperUtilities {
 		if(log!=null)
 			this.logger = log;
 		else
-			this.logger = Logger.getLogger(AccordoServizioWrapperUtilities.class);
+			this.logger = LoggerWrapperFactory.getLogger(AccordoServizioWrapperUtilities.class);
 		this.openspcoopUtilities = new RegistroOpenSPCoopUtilities(this.logger);
 		this.xmlUtils = XMLUtils.getInstance();
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
@@ -90,7 +91,7 @@ public class AccordoServizioWrapperUtilities {
 		if(log!=null)
 			this.logger = log;
 		else
-			this.logger = Logger.getLogger(AccordoServizioWrapperUtilities.class);
+			this.logger = LoggerWrapperFactory.getLogger(AccordoServizioWrapperUtilities.class);
 		this.accordoServizioWrapper = accordoServizio;
 	}
 	private AccordoServizioWrapper accordoServizioWrapper = null;

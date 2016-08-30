@@ -30,7 +30,7 @@ import java.util.Date;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -98,7 +98,7 @@ public class VerificaTimeoutGestioneContentLength {
 	 */
 	Repository repositoryOneWay=new Repository();
 	@Test(groups={VerificaTimeoutGestioneContentLength.ID_GRUPPO,VerificaTimeoutGestioneContentLength.ID_GRUPPO+".ONEWAY"})
-	public void oneWay() throws FatalTestSuiteException, Exception{	
+	public void oneWay() throws TestSuiteException, Exception{	
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -156,7 +156,7 @@ public class VerificaTimeoutGestioneContentLength {
 		}
 	}
 	@Test(groups={VerificaTimeoutGestioneContentLength.ID_GRUPPO,VerificaTimeoutGestioneContentLength.ID_GRUPPO+".ONEWAY"},dependsOnMethods={"testOneWay"})
-	public void oneWay_Attachments() throws FatalTestSuiteException, Exception{	
+	public void oneWay_Attachments() throws TestSuiteException, Exception{	
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -228,7 +228,7 @@ public class VerificaTimeoutGestioneContentLength {
 	 */
 	Repository repositoryOneWayStateless=new Repository();
 	@Test(groups={VerificaTimeoutGestioneContentLength.ID_GRUPPO,VerificaTimeoutGestioneContentLength.ID_GRUPPO+".ONEWAY_STATELESS"})
-	public void oneWayStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayStateless() throws TestSuiteException, Exception{
 		
 		// Creazione client Sincrono
 		ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayStateless);
@@ -269,7 +269,7 @@ public class VerificaTimeoutGestioneContentLength {
 		}
 	}
 	@Test(groups={VerificaTimeoutGestioneContentLength.ID_GRUPPO,VerificaTimeoutGestioneContentLength.ID_GRUPPO+".ONEWAY_STATELESS"},dependsOnMethods={"testOneWayStateless"})
-	public void oneWayStateless_Attachments() throws FatalTestSuiteException, Exception{
+	public void oneWayStateless_Attachments() throws TestSuiteException, Exception{
 		
 		// Creazione client Sincrono
 		ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryOneWayStateless);
@@ -607,7 +607,7 @@ public class VerificaTimeoutGestioneContentLength {
 	 */
 	Repository repositoryOneWayWithWSA=new Repository();
 	@Test(groups={VerificaTimeoutGestioneContentLength.ID_GRUPPO,VerificaTimeoutGestioneContentLength.ID_GRUPPO+".ONEWAY_WSADDRESSING"})
-	public void oneWayWithWSA() throws FatalTestSuiteException, Exception{
+	public void oneWayWithWSA() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -646,13 +646,13 @@ public class VerificaTimeoutGestioneContentLength {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 			
 		}catch(Exception e){
@@ -712,7 +712,7 @@ public class VerificaTimeoutGestioneContentLength {
 	 */
 	Repository repositorySincronoWithWSA=new Repository();
 	@Test(groups={VerificaTimeoutGestioneContentLength.ID_GRUPPO,VerificaTimeoutGestioneContentLength.ID_GRUPPO+".SINCRONO_WSADDRESSING"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithWSA() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithWSA() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{

@@ -22,7 +22,7 @@ package org.openspcoop2.generic_project.web.impl.jsf1.mbean;
 
 import java.lang.reflect.ParameterizedType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 import org.openspcoop2.generic_project.web.impl.jsf1.datamodel.ParameterizedDataModel;
@@ -30,6 +30,7 @@ import org.openspcoop2.generic_project.web.iservice.IBaseService;
 import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 import org.openspcoop2.generic_project.web.table.PagedDataTable;
 import org.openspcoop2.generic_project.web.view.IViewBean;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

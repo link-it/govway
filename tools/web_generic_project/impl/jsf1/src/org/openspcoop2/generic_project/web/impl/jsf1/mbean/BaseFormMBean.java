@@ -29,7 +29,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManager;
 import org.openspcoop2.generic_project.web.form.Form;
@@ -49,6 +49,7 @@ import org.openspcoop2.generic_project.web.mbean.exception.ModificaException;
 import org.openspcoop2.generic_project.web.mbean.exception.NuovoException;
 import org.openspcoop2.generic_project.web.mbean.exception.ResetException;
 import org.openspcoop2.generic_project.web.mbean.exception.RestoreSearchException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * BaseFormMBean classe generica che fornisce il supporto ad una form.
@@ -99,7 +100,7 @@ public abstract class BaseFormMBean<BeanType,KeyType,FormType extends Form> impl
 	
 	public Logger getLog(){
 		if(this.log == null)
-			this.log = Logger.getLogger(BaseFormMBean.class);
+			this.log = LoggerWrapperFactory.getLogger(BaseFormMBean.class);
 		
 		return this.log;
 	}

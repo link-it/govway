@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -64,6 +64,7 @@ import org.openspcoop2.core.registry.ServizioAzione;
 import org.openspcoop2.core.registry.ServizioAzioneFruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.HttpUtilities;
 
@@ -97,7 +98,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	private ValidatoreXSD validatoreRegistro = null;
 
 	/** Logger utilizzato per info. */
-	private org.apache.log4j.Logger log = null;
+	private org.slf4j.Logger log = null;
 
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
@@ -123,7 +124,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	public DriverRegistroServiziWEB(String urlPrefix,String pathPrefix,Logger alog){	
 		try{
 			if(alog==null)
-				this.log = Logger.getLogger(DriverRegistroServiziWEB.class);
+				this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziWEB.class);
 			else
 				this.log = alog;
 

@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.pdd.core;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;

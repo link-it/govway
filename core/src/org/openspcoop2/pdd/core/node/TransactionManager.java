@@ -58,7 +58,7 @@ import org.openspcoop2.utils.date.DateManager;
 public class TransactionManager {
 
 	/** Logger utilizzato per debug. */
-	private static org.apache.log4j.Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+	private static org.slf4j.Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
 	public final static String ID_MODULO = "TransactionManager";

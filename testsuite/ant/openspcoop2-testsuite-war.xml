@@ -120,7 +120,8 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="${log4j_jar}"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
 				<include name="${javax_jms_jar}"/>
@@ -129,10 +130,9 @@
 				<include name="openspcoop2_integrationManagerStub_axis14.jar"/>
 			</lib>
 			<classes dir="${cfg_testsuite}">
-				<include name="testsuite.log4j.properties"/>
-				<include name="gui_testsuite.properties"/>
+				<include name="testsuite.log4j2.properties"/>
 				<include name="testsuiteServer-crypto.properties"/>
-				<include name="${log4j_properties}"/>
+				<include name="log4j2.properties"/>
 			</classes>
 			<classes dir="${build_testsuite}/tmp">
 				<include name="database.properties"/>

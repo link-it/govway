@@ -32,7 +32,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;

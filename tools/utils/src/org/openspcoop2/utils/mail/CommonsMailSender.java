@@ -30,7 +30,7 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.SSLUtilities;

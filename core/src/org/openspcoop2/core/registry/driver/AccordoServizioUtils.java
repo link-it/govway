@@ -29,11 +29,12 @@ import java.util.List;
 
 import javax.xml.validation.Schema;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
@@ -61,7 +62,7 @@ public class AccordoServizioUtils {
 		if(log!=null)
 			this.logger = log;
 		else
-			this.logger = Logger.getLogger(AccordoServizioUtils.class);
+			this.logger = LoggerWrapperFactory.getLogger(AccordoServizioUtils.class);
 		this.xmlUtils = XMLUtils.getInstance();
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 	}

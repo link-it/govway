@@ -28,9 +28,10 @@ import java.util.Vector;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.pdd.OpenSPCoop2PoolsStartup;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
 

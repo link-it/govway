@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -69,6 +69,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -245,7 +246,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	public DriverConfigurazioneXML(String path,Logger alog){
 
 		if(alog==null)
-			this.log = Logger.getLogger(DriverConfigurazioneXML.class);
+			this.log = LoggerWrapperFactory.getLogger(DriverConfigurazioneXML.class);
 		else
 			this.log = alog;
 		

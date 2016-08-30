@@ -47,7 +47,6 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
-import org.apache.log4j.Logger;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.util.WSSecurityUtil;
@@ -57,6 +56,7 @@ import org.openspcoop2.message.mtom.MtomXomReference;
 import org.openspcoop2.message.reference.AttachmentReference;
 import org.openspcoop2.message.reference.ElementReference;
 import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.resources.TransportRequestContext;
 import org.openspcoop2.utils.resources.TransportResponseContext;
@@ -557,7 +557,7 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 	public void updateContentType() throws SOAPException {
 		if(countAttachments() > 0 && saveRequired()){
 	   		saveChanges();
-		}else if((SOAPVersion.isMtom(Logger.getLogger(OpenSPCoop2Message.class), this.getContentType())) && saveRequired() ){
+		}else if((SOAPVersion.isMtom(LoggerWrapperFactory.getLogger(OpenSPCoop2Message.class), this.getContentType())) && saveRequired() ){
 			// Bug Fix: OP-375  'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="application/xop+xml"'
 			//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
 			saveChanges();

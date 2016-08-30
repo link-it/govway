@@ -39,7 +39,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -132,7 +132,7 @@ public class BusteEGovConEccezioni {
 	Repository repositoryOneWayEccezioniNonGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWENG"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniNonGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniNonGravi()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniNonGravi.xml");
 		this.repositoryOneWayEccezioniNonGravi.add(this.busteEGov.getID(index));
@@ -249,7 +249,7 @@ public class BusteEGovConEccezioni {
 	Repository repositorySincronaEccezioniNonGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SENG"},
 			dependsOnMethods="init")
-			public void EGovSincronaEccezioniNonGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSincronaEccezioniNonGravi()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSincronaEccezioniNonGravi.xml");
 
@@ -364,7 +364,7 @@ public class BusteEGovConEccezioni {
 	Repository repositoryOneWayEccezioniAlcuneGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniAlcuneGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniAlcuneGravi()throws TestSuiteException, SOAPException, Exception{
 
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi.add(this.busteEGov.getID(index));
@@ -480,7 +480,7 @@ public class BusteEGovConEccezioni {
 	Repository repositorySincronaEccezioniAlcuneGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SEAG"},
 			dependsOnMethods="init")
-			public void EGovSincronaEccezioniAlcuneGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSincronaEccezioniAlcuneGravi()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSincronaEccezioniAlcuneGravi.xml");
 		this.repositorySincronaEccezioniAlcuneGravi.add(this.busteEGov.getID(index));
@@ -592,7 +592,7 @@ public class BusteEGovConEccezioni {
 	Repository repositoryOneWayEccezioniAlcuneGravi_faultCorretto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG_FC"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto()throws TestSuiteException, SOAPException, Exception{
 			
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi_faultCorretto.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi_faultCorretto.add(this.busteEGov.getID(index));
@@ -719,7 +719,7 @@ public class BusteEGovConEccezioni {
 	Repository repositoryOneWayEccezioniAlcuneGravi_faultCorretto_CDATA=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG_FC_CDATA"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto_CDATA()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto_CDATA()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi_faultCorretto_CDATA.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi_faultCorretto_CDATA.add(this.busteEGov.getID(index));
@@ -846,7 +846,7 @@ public class BusteEGovConEccezioni {
 	Repository repositoryOneWayEccezioniAlcuneGravi_faultStringScorretto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG_FSS"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniAlcuneGravi_faultStringScorretto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniAlcuneGravi_faultStringScorretto()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi_faultStringScorretto.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi_faultStringScorretto.add(this.busteEGov.getID(index));
@@ -957,7 +957,7 @@ public class BusteEGovConEccezioni {
 	Repository repositoryOneWayEccezioniAlcuneGravi_faultCodeScorretto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG_FCS"},
 			dependsOnMethods="init")
-	public void EGovOneWayEccezioniAlcuneGravi_faultCodeScorretto()throws FatalTestSuiteException, SOAPException, Exception{
+	public void EGovOneWayEccezioniAlcuneGravi_faultCodeScorretto()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi_faultCodeScorretto.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi_faultCodeScorretto.add(this.busteEGov.getID(index));

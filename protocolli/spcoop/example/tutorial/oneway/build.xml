@@ -20,6 +20,7 @@
 	<!-- CLASSPATH -->
 	<path id="classpath_compile" >
 		<fileset dir="${openspcoop2_lib}" >
+			<include name="**/log/*"/>
 			<include name="**/cxf/*"/>
 			<include name="**/saaj/*"/>
 			<include name="**/jetty/*"/>
@@ -71,6 +72,7 @@
             <classpath>
                 <path refid="classpath_compile"/>
             	<path refid="classpath_dist"/>
+		<pathelement location="." />
             </classpath>
         </java>
 	</target>
@@ -82,6 +84,7 @@
             <classpath>
                 <path refid="classpath_compile"/>
             	<path refid="classpath_dist"/>
+		<pathelement location="." />
             </classpath>
         </java>
 	</target>

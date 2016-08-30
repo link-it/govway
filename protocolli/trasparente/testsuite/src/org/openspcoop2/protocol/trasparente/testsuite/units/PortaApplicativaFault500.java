@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.Porta;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaApplicativa;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaImpl;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -41,7 +41,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	/* TEST ONE WAY FAULT.500 */
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP11.STATEFUL"})
-	public void oneWayFault500_paSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP11Stateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -64,7 +64,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP11.STATELESS"})
-	public void oneWayFault500_paSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault500(this.paSOAP11Stateless, this.repositoryPortaApplicativaOneWayFault500_Soap11Stateless);
 	}
 
@@ -80,7 +80,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP12.STATEFUL"})
-	public void oneWayFault500_paSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP12Stateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -103,7 +103,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP12.STATELESS"})
-	public void oneWayFault500_paSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault500(this.paSOAP12Stateless, this.repositoryPortaApplicativaOneWayFault500_Soap12Stateless);
 	}
 
@@ -119,7 +119,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void oneWayFault500_paSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -142,7 +142,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP11.STATELESS.ATTACHMENTS"})
-	public void oneWayFault500_paSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault500(this.paSOAP11WithAttachmentsStateless, this.repositoryPortaApplicativaOneWayFault500_Soap11WithAttachmentsStateless);
 	}
 
@@ -158,7 +158,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void oneWayFault500_paSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -181,7 +181,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP12.STATELESS.ATTACHMENTS"})
-	public void oneWayFault500_paSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault500_paSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault500(this.paSOAP12WithAttachmentsStateless, this.repositoryPortaApplicativaOneWayFault500_Soap12WithAttachmentsStateless);
 	}
 
@@ -199,7 +199,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	/* TEST SINCRONO FAULT.500 */
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP11.STATELESS"})
-	public void sincronoFault500_paSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP11Stateless, this.repositoryPortaApplicativaSincronoFault500_Soap11Stateless);
 	}
 
@@ -215,7 +215,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP11.STATEFUL"})
-	public void sincronoFault500_paSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP11Stateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP11Stateful, this.repositoryPortaApplicativaSincronoFault500_Soap11Stateful);
 	}
 
@@ -231,7 +231,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}	
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP12.STATELESS"})
-	public void sincronoFault500_paSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP12Stateless, this.repositoryPortaApplicativaSincronoFault500_Soap12Stateless);
 	}
 
@@ -248,7 +248,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP12.STATEFUL"})
-	public void sincronoFault500_paSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP12Stateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP12Stateful, this.repositoryPortaApplicativaSincronoFault500_Soap12Stateful);
 	}
 
@@ -264,7 +264,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}	
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP11.STATELESS.ATTACHMENTS"})
-	public void sincronoFault500_paSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP11WithAttachmentsStateless, this.repositoryPortaApplicativaSincronoFault500_Soap11WithAttachmentsStateless);
 	}
 
@@ -280,7 +280,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP12.STATELESS.ATTACHMENTS"})
-	public void sincronoFault500_paSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP12WithAttachmentsStateless, this.repositoryPortaApplicativaSincronoFault500_Soap12WithAttachmentsStateless);
 	}
 
@@ -297,7 +297,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void sincronoFault500_paSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP12WithAttachmentsStateful, this.repositoryPortaApplicativaSincronoFault500_Soap12WithAttachmentsStateful);
 	}
 
@@ -313,7 +313,7 @@ public class PortaApplicativaFault500 extends PortaImpl {
 	}
 
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO_FAULT.500.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void sincronoFault500_paSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault500_paSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault500(this.paSOAP11WithAttachmentsStateful, this.repositoryPortaApplicativaSincronoFault500_Soap11WithAttachmentsStateful);
 	}
 

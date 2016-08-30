@@ -30,7 +30,7 @@ import java.util.Date;
 
 import javax.jms.QueueSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.costanti.OperationsParameter;

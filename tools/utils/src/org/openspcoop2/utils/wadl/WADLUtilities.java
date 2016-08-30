@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jvnet.ws.wadl.HTTPMethods;
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.jvnet.ws.wadl.ast.MethodNode;

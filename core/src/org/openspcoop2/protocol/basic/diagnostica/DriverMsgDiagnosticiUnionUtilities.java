@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.basic.diagnostica;
 
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;

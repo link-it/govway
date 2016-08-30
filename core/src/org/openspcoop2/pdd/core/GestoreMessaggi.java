@@ -35,7 +35,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -76,6 +76,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -746,7 +747,7 @@ public class GestoreMessaggi  {
 					}
 					else{
 						ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
-						//		Ricerco connettore nel className.properties
+						//		Ricerco connettore
 						String adapterClass = classNameProperties.getJDBCAdapter(jdbcAdapter);
 						if(adapterClass == null){
 							log.error("Inizializzione GestoreMessaggi non riuscita: AdapterClass non registrata ["+propertiesReader.getRepositoryJDBCAdapter()+"]");
@@ -839,7 +840,7 @@ public class GestoreMessaggi  {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(GestoreMessaggi.class);
+			this.log = LoggerWrapperFactory.getLogger(GestoreMessaggi.class);
 		}
 
 		if(this.propertiesReader.isRepositoryOnFS() == false){

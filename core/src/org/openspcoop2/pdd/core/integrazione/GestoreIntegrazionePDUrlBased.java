@@ -21,9 +21,10 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 
@@ -46,7 +47,7 @@ public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGest
 	public GestoreIntegrazionePDUrlBased(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(this.log==null){
-			this.log = Logger.getLogger(GestoreIntegrazionePDUrlBased.class);
+			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePDUrlBased.class);
 		}
 		try{
 			this.utilities = UtilitiesIntegrazione.getInstance(this.log);

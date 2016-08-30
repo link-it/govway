@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.sdk;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;

@@ -34,7 +34,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.message.MessageElement;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -172,7 +172,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincrono=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincrono() throws FatalTestSuiteException, IOException, Exception{
+	public void sincrono() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -276,7 +276,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorynotifica=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY"},description="Test di tipo notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void notifica() throws FatalTestSuiteException, IOException, Exception{
+	public void notifica() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -378,7 +378,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoMultipartRelatedMIME=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_MUTIPART_RELATED"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoMultipartRelatedMIME() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoMultipartRelatedMIME() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -507,7 +507,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorynotificaMultipartRelatedMIME=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_MUTIPART_RELATED"},description="Test di tipo notificaMultipartRelatedMIME, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void notificaMultipartRelatedMIME() throws FatalTestSuiteException, IOException, Exception{
+	public void notificaMultipartRelatedMIME() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -615,7 +615,7 @@ public class TunnelSOAP {
 	Repository repositorySincronoAttachmentsOpenSPCoopDoc=new Repository();
 	Hashtable<String, Message> repositorySincronoAttachmentsOpenSPCoopDoc_message = new Hashtable<String, Message>();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_DOC"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoAttachmentsOpenSPCoopDoc() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoAttachmentsOpenSPCoopDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -714,7 +714,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopZip=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_ZIP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoAttachmentsOpenSPCoopZip() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoAttachmentsOpenSPCoopZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -814,7 +814,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopPdf=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_PDF"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoAttachmentsOpenSPCoopPdf() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoAttachmentsOpenSPCoopPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -916,7 +916,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopFormMultipart=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_FORM_MULTIPART"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoAttachmentsOpenSPCoopFormMultipart() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoAttachmentsOpenSPCoopFormMultipart() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1051,7 +1051,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositoryNotificaAttachmentsOpenSPCoopDoc=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_DOC"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void NotificaAttachmentsOpenSPCoopDoc() throws FatalTestSuiteException, IOException, Exception{
+	public void NotificaAttachmentsOpenSPCoopDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1154,7 +1154,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositoryNotificaAttachmentsOpenSPCoopZip=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_ZIP"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void NotificaAttachmentsOpenSPCoopZip() throws FatalTestSuiteException, IOException, Exception{
+	public void NotificaAttachmentsOpenSPCoopZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1259,7 +1259,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositoryNotificaAttachmentsOpenSPCoopPdf=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_PDF"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void NotificaAttachmentsOpenSPCoopPdf() throws FatalTestSuiteException, IOException, Exception{
+	public void NotificaAttachmentsOpenSPCoopPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1365,7 +1365,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoAttachmentsCustomDoc=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_DOC"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoAttachmentsCustomDoc() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoAttachmentsCustomDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1468,7 +1468,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoAttachmentsCustomZip=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_ZIP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoAttachmentsCustomZip() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoAttachmentsCustomZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1572,7 +1572,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoAttachmentsCustomPdf=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_PDF"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoAttachmentsCustomPdf() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoAttachmentsCustomPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1681,7 +1681,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositoryNotificaCustomDoc=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_DOC"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void NotificaCustomDoc() throws FatalTestSuiteException, IOException, Exception{
+	public void NotificaCustomDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1787,7 +1787,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositoryNotificaCustomZip=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_ZIP"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void NotificaCustomZip() throws FatalTestSuiteException, IOException, Exception{
+	public void NotificaCustomZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;
@@ -1889,7 +1889,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositoryNotificaCustomPdf=new Repository();
 	@Test(groups={TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_PDF"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void NotificaCustomPdf() throws FatalTestSuiteException, IOException, Exception{
+	public void NotificaCustomPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		ByteArrayOutputStream bout = null;

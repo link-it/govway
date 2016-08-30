@@ -34,10 +34,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.input.ReaderInputStream;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,7 +56,7 @@ public abstract class AbstractXMLDiff {
 
 	
 	@SuppressWarnings("unused")
-	private static Logger logger = Logger.getLogger(AbstractXMLDiff.class);
+	private static Logger logger = LoggerWrapperFactory.getLogger(AbstractXMLDiff.class);
 	public static void setLogger(Logger logger) {
 		AbstractXMLDiff.logger = logger;
 	}

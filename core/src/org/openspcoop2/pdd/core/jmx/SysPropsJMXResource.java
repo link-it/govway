@@ -39,7 +39,7 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.SystemPropertiesManager;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 

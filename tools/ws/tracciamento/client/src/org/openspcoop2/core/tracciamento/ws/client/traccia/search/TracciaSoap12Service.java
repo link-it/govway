@@ -57,7 +57,7 @@ public class TracciaSoap12Service extends Service {
 			url = TracciaSoap12Service.class.getClassLoader().getResource("/tracciamento/TracciaSearch_PortSoap12.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.Logger.getLogger(TracciaSoap12Service.class.getName())
+			java.util.logging.LoggerWrapperFactory.getLogger(TracciaSoap12Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/TracciaSearch_PortSoap12.wsdl");
         }       

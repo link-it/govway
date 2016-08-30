@@ -31,7 +31,7 @@ import java.sql.Timestamp;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;

@@ -25,7 +25,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IDMappingBehaviour;
 import org.openspcoop2.generic_project.beans.IField;

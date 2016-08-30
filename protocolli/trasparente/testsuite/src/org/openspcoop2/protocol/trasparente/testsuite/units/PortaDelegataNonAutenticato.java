@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.Porta;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaDelegata;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaImpl;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -42,7 +42,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	/* TEST ONE WAY */
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL"})
-	public void oneWay_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP11Stateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11Stateful, this.repositoryPortaDelegataOneWaySOAP11Stateful);
 	}
 
@@ -59,7 +59,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS"})
-	public void oneWay_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11Stateless, this.repositoryPortaDelegataOneWaySOAP11Stateless);
 	}
 
@@ -75,7 +75,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL"})
-	public void oneWay_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP12Stateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12Stateful, this.repositoryPortaDelegataOneWaySOAP12Stateful);
 	}
 
@@ -92,7 +92,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS"})
-	public void oneWay_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12Stateless, this.repositoryPortaDelegataOneWaySOAP12Stateless);
 	}
 
@@ -108,7 +108,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void oneWay_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataOneWaySOAP11WithAttachmentsStateful);
 	}
 
@@ -125,7 +125,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS.ATTACHMENTS"})
-	public void oneWay_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataOneWaySOAP11WithAttachmentsStateless);
 	}
 
@@ -141,7 +141,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void oneWay_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataOneWaySOAP12WithAttachmentsStateful);
 	}
 
@@ -158,7 +158,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS.ATTACHMENTS"})
-	public void oneWay_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataOneWaySOAP12WithAttachmentsStateless);
 	}
 
@@ -176,7 +176,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	/* TEST SINCRONO */
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL"})
-	public void sincrono_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP11Stateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11Stateful, this.repositoryPortaDelegataSincronoSOAP11Stateful);
 	}
 
@@ -193,7 +193,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS"})
-	public void sincrono_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11Stateless, this.repositoryPortaDelegataSincronoSOAP11Stateless);
 	}
 
@@ -209,7 +209,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL"})
-	public void sincrono_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP12Stateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12Stateful, this.repositoryPortaDelegataSincronoSOAP12Stateful);
 	}
 
@@ -226,7 +226,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS"})
-	public void sincrono_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12Stateless, this.repositoryPortaDelegataSincronoSOAP12Stateless);
 	}
 
@@ -242,7 +242,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void sincrono_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataSincronoSOAP11WithAttachmentsStateful);
 	}
 
@@ -259,7 +259,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS.ATTACHMENTS"})
-	public void sincrono_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataSincronoSOAP11WithAttachmentsStateless);
 	}
 
@@ -275,7 +275,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void sincrono_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataSincronoSOAP12WithAttachmentsStateful);
 	}
 
@@ -292,7 +292,7 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS.ATTACHMENTS"})
-	public void sincrono_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataSincronoSOAP12WithAttachmentsStateless);
 	}
 

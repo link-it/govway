@@ -24,14 +24,15 @@
 package org.openspcoop2.testsuite.server;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -71,7 +72,11 @@ public class ServerCore extends HttpServlet{
 			// Server Properties
 			TestSuiteProperties.initialize();
 			// Logger
-			PropertyConfigurator.configure(ServerGenerico.class.getResource("/"+CostantiTestSuite.LOGGER_PROPERTIES));
+			try{
+				LoggerWrapperFactory.setLogConfiguration(ServerCore.class.getResource("/"+CostantiTestSuite.LOGGER_PROPERTIES));
+			}catch(Exception e){
+				throw new TestSuiteException("InitLogger",e);
+			}
 		}
 		
 		// Inizializzazione DatabaseProperties
@@ -83,7 +88,7 @@ public class ServerCore extends HttpServlet{
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
 		
 		// Istanza di logger
-		this.log=Logger.getLogger("TestSuite.tracer");
+		this.log=LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
 		
 		// Istanza di DatabaseProperties
 		this.databaseProperties = DatabaseProperties.getInstance();

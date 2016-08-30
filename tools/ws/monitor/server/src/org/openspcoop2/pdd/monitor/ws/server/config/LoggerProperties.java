@@ -26,8 +26,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.apache.logging.log4j.PropertyConfigurator;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
@@ -107,10 +108,10 @@ public class LoggerProperties {
 		if(WSStartup.initializedLog==false){
 			WSStartup.initLog();
 		}
-		return Logger.getLogger("monitor.ws");
+		return LoggerWrapperFactory.getLogger("monitor.ws");
 	}
 	
 	public static Logger getLoggerDAO(){
-		return Logger.getLogger("monitor.dao");
+		return LoggerWrapperFactory.getLogger("monitor.dao");
 	}
 }

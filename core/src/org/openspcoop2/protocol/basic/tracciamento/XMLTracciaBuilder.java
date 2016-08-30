@@ -26,7 +26,7 @@ package org.openspcoop2.protocol.basic.tracciamento;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.tracciamento.Eccezione;
 import org.openspcoop2.core.tracciamento.Riscontro;
 import org.openspcoop2.core.tracciamento.Trasmissione;

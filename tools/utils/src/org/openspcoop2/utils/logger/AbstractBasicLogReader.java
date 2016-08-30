@@ -20,10 +20,8 @@
  */
 package org.openspcoop2.utils.logger;
 
-import java.io.File;
-import java.util.Properties;
-
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.logger.config.DiagnosticConfig;
 
 /**
  * AbstractBasicLogReader
@@ -35,14 +33,8 @@ import org.openspcoop2.utils.UtilsException;
 public abstract class AbstractBasicLogReader extends AbstractBaseDiagnosticManagerCore implements ILogReader {
 
 	
-	public AbstractBasicLogReader(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution);
-	}
-	public AbstractBasicLogReader(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution);
-	}
-	public AbstractBasicLogReader(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution);
+	public AbstractBasicLogReader(DiagnosticConfig diagnosticConfig) throws UtilsException{
+		super(diagnosticConfig);
 	}
 
 	@Override

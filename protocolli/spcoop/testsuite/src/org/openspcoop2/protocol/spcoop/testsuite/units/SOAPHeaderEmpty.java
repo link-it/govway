@@ -29,7 +29,7 @@ import java.util.Date;
 import javax.xml.soap.SOAPException;
 
 import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -104,7 +104,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoSoapHeaderVuoto=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_SOAP_HEADER_VUOTO"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapHeaderVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoSoapHeaderVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoSoapHeaderVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -168,7 +168,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoStatefulSoapHeaderVuoto=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_STATEFUL_SOAP_HEADER_VUOTO"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoStatefulSoapHeaderVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoStatefulSoapHeaderVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoStatefulSoapHeaderVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -235,7 +235,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoSoapHeaderNonPresente=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_SOAP_HEADER_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapHeaderNonPresente() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoSoapHeaderNonPresente() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoSoapHeaderNonPresente);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -299,7 +299,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoStatefulSoapHeaderNonPresente=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_STATEFUL_SOAP_HEADER_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoStatefulSoapHeaderNonPresente() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoStatefulSoapHeaderNonPresente() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoStatefulSoapHeaderNonPresente);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -363,7 +363,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoSoapWithAttachmentsHeaderVuoto=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_SOAP_WITH_ATTACHMENTS_HEADER_VUOTO"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapWithAttachmentsHeaderVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoSoapWithAttachmentsHeaderVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoSoapWithAttachmentsHeaderVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -430,7 +430,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoStatefulSoapWithAttachmentsHeaderVuoto=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_STATEFUL_SOAP_WITH_ATTACHMENTS_HEADER_VUOTO"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoStatefulSoapWithAttachmentsHeaderVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoStatefulSoapWithAttachmentsHeaderVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoStatefulSoapWithAttachmentsHeaderVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -500,7 +500,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoSoapWithAttachmentsHeaderNonPresente=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_SOAP_WITH_ATTACHMENTS_HEADER_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapWithAttachmentsHeaderNonPresente() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoSoapWithAttachmentsHeaderNonPresente() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoSoapWithAttachmentsHeaderNonPresente);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -567,7 +567,7 @@ public class SOAPHeaderEmpty {
 	 */
 	Repository repositorySincronoStatefulSoapWithAttachmentsHeaderNonPresente=new Repository();
 	@Test(groups={SOAPHeaderEmpty.ID_GRUPPO,SOAPHeaderEmpty.ID_GRUPPO+".SINCRONO_STATEFUL_SOAP_HEADER_HEADER_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i Header sono uguali e se gli attachment sono uguali")
-	public void sincronoStatefulSoapWithAttachmentsHeaderNonPresente() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoStatefulSoapWithAttachmentsHeaderNonPresente() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoStatefulSoapWithAttachmentsHeaderNonPresente);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());

@@ -41,7 +41,7 @@ import org.richfaces.component.html.HtmlListShuttle;
 public class MultipleChoiceItemConverter implements Converter {
 	
 	
-//	private static Logger log = Logger.getLogger("console.gui");
+//	private static Logger log = LogUtilities.getLogger("console.gui");
 	
 	
 	

@@ -31,7 +31,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -105,7 +106,7 @@ public class GestoreRisorseJMX {
 	
 		// log
 		if(logger==null){
-			this.log = Logger.getLogger(GestoreRisorseJMX.class);
+			this.log = LoggerWrapperFactory.getLogger(GestoreRisorseJMX.class);
 		}
 		else{
 			this.log = logger;
@@ -113,7 +114,7 @@ public class GestoreRisorseJMX {
 		
 		// logConsole
 		if(loggerConsole==null){
-			loggerConsole = Logger.getLogger("openspcoop2.startup");
+			loggerConsole = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 		}
 		
 		try{

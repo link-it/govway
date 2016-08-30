@@ -26,7 +26,7 @@ package org.openspcoop2.protocol.spcoop.validator;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;

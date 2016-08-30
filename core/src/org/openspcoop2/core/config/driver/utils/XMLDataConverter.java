@@ -37,7 +37,7 @@ import java.sql.Connection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -69,6 +69,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -189,7 +190,7 @@ public class XMLDataConverter {
 			Logger log,Logger logDriver) throws DriverConfigurazioneException{
 	
 		if(log == null)
-			this.log = Logger.getLogger(XMLDataConverter.class);
+			this.log = LoggerWrapperFactory.getLogger(XMLDataConverter.class);
 		else
 			this.log = log;
 		this.logDriver = logDriver;
@@ -346,7 +347,7 @@ public class XMLDataConverter {
 			Logger log,Logger logDriver) throws DriverConfigurazioneException{
 	
 		if(log == null)
-			this.log = Logger.getLogger(XMLDataConverter.class);
+			this.log = LoggerWrapperFactory.getLogger(XMLDataConverter.class);
 		else
 			this.log = log;
 		this.logDriver = logDriver;

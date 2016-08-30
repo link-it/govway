@@ -24,7 +24,8 @@ package org.openspcoop2.ValidazioneContenutiWS.utilities;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /**
  * Reader delle proprieta' per l'accesso al Database
@@ -37,7 +38,7 @@ import org.apache.log4j.Logger;
 public class ValidazioneProperties {
 
 	/** Logger utilizzato per errori eventuali. */
-	private static Logger log = Logger.getLogger("DatabaseProperties");
+	private static Logger log = LoggerWrapperFactory.getLogger("DatabaseProperties");
 
 
 

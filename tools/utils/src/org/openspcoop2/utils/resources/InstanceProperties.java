@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 
@@ -57,7 +58,7 @@ public abstract class InstanceProperties {
 		this.propertiesOriginale = new PropertiesReader(propertiesOriginale,readCallsNotSynchronized);
 		this.log = log;
 		if(this.log==null){
-			this.log = Logger.getLogger(InstanceProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(InstanceProperties.class);
 		}
 		this.OPENSPCOOP2_LOCAL_HOME = OPENSPCOOP2_LOCAL_HOME;
 		this.readCallsNotSynchronized = readCallsNotSynchronized;

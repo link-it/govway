@@ -50,7 +50,7 @@ import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.Text;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.utils.EsitoRichiestaXMLUtils;
 import org.openspcoop2.message.SOAPVersion;
@@ -278,7 +278,7 @@ public class Utilities {
 	 * @param id il valore id
 	 * @param msg il messaggio a cui aggiungere
 	 */
-	public static void setIdInMimeHeaders(String nameId,String id,Message msg) throws FatalTestSuiteException{
+	public static void setIdInMimeHeaders(String nameId,String id,Message msg) throws TestSuiteException{
 		MimeHeaders mime=msg.getMimeHeaders();
 		mime.setHeader(nameId, id);
 	}
@@ -329,7 +329,7 @@ public class Utilities {
 			javax.xml.soap.MimeHeader header = (javax.xml.soap.MimeHeader) it.next();
 			mimes.append("["+header.getName()+"="+header.getValue()+"]");
 		}
-		//Logger log=Logger.getLogger("TestSuite.tracer");
+		//Logger log=LogUtilities.getLogger("openspcoop2.testsuite");
 		//log.info("mimes: "+mimes.toString());
 		String[] header = headers.getHeader(idName);
 		String ret = null;

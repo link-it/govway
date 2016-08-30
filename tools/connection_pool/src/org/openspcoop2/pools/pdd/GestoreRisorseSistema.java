@@ -29,8 +29,7 @@ import java.util.Vector;
 import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.core.driver.DriverRisorseSistemaException;
 import org.openspcoop2.pools.core.Datasource;
@@ -38,6 +37,7 @@ import org.openspcoop2.pools.pdd.db.DBInfo;
 import org.openspcoop2.pools.pdd.db.DBPool;
 import org.openspcoop2.pools.pdd.jms.JMSInfo;
 import org.openspcoop2.pools.pdd.jms.JMSInfoContextProperty;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
 

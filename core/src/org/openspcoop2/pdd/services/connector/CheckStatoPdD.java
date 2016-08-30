@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.Dump;
@@ -41,6 +41,7 @@ import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
 import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Servlet che serve per verificare l'installazione di OpenSPCoop.
@@ -66,7 +67,7 @@ public class CheckStatoPdD extends HttpServlet {
 		
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(log==null)
-			log = Logger.getLogger(CheckStatoPdD.class);
+			log = LoggerWrapperFactory.getLogger(CheckStatoPdD.class);
 		
 		
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();

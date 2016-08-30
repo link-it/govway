@@ -23,7 +23,7 @@ package org.openspcoop2.utils.cache;
 
 import java.lang.reflect.Method;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 
 /**

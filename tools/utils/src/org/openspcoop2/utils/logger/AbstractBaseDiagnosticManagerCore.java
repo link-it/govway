@@ -22,12 +22,14 @@ package org.openspcoop2.utils.logger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.SystemDate;
+import org.openspcoop2.utils.logger.config.DiagnosticConfig;
 
 /**
  * AbstractBaseDiagnosticManagerCore
@@ -42,17 +44,14 @@ public abstract class AbstractBaseDiagnosticManagerCore  {
 	private boolean throwExceptionPlaceholderFailedResolution;
 	private Properties diagnosticProperties;
 	
-	public AbstractBaseDiagnosticManagerCore(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		this(getProperties(diagnosticPropertiesResourceURI), throwExceptionPlaceholderFailedResolution);
-	}
-	public AbstractBaseDiagnosticManagerCore(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
-		this(getProperties(diagnosticPropertiesResource), throwExceptionPlaceholderFailedResolution);
-	}
-	public AbstractBaseDiagnosticManagerCore(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{
+	public AbstractBaseDiagnosticManagerCore(DiagnosticConfig diagnosticConfig) throws UtilsException{
+		
+		DiagnosticConfig.validate(diagnosticConfig); // garantisce che getThrowExceptionPlaceholderFailedResolution non torni null. e readProperties contenga una configurazione valida
 		try{
-			this.diagnosticProperties = diagnosticProperties;
+			
+			this.diagnosticProperties = DiagnosticConfig.readProperties(diagnosticConfig);
 						
-			this.throwExceptionPlaceholderFailedResolution = throwExceptionPlaceholderFailedResolution;
+			this.throwExceptionPlaceholderFailedResolution = diagnosticConfig.getThrowExceptionPlaceholderFailedResolution();
 			
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -75,65 +74,85 @@ public abstract class AbstractBaseDiagnosticManagerCore  {
 	
 	// ---- STATIC 
 	
-	public static Properties getProperties(String diagnosticPropertiesResourceURI) throws UtilsException{
-		InputStream is = null;
+	public static Properties getProperties(File file) throws UtilsException{
+		String filePath = "fs";
 		try{
-			is = AbstractBaseDiagnosticManagerCore.class.getResourceAsStream(diagnosticPropertiesResourceURI);
-			if(is==null && diagnosticPropertiesResourceURI.startsWith("/")==false){
-				is = AbstractBaseDiagnosticManagerCore.class.getResourceAsStream("/"+diagnosticPropertiesResourceURI);
+			if(file==null){
+				throw new Exception("Resource file undefined");
 			}
-			if(is==null){
-				throw new UtilsException("Resource ["+diagnosticPropertiesResourceURI+"] not found");
-			}
-			Properties p = new Properties();
-			p.load(is);
-			return p;
-		}
-		catch(Exception e){
-			if(e instanceof UtilsException){
-				throw (UtilsException) e;
+			filePath = file.getAbsolutePath();
+			if(file.exists()){
+				Properties p = new Properties();
+				FileInputStream fin = null;
+				try{
+					fin = new FileInputStream(file);
+					p.load(fin);
+				}finally{
+					try{
+						fin.close();
+					}catch(Exception eClose){}
+				}
+				return p;
 			}
 			else{
-				throw new UtilsException(e.getMessage(),e);
+				throw new UtilsException("Resource not exists");
 			}
-		}
-		finally{
-			try{
-				if(is!=null){
-					is.close();
-				}
-			}catch(Exception eClose){}
+		}catch(Exception e){
+			throw new UtilsException("Reading Properties failed (resource ["+filePath+"]): "+e.getMessage(),e);
 		}
 	}
-	
-	public static Properties getProperties(File diagnosticPropertiesResource) throws UtilsException{
-		InputStream is = null;
+	public static Properties getProperties(String name) throws UtilsException{
 		try{
-			if(diagnosticPropertiesResource.exists()==false){
-				throw new Exception("Not exists");
+			if(name==null){
+				throw new Exception("Resource name undefined");
 			}
-			if(diagnosticPropertiesResource.canRead()==false){
-				throw new Exception("Cannot read");
-			}
-			is = new FileInputStream(diagnosticPropertiesResource);
-			Properties p = new Properties();
-			p.load(is);
-			return p;
-		}
-		catch(Exception e){
-			if(e instanceof UtilsException){
-				throw (UtilsException) e;
+			File f = new File(name);
+			if(f.exists()){
+				return getProperties(f);
 			}
 			else{
-				throw new UtilsException(e.getMessage(),e);
-			}
-		}
-		finally{
-			try{
-				if(is!=null){
-					is.close();
+				String newName = null;
+				if(name.trim().startsWith("/")){
+					newName = name;
 				}
-			}catch(Exception eClose){}
+				else{
+					newName = "/" + name;
+				}
+				URL url = AbstractBaseDiagnosticManagerCore.class.getResource(newName);
+				if(url!=null){
+					return getProperties(url);
+				}
+				else{
+					throw new UtilsException("Resource ["+name+"] not found");
+				}
+			}
+		}catch(Exception e){
+			throw new UtilsException("Reading Properties failed (resource ["+name+"]): "+e.getMessage(),e);
 		}
 	}
+	public static Properties getProperties(URL url) throws UtilsException{
+		URI uri = null;
+		try{
+			if(url==null){
+				throw new Exception("Resource URL undefined");
+			}
+			uri = url.toURI();
+		}catch(Exception e){
+			throw new UtilsException("Reading Properties failed (url ["+url+"]): "+e.getMessage(),e);
+		}
+		return getProperties(uri);
+
+	}
+	public static Properties getProperties(URI uri) throws UtilsException{
+		try{
+			if(uri==null){
+				throw new Exception("Resource URI undefined");
+			}
+			File f = new File(uri);
+			return getProperties(f);
+		}catch(Exception e){
+			throw new UtilsException("Reading Properties failed (uri ["+uri+"]): "+e.getMessage(),e);
+		}
+	}
+
 }

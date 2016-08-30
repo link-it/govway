@@ -33,7 +33,7 @@ import javax.xml.ws.BindingProvider;
 import org.apache.axis.Message;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
@@ -281,7 +281,7 @@ public class IntegrationManager {
 	 */
 	Repository repositoryOneWay=new Repository();
 	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".ONEWAY"})
-	public void oneWay() throws FatalTestSuiteException, Exception{	
+	public void oneWay() throws TestSuiteException, Exception{	
 		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"]");
 		gestioneProfiloOneway(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY, null, null, this.repositoryOneWay,null,true);
 	}
@@ -358,7 +358,7 @@ public class IntegrationManager {
 		
 		// Controlla che sia uguale a quello ritornato nell'header della risposta
 	    if(msgRisposta.getProtocolHeaderInfo().getID()==null)
-	    	throw new FatalTestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
+	    	throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
 	    
 		// Identificativo della richiesta
 	    String identificativoRichiestaAsincrona=msgRisposta.getProtocolHeaderInfo().getID();
@@ -500,11 +500,11 @@ public class IntegrationManager {
 			String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),msgAxisResponse);
 		    // Controlla che sia uguale a quello ritornato nell'header della risposta
 		    if(idBody==null)
-		    	throw new FatalTestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
+		    	throw new TestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
 		    if(msgRisposta.getProtocolHeaderInfo().getID()==null)
-		    	throw new FatalTestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
+		    	throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
 		    if(msgRisposta.getProtocolHeaderInfo().getID().equals(idBody)==false)
-		    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
+		    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
 		}
 		    
 		// Identificativo della richiesta
@@ -521,7 +521,7 @@ public class IntegrationManager {
 	    String riferimentoAsincrono= org.openspcoop2.testsuite.core.Utilities.getValueFromHeaders(receivedMessageRispostaAsincrona, TestSuiteProperties.getInstance().getRiferimentoAsincronoTrasporto());
 	    // Check riferimentoAsincrono uguale a identificativo richiesta
 	    if(identificativoRichiestaAsincrona.equals(riferimentoAsincrono)==false){
-	    	throw new FatalTestSuiteException("RiferimentoAsincrono ritornato con la risposta ["+riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
+	    	throw new TestSuiteException("RiferimentoAsincrono ritornato con la risposta ["+riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
 	    }
 	    
 	    // Attesa terminazione messaggi
@@ -723,7 +723,7 @@ public class IntegrationManager {
 	    String riferimentoAsincrono= org.openspcoop2.testsuite.core.Utilities.getValueFromHeaders(receivedMessageRispostaAsincrona, TestSuiteProperties.getInstance().getRiferimentoAsincronoTrasporto());
 	    // Check riferimentoAsincrono uguale a identificativo richiesta
 	    if(identificativoRichiestaAsincrona.equals(riferimentoAsincrono)==false){
-	    	throw new FatalTestSuiteException("RiferimentoAsincrono ritornato con la risposta ["+riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
+	    	throw new TestSuiteException("RiferimentoAsincrono ritornato con la risposta ["+riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
 	    }
 	    
 	    // Attesa terminazione messaggi
@@ -852,7 +852,7 @@ public class IntegrationManager {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_asincr"})
-	public void asincronoAsimmetrico_ModalitaAsincrona() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_ModalitaAsincrona() throws TestSuiteException, Exception{
 		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"]");
 		
 		this.gestioneProfiloAsincronoAsimmetrico(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA, 
@@ -987,7 +987,7 @@ public class IntegrationManager {
 	 */
 	Repository repositoryOneWayLoopback=new Repository();
 	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".ONEWAY_LOOPBACK"})
-	public void oneWayLoopback() throws FatalTestSuiteException, Exception{		
+	public void oneWayLoopback() throws TestSuiteException, Exception{		
 		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"]");
 		gestioneProfiloOneway(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_LOOPBACK, null, null, this.repositoryOneWayLoopback,null,true);
 	}
@@ -1046,7 +1046,7 @@ public class IntegrationManager {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaAsincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_asin_azCorrelata"})
-	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaAsincrona() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaAsincrona() throws TestSuiteException, Exception{
 		Reporter.log("SOAPEngine axis14["+use_axis14_engine+"] cxf["+use_cxf_engine+"]");
 		this.gestioneProfiloAsincronoAsimmetrico(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_AZIONE_CORRELATA_MODALITA_ASINCRONA, 
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_AZIONE_CORRELATA_MODALITA_ASINCRONA, 
@@ -2339,7 +2339,7 @@ public class IntegrationManager {
 		
 		// Controlla che sia uguale a quello ritornato nell'header della risposta
 	    if(msgRisposta.getProtocolHeaderInfo().getID()==null)
-	    	throw new FatalTestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
+	    	throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
 	    
 		// Identificativo della richiesta
 	    String identificativoRichiestaAsincrona=msgRisposta.getProtocolHeaderInfo().getID();
@@ -2525,7 +2525,7 @@ public class IntegrationManager {
 		// Test uguaglianza Body
 		Reporter.log("Controllo risposta ottenuta");
 		if(msgRisposta.getProtocolHeaderInfo().getID()==null)
-			throw new FatalTestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
+			throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
 		   
 		if(modalitaSincrona){
 			Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(msgAxis,msgAxisResponse));
@@ -2534,9 +2534,9 @@ public class IntegrationManager {
 				String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),msgAxisResponse);
 				// Controlla che sia uguale a quello ritornato nell'header della risposta
 				if(idBody==null)
-					throw new FatalTestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
+					throw new TestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
 				if(msgRisposta.getProtocolHeaderInfo().getID().equals(idBody)==false)
-					throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
+					throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
 			}
 		}
 		
@@ -2657,7 +2657,7 @@ public class IntegrationManager {
 		Reporter.log("Controllo risposta ottenuta");
 		Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(msgAxisRichiestaStatoAsincrona,msgAxisResponseRichiestaStato));
 		if(msgRispostaRichiestaStato.getProtocolHeaderInfo().getID()==null)
-	    	throw new FatalTestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta della richiesta stato.");
+	    	throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta della richiesta stato.");
 	   
 		// Identificativo della richiesta stato
 	    String identificativoRichiestaStatoAsincrona=msgRispostaRichiestaStato.getProtocolHeaderInfo().getID();
@@ -2779,11 +2779,11 @@ public class IntegrationManager {
 			String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),msgAxisResponse);
 		    // Controlla che sia uguale a quello ritornato nell'header della risposta
 		    if(idBody==null)
-		    	throw new FatalTestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
+		    	throw new TestSuiteException("ID e-Gov non presenta nella ricevuta OpenSPCoopOK.");
 		    if(msgRisposta.getProtocolHeaderInfo().getID()==null)
-		    	throw new FatalTestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
+		    	throw new TestSuiteException("ID e-Gov non presenta nell'header del trasporto della ricevuta.");
 		    if(msgRisposta.getProtocolHeaderInfo().getID().equals(idBody)==false)
-		    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
+		    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della ricevuta differisce dall'id egov presente nel messaggio OpenSPCoopOK della ricevuta.");
 		}
 		    
 		// Identificativo della richiesta

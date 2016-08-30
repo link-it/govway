@@ -28,12 +28,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 
 /**
@@ -163,7 +164,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 	public AbstractXMLServiceManager(Class<XML> cXmlRoot, String xsdPath, String xmlPath,Logger alog) throws ServiceException{
 
 		if(alog==null){
-			this.log = Logger.getLogger(AbstractXMLServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(AbstractXMLServiceManager.class);
 		}else
 			this.log = alog;
 

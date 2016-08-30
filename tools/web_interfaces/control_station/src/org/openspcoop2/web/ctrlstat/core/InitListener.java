@@ -28,9 +28,10 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.message.XMLDiff;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
@@ -60,7 +61,7 @@ public class InitListener implements ServletContextListener {
 	protected static Logger log = null;
 	private static boolean initialized = false;
 	static {
-		InitListener.log = Logger.getLogger(InitListener.class);
+		InitListener.log = LoggerWrapperFactory.getLogger(InitListener.class);
 	}
 
 	public static boolean isInitialized() {

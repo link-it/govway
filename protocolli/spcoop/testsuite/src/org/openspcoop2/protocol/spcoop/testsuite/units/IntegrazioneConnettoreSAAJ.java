@@ -44,7 +44,7 @@ import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -117,7 +117,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositoryOneWaySAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".ONEWAY_SAAJ"})
-	public void oneWaySAAJ() throws FatalTestSuiteException, Exception{
+	public void oneWaySAAJ() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -156,13 +156,13 @@ public class IntegrazioneConnettoreSAAJ {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 			
 		    // Header HTTP
@@ -232,7 +232,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositoryOneWayWithWSASAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".ONEWAY_WSADDRESSING_SAAJ"})
-	public void oneWayWithWSASAAJ() throws FatalTestSuiteException, Exception{
+	public void oneWayWithWSASAAJ() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -271,13 +271,13 @@ public class IntegrazioneConnettoreSAAJ {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 			
 		    // Header HTTP
@@ -353,7 +353,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositorySincronoSAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".SINCRONO_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoSAAJ() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoSAAJ() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -455,7 +455,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositorySincronoWithWSASAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".SINCRONO_WSADDRESSING_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithWSASAAJ() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithWSASAAJ() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -562,7 +562,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositorysincronoWithWSAVerificaClientSincronoSAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".SINCRONO_WSADDRESSING_VERIFICA_CLIENT_SINCRONO_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithWSAVerificaClientSincronoSAAJ() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithWSAVerificaClientSincronoSAAJ() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -674,7 +674,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositoryOneWayWithAttachmentsSAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".ONEWAY_ATTACHMENTS_SAAJ"})
-	public void oneWayWithAttachmentsSAAJ() throws FatalTestSuiteException, Exception{
+	public void oneWayWithAttachmentsSAAJ() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -721,13 +721,13 @@ public class IntegrazioneConnettoreSAAJ {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 			
 		    // Header HTTP
@@ -797,7 +797,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositoryOneWayWithAttachmentsAndWSAddressingSAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".ONEWAY_ATTACHMENTS_WSADDRESSING_SAAJ"})
-	public void oneWayWithAttachmentsAndWSAddressingSAAJ() throws FatalTestSuiteException, Exception{
+	public void oneWayWithAttachmentsAndWSAddressingSAAJ() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -844,13 +844,13 @@ public class IntegrazioneConnettoreSAAJ {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 				
 		    // Header HTTP
@@ -926,7 +926,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositorySincronoWithAttachmentsSAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".SINCRONO_ATTACHMENTS_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithAttachmentsSAAJ() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithAttachmentsSAAJ() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1023,7 +1023,7 @@ public class IntegrazioneConnettoreSAAJ {
 	 */
 	Repository repositorySincronoWithAttachmentsAndWSAddressingSAAJ=new Repository();
 	@Test(groups={IntegrazioneConnettoreSAAJ.ID_GRUPPO,IntegrazioneConnettoreSAAJ.ID_GRUPPO+".SINCRONO_ATTACHMENTS_WSADDRESSING_SAAJ"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithAttachmentsAndWSAddressingSAAJ() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithAttachmentsAndWSAddressingSAAJ() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{

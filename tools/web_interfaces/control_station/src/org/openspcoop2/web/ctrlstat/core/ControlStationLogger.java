@@ -25,10 +25,11 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -44,17 +45,17 @@ import org.openspcoop2.web.ctrlstat.costanti.TipoProperties;
  */
 public class ControlStationLogger {
 
-	public static void initialize(Logger logConsole,String rootDirectory, String confPropertyName, String confLocalPathPrefix,Properties objectProperties) throws IOException{
+	public static void initialize(Logger logConsole,String rootDirectory, String confPropertyName, String confLocalPathPrefix,Properties objectProperties) throws IOException, UtilsException{
 
 		// Originale
 		java.util.Properties loggerProperties = new java.util.Properties();
 		java.io.File loggerFile = null;
 		if(rootDirectory!=null)
-			loggerFile = new java.io.File(rootDirectory+"console.log4j.properties");
+			loggerFile = new java.io.File(rootDirectory+"console.log4j2.properties");
 		else
-			loggerFile = new java.io.File("console.log4j.properties");
+			loggerFile = new java.io.File("console.log4j2.properties");
 		if(loggerFile .exists() == false ){
-			loggerProperties.load(OpenSPCoop2Logger.class.getResourceAsStream("/console.log4j.properties"));
+			loggerProperties.load(OpenSPCoop2Logger.class.getResourceAsStream("/console.log4j2.properties"));
 		}else{
 			FileInputStream fin = null;
 			try{
@@ -104,41 +105,41 @@ public class ControlStationLogger {
 			}
 		}
 
-		PropertyConfigurator.configure(loggerProperties);
+		LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 
 
 	}
 
 	public static Logger getPddConsoleCoreLogger(){
-		 return Logger.getLogger("pddConsole.core");
+		 return LoggerWrapperFactory.getLogger("pddConsole.core");
 	}
 	
 	public static Logger getSmistatoreLogger(){
-		 return Logger.getLogger("pddConsole.gestori.smistatore");
+		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.smistatore");
 	}
 	
 	public static Logger getGestorePddLogger(){
-		 return Logger.getLogger("pddConsole.gestori.config");
+		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.config");
 	}
 	
 	public static Logger getGestoreGELogger(){
-		 return Logger.getLogger("pddConsole.gestori.gestoreEventi");
+		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.gestoreEventi");
 	}
 	
 	public static Logger getGestoreRegistroLogger(){
-		 return Logger.getLogger("pddConsole.gestori.registry");
+		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.registry");
 	}
 	
 	public static Logger getGestoreAutorizzazioneLogger(){
-		 return Logger.getLogger("pddConsole.gestori.auth");
+		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.auth");
 	}
 	
 	public static Logger getDriverDBPddConsoleLogger(){
-		return Logger.getLogger(CostantiControlStation.DRIVER_DB_PDD_CONSOLE_LOGGER);
+		return LoggerWrapperFactory.getLogger(CostantiControlStation.DRIVER_DB_PDD_CONSOLE_LOGGER);
 	}
 	
 	public static Logger getSincronizzatoreLogger(){
-		 return Logger.getLogger("pddConsole.sincronizzatore");
+		 return LoggerWrapperFactory.getLogger("pddConsole.sincronizzatore");
 	}
 	
 }

@@ -36,7 +36,7 @@ import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 import javax.xml.ws.BindingProvider;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.IdPortaDelegata;
 import org.openspcoop2.core.config.IdServizioApplicativo;

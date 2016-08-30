@@ -25,12 +25,13 @@ package org.openspcoop2.protocol.engine.builder;
 
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Classe per la costruzione delle traccie
@@ -56,7 +57,7 @@ public class TracciaBuilder  {
 		if(aLog!=null)
 			this.log = aLog;
 		else
-			this.log = Logger.getLogger(TracciaBuilder.class);
+			this.log = LoggerWrapperFactory.getLogger(TracciaBuilder.class);
 		this.protocolFactory = protocolFactory;
 		try{
 			this.tracciaProtocolBuilder = this.protocolFactory.createXMLTracciaBuilder();

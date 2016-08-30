@@ -22,11 +22,12 @@
 package org.openspcoop2.utils.logger.config;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.util.Properties;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.logger.AbstractBaseDiagnosticManagerCore;
-import org.openspcoop2.utils.logger.log4j.Log4jType;
 
 /**
  * Log4jConfig
@@ -37,69 +38,89 @@ import org.openspcoop2.utils.logger.log4j.Log4jType;
  */
 public class Log4jConfig {
 
-	private Log4jType log4jType = Log4jType.LOG4Jv1;
+	private File log4jConfigFile;
+	private String log4jConfigName;
+	private URI log4jConfigURI;
+	private URL log4jConfigURL;
+	private Properties log4jConfigProperties;
 	
-	private File log4jPropertiesResource;
-	private Properties log4jProperties;
-	private String log4jPropertiesResourceURI;
+	public File getLog4jConfigFile() {
+		return this.log4jConfigFile;
+	}
+	public void setLog4jConfigFile(File log4jConfigFile) {
+		this.log4jConfigFile = log4jConfigFile;
+	}
+	public Properties getLog4jConfigProperties() {
+		return this.log4jConfigProperties;
+	}
+	public void setLog4jConfigProperties(Properties log4jConfigProperties) {
+		this.log4jConfigProperties = log4jConfigProperties;
+	}
+	public String getLog4jConfigName() {
+		return this.log4jConfigName;
+	}
+	public void setLog4jConfigName(String log4jConfigName) {
+		this.log4jConfigName = log4jConfigName;
+	}
+	public URI getLog4jConfigURI() {
+		return this.log4jConfigURI;
+	}
+	public void setLog4jConfigURI(URI log4jConfigURI) {
+		this.log4jConfigURI = log4jConfigURI;
+	}
+	public URL getLog4jConfigURL() {
+		return this.log4jConfigURL;
+	}
+	public void setLog4jConfigURL(URL log4jConfigURL) {
+		this.log4jConfigURL = log4jConfigURL;
+	}
+
 	
-	public Log4jType getLog4jType() {
-		return this.log4jType;
-	}
-	public void setLog4jType(Log4jType log4jType) {
-		this.log4jType = log4jType;
-	}
-	
-	
-	public File getLog4jPropertiesResource() {
-		return this.log4jPropertiesResource;
-	}
-	public void setLog4jPropertiesResource(File log4jPropertiesResource) {
-		this.log4jPropertiesResource = log4jPropertiesResource;
-	}
-	public Properties getLog4jProperties() {
-		return this.log4jProperties;
-	}
-	public void setLog4jProperties(Properties log4jProperties) {
-		this.log4jProperties = log4jProperties;
-	}
-	public String getLog4jPropertiesResourceURI() {
-		return this.log4jPropertiesResourceURI;
-	}
-	public void setLog4jPropertiesResourceURI(String log4jPropertiesResourceURI) {
-		this.log4jPropertiesResourceURI = log4jPropertiesResourceURI;
-	}
-	
-	public static Properties validateAndGetProperties(Log4jConfig config) throws UtilsException{
+	public static void validate(Log4jConfig config) throws UtilsException{
 		if(config==null){
 			throw new UtilsException("Log4j configuration undefined (with enabled mode)");
 		}
 		int log4jConfigMode = 0;
-		if(config.getLog4jProperties()!=null){
+		if(config.getLog4jConfigFile()!=null){
 			log4jConfigMode++;
 		}
-		if(config.getLog4jPropertiesResource()!=null){
+		if(config.getLog4jConfigName()!=null){
 			log4jConfigMode++;
 		}
-		if(config.getLog4jPropertiesResourceURI()!=null){
+		if(config.getLog4jConfigURI()!=null){
 			log4jConfigMode++;
 		}
+		if(config.getLog4jConfigURL()!=null){
+			log4jConfigMode++;
+		}
+		if(config.getLog4jConfigProperties()!=null){
+			log4jConfigMode++;
+		}	
 		if(log4jConfigMode==0){
 			throw new UtilsException("Log4j configuration uncorrect: source log4j configuration file undefined");
 		}
 		if(log4jConfigMode>1){
 			throw new UtilsException("Log4j configuration uncorrect: found multiple source log4j configuration file");
 		}
-		Properties log4jProperties = null;
-		if(config.getLog4jProperties()!=null){
-			log4jProperties = config.getLog4jProperties();
+
+	}
+	
+	public static void setConfigurationLogger(Log4jConfig config) throws UtilsException{
+		
+		if(config.getLog4jConfigFile()!=null){
+			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigFile());
 		}
-		else if(config.getLog4jPropertiesResource()!=null){
-			log4jProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getLog4jPropertiesResource());
+		else if(config.getLog4jConfigName()!=null){
+			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigName());
 		}
-		else if(config.getLog4jPropertiesResourceURI()!=null){
-			log4jProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getLog4jPropertiesResourceURI());
+		else if(config.getLog4jConfigURI()!=null){
+			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigURI());
 		}
-		return log4jProperties;
+		else if(config.getLog4jConfigURL()!=null){
+			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigURL());
+		}
+		else if(config.getLog4jConfigProperties()!=null){
+			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigProperties());
+		}
 	}
 }

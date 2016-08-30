@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.generic_project.web.impl.jsf1.table.factory.impl;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.form.Form;
@@ -30,6 +30,7 @@ import org.openspcoop2.generic_project.web.impl.jsf1.table.impl.BaseTable;
 import org.openspcoop2.generic_project.web.table.PagedDataTable;
 import org.openspcoop2.generic_project.web.table.Table;
 import org.openspcoop2.generic_project.web.table.factory.TableFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

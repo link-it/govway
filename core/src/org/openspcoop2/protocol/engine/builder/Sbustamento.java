@@ -26,7 +26,7 @@ package org.openspcoop2.protocol.engine.builder;
 
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;

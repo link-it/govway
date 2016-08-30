@@ -21,7 +21,7 @@
 
 package org.openspcoop2.utils.mail;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * SenderFactory

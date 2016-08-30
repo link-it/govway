@@ -71,8 +71,9 @@ import org.adroitlogic.soapbox.Processor;
 import org.adroitlogic.soapbox.SBConstants;
 import org.adroitlogic.soapbox.SecurityConfig;
 import org.adroitlogic.soapbox.SecurityFailureException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.w3c.dom.Element;
@@ -87,7 +88,7 @@ import org.w3c.dom.Element;
  */
 public class ProcessTimestampedMessage implements Processor {
     
-    private static final Logger logger = Logger.getLogger(ProcessTimestampedMessage.class);
+    private static final Logger logger = LoggerWrapperFactory.getLogger(ProcessTimestampedMessage.class);
     
     private final SimpleDateFormat zuluMillisecondsPrecision = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); // SimpleDateFormat non e' thread-safe
     private final SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // SimpleDateFormat non e' thread-safe

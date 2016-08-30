@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.basic.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.manifest.Funzionalita;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.Profilo;

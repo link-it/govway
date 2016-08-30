@@ -48,7 +48,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -141,7 +141,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSWithClientAuth=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsWithClientAuth() throws FatalTestSuiteException, IOException, SOAPException{
+	public void httpsWithClientAuth() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryHTTPSWithClientAuth,CostantiTestSuite.PORTA_DELEGATA_HTTPS_WITH_CLIENT_AUTH,addIDUnivoco);
 	}
 	@DataProvider (name="httpsWithClientAuth")
@@ -213,7 +213,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSWithClientAuthIdentita2=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_IDENTITA2"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsWithClientAuthIdentita2() throws FatalTestSuiteException, IOException, SOAPException{
+	public void httpsWithClientAuthIdentita2() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryHTTPSWithClientAuthIdentita2,CostantiTestSuite.PORTA_DELEGATA_HTTPS_WITH_CLIENT_AUTH_IDENTITA2,addIDUnivoco);
 	}
 	@DataProvider (name="httpsWithClientAuthIdentita2")
@@ -284,7 +284,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSWithClientAuthError=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITH_CLIENT_AUTH_ERROR"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsWithClientAuthError() throws FatalTestSuiteException, IOException, Exception{
+	public void httpsWithClientAuthError() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -417,7 +417,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSWithoutClientAuth=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".WITHOUT_CLIENT_AUTH"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsWithoutClientAuth() throws FatalTestSuiteException, IOException, SOAPException{
+	public void httpsWithoutClientAuth() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryHTTPSWithoutClientAuth,CostantiTestSuite.PORTA_DELEGATA_HTTPS_WITHOUT_CLIENT_AUTH,addIDUnivoco);
 	}
 	@DataProvider (name="httpsWithoutClientAuth")
@@ -483,7 +483,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSCANonPresente=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CA_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsCANonPresente() throws FatalTestSuiteException, IOException, Exception{
+	public void httpsCANonPresente() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -602,7 +602,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSHostnameVerifier=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".HOSTNAME_VERIFIER"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsHostnameVerifier() throws FatalTestSuiteException, IOException, Exception{
+	public void httpsHostnameVerifier() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -840,7 +840,7 @@ public class HTTPS {
 	Repository repositoryHTTPSAutenticazioneSIL=new Repository();
 	Date dataTestAutenticazioneSIL = null;
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_SIL"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsAutenticazioneSIL() throws FatalTestSuiteException, IOException, Exception{
+	public void httpsAutenticazioneSIL() throws TestSuiteException, IOException, Exception{
 		
 		this.dataTestAutenticazioneSIL = new Date();
 		
@@ -955,7 +955,7 @@ public class HTTPS {
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 		
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_SIL_2"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsAutenticazioneSIL_2() throws FatalTestSuiteException, IOException, Exception{
+	public void httpsAutenticazioneSIL_2() throws TestSuiteException, IOException, Exception{
 		
 		this.dataTestAutenticazioneSIL2 = new Date();
 		
@@ -1173,7 +1173,7 @@ public class HTTPS {
 	
 	Repository repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_SPCOOP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsAutorizzazioneSPCoopOkSoggetto1() throws FatalTestSuiteException, IOException, SOAPException{
+	public void httpsAutorizzazioneSPCoopOkSoggetto1() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopFruitoreSoggetto1.sincrono(this.repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1,CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_FUNZIONANTE,addIDUnivoco);
 	}
 	@DataProvider (name="httpsAutorizzazioneSPCoopOkSoggetto1")
@@ -1243,7 +1243,7 @@ public class HTTPS {
 	 */
 	Repository repositoryFruitoreNonPresente=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void FruitoreNonPresente() throws FatalTestSuiteException, IOException, Exception{
+	public void FruitoreNonPresente() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1426,7 +1426,7 @@ public class HTTPS {
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	Repository repositorySpoofingRilevato=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void SpoofingRilevato() throws FatalTestSuiteException, IOException, Exception{
+	public void SpoofingRilevato() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1623,7 +1623,7 @@ public class HTTPS {
 
 	Repository repositorySpoofingRilevatoTramiteFruitore=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_TRAMITE_FRUIZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void SpoofingRilevatoTramiteFruitore() throws FatalTestSuiteException, IOException, Exception{
+	public void SpoofingRilevatoTramiteFruitore() throws TestSuiteException, IOException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1817,7 +1817,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSAutorizzazioneSPCoopDisabilitata=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_SPCOOP_DISABILITATA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsAutorizzazioneSPCoopDisabilitata() throws FatalTestSuiteException, IOException, SOAPException{
+	public void httpsAutorizzazioneSPCoopDisabilitata() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.sincrono(this.repositoryHTTPSAutorizzazioneSPCoopDisabilitata,
 				CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_DISABILITATA,addIDUnivoco);
 	}
@@ -1892,7 +1892,7 @@ public class HTTPS {
 	 */
 	Repository repositoryHTTPSAutorizzazioneSPCoopDisabilitataTramiteFruizione=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_SPCOOP_DISABILITATA_TRAMITE_FRUZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void httpsAutorizzazioneSPCoopDisabilitataTramiteFruizione() throws FatalTestSuiteException, IOException, SOAPException{
+	public void httpsAutorizzazioneSPCoopDisabilitataTramiteFruizione() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopFruitoreSoggetto2.sincrono(this.repositoryHTTPSAutorizzazioneSPCoopDisabilitataTramiteFruizione,
 				CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_DISABILITATA_TRAMITE_FRUIZIONE,addIDUnivoco,true);
 	}
@@ -1961,7 +1961,7 @@ public class HTTPS {
 	 */
 	Repository repositorySincronoConsegnaHTTPS=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CONSEGNA_SIL_HTTPS"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoConsegnaHTTPS() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoConsegnaHTTPS() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoConsegnaHTTPS,CostantiTestSuite.PORTA_DELEGATA_HTTPS_SIL_CONSEGNA,addIDUnivoco);
 	}
 	@DataProvider (name="SincronoConsegnaHTTPS")

@@ -28,11 +28,12 @@ import java.sql.ResultSet;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -93,7 +94,7 @@ public class LoaderCore{
 	private String nomePdDOperativaCtrlstatSinglePdD = null;
 	public LoaderCore() throws Exception{
 		// Log4J caricato tramite LoaderStartup
-		LoaderCore.log = Logger.getLogger("openspcoop2_loader");
+		LoaderCore.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
 
 		this.initCore();
 

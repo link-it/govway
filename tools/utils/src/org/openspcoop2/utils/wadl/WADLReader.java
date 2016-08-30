@@ -26,7 +26,7 @@ import java.net.URI;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.jvnet.ws.wadl.ast.InvalidWADLException;
 import org.jvnet.ws.wadl.ast.ResourceTypeNode;

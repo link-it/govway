@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 

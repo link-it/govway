@@ -41,7 +41,7 @@ import org.apache.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.jcs.engine.behavior.IElementAttributes;
 import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.memory.behavior.IMemoryCache;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.CollectionProperties;
@@ -56,15 +56,17 @@ import org.openspcoop2.utils.resources.PropertiesUtilities;
  */
 public class Cache {
 
-	public static boolean initialize(Logger logConsole,Logger logCore,String rootDirectory,Properties objectProperties,
+	public static boolean initialize(Logger logConsole,Logger logCore,
+			String cachePropertiesName,
+			String rootDirectory,Properties objectProperties,
 			String OPENSPCOOP2_LOCAL_HOME,String OPENSPCOOP2_CACHE_PROPERTIES,String OPENSPCOOP2_CACHE_LOCAL_PATH){
 		try{
 			
 			// Originale
 			java.util.Properties cacheProperties = new java.util.Properties();
-			java.io.File loggerFile = new java.io.File(rootDirectory+"cache.jcs.properties");
+			java.io.File loggerFile = new java.io.File(rootDirectory+cachePropertiesName);
 			if(loggerFile .exists() == false ){
-				cacheProperties.load(Cache.class.getResourceAsStream("/cache.jcs.properties"));
+				cacheProperties.load(Cache.class.getResourceAsStream("/"+cachePropertiesName));
 			}else{
 				FileInputStream fin = null;
 				try{

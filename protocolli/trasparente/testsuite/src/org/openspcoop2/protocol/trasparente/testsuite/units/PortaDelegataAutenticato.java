@@ -25,7 +25,7 @@ import java.util.Date;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.Porta;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaDelegata;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaImpl;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -46,7 +46,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 
 	Date date_oneWayAutenticato_pdSOAP11Stateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP11.STATEFUL"})
-	public void oneWayAutenticato_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP11Stateful() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP11Stateful = new Date();
 		Porta._oneWayAutenticato(this.pdSOAP11Stateful, this.repositoryPortaDelegataOneWayAutenticatoSOAP11Stateful);
 	}
@@ -65,7 +65,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_oneWayAutenticato_pdSOAP11Stateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP11.STATELESS"})
-	public void oneWayAutenticato_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP11Stateless = new Date();
 		Porta._oneWayAutenticato(this.pdSOAP11Stateless, this.repositoryPortaDelegataOneWayAutenticatoSOAP11Stateless);
 	}
@@ -83,7 +83,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_oneWayAutenticato_pdSOAP12Stateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP12.STATEFUL"})
-	public void oneWayAutenticato_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP12Stateful() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP12Stateful = new Date();
 		Porta._oneWayAutenticato(this.pdSOAP12Stateful, this.repositoryPortaDelegataOneWayAutenticatoSOAP12Stateful);
 	}
@@ -102,7 +102,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_oneWayAutenticato_pdSOAP12Stateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP12.STATELESS"})
-	public void oneWayAutenticato_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP12Stateless = new Date();
 		Porta._oneWayAutenticato(this.pdSOAP12Stateless, this.repositoryPortaDelegataOneWayAutenticatoSOAP12Stateless);
 	}
@@ -121,7 +121,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_oneWayAutenticato_pdSOAP11WithAttachmentsStateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void oneWayAutenticato_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP11WithAttachmentsStateful = new Date();		
 		Porta._oneWayAutenticato(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataOneWayAutenticatoSOAP11WithAttachmentsStateful);
 	}
@@ -140,7 +140,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_oneWayAutenticato_pdSOAP11WithAttachmentsStateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP11.STATELESS.ATTACHMENTS"})
-	public void oneWayAutenticato_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP11WithAttachmentsStateless = new Date();
 		Porta._oneWayAutenticato(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataOneWayAutenticatoSOAP11WithAttachmentsStateless);
 	}
@@ -159,7 +159,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_oneWayAutenticato_pdSOAP12WithAttachmentsStateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void oneWayAutenticato_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP12WithAttachmentsStateful = new Date();
 		Porta._oneWayAutenticato(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataOneWayAutenticatoSOAP12WithAttachmentsStateful);
 	}
@@ -178,7 +178,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_oneWayAutenticato_pdSOAP12WithAttachmentsStateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_AUTENTICATO.SOAP12.STATELESS.ATTACHMENTS"})
-	public void oneWayAutenticato_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		this.date_oneWayAutenticato_pdSOAP12WithAttachmentsStateless = new Date();
 		Porta._oneWayAutenticato(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataOneWayAutenticatoSOAP12WithAttachmentsStateless);
 	}
@@ -198,7 +198,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_sincronoAutenticato_pdSOAP11Stateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP11.STATEFUL"})
-	public void sincronoAutenticato_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP11Stateful() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP11Stateful = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP11Stateful, this.repositoryPortaDelegataSincronoAutenticatoSOAP11Stateful);
 	}
@@ -217,7 +217,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_sincronoAutenticato_pdSOAP11Stateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP11.STATELESS"})
-	public void sincronoAutenticato_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP11Stateless = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP11Stateless, this.repositoryPortaDelegataSincronoAutenticatoSOAP11Stateless);
 	}
@@ -236,7 +236,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_sincronoAutenticato_pdSOAP12Stateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP12.STATEFUL"})
-	public void sincronoAutenticato_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP12Stateful() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP12Stateful = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP12Stateful, this.repositoryPortaDelegataSincronoAutenticatoSOAP12Stateful);
 	}
@@ -255,7 +255,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 
 	Date date_sincronoAutenticato_pdSOAP12Stateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP12.STATELESS"})
-	public void sincronoAutenticato_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP12Stateless = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP12Stateless, this.repositoryPortaDelegataSincronoAutenticatoSOAP12Stateless);
 	}
@@ -275,7 +275,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_sincronoAutenticato_pdSOAP11WithAttachmentsStateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void sincronoAutenticato_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP11WithAttachmentsStateful = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataSincronoAutenticatoSOAP11WithAttachmentsStateful);
 	}
@@ -295,7 +295,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_sincronoAutenticato_pdSOAP11WithAttachmentsStateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP11.STATELESS.ATTACHMENTS"})
-	public void sincronoAutenticato_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP11WithAttachmentsStateless = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataSincronoAutenticatoSOAP11WithAttachmentsStateless);
 	}
@@ -314,7 +314,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_sincronoAutenticato_pdSOAP12WithAttachmentsStateful;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void sincronoAutenticato_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP12WithAttachmentsStateful = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataSincronoAutenticatoSOAP12WithAttachmentsStateful);
 	}
@@ -333,7 +333,7 @@ public class PortaDelegataAutenticato extends PortaImpl {
 	
 	Date date_sincronoAutenticato_pdSOAP12WithAttachmentsStateless;
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Autenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_AUTENTICATO.SOAP12.STATELESS.ATTACHMENTS"})
-	public void sincronoAutenticato_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		this.date_sincronoAutenticato_pdSOAP12WithAttachmentsStateless = new Date();
 		Porta._sincronoAutenticato(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataSincronoAutenticatoSOAP12WithAttachmentsStateless);
 	}

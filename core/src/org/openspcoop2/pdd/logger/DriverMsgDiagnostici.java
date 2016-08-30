@@ -30,7 +30,7 @@ import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;

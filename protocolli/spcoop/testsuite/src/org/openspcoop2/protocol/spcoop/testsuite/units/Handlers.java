@@ -44,7 +44,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.handler.TestContext;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -120,7 +120,7 @@ public class Handlers {
 		};
 	}
 	
-	public void verificaInstallazioneHandler() throws FatalTestSuiteException, Exception{
+	public void verificaInstallazioneHandler() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		Date dataInizioTest = DateManager.getDate();
@@ -215,7 +215,7 @@ public class Handlers {
 	Repository repositoryOneWay=new Repository();
 
 	@Test(groups={Handlers.ID_GRUPPO,Handlers.ID_GRUPPO+".ONEWAY_STATEFUL"},dataProvider="TipologieTests")
-	public void oneWay(Boolean attachments) throws FatalTestSuiteException, Exception{
+	public void oneWay(Boolean attachments) throws TestSuiteException, Exception{
 		
 		if(this.doTestStateful==false){
 			return;
@@ -360,7 +360,7 @@ public class Handlers {
 	 */
 	Repository repositoryOneWay_Stateless=new Repository();
 	@Test(groups={Handlers.ID_GRUPPO,Handlers.ID_GRUPPO+".ONEWAY_STATELESS"},dataProvider="TipologieTests")
-	public void oneWay_Stateless(boolean attachments) throws FatalTestSuiteException, Exception{
+	public void oneWay_Stateless(boolean attachments) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -495,7 +495,7 @@ public class Handlers {
 	 */
 	Repository repositoryOneWay_RispostaCompletamenteVuota=new Repository();
 	@Test(groups={Handlers.ID_GRUPPO,Handlers.ID_GRUPPO+".ONEWAY_RISPOSTA_VUOTA"},dataProvider="TipologieTests")
-	public void oneWay_RispostaCompletamenteVuota(boolean attachments) throws FatalTestSuiteException, Exception{
+	public void oneWay_RispostaCompletamenteVuota(boolean attachments) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -623,7 +623,7 @@ public class Handlers {
 	 */
 	Repository repositorySincrono_Stateful=new Repository();
 	@Test(groups={Handlers.ID_GRUPPO,Handlers.ID_GRUPPO+".SINCRONO_STATEFUL"},dataProvider="TipologieTests")
-	public void sincrono_Stateful(boolean attachments) throws FatalTestSuiteException, Exception{
+	public void sincrono_Stateful(boolean attachments) throws TestSuiteException, Exception{
 		
 		if(this.doTestStateful==false){
 			return;
@@ -768,7 +768,7 @@ public class Handlers {
 	 */
 	Repository repositorySincrono_Stateless=new Repository();
 	@Test(groups={Handlers.ID_GRUPPO,Handlers.ID_GRUPPO+".SINCRONO_STATELESS"},dataProvider="TipologieTests")
-	public void sincrono_Stateless(boolean attachments) throws FatalTestSuiteException, Exception{
+	public void sincrono_Stateless(boolean attachments) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 

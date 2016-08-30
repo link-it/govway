@@ -21,7 +21,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;

@@ -38,7 +38,7 @@
 		</fileset>
 		<pathelement path="${openspcoop2_lib}/jibx/jibx-run-1.2.6.jar"/>
 		<pathelement path="${openspcoop2_lib}/jibx/xpp3-1.2.6.jar"/>
-		<pathelement path="${openspcoop2_lib}/log/log4j-1.2.16.jar"/>
+		<fileset dir="${openspcoop2_lib}/log" includes="*.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/soap.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/uddi4j-2.0.5.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.5.6.jar"/>
@@ -50,6 +50,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement path="${openspcoop2_lib}/commons/commons-lang-2.6.jar"/>
+		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.0.7.jar"/>
 		<fileset dir="${openspcoop2_dist}" includes="**/*.jar"/>
 		<pathelement path="${jdbc_lib}"/>
 		<pathelement path="${build}"/>
@@ -75,7 +76,7 @@
 			<then>
 				<!-- db/uddi/web -->
 				<copy file="${openspcoop2}/core/src/schemi/registroServizi.xsd" todir="${build}"/>
-				<copy file="deploy/properties/xml2backend.log4j.properties" todir="${build}"/>
+				<copy file="deploy/properties/xml2backend.log4j2.properties" todir="${build}"/>
 				<java classname="org.openspcoop2.core.registry.driver.utils.TestXMLDataConverter" fork="true">
 					<arg value="${sorgenteRegistroServizi}" />
 					<arg value="${tipoRegistroServizi}" />
@@ -87,7 +88,7 @@
 					<arg value="${statoAccordi}" />
 					<arg value="${protocolloDefault}" />
 					<arg value="${pddOperativa}" />
-					<arg value="${build}/xml2backend.log4j.properties" />
+					<arg value="${build}/xml2backend.log4j2.properties" />
 					<classpath>
 						<path refid="classpath_script"/>
 					</classpath>
@@ -101,7 +102,7 @@
 			<then>
 				<!-- db -->
 				<copy file="${openspcoop2}/core/src/schemi/config.xsd" todir="${build}"/>
-				<copy file="deploy/properties/xml2backend.log4j.properties" todir="${build}"/>
+				<copy file="deploy/properties/xml2backend.log4j2.properties" todir="${build}"/>
 				<java classname="org.openspcoop2.core.config.driver.utils.TestXMLDataConverter" fork="true">
 					<arg value="${sorgenteConfigurazione}" />
 					<arg value="${tipoConfigurazione}" />
@@ -111,7 +112,7 @@
 					<arg value="${tipoConversioneConfigurazione}" />
 					<arg value="${gestioneSoggettiConfigurazione}" />
 					<arg value="${protocolloDefault}" />
-					<arg value="${build}/xml2backend.log4j.properties" />
+					<arg value="${build}/xml2backend.log4j2.properties" />
 					<classpath>
 						<path refid="classpath_script"/>
 					</classpath>
@@ -124,7 +125,7 @@
 	
 	<!-- Eliminazione puntuale del servizio -->
 	<target name="eliminaServizio" depends="init">
-		<copy file="deploy/properties/xml2backend.log4j.properties" todir="${build}"/>
+		<copy file="deploy/properties/xml2backend.log4j2.properties" todir="${build}"/>
 		<if>
 			<equals arg1="${tipologiaEliminazioneServizio}" arg2="erogazione" />
 			<then>
@@ -133,7 +134,7 @@
 					<arg value="${tipologiaEliminazioneServizio}" />
 					<arg value="${servizio}" />
 					<arg value="${soggetto}" />
-					<arg value="${build}/xml2backend.log4j.properties" />
+					<arg value="${build}/xml2backend.log4j2.properties" />
 					<classpath>
 						<path refid="classpath_script"/>
 					</classpath>
@@ -146,7 +147,7 @@
 					<arg value="${servizio}" />
 					<arg value="${soggetto}" />
 					<arg value="${fruitore}" />
-					<arg value="${build}/xml2backend.log4j.properties" />
+					<arg value="${build}/xml2backend.log4j2.properties" />
 					<classpath>
 						<path refid="classpath_script"/>
 					</classpath>

@@ -45,7 +45,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
@@ -103,7 +103,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryNamespace1=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Namespace1"})
-	public void clientNamespace1()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientNamespace1()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -219,7 +219,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryNamespace2=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Namespace2"})
-	public void clientNamespace2()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientNamespace2()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -343,7 +343,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryNamespace3=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Namespace3"})
-	public void clientNamespace3()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientNamespace3()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -454,7 +454,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryNamespace4=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Namespace4"})
-	public void clientNamespace4()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientNamespace4()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -577,7 +577,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryNamespace5=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Namespace5"})
-	public void clientNamespace5()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientNamespace5()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -695,7 +695,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryNamespace6=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Namespace6"})
-	public void clientNamespace6()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientNamespace6()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -811,7 +811,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryNamespaceErrato1=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".NamespaceErrato1"})
-	public void clientNamespaceErrato1()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientNamespaceErrato1()throws TestSuiteException, SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -934,7 +934,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositorySoapActorMustUnderstand1=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".SoapActorMustUnderstand1"})
-	public void clientSoapActorMustUnderstand1()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientSoapActorMustUnderstand1()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1051,7 +1051,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositorySoapActorMustUnderstand2=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".SoapActorMustUnderstand2"})
-	public void clientSoapActorMustUnderstand2()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientSoapActorMustUnderstand2()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1170,7 +1170,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositorySoapActorMustUnderstand3=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".SoapActorMustUnderstand3"})
-	public void clientSoapActorMustUnderstand3()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientSoapActorMustUnderstand3()throws TestSuiteException, SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1354,7 +1354,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositorySoapActorMustUnderstand4=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".SoapActorMustUnderstand4"})
-	public void clientSoapActorMustUnderstand4()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientSoapActorMustUnderstand4()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1473,7 +1473,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositorySoapActorMustUnderstand5=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".SoapActorMustUnderstand5"})
-	public void clientSoapActorMustUnderstand5()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientSoapActorMustUnderstand5()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1593,7 +1593,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryManifest1=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Manifest1"})
-	public void clientManifest1()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientManifest1()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1726,7 +1726,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryManifest2=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Manifest2"})
-	public void clientManifest2()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientManifest2()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1858,7 +1858,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryManifest3=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Manifest3"})
-	public void clientManifest3()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientManifest3()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1987,7 +1987,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryManifest4=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Manifest4"})
-	public void clientManifest4()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientManifest4()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2120,7 +2120,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryManifest5=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".Manifest5"})
-	public void clientManifest5()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientManifest5()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2259,7 +2259,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryErroreManifest1=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".ErroreManifest1"})
-	public void clientErroreManifest1()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientErroreManifest1()throws TestSuiteException, SOAPException, Exception{
 		
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2402,7 +2402,7 @@ public class BusteEGovNamespace {
 	 */
 	Repository repositoryErroreManifest2=new Repository();
 	@Test(groups={BusteEGovNamespace.ID_GRUPPO,BusteEGovNamespace.ID_GRUPPO+".ErroreManifest2"})
-	public void clientErroreManifest2()throws FatalTestSuiteException, SOAPException, Exception{
+	public void clientErroreManifest2()throws TestSuiteException, SOAPException, Exception{
 
 		String idegov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);

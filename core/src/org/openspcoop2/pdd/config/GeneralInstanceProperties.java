@@ -37,7 +37,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.io.JarUtilities;
 import org.openspcoop2.utils.io.ZipUtilities;
@@ -90,7 +90,7 @@ public class GeneralInstanceProperties {
 		// Lookup
 		File fClasspath = null;
 		try{
-			URL urlClasspath = GeneralInstanceProperties.class.getResource("/logger.log4j.properties");
+			URL urlClasspath = GeneralInstanceProperties.class.getResource("/openspcoop2.log4j2.properties");
 			if(urlClasspath!=null){
 				URI uri = urlClasspath.toURI();
 				String uriS = uri.toString();
@@ -111,8 +111,8 @@ public class GeneralInstanceProperties {
 				}
 				File f = (new File(uriS)).getParentFile();
 				if(f!=null){					
-					// OpenSPCoop.ear/properties/logger.log4j.properties
-					// openspcoop.war/WEB-INF/classes/logger.log4j.properties
+					// OpenSPCoop.ear/properties/openspcoop2.log4j2.properties
+					// openspcoop.war/WEB-INF/classes/openspcoop2.log4j2.properties
 					if("properties".equals(f.getName())){
 						fClasspath = f.getParentFile().getParentFile();
 					}else if("classes".equals(f.getName())){

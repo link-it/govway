@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -64,6 +64,7 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.web.XMLLib;
 import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.HttpUtilities;
 
@@ -100,7 +101,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	private ValidatoreXSD validatoreRegistro = null;
 	
 	/** Logger utilizzato per info. */
-	private org.apache.log4j.Logger log = null;
+	private org.slf4j.Logger log = null;
 
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
@@ -141,7 +142,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	public DriverRegistroServiziUDDI(String inquiry,String publish, String user,String password,String urlPrefix, String pathPrefix,Logger alog){
 		try{
 			if(alog==null)
-				this.log = Logger.getLogger(DriverRegistroServiziUDDI.class);
+				this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziUDDI.class);
 			else
 				this.log = alog;
 			

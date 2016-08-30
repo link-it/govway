@@ -23,7 +23,7 @@
 
 package org.openspcoop2.testsuite.clients;
 import org.apache.axis.AxisFault;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.Utilities;
 
@@ -37,13 +37,13 @@ import org.openspcoop2.testsuite.core.Utilities;
 
 public class ClientOneWay extends ClientCore{
 	  
-	public ClientOneWay(Repository rep)throws FatalTestSuiteException{
+	public ClientOneWay(Repository rep)throws TestSuiteException{
 		super();
 		this.repository=rep;
 	}
 	
 
-    public void run()throws FatalTestSuiteException,AxisFault{
+    public void run()throws TestSuiteException,AxisFault{
     	// imposta la url e l'autenticazione per il soapEngine
 	    this.soapEngine.setConnectionParameters();
 	    // Effettua una invocazione asincrona
@@ -52,7 +52,7 @@ public class ClientOneWay extends ClientCore{
 	    this.sentMessage=this.soapEngine.getRequestMessage();
 	    // Check
 	    if(this.idMessaggio==null)
-	    	throw new FatalTestSuiteException("ID messaggio non presenta nell'header del trasporto della risposta.");
+	    	throw new TestSuiteException("ID messaggio non presenta nell'header del trasporto della risposta.");
 	    // Preleva l'id dal body della risposta
 	    try{
 	    	// Il body puo' essere null in caso si voglia che il oneway non ritorna contenuto applicativo.
@@ -60,13 +60,13 @@ public class ClientOneWay extends ClientCore{
 			    String idBody=Utilities.getIDFromOpenSPCoopOKMessage(this.log,this.receivedMessage);
 			    // Controlla che sia uguale a quello ritornato nell'header della risposta
 			    if(idBody==null)
-			    	throw new FatalTestSuiteException("ID messaggio non presenta nella risposta OpenSPCoopOK.");
+			    	throw new TestSuiteException("ID messaggio non presenta nella risposta OpenSPCoopOK.");
 			    if(this.idMessaggio.equals(idBody)==false)
-			    	throw new FatalTestSuiteException("ID messaggio presente nell'header del trasporto della risposta differisce dall'id presente nel messaggio OpenSPCoopOK della risposta.");
+			    	throw new TestSuiteException("ID messaggio presente nell'header del trasporto della risposta differisce dall'id presente nel messaggio OpenSPCoopOK della risposta.");
 				
 		    }
 	    }catch(Exception e){
-	    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+	    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 	    }
 	   // Aggiungo nel repository l'id del messaggio raccolto   
 	    this.repository.add(this.idMessaggio);

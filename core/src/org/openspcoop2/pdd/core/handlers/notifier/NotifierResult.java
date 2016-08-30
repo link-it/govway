@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.core.handlers.notifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.notifier.StreamingHandler;
 import org.openspcoop2.utils.io.notifier.unblocked.AbstractStreamingHandler;

@@ -20,9 +20,7 @@
  */
 package org.openspcoop2.utils.logger.log4j;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.IContext;
@@ -41,81 +39,12 @@ import org.openspcoop2.utils.logger.config.MultiLoggerConfig;
  */
 public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 
-	public Log4JLoggerWithProxyContext(org.apache.log4j.Logger logger, MultiLoggerConfig config) throws UtilsException {
-		super(getDiagnosticProperties(config), config.getDiagnosticConfig().getThrowExceptionPlaceholderFailedResolution(), 
-				getLog4jProperties(config), config.getLog4jConfig().getLog4jType());
-	}
-	private static Properties getDiagnosticProperties(MultiLoggerConfig config) throws UtilsException{
-		if(config==null){
-			throw new UtilsException("Configuration undefined");
-		}
-		return DiagnosticConfig.validateAndGetProperties(config.getDiagnosticConfig());
-	}
-	private static Properties getLog4jProperties(MultiLoggerConfig config) throws UtilsException{
-		if(config==null){
-			throw new UtilsException("Configuration undefined");
-		}
-		return Log4jConfig.validateAndGetProperties(config.getLog4jConfig());
-	}
-	
-	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType)
-			throws UtilsException {
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
-	}
-	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	public Log4JLoggerWithProxyContext(MultiLoggerConfig config) throws UtilsException {
+		super(config.getDiagnosticConfig(),config.getLog4jConfig());
 	}
 
-	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType)
-			throws UtilsException {
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
-	}
-	public Log4JLoggerWithProxyContext(File diagnosticPropertiesResource,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResource, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-
-	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType)
-			throws UtilsException {
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
-	}
-	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-
-	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType)
-			throws UtilsException {
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
-	}
-	public Log4JLoggerWithProxyContext(Properties diagnosticProperties,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		super(diagnosticProperties, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-
-	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType)
-			throws UtilsException {
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
-	}
-	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
-			Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
-	}
-
-	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType)
-			throws UtilsException {
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties, log4jType);
-	}
-	public Log4JLoggerWithProxyContext(String diagnosticPropertiesResourceURI,
-			Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		super(diagnosticPropertiesResourceURI, throwExceptionPlaceholderFailedResolution, resourceLogProperties);
+	public Log4JLoggerWithProxyContext(DiagnosticConfig diagnosticConfig, Log4jConfig logConfig) throws UtilsException {
+		super(diagnosticConfig, logConfig);
 	}
 	
 	private ProxyContext context;

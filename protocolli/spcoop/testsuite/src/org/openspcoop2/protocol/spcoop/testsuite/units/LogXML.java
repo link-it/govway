@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.units;
 
 import javax.xml.soap.SOAPException;
 
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.testng.annotations.Test;
 
 
@@ -53,7 +53,7 @@ public class LogXML {
 	// ------------- Msg diagnostici ------------------
 
 	@Test(groups={LogXML.ID_GRUPPO,LogXML.ID_GRUPPO+".MSG_DIAGNOSTICI"})
-	public void msgDiagnostici()throws FatalTestSuiteException,SOAPException, Exception{
+	public void msgDiagnostici()throws TestSuiteException,SOAPException, Exception{
 		
 		org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities.verificaMsgDiagnosticiXML();
 		
@@ -71,7 +71,7 @@ public class LogXML {
 	// ------------- Tracce ------------------
 
 	@Test(groups={LogXML.ID_GRUPPO,LogXML.ID_GRUPPO+".TRACCE"})
-	public void tracce()throws FatalTestSuiteException,SOAPException, Exception{
+	public void tracce()throws TestSuiteException,SOAPException, Exception{
 		
 		org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities.verificaTracciaturaXML();
 		

@@ -23,7 +23,7 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDPortaDelegata;

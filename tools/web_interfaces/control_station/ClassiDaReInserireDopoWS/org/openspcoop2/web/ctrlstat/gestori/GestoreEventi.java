@@ -38,7 +38,8 @@ import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 import javax.xml.ws.BindingProvider;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.log.LogUtilities;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ServizioSpcoop;
 import org.openspcoop2.core.registry.Soggetto;
@@ -127,7 +128,7 @@ public class GestoreEventi extends GestoreGeneral {
 	private GestoreExceptionListenerJMS exceptionListenerJMS = new GestoreExceptionListenerJMS();
 
 	public GestoreEventi(String tipoDB) {
-		this.log = Logger.getLogger("gestore_eventi");
+		this.log = LogUtilities.getLogger("gestore_eventi");
 		this.name = "GestoreEventi";
 		this.tipoDB = tipoDB;
 	}

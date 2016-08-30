@@ -35,8 +35,8 @@ import java.util.Vector;
 
 import javax.xml.soap.SOAPEnvelope;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -103,6 +103,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -323,7 +324,7 @@ public class ConfigurazionePdDReader {
 			if(aLog!=null)
 				this.log = aLog;
 			else
-				this.log = Logger.getLogger(ConfigurazionePdDReader.class);
+				this.log = LoggerWrapperFactory.getLogger(ConfigurazionePdDReader.class);
 			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
 					useOp2UtilsDatasource, bindJMX);
 

@@ -32,8 +32,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -80,11 +80,11 @@ public class MsgDiagnostico {
 	
 
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici */
-	private Logger loggerMsgDiagnostico = null;
+	private org.apache.logging.log4j.Logger loggerMsgDiagnostico = null;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici HumanReadable */
-	private Logger loggerOpenSPCoop2 = null;
+	private org.apache.logging.log4j.Logger loggerOpenSPCoop2 = null;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici HumanReadable del servìzio di IntegrationManager */
-	private Logger loggerIntegrationManager = null;
+	private org.apache.logging.log4j.Logger loggerIntegrationManager = null;
 	/**  Logger log4j utilizzato per segnalare a video errori gravi (FATAL) */
 	private Logger loggerOpenSPCoop2Fatal = null;
 	/**  Logger log4j utilizzato per scrivere lo stack trace degli errore nel core logger di openspcoop */
@@ -909,8 +909,11 @@ public class MsgDiagnostico {
 			}
 			
 			// Log fatal emesso su console jboss
-			if(msgReplaceKey!=null && severitaLivelloOpenSPCoop2==0)
-				this.loggerOpenSPCoop2Fatal.log(LogLevels.LOG_LEVEL_FATAL,msgReplaceKey);
+			if(msgReplaceKey!=null && severitaLivelloOpenSPCoop2==0){
+				// dalla versione 2.3, essendo utilizzato slf4j, si converte fatal in error.
+				//this.loggerOpenSPCoop2Fatal.log(LogLevels.LOG_LEVEL_FATAL,msgReplaceKey);
+				this.loggerOpenSPCoop2Fatal.error(msgReplaceKey);
+			}
 
 		}catch(Exception e){
 			logError("MsgDiagnostico.logPersonalizzato error "+e.getMessage(),e);
@@ -956,8 +959,11 @@ public class MsgDiagnostico {
 			msg = e.getMessage();
 		this.logFatalError(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
-		if(this.loggerOpenSPCoop2Core!=null)
-			this.loggerOpenSPCoop2Core.fatal(posizioneErrore+": "+msg,e);
+		if(this.loggerOpenSPCoop2Core!=null){
+			// dalla versione 2.3, essendo utilizzato slf4j, si converte fatal in error.
+			//this.loggerOpenSPCoop2Core.fatal(posizioneErrore+": "+msg,e);
+			this.loggerOpenSPCoop2Core.error(posizioneErrore+": "+msg,e);
+		}
 	}
 	public void logFatalError(String message, String posizioneErrore) {
 		this.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, message);
@@ -974,8 +980,11 @@ public class MsgDiagnostico {
 			msg = e.getMessage();
 		this.logStartupError(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
-		if(this.loggerOpenSPCoop2Core!=null)
-			this.loggerOpenSPCoop2Core.fatal(posizioneErrore+": "+msg,e);
+		if(this.loggerOpenSPCoop2Core!=null){
+			// dalla versione 2.3, essendo utilizzato slf4j, si converte fatal in error.
+			//this.loggerOpenSPCoop2Core.fatal(posizioneErrore+": "+msg,e);
+			this.loggerOpenSPCoop2Core.error(posizioneErrore+": "+msg,e);
+		}
 	}
 	public void logStartupError(String message, String posizioneErrore) {
 		this.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, message);
@@ -1111,7 +1120,9 @@ public class MsgDiagnostico {
 			}
 			
 			// Log emesso su console jboss
-			this.loggerOpenSPCoop2Fatal.log(LogLevels.LOG_LEVEL_FATAL,msg);
+			// dalla versione 2.3, essendo utilizzato slf4j, si converte fatal in error.
+			//this.loggerOpenSPCoop2Fatal.log(LogLevels.LOG_LEVEL_FATAL,msg);
+			this.loggerOpenSPCoop2Fatal.error(msg);
 
 		}catch(Exception e){
 			logError("MsgDiagnostico.fatalOpenSPCoop error "+e.getMessage(),e);

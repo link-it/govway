@@ -26,10 +26,11 @@ package org.openspcoop2.protocol.spcoop.backward_compatibility.config;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -50,7 +51,7 @@ public class BackwardCompatibilityProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'pdd.properties' */
+	/** Reader delle proprieta' impostate nel file 'backwardCompatibility.properties' */
 	private BackwardCompatibilityInstanceProperties reader;
 
 	/** Copia Statica */
@@ -69,7 +70,7 @@ public class BackwardCompatibilityProperties {
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = Logger.getLogger(BackwardCompatibilityProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(BackwardCompatibilityProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();

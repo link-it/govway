@@ -20,8 +20,7 @@
  */
 package org.openspcoop2.utils.logger.log4j;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.logger.constants.Severity;
 
 /**
@@ -31,55 +30,13 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SeverityLog4J extends org.apache.log4j.Level{ 
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class SeverityLog4J { 
 
-	
-	/*
-	 * Log4J 1.x
-	 * 
-	 * 	Standard intLevel
-	 *     OFF 	   2147483647
-	 *     FATAL     50000
-	 *     ERROR     40000
-	 *     WARN      30000
-	 *     INFO      20000
-	 *     DEBUG     10000
-	 *     ALL     -2147483648
-	 */
-	
-	/** Definisce un Livello di Severita' FATAL per un messaggio Diagnostico: valore Log4J = 50001 */
-	public static final Level LOG_V1_LEVEL_FATAL = 
-		new SeverityLog4J(Severity.FATAL,50001);
 
-	/** Definisce un Livello di Severita' ERROR per un messaggio Diagnostico: valore Log4J = 40001 */
-	public static final Level LOG_V1_LEVEL_ERROR = 
-		new SeverityLog4J(Severity.ERROR,40001);
+	private static String getSeverityLog4JName(Severity levelStr) {
+		return "OP_"+levelStr.name();
+	}
 
-	/** Definisce un Livello di Severita' WARN per un messaggio Diagnostico: valore Log4J = 30001 */
-	public static final Level LOG_V1_LEVEL_WARN = 
-		new SeverityLog4J(Severity.WARN,30001);
-
-	/** Definisce un Livello di Severita' INFO per un messaggio Diagnostico: valore Log4J = 20001 */
-	public static final Level LOG_V1_LEVEL_INFO = 
-		new SeverityLog4J(Severity.INFO,20001);
-
-	/** Definisce un Livello di Severita' DEBUG-LOW per un messaggio Diagnostico: valore Log4J = 10003 */
-	public static final Level LOG_V1_LEVEL_DEBUG_LOW = 
-		new SeverityLog4J(Severity.DEBUG_LOW,10003);
-
-	/** Definisce un Livello di Severita' DEBUG-MEDIUM per un messaggio Diagnostico: valore Log4J = 10002 */
-	public static final Level LOG_V1_LEVEL_DEBUG_MEDIUM = 
-		new SeverityLog4J(Severity.DEBUG_MEDIUM,10002);
-
-	/** Definisce un Livello di Severita' DEBUG-HIGH per un messaggio Diagnostico: valore Log4J = 10001 */
-	public static final Level LOG_V1_LEVEL_DEBUG_HIGH = 
-		new SeverityLog4J(Severity.DEBUG_HIGH,10001);
-	
 	/*
 	 * Log4J 2.x
 	 * 
@@ -96,113 +53,78 @@ public class SeverityLog4J extends org.apache.log4j.Level{
 	
 	/** Definisce un Livello di Severita' FATAL per un messaggio Diagnostico: valore Log4J = 99 */
 	public static final Level LOG_V2_LEVEL_FATAL = 
-		new SeverityLog4J(Severity.FATAL,99);
+			org.apache.logging.log4j.Level.forName(getSeverityLog4JName(Severity.FATAL),99);
 
 	/** Definisce un Livello di Severita' ERROR per un messaggio Diagnostico: valore Log4J = 199 */
 	public static final Level LOG_V2_LEVEL_ERROR = 
-		new SeverityLog4J(Severity.ERROR,199);
+			org.apache.logging.log4j.Level.forName(getSeverityLog4JName(Severity.ERROR),199);
 
 	/** Definisce un Livello di Severita' WARN per un messaggio Diagnostico: valore Log4J = 299 */
 	public static final Level LOG_V2_LEVEL_WARN = 
-		new SeverityLog4J(Severity.WARN,299);
+			org.apache.logging.log4j.Level.forName(getSeverityLog4JName(Severity.WARN),299);
 
 	/** Definisce un Livello di Severita' INFO per un messaggio Diagnostico: valore Log4J = 399 */
 	public static final Level LOG_V2_LEVEL_INFO = 
-		new SeverityLog4J(Severity.INFO,399);
+			org.apache.logging.log4j.Level.forName(getSeverityLog4JName(Severity.INFO),399);
 
 	/** Definisce un Livello di Severita' DEBUG-LOW per un messaggio Diagnostico: valore Log4J = 498 */
 	public static final Level LOG_V2_LEVEL_DEBUG_LOW = 
-		new SeverityLog4J(Severity.DEBUG_LOW,498);
+			org.apache.logging.log4j.Level.forName(getSeverityLog4JName(Severity.DEBUG_LOW),498);
 
 	/** Definisce un Livello di Severita' DEBUG-MEDIUM per un messaggio Diagnostico: valore Log4J = 499 */
 	public static final Level LOG_V2_LEVEL_DEBUG_MEDIUM = 
-		new SeverityLog4J(Severity.DEBUG_MEDIUM,499);
+			org.apache.logging.log4j.Level.forName(getSeverityLog4JName(Severity.DEBUG_MEDIUM),499);
 
 	/** Definisce un Livello di Severita' DEBUG-HIGH per un messaggio Diagnostico: valore Log4J = 599 */
 	public static final Level LOG_V2_LEVEL_DEBUG_HIGH = 
-		new SeverityLog4J(Severity.DEBUG_HIGH,599);
-	
+			org.apache.logging.log4j.Level.forName(getSeverityLog4JName(Severity.DEBUG_HIGH),599);
 
-
-	
-
-	
-	
-	
-
-	
-	protected SeverityLog4J(Severity levelStr,int level) {
-		super(level, "OP_"+levelStr.name(), level);
-	}
-
-	public static Level getSeverityLog4J(Severity severity,Log4jType log4jType){
-		if(Log4jType.LOG4Jv1.equals(log4jType)){
-			switch (severity) {
-			case FATAL:
-				return LOG_V1_LEVEL_FATAL;
-			case ERROR:
-				return LOG_V1_LEVEL_ERROR;
-			case WARN:
-				return LOG_V1_LEVEL_WARN;
-			case INFO:
-				return LOG_V1_LEVEL_INFO;
-			case DEBUG_LOW:
-				return LOG_V1_LEVEL_DEBUG_LOW;
-			case DEBUG_MEDIUM:
-				return LOG_V1_LEVEL_DEBUG_MEDIUM;
-			case DEBUG_HIGH:
-				return LOG_V1_LEVEL_DEBUG_HIGH;
-			}
-		}
-		else{
-			
-			// TODO: Per log4j 2 non funziona la conversione in Priority. Per i custom level è tutto differente: http://logging.apache.org/log4j/2.x/manual/customloglevels.html
-			// Viene quindi implementato un metodo che per ora mappa suil livelli standard di log4j. Vedi metodo sottostante
-			
-			switch (severity) {
-			case FATAL:
-				return LOG_V2_LEVEL_FATAL;
-			case ERROR:
-				return LOG_V2_LEVEL_ERROR;
-			case WARN:
-				return LOG_V2_LEVEL_WARN;
-			case INFO:
-				return LOG_V2_LEVEL_INFO;
-			case DEBUG_LOW:
-				return LOG_V2_LEVEL_DEBUG_LOW;
-			case DEBUG_MEDIUM:
-				return LOG_V2_LEVEL_DEBUG_MEDIUM;
-			case DEBUG_HIGH:
-				return LOG_V2_LEVEL_DEBUG_HIGH;
-			}
-		}
-		return null;
-	}
-	
-	public static void log4j2(Logger log,Severity severity, String msg){
+	public static Level getSeverityLog4J(Severity severity){
+					
 		switch (severity) {
 		case FATAL:
-			log.fatal(msg);
-			break;
+			return LOG_V2_LEVEL_FATAL;
 		case ERROR:
-			log.error(msg);
-			break;
+			return LOG_V2_LEVEL_ERROR;
 		case WARN:
-			log.warn(msg);
-			break;
+			return LOG_V2_LEVEL_WARN;
 		case INFO:
-			log.info(msg);
-			break;
+			return LOG_V2_LEVEL_INFO;
 		case DEBUG_LOW:
-			log.debug(msg);
-			break;
+			return LOG_V2_LEVEL_DEBUG_LOW;
 		case DEBUG_MEDIUM:
-			log.debug(msg);
-			break;
+			return LOG_V2_LEVEL_DEBUG_MEDIUM;
 		case DEBUG_HIGH:
-			log.trace(msg);
-			break;
+			return LOG_V2_LEVEL_DEBUG_HIGH;
 		}
+
+		return null;
 	}
+//	
+//	public static void log4j2(Logger log,Severity severity, String msg){
+//		switch (severity) {
+//		case FATAL:
+//			log.fatal(msg);
+//			break;
+//		case ERROR:
+//			log.error(msg);
+//			break;
+//		case WARN:
+//			log.warn(msg);
+//			break;
+//		case INFO:
+//			log.info(msg);
+//			break;
+//		case DEBUG_LOW:
+//			log.debug(msg);
+//			break;
+//		case DEBUG_MEDIUM:
+//			log.debug(msg);
+//			break;
+//		case DEBUG_HIGH:
+//			log.trace(msg);
+//			break;
+//		}
+//	}
 	
 }

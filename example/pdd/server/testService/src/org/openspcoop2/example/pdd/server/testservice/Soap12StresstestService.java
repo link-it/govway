@@ -27,8 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 
 /**
  * EchoServiceSoap12Stresstest
@@ -48,24 +47,6 @@ public class Soap12StresstestService extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private static Logger log = null;
-	private static synchronized void initLogger(){
-		try{
-			if(Soap12StresstestService.log==null){
-				PropertyConfigurator.configure(Soap12StresstestService.class.getResource("/testService.log4j.properties"));
-				Soap12StresstestService.log = Logger.getLogger("openspcoop2.stressTestService");
-			}
-		}catch(Exception e){
-			e.printStackTrace(System.out);
-		}
-	}
-	private static Logger getLogger(){
-		if(Soap12StresstestService.log==null){
-			Soap12StresstestService.initLogger();
-		}
-		return Soap12StresstestService.log;
-	}
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -101,7 +82,7 @@ public class Soap12StresstestService extends HttpServlet {
 			
 			
 		}catch(Exception e){
-			Logger log = Soap12StresstestService.getLogger();
+			Logger log = Startup.logStressTest;
 			if(log!=null){
 				log.error("ERRORE Soap12StresstestService: "+e.toString(),e);
 			}

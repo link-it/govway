@@ -44,7 +44,7 @@ import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -117,7 +117,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositoryOneWayHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".ONEWAY_HTTPCORE"})
-	public void oneWayHTTPCORE() throws FatalTestSuiteException, Exception{
+	public void oneWayHTTPCORE() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -156,13 +156,13 @@ public class IntegrazioneConnettoreHTTPCORE {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 			
 		    // Header HTTP
@@ -232,7 +232,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositoryOneWayWithWSAHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".ONEWAY_WSADDRESSING_HTTPCORE"})
-	public void oneWayWithWSAHTTPCORE() throws FatalTestSuiteException, Exception{
+	public void oneWayWithWSAHTTPCORE() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -271,13 +271,13 @@ public class IntegrazioneConnettoreHTTPCORE {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 			
 		    // Header HTTP
@@ -353,7 +353,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositorySincronoHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".SINCRONO_HTTPCORE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoHTTPCORE() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoHTTPCORE() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -455,7 +455,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositorySincronoWithWSAHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".SINCRONO_WSADDRESSING_HTTPCORE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithWSAHTTPCORE() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithWSAHTTPCORE() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -562,7 +562,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositorysincronoWithWSAVerificaClientSincronoHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".SINCRONO_WSADDRESSING_VERIFICA_CLIENT_SINCRONO_HTTPCORE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithWSAVerificaClientSincronoHTTPCORE() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithWSAVerificaClientSincronoHTTPCORE() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -674,7 +674,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositoryOneWayWithAttachmentsHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".ONEWAY_ATTACHMENTS_HTTPCORE"})
-	public void oneWayWithAttachmentsHTTPCORE() throws FatalTestSuiteException, Exception{
+	public void oneWayWithAttachmentsHTTPCORE() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -721,13 +721,13 @@ public class IntegrazioneConnettoreHTTPCORE {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 			
 		    // Header HTTP
@@ -797,7 +797,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositoryOneWayWithAttachmentsAndWSAddressingHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".ONEWAY_ATTACHMENTS_WSADDRESSING_HTTPCORE"})
-	public void oneWayWithAttachmentsAndWSAddressingHTTPCORE() throws FatalTestSuiteException, Exception{
+	public void oneWayWithAttachmentsAndWSAddressingHTTPCORE() throws TestSuiteException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -844,13 +844,13 @@ public class IntegrazioneConnettoreHTTPCORE {
 				    String idBody=org.openspcoop2.testsuite.core.Utilities.getIDFromOpenSPCoopOKMessage(SPCoopTestsuiteLogger.getInstance(),client.getResponseMessage());
 				    // Controlla che sia uguale a quello ritornato nell'header della risposta
 				    if(idBody==null)
-				    	throw new FatalTestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
+				    	throw new TestSuiteException("ID e-Gov non presenta nella risposta OpenSPCoopOK.");
 				    if(client.getIdMessaggio().equals(idBody)==false)
-				    	throw new FatalTestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
+				    	throw new TestSuiteException("ID e-Gov presente nell'header del trasporto della risposta differisce dall'id egov presente nel messaggio OpenSPCoopOK della risposta.");
 					
 			    }
 		    }catch(Exception e){
-		    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+		    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 		    }
 				
 		    // Header HTTP
@@ -926,7 +926,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositorySincronoWithAttachmentsHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".SINCRONO_ATTACHMENTS_HTTPCORE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithAttachmentsHTTPCORE() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithAttachmentsHTTPCORE() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1023,7 +1023,7 @@ public class IntegrazioneConnettoreHTTPCORE {
 	 */
 	Repository repositorySincronoWithAttachmentsAndWSAddressingHTTPCORE=new Repository();
 	@Test(groups={IntegrazioneConnettoreHTTPCORE.ID_GRUPPO,IntegrazioneConnettoreHTTPCORE.ID_GRUPPO+".SINCRONO_ATTACHMENTS_WSADDRESSING_HTTPCORE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoWithAttachmentsAndWSAddressingHTTPCORE() throws FatalTestSuiteException, IOException, Exception{
+	public void sincronoWithAttachmentsAndWSAddressingHTTPCORE() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{

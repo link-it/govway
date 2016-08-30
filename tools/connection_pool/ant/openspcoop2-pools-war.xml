@@ -51,9 +51,9 @@
 				<include name="${jboss_deployment_structure}" />
 			</webinf>
 			<classes dir="deploy/properties/">
-				<include name="openspcoop2_pools.log4j.properties"/>
+				<include name="openspcoop2_pools.log4j2.properties"/>
 				<include name="openspcoop2_pools.properties"/>
-				<include name="${log4j_properties}" />
+				<include name="log4j2.properties" />
 			</classes>
 			<lib dir="${dist_openspcoop2Pools}">
 				<include name="openspcoop2_pools-core_*.jar"/>
@@ -67,7 +67,8 @@
 				<include name="jibx-run-1.2.6.jar"/>
 			</lib>
 			<lib dir="${required_lib_openspcoop2Pools}/log">
-				<include name="${log4j_jar}"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib_openspcoop2Pools}/jax">
 				<include name="${jaxp_ri_jar}" />

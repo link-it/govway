@@ -162,11 +162,11 @@
 		
 		<!-- Replace per audit Appender (Log4J) -->
 		<replace file="${dist_pddConsole}/RepositoryPddConsoleOpenSPCoop2.sql" 
-				 token="'audit.log4j.properties'" 
-				 value="'console.audit.log4j.properties'" />
+				 token="'audit.log4j2.properties'" 
+				 value="'console.audit.log4j2.properties'" />
 		<replace file="${dist_pddConsole}/RepositoryPddConsoleOpenSPCoop2.sql" 
-				 token="'audit_local.log4j.properties'" 
-				 value="'console_local.audit.log4j.properties'" />
+				 token="'audit_local.log4j2.properties'" 
+				 value="'console_local.audit.log4j2.properties'" />
 		<replace file="${dist_pddConsole}/RepositoryPddConsoleOpenSPCoop2.sql" 
 				 token="'OPENSPCOOP2_AUDIT_LOG_PROPERTIES'" 
 				 value="'OPENSPCOOP2_CONSOLE_AUDIT_LOG_PROPERTIES'" />		 	

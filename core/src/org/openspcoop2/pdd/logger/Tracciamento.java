@@ -34,7 +34,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;

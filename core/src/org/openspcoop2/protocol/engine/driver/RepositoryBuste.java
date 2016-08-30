@@ -33,7 +33,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -125,7 +126,7 @@ public class RepositoryBuste  {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(RepositoryBuste.class.getName());
+			this.log = LoggerWrapperFactory.getLogger(RepositoryBuste.class.getName());
 		}
 		this.isRichiesta = isRichiesta;
 		this.protocolFactory = protocolFactory;

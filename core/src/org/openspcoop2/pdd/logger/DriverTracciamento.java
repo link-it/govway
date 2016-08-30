@@ -31,7 +31,7 @@ import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.ProtocolliRegistrati;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;

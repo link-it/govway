@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.security.message;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.security.message.constants.SecurityType;
 import org.openspcoop2.utils.digest.IDigestReader;
 

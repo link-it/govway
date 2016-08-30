@@ -66,7 +66,7 @@ import org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.Eliminazion
 import org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType;
 import org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
@@ -209,7 +209,7 @@ public class ValidazioneContenutiApplicativi {
 				client.run();
 				if(invocazioneOK==false){
 					Reporter.log("Invocazione PD non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione PD non ha causato errori.");
+					throw new TestSuiteException("Invocazione PD non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				if(invocazioneOK){
@@ -325,7 +325,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryGestioneUtentiWrappedDocumentLiteral=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".GestioneUtentiWrappedDocumentLiteral"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void gestioneUtentiWrappedDocumentLiteral() throws FatalTestSuiteException, IOException, Exception{
+	public void gestioneUtentiWrappedDocumentLiteral() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -751,7 +751,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryAggiornamentoUtentiWrappedDocumentLiteral=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".AggiornamentoUtentiWrappedDocumentLiteral"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void aggiornamentoUtentiWrappedDocumentLiteral() throws FatalTestSuiteException, IOException, Exception{
+	public void aggiornamentoUtentiWrappedDocumentLiteral() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -938,7 +938,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryAsincronoSimmetricoWrappedDocumentLiteral=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".AsincronoSimmetricoWrappedDocumentLiteral"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void asincronoSimmetricoRichiestaWrappedDocumentLiteral() throws FatalTestSuiteException, IOException, Exception{
+	public void asincronoSimmetricoRichiestaWrappedDocumentLiteral() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -1090,7 +1090,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryAsincronoAsimmetricoWrappedDocumentLiteral=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".AsincronoAsimmetricoWrappedDocumentLiteral"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void asincronoAsimmetricoRichiestaWrappedDocumentLiteral() throws FatalTestSuiteException, IOException, Exception{
+	public void asincronoAsimmetricoRichiestaWrappedDocumentLiteral() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -1287,7 +1287,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryGestioneUtentiDocumentLiteral=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".GestioneUtentiDocumentLiteral"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void gestioneUtentiDocumentLiteral() throws FatalTestSuiteException, IOException, Exception{
+	public void gestioneUtentiDocumentLiteral() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -1424,7 +1424,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryGestioneUtentiDocumentLiteralContenutiErrato=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".GestioneUtentiDocumentLiteralContenutoErrato"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void gestioneUtentiDocumentLiteralContenutoErrato() throws FatalTestSuiteException, IOException, Exception{
+	public void gestioneUtentiDocumentLiteralContenutoErrato() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -1668,7 +1668,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryGestioneUtentiRPCLiteral=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".GestioneUtentiRPCLiteral"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void gestioneUtentiRPCLiteral() throws FatalTestSuiteException, IOException, Exception{
+	public void gestioneUtentiRPCLiteral() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -1825,7 +1825,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryGestioneUtentiRPCEncoded=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".GestioneUtentiRPCEncoded"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void gestioneUtentiRPCEncoded() throws FatalTestSuiteException, IOException, Exception{
+	public void gestioneUtentiRPCEncoded() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -1985,7 +1985,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryGestioneUtentiOverloadedOperations=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".GestioneUtentiOverloadedOperations"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void gestioneUtentiOverloadedOperations() throws FatalTestSuiteException, IOException, Exception{
+	public void gestioneUtentiOverloadedOperations() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		
@@ -2167,7 +2167,7 @@ public class ValidazioneContenutiApplicativi {
 	Repository repositoryGestioneUtentiStileIbrido=new Repository();
 	@Test(groups={ValidazioneContenutiApplicativi.ID_GRUPPO,
 			ValidazioneContenutiApplicativi.ID_GRUPPO+".GestioneUtentiStileIbrido"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void gestioneUtentiStileIbrido() throws FatalTestSuiteException, IOException, Exception{
+	public void gestioneUtentiStileIbrido() throws TestSuiteException, IOException, Exception{
 		
 		TestSuiteTransformer.sequentialForced = true;
 		

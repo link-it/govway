@@ -27,7 +27,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * Classe dove sono forniti metodi per effettuare operazioni sull'albero JNDI 

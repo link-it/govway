@@ -26,13 +26,13 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Validazione Semantica
@@ -58,16 +58,16 @@ public class TestValidazioneSemantica {
 		// Inizializzo logger
 		try{
 			if(args.length==5){
-				PropertyConfigurator.configure(args[4]);
+				LoggerWrapperFactory.setLogConfiguration(args[4]);
 			}else{
-				PropertyConfigurator.configure(TestValidazioneSemantica.class.getResource("/validator.log4j.properties"));
+				LoggerWrapperFactory.setLogConfiguration(TestValidazioneSemantica.class.getResource("/validator.log4j2.properties"));
 			}
 		}catch(Exception e) {
 			String errorMsg = "Errore durante il caricamento del file di log args4["+args[4]+"] : "+e.getMessage();
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}	
-		Logger log = Logger.getLogger("validatoreDatiConfigurazione");
+		Logger log = LoggerWrapperFactory.getLogger("validatoreDatiConfigurazione");
 		
 		
 		java.util.Properties commonProperties = new java.util.Properties();

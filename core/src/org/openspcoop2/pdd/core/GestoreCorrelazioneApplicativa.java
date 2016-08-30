@@ -32,7 +32,7 @@ import java.util.List;
 
 import javax.xml.soap.SOAPEnvelope;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -122,7 +123,7 @@ public class GestoreCorrelazioneApplicativa {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(GestoreCorrelazioneApplicativa.class);
+			this.log = LoggerWrapperFactory.getLogger(GestoreCorrelazioneApplicativa.class);
 		}
 		this.soggettoFruitore = soggettoFruitore;
 		this.idServizio = idServizio;

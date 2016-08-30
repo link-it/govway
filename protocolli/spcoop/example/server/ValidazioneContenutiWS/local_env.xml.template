@@ -2,17 +2,20 @@
 
 <project name="OpenSPCoop2Testsuite_LocalEnv" basedir=".">
 
-      <property name="openspcoop2" location="../../../../.." />
+	<property name="openspcoop2" location="../../../../.." />
 
-	  <!-- ApplicationServer version -->
-	  <property name="as" value="jboss/wildfly/tomcat" />
+	<!-- openspcoop2.utils -->
+	<property name="openspcoop2.dist" value="${openspcoop2}/core/dist" />
 
-	  <property name="ws_validazione_lib" value="${openspcoop2}/lib"/>
-	  <property name="required_lib" value="${ws_validazione_lib}" />
+	<!-- ApplicationServer version -->
+	<property name="as" value="jboss/wildfly/tomcat" />
 
-	  <property name="appServer_url" value="http://127.0.0.1:8080/" />
+	<property name="ws_validazione_lib" value="${openspcoop2}/lib"/>
+	<property name="required_lib" value="${ws_validazione_lib}" />
+
+	<property name="appServer_url" value="http://127.0.0.1:8080/" />
       
-      <!-- Specifica se inserire le informazioni di debug nelle classi -->
-      <property name="debug" value="true" />
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
 
 </project>

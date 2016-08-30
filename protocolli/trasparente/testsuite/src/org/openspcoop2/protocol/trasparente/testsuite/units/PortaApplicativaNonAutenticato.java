@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.Porta;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaApplicativa;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaImpl;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -42,7 +42,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	/* TEST ONE WAY */
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL"})
-	public void oneWay_paSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP11Stateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP11Stateful, this.repositoryPortaApplicativaOneWaySOAP11Stateful);
 	}
 
@@ -59,7 +59,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS"})
-	public void oneWay_paSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP11Stateless, this.repositoryPortaApplicativaOneWaySOAP11Stateless);
 	}
 
@@ -75,7 +75,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL"})
-	public void oneWay_paSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP12Stateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP12Stateful, this.repositoryPortaApplicativaOneWaySOAP12Stateful);
 	}
 
@@ -92,7 +92,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS"})
-	public void oneWay_paSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP12Stateless, this.repositoryPortaApplicativaOneWaySOAP12Stateless);
 	}
 
@@ -108,7 +108,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void oneWay_paSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP11WithAttachmentsStateful, this.repositoryPortaApplicativaOneWaySOAP11WithAttachmentsStateful);
 	}
 
@@ -125,7 +125,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP11.STATELESS.ATTACHMENTS"})
-	public void oneWay_paSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP11WithAttachmentsStateless, this.repositoryPortaApplicativaOneWaySOAP11WithAttachmentsStateless);
 	}
 
@@ -141,7 +141,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void oneWay_paSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP12WithAttachmentsStateful, this.repositoryPortaApplicativaOneWaySOAP12WithAttachmentsStateful);
 	}
 
@@ -158,7 +158,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".ONEWAY",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS.ATTACHMENTS"})
-	public void oneWay_paSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWay_paSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWay(this.paSOAP12WithAttachmentsStateless, this.repositoryPortaApplicativaOneWaySOAP12WithAttachmentsStateless);
 	}
 
@@ -176,7 +176,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	/* TEST SINCRONO */
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL"})
-	public void sincrono_paSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP11Stateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP11Stateful, this.repositoryPortaApplicativaSincronoSOAP11Stateful);
 	}
 
@@ -193,7 +193,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS"})
-	public void sincrono_paSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP11Stateless, this.repositoryPortaApplicativaSincronoSOAP11Stateless);
 	}
 
@@ -209,7 +209,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL"})
-	public void sincrono_paSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP12Stateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP12Stateful, this.repositoryPortaApplicativaSincronoSOAP12Stateful);
 	}
 
@@ -226,7 +226,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS"})
-	public void sincrono_paSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP12Stateless, this.repositoryPortaApplicativaSincronoSOAP12Stateless);
 	}
 
@@ -242,7 +242,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void sincrono_paSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP11WithAttachmentsStateful, this.repositoryPortaApplicativaSincronoSOAP11WithAttachmentsStateful);
 	}
 
@@ -259,7 +259,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP11.STATELESS.ATTACHMENTS"})
-	public void sincrono_paSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP11WithAttachmentsStateless, this.repositoryPortaApplicativaSincronoSOAP11WithAttachmentsStateless);
 	}
 
@@ -275,7 +275,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void sincrono_paSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP12WithAttachmentsStateful, this.repositoryPortaApplicativaSincronoSOAP12WithAttachmentsStateful);
 	}
 
@@ -292,7 +292,7 @@ public class PortaApplicativaNonAutenticato extends PortaImpl {
 
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"NonAutenticato",PortaApplicativa.ID_GRUPPO+".ATTACHMENTS",PortaApplicativa.ID_GRUPPO+".SINCRONO",PortaApplicativa.ID_GRUPPO+".SOAP12",PortaApplicativa.ID_GRUPPO+".SINCRONO.SOAP12.STATELESS.ATTACHMENTS"})
-	public void sincrono_paSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincrono_paSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincrono(this.paSOAP12WithAttachmentsStateless, this.repositoryPortaApplicativaSincronoSOAP12WithAttachmentsStateless);
 	}
 

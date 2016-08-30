@@ -21,7 +21,7 @@
 package org.openspcoop2.utils.io.notifier.unblocked;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 
 /**

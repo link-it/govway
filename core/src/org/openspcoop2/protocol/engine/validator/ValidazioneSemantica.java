@@ -23,7 +23,7 @@
 
 package org.openspcoop2.protocol.engine.validator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Classe utilizzata per effettuare un controllo di registrazione dei soggetti di una busta nel registro dei servizi.
@@ -114,7 +115,7 @@ public class ValidazioneSemantica  {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(ValidazioneSemantica.class);
+			this.log = LoggerWrapperFactory.getLogger(ValidazioneSemantica.class);
 		}
 		this.validazioneIdentificativiCompleta = validazioneIdentificativiCompleta;
 		this.protocolFactory = protocolFactory;

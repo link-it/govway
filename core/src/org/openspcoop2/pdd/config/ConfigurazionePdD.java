@@ -31,7 +31,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -55,6 +55,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -250,7 +251,7 @@ public class ConfigurazionePdD  {
 			if(alog!=null)
 				this.log = alog;
 			else
-				this.log = Logger.getLogger(ConfigurazionePdD.class);
+				this.log = LoggerWrapperFactory.getLogger(ConfigurazionePdD.class);
 			
 			String msg = "Leggo configurazione di tipo["+accessoConfigurazione.getTipo()+"]   location["+accessoConfigurazione.getLocation()+"]";
 			this.log.info(msg);

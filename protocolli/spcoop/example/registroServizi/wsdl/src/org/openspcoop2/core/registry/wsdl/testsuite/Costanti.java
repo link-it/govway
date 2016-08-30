@@ -67,8 +67,8 @@ public class Costanti {
 		Costanti.TEST1_OPERATIONS_EROGATORE[3],Costanti.TEST1_OPERATIONS_EROGATORE[4],Costanti.TEST1_OPERATIONS_EROGATORE[5],Costanti.TEST1_OPERATIONS_EROGATORE[6],
 		Costanti.TEST1_OPERATIONS_FRUITORE[0]};	
 	
-	private static String TEST1_FILE_PATH_NAMESPACE = "org"+File.separatorChar+"openspcoop"+File.separatorChar+"www"+File.separatorChar+"example"+File.separatorChar;
-	public static String [] TEST1_FILE_PATH_LOGICO_EROGATORE = {Costanti.TEST1_FILE_PATH_NAMESPACE+"deploy.wsdd",Costanti.TEST1_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	private static String TEST1_FILE_PATH_NAMESPACE = "org"+File.separatorChar+"openspcoop2"+File.separatorChar+"example"+File.separatorChar;
+	public static String [] TEST1_FILE_PATH_LOGICO_EROGATORE = {
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"AggiornamentoNamespaceWSDLRequest.java",Costanti.TEST1_FILE_PATH_NAMESPACE+"AggiornamentoNamespaceWSDLResponse.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"allegato"+File.separatorChar+"_import"+File.separatorChar+"EsempioAllegatoImport1.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"allegato"+File.separatorChar+"_import"+File.separatorChar+"EsempioAllegatoImport2.java",
@@ -95,8 +95,10 @@ public class Costanti {
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"RichiestaRegistrazioneResponse.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"RichiestaStatoRegistrazioneRequest.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"RichiestaStatoRegistrazioneResponse.java"
-	};
-	public static String [] TEST1_FILE_PATH_LOGICO_FRUITORE = {Costanti.TEST1_FILE_PATH_NAMESPACE+"deploy.wsdd",Costanti.TEST1_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	};                      
+
+	
+	public static String [] TEST1_FILE_PATH_LOGICO_FRUITORE = {
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"EsitoAggiornamentoRequest.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"EsitoAggiornamentoResponse.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"Esito.java",
@@ -115,11 +117,16 @@ public class Costanti {
 	private static Vector<String> TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR = new Vector<String>();
 	static{
 		for(int i=0; i<Costanti.TEST1_PORT_TYPES_EROGATORE.length; i++){
-			Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"BindingImpl.java");
-			Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"BindingSkeleton.java");
-			Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"BindingStub.java");
+			Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add("build.xml");
 			Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"Service.java");
-			Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"ServiceLocator.java");
+			if("Oneway".equals(Costanti.TEST1_PORT_TYPES_EROGATORE[i])){
+				Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"_NotificaPort_Client.java");
+				Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"_NotificaPort_Server.java");
+			}
+			else{
+				Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"_"+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"Port_Client.java");
+				Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"_"+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+"Port_Server.java");
+			}
 			Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_EROGATORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_EROGATORE[i]+".java");
 		}
 	}
@@ -127,11 +134,10 @@ public class Costanti {
 	private static Vector<String> TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR = new Vector<String>();
 	static{
 		for(int i=0; i<Costanti.TEST1_PORT_TYPES_FRUITORE.length; i++){
-			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"BindingImpl.java");
-			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"BindingSkeleton.java");
-			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"BindingStub.java");
+			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add("build.xml");
 			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"Service.java");
-			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"ServiceLocator.java");
+			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"_"+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"Port_Client.java");
+			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"_"+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+"Port_Server.java");
 			Costanti.TEST1_FILE_PATH_IMPLEMENTIVO_FRUITORE_VECTOR.add(Costanti.TEST1_FILE_PATH_NAMESPACE+Costanti.TEST1_PORT_TYPES_FRUITORE[i]+".java");
 		}
 	}
@@ -180,7 +186,7 @@ public class Costanti {
 	
 	public static String [] TEST1_PORT_TYPE_ASINCRONO_ASIMMETRICO = {"AsincronoAsimmetrico"};
 	public static String [] TEST1_OPERATIONS_ASINCRONO_ASIMMETRICO = {"richiestaRegistrazione,richiestaStatoRegistrazione"};
-	public static String [] TEST1_FILE_PATH_LOGICO_ASINCRONO_ASIMMETRICO = {Costanti.TEST1_FILE_PATH_NAMESPACE+"deploy.wsdd",Costanti.TEST1_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	public static String [] TEST1_FILE_PATH_LOGICO_ASINCRONO_ASIMMETRICO = {
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"Dati.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"Esito.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"IdentificativoRichiestaAsincrona.java",
@@ -208,7 +214,7 @@ public class Costanti {
 	public static String [] TEST1_OPERATION_ASINCRONO_SIMMETRICO_RICHIESTA = {"richiestaAggiornamento"};
 	public static String [] TEST1_PORT_TYPE_ASINCRONO_SIMMETRICO_RISPOSTA = {"AsincronoSimmetricoRisposta"};
 	public static String [] TEST1_OPERATION_ASINCRONO_SIMMETRICO_RISPOSTA = {"esitoAggiornamento"};
-	public static String [] TEST1_FILE_PATH_LOGICO_ASINCRONO_SIMMETRICO_RICHIESTA = {Costanti.TEST1_FILE_PATH_NAMESPACE+"deploy.wsdd",Costanti.TEST1_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	public static String [] TEST1_FILE_PATH_LOGICO_ASINCRONO_SIMMETRICO_RICHIESTA = {
 		Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"Dati.java",
 		Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"PresaInCarico.java",
 		Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"RichiestaAggiornamentoRequest.java",
@@ -226,7 +232,7 @@ public class Costanti {
 		}
 	}
 	public static String [] TEST1_FILE_PATH_IMPLEMENTATIVO_ASINCRONO_SIMMETRICO_RICHIESTA = Costanti.TEST1_FILE_PATH_IMPLEMENTATIVO_ASINCRONO_SIMMETRICO_RICHIESTA_VECTOR.toArray(new String[1]);
-	public static String [] TEST1_FILE_PATH_LOGICO_ASINCRONO_SIMMETRICO_RISPOSTA = {Costanti.TEST1_FILE_PATH_NAMESPACE+"deploy.wsdd",Costanti.TEST1_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	public static String [] TEST1_FILE_PATH_LOGICO_ASINCRONO_SIMMETRICO_RISPOSTA = {
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"Esito.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"PresaInCarico.java",
 			Costanti.TEST1_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"EsitoAggiornamentoRequest.java",
@@ -350,7 +356,7 @@ public class Costanti {
 	private static String TEST3_FILE_PATH_NAMESPACE = "org"+File.separatorChar+"openspcoop"+File.separatorChar+"www"+File.separatorChar+"example"+File.separatorChar;
 	private static String TEST3_FILE_PATH_NAMESPACE_EXAMPLE2 = "org"+File.separatorChar+"openspcoop"+File.separatorChar+"www"+File.separatorChar+"example2"+File.separatorChar;
 	private static String TEST3_FILE_PATH_NAMESPACE_EXAMPLE3 = "org"+File.separatorChar+"openspcoop"+File.separatorChar+"www"+File.separatorChar+"example3"+File.separatorChar;
-	public static String [] TEST3_FILE_PATH_LOGICO_EROGATORE = {Costanti.TEST3_FILE_PATH_NAMESPACE+"deploy.wsdd",Costanti.TEST3_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	public static String [] TEST3_FILE_PATH_LOGICO_EROGATORE = {
 			Costanti.TEST3_FILE_PATH_NAMESPACE+"NotificaRequestIncluso.java",
 			Costanti.TEST3_FILE_PATH_NAMESPACE+"allegato"+File.separatorChar+"_import"+File.separatorChar+"EsempioAllegatoImport1.java",
 			Costanti.TEST3_FILE_PATH_NAMESPACE+"allegato"+File.separatorChar+"_import"+File.separatorChar+"EsempioAllegatoImport2.java",
@@ -360,7 +366,7 @@ public class Costanti {
 			Costanti.TEST3_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"EsempioAllegatoInclude2.java",
 			Costanti.TEST3_FILE_PATH_NAMESPACE_EXAMPLE3+"NotificaRequest2.java"
 	};
-	public static String [] TEST3_FILE_PATH_LOGICO_FRUITORE = {Costanti.TEST3_FILE_PATH_NAMESPACE+"deploy.wsdd",Costanti.TEST3_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	public static String [] TEST3_FILE_PATH_LOGICO_FRUITORE = {
 			Costanti.TEST3_FILE_PATH_NAMESPACE+"NotificaRequestIncluso.java",
 			Costanti.TEST3_FILE_PATH_NAMESPACE+"allegato"+File.separatorChar+"_import"+File.separatorChar+"EsempioAllegatoImport1.java",
 			Costanti.TEST3_FILE_PATH_NAMESPACE+"allegato"+File.separatorChar+"_import"+File.separatorChar+"EsempioAllegatoImport2.java",
@@ -580,8 +586,7 @@ public class Costanti {
 	
 	private static String TEST6_FILE_PATH_NAMESPACE = "org"+File.separatorChar+"openspcoop"+File.separatorChar+"www"+File.separatorChar+"example"+File.separatorChar;
 	
-	public static String [] TEST6_FILE_PATH_LOGICO = {Costanti.TEST6_FILE_PATH_NAMESPACE+"impl"+File.separatorChar+"deploy.wsdd",
-		Costanti.TEST6_FILE_PATH_NAMESPACE+"impl"+File.separatorChar+"undeploy.wsdd",
+	public static String [] TEST6_FILE_PATH_LOGICO = {
 		Costanti.TEST6_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"SPCoopException.java",
 		Costanti.TEST6_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"SPCoopHeaderInfo.java",
 		Costanti.TEST6_FILE_PATH_NAMESPACE+"types"+File.separatorChar+"SPCoopMessage.java",
@@ -629,8 +634,7 @@ public class Costanti {
 	
 	private static String TEST7_FILE_PATH_NAMESPACE = "org"+File.separatorChar+"openspcoop"+File.separatorChar+"pdd"+File.separatorChar+"services"+File.separatorChar;
 	
-	public static String [] TEST7_FILE_PATH_LOGICO = {Costanti.TEST7_FILE_PATH_NAMESPACE+"deploy.wsdd",
-		Costanti.TEST7_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	public static String [] TEST7_FILE_PATH_LOGICO = {
 		Costanti.TEST7_FILE_PATH_NAMESPACE+"DeleteAllMessages.java",
 		Costanti.TEST7_FILE_PATH_NAMESPACE+"DeleteAllMessagesResponse.java",
 		Costanti.TEST7_FILE_PATH_NAMESPACE+"DeleteMessageByReference.java",
@@ -660,8 +664,7 @@ public class Costanti {
 		Costanti.TEST7_FILE_PATH_NAMESPACE+"SPCoopMessage.java"
 	};
 	
-	public static String [] TEST7_FILE_PATH_LOGICO_EROGATORE = {Costanti.TEST7_FILE_PATH_NAMESPACE+"deploy.wsdd",
-		Costanti.TEST7_FILE_PATH_NAMESPACE+"undeploy.wsdd",
+	public static String [] TEST7_FILE_PATH_LOGICO_EROGATORE = {
 		Costanti.TEST7_FILE_PATH_NAMESPACE+"SPCoopException.java",
 		Costanti.TEST7_FILE_PATH_NAMESPACE+"SPCoopHeaderInfo.java",
 		Costanti.TEST7_FILE_PATH_NAMESPACE+"SPCoopMessage.java"

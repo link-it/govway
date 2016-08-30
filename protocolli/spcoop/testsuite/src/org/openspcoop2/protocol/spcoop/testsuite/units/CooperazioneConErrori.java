@@ -33,7 +33,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
@@ -175,7 +175,7 @@ public class CooperazioneConErrori {
 				client.run();
 				if(param.isInvocazioneOK()==false){
 					Reporter.log("Invocazione PD non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione PD non ha causato errori.");
+					throw new TestSuiteException("Invocazione PD non ha causato errori.");
 				}else{
 					if(param.isModalitaAsincrona()){
 						
@@ -471,7 +471,7 @@ public class CooperazioneConErrori {
 	Repository repositoryConnettoreErrato=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".CONNETTORE_ERRATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void connettoreErrato() throws FatalTestSuiteException, IOException, Exception{
+	public void connettoreErrato() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 		Date dataInizioTest = DateManager.getDate();
@@ -806,7 +806,7 @@ public class CooperazioneConErrori {
 	Repository repositorySOAPFaultPdDDestinazione=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".SOAP_FAULT_PDD_DEST"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void SOAPFaultPdDDestinazione() throws FatalTestSuiteException, IOException, Exception{
+	public void SOAPFaultPdDDestinazione() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 		
@@ -1151,7 +1151,7 @@ public class CooperazioneConErrori {
 	Repository repositoryConnettoreErratoServizioApplicativo=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".CONNETTORE_ERRATO_SA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void ConnettoreErratoServizioApplicativo() throws FatalTestSuiteException, IOException, Exception{
+	public void ConnettoreErratoServizioApplicativo() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 		Date dataInizioTest = DateManager.getDate();
@@ -1559,7 +1559,7 @@ public class CooperazioneConErrori {
 	Repository repositorySOAPFaultServizioApplicativo=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".SOAP_FAULT_SA"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void SOAPFaultServizioApplicativo() throws FatalTestSuiteException, IOException, Exception{
+	public void SOAPFaultServizioApplicativo() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 	
@@ -1959,7 +1959,7 @@ public class CooperazioneConErrori {
 	Repository repositoryErroreProcessamento=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".ERRORE_PROCESSAMENTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void ErroreProcessamento() throws FatalTestSuiteException, IOException, Exception{
+	public void ErroreProcessamento() throws TestSuiteException, IOException, Exception{
 
 		int indexMessage = 0;
 		
@@ -2430,7 +2430,7 @@ public class CooperazioneConErrori {
 	Repository repositoryErroreValidazione=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".ERRORE_VALIDAZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void ErroreValidazione() throws FatalTestSuiteException, IOException, Exception{
+	public void ErroreValidazione() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 	
@@ -2801,7 +2801,7 @@ public class CooperazioneConErrori {
 	Repository repositoryRispedizioniOneWay=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".RISPEDIZIONI_ONEWAY"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void rispedizioniOneWay() throws FatalTestSuiteException, IOException, Exception{
+	public void rispedizioniOneWay() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 		Date dataInizioTest = DateManager.getDate();
@@ -3064,7 +3064,7 @@ public class CooperazioneConErrori {
 	Repository repositoryRispedizioniAsincronoSimmetrico=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".RISPEDIZIONI_ASINCRONO_SIMMETRICO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void rispedizioniAsincronoSimmetrico() throws FatalTestSuiteException, IOException, Exception{
+	public void rispedizioniAsincronoSimmetrico() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 		Date dataInizioTest = DateManager.getDate();
@@ -3228,7 +3228,7 @@ public class CooperazioneConErrori {
 	Repository repositoryRispedizioniAsincronoAsimmetrico=new Repository();
 	@Test(groups={CooperazioneConErrori.ID_GRUPPO,
 			CooperazioneConErrori.ID_GRUPPO+".RISPEDIZIONI_ASINCRONO_ASIMMETRICO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void rispedizioniAsincronoAsimmetrico() throws FatalTestSuiteException, IOException, Exception{
+	public void rispedizioniAsincronoAsimmetrico() throws TestSuiteException, IOException, Exception{
 
 		ParametriCooperazioneConErrori param = null;
 		Date dataInizioTest = DateManager.getDate();

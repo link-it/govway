@@ -39,7 +39,7 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage;
 import org.openspcoop2.pdd.services.axis14.PD_PortType;
 import org.openspcoop2.pdd.services.axis14.PDServiceLocator;

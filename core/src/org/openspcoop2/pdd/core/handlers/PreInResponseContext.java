@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.pdd.core.handlers;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 

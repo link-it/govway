@@ -27,7 +27,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Classe utilizzata per la validazione sintattica di una busta.
@@ -84,7 +85,7 @@ public class ValidazioneSintattica {
 	protected boolean readQualifiedAttribute;
 
 	/** Logger utilizzato per debug. */
-	protected org.apache.log4j.Logger log = null;
+	protected org.slf4j.Logger log = null;
 
 	protected boolean segnalazioneElementoPresentePiuVolte = false;
 	private IProtocolFactory protocolFactory;
@@ -137,7 +138,7 @@ public class ValidazioneSintattica {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(ValidazioneSintattica.class.getName());
+			this.log = LoggerWrapperFactory.getLogger(ValidazioneSintattica.class.getName());
 		}
 		this.readQualifiedAttribute = readQualifiedAttribute;
 		this.protocolFactory = protocolFactory;

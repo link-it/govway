@@ -22,10 +22,11 @@ package org.openspcoop2.generic_project.web.impl.jsf1.mbean;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.form.Form;
 import org.openspcoop2.generic_project.web.form.SearchForm;
 import org.openspcoop2.generic_project.web.table.Table;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

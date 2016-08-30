@@ -36,7 +36,8 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.CountingOutputStream;
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -165,7 +166,7 @@ public abstract class AbstractXQueryExpressionEngine {
 	
 	
 	@SuppressWarnings("unused")
-	private static Logger logger = Logger.getLogger(AbstractXQueryExpressionEngine.class);
+	private static Logger logger = LoggerWrapperFactory.getLogger(AbstractXQueryExpressionEngine.class);
 	public static void setLogger(Logger logger) {
 		AbstractXQueryExpressionEngine.logger = logger;
 	}

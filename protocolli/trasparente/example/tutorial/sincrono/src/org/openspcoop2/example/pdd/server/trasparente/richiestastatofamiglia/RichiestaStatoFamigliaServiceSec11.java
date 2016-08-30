@@ -49,9 +49,7 @@ public class RichiestaStatoFamigliaServiceSec11 extends Service {
             url = RichiestaStatoFamigliaServiceSec11.class.getClassLoader().getResource("configurazionePdD/wsdl/implementazioneErogatoreSoap11Security.wsdl");
         } 
         if (url == null) {
-            java.util.logging.Logger.getLogger(RichiestaStatoFamigliaServiceSec11.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "configurazionePdD/wsdl/implementazioneErogatoreSoap11Security.wsdl");
+        	System.out.println("Can not initialize the default wsdl from configurazionePdD/wsdl/implementazioneErogatoreSoap11Security.wsdl");
         }       
         WSDL_LOCATION = url;
     }

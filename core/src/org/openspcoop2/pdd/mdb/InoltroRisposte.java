@@ -27,7 +27,7 @@ import java.util.Vector;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -886,7 +886,7 @@ public class InoltroRisposte extends GenericLib{
 			SOAPFault faultConnectionReply = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
-			// Ricerco connettore nel className.properties
+			// Ricerco connettore
 			ClassNameProperties prop = ClassNameProperties.getInstance();
 			String connectorClass = prop.getConnettore(tipoConnector);
 			if(connectorClass == null){

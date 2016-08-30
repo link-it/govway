@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;

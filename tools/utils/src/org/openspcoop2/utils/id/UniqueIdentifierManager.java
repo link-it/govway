@@ -23,7 +23,8 @@
 package org.openspcoop2.utils.id;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -67,7 +68,7 @@ public class UniqueIdentifierManager {
 		}
 		try{
 			if(UniqueIdentifierManager.uniqueIdentifierGenerator==null){
-				Logger log = Logger.getLogger(UniqueIdentifierManager.class);
+				Logger log = LoggerWrapperFactory.getLogger(UniqueIdentifierManager.class);
 				log.error("UniqueIdentifierManager non inizializzato");
 				UniqueIdentifierManager.inizializzaUniqueIdentifierManager("org.openspcoop.utils.id.ClusterIdentifier");
 			}
@@ -83,7 +84,7 @@ public class UniqueIdentifierManager {
 		}
 		try{
 			if(UniqueIdentifierManager.uniqueIdentifierGenerator==null){
-				Logger log = Logger.getLogger(UniqueIdentifierManager.class);
+				Logger log = LoggerWrapperFactory.getLogger(UniqueIdentifierManager.class);
 				log.error("UniqueIdentifierManager non inizializzato");
 				UniqueIdentifierManager.inizializzaUniqueIdentifierManager("org.openspcoop.utils.id.ClusterIdentifier");
 			}

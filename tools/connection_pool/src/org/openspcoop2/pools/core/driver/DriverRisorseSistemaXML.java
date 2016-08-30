@@ -33,7 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.math.BigInteger;
 
@@ -47,6 +47,7 @@ import org.openspcoop2.pools.core.PoolSize;
 import org.openspcoop2.pools.core.Validation;
 import org.openspcoop2.pools.core.WhenExhausted;
 import org.openspcoop2.pools.core.commons.Costanti;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -194,7 +195,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 		if(alog!=null)
 			this.log = alog;
 		else
-			this.log =  Logger.getLogger("Configuratore Risorse Esterne (poolConfig) XML");
+			this.log =  LoggerWrapperFactory.getLogger("Configuratore Risorse Esterne (poolConfig) XML");
 
 		if(path == null){
 			this.log.error("DriverRisorseSistema: Riscontrato errore durante la creazione: url/path is null");

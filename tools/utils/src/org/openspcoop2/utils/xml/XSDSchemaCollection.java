@@ -34,7 +34,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.validation.Schema;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 

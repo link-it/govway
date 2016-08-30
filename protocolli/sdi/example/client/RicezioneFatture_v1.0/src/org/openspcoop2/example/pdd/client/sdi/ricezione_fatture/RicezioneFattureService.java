@@ -51,9 +51,7 @@ public class RicezioneFattureService extends Service {
             url = RicezioneFattureService.class.getClassLoader().getResource("RicezioneFatture_v1.0.wsdl");
         } 
         if (url == null) {
-            java.util.logging.Logger.getLogger(RicezioneFattureService.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "RicezioneFatture_v1.0.wsdl");
+        	System.out.println("Can not initialize the default wsdl from RicezioneFatture_v1.0.wsdl");
         }       
         WSDL_LOCATION = url;
     }

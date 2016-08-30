@@ -30,7 +30,7 @@ import java.util.Vector;
 
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 
@@ -130,7 +131,7 @@ public class Validatore  {
 
 	
 	/** Logger utilizzato per debug. */
-	private org.apache.log4j.Logger log = null;
+	private org.slf4j.Logger log = null;
 	private IProtocolFactory protocolFactory;
 	private IProtocolManager protocolManager;
 	/** bustaErroreHeaderIntestazione: generata solo quando la busta arrivata non contiene gli elementi principali */
@@ -170,7 +171,7 @@ public class Validatore  {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(Validatore.class);
+			this.log = LoggerWrapperFactory.getLogger(Validatore.class);
 		}
 		this.readQualifiedAttribute = readQualifiedAttribute;
 		this.protocolFactory = protocolFactory;

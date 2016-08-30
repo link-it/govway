@@ -25,8 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -66,7 +67,7 @@ public class SDIProperties {
 		if(log != null)
 			this.log = log;
 		else
-			this.log = Logger.getLogger("SDIProperties");
+			this.log = LoggerWrapperFactory.getLogger("SDIProperties");
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 

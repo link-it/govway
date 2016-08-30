@@ -89,9 +89,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-2.1.7.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.1.7.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.1.7.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-asl-4.4.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-api-1.7.21.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/slf4j-jdk14-1.7.21.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-asl-4.4.1.jar"/>		
 		<var name="manifest.classpath.3parti" value="${tmp}" />
 		<!-- <echo message="3PARTI: ${manifest.classpath.3parti}"/> -->
 		
@@ -492,27 +490,11 @@
 			</then>
 		</if>
 
-		<!-- msgDiagnostici.properties -->
+		<!-- openspcoop2.msgDiagnostici.properties -->
 		<mkdir dir="${build}/tmpNative2ASCII_src" />
 		<mkdir dir="${build}/tmpNative2ASCII_dest" />
-		<copy file="${properties_dir}/msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
+		<copy file="${properties_dir}/openspcoop2.msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
-
-		<!-- Logger Log4j Properties -->
-		<copy file="${properties_dir}/logger.log4j.properties" todir="${build}/tmp" />
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss6"/>
-				<equals arg1="${as}" arg2="jboss7"/>
-				<matches string="${as}" pattern="wildfly.*"/>
-			</or>
-			<then>
-				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.logger.org.openspcoop2" value="log4j.logger.org.openspcoop2"/>
-				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.category.openspcoop2.startup" value="log4j.category.openspcoop2.startup"/>
-				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.additivity.org.openspcoop2" value="log4j.additivity.org.openspcoop2"/>
-				<replace file="${build}/tmp/logger.log4j.properties" token="#log4j.additivity.openspcoop2.startup" value="log4j.additivity.openspcoop2.startup"/>
-			</then>
-		</if>
 					
 		<!-- application server (jars e jboss-app.xml) -->
 		<!-- xalan -->
@@ -528,27 +510,6 @@
 			<then>
 				<var name="xalan_jar" value="xalan-2.7.1.jar"/>
 				<var name="xalan_serializer_jar" value="xalan-2.7.1_serializer.jar" />
-			</then>
-		</if>
-		<!-- log -->
-		<var name="log4j_jar" value=""/>
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss6"/>
-				<equals arg1="${as}" arg2="jboss7"/>
-				<matches string="${as}" pattern="wildfly.*"/>
-			</or>
-			<then>
-				<var name="log4j_jar" value="log4j-1.2.16.jar"/>
-			</then>
-		</if>
-		<var name="log4j_properties" value=""/>
-		<if>
-			<or>
-				<equals arg1="${as}" arg2="jboss6"/>
-			</or>
-			<then>
-				<var name="log4j_properties" value="log4j.properties"/>
 			</then>
 		</if>
 		<!-- jaxb_xjc -->
@@ -790,8 +751,7 @@
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.21.jar"/>
-				<include name="slf4j-jdk14-1.7.21.jar"/>
-				<include name="${log4j_jar}"/>
+				<include name="log4j*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jminix">
 				<include name="*.jar"/>
@@ -827,19 +787,19 @@
 			</zipfileset>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<zipfileset dir="${properties_dir}" prefix="properties">
-				<include name="cache.jcs.properties" />
-				<include name="className.properties" />
-				<include name="jmsPublisher.properties" />
-				<include name="autorizzazioneControlStation.properties" />
-				<include name="pdd.properties" />
-				<include name="${log4j_properties}"/>
+				<include name="openspcoop2.jcs.properties" />
+				<include name="openspcoop2.classRegistry.properties" />
+				<include name="openspcoop2.jmsPublisher.properties" />
+				<include name="openspcoop2.autorizzazionePdDConsole.properties" />
+				<include name="openspcoop2.pdd.properties" />
+				<include name="openspcoop2.log4j2.properties" />
+				<include name="log4j2.properties" />
 			</zipfileset>
 			<zipfileset dir="${build}/tmp" prefix="properties">
 				<include name="openspcoop2.properties" />
-				<include name="logger.log4j.properties" />
 			</zipfileset>
 			<zipfileset dir="${build}/tmpNative2ASCII_dest" prefix="properties">
-				<include name="msgDiagnostici.properties" />
+				<include name="openspcoop2.msgDiagnostici.properties" />
 			</zipfileset>
 			<zipfileset dir="${properties_dir}/crypto" prefix="properties" />
 			<!-- Properties di LinkITThreads -->
@@ -869,9 +829,9 @@
 		<delete file="${build}/tmp/openspcoop2.properties" deleteonexit="true"/>
 		<delete file="${build}/tmp/jboss-app.xml" deleteonexit="true"/>
 		<delete dir="${build}/tmp" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_dest/msgDiagnostici.properties" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_dest/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
 		<delete dir="${build}/tmpNative2ASCII_dest" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_src/msgDiagnostici.properties" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_src/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
 		<delete dir="${build}/tmpNative2ASCII_src" deleteonexit="true"/>
 
 		<!-- Elimino archivi intermedi -->

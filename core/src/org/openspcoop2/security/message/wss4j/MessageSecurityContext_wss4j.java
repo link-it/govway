@@ -23,7 +23,7 @@
 
 package org.openspcoop2.security.message.wss4j;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecurityContext;

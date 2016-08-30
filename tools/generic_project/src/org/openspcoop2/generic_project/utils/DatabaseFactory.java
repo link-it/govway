@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
 /**
@@ -42,7 +42,7 @@ public class DatabaseFactory<T> {
 	private DatabaseProperties databaseProperties = null;
 	private Class<T> cServiceManager = null;
 	
-	public DatabaseFactory(Class<T> cServiceManager,String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, String nomeFileProperties,org.apache.log4j.Logger log) throws ServiceException{
+	public DatabaseFactory(Class<T> cServiceManager,String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, String nomeFileProperties,org.slf4j.Logger log) throws ServiceException{
 		try{
 			this.cServiceManager = cServiceManager;
 			org.openspcoop2.generic_project.utils.DatabaseProperties.initialize(PROPERTIES_LOCAL_PATH, PROPERTIES_NAME, nomeFileProperties, log);

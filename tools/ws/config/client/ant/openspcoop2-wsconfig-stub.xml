@@ -118,7 +118,7 @@
 		<if>
  			<available file="${file}" type="file"/>
 			<then>
- 				<var name="replacetoken" value="java.util.logging.Logger.getLogger(" />
+ 				<var name="replacetoken" value="java.util.logging.LogUtilities.getLogger(" />
 				<replace file="${file}" token="${replacetoken}">
 					<replacevalue>
 		}
@@ -129,7 +129,7 @@
 			url = @OBJECT_TYPE@.class.getClassLoader().getResource("/config/@WSDL_NAME@");
 		}
 		if (url==null ){
-			java.util.logging.Logger.getLogger(</replacevalue>
+			java.util.logging.LogUtilities.getLogger(</replacevalue>
 				
 				</replace>
 				<replace file="${file}" token="@OBJECT_TYPE@" value="${objectType}Soap${soapVersion}Service"/>

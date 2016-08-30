@@ -32,7 +32,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
@@ -81,9 +82,9 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
 			try{
 				
 				// Carico file properties.
-				properties = AutorizzazionePdDConsole.class.getResourceAsStream("/autorizzazionePdDConsole.properties");
+				properties = AutorizzazionePdDConsole.class.getResourceAsStream("/openspcoop2.autorizzazionePdDConsole.properties");
 				if(properties==null)
-					throw new Exception("File autorizzazionePdDConsole.properties non trovato");
+					throw new Exception("File openspcoop2.autorizzazionePdDConsole.properties non trovato");
 				Properties reader = new Properties();
 				reader.load(properties);
 				
@@ -128,7 +129,7 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
 			}catch(Exception e){
 				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				if(log==null)
-					log = Logger.getLogger(AutorizzazionePdDConsole.class);
+					log = LoggerWrapperFactory.getLogger(AutorizzazionePdDConsole.class);
 				log.error("Errore durante l'istanziazione della classe autorizzazionePdDConsole: "+e.getMessage(),e);
 			}finally{
 				try{
@@ -162,7 +163,7 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
     	
     	Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(log==null)
-			log = Logger.getLogger(AutorizzazionePdDConsole.class);
+			log = LoggerWrapperFactory.getLogger(AutorizzazionePdDConsole.class);
     	
     	try{
     		

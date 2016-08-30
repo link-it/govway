@@ -32,7 +32,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.Field;

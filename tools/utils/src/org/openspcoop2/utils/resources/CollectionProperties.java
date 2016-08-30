@@ -23,7 +23,7 @@ package org.openspcoop2.utils.resources;
 
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -222,7 +222,7 @@ public class CollectionProperties {
 		try{
 			return this.getValue(key);
 		}catch(Exception e){
-			Logger.getLogger(CollectionProperties.class).error("Lettura proprietà ["+key+"] ha generato un errore: "+e.getMessage(),e);
+			LoggerWrapperFactory.getLogger(CollectionProperties.class).error("Lettura proprietà ["+key+"] ha generato un errore: "+e.getMessage(),e);
 			return null;
 		}
 	}

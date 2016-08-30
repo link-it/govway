@@ -57,7 +57,7 @@ public class MessaggioDiagnosticoSoap11Service extends Service {
 			url = MessaggioDiagnosticoSoap11Service.class.getClassLoader().getResource("/diagnostica/MessaggioDiagnosticoSearch_PortSoap11.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.Logger.getLogger(MessaggioDiagnosticoSoap11Service.class.getName())
+			java.util.logging.LoggerWrapperFactory.getLogger(MessaggioDiagnosticoSoap11Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/MessaggioDiagnosticoSearch_PortSoap11.wsdl");
         }       

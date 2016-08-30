@@ -21,7 +21,7 @@
 
 package org.openspcoop2.protocol.engine.archive;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 
@@ -46,7 +47,7 @@ public class Importer {
 
 	public static void main(String[] args) throws Exception {
 		
-		Logger log = Logger.getLogger(Importer.class);
+		Logger log = LoggerWrapperFactory.getLogger(Importer.class);
 		
 		// Lettura file
 		String archiveFile = args[0];

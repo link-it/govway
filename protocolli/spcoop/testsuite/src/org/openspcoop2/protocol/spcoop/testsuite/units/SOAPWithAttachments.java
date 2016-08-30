@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
@@ -103,7 +103,7 @@ public class SOAPWithAttachments {
 	 */
 	Repository repositoryOneWay=new Repository();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ONEWAY"})
-	public void oneWay() throws FatalTestSuiteException, Exception{
+	public void oneWay() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryOneWay,CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY,addIDUnivoco);
 	}
 	@DataProvider (name="OneWay")
@@ -146,7 +146,7 @@ public class SOAPWithAttachments {
 	 */
 	Repository repositoryOneWayStateless=new Repository();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ONEWAY_STATELESS"})
-	public void oneWayStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayStateless() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryOneWayStateless,CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS,addIDUnivoco);
 	}
 	@DataProvider (name="OneWayStateless")
@@ -190,7 +190,7 @@ public class SOAPWithAttachments {
 	 */
 	Repository repositorySincrono=new Repository();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincrono() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincrono() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincrono,CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO,addIDUnivoco);
 	}
 	@DataProvider (name="Sincrono")
@@ -233,7 +233,7 @@ public class SOAPWithAttachments {
 	 */
 	Repository repositorySincrono_Stateful=new Repository();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_STATEFUL"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincrono_Stateful() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincrono_Stateful() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincrono_Stateful,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL,addIDUnivoco);
 	}
@@ -649,7 +649,7 @@ public class SOAPWithAttachments {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_asincr"})
-	public void asincronoAsimmetrico_ModalitaAsincrona() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_ModalitaAsincrona() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_ASINCRONA,
@@ -729,7 +729,7 @@ public class SOAPWithAttachments {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona_Stateful = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_asincr_stateful"})
-	public void asincronoAsimmetrico_ModalitaAsincrona_Stateful() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_ModalitaAsincrona_Stateful() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_STATEFUL,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_ASINCRONA_STATEFUL,
@@ -806,7 +806,7 @@ public class SOAPWithAttachments {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_sincr"})
-	public void asincronoAsimmetrico_modalitaSincrona() throws FatalTestSuiteException, IOException, SOAPException{
+	public void asincronoAsimmetrico_modalitaSincrona() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA,
@@ -875,7 +875,7 @@ public class SOAPWithAttachments {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona_Stateful = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_sincr_stateful"})
-	public void asincronoAsimmetrico_modalitaSincrona_Stateful() throws FatalTestSuiteException, IOException, SOAPException{
+	public void asincronoAsimmetrico_modalitaSincrona_Stateful() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_STATEFUL,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA_STATEFUL,
@@ -946,7 +946,7 @@ public class SOAPWithAttachments {
 	 */
 	Repository repositoryOneWayLoopback=new Repository();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ONEWAY_LOOPBACK"})
-	public void oneWayLoopback() throws FatalTestSuiteException, Exception{
+	public void oneWayLoopback() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryOneWayLoopback,CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_LOOPBACK,addIDUnivoco);
 	}
 	@DataProvider (name="OneWayLoopback")
@@ -1005,7 +1005,7 @@ public class SOAPWithAttachments {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaAsincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_azCorrelata_asincr"})
-	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaAsincrona() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaAsincrona() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_AZIONE_CORRELATA_MODALITA_ASINCRONA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_AZIONE_CORRELATA_MODALITA_ASINCRONA,
@@ -1078,7 +1078,7 @@ public class SOAPWithAttachments {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaSincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_azCorrelata_sincr"})
-	public void asincronoAsimmetrico_AzioneCorrelata_modalitaSincrona() throws FatalTestSuiteException, IOException, SOAPException{
+	public void asincronoAsimmetrico_AzioneCorrelata_modalitaSincrona() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_AZIONE_CORRELATA_MODALITA_SINCRONA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_AZIONE_CORRELATA_MODALITA_SINCRONA,
@@ -1153,7 +1153,7 @@ public class SOAPWithAttachments {
 	 */
 	Repository repositorySincronoManifestAttachmentsDisabilitato=new Repository();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_MANIFEST_DISABILITATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoManifestAttachmentsDisabilitato() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoManifestAttachmentsDisabilitato() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoManifestAttachmentsDisabilitato,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_GESTIONE_MANIFEST_DISABILITATA,addIDUnivoco);
 	}
@@ -1195,7 +1195,7 @@ public class SOAPWithAttachments {
 	 */
 	Repository repositorySincronoContentTypeNonStandard=new Repository();
 	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_CONTENT_TYPE_NON_STANDARD"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoContentTypeNonStandard() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoContentTypeNonStandard() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoContentTypeNonStandard);

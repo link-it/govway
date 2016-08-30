@@ -33,9 +33,10 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.server.AxisServer;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.handler.WSHandlerConstants;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Classe di base per la gestione del WS-Security.
@@ -66,7 +67,7 @@ public class Axis14WSSBaseUtils {
     	if(log!=null)
     		this.log = log;
     	else
-    		this.log = Logger.getLogger("OpenSPCoopWSSSecurityEngine");
+    		this.log = LoggerWrapperFactory.getLogger("OpenSPCoopWSSSecurityEngine");
     	try{
     		initWsuIdAllocator(prefixWsuId,this.log);
     	}catch(Exception e){
@@ -85,7 +86,7 @@ public class Axis14WSSBaseUtils {
     	if(log!=null)
     		this.log = log;
     	else
-    		this.log = Logger.getLogger("OpenSPCoopWSSSecurityEngine");
+    		this.log = LoggerWrapperFactory.getLogger("OpenSPCoopWSSSecurityEngine");
     	try{
     		initWsuIdAllocator(prefixWsuId,this.log);
     	}catch(Exception e){

@@ -188,7 +188,7 @@
 		
 	</target>
 	
-	<!-- tracer.log4j.properties -->
+	<!-- console.log4j.properties -->
 	<target name="pddConsole_console_log4j_properties_settings">
 		
 		<concat destfile="${file}" append="yes" >

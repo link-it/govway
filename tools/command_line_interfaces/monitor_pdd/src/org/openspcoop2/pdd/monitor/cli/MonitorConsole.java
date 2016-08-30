@@ -30,8 +30,8 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.generic_project.utils.ServerProperties;
 import org.openspcoop2.pdd.monitor.Busta;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
@@ -41,6 +41,7 @@ import org.openspcoop2.pdd.monitor.BustaServizio;
 import org.openspcoop2.pdd.monitor.ServizioApplicativoConsegna;
 import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -76,7 +77,7 @@ public class MonitorConsole {
 					inPropLog4j.close();
 			} catch (Exception e) {}
 		}
-		log=Logger.getLogger("DRIVER_DB_MONITORAGGIO");	
+		log=LoggerWrapperFactory.getLogger("DRIVER_DB_MONITORAGGIO");	
 		//System.out.println("Logger inizializzato.");
 		
 		//		Connessione al DB

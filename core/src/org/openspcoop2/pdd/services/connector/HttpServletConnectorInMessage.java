@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
@@ -72,7 +73,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			if(this.log==null)
-				this.log = Logger.getLogger(HttpServletConnectorInMessage.class);
+				this.log = LoggerWrapperFactory.getLogger(HttpServletConnectorInMessage.class);
 			
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;

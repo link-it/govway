@@ -28,8 +28,9 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.struts.upload.FormFile;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -74,7 +75,7 @@ public class LoaderHelper {
 
 		this.session = session;
 
-		this.log = Logger.getLogger("openspcoop2_loader");
+		this.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
 		try {
 			this.core = new LoaderCore();
 		} catch (Exception e) {

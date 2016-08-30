@@ -32,7 +32,7 @@ import java.util.Vector;
 
 import javax.xml.soap.SOAPBody;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -94,6 +94,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -242,7 +243,7 @@ public class EJBUtils {
 		this.functionAsRouter = functionAsRouter;
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(this.log==null){
-			this.log = Logger.getLogger(EJBUtils.class);
+			this.log = LoggerWrapperFactory.getLogger(EJBUtils.class);
 		}
 		this.msgDiag = msgDiag;
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();

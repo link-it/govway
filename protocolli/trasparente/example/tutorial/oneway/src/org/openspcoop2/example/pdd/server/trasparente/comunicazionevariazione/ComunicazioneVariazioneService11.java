@@ -52,9 +52,7 @@ public class ComunicazioneVariazioneService11 extends Service {
             url = ComunicazioneVariazioneService11.class.getClassLoader().getResource("configurazionePdD/wsdl/implementazioneErogatoreSoap11.wsdl");
         } 
         if (url == null) {
-            java.util.logging.Logger.getLogger(ComunicazioneVariazioneService11.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "configurazionePdD/wsdl/implementazioneErogatoreSoap11.wsdl");
+            System.out.println("Can not initialize the default wsdl from configurazionePdD/wsdl/implementazioneErogatoreSoap11.wsdl");
         }       
         WSDL_LOCATION = url;
     }

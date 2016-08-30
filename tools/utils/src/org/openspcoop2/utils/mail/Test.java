@@ -24,7 +24,7 @@ package org.openspcoop2.utils.mail;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.SSLConfig;
 
 /**
@@ -61,11 +61,11 @@ public class Test {
 		String contenuto = "Questa è una prova di invio mail";
 		
 		// Sender [Commons-Net]
-		Sender senderCommonsNet = SenderFactory.newSender(SenderType.COMMONS_NET, Logger.getLogger(Test.class));
+		Sender senderCommonsNet = SenderFactory.newSender(SenderType.COMMONS_NET, LoggerWrapperFactory.getLogger(Test.class));
 		senderCommonsNet.setConnectionTimeout(100);
 		senderCommonsNet.setReadTimeout(5 * 1000);
 		// Sender [Commons-Mail]
-		Sender senderCommonsMail = SenderFactory.newSender(SenderType.COMMONS_MAIL, Logger.getLogger(Test.class));
+		Sender senderCommonsMail = SenderFactory.newSender(SenderType.COMMONS_MAIL, LoggerWrapperFactory.getLogger(Test.class));
 		senderCommonsMail.setConnectionTimeout(100);
 		senderCommonsMail.setReadTimeout(5 * 1000);
 

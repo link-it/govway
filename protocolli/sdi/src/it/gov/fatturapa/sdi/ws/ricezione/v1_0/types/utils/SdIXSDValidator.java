@@ -20,7 +20,7 @@
  */
 package it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.generic_project.exception.ServiceException;
 

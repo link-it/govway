@@ -36,7 +36,7 @@ import org.apache.axis.Message;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -100,7 +100,7 @@ public class FunzionalitaEGov {
 	 */
 	Repository repositoryConsegnaAffidabile=new Repository();
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaAffidabile"})
-	public void ConsegnaAffidabile() throws FatalTestSuiteException, Exception{
+	public void ConsegnaAffidabile() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -190,7 +190,7 @@ public class FunzionalitaEGov {
 	 */
 	Repository repositoryConsengaConFiltroDuplicati=new Repository();
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaConFiltroDuplicati"})
-	public void ConsegnaConFiltroDuplicati()throws FatalTestSuiteException, SOAPException, Exception{
+	public void ConsegnaConFiltroDuplicati()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -310,7 +310,7 @@ public class FunzionalitaEGov {
 	 */
 	Repository repositoryConsegnaAffidabileConFiltroDuplicati=new Repository();
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaAffidabileConFiltroDuplicati"})
-	public void ConsegnaAffidabileConFiltroDuplicati()throws FatalTestSuiteException,SOAPException, Exception{
+	public void ConsegnaAffidabileConFiltroDuplicati()throws TestSuiteException,SOAPException, Exception{
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryConsegnaAffidabileConFiltroDuplicati.add(egov);
@@ -430,7 +430,7 @@ public class FunzionalitaEGov {
 	 */
 	Repository repositoryBustaConOraRegistrazioneIntoIDEGovScaduta=new Repository();
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".BustaOraRegistrazioneIntoIDEGovScaduta"})
-	public void bustaConOraRegistrazioneIntoIDEGovScaduta()throws FatalTestSuiteException, SOAPException, Exception{
+	public void bustaConOraRegistrazioneIntoIDEGovScaduta()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -481,7 +481,7 @@ public class FunzionalitaEGov {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con busta scaduta.");
-					throw new FatalTestSuiteException("Invocazione PA con busta scaduta, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta scaduta, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -577,7 +577,7 @@ public class FunzionalitaEGov {
 	 */
 	Repository repositoryBustaConOraRegistrazioneScaduta=new Repository();
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".BustaOraRegistrazioneScaduta"})
-	public void bustaConOraRegistrazioneScaduta()throws FatalTestSuiteException, SOAPException, Exception{
+	public void bustaConOraRegistrazioneScaduta()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -625,7 +625,7 @@ public class FunzionalitaEGov {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con busta scaduta.");
-					throw new FatalTestSuiteException("Invocazione PA con busta scaduta, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta scaduta, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -722,7 +722,7 @@ public class FunzionalitaEGov {
 	 */
 	Repository repositoryConsegnaAffidabileConScadenza=new Repository();
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaAffidabileConScadenza"})
-	public void ConsegnaAffidabileConScadenza()throws FatalTestSuiteException, SOAPException, Exception{
+	public void ConsegnaAffidabileConScadenza()throws TestSuiteException, SOAPException, Exception{
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryConsegnaAffidabileConScadenza.add(egov);
@@ -763,7 +763,7 @@ public class FunzionalitaEGov {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con busta scaduta.");
-					throw new FatalTestSuiteException("Invocazione PA con busta scaduta, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta scaduta, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -848,7 +848,7 @@ public class FunzionalitaEGov {
 	 */
 	Repository repositoryCooperazioneConIDDiCollaborazione=new Repository();
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".CooperazioneConIDDiCollaborazione"})
-	public void CooperazioneConIDDiCollaborazione() throws FatalTestSuiteException, IOException{
+	public void CooperazioneConIDDiCollaborazione() throws TestSuiteException, IOException{
 
 		ClientSincrono client=new ClientSincrono(this.repositoryCooperazioneConIDDiCollaborazione);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -955,7 +955,7 @@ public class FunzionalitaEGov {
 	 * 0. Reset tabelle consegna in ordine
 	 */	
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaInOrdine"})
-	public void consegnaInOrdine_test0() throws FatalTestSuiteException, Exception{
+	public void consegnaInOrdine_test0() throws TestSuiteException, Exception{
 		
 		try{
 			String version_jbossas = Utilities.readApplicationServerVersion();
@@ -991,11 +991,11 @@ public class FunzionalitaEGov {
 	 * Test 1.
 	 * 1. Pubblico 1 messaggio, verifico che idegov=idcollaborazione e sequenza=1
 	 *       Verifico che sequenzaAttesa e nextSequenza sia 2
-	 * @throws FatalTestSuiteException
+	 * @throws TestSuiteException
 	 * @throws Exception
 	 */
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaInOrdine"},dependsOnMethods="consegnaInOrdine_test0")
-	public void consegnaInOrdine_test1() throws FatalTestSuiteException, Exception{
+	public void consegnaInOrdine_test1() throws TestSuiteException, Exception{
 		
 		if(!this.doTest){
 			return;
@@ -1124,11 +1124,11 @@ public class FunzionalitaEGov {
 	 * Test .2
 	 * 2. Pubblico messaggio, verifico che idegov!=idcollaborazione, ma idegovprecedente=idcollaborazione e sequenza=2
 	 *       Verifico che sequenzaAttesa e nextSequenza sia 3
-	 * @throws FatalTestSuiteException
+	 * @throws TestSuiteException
 	 * @throws Exception
 	 */
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaInOrdine"},dependsOnMethods="testDBConsegnaInOrdine_test1")
-	public void consegnaInOrdine_test2() throws FatalTestSuiteException, Exception{
+	public void consegnaInOrdine_test2() throws TestSuiteException, Exception{
 		
 		if(!this.doTest){
 			return;
@@ -1259,13 +1259,13 @@ public class FunzionalitaEGov {
 	 *	  Verifico che messaggio con sequenza 3 sia consegnato
 	 *	  Verifico che messaggio con sequenza 4 sia consegnato
 	 *
-	 * @throws FatalTestSuiteException
+	 * @throws TestSuiteException
 	 * @throws Exception
 	 */
 	Repository repositoryConsegnaInOrdinePubblicazioneFuoriOrdine=new Repository();
 	
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaInOrdine"},dependsOnMethods="testDBConsegnaInOrdine_test2")
-	public void consegnaInOrdine_test3() throws FatalTestSuiteException, Exception{
+	public void consegnaInOrdine_test3() throws TestSuiteException, Exception{
 		
 		if(!this.doTest){
 			return;
@@ -1500,11 +1500,11 @@ public class FunzionalitaEGov {
 	 * 4. Altero sequenza attesa incrementandola di uno
 	 *   Pubblico messaggio, questo verra' scartato poiche' in ordine minore di quello atteso.
 	 *   rimetto apposto sequenza attesa.
-	 * @throws FatalTestSuiteException
+	 * @throws TestSuiteException
 	 * @throws Exception
 	 */
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaInOrdine"},dependsOnMethods="testDBConsegnaInOrdine_test3_dopoScongelamento")
-	public void consegnaInOrdine_test4_incrementoSequenzaAttesa() throws FatalTestSuiteException, Exception{
+	public void consegnaInOrdine_test4_incrementoSequenzaAttesa() throws TestSuiteException, Exception{
 
 		if(!this.doTest){
 			return;
@@ -1523,7 +1523,7 @@ public class FunzionalitaEGov {
 	}
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaInOrdine"}
 		,dependsOnMethods="consegnaInOrdine_test4_incrementoSequenzaAttesa")
-	public void consegnaInOrdine_test4() throws FatalTestSuiteException, Exception{
+	public void consegnaInOrdine_test4() throws TestSuiteException, Exception{
 	
 		if(!this.doTest){
 			return;
@@ -1663,11 +1663,11 @@ public class FunzionalitaEGov {
 	
 	/**
 	 * Test finale che tutto rifunzioni
-	 * @throws FatalTestSuiteException
+	 * @throws TestSuiteException
 	 * @throws Exception
 	 */
 	@Test(groups={FunzionalitaEGov.ID_GRUPPO,FunzionalitaEGov.ID_GRUPPO+".ConsegnaInOrdine"},dependsOnMethods="testDBConsegnaInOrdine_test4")
-	public void consegnaInOrdine_test5() throws FatalTestSuiteException, Exception{
+	public void consegnaInOrdine_test5() throws TestSuiteException, Exception{
 
 		if(!this.doTest){
 			return;

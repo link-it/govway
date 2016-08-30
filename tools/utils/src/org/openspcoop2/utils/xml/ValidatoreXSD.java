@@ -27,7 +27,7 @@ import java.io.InputStream;
 import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -53,246 +53,246 @@ public class ValidatoreXSD extends AbstractValidatoreXSD {
 
 	public ValidatoreXSD(Logger log, File... file) throws Exception {
 		super(log, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, File file) throws Exception {
 		super(log, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, InputStream... inputStream)
 			throws Exception {
 		super(log, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, InputStream inputStream) throws Exception {
 		super(log, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			File... file) throws Exception {
 		super(log, lsResourceResolver, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			File file) throws Exception {
 		super(log, lsResourceResolver, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			InputStream... inputStream) throws Exception {
 		super(log, lsResourceResolver, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			InputStream inputStream) throws Exception {
 		super(log, lsResourceResolver, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			Node... schema) throws Exception {
 		super(log, lsResourceResolver, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			Node schema) throws Exception {
 		super(log, lsResourceResolver, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			Source... source) throws Exception {
 		super(log, lsResourceResolver, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			Source source) throws Exception {
 		super(log, lsResourceResolver, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			String... url) throws Exception {
 		super(log, lsResourceResolver, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
 			String url) throws Exception {
 		super(log, lsResourceResolver, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, Node... schema) throws Exception {
 		super(log, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, Node schema) throws Exception {
 		super(log, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, Source... source) throws Exception {
 		super(log, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, Source source) throws Exception {
 		super(log, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, File... file)
 			throws Exception {
 		super(log, schemaFactory, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, File file)
 			throws Exception {
 		super(log, schemaFactory, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			InputStream... inputStream) throws Exception {
 		super(log, schemaFactory, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			InputStream inputStream) throws Exception {
 		super(log, schemaFactory, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, File... file)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, File file) throws Exception {
 		super(log, schemaFactory, lsResourceResolver, file);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, InputStream... inputStream)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, InputStream inputStream)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, inputStream);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Node... schema)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Node schema)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Source... source)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Source source)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, String... url)
 			throws Exception {
 		super(log, schemaFactory, lsResourceResolver, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, String url) throws Exception {
 		super(log, schemaFactory, lsResourceResolver, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, Node... schema)
 			throws Exception {
 		super(log, schemaFactory, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, Node schema)
 			throws Exception {
 		super(log, schemaFactory, schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, Source... source)
 			throws Exception {
 		super(log, schemaFactory, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, Source source)
 			throws Exception {
 		super(log, schemaFactory, source);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, String... url)
 			throws Exception {
 		super(log, schemaFactory, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String schemaFactory, String url)
 			throws Exception {
 		super(log, schemaFactory, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String... url) throws Exception {
 		super(log, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Logger log, String url) throws Exception {
 		super(log, url);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ValidatoreXSD(Schema schema) throws Exception {
 		super(schema);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 

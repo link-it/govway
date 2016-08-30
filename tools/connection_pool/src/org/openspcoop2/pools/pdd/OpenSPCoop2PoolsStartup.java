@@ -28,9 +28,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.pools.pdd.jmx.GestoreRisorseJMX;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -49,11 +50,11 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 	private static final String ID_MODULO = "Inizializzazione Risorse OpenSPCoop (Pools)";
 
 	/** Logger utilizzato per segnalazione di errori. */
-	private static Logger logger = //Logger.getLogger("InizializzazioneOpenSPCoop");
-			Logger.getLogger("openspcoop2Pools");
+	private static Logger logger = //LogUtilities.getLogger("InizializzazioneOpenSPCoop");
+			LoggerWrapperFactory.getLogger("openspcoop2Pools");
 	
-	private static Logger loggerConsole = //Logger.getLogger(OpenSPCoop2PoolsStartup.ID_MODULO);
-			Logger.getLogger("openspcoop2Pools");
+	private static Logger loggerConsole = //LogUtilities.getLogger(OpenSPCoop2PoolsStartup.ID_MODULO);
+			LoggerWrapperFactory.getLogger("openspcoop2Pools");
 
 	
 	/** Context della Servlet */
@@ -91,7 +92,7 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 			java.util.Properties loggerProperties = new java.util.Properties();
 			loggerProperties.load(OpenSPCoop2PoolsStartup.class.getResourceAsStream("/openspcoop2_pools.log4j.properties"));
 			PropertyConfigurator.configure(loggerProperties);
-			OpenSPCoop2PoolsStartup.logger = Logger.getLogger("openspcoop2Pools");
+			OpenSPCoop2PoolsStartup.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 		}catch(Exception e){
 			OpenSPCoop2PoolsStartup.loggerConsole.error("Inizializzazione logger non riuscita",e);
 		}

@@ -418,7 +418,7 @@ public class SoggettiCore extends ControlStationCore {
 			return driver.getDriverConfigurazioneDB().getSoggetto(soggetto);
 
 		} catch (DriverControlStationException e) {
-			ControlStationCore.log.error(e);
+			ControlStationCore.log.error(e.getMessage(),e);
 			throw new DriverConfigurazioneException(e);
 		} catch (DriverConfigurazioneNotFound de) {
 			ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage());

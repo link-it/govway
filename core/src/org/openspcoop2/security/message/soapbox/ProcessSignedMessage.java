@@ -64,10 +64,11 @@ import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.soapbox.Processor;
 import org.adroitlogic.soapbox.SBConstants;
 import org.adroitlogic.soapbox.SecurityFailureException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.security.message.signature.SunEnvelopeIdResolver;
 import org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -106,7 +107,7 @@ public class ProcessSignedMessage implements Processor {
 		return this.certificates;
 	}
 	
-    private static final Logger logger = Logger.getLogger(ProcessSignedMessage.class);
+    private static final Logger logger = LoggerWrapperFactory.getLogger(ProcessSignedMessage.class);
 
     @Override
 	public void process(org.adroitlogic.soapbox.SecurityConfig secConfig, MessageSecurityContext msgSecCtx) {

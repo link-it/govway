@@ -37,7 +37,7 @@
 		</fileset>
 		<pathelement path="${openspcoop2_lib}/jibx/jibx-run-1.2.6.jar"/>
 		<pathelement path="${openspcoop2_lib}/jibx/xpp3-1.2.6.jar"/>
-		<pathelement path="${openspcoop2_lib}/log/log4j-1.2.16.jar"/>
+		<fileset dir="${openspcoop2_lib}/log" includes="*.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/soap.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/uddi4j-2.0.5.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.5.6.jar"/>
@@ -46,6 +46,7 @@
 		<pathelement path="${openspcoop2_lib}/commons/commons-discovery-0.5.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/wsdl4j-1.6.3.jar"/>
 		<pathelement path="${openspcoop2_lib}/stub/cxf/*"/>
+		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.0.7.jar"/>
 		<fileset dir="${openspcoop2_dist}" includes="**/*.jar"/>
 		<pathelement path="${jdbc_lib}"/>
 		<pathelement path="${build}"/>
@@ -70,12 +71,13 @@
 			<then>
 				<!-- db/uddi/web -->
 				<copy file="${openspcoop2}/core/src/schemi/registroServizi.xsd" todir="${build}"/>
-				<copy file="deploy/properties/validator.log4j.properties" todir="${build}"/>
+				<copy file="deploy/properties/validator.log4j2.properties" todir="${build}"/>
 				<java classname="org.openspcoop2.core.registry.driver.utils.TestValidazioneSemantica" fork="true">
 					<arg value="${proprietaComuni}" />
 					<arg value="${tipoRegistroServizi}" />
 					<arg value="${proprietaRegistroServizi}" />
 					<arg value="${verificaURIRegistroServizi}" />
+					<arg value="${build}/validator.log4j2.properties" />
 					<classpath>
 						<path refid="classpath_script"/>
 					</classpath>
@@ -89,12 +91,13 @@
 			<then>
 				<!-- db -->
 				<copy file="${openspcoop2}/core/src/schemi/config.xsd" todir="${build}"/>
-				<copy file="deploy/properties/validator.log4j.properties" todir="${build}"/>
+				<copy file="deploy/properties/validator.log4j2.properties" todir="${build}"/>
 				<java classname="org.openspcoop2.core.config.driver.utils.TestValidazioneSemantica" fork="true">
 					<arg value="${proprietaComuni}" />
 					<arg value="${tipoConfigurazione}" />
 					<arg value="${proprietaConfigurazione}" />
 					<arg value="${validazioneSezioneConfigurazione}" />
+					<arg value="${build}/validator.log4j2.properties" />
 					<classpath>
 						<path refid="classpath_script"/>
 					</classpath>

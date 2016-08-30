@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCore;
 

@@ -116,7 +116,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 	private IProtocolFactory protocolFactory;
 	/** Logger utilizzato per debug. */
-	private org.apache.log4j.Logger log = null;
+	private org.slf4j.Logger log = null;
 
 	private boolean segnalazioneElementoPresentePiuVolte = false;
 	

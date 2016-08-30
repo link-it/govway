@@ -29,7 +29,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -52,6 +52,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -116,7 +117,7 @@ public class ProfiloDiCollaborazione {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(ProfiloDiCollaborazione.class.getName());
+			this.log = LoggerWrapperFactory.getLogger(ProfiloDiCollaborazione.class.getName());
 		}
 		if(protocolFactory!=null)
 			initProtocolFactory(protocolFactory);

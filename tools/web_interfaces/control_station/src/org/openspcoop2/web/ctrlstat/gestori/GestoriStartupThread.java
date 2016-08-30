@@ -21,7 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.gestori;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 

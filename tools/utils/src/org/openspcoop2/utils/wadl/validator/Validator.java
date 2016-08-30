@@ -28,7 +28,7 @@ import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.validation.Schema;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jvnet.ws.wadl.Param;
 import org.jvnet.ws.wadl.ParamStyle;
 import org.jvnet.ws.wadl.ast.AbstractNode;

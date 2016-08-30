@@ -31,7 +31,7 @@ import java.util.List;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.digest.IDigestReader;
 
 /**
@@ -118,7 +119,7 @@ public abstract class MessageSecurityContext{
     	if(messageSecurityContextParameters.getLog()!=null)
     		this.log = messageSecurityContextParameters.getLog();
     	else
-    		this.log = Logger.getLogger(MessageSecurityContext.class);
+    		this.log = LoggerWrapperFactory.getLogger(MessageSecurityContext.class);
     	this.functionAsClient = messageSecurityContextParameters.isFunctionAsClient();
     	this.prefixWsuId = messageSecurityContextParameters.getPrefixWsuId();
     	this.idFruitore = messageSecurityContextParameters.getIdFruitore();

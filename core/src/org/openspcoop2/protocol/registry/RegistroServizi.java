@@ -29,7 +29,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -60,6 +60,7 @@ import org.openspcoop2.core.registry.driver.ws.DriverRegistroServiziWS;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -247,7 +248,7 @@ public class RegistroServizi  {
 			if(alog!=null)
 				this.log = alog;
 			else
-				this.log = Logger.getLogger(RegistroServizi.class);
+				this.log = LoggerWrapperFactory.getLogger(RegistroServizi.class);
 
 			this.raggiungibilitaTotale = raggiungibilitaTotale;
 

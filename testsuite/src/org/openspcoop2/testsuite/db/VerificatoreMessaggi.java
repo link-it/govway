@@ -33,7 +33,6 @@ import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 
 /**
@@ -59,10 +58,10 @@ public class VerificatoreMessaggi {
 	
 	/* ----------------------- MESSAGGI --------------------------- */
 	
-	public long countMsgOpenSPCoop_profiloAsincrono(String idRichiesta,String idRisposta) throws FatalTestSuiteException {
+	public long countMsgOpenSPCoop_profiloAsincrono(String idRichiesta,String idRisposta) throws TestSuiteException {
 		return countMsgOpenSPCoop(idRichiesta) + countMsgOpenSPCoop(idRisposta);
 	}
-	public synchronized long countMsgOpenSPCoop(String id) throws FatalTestSuiteException {
+	public synchronized long countMsgOpenSPCoop(String id) throws TestSuiteException {
 		PreparedStatement prep = null;
 		ResultSet res = null;
 		try {
@@ -107,7 +106,7 @@ public class VerificatoreMessaggi {
 
 	
 	
-	public String getMotivoErroreProcessamentoMessaggio(String id,String tipo) throws FatalTestSuiteException {
+	public String getMotivoErroreProcessamentoMessaggio(String id,String tipo) throws TestSuiteException {
 		PreparedStatement prep = null;
 		ResultSet res = null;
 		try {
@@ -155,7 +154,7 @@ public class VerificatoreMessaggi {
 	}
 
 	
-	public boolean existsMessaggioInProcessamento(String id,String tipo) throws FatalTestSuiteException {
+	public boolean existsMessaggioInProcessamento(String id,String tipo) throws TestSuiteException {
 		PreparedStatement prep = null;
 		ResultSet res = null;
 		try {
@@ -199,16 +198,16 @@ public class VerificatoreMessaggi {
 	}
 
 	
-	public void deleteMessage(String id,String tipo,boolean useTransazioni) throws FatalTestSuiteException {
+	public void deleteMessage(String id,String tipo,boolean useTransazioni) throws TestSuiteException {
 		deleteMessage_engine(id, tipo, false, null, useTransazioni);
 	}
-	public void deleteMessageByRiferimentoMessaggio(String id,String tipo,boolean useTransazioni) throws FatalTestSuiteException {
+	public void deleteMessageByRiferimentoMessaggio(String id,String tipo,boolean useTransazioni) throws TestSuiteException {
 		deleteMessage_engine(id, tipo, true, null, useTransazioni);
 	}
-	public void deleteMessageByRiferimentoMessaggio(String id,String tipo,boolean orderByOraRegistrazioneASC,boolean useTransazioni) throws FatalTestSuiteException {
+	public void deleteMessageByRiferimentoMessaggio(String id,String tipo,boolean orderByOraRegistrazioneASC,boolean useTransazioni) throws TestSuiteException {
 		deleteMessage_engine(id, tipo, true, orderByOraRegistrazioneASC, useTransazioni);
 	}
-	private void deleteMessage_engine(String id,String tipo,boolean rifMsg,Boolean orderByOraRegistrazioneASC,boolean useTransazioni) throws FatalTestSuiteException {
+	private void deleteMessage_engine(String id,String tipo,boolean rifMsg,Boolean orderByOraRegistrazioneASC,boolean useTransazioni) throws TestSuiteException {
 		PreparedStatement prep = null;
 		ResultSet rs = null;
 		try {
@@ -313,7 +312,7 @@ public class VerificatoreMessaggi {
 		}
 	}
 
-	public void deleteUtilizzoProfiloCollaborazione(String id,String tipo, boolean useTransazioni) throws FatalTestSuiteException {
+	public void deleteUtilizzoProfiloCollaborazione(String id,String tipo, boolean useTransazioni) throws TestSuiteException {
 		PreparedStatement prep = null;
 		try {
 			if(useTransazioni){
@@ -359,7 +358,7 @@ public class VerificatoreMessaggi {
 	/* ----------------------- CORRELAZIONE APPLICATIVA --------------------------- */
 
 	public void deleteCorrelazioneApplicativa(String idCorrelazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		PreparedStatement pstmt = null;
 		try {
@@ -379,14 +378,14 @@ public class VerificatoreMessaggi {
 
 	}
 	
-	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRichiestaInviato(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRichiestaInviato(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRichiesta(id,Costanti.OUTBOX,correlazioneApplicativa);
 	}
-	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRichiestaRicevuto(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRichiestaRicevuto(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRichiesta(id,Costanti.INBOX,correlazioneApplicativa);
 	}
 	private boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRichiesta(String id, String tipo, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
@@ -429,14 +428,14 @@ public class VerificatoreMessaggi {
 
 	}
 
-	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRispostaInviato(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRispostaInviato(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRisposta(id,Costanti.OUTBOX,correlazioneApplicativa);
 	}
-	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRispostaRicevuto(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRispostaRicevuto(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRisposta(id,Costanti.INBOX,correlazioneApplicativa);
 	}
 	private boolean isTracedCorrelazioneApplicativaRichiestaIntoMessaggioRisposta(String id, String tipo, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
@@ -479,14 +478,14 @@ public class VerificatoreMessaggi {
 
 	}
 	
-	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRichiestaInviato(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRichiestaInviato(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRispostaIntoMessaggioRichiesta(id,Costanti.OUTBOX,correlazioneApplicativa);
 	}
-	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRichiestaRicevuto(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRichiestaRicevuto(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRispostaIntoMessaggioRichiesta(id,Costanti.INBOX,correlazioneApplicativa);
 	}
 	private boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRichiesta(String id, String tipo, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
@@ -529,14 +528,14 @@ public class VerificatoreMessaggi {
 
 	}
 
-	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRispostaInviato(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRispostaInviato(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRispostaIntoMessaggioRisposta(id,Costanti.OUTBOX,correlazioneApplicativa);
 	}
-	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRispostaRicevuto(String id, String correlazioneApplicativa)throws FatalTestSuiteException {
+	public boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRispostaRicevuto(String id, String correlazioneApplicativa)throws TestSuiteException {
 		return isTracedCorrelazioneApplicativaRispostaIntoMessaggioRisposta(id,Costanti.INBOX,correlazioneApplicativa);
 	}
 	private boolean isTracedCorrelazioneApplicativaRispostaIntoMessaggioRisposta(String id, String tipo, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
@@ -705,7 +704,7 @@ public class VerificatoreMessaggi {
 	/* ----------------------- REPOSITORY --------------------------- */
 	
 	public long getNumeroDuplicatiRicevuti(String tipoMessaggio,String idMessaggio,boolean richiesta,boolean useTransazioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
@@ -780,7 +779,7 @@ public class VerificatoreMessaggi {
 	}
 
 	public boolean isBustaRegistrataHistory(String tipoMessaggio,String idMessaggio,boolean richiesta,boolean useTransazioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;
@@ -866,7 +865,7 @@ public class VerificatoreMessaggi {
 	/* ----------------------- UTILITY --------------------------- */
 	
 	public Vector<String> getTabelleNonCorrettamenteSvuotate(String tipoRepositoryBuste)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;

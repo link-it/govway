@@ -25,7 +25,7 @@ package org.openspcoop2.pdd.core.handlers;
 import java.util.Date;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * GeneratoreCasualeDate

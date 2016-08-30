@@ -39,7 +39,7 @@ import java.util.Vector;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -77,6 +77,7 @@ import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
 import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.resources.Loader;
@@ -151,7 +152,7 @@ public class XMLDataConverter {
 	private void XMLDataConverterSetup(Object sorgente,AccessoRegistroRegistro destinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
 	
 		if(log == null)
-			this.log = Logger.getLogger(XMLDataConverter.class);
+			this.log = LoggerWrapperFactory.getLogger(XMLDataConverter.class);
 		else
 			this.log = log;
 		this.logDriver = logDriver;
@@ -322,7 +323,7 @@ public class XMLDataConverter {
 	private void XMLDataConverterSetup(Object sorgente,Connection connection,String tipoDatabase,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
 	
 		if(log == null)
-			this.log = Logger.getLogger(XMLDataConverter.class);
+			this.log = LoggerWrapperFactory.getLogger(XMLDataConverter.class);
 		else
 			this.log = log;
 		this.logDriver = logDriver;

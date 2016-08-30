@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;

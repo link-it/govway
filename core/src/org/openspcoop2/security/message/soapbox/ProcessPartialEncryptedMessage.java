@@ -84,7 +84,7 @@ import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.soapbox.Processor;
 import org.adroitlogic.soapbox.SBConstants;
 import org.adroitlogic.soapbox.SecurityFailureException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.xml.security.algorithms.JCEMapper;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
@@ -93,6 +93,7 @@ import org.apache.xml.security.utils.Base64;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -125,7 +126,7 @@ public class ProcessPartialEncryptedMessage implements Processor {
 	}
 	
 
-	public static final Logger logger = Logger.getLogger(ProcessPartialEncryptedMessage.class);
+	public static final Logger logger = LoggerWrapperFactory.getLogger(ProcessPartialEncryptedMessage.class);
     
     /**
      *

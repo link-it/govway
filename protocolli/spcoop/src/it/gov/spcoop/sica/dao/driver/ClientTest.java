@@ -21,6 +21,47 @@
 
 package it.gov.spcoop.sica.dao.driver;
 
+import java.io.File;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Message;
+import javax.wsdl.Service;
+
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
+import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
+import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
+import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.RegistroServizi;
+import org.openspcoop2.core.registry.Servizio;
+import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.TipologiaServizio;
+import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
+import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
+import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.wsdl.DefinitionWrapper;
+import org.openspcoop2.utils.wsdl.WSDLUtilities;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.utils.xml.XSDUtils;
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import it.cnipa.collprofiles.EgovDecllElement;
 import it.cnipa.collprofiles.OperationListType;
 import it.cnipa.collprofiles.OperationType;
@@ -31,6 +72,7 @@ import it.gov.spcoop.sica.dao.AccordoServizioParteComune;
 import it.gov.spcoop.sica.dao.AccordoServizioParteSpecifica;
 import it.gov.spcoop.sica.dao.Costanti;
 import it.gov.spcoop.sica.dao.Documento;
+import it.gov.spcoop.sica.manifest.AccordoServizio;
 import it.gov.spcoop.sica.manifest.DocumentoConversazione;
 import it.gov.spcoop.sica.manifest.DocumentoCoordinamento;
 import it.gov.spcoop.sica.manifest.DocumentoInterfaccia;
@@ -41,7 +83,6 @@ import it.gov.spcoop.sica.manifest.ElencoAllegati;
 import it.gov.spcoop.sica.manifest.ElencoPartecipanti;
 import it.gov.spcoop.sica.manifest.ElencoServiziComponenti;
 import it.gov.spcoop.sica.manifest.ElencoServiziComposti;
-import it.gov.spcoop.sica.manifest.AccordoServizio;
 import it.gov.spcoop.sica.manifest.ServizioComposto;
 import it.gov.spcoop.sica.manifest.SpecificaConversazione;
 import it.gov.spcoop.sica.manifest.SpecificaCoordinamento;
@@ -58,47 +99,6 @@ import it.gov.spcoop.sica.manifest.driver.TipiDocumentoLivelloServizio;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSemiformale;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSicurezza;
 import it.gov.spcoop.sica.wscp.ProfiloCollaborazioneEGOV;
-
-import java.io.File;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Message;
-import javax.wsdl.Service;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
-import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
-import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
-import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Property;
-import org.openspcoop2.core.registry.Operation;
-import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.RegistroServizi;
-import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.constants.TipologiaServizio;
-import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
-import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
-import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
-import org.openspcoop2.utils.io.ZipUtilities;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.openspcoop2.utils.wsdl.DefinitionWrapper;
-import org.openspcoop2.utils.wsdl.WSDLUtilities;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
-import org.openspcoop2.utils.xml.XSDUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 
 /**
@@ -234,9 +234,9 @@ public class ClientTest {
 			
 			
 			java.util.Properties loggerProperties = new java.util.Properties();
-			loggerProperties.load(RegistroServizi.class.getResourceAsStream("/logger.log4j.properties"));
-			PropertyConfigurator.configure(loggerProperties);
-			Logger log = Logger.getLogger("openspcoop2.core");
+			loggerProperties.load(RegistroServizi.class.getResourceAsStream("/openspcoop2.log4j2.properties"));
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			Logger log = LoggerWrapperFactory.getLogger("openspcoop2.core");
 			
 			XMLUtils xmlSICAUtilities = new XMLUtils(context,log);
 			

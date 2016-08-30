@@ -23,10 +23,10 @@ package org.openspcoop2.pdd.core.handlers.statistics;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -50,7 +50,7 @@ public class StatisticsCollection {
 	private static synchronized void initEsitiProperties(){
 		if(esitiProperties==null){
 			try{
-				esitiProperties = EsitiProperties.getInstance(Logger.getLogger(StatisticsCollection.class));
+				esitiProperties = EsitiProperties.getInstance(LoggerWrapperFactory.getLogger(StatisticsCollection.class));
 			}catch(Exception e){
 				throw new RuntimeException(e.getMessage(),e);
 			}

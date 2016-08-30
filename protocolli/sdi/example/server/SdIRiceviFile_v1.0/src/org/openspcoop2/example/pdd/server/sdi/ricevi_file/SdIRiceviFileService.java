@@ -51,9 +51,7 @@ public class SdIRiceviFileService extends Service {
             url = SdIRiceviFileService.class.getClassLoader().getResource("SdIRiceviFile_v1.0.wsdl");
         } 
         if (url == null) {
-            java.util.logging.Logger.getLogger(SdIRiceviFileService.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "SdIRiceviFile_v1.0.wsdl");
+        	System.out.println("Can not initialize the default wsdl from SdIRiceviFile_v1.0.wsdl");
         }       
         WSDL_LOCATION = url;
     }

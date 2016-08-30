@@ -35,7 +35,8 @@ import java.util.Vector;
 
 import javax.xml.ws.BindingProvider;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.log.LogUtilities;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -121,7 +122,7 @@ public class SincronizzatoreLib {
 	private String tipoDatabase = null;
 
 	public SincronizzatoreLib() throws Exception {
-		SincronizzatoreLib.log = Logger.getLogger("sincronizzatore");
+		SincronizzatoreLib.log = LogUtilities.getLogger("sincronizzatore");
 
 		this.init();
 	}

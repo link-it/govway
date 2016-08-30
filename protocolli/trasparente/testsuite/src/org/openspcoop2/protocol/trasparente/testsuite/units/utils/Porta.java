@@ -33,7 +33,7 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.core.TrasparenteTestsuiteLogger;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -188,11 +188,11 @@ public class Porta {
 	}
 
 	
-	public void oneWay(Repository repositoryOneWay) throws FatalTestSuiteException, Exception{
+	public void oneWay(Repository repositoryOneWay) throws TestSuiteException, Exception{
 		this.collaborazioneTrasparenteBase.oneWay(repositoryOneWay,this.portaDelegataOneWay,true, null, null);
 	}
 
-	public void oneWayFault200(Repository repositoryOneWay) throws FatalTestSuiteException, Exception{
+	public void oneWayFault200(Repository repositoryOneWay) throws TestSuiteException, Exception{
 		if(this.stateful) {
 			this.collaborazioneTrasparenteBaseFault200.oneWay(repositoryOneWay,this.portaDelegataOneWayFault200,true, null, null);
 		} else {
@@ -206,7 +206,7 @@ public class Porta {
 		}
 	}
 
-	public void oneWayFault500(Repository repositoryOneWay) throws FatalTestSuiteException, Exception{
+	public void oneWayFault500(Repository repositoryOneWay) throws TestSuiteException, Exception{
 		if(this.stateful) {
 			this.collaborazioneTrasparenteBaseFault500.oneWay(repositoryOneWay,this.portaDelegataOneWayFault500,true, null, null, false);
 		} else {
@@ -220,7 +220,7 @@ public class Porta {
 		}
 	}
 
-	public void oneWayAutenticato(Repository repositoryOneWay) throws FatalTestSuiteException, Exception{
+	public void oneWayAutenticato(Repository repositoryOneWay) throws TestSuiteException, Exception{
 		this.collaborazioneTrasparenteBaseAutenticato.oneWay(repositoryOneWay,this.portaDelegataOneWayAutenticata,true, this.usernameOneWayAutenticata, this.passwordOneWayAutenticata);
 	}
 
@@ -295,11 +295,11 @@ public class Porta {
 	/***
 	 * Test per il profilo di collaborazione Sincrono
 	 */
-	public void sincrono(Repository repository) throws FatalTestSuiteException, Exception{
+	public void sincrono(Repository repository) throws TestSuiteException, Exception{
 		this.collaborazioneTrasparenteBase.sincrono(repository,this.portaDelegataSincrono,true);
 	}
 
-	public void sincronoFault200(Repository repository) throws FatalTestSuiteException, Exception{
+	public void sincronoFault200(Repository repository) throws TestSuiteException, Exception{
 		try {
 			this.collaborazioneTrasparenteBaseFault200.sincrono(repository,this.portaDelegataSincronoFault200,true);
 			Assert.fail("Test SincronoFault200, atteso fault");
@@ -309,7 +309,7 @@ public class Porta {
 		}
 	}
 
-	public void sincronoFault500(Repository repository) throws FatalTestSuiteException, Exception{
+	public void sincronoFault500(Repository repository) throws TestSuiteException, Exception{
 		try {
 			this.collaborazioneTrasparenteBaseFault500.sincrono(repository,this.portaDelegataSincronoFault500,true);
 			Assert.fail("Test SincronoFault500, atteso fault");
@@ -367,7 +367,7 @@ public class Porta {
 		}
 	}
 
-	public void sincronoAutenticato(Repository repository) throws FatalTestSuiteException, Exception{
+	public void sincronoAutenticato(Repository repository) throws TestSuiteException, Exception{
 		this.collaborazioneTrasparenteBaseAutenticato.sincrono(repository,this.portaDelegataSincronoAutenticata,true,this.usernameSincronoAutenticata,this.passwordSincronoAutenticata);
 	}
 	
@@ -410,15 +410,15 @@ public class Porta {
 	
 	
 	
-	public static void _oneWay(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _oneWay(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.oneWay(repository);
 	}
 	
-	public static void _oneWayFault200(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _oneWayFault200(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.oneWayFault200(repository);
 	}
 	
-	public static void _oneWayFault500(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _oneWayFault500(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.oneWayFault500(repository);
 	}
 	
@@ -438,15 +438,15 @@ public class Porta {
 		port.testOneWayAutenticato(data, msgDiagData, id, checkServizioApplicativo, date);
 	}	
 	
-	public static void _sincrono(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _sincrono(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.sincrono(repository);
 	}
 	
-	public static void _sincronoFault200(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _sincronoFault200(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.sincronoFault200(repository);
 	}
 	
-	public static void _sincronoFault500(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _sincronoFault500(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.sincronoFault500(repository);
 	}
 	
@@ -466,11 +466,11 @@ public class Porta {
 		port.testSincronoAutenticato(data, msgDiagData, id, checkServizioApplicativo, date);
 	}
 
-	public static void _sincronoAutenticato(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _sincronoAutenticato(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.sincronoAutenticato(repository);
 	}
 	
-	public static void _oneWayAutenticato(Porta port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _oneWayAutenticato(Porta port, Repository repository) throws TestSuiteException, Exception{
 		port.oneWayAutenticato(repository);
 	}
 

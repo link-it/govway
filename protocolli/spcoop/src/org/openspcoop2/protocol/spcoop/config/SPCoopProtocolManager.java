@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.spcoop.config;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.Busta;

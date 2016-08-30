@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
@@ -100,6 +100,7 @@ import org.openspcoop2.protocol.sdk.constants.SOAPFaultIntegrationGenericInfoMod
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.IDate;
@@ -155,7 +156,7 @@ public class OpenSPCoop2Properties {
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = Logger.getLogger("openspcoop2.startup");
+			this.log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
@@ -312,7 +313,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				else{
-					//	Ricerco connettore nel className.properties
+					//	Ricerco connettore
 					String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 					if(adapterClass == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste ["+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
@@ -378,7 +379,7 @@ public class OpenSPCoop2Properties {
 				for(int i=0; i<tipiThreshold.length;i++){
 					if(this.getRepositoryThresholdParameters(tipiThreshold[i])==null)
 						return false;
-					//	Ricerco connettore nel className.properties
+					//	Ricerco connettore
 					String tipoClass = className.getThreshold(tipiThreshold[i]);
 					if(tipoClass == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold[i]+"] nelle classi registrate in OpenSPCoop");
@@ -500,7 +501,7 @@ public class OpenSPCoop2Properties {
 			if( this.getNodeReceiver()==null ){
 				return false;
 			}else{
-				//	Ricerco connettore nel className.properties
+				//	Ricerco connettore
 				String tipoClass = className.getNodeReceiver(this.getNodeReceiver());
 				if(tipoClass == null){
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in OpenSPCoop");
@@ -525,7 +526,7 @@ public class OpenSPCoop2Properties {
 			if( this.getNodeSender()==null ){
 				return false;
 			}else{
-				//	Ricerco connettore nel className.properties
+				//	Ricerco connettore
 				String tipoClass = className.getNodeSender(this.getNodeSender());
 				if(tipoClass == null){
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in OpenSPCoop");
@@ -545,7 +546,7 @@ public class OpenSPCoop2Properties {
 						this.log.error("Un JDBCAdapter deve essere definito in caso di NodeSender=db");
 						return false;
 					}
-					//	Ricerco connettore nel className.properties
+					//	Ricerco connettore
 					String jdbcAdapter = this.getRepositoryJDBCAdapter();
 					if(this.getDatabaseType()!=null && TipiDatabase.DEFAULT.equals(jdbcAdapter)){
 						try{
@@ -729,7 +730,7 @@ public class OpenSPCoop2Properties {
 			}else{
 				String[] tipiIntegrazionePD = this.getTipoIntegrazionePD();
 
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiIntegrazionePD.length;i++){
 					String tipoClass = className.getIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 					if(tipoClass == null){
@@ -762,7 +763,7 @@ public class OpenSPCoop2Properties {
 					
 					String[] tipiIntegrazionePD_protocollo = this.getTipoIntegrazionePD(protocollo);
 
-					// Check tipi registrati in className.properties
+					// Check tipi registrati
 					for(int i=0; i<tipiIntegrazionePD_protocollo.length;i++){
 						String tipoClass = className.getIntegrazionePortaDelegata(tipiIntegrazionePD_protocollo[i]);
 						if(tipoClass == null){
@@ -791,7 +792,7 @@ public class OpenSPCoop2Properties {
 			if ( this.getTipoIntegrazionePA() == null ){
 				String[] tipiIntegrazionePA = this.getTipoIntegrazionePA();
 
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiIntegrazionePA.length;i++){
 					String tipoClass = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 					if(tipoClass == null){
@@ -824,7 +825,7 @@ public class OpenSPCoop2Properties {
 					
 					String[] tipiIntegrazionePA_protocollo = this.getTipoIntegrazionePA(protocollo);
 
-					// Check tipi registrati in className.properties
+					// Check tipi registrati
 					for(int i=0; i<tipiIntegrazionePA_protocollo.length;i++){
 						String tipoClass = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA_protocollo[i]);
 						if(tipoClass == null){
@@ -865,7 +866,7 @@ public class OpenSPCoop2Properties {
 				return false;
 			}else{
 				if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(this.getTipoAutorizzazioneBuste())==false){
-					//	Ricerco connettore nel className.properties
+					//	Ricerco connettore
 					String tipoClass = className.getAutorizzazioneBuste(this.getTipoAutorizzazioneBuste());
 					if(tipoClass == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in OpenSPCoop");
@@ -885,7 +886,7 @@ public class OpenSPCoop2Properties {
 			if( this.getGestoreRepositoryBuste() == null  ){
 				return false;
 			}else{
-				//	Ricerco nel className.properties
+				//	Ricerco
 				if(this.getDatabaseType()!=null){
 					try{
 						IGestoreRepository repository = GestoreRepositoryFactory.createRepositoryBuste(this.getDatabaseType());
@@ -912,7 +913,7 @@ public class OpenSPCoop2Properties {
 			}
 
 			// Filtro duplicati (warning)
-			// Ricerco nel className.properties
+			// Ricerco
 			String tipoClassFiltroDuplicati = className.getFiltroDuplicati(this.getGestoreFiltroDuplicatiRepositoryBuste());
 			if(tipoClassFiltroDuplicati == null){
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
@@ -932,7 +933,7 @@ public class OpenSPCoop2Properties {
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase', tipo di database non gestito");
 					return false;
 				}
-				// Ricerco nel className.properties
+				// Ricerco
 				String tipoClass = className.getSQLQueryObject(this.getDatabaseType());
 				if(tipoClass == null){
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in OpenSPCoop");
@@ -1036,7 +1037,7 @@ public class OpenSPCoop2Properties {
 			String [] gestoriCredenzialiPD = this.getTipoGestoreCredenzialiPD();
 			if(gestoriCredenzialiPD!=null){
 				for(int i=0; i<gestoriCredenzialiPD.length;i++){
-					//	Ricerco nel className.properties
+					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPD[i]);
 					if(tipoClass == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in OpenSPCoop");
@@ -1056,7 +1057,7 @@ public class OpenSPCoop2Properties {
 			String [] gestoriCredenzialiPA = this.getTipoGestoreCredenzialiPA();
 			if(gestoriCredenzialiPA!=null){
 				for(int i=0; i<gestoriCredenzialiPA.length;i++){
-					//	Ricerco nel className.properties
+					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPA[i]);
 					if(tipoClass == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in OpenSPCoop");
@@ -1076,7 +1077,7 @@ public class OpenSPCoop2Properties {
 			String [] gestoriCredenzialiIM = this.getTipoGestoreCredenzialiIM();
 			if(gestoriCredenzialiIM!=null){
 				for(int i=0; i<gestoriCredenzialiIM.length;i++){
-					//	Ricerco nel className.properties
+					//	Ricerco
 					String tipoClass = className.getGestoreCredenzialiIM(gestoriCredenzialiIM[i]);
 					if(tipoClass == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in OpenSPCoop");
@@ -1130,7 +1131,7 @@ public class OpenSPCoop2Properties {
 			// InitHandler
 			if ( this.getInitHandler() != null ){
 				String[] tipiHandler = this.getInitHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getInitHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1152,7 +1153,7 @@ public class OpenSPCoop2Properties {
 			// ExitHandler
 			if ( this.getExitHandler() != null ){
 				String[] tipiHandler = this.getExitHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getExitHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1174,7 +1175,7 @@ public class OpenSPCoop2Properties {
 			// PreInRequestHandler
 			if ( this.getPreInRequestHandler() != null ){
 				String[] tipiHandler = this.getPreInRequestHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getPreInRequestHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1195,7 +1196,7 @@ public class OpenSPCoop2Properties {
 			// InRequestHandler
 			if ( this.getInRequestHandler() != null ){
 				String[] tipiHandler = this.getInRequestHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getInRequestHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1216,7 +1217,7 @@ public class OpenSPCoop2Properties {
 			// InRequestProtocolHandler
 			if ( this.getInRequestProtocolHandler() != null ){
 				String[] tipiHandler = this.getInRequestProtocolHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getInRequestProtocolHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1237,7 +1238,7 @@ public class OpenSPCoop2Properties {
 			// OutRequestHandler
 			if ( this.getOutRequestHandler() != null ){
 				String[] tipiHandler = this.getOutRequestHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getOutRequestHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1258,7 +1259,7 @@ public class OpenSPCoop2Properties {
 			// PostOutRequestHandler
 			if ( this.getPostOutRequestHandler() != null ){
 				String[] tipiHandler = this.getPostOutRequestHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getPostOutRequestHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1279,7 +1280,7 @@ public class OpenSPCoop2Properties {
 			// PreInResponseHandler
 			if ( this.getPreInResponseHandler() != null ){
 				String[] tipiHandler = this.getPreInResponseHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getPreInResponseHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1300,7 +1301,7 @@ public class OpenSPCoop2Properties {
 			// InResponseHandler
 			if ( this.getInResponseHandler() != null ){
 				String[] tipiHandler = this.getInResponseHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getInResponseHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1321,7 +1322,7 @@ public class OpenSPCoop2Properties {
 			// OutResponseHandler
 			if ( this.getOutResponseHandler() != null ){
 				String[] tipiHandler = this.getOutResponseHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getOutResponseHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1342,7 +1343,7 @@ public class OpenSPCoop2Properties {
 			// PostOutResponseHandler
 			if ( this.getPostOutResponseHandler() != null ){
 				String[] tipiHandler = this.getPostOutResponseHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getPostOutResponseHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1363,7 +1364,7 @@ public class OpenSPCoop2Properties {
 			// IntegrationManagerRequestHandler
 			if ( this.getIntegrationManagerRequestHandler() != null ){
 				String[] tipiHandler = this.getIntegrationManagerRequestHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getIntegrationManagerRequestHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1384,7 +1385,7 @@ public class OpenSPCoop2Properties {
 			// IntegrationManagerResponseHandler
 			if ( this.getIntegrationManagerResponseHandler() != null ){
 				String[] tipiHandler = this.getIntegrationManagerResponseHandler();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				for(int i=0; i<tipiHandler.length;i++){
 					String tipoClass = className.getIntegrationManagerResponseHandler(tipiHandler[i]);
 					if(tipoClass == null){
@@ -1438,7 +1439,7 @@ public class OpenSPCoop2Properties {
 			// InitOpenSPCoop2MessageFactory
 			if ( this.getOpenspcoop2MessageFactory() != null ){
 				String tipo = this.getOpenspcoop2MessageFactory();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				String tipoClass = className.getOpenSPCoop2MessageFactory(tipo);
 				if(tipoClass == null){
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messagefactory'=...,"+tipo+
@@ -1458,7 +1459,7 @@ public class OpenSPCoop2Properties {
 			// InitOpenSPCoop2MessageFactory
 			if ( this.getMessageSecurityContext() != null ){
 				String tipo = this.getMessageSecurityContext();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				String tipoClass = className.getMessageSecurityContext(tipo);
 				if(tipoClass == null){
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipo+
@@ -1476,7 +1477,7 @@ public class OpenSPCoop2Properties {
 			}
 			if ( this.getMessageSecurityDigestReader() != null ){
 				String tipo = this.getMessageSecurityDigestReader();
-				// Check tipi registrati in className.properties
+				// Check tipi registrati
 				String tipoClass = className.getMessageSecurityDigestReader(tipo);
 				if(tipoClass == null){
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipo+
@@ -5987,9 +5988,9 @@ public class OpenSPCoop2Properties {
 
 
 	/**
-	 * Restituisce l'eventuale location del file pdd.properties
+	 * Restituisce l'eventuale location del file openspcoop2.pdd.properties
 	 * 
-	 * @return Restituisce la location del file pdd.properties
+	 * @return Restituisce la location del file openspcoop2.pdd.properties
 	 */
 	private static String filePddProperties = null;
 	private static boolean filePddPropertiesLetto = false;

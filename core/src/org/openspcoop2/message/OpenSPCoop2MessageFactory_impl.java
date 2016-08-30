@@ -29,10 +29,11 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -48,7 +49,7 @@ import org.w3c.dom.Element;
 
 public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 
-	private static Logger logger = Logger.getLogger(OpenSPCoop2MessageFactory_impl.class);
+	private static Logger logger = LoggerWrapperFactory.getLogger(OpenSPCoop2MessageFactory_impl.class);
 	
 	@Override
 	public OpenSPCoop2Message _createMessage(SOAPVersion versioneSoap,SOAPMessage msg) {

@@ -136,14 +136,14 @@
 				<antcall target="pdd_openspcoop2_properties_settings">
 				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.properties"/>
 				</antcall>
-				<antcall target="pdd_logger_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/logger.log4j.properties"/>
+				<antcall target="pdd_openspcoop2_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.log4j2.properties"/>
 				</antcall>
 				<antcall target="pdd_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/log4j.properties"/>
+				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/log4j2.properties"/>
 				</antcall>
-				<antcall target="pdd_className_properties_settings">
-				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/className.properties"/>
+				<antcall target="pdd_openspcoop2_classRegistry_properties_settings">
+				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.classRegistry.properties"/>
 				</antcall>
 				<antcall target="dos2unix">
 					<param name="dir" value="${tmp_archivi}/OpenSPCoop2.ear/properties"/>
@@ -197,14 +197,14 @@
 				<antcall target="pdd_openspcoop2_properties_settings">
 				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.properties"/>
 				</antcall>
-				<antcall target="pdd_logger_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/logger.log4j.properties"/>
+				<antcall target="pdd_openspcoop2_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.log4j2.properties"/>
 				</antcall>
 				<antcall target="pdd_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/log4j.properties"/>
+				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/log4j2.properties"/>
 				</antcall>
-				<antcall target="pdd_className_properties_settings">
-				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/className.properties"/>
+				<antcall target="pdd_openspcoop2_classRegistry_properties_settings">
+				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.classRegistry.properties"/>
 				</antcall>
 				<antcall target="dos2unix">
 					<param name="dir" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes"/>

@@ -57,7 +57,7 @@ public class ServizioApplicativoSoap11Service extends Service {
 			url = ServizioApplicativoSoap11Service.class.getClassLoader().getResource("/config/ServizioApplicativoAll_PortSoap11.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.Logger.getLogger(ServizioApplicativoSoap11Service.class.getName())
+			java.util.logging.LoggerWrapperFactory.getLogger(ServizioApplicativoSoap11Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/ServizioApplicativoAll_PortSoap11.wsdl");
         }       

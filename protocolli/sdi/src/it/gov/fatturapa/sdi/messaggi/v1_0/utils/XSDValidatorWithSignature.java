@@ -22,7 +22,7 @@ package it.gov.fatturapa.sdi.messaggi.v1_0.utils;
 
 import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaDecorrenzaTerminiType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 

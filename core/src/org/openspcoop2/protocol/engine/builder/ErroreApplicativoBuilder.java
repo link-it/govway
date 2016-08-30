@@ -23,7 +23,7 @@
 
 package org.openspcoop2.protocol.engine.builder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDServizio;
@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -107,7 +108,7 @@ public class ErroreApplicativoBuilder  {
 		if(aLog!=null)
 			this.log = aLog;
 		else
-			this.log = Logger.getLogger(ErroreApplicativoBuilder.class);
+			this.log = LoggerWrapperFactory.getLogger(ErroreApplicativoBuilder.class);
 		this.protocolFactory = protocolFactory;
 		
 		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();

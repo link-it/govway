@@ -29,7 +29,7 @@ import java.util.Date;
 import javax.xml.soap.SOAPException;
 
 import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -104,7 +104,7 @@ public class SOAPBodyEmpty {
 	 */
 	Repository repositorySincronoSoapBodyVuoto=new Repository();
 	@Test(groups={SOAPBodyEmpty.ID_GRUPPO,SOAPBodyEmpty.ID_GRUPPO+".SINCRONO_SOAP_BODY_VUOTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapBodyVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoSoapBodyVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoSoapBodyVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -161,7 +161,7 @@ public class SOAPBodyEmpty {
 	 */
 	Repository repositorySincronoStatefulSoapBodyVuoto=new Repository();
 	@Test(groups={SOAPBodyEmpty.ID_GRUPPO,SOAPBodyEmpty.ID_GRUPPO+".SINCRONO_STATEFUL_SOAP_BODY_VUOTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoStatefulSoapBodyVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoStatefulSoapBodyVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoStatefulSoapBodyVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -219,7 +219,7 @@ public class SOAPBodyEmpty {
 	 */
 	Repository repositorySincronoSoapWithAttachments_BodyVuoto=new Repository();
 	@Test(groups={SOAPBodyEmpty.ID_GRUPPO,SOAPBodyEmpty.ID_GRUPPO+".SINCRONO_SOAP_WITH_ATTACHMENTS_BODY_VUOTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoSoapWithAttachments_BodyVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoSoapWithAttachments_BodyVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoSoapWithAttachments_BodyVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -279,7 +279,7 @@ public class SOAPBodyEmpty {
 	 */
 	Repository repositorySincronoStatefulSoapWithAttachments_BodyVuoto=new Repository();
 	@Test(groups={SOAPBodyEmpty.ID_GRUPPO,SOAPBodyEmpty.ID_GRUPPO+".SINCRONO_STATEFUL_SOAP_WITH_ATTACHMENTS_BODY_VUOTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoStatefulSoapWithAttachments_BodyVuoto() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoStatefulSoapWithAttachments_BodyVuoto() throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoStatefulSoapWithAttachments_BodyVuoto);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());

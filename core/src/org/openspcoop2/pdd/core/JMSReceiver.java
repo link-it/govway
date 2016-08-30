@@ -30,7 +30,7 @@ import javax.jms.Queue;
 
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.JMSObject;
 import org.openspcoop2.pdd.config.QueueManager;

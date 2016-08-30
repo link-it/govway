@@ -36,7 +36,7 @@ import org.openspcoop2.testsuite.clients.ClientCore;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
@@ -116,7 +116,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryOneWayWSS=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".ONEWAY"})
-	public void oneWayWSS() throws FatalTestSuiteException, Exception{
+	public void oneWayWSS() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryOneWayWSS,CostantiTestSuite.PORTA_DELEGATA_WSS_HELLO_WORLD,addIDUnivoco);
 	}
 	@DataProvider (name="OneWayWSS")
@@ -157,7 +157,7 @@ public class WSSecurity {
 	Repository repositoryOneWayWSSNonAutorizzato=new Repository();
 	private boolean faultCorrettoRicevuto = false;
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"})
-	public void oneWayWSSNonAutorizzato() throws FatalTestSuiteException, Exception{
+	public void oneWayWSSNonAutorizzato() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -281,7 +281,7 @@ public class WSSecurity {
 	 */
 	Repository repositorySincronoWSSTimestamp=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_TIMESTAMP"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Timestampt")
-	public void sincronoWSSTimestamp() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSTimestamp() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSTimestamp,CostantiTestSuite.PORTA_DELEGATA_WSS_TIMESTAMP,addIDUnivoco);
 	}
 	@DataProvider (name="SincronoWSSTimestamp")
@@ -316,7 +316,7 @@ public class WSSecurity {
 	 */
 	Repository repositorySincronoWSSEncrypt=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_ENCRYPT"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Encryptt")
-	public void sincronoWSSEncrypt() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSEncrypt() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSEncrypt,CostantiTestSuite.PORTA_DELEGATA_WSS_ENCRYPT,addIDUnivoco);
 	}
 	@DataProvider (name="SincronoWSSEncrypt")
@@ -346,7 +346,7 @@ public class WSSecurity {
 	 */
 	Repository repositorySincronoWSSEncryptP12=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_ENCRYPT_P12"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Encrypt e keystore P12")
-	public void sincronoWSSEncryptP12() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSEncryptP12() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSEncryptP12,CostantiTestSuite.PORTA_DELEGATA_WSS_ENCRYPT_P12,addIDUnivoco);
 	}
 	@DataProvider (name="SincronoWSSEncrypt_P12")
@@ -382,7 +382,7 @@ public class WSSecurity {
 	 */
 	Repository repositorySincronoWSSSignature=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_SIGNATURE"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature")
-	public void sincronoWSSSignature() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSignature() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSSignature,CostantiTestSuite.PORTA_DELEGATA_WSS_SIGNATURE,addIDUnivoco);
 	}
 	@DataProvider (name="SincronoWSSSignature")
@@ -412,7 +412,7 @@ public class WSSecurity {
 	 */
 	Repository repositorySincronoWSSSignature_P12=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_SIGNATURE_P12"},description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature P12")
-	public void sincronoWSSSignatureP12() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSignatureP12() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSSSignature_P12,CostantiTestSuite.PORTA_DELEGATA_WSS_SIGNATURE_P12,addIDUnivoco);
 	}
 	@DataProvider (name="SincronoWSSSignature_P12")
@@ -453,7 +453,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSEncryptMessaggioAlterato=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSEncryptMessaggioAlterato"})
-	public void wssEncryptMessaggioAlterato() throws FatalTestSuiteException, Exception{
+	public void wssEncryptMessaggioAlterato() throws TestSuiteException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -513,7 +513,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSSignatureMessaggioAlterato=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSSignatureMessaggioAlterato"})
-	public void wssSignatureMessaggioAlterato() throws FatalTestSuiteException, Exception{
+	public void wssSignatureMessaggioAlterato() throws TestSuiteException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -592,7 +592,7 @@ public class WSSecurity {
 	Repository repositorySincronoWSS=new Repository();
 	boolean repositorySincronoWSS_CHECK = true;
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SINCRONO_ALL"},description="Test per il profilo di collaborazione Sincrono con WSSecurity t")
-	public void sincronoWSS() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSS() throws TestSuiteException, IOException, SOAPException{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -650,7 +650,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryConsengaAffidabileWSS=new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".CONSEGNA_AFFIDABILE"})
-	public void ConsegnaAffidabileWSS() throws FatalTestSuiteException, Exception{
+	public void ConsegnaAffidabileWSS() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -819,7 +819,7 @@ public class WSSecurity {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincronaWSS = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".ASINCRONO_ASIMMETRICO"})
-	public void asincronoAsimmetrico_modalitaSincronaWSS() throws FatalTestSuiteException, IOException, SOAPException{
+	public void asincronoAsimmetrico_modalitaSincronaWSS() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_WSS_ASINCRONA_ASIMMETRICA,
 				CostantiTestSuite.PORTA_DELEGATA_WSS_ASINCRONA_ASIMMETRICA_CORRELATA,
@@ -892,7 +892,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test1 = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test1"})
-	public void testBUG18_Test1() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test1() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -995,7 +995,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test2 = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test2"})
-	public void testBUG18_Test2() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test2() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1100,7 +1100,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test3 = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test3"})
-	public void testBUG18_Test3() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test3() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1204,7 +1204,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test4 = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test4"})
-	public void testBUG18_Test4() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test4() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1310,7 +1310,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test5 = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test5"})
-	public void testBUG18_Test5() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test5() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1414,7 +1414,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test6 = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test6"})
-	public void testBUG18_Test6() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test6() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1524,7 +1524,7 @@ public class WSSecurity {
 	
 	Repository repositoryWSSBUG18_Test1_FunzioniWSSInvertite = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test1_FunzioniWSSInvertite"})
-	public void testBUG18_Test1_FunzioniWSSInvertite() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test1_FunzioniWSSInvertite() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1624,7 +1624,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test2_FunzioniWSSInvertite = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test2_FunzioniWSSInvertite"})
-	public void testBUG18_Test2_FunzioniWSSInvertite() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test2_FunzioniWSSInvertite() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1727,7 +1727,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test3_FunzioniWSSInvertite = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test3_FunzioniWSSInvertite"})
-	public void testBUG18_Test3_FunzioniWSSInvertite() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test3_FunzioniWSSInvertite() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1829,7 +1829,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test4_FunzioniWSSInvertite = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test4_FunzioniWSSInvertite"})
-	public void testBUG18_Test4_FunzioniWSSInvertite() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test4_FunzioniWSSInvertite() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1933,7 +1933,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test5_FunzioniWSSInvertite = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test5_FunzioniWSSInvertite"})
-	public void testBUG18_Test5_FunzioniWSSInvertite() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test5_FunzioniWSSInvertite() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -2035,7 +2035,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryWSSBUG18_Test6_FunzioniWSSInvertite = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".BUG18_Test6_FunzioniWSSInvertite"})
-	public void testBUG18_Test6_FunzioniWSSInvertite() throws FatalTestSuiteException, Exception, SOAPException{
+	public void testBUG18_Test6_FunzioniWSSInvertite() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -2141,7 +2141,7 @@ public class WSSecurity {
 	 */
 	Repository repositoryAnnidamento = new Repository();
 	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".Annidamento"})
-	public void annidamento() throws FatalTestSuiteException, Exception, SOAPException{
+	public void annidamento() throws TestSuiteException, Exception, SOAPException{
 		
 		DatabaseComponent dbComponentErogatore = null;
 		DatabaseComponent dbComponentFruitore = null;

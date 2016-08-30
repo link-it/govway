@@ -23,7 +23,7 @@ package org.openspcoop2.security.message.engine;
 
 import java.lang.reflect.Constructor;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;

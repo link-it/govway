@@ -30,7 +30,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.node.TransactionManager;
@@ -47,6 +47,7 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 
@@ -180,7 +181,7 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 			
 			/* ----------- Controllo inizializzazione libreria ----------- */
 			if( lib.getInizializzazioneUltimata() == false ){
-				this.log = Logger.getLogger(InoltroBusteMDB.class);
+				this.log = LoggerWrapperFactory.getLogger(InoltroBusteMDB.class);
 				this.log.error("["+InoltroBuste.ID_MODULO+"] Inizializzazione non riuscita");
 				this.ctxMDB.setRollbackOnly();
 				return;

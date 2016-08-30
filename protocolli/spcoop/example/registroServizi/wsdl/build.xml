@@ -33,6 +33,7 @@
 				<path refid="classpath"/>
 			</classpath>
 		</javac>
+		<copy file="src/log4j2.properties" todir="build"/>
 	</target>
 
 
@@ -40,7 +41,7 @@
 	<target name="run" depends=""
         description="Esegue il Client" >
 		<!-- Run the java code  -->
-		<java classname="org.openspcoop2.core.registry.wsdl.testsuite.Testsuite" fork="false">
+		<java classname="org.openspcoop2.core.registry.wsdl.testsuite.Testsuite" fork="true">
 			<arg value="${parameter}" />
 			<classpath>
 				<path refid="classpath" />
@@ -52,22 +53,32 @@
 
 	<!-- Classpath -->
 	<path id="classpath">
-		<fileset dir="${required_lib}/cxf" includes="*.jar"/>
-		<fileset dir="${required_lib}/saaj" includes="*.jar"/>
-		<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
-		<fileset dir="${required_lib}/axis14" includes="axis-1.4.jar"/>
-		<fileset dir="${required_lib}/axis14" includes="axis-jaxrpc-1.4.jar"/>
-		<fileset dir="${required_lib}/axis14" includes="axis-saaj-1.4.jar"/>
-		<fileset dir="${required_lib}/log" includes="log4j-1.2.16.jar"/>
-		<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
-		<fileset dir="${required_lib}/shared" includes="xercesImpl-2.11.0.jar"/>
-		<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
-		<fileset dir="${required_lib}/commons" includes="commons-logging-1.2.jar"/>
-		<fileset dir="${required_lib}/commons" includes="commons-discovery-0.5.jar"/>
-		<fileset dir="${required_lib}/jibx" includes="jibx-run-1.2.6.jar"/>
-		<fileset dir="${required_lib}/javax" includes="*.jar"/>
 		<fileset dir="${dist_openspcoop}" includes="*.jar"/>
 		<fileset dir="${dist_spcoop}" includes="*.jar"/>
+		<fileset dir="${required_lib}/log" includes="*.jar"/>
+		<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
+		<fileset dir="${required_lib}/shared" includes="velocity-1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-validator-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-core-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-frontend-jaxws-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-databinding-jaxb-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-tools-common-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-core-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-wsdl-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-jaxws-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-simple-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-databinding-jaxb-3.1.7.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-rt-bindings-soap-3.1.7.jar"/>	
+		<fileset dir="${required_lib}/cxf" includes="stax2-api-3.1.4.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="woodstox-core-asl-4.4.1.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="xmlschema-core-2.2.1.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="xml-resolver-1.2.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="javax.ws.rs-api-2.0.1.jar"/>
+		<fileset dir="${required_lib}/javax" includes="javax.servlet.jar"/>
+		<fileset dir="${required_lib}/saaj" includes="*.jar"/>
+		<fileset dir="${required_lib}/jax" includes="*.jar"/>
+		<fileset dir="${required_lib}/commons" includes="commons-collections-3.2.2.jar"/>
+		<fileset dir="${required_lib}/commons" includes="commons-lang-2.6.jar"/>
 	</path>
 
 

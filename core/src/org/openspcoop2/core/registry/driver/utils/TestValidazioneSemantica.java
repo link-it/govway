@@ -19,23 +19,22 @@
  *
  */
 
-
 package org.openspcoop2.core.registry.driver.utils;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
 import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.ws.DriverRegistroServiziWS;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Validazione Semantica
@@ -59,18 +58,22 @@ public class TestValidazioneSemantica {
 		}
 
 		// Inizializzo logger
+//		System.out.println("LUNGHEZZA: "+args.length);
+//		for (int i = 0; i < args.length; i++) {
+//			System.out.println("ARG["+i+"]=["+args[i]+"]");
+//		}
 		try{
 			if(args.length==5){
-				PropertyConfigurator.configure(args[4]);
+				LoggerWrapperFactory.setLogConfiguration(args[4]);
 			}else{
-				PropertyConfigurator.configure(TestValidazioneSemantica.class.getResource("/validator.log4j.properties"));
+				LoggerWrapperFactory.setLogConfiguration(TestValidazioneSemantica.class.getResource("/validator.log4j2.properties"));
 			}
 		}catch(Exception e) {
 			String errorMsg = "Errore durante il caricamento del file di log args4["+args[4]+"] : "+e.getMessage();
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}	
-		Logger log = Logger.getLogger("validatoreDatiRegistro");
+		Logger log = LoggerWrapperFactory.getLogger("validatoreDatiRegistro");
 		
 		
 		java.util.Properties commonProperties = new java.util.Properties();

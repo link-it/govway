@@ -42,7 +42,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.utils.date.DateManager;
@@ -120,7 +120,7 @@ public class SOAPAction {
 
 	Repository repositorySoapActionNonPresentePD=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonPresente_PD"})
-	public void soapActionNonPresente_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void soapActionNonPresente_PD()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -185,7 +185,7 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionNonPresentePA=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonPresente_PA"})
-	public void soapActionNonPresente_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void soapActionNonPresente_PA()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -271,7 +271,7 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionValueNonPresentePD=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionValueNonPresente_PD"})
-	public void soapActionValueNonPresente_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void soapActionValueNonPresente_PD()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -347,7 +347,7 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionValueNonPresentePA=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionValueNonPresente_PA"})
-	public void soapActionValueNonPresente_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void soapActionValueNonPresente_PA()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -452,7 +452,7 @@ public class SOAPAction {
 
 	Repository repositorySoapActionStringVuotaNonQuotataPD=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaNonQuotata_PD"})
-	public void SoapActionStringVuotaNonQuotata_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void SoapActionStringVuotaNonQuotata_PD()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -517,7 +517,7 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionStringVuotaNonQuotataPA=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaNonQuotata_PA"})
-	public void SoapActionStringVuotaNonQuotata_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void SoapActionStringVuotaNonQuotata_PA()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -614,7 +614,7 @@ public class SOAPAction {
 
 	Repository repositorySoapActionNonQuotataPD=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonQuotata_PD"})
-	public void soapActionNonQuotata_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void soapActionNonQuotata_PD()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -679,7 +679,7 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionNonQuotataPA=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SOAPActionNonQuotata_PA"})
-	public void soapActionNonQuotata_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void soapActionNonQuotata_PA()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -767,7 +767,7 @@ public class SOAPAction {
 
 	Repository repositorySoapActionStringVuotaQuotataPD=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaQuotata_PD"})
-	public void SoapActionStringVuotaQuotata_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void SoapActionStringVuotaQuotata_PD()throws TestSuiteException,SOAPException, Exception{
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
@@ -810,7 +810,7 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionStringVuotaQuotataPA=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringVuotaQuotata_PA"})
-	public void SoapActionStringVuotaQuotata_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void SoapActionStringVuotaQuotata_PA()throws TestSuiteException,SOAPException, Exception{
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
@@ -861,7 +861,7 @@ public class SOAPAction {
 
 	Repository repositorySoapActionStringQuotataPD=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringQuotata_PD"})
-	public void SoapActionStringQuotata_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void SoapActionStringQuotata_PD()throws TestSuiteException,SOAPException, Exception{
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
@@ -904,7 +904,7 @@ public class SOAPAction {
 	
 	Repository repositorySoapActionStringQuotataPA=new Repository();
 	@Test(groups={SOAPAction.ID_GRUPPO,SOAPAction.ID_GRUPPO+".SoapActionStringQuotata_PA"})
-	public void SoapActionStringQuotata_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void SoapActionStringQuotata_PA()throws TestSuiteException,SOAPException, Exception{
 		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =

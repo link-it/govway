@@ -17,6 +17,9 @@
 			<exclude name="**/jax/*"/>
 		</fileset>
 		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.2.11.jar" />
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="openspcoop2_utils*.jar"/>
+		</fileset>
 	</path>
 	
 	<!-- estensione di ant (if .... ) -->
@@ -54,8 +57,6 @@
 	</if>
 	
 	<!-- Jar dipendenti dall'A.S. -->
-	<var name="log4j_jar" value="" />
-	<var name="log4j_properties" value=""/>
 	<var name="commons_logging_jar" value="" />
 	<var name="jaxp_ri_jar" value=""/>
 	<var name="jboss_deployment_structure" value="" />		
@@ -67,29 +68,6 @@
 		</or>
 		<then>
 			<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
-		</then>
-	</if>
-	<!-- log -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="log4j_jar" value="log4j-1.2.16.jar" />
-		</then>
-	</if>
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="log4j_properties" value="log4j.properties"/>
 		</then>
 	</if>
 	<!-- jaxp_ri -->
@@ -179,7 +157,7 @@
 				<include name="**/validazione.properties"/>
 			</classes>
 			<classes dir="deploy/properties">
-				<include name="${log4j_properties}"/>
+				<include name="log4j2.properties"/>
 			</classes>
 			<lib dir="${ws_validazione_lib}/axis14">
 				<include name="axis-1.4.jar"/>
@@ -195,10 +173,14 @@
 				<include name="wsdl4j-1.6.3.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/log">
-				<include name="${log4j_jar}"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/jax">
 				<include name="${jaxp_ri_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.dist}" >
+				<include name="openspcoop2_utils*.jar"/>
 			</lib>
 		</war>
 		<delete dir="${build_testsuite}/tmp" />

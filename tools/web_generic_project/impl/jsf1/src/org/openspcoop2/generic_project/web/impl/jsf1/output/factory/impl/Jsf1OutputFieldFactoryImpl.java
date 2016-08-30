@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.impl.jsf1.output.impl.ButtonImpl;
 import org.openspcoop2.generic_project.web.impl.jsf1.output.impl.DateTimeImpl;
@@ -41,6 +41,7 @@ import org.openspcoop2.generic_project.web.output.OutputNumber;
 import org.openspcoop2.generic_project.web.output.Text;
 import org.openspcoop2.generic_project.web.output.factory.OutputFieldFactory;
 import org.openspcoop2.generic_project.web.view.IViewBean;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

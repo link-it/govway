@@ -35,35 +35,12 @@
 	</if>
 	
 	<!-- Jar dipendenti dall'A.S. -->
-	<var name="log4j_jar" value="" />
-	<var name="log4j_properties" value=""/>
 	<var name="commons_logging_jar" value="" />
 	<var name="jaxp_ri_jar" value=""/>
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
-
-	<!-- log -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss6"/>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="log4j_jar" value="log4j-1.2.16.jar" />
-		</then>
-	</if>
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-			<equals arg1="${as}" arg2="jboss6"/>
-		</or>
-		<then>
-			<var name="log4j_properties" value="log4j.properties"/>
-		</then>
-	</if>    
+  
 	<!-- commons_logging -->
 	<if>
 		<or>

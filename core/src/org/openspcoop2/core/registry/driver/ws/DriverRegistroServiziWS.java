@@ -32,7 +32,7 @@ import java.util.List;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.ws.BindingProvider;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.id.IDAccordo;
@@ -72,6 +72,7 @@ import org.openspcoop2.core.registry.ws.client.portadominio.search.PortaDominioS
 import org.openspcoop2.core.registry.ws.client.portadominio.search.SearchFilterPortaDominio;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SearchFilterSoggetto;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SoggettoSoap11Service;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 
@@ -111,7 +112,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 
 	
 	/** Logger utilizzato per info. */
-	private org.apache.log4j.Logger log = null;
+	private org.slf4j.Logger log = null;
 
 	private  DatatypeFactory dataTypeFactory = null;
 
@@ -134,7 +135,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 	public DriverRegistroServiziWS(String prefixLocation,String username,String password,Logger alog){	
 		try{
 			if(alog==null)
-				this.log = Logger.getLogger(DriverRegistroServiziWS.class);
+				this.log = LoggerWrapperFactory.getLogger(DriverRegistroServiziWS.class);
 			else
 				this.log = alog;
 			

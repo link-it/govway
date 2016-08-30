@@ -168,7 +168,7 @@ public class AuditCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_NOME = "log4jAppender";
 	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_CLASS_NAME = "org.openspcoop2.web.lib.audit.appender.AuditLog4JAppender";
 	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_NAME = "fileConfigurazione";
-	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE = "audit.log4j.properties";
+	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE = "audit.log4j2.properties";
 	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_CATEGORY_NAME = "category";
 	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_CATEGORY_VALUE = "audit";
 	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_XML_NAME = "xml";

@@ -42,7 +42,7 @@ import java.util.Vector;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -61,6 +61,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
@@ -652,7 +653,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log) throws SICAToOpenSPCoopUtilitiesException{
 		
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		org.openspcoop2.core.registry.AccordoCooperazione accCooperazioneOpenspcoop = new org.openspcoop2.core.registry.AccordoCooperazione();
@@ -769,7 +770,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 				
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		boolean includiInfoRegistroGenerale = sicaToOpenspcoopContext.isSICAClient_includiInfoRegistroGenerale();
@@ -912,7 +913,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
@@ -1155,7 +1156,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		boolean documentoSpecificaEGOV_asClientSICA = sicaToOpenspcoopContext.isInformazioniEGov_wscp();
@@ -1474,7 +1475,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
@@ -1845,7 +1846,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
@@ -2168,7 +2169,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		boolean verificaCorreggiLocationWSDL = sicaToOpenspcoopContext.isWSDL_XSD_allineaImportInclude();
@@ -2474,7 +2475,7 @@ public class SICAtoOpenSPCoopUtilities {
 			Logger log)throws SICAToOpenSPCoopUtilitiesException{
 		
 		if(log==null){
-			log = Logger.getLogger(SICAtoOpenSPCoopUtilities.class);
+			log = LoggerWrapperFactory.getLogger(SICAtoOpenSPCoopUtilities.class);
 		}
 		
 		boolean documentoSpecificaEGOV_asClientSICA = sicaToOpenspcoopContext.isInformazioniEGov_wscp();

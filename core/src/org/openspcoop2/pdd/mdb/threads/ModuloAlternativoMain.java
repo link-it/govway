@@ -29,12 +29,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.threshold.ThreadsUtils;
 import org.openspcoop2.pdd.mdb.GenericLibException;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * @author Fabio Tronci (tronci@link.it)
@@ -154,7 +155,7 @@ public class ModuloAlternativoMain extends Thread {
 	/* **************** Metodi di init ********************** */
 	private void initLogger() throws GenericLibException {
 		try {
-			this.log = Logger.getLogger(ModuloAlternativoMain.class);
+			this.log = LoggerWrapperFactory.getLogger(ModuloAlternativoMain.class);
 		} catch (Exception e) {
 			if(this.log==null)
 				System.out.println("Riscontrato errore durante l'inizializzazione del Logger: "

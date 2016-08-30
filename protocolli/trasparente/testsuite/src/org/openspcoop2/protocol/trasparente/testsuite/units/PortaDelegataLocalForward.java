@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.Porta;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaDelegata;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaImpl;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -41,7 +41,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	/* TEST ONE WAY LOCAL_FORWARD */
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP11.STATEFUL"})
-	public void oneWayLocalForward_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP11Stateful() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP11Stateful, this.repositoryPortaDelegataOneWayLocalForwardSOAP11Stateful);
 	}
 
@@ -58,7 +58,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP11.STATELESS"})
-	public void oneWayLocalForward_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP11Stateless, this.repositoryPortaDelegataOneWayLocalForwardSOAP11Stateless);
 	}
 
@@ -74,7 +74,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP12.STATEFUL"})
-	public void oneWayLocalForward_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP12Stateful() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP12Stateful, this.repositoryPortaDelegataOneWayLocalForwardSOAP12Stateful);
 	}
 
@@ -91,7 +91,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP12.STATELESS"})
-	public void oneWayLocalForward_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP12Stateless, this.repositoryPortaDelegataOneWayLocalForwardSOAP12Stateless);
 	}
 
@@ -107,7 +107,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void oneWayLocalForward_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataOneWayLocalForwardSOAP11WithAttachmentsStateful);
 	}
 
@@ -124,7 +124,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP11.STATELESS.ATTACHMENTS"})
-	public void oneWayLocalForward_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataOneWayLocalForwardSOAP11WithAttachmentsStateless);
 	}
 
@@ -140,7 +140,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void oneWayLocalForward_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataOneWayLocalForwardSOAP12WithAttachmentsStateful);
 	}
 
@@ -157,7 +157,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_LOCAL_FORWARD.SOAP12.STATELESS.ATTACHMENTS"})
-	public void oneWayLocalForward_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		PortaDelegata._oneWayLocalForward(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataOneWayLocalForwardSOAP12WithAttachmentsStateless);
 	}
 
@@ -175,7 +175,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	/* TEST SINCRONO LOCAL_FORWARD */
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD.SOAP11.STATELESS"})
-	public void sincronoLocalForward_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoLocalForward_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		PortaDelegata._sincronoLocalForward(this.pdSOAP11Stateless, this.repositoryPortaDelegataSincronoLocalForwardSOAP11Stateless);
 	}
 
@@ -191,7 +191,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD.SOAP12.STATELESS"})
-	public void sincronoLocalForward_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoLocalForward_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		PortaDelegata._sincronoLocalForward(this.pdSOAP12Stateless, this.repositoryPortaDelegataSincronoLocalForwardSOAP12Stateless);
 	}
 
@@ -207,7 +207,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD.SOAP11.STATELESS.ATTACHMENTS"})
-	public void sincronoLocalForward_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoLocalForward_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		PortaDelegata._sincronoLocalForward(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataSincronoLocalForwardSOAP11WithAttachmentsStateless);
 	}
 
@@ -223,7 +223,7 @@ public class PortaDelegataLocalForward extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"LocalForward",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_LOCAL_FORWARD.SOAP12.STATELESS.ATTACHMENTS"})
-	public void sincronoLocalForward_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoLocalForward_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		PortaDelegata._sincronoLocalForward(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataSincronoLocalForwardSOAP12WithAttachmentsStateless);
 	}
 

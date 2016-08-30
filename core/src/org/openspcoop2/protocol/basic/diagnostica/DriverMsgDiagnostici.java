@@ -36,7 +36,7 @@ import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -118,9 +119,8 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	public void init(String nomeDataSource, String tipoDatabase, Properties jndiProperties, Logger log) throws DriverMsgDiagnosticiException {
 		// Logger
 		try {
-			//PropertyConfigurator.configure(DriverRegistroServiziDB.class.getResource("/tracer.log4j.properties"));
 			if(log==null)
-				this.log = Logger.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
 			else
 				this.log = log;
 		} catch (Exception e) {
@@ -164,9 +164,8 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	public void init(DataSource dataSourceObject, String tipoDatabase, Logger log) throws DriverMsgDiagnosticiException {
 		// Logger
 		try {
-			//PropertyConfigurator.configure(DriverRegistroServiziDB.class.getResource("/tracer.log4j.properties"));
 			if(log==null)
-				this.log = Logger.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
 			else
 				this.log = log;
 		} catch (Exception e) {

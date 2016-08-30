@@ -30,8 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.message.ServletTestService;
 
 
@@ -50,27 +48,8 @@ public class EchoService extends ServletTestService {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger log = null;
-	private static synchronized void initLogger(){
-		try{
-			if(EchoService.log==null){
-				PropertyConfigurator.configure(EchoService.class.getResource("/testService.log4j.properties"));
-				EchoService.log = Logger.getLogger("openspcoop2.echoService");
-			}
-		}catch(Exception e){
-			e.printStackTrace(System.out);
-		}
-	}
-	private static Logger getLogger(){
-		if(EchoService.log==null){
-			EchoService.initLogger();
-		}
-		return EchoService.log;
-	}
-
-	
 	public EchoService(){
-		super(getLogger());
+		super(Startup.logEcho);
 	}
 
 	@Override

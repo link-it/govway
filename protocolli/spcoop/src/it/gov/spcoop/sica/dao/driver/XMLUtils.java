@@ -35,7 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.activation.FileDataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 import org.openspcoop2.utils.io.ZipUtilities;
 

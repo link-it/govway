@@ -38,8 +38,8 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.protocol.sdi.utils.SDICompatibilitaNamespaceErrati;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**
@@ -174,7 +174,7 @@ public final class RicezioneFatture_RicezioneFatturePort_Client {
     		}
         	
     		byte [] xml = FileSystemUtilities.readBytesFromFile(notificaDecorrenzaTermini);
-    		xml = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(Logger.getLogger(RicezioneFatture_RicezioneFatturePort_Client.class), xml);
+    		xml = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(LoggerWrapperFactory.getLogger(RicezioneFatture_RicezioneFatturePort_Client.class), xml);
     		NotificaDecorrenzaTerminiType ntd = deserializer.readNotificaDecorrenzaTerminiType(xml);
     		
         	System.out.println("Invoking notificaDecorrenzaTermini...");

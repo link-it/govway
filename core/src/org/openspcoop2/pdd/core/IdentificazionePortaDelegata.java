@@ -23,7 +23,7 @@
 
 package org.openspcoop2.pdd.core;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -49,7 +49,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 
 public class IdentificazionePortaDelegata {
 
-	//private static org.apache.log4j.Logger log = OpenSPCoopLogger.getLoggerOpenSPCoopCore();
+	//private static org.slf4j.Logger log = OpenSPCoopLogger.getLoggerOpenSPCoopCore();
 
 
 	/* ---- Location della Porta Delegata --- */

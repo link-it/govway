@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import javax.xml.soap.SOAPException;
 
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
@@ -56,7 +56,7 @@ public class ClientAsincronoSimmetrico_ModalitaSincrona extends ClientCore{
 	/** Repository per la correlazione delle due istanze asincrone */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincrone;
 	
-	public ClientAsincronoSimmetrico_ModalitaSincrona(RepositoryConsegnaRisposteAsincroneSimmetriche repos,RepositoryCorrelazioneIstanzeAsincrone invRep,String portaCorrelata) throws FatalTestSuiteException {
+	public ClientAsincronoSimmetrico_ModalitaSincrona(RepositoryConsegnaRisposteAsincroneSimmetriche repos,RepositoryCorrelazioneIstanzeAsincrone invRep,String portaCorrelata) throws TestSuiteException {
 		super();
 		this.repositoryConsegnaRisposteAsincroneSimmetriche=repos;
 		this.repositoryCorrelazioneIstanzeAsincrone=invRep;
@@ -69,7 +69,7 @@ public class ClientAsincronoSimmetrico_ModalitaSincrona extends ClientCore{
 	
 	
 	
-	public void run() throws FatalTestSuiteException, InterruptedException, SOAPException, IOException{
+	public void run() throws TestSuiteException, InterruptedException, SOAPException, IOException{
 		// imposta la url e l'autenticazione per il soapEngine
 	    this.soapEngine.setConnectionParameters();
 	    // Imposta l'header utilizzato dalla testsuite
@@ -99,7 +99,7 @@ public class ClientAsincronoSimmetrico_ModalitaSincrona extends ClientCore{
 	    
 	    // Check riferimentoAsincrono uguale a identificativo richiesta
 	    if(identificativoRichiestaAsincrona.equals(riferimentoAsincrono)==false){
-	    	throw new FatalTestSuiteException("RiferimentoAsincrono ritornato con la risposta ["+riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
+	    	throw new TestSuiteException("RiferimentoAsincrono ritornato con la risposta ["+riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
 	    }
 	    
 	    // Attesa terminazione messaggi

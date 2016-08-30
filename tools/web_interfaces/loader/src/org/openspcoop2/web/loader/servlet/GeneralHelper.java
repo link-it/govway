@@ -27,7 +27,8 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -63,10 +64,10 @@ public class GeneralHelper {
 		try {
 			this.loaderCore = new LoaderCore();
 		} catch (Exception e) {
-			this.log = Logger.getLogger("openspcoop2_loader");
+			this.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
 			this.log.error("Exception: " + e.getMessage(), e);
 		}
-		this.log = Logger.getLogger("openspcoop2_loader");	
+		this.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");	
 	}
 
 	

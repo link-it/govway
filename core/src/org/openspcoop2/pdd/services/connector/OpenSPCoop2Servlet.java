@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * OpenSPCoop2Servlet
@@ -96,7 +97,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	private void dispatch(HttpServletRequest req, HttpServletResponse res,MethodType method) throws ServletException, IOException {
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		Logger logOpenSPCoop2Servlet = Logger.getLogger("openspcoop2.startup");
+		Logger logOpenSPCoop2Servlet = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 		
 		boolean doPost = MethodType.POST.equals(method);
 		

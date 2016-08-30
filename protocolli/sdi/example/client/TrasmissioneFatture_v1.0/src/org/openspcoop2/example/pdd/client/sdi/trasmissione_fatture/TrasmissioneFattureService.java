@@ -51,9 +51,7 @@ public class TrasmissioneFattureService extends Service {
             url = TrasmissioneFattureService.class.getClassLoader().getResource("TrasmissioneFatture_v1.1.wsdl");
         } 
         if (url == null) {
-            java.util.logging.Logger.getLogger(TrasmissioneFattureService.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "TrasmissioneFatture_v1.1.wsdl");
+        	System.out.println("Can not initialize the default wsdl from TrasmissioneFatture_v1.1.wsdl");
         }       
         WSDL_LOCATION = url;
     }

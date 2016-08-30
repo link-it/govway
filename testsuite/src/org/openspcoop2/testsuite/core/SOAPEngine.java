@@ -107,10 +107,10 @@ public class SOAPEngine {
 	/**
 	 * Costruttore che costruisce una richiesta di tipo webservice verso una url con nome della operazione, metodo, e i parametri passati
 	 **/	
-	public SOAPEngine(String url) throws FatalTestSuiteException {
+	public SOAPEngine(String url) throws TestSuiteException {
 		this(url, SOAPVersion.SOAP11);
 	}
-	public SOAPEngine(String url,SOAPVersion soapVersione) throws FatalTestSuiteException {
+	public SOAPEngine(String url,SOAPVersion soapVersione) throws TestSuiteException {
 		this.soapVersion = soapVersione;
 		this.url = url;
 		this.withAttachment=false;
@@ -135,12 +135,12 @@ public class SOAPEngine {
 	 * 
 	 * @throws TestExceptionFatal
 	 */
-	private void initCall() throws FatalTestSuiteException{
+	private void initCall() throws TestSuiteException{
 		Service service = new Service();
 		try {
 			this.call = (Call) service.createCall();
 		} catch (ServiceException e) {
-			throw new FatalTestSuiteException(e.getMessage());
+			throw new TestSuiteException(e.getMessage());
 		}
 	}
 
@@ -214,7 +214,7 @@ public class SOAPEngine {
 			}
 		}catch(Exception e){
 			e.printStackTrace(System.out);
-			throw new FatalTestSuiteException(e.getMessage());
+			throw new TestSuiteException(e.getMessage());
 		}
 		
 		try {
@@ -339,13 +339,13 @@ public class SOAPEngine {
 	 * @param str il nome del file da prelevare il messaggio
 	 * @param bodyFile se il valore e' true, nel file si trova solo il soap body del messaggio, il metodo imbusta.
 	 */
-	public void setMessageFromFile(String str,boolean bodyFile,boolean generaIDUnivoco)throws FatalTestSuiteException{
+	public void setMessageFromFile(String str,boolean bodyFile,boolean generaIDUnivoco)throws TestSuiteException{
 		File file=new File(str);
 		InputStream in=null;
 		try {
 			in = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			throw new FatalTestSuiteException("File non esistente");
+			throw new TestSuiteException("File non esistente");
 		}
 		this.sentMessage=new Message(in,bodyFile);
 		if(generaIDUnivoco)
@@ -357,15 +357,15 @@ public class SOAPEngine {
 				this.sentMessage.getSOAPPartAsBytes();
 			}
 		} catch (Exception e) {
-			throw new FatalTestSuiteException("Errore durante il salvataggio: "+e.getMessage());
+			throw new TestSuiteException("Errore durante il salvataggio: "+e.getMessage());
 		}
 		try {
 			in.close();
 		} catch (Exception e) {
-			throw new FatalTestSuiteException("Errore durante la chiusura dell'input stream: "+e.getMessage());
+			throw new TestSuiteException("Errore durante la chiusura dell'input stream: "+e.getMessage());
 		}
 	}
-	public void setMessageFromFile(String str,boolean bodyFile)throws FatalTestSuiteException{
+	public void setMessageFromFile(String str,boolean bodyFile)throws TestSuiteException{
 		setMessageFromFile(str,bodyFile,false);
 	}
 	

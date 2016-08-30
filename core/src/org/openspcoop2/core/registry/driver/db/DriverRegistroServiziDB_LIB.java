@@ -39,7 +39,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.AccordiUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
@@ -76,6 +76,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
@@ -95,7 +96,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 public class DriverRegistroServiziDB_LIB {
 
 	/** Logger utilizzato per debug. */
-	public static org.apache.log4j.Logger log = Logger.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
+	public static org.slf4j.Logger log = LoggerWrapperFactory.getLogger(CostantiRegistroServizi.REGISTRO_DRIVER_DB_LOGGER);
 
 	// Tipo database ereditato da DriverRegistroServiziDB
 	private static String tipoDB = null;
@@ -2935,13 +2936,13 @@ public class DriverRegistroServiziDB_LIB {
 			return idConnettore;
 
 		} catch (CoreException e) {
-			DriverRegistroServiziDB_LIB.log.error(e);
+			DriverRegistroServiziDB_LIB.log.error("Errore Core: "+e.getMessage(),e);
 			throw new DriverRegistroServiziException(e);
 		} catch (SQLException e) {
-			DriverRegistroServiziDB_LIB.log.error("Errore SQL", e);
+			DriverRegistroServiziDB_LIB.log.error("Errore SQL: "+e.getMessage(), e);
 			throw new DriverRegistroServiziException(e);
 		}catch (Exception e) {
-			DriverRegistroServiziDB_LIB.log.error("Errore", e);
+			DriverRegistroServiziDB_LIB.log.error("Errore Generico: "+e.getMessage(), e);
 			throw new DriverRegistroServiziException(e);
 		} finally {
 			try {

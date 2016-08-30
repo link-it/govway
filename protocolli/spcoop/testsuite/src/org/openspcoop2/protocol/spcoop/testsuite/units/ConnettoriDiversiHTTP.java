@@ -58,7 +58,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientCore;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -467,7 +467,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_text_queue=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE"})
-	public void jmsTextQueue() throws FatalTestSuiteException, Exception{
+	public void jmsTextQueue() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue,CostantiTestSuite.PORTA_DELEGATA_JMS_TEXT_QUEUE);
@@ -524,7 +524,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_bytes_queue=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".BYTES_QUEUE"})
-	public void jmsBytesQueue() throws FatalTestSuiteException, Exception{
+	public void jmsBytesQueue() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_bytes_queue,CostantiTestSuite.PORTA_DELEGATA_JMS_BYTES_QUEUE);
@@ -581,7 +581,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_text_topic=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC"})
-	public void jmsTextTopic() throws FatalTestSuiteException, Exception{
+	public void jmsTextTopic() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_topic,CostantiTestSuite.PORTA_DELEGATA_JMS_TEXT_TOPIC);
@@ -640,7 +640,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_bytes_topic=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".BYTES_TOPIC"})
-	public void jmsBytesTopic() throws FatalTestSuiteException, Exception{
+	public void jmsBytesTopic() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_bytes_topic,CostantiTestSuite.PORTA_DELEGATA_JMS_BYTES_TOPIC);
@@ -700,7 +700,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_text_queue_propagazioneEGov=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE_PROPAGAZIONE_EGOV"})
-	public void jmsTextQueuePropagazioneEGov() throws FatalTestSuiteException, Exception{
+	public void jmsTextQueuePropagazioneEGov() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue_propagazioneEGov,CostantiTestSuite.PORTA_DELEGATA_JMS_INFO_EGOV_QUEUE);
@@ -757,7 +757,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_text_topic_propagazioneEGov=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC_PROPAGAZIONE_EGOV"})
-	public void jmsTextTopicPropagazioneEGov() throws FatalTestSuiteException, Exception{
+	public void jmsTextTopicPropagazioneEGov() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_topic_propagazioneEGov,CostantiTestSuite.PORTA_DELEGATA_JMS_INFO_EGOV_TOPIC);
@@ -818,7 +818,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_text_queue_sbustamentoSOAP=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE_SBUSTAMENTO_SOAP"})
-	public void jmsTextQueuesbustamentoSOAP() throws FatalTestSuiteException, Exception{
+	public void jmsTextQueuesbustamentoSOAP() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue_sbustamentoSOAP,CostantiTestSuite.PORTA_DELEGATA_JMS_SBUSTAMENTO_SOAP_QUEUE);
@@ -876,7 +876,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryJMS_text_topic_sbustamentoSOAP=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC_SBUSTAMENTO_SOAP"})
-	public void jmsTextTopicsbustamentoSOAP() throws FatalTestSuiteException, Exception{
+	public void jmsTextTopicsbustamentoSOAP() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_topic_sbustamentoSOAP,CostantiTestSuite.PORTA_DELEGATA_JMS_SBUSTAMENTO_SOAP_TOPIC);
@@ -935,7 +935,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositorySAAJOneway=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".SAAJ_ONEWAY"})
-	public void saajOneway() throws FatalTestSuiteException, Exception{
+	public void saajOneway() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		this.collaborazioneSPCoopBase.oneWay(this.repositorySAAJOneway,CostantiTestSuite.PORTA_DELEGATA_SAAJ_ONEWAY,addIDUnivoco);
@@ -980,7 +980,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositorySAAJSincrono=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".SAAJ_SINCRONO"})
-	public void saajSincrono() throws FatalTestSuiteException, Exception{
+	public void saajSincrono() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySAAJSincrono,CostantiTestSuite.PORTA_DELEGATA_SAAJ_SINCRONO,addIDUnivoco);
@@ -1024,7 +1024,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryHTTPCOREOneway=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".HTTPCORE_ONEWAY"})
-	public void httpCoreOneway() throws FatalTestSuiteException, Exception{
+	public void httpCoreOneway() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryHTTPCOREOneway,CostantiTestSuite.PORTA_DELEGATA_HTTPCORE_ONEWAY,addIDUnivoco);
@@ -1069,7 +1069,7 @@ public class ConnettoriDiversiHTTP {
 	 */
 	Repository repositoryHTTPCORESincrono=new Repository();
 	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".HTTPCORE_SINCRONO"})
-	public void httpCoreSincrono() throws FatalTestSuiteException, Exception{
+	public void httpCoreSincrono() throws TestSuiteException, Exception{
 		
 		// Invocazione SPCoop
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryHTTPCORESincrono,CostantiTestSuite.PORTA_DELEGATA_HTTPCORE_SINCRONO,addIDUnivoco);

@@ -37,7 +37,7 @@ import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.Costanti;
@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracce;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
 import org.openspcoop2.protocol.sdk.tracciamento.IDriverTracciamento;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -118,7 +119,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 		// Logger
 		try {
 			if(log==null)
-				this.log = Logger.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
 			else
 				this.log = log;
 		} catch (Exception e) {
@@ -167,7 +168,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 		// Logger
 		try {
 			if(log==null)
-				this.log = Logger.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(Costanti.LOGANALIZER_DRIVER_DB_LOGGER);
 			else
 				this.log = log;
 		} catch (Exception e) {

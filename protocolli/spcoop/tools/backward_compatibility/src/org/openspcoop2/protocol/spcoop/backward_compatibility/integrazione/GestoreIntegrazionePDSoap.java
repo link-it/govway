@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione;
 
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.services.BackwardCompatibilityStartup;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Classe utilizzata per la ricezione di informazioni di integrazione 
@@ -67,7 +68,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 	public GestoreIntegrazionePDSoap(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(this.log==null){
-			this.log = Logger.getLogger(GestoreIntegrazionePDSoap.class);
+			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePDSoap.class);
 		}
 		try{
 			this.backwardCompatibilityProperties = BackwardCompatibilityProperties.getInstance(true);

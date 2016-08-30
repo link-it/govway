@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.Porta;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaDelegata;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaImpl;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -41,7 +41,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	/* TEST ONE WAY FAULT.200 */
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATEFUL"})
-	public void oneWayFault200_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP11Stateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -64,7 +64,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATELESS"})
-	public void oneWayFault200_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault200(this.pdSOAP11Stateless, this.repositoryPortaDelegataOneWayFault200_Soap11Stateless);
 	}
 
@@ -80,7 +80,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATEFUL"})
-	public void oneWayFault200_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP12Stateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -103,7 +103,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATELESS"})
-	public void oneWayFault200_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault200(this.pdSOAP12Stateless, this.repositoryPortaDelegataOneWayFault200_Soap12Stateless);
 	}
 
@@ -119,7 +119,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void oneWayFault200_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -142,7 +142,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP11.STATELESS.ATTACHMENTS"})
-	public void oneWayFault200_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault200(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataOneWayFault200_Soap11WithAttachmentsStateless);
 	}
 
@@ -158,7 +158,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void oneWayFault200_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		if(this.doTestStateful==false){
 			return;
 		}
@@ -181,7 +181,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY_FAULT.200.SOAP12.STATELESS.ATTACHMENTS"})
-	public void oneWayFault200_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayFault200_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._oneWayFault200(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataOneWayFault200_Soap12WithAttachmentsStateless);
 	}
 
@@ -199,7 +199,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	/* TEST SINCRONO FAULT.200 */
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP11.STATELESS"})
-	public void sincronoFault200_pdSOAP11Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP11Stateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP11Stateless, this.repositoryPortaDelegataSincronoFault200_Soap11Stateless);
 	}
 
@@ -215,7 +215,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP11.STATEFUL"})
-	public void sincronoFault200_pdSOAP11Stateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP11Stateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP11Stateful, this.repositoryPortaDelegataSincronoFault200_Soap11Stateful);
 	}
 
@@ -231,7 +231,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP12.STATELESS"})
-	public void sincronoFault200_pdSOAP12Stateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP12Stateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP12Stateless, this.repositoryPortaDelegataSincronoFault200_Soap12Stateless);
 	}
 
@@ -247,7 +247,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP12.STATEFUL"})
-	public void sincronoFault200_pdSOAP12Stateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP12Stateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP12Stateful, this.repositoryPortaDelegataSincronoFault200_Soap12Stateful);
 	}
 
@@ -263,7 +263,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP11.STATELESS.ATTACHMENTS"})
-	public void sincronoFault200_pdSOAP11WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP11WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP11WithAttachmentsStateless, this.repositoryPortaDelegataSincronoFault200_Soap11WithAttachmentsStateless);
 	}
 
@@ -279,7 +279,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP12.STATELESS.ATTACHMENTS"})
-	public void sincronoFault200_pdSOAP12WithAttachmentsStateless() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP12WithAttachmentsStateless() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP12WithAttachmentsStateless, this.repositoryPortaDelegataSincronoFault200_Soap12WithAttachmentsStateless);
 	}
 
@@ -296,7 +296,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP12.STATEFUL.ATTACHMENTS"})
-	public void sincronoFault200_pdSOAP12WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP12WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP12WithAttachmentsStateful, this.repositoryPortaDelegataSincronoFault200_Soap12WithAttachmentsStateful);
 	}
 
@@ -312,7 +312,7 @@ public class PortaDelegataFault200 extends PortaImpl {
 	}
 
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"Fault200",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".SINCRONO_FAULT.200.SOAP11.STATEFUL.ATTACHMENTS"})
-	public void sincronoFault200_pdSOAP11WithAttachmentsStateful() throws FatalTestSuiteException, Exception{
+	public void sincronoFault200_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{
 		Porta._sincronoFault200(this.pdSOAP11WithAttachmentsStateful, this.repositoryPortaDelegataSincronoFault200_Soap11WithAttachmentsStateful);
 	}
 

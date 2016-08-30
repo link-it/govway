@@ -29,9 +29,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
@@ -126,7 +126,7 @@ public class AuditLog4JAppender implements IAuditAppender {
 			// File Local Implementation
 			if(nomeFileLoaderInstance!=null && nomeProprietaLoaderInstance!=null){
 				CollectionProperties loggerPropertiesRidefinito =  
-						PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,Logger.getLogger(AuditLog4JAppender.class), 
+						PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,LoggerWrapperFactory.getLogger(AuditLog4JAppender.class), 
 								nomeProprietaLoaderInstance, nomeFileLoaderInstance, confDirectory);
 				if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
 					Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
@@ -143,8 +143,7 @@ public class AuditLog4JAppender implements IAuditAppender {
 				}
 			}
 			
-			
-			PropertyConfigurator.configure(loggerProperties);
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			
 			// Logger
 			String category = properties.getProperty("category");
@@ -152,7 +151,7 @@ public class AuditLog4JAppender implements IAuditAppender {
 				throw new Exception("Proprieta' 'category' non definita");
 			}
 			category = category.trim();
-			this.logger = Logger.getLogger(category);
+			this.logger = LoggerWrapperFactory.getLogger(category);
 			
 			// xml format
 			String xml = properties.getProperty("xml");

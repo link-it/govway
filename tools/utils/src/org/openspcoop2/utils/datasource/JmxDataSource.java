@@ -39,7 +39,8 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 
@@ -236,7 +237,7 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 	
 	
 	/* Variabili per la gestione JMX */
-	private Logger log = Logger.getLogger(JmxDataSource.class);
+	private Logger log = LoggerWrapperFactory.getLogger(JmxDataSource.class);
 
 	/* Costruttore */
 	public JmxDataSource(){

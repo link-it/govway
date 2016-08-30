@@ -27,11 +27,12 @@ package org.openspcoop2.protocol.engine.validator;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+
 /**
  * Classe utilizzata per effettuare una validazione con schema xsd.
  *

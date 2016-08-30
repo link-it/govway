@@ -51,9 +51,7 @@ public class SdIRiceviNotificaService extends Service {
             url = SdIRiceviNotificaService.class.getClassLoader().getResource("SdIRiceviNotifica_v1.0.wsdl");
         } 
         if (url == null) {
-            java.util.logging.Logger.getLogger(SdIRiceviNotificaService.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "SdIRiceviNotifica_v1.0.wsdl");
+        	System.out.println("Can not initialize the default wsdl from SdIRiceviNotifica_v1.0.wsdl");
         }       
         WSDL_LOCATION = url;
     }

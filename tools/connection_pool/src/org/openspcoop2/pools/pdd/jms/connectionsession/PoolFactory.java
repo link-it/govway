@@ -24,9 +24,10 @@
 package org.openspcoop2.pools.pdd.jms.connectionsession;
 
 import org.apache.commons.pool.BasePoolableObjectFactory; 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
 import javax.jms.Destination;
@@ -130,9 +131,9 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 			java.util.Properties loggerProperties = new java.util.Properties();
 			loggerProperties.load(PoolFactory.class.getResourceAsStream("/openspcoop2_pools.log4j.properties"));
 			PropertyConfigurator.configure(loggerProperties);
-			this.logger = Logger.getLogger("openspcoop2Pools");
+			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 		}catch(Exception e){
-			this.logger = Logger.getLogger("openspcoop2Pools");
+			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 		}
 			
 		

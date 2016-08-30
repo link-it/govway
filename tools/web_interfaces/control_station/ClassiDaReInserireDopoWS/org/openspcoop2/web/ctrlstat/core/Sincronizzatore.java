@@ -28,8 +28,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.log.LogUtilities;
+import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -51,8 +52,8 @@ public class Sincronizzatore {
 
 	public static void main(String args[]) {
 		// configuro il logger
-		PropertyConfigurator.configure(Sincronizzatore.class.getResource("/tracer.log4j.properties"));
-		Sincronizzatore.log = Logger.getLogger("sincronizzatore");
+		PropertyConfigurator.configure(Sincronizzatore.class.getResource("/console.log4j.properties"));
+		Sincronizzatore.log = LogUtilities.getLogger("sincronizzatore");
 
 		String fileProperties = "/sincronizzatore.properties";
 		if (args.length > 0) {

@@ -27,9 +27,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.core.Utils;
 import org.openspcoop2.generic_project.web.logging.LoggerManager;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.MapReader;
 
 /***

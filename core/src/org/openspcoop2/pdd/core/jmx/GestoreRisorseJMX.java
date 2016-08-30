@@ -24,7 +24,7 @@ package org.openspcoop2.pdd.core.jmx;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.resources.RisorseJMXException;
 

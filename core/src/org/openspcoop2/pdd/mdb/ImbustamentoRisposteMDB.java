@@ -30,7 +30,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.node.TransactionManager;
@@ -45,6 +45,7 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -168,7 +169,7 @@ public class ImbustamentoRisposteMDB implements MessageDrivenBean, MessageListen
 			
 			/* ----------- Controllo inizializzazione lib ----------- */
 			if( lib.inizializzazioneUltimata == false ){
-					this.log = Logger.getLogger(ImbustamentoRisposteMDB.class);
+					this.log = LoggerWrapperFactory.getLogger(ImbustamentoRisposteMDB.class);
 					this.log.error("["+ImbustamentoRisposte.ID_MODULO+"] Inizializzazione MDB non riuscita");
 					this.ctxMDB.setRollbackOnly();
 					return;

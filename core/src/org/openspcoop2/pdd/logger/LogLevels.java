@@ -23,7 +23,7 @@
 
 package org.openspcoop2.pdd.logger;
 
-import  org.apache.log4j.Level;
+import  org.apache.logging.log4j.Level;
 
 /**
  * Classe utilizzata per rappresentare i livelli di msgDiagnostico di OpenSPCoop.
@@ -35,12 +35,9 @@ import  org.apache.log4j.Level;
  */
 
 
-public class LogLevels extends org.apache.log4j.Level{
+public class LogLevels {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
 
 	/** Definisce la costante per il livello di log gestito in OpenSPCoop */
 	public static final int COSTANTE_TRASFORMAZIONE_LOG4J_LEVEL = 10000;
@@ -131,70 +128,77 @@ public class LogLevels extends org.apache.log4j.Level{
 	/** Abilita qualsiasi log */
 	public static final String LIVELLO_ALL = "all";
 
+	
+	/*
+	Standard Level 	intLevel
+	OFF 	0
+	FATAL 	100
+	ERROR 	200
+	WARN 	300
+	INFO 	400
+	DEBUG 	500
+	TRACE 	600
+	ALL 	Integer.MAX_VALUE
+	*/
 
-	/** Definisce un Livello di Severita' FATAL per un messaggio Diagnostico: valore Log4J = 50001 */
+	/** Definisce un Livello di Severita' FATAL per un messaggio Diagnostico: valore Log4J = 99 */
 	public static final Level LOG_LEVEL_FATAL = 
-		new LogLevels(LogLevels.LIVELLO_FATAL,50001);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_FATAL,99);
 
-	/** Definisce un Livello di Severita' ERROR per un messaggio Diagnostico: valore Log4J = 40002 */
+	/** Definisce un Livello di Severita' ERROR per un messaggio Diagnostico: valore Log4J = 198 */
 	public static final Level LOG_LEVEL_ERROR_PROTOCOL = 
-		new LogLevels(LogLevels.LIVELLO_ERROR_PROTOCOL,40002);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_ERROR_PROTOCOL,198);
 
-	/** Definisce un Livello di Severita' ERROR-INTEGRATION per un messaggio Diagnostico: valore Log4J = 40001 */
+	/** Definisce un Livello di Severita' ERROR-INTEGRATION per un messaggio Diagnostico: valore Log4J = 199 */
 	public static final Level LOG_LEVEL_ERROR_INTEGRATION = 
-		new LogLevels(LogLevels.LIVELLO_ERROR_INTEGRATION,40001);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_ERROR_INTEGRATION,199);
 
-	/** Definisce un Livello di Severita' INFO-PROTOCOL per un messaggio Diagnostico: valore Log4J = 20002 */
+	/** Definisce un Livello di Severita' INFO-PROTOCOL per un messaggio Diagnostico: valore Log4J = 398 */
 	public static final Level LOG_LEVEL_INFO_PROTOCOL = 
-		new LogLevels(LogLevels.LIVELLO_INFO_PROTOCOL,20002);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_INFO_PROTOCOL,398);
 
-	/** Definisce un Livello di Severita' INFO-INTEGRATION per un messaggio Diagnostico: valore Log4J = 20001 */
+	/** Definisce un Livello di Severita' INFO-INTEGRATION per un messaggio Diagnostico: valore Log4J = 399 */
 	public static final Level LOG_LEVEL_INFO_INTEGRATION = 
-		new LogLevels(LogLevels.LIVELLO_INFO_INTEGRATION,20001);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_INFO_INTEGRATION,399);
 
-	/** Definisce un Livello di Severita' DEBUG-LOW per un messaggio Diagnostico: valore Log4J = 10003 */
+	/** Definisce un Livello di Severita' DEBUG-LOW per un messaggio Diagnostico: valore Log4J = 498 */
 	public static final Level LOG_LEVEL_DEBUG_LOW = 
-		new LogLevels(LogLevels.LIVELLO_DEBUG_LOW,10003);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_DEBUG_LOW,498);
 
-	/** Definisce un Livello di Severita' DEBUG-MEDIUM per un messaggio Diagnostico: valore Log4J = 10002 */
+	/** Definisce un Livello di Severita' DEBUG-MEDIUM per un messaggio Diagnostico: valore Log4J = 499 */
 	public static final Level LOG_LEVEL_DEBUG_MEDIUM = 
-		new LogLevels(LogLevels.LIVELLO_DEBUG_MEDIUM,10002);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_DEBUG_MEDIUM,499);
 
-	/** Definisce un Livello di Severita' DEBUG-HIGH per un messaggio Diagnostico: valore Log4J = 10001 */
+	/** Definisce un Livello di Severita' DEBUG-HIGH per un messaggio Diagnostico: valore Log4J = 599 */
 	public static final Level LOG_LEVEL_DEBUG_HIGH = 
-		new LogLevels(LogLevels.LIVELLO_DEBUG_HIGH,10001);
+			org.apache.logging.log4j.Level.forName(LogLevels.LIVELLO_DEBUG_HIGH,599);
 
-
-	/** Costruttore */
-	public LogLevels(String name, int value) {
-		super(value,name,value);
-	}
 
 
 	/** 
 	 * Metodo che effettua la trasformazione da un livello di severita OpenSPCoop2 nell'analogo livello Log4J. 
 	 *
-	 * @param valueLivello Livello da trasformare
+	 * @param valueLivelloOpenSPCoop Livello da trasformare
 	 * @return Il livello di Log4J, se la trasformazione ha successo, false altrimenti.
 	 */
-	public static Level toLog4J(int valueLivello){
-		if((valueLivello < 0) || (valueLivello > 7)){
+	public static Level toLog4J(int valueLivelloOpenSPCoop){
+		if((valueLivelloOpenSPCoop < 0) || (valueLivelloOpenSPCoop > 7)){
 			return LogLevels.LOG_LEVEL_INFO_PROTOCOL;
-		}  else if( valueLivello == LogLevels.SEVERITA_FATAL ){
+		}  else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_FATAL ){
 			return LogLevels.LOG_LEVEL_FATAL;
-		}  else if( valueLivello == LogLevels.SEVERITA_ERROR_PROTOCOL ){
+		}  else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_ERROR_PROTOCOL ){
 			return LogLevels.LOG_LEVEL_ERROR_PROTOCOL;
-		}  else if( valueLivello == LogLevels.SEVERITA_ERROR_INTEGRATION ){
+		}  else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_ERROR_INTEGRATION ){
 			return LogLevels.LOG_LEVEL_ERROR_INTEGRATION;
-		}  else if( valueLivello == LogLevels.SEVERITA_INFO_PROTOCOL ){
+		}  else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_INFO_PROTOCOL ){
 			return LogLevels.LOG_LEVEL_INFO_PROTOCOL;
-		}  else if( valueLivello == LogLevels.SEVERITA_INFO_INTEGRATION ){
+		}  else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_INFO_INTEGRATION ){
 			return LogLevels.LOG_LEVEL_INFO_INTEGRATION;
-		} else if( valueLivello == LogLevels.SEVERITA_DEBUG_LOW ){
+		} else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_DEBUG_LOW ){
 			return LogLevels.LOG_LEVEL_DEBUG_LOW;
-		} else if( valueLivello == LogLevels.SEVERITA_DEBUG_MEDIUM ){
+		} else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_DEBUG_MEDIUM ){
 			return LogLevels.LOG_LEVEL_DEBUG_MEDIUM;
-		} else if( valueLivello == LogLevels.SEVERITA_DEBUG_HIGH ){
+		} else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_DEBUG_HIGH ){
 			return LogLevels.LOG_LEVEL_DEBUG_HIGH;
 		} else
 			return null;
@@ -236,10 +240,10 @@ public class LogLevels extends org.apache.log4j.Level{
 			return LogLevels.LOG_LEVEL_DEBUG_HIGH;
 		}
 		else if(livello.equalsIgnoreCase(LogLevels.LIVELLO_OFF)){
-			return org.apache.log4j.Level.OFF;
+			return org.apache.logging.log4j.Level.OFF;
 		}
 		else if(livello.equalsIgnoreCase(LogLevels.LIVELLO_ALL)){
-			return org.apache.log4j.Level.ALL;
+			return org.apache.logging.log4j.Level.ALL;
 		}else
 			return null;
 	}

@@ -32,7 +32,7 @@ import javax.xml.soap.MimeHeaders;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.utils.ByteArrayOutputStream;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
 
@@ -63,7 +63,7 @@ public class ClientAsincronoAsimmetrico_ModalitaAsincrona extends ClientCore{
 	/** Repository per la correlazione delle due istanze asincrone */
 	private RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincrone;
 	
-	public ClientAsincronoAsimmetrico_ModalitaAsincrona(RepositoryCorrelazioneIstanzeAsincrone rep) throws FatalTestSuiteException {
+	public ClientAsincronoAsimmetrico_ModalitaAsincrona(RepositoryCorrelazioneIstanzeAsincrone rep) throws TestSuiteException {
 		super();
 		this.repositoryCorrelazioneIstanzeAsincrone=rep;
 	}
@@ -77,7 +77,7 @@ public class ClientAsincronoAsimmetrico_ModalitaAsincrona extends ClientCore{
 		this.portaDelegataCorrelata=nomePorta;
 	}
 
-	public void run() throws FatalTestSuiteException, AxisFault{	
+	public void run() throws TestSuiteException, AxisFault{	
 		
 		// Backup della richiesta per un successivo invio
 		String contentType = this.soapEngine.getRequestMessage().getContentType(new org.apache.axis.soap.SOAP11Constants());
@@ -102,7 +102,7 @@ public class ClientAsincronoAsimmetrico_ModalitaAsincrona extends ClientCore{
 			this.setMessage(tmp,false);
 			
 		}catch(Exception e){
-			throw new FatalTestSuiteException(e.getMessage());
+			throw new TestSuiteException(e.getMessage());
 		}
 		
 		// imposta la url e l'autenticazione per il soapEngine
@@ -113,7 +113,7 @@ public class ClientAsincronoAsimmetrico_ModalitaAsincrona extends ClientCore{
 	    this.sentMessage=this.soapEngine.getRequestMessage();
 	    // Check id
 	    if(this.idMessaggio==null)
-	    	throw new FatalTestSuiteException("ID messaggio non presenta nell'header del trasporto della ricevuta.");
+	    	throw new TestSuiteException("ID messaggio non presenta nell'header del trasporto della ricevuta.");
 	    // Preleva l'id dal body della risposta
 	    try{
 	    	// Il body puo' essere null in caso si voglia che il oneway non ritorna contenuto applicativo.
@@ -121,13 +121,13 @@ public class ClientAsincronoAsimmetrico_ModalitaAsincrona extends ClientCore{
 			    String idBody=Utilities.getIDFromOpenSPCoopOKMessage(this.log,this.receivedMessage);
 			    // Controlla che sia uguale a quello ritornato nell'header della risposta
 			    if(idBody==null)
-			    	throw new FatalTestSuiteException("ID messaggio non presenta nella ricevuta OpenSPCoopOK.");
+			    	throw new TestSuiteException("ID messaggio non presenta nella ricevuta OpenSPCoopOK.");
 			    if(this.idMessaggio.equals(idBody)==false)
-			    	throw new FatalTestSuiteException("ID messaggio presente nell'header del trasporto della risposta differisce dall'id presente nel messaggio OpenSPCoopOK della ricevuta.");
+			    	throw new TestSuiteException("ID messaggio presente nell'header del trasporto della risposta differisce dall'id presente nel messaggio OpenSPCoopOK della ricevuta.");
 				
 		    }
 	    }catch(Exception e){
-	    	throw new FatalTestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
+	    	throw new TestSuiteException("Check msg openspcoop ok non riuscita: "+e.getMessage());
 	    }
 	    // Identificativo della richiesta
 	    String identificativoRichiestaAsincrona=this.idMessaggio;
@@ -193,7 +193,7 @@ public class ClientAsincronoAsimmetrico_ModalitaAsincrona extends ClientCore{
 	    this.sentMessage=this.soapEngine.getRequestMessage();
 	    // Check riferimentoAsincrono uguale a identificativo richiesta
 	    if(identificativoRichiestaAsincrona.equals(this.riferimentoAsincrono)==false){
-	    	throw new FatalTestSuiteException("RiferimentoAsincrono ritornato con la richiesta stato ["+this.riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
+	    	throw new TestSuiteException("RiferimentoAsincrono ritornato con la richiesta stato ["+this.riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
 	    }
 	    
 	    // Attesa terminazione messaggi

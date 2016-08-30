@@ -43,7 +43,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -106,7 +106,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncoding=new Repository();
 	@Test(groups={XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncoding"},description="Test di tipo xmlEncoding, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncoding() throws FatalTestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncoding() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
 		// Creazione client xmlEncoding
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingStateful);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -163,7 +163,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncodingSoapWithAttachments=new Repository();
 	@Test(groups={XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncodingSoapWithAttachments"},description="Test di tipo xmlEncodingSoapWithAttachments, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncodingSoapWithAttachments() throws FatalTestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncodingSoapWithAttachments() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
 		// Creazione client xmlEncodingSoapWithAttachments
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingSoapWithAttachments);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -237,7 +237,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncodingStateful=new Repository();
 	@Test(groups={XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncodingStateful"},description="Test di tipo xmlEncodingStateful, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncodingStateful() throws FatalTestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncodingStateful() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
 		// Creazione client xmlEncodingStateful
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingStateful);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -295,7 +295,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncodingStatefulSoapWithAttachments=new Repository();
 	@Test(groups={XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncodingStatefulSoapWithAttachments"},description="Test di tipo xmlEncodingStatefulSoapWithAttachments, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncodingStatefulSoapWithAttachments() throws FatalTestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncodingStatefulSoapWithAttachments() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
 		// Creazione client xmlEncodingStatefulSoapWithAttachments
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingStatefulSoapWithAttachments);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());

@@ -31,8 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -40,23 +41,22 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.IdSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * Inizializza una configurazione
@@ -160,16 +160,16 @@ public class OpenSPCoop2DBConfigurationUtility {
 		// Inizializzo logger
 		try{
 			if(args.length==(logIndex+1)){
-				PropertyConfigurator.configure(args[logIndex]);
+				LoggerWrapperFactory.setLogConfiguration(args[logIndex]);
 			}else{
-				PropertyConfigurator.configure(OpenSPCoop2DBConfigurationUtility.class.getResource("/tracer.log4j.properties"));
+				LoggerWrapperFactory.setLogConfiguration(OpenSPCoop2DBConfigurationUtility.class.getResource("/console.log4j2.properties"));
 			}
 		}catch(Exception e) {
 			String errorMsg = "Errore durante il caricamento del file di log args"+logIndex+"["+args[logIndex]+"] : "+e.getMessage();
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}	
-		Logger log = Logger.getLogger("gestoreEliminazioneServizio");
+		Logger log = LoggerWrapperFactory.getLogger("gestoreEliminazioneServizio");
 		
 		// Inizializzo file di properties contenente le configurazioni per l'accesso al database
 		java.util.Properties reader = new java.util.Properties();

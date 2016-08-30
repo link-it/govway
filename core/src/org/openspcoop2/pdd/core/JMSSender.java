@@ -28,7 +28,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.JMSObject;
 import org.openspcoop2.pdd.config.QueueManager;

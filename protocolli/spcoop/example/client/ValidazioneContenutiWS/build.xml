@@ -10,11 +10,11 @@
 	<property name="ws_validazione_lib_client" location="${openspcoop2}/lib"/>
 	<path id="classpath_ws_validazione_client" >
 		<fileset dir="${ws_validazione_lib_client}" >
-			<exclude name="**/cxf/*"/>
-			<exclude name="**/saaj/*"/>
-			<exclude name="**/jax/*"/>
+			<include name="axis14/*"/>
+			<include name="commons/commons-logging-1.2.jar"/>
+			<include name="commons/commons-discovery-0.5.jar"/>
+			<include name="shared/wsdl4j-1.6.3.jar"/>
 		</fileset>
-		<fileset file="${ws_validazione_lib_client}/jax/jaxb-api-2.2.11.jar" />
 		<fileset file="deploy/stub_ws/validazioneContenutiWS_stub.jar" />
 	</path>
 

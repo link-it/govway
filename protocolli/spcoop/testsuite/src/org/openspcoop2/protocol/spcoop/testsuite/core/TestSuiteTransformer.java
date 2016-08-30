@@ -27,11 +27,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.spcoop.testsuite.units.SOAPMessageScorretti;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.testng.annotations.ITestAnnotation;
@@ -53,7 +53,7 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 	public void transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod){
 		
 		try{
-			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), Logger.getLogger(TestSuiteTransformer.class));
+			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), LoggerWrapperFactory.getLogger(TestSuiteTransformer.class));
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -61,8 +61,8 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 		try{
 			ConfigurazionePdD config = new ConfigurazionePdD();
 			config.setLoader(new Loader());
-			PropertyConfigurator.configure(TestSuiteTransformer.class.getResource("/testsuite_spcoop.log4j.properties"));
-			Logger log = Logger.getLogger("TestSuite.tracer");
+			LoggerWrapperFactory.setLogConfiguration(TestSuiteTransformer.class.getResource("/testsuite_spcoop.log4j2.properties"));
+			Logger log = LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
 			config.setLog(log);
 			ProtocolFactoryManager.initializeSingleProtocol(log, config, CostantiTestSuite.PROTOCOL_NAME);
 		}catch(Exception e){

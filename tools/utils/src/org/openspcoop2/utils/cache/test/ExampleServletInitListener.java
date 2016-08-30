@@ -25,7 +25,7 @@ package org.openspcoop2.utils.cache.test;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.cache.CacheJMXUtils;
 
 /**
@@ -56,8 +56,8 @@ public class ExampleServletInitListener implements ServletContextListener {
 		
 		try{
 			
-			configManager = new ExampleConfigCacheWrapper(true, Logger.getLogger(ExampleServletInitListener.class));
-			CacheJMXUtils.register(Logger.getLogger(ExampleServletInitListener.class),new ExampleConfigCacheJmx());
+			configManager = new ExampleConfigCacheWrapper(true, LoggerWrapperFactory.getLogger(ExampleServletInitListener.class));
+			CacheJMXUtils.register(LoggerWrapperFactory.getLogger(ExampleServletInitListener.class),new ExampleConfigCacheJmx());
 
 		}catch(Exception e){}
 				

@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.spcoop.archive;
 
 import it.gov.spcoop.sica.dao.driver.XMLUtils;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;

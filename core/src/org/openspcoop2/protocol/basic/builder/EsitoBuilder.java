@@ -27,7 +27,7 @@ import java.util.List;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.eccezione.errore_applicativo.Eccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils;

@@ -33,11 +33,7 @@ import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
 
-import org.apache.log4j.Logger;
-
-
-
-
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;

@@ -23,7 +23,7 @@
 
 package org.openspcoop2.testsuite.core;
 
-import javax.xml.soap.SOAPFault;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Eccezioni lanciate dalla TestSuite
@@ -33,41 +33,62 @@ import javax.xml.soap.SOAPFault;
  * @version $Rev$, $Date$
  */
 
-@SuppressWarnings("serial")
 public class TestSuiteException extends RuntimeException {
 	
-	public final static String fault="FaultMessage";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	String message;
-	String position;
-	String code;
-	SOAPFault faultSOAP;
-	public TestSuiteException(Exception e,String str){
-	    this.message=e.getMessage();
-	    this.position=str;
-	    //setLog();
+	private String message;
+	private String position;
+	private Exception exception;
+	public TestSuiteException(Exception e,String position){
+		super(_getMessage(position,null,e),e);
+		this.exception = e;
+		this.position=position;
+	}
+	public TestSuiteException(String position,Exception e){
+		super(_getMessage(position,null,e),e);
+		this.exception = e;
+	    this.position=position;
 	}
 	
-	public TestSuiteException(String code){
-		this.code=code;
+	public TestSuiteException(String message){
+		super(message);
+		this.message=message;
 	}
 	
 	public TestSuiteException(String msg,String pos){
+		super(_getMessage(pos,msg,null));
 		this.message=msg;
 		this.position=pos;
 	}
-/*	private void setLog(){
-	//	ClientWS.log.warn("nella posizione "+position+" si e' verificato un' eccezione    :"+ message);
-	}*/
-    
 
-	public String getCode(){
-		return this.code;
-	}
 	
 	@Override
 	public String getMessage(){
-		if(this.code!=null)return this.code;
-		return this.position+"         "+this.message;
+		return _getMessage(this.position,this.message, this.exception);
+	}
+	private static String _getMessage(String position,String message,Exception exception){
+		StringBuffer bf = new StringBuffer();
+		
+		if(position!=null){
+			bf.append(position);
+		}
+		
+		if(message!=null){
+			if(bf.length()>0){
+				bf.append(" - ");
+			}
+			bf.append(message);
+		}
+		else if(exception!=null){
+			if(bf.length()>0){
+				bf.append(" - ");
+			}
+			bf.append(Utilities.getInnerNotEmptyMessageException(exception).getMessage());
+		}
+		return bf.toString();
 	}
 }

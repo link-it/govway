@@ -61,10 +61,9 @@ import org.openspcoop2.utils.resources.SSLHostNameVerifierDisabled;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.testsuite.axis14.Axis14DynamicNamespaceContextFactory;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
-import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -121,7 +120,7 @@ public class ClientHttpGenerico extends ClientCore{
 	
 	
 	/** Costruttore */
-	public ClientHttpGenerico(Repository rep,java.util.Hashtable<String, String> sslContext) throws FatalTestSuiteException {
+	public ClientHttpGenerico(Repository rep,java.util.Hashtable<String, String> sslContext) throws TestSuiteException {
 		super();
 		this.repository=rep;
 		this.method="POST";
@@ -131,18 +130,18 @@ public class ClientHttpGenerico extends ClientCore{
 			try{
 				this.sslContextProperties = ConnettoreHTTPSProperties.readProperties(sslContext);
 			}catch(Exception e){
-				throw new FatalTestSuiteException("[HTTPS error]"+ e.getMessage());
+				throw new TestSuiteException("[HTTPS error]"+ e.getMessage());
 			}
 		}
 	}
 	/** Costruttore */
-	public ClientHttpGenerico(Repository rep)throws FatalTestSuiteException{
+	public ClientHttpGenerico(Repository rep)throws TestSuiteException{
 		this(rep,null);
 	}
-	public ClientHttpGenerico(java.util.Hashtable<String, String> sslContext)throws FatalTestSuiteException{
+	public ClientHttpGenerico(java.util.Hashtable<String, String> sslContext)throws TestSuiteException{
 		this(new Repository(),sslContext);
 	}
-	public ClientHttpGenerico()throws FatalTestSuiteException{
+	public ClientHttpGenerico()throws TestSuiteException{
 		this(new Repository(),null);
 	}
 
@@ -187,7 +186,7 @@ public class ClientHttpGenerico extends ClientCore{
 		}
 	}
 	@Override
-	public void setMessageFromFile(String fileName,boolean isBody) throws FatalTestSuiteException{
+	public void setMessageFromFile(String fileName,boolean isBody) throws TestSuiteException{
 		setMessageFromFile(fileName,isBody,false);
 	}
 
@@ -278,11 +277,11 @@ public class ClientHttpGenerico extends ClientCore{
 	 * Deve essere chiamato dopo aver impostato la url della Porta di Dominio, e la porta delegata da invocare
 	 */
 	@Override
-	public void connectToSoapEngine() throws FatalTestSuiteException{
+	public void connectToSoapEngine() throws TestSuiteException{
 		this.connectToSoapEngine(SOAPVersion.SOAP11);
 	}
 	@Override
-	public void connectToSoapEngine(SOAPVersion soapVersion) throws FatalTestSuiteException {
+	public void connectToSoapEngine(SOAPVersion soapVersion) throws TestSuiteException {
 		FileInputStream finKeyStore = null;
 		FileInputStream finTrustStore = null;
 		try{
@@ -354,7 +353,7 @@ public class ClientHttpGenerico extends ClientCore{
 			
 		}catch(Exception e){
 			this.log.error("La connessione HTTP non e' riuscita: "+e.getMessage(),e);
-			throw new FatalTestSuiteException("La connessione HTTP non e' riuscita:  "+e.getMessage());
+			throw new TestSuiteException("La connessione HTTP non e' riuscita:  "+e.getMessage());
 		}finally{
 			try{
 				if(finKeyStore!=null){

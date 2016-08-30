@@ -46,7 +46,7 @@ import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -134,7 +134,7 @@ public class LocalForward {
 	private Date testONEWAY_STATEFUL;
 	Repository repositoryONEWAY_STATEFUL=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_STATEFUL"})
-	public void invokePD_ONEWAY_STATEFUL() throws FatalTestSuiteException, Exception{
+	public void invokePD_ONEWAY_STATEFUL() throws TestSuiteException, Exception{
 
 		if(this.doTestStateful==false){
 			return;
@@ -243,7 +243,7 @@ public class LocalForward {
 	private Date testONEWAY_STATELESS;
 	Repository repositoryONEWAY_STATELESS=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_STATELESS"})
-	public void invokePD_ONEWAY_STATELESS() throws FatalTestSuiteException, Exception{
+	public void invokePD_ONEWAY_STATELESS() throws TestSuiteException, Exception{
 
 		this.testONEWAY_STATELESS = new Date();
 		
@@ -310,7 +310,7 @@ public class LocalForward {
 	Date testONEWAY_STATELESS_PA_STATEFUL;
 	Repository repositoryONEWAY_STATELESS_PA_STATEFUL=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_STATELESS_PA_STATEFUL"})
-	public void invokePD_ONEWAY_STATELESS_PA_STATEFUL() throws FatalTestSuiteException, Exception{
+	public void invokePD_ONEWAY_STATELESS_PA_STATEFUL() throws TestSuiteException, Exception{
 
 		this.testONEWAY_STATELESS_PA_STATEFUL = new Date();
 		
@@ -377,7 +377,7 @@ public class LocalForward {
 	Date testSINCRONO;
 	Repository repositorySINCRONO=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SINCRONO"})
-	public void invokePD_SINCRONO() throws FatalTestSuiteException, Exception{
+	public void invokePD_SINCRONO() throws TestSuiteException, Exception{
 
 		this.testSINCRONO = new Date();
 		
@@ -445,7 +445,7 @@ public class LocalForward {
 	Date testONEWAY_INTEGRATION_MANAGER;
 	Repository repositoryONEWAY_INTEGRATION_MANAGER=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ONEWAY_INTEGRATION_MANAGER"})
-	public void invokePD_ONEWAY_INTEGRATION_MANAGER() throws FatalTestSuiteException, Exception{
+	public void invokePD_ONEWAY_INTEGRATION_MANAGER() throws TestSuiteException, Exception{
 
 		this.testONEWAY_INTEGRATION_MANAGER = new Date();
 		
@@ -662,7 +662,7 @@ public class LocalForward {
 	 * Test per ASINCRONI
 	 */
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".ASINCRONI"})
-	public void invokePD_ASINCRONI() throws FatalTestSuiteException, Exception{
+	public void invokePD_ASINCRONI() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -689,7 +689,7 @@ public class LocalForward {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_ASINCRONI+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 
@@ -727,7 +727,7 @@ public class LocalForward {
 	 * Test per SINCRONO_STATEFUL
 	 */
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SINCRONO_STATEFUL"})
-	public void invokePD_SINCRONO_STATEFUL() throws FatalTestSuiteException, Exception{
+	public void invokePD_SINCRONO_STATEFUL() throws TestSuiteException, Exception{
 
 		if(this.doTestStateful==false){
 			return;
@@ -759,7 +759,7 @@ public class LocalForward {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SINCRONO_STATEFUL+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SINCRONO_STATEFUL+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SINCRONO_STATEFUL+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 
@@ -797,7 +797,7 @@ public class LocalForward {
 	 * Test per SOGGETTO_NON_LOCALE
 	 */
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SOGGETTO_NON_LOCALE"})
-	public void invokePD_SOGGETTO_NON_LOCALE() throws FatalTestSuiteException, Exception{
+	public void invokePD_SOGGETTO_NON_LOCALE() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -824,7 +824,7 @@ public class LocalForward {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOGGETTO_NON_LOCALE+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOGGETTO_NON_LOCALE+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOGGETTO_NON_LOCALE+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 
@@ -883,7 +883,7 @@ public class LocalForward {
 	Date testWSS_ENCRYPT_REQUEST;
 	Repository repositoryWSS_ENCRYPT_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_REQUEST"})
-	public void invokePD_WSS_ENCRYPT_REQUEST() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_ENCRYPT_REQUEST() throws TestSuiteException, Exception{
 
 		this.testWSS_ENCRYPT_REQUEST = new Date();
 		
@@ -956,7 +956,7 @@ public class LocalForward {
 	Date testWSS_ENCRYPT_DECRYPT_REQUEST;
 	Repository repositoryWSS_ENCRYPT_DECRYPT_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_DECRYPT_REQUEST"})
-	public void invokePD_WSS_ENCRYPT_DECRYPT_REQUEST() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_ENCRYPT_DECRYPT_REQUEST() throws TestSuiteException, Exception{
 
 		this.testWSS_ENCRYPT_DECRYPT_REQUEST = new Date();
 		
@@ -1029,7 +1029,7 @@ public class LocalForward {
 	 * Test per DECRYPT_REQUEST
 	 */
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".DECRYPT_REQUEST"})
-	public void invokePD_DECRYPT_REQUEST() throws FatalTestSuiteException, Exception{
+	public void invokePD_DECRYPT_REQUEST() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -1056,7 +1056,7 @@ public class LocalForward {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_DECRYPT_REQUEST+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_DECRYPT_REQUEST+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_DECRYPT_REQUEST+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 
@@ -1093,7 +1093,7 @@ public class LocalForward {
 	Date testWSS_ENCRYPT_RESPONSE;
 	Repository repositoryWSS_ENCRYPT_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_RESPONSE"})
-	public void invokePD_WSS_ENCRYPT_RESPONSE() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_ENCRYPT_RESPONSE() throws TestSuiteException, Exception{
 
 		this.testWSS_ENCRYPT_RESPONSE = new Date();
 		
@@ -1165,7 +1165,7 @@ public class LocalForward {
 	Date testWSS_ENCRYPT_DECRYPT_RESPONSE;
 	Repository repositoryWSS_ENCRYPT_DECRYPT_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_ENCRYPT_DECRYPT_RESPONSE"})
-	public void invokePD_WSS_ENCRYPT_DECRYPT_RESPONSE() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_ENCRYPT_DECRYPT_RESPONSE() throws TestSuiteException, Exception{
 
 		this.testWSS_ENCRYPT_DECRYPT_RESPONSE = new Date();
 		
@@ -1247,7 +1247,7 @@ public class LocalForward {
 	Date testWSS_SIGNATURE_REQUEST;
 	Repository repositoryWSS_SIGNATURE_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_REQUEST"})
-	public void invokePD_WSS_SIGNATURE_REQUEST() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_SIGNATURE_REQUEST() throws TestSuiteException, Exception{
 
 		this.testWSS_SIGNATURE_REQUEST = new Date();
 		
@@ -1330,7 +1330,7 @@ public class LocalForward {
 	Date testWSS_SIGNATURE_VERIFY_REQUEST;
 	Repository repositoryWSS_SIGNATURE_VERIFY_REQUEST=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_VERIFY_REQUEST"})
-	public void invokePD_WSS_SIGNATURE_VERIFY_REQUEST() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_SIGNATURE_VERIFY_REQUEST() throws TestSuiteException, Exception{
 
 		this.testWSS_SIGNATURE_VERIFY_REQUEST = new Date();
 		
@@ -1413,7 +1413,7 @@ public class LocalForward {
 	 * Test per VERIFY_REQUEST
 	 */
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".VERIFY_REQUEST"})
-	public void invokePD_VERIFY_REQUEST() throws FatalTestSuiteException, Exception{
+	public void invokePD_VERIFY_REQUEST() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -1440,7 +1440,7 @@ public class LocalForward {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_VERIFY_REQUEST+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_VERIFY_REQUEST+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_WSS_VERIFY_REQUEST+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 
@@ -1478,7 +1478,7 @@ public class LocalForward {
 	Date testWSS_SIGNATURE_RESPONSE;
 	Repository repositoryWSS_SIGNATURE_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_RESPONSE"})
-	public void invokePD_WSS_SIGNATURE_RESPONSE() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_SIGNATURE_RESPONSE() throws TestSuiteException, Exception{
 
 		this.testWSS_SIGNATURE_RESPONSE = new Date();
 		
@@ -1560,7 +1560,7 @@ public class LocalForward {
 	Date testWSS_SIGNATURE_VERIFY_RESPONSE;
 	Repository repositoryWSS_SIGNATURE_VERIFY_RESPONSE=new Repository();
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".WSS_SIGNATURE_VERIFY_RESPONSE"})
-	public void invokePD_WSS_SIGNATURE_VERIFY_RESPONSE() throws FatalTestSuiteException, Exception{
+	public void invokePD_WSS_SIGNATURE_VERIFY_RESPONSE() throws TestSuiteException, Exception{
 
 		this.testWSS_SIGNATURE_VERIFY_RESPONSE = new Date();
 		
@@ -1655,7 +1655,7 @@ public class LocalForward {
 	 */
 	Date testPD_CONNETTORE_ERRATO_STATEFUL;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".CONNETTORE_ERRATO_STATEFUL"})
-	public void invokePD_CONNETTORE_ERRATO_STATEFUL() throws FatalTestSuiteException, Exception{
+	public void invokePD_CONNETTORE_ERRATO_STATEFUL() throws TestSuiteException, Exception{
 
 		this.testPD_CONNETTORE_ERRATO_STATEFUL = new Date();
 		
@@ -1748,7 +1748,7 @@ public class LocalForward {
 	 */
 	Date testPD_CONNETTORE_ERRATO_STATELESS;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".CONNETTORE_ERRATO_STATELESS"})
-	public void invokePD_CONNETTORE_ERRATO_STATELESS() throws FatalTestSuiteException, Exception{
+	public void invokePD_CONNETTORE_ERRATO_STATELESS() throws TestSuiteException, Exception{
 		
 		this.testPD_CONNETTORE_ERRATO_STATELESS = new Date();
 		
@@ -1782,7 +1782,7 @@ public class LocalForward {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_CONNETTORE_ERRATO_STATELESS+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_CONNETTORE_ERRATO_STATELESS+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_CONNETTORE_ERRATO_STATELESS+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 
@@ -1848,7 +1848,7 @@ public class LocalForward {
 	 */
 	Date testPA_CONNETTORE_ERRATO_STATEFUL;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SOAP_FAULT_STATEFUL"})
-	public void invokePD_SOAP_FAULT_STATEFUL() throws FatalTestSuiteException, Exception{
+	public void invokePD_SOAP_FAULT_STATEFUL() throws TestSuiteException, Exception{
 
 		this.testPA_CONNETTORE_ERRATO_STATEFUL = new Date();
 		
@@ -1948,7 +1948,7 @@ public class LocalForward {
 	 */
 	Date testPD_SOAP_FAULT_STATELESS;
 	@Test(groups={LocalForward.ID_GRUPPO,LocalForward.ID_GRUPPO+".SOAP_FAULT_STATELESS"})
-	public void invokePD_SOAP_FAULT_STATELESS() throws FatalTestSuiteException, Exception{
+	public void invokePD_SOAP_FAULT_STATELESS() throws TestSuiteException, Exception{
 		
 		this.testPD_SOAP_FAULT_STATELESS = new Date();
 		
@@ -1982,7 +1982,7 @@ public class LocalForward {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata  (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOAP_FAULT_STATELESS+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOAP_FAULT_STATELESS+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_LOCAL_FORWARD_SOAP_FAULT_STATELESS+") non ha causato errori.");
 
 			} catch (AxisFault error) {
 				

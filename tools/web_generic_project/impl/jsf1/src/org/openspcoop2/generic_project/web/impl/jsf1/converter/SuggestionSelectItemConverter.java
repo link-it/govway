@@ -43,7 +43,7 @@ import org.richfaces.component.html.HtmlListShuttle;
 public class SuggestionSelectItemConverter extends InputTextSelectItemConverter {
 
 	
-//	private static Logger log = Logger.getLogger("console.gui");
+//	private static Logger log = LogUtilities.getLogger("console.gui");
 	
 //	@SuppressWarnings("unchecked")
 	@Override

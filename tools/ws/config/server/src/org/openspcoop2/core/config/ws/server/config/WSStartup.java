@@ -28,8 +28,9 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -98,7 +99,7 @@ public class WSStartup implements ServletContextListener {
 		if(WSStartup.initializedLog==false){
 			
 			try{
-				WSStartup.log = Logger.getLogger(WSStartup.class);
+				WSStartup.log = LoggerWrapperFactory.getLogger(WSStartup.class);
 				LoggerProperties.initialize(WSStartup.log, confDir, null);
 				initializedLog = true;
 				WSStartup.log = LoggerProperties.getLoggerWS();

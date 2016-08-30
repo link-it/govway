@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Servlet che serve per creare un tunnel da un servizio che non conosce SOAP verso OpenSPCoop (che utilizza SOAP)
@@ -87,7 +88,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP extends HttpServlet {
 			try{
 				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				if(log==null){
-					log = Logger.getLogger(RicezioneContenutiApplicativiHTTPtoSOAP.class);
+					log = LoggerWrapperFactory.getLogger(RicezioneContenutiApplicativiHTTPtoSOAP.class);
 				}
 				log.error(e.getMessage(), e);
 			}catch(Exception eLog){}
@@ -128,7 +129,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP extends HttpServlet {
 			try{
 				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				if(log==null){
-					log = Logger.getLogger(RicezioneContenutiApplicativiHTTPtoSOAP.class);
+					log = LoggerWrapperFactory.getLogger(RicezioneContenutiApplicativiHTTPtoSOAP.class);
 				}
 				log.error(e.getMessage(), e);
 			}catch(Exception eLog){}

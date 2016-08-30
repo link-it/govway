@@ -67,7 +67,7 @@ public class LoginBean {
 
 	private LanguageForm languageForm = null;
 
-//	private static Logger log = Logger.getLogger("console.gui");
+//	private static Logger log = LogUtilities.getLogger("console.gui");
 
 	public LoginBean() {
 		this(false);

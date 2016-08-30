@@ -32,7 +32,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -192,7 +193,7 @@ public class ClientTest {
 			}
 			
 			
-			Logger log = Logger.getLogger(ClientTest.class);
+			Logger log = LoggerWrapperFactory.getLogger(ClientTest.class);
 			
 			IDSerialGenerator serialGenerator = new IDSerialGenerator(infoStat);
 			

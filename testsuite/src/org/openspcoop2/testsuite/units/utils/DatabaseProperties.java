@@ -25,10 +25,11 @@ package org.openspcoop2.testsuite.units.utils;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.UnitsDatabaseProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -44,7 +45,7 @@ import org.openspcoop2.testsuite.units.UnitsDatabaseProperties;
 public class DatabaseProperties implements UnitsDatabaseProperties {
 
 	/** Logger utilizzato per errori eventuali. */
-	private static Logger log = Logger.getLogger("DatabaseProperties");
+	private static Logger log = LoggerWrapperFactory.getLogger("DatabaseProperties");
 
 
 

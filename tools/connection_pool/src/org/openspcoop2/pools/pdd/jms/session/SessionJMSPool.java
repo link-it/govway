@@ -26,8 +26,8 @@ package org.openspcoop2.pools.pdd.jms.session;
 import org.apache.commons.pool.impl.GenericObjectPool.Config;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.apache.logging.log4j.PropertyConfigurator;
 
 import java.util.Hashtable;
 
@@ -37,6 +37,7 @@ import javax.jms.Session;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
 import org.openspcoop2.pools.pdd.jms.JMSInfo;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -90,9 +91,9 @@ public class SessionJMSPool implements java.io.Serializable  {
 				java.util.Properties loggerProperties = new java.util.Properties();
 				loggerProperties.load(SessionJMSPool.class.getResourceAsStream("/openspcoop2_pools.log4j.properties"));
 				PropertyConfigurator.configure(loggerProperties);
-				SessionJMSPool.staticLogger = Logger.getLogger("openspcoop2Pools");
+				SessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 			}catch(Exception e){
-				SessionJMSPool.staticLogger = Logger.getLogger("openspcoop2Pools");
+				SessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 			}
 		}
 
@@ -183,7 +184,7 @@ public class SessionJMSPool implements java.io.Serializable  {
 				SessionJMSPool.pool.get(this.jndiName).addObject() ;
 			}	
 		}catch(Exception e){
-			Logger.getLogger("SessionJMSPool").error("(OpenSPCoopQueueManager_"+this.jndiName+") Riscontrato errore durante l'inizializzazione del Pool["
+			LoggerWrapperFactory.getLogger("SessionJMSPool").error("(OpenSPCoopQueueManager_"+this.jndiName+") Riscontrato errore durante l'inizializzazione del Pool["
 					+this.jndiName+"]: "+ e.getMessage());
 		}
 

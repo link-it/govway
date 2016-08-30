@@ -22,8 +22,8 @@ package org.openspcoop2.protocol.spcoop.testsuite.core;
 
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
 *
@@ -41,12 +41,12 @@ public class SPCoopTestsuiteLogger {
 			InputStream is = null;
 			try{
 				java.util.Properties loggerProperties = new java.util.Properties();
-				is = SPCoopTestsuiteLogger.class.getResourceAsStream("/testsuite_spcoop.log4j.properties");
+				is = SPCoopTestsuiteLogger.class.getResourceAsStream("/testsuite_spcoop.log4j2.properties");
 				if(is!=null){
-					loggerProperties.load(SPCoopTestsuiteLogger.class.getResourceAsStream("/testsuite_spcoop.log4j.properties"));
+					loggerProperties.load(SPCoopTestsuiteLogger.class.getResourceAsStream("/testsuite_spcoop.log4j2.properties"));
 				}
-				PropertyConfigurator.configure(loggerProperties);
-				logger = Logger.getLogger("TestSuite.tracer");
+				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+				logger = LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
 			}catch(Exception e){
 				System.err.println("Riscontrato errore durante l'inizializzazione del sistema di logging di OpenSPCoop: "
 						+e.getMessage());

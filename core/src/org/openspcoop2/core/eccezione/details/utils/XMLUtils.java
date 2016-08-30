@@ -37,7 +37,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.eccezione.details.constants.Costanti;
 import org.openspcoop2.core.eccezione.details.Dettaglio;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;

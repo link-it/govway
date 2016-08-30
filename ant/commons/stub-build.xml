@@ -194,7 +194,7 @@
 		<if>
  			<available file="${serviceFile}" type="file"/>
 			<then>
- 				<var name="replacetoken" value="java.util.logging.Logger.getLogger(" />
+ 				<var name="replacetoken" value="java.util.logging.LogUtilities.getLogger(" />
 				<replace file="${serviceFile}" token="${replacetoken}">
 					<replacevalue>
 		}
@@ -205,7 +205,7 @@
 			url = @OBJECT_TYPE@.class.getClassLoader().getResource("/@WSDL_NAME@");
 		}
 		if (url==null ){
-			java.util.logging.Logger.getLogger(</replacevalue>
+			java.util.logging.LogUtilities.getLogger(</replacevalue>
 				
 				</replace>
 				<replace file="${serviceFile}" token="@OBJECT_TYPE@" value="${className}"/>

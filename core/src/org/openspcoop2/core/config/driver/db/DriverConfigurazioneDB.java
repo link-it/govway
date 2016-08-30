@@ -39,7 +39,7 @@ import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
@@ -142,6 +142,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
@@ -190,7 +191,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	private boolean atomica = true;
 
 	/** Logger utilizzato per debug. */
-	protected org.apache.log4j.Logger log = null;
+	protected org.slf4j.Logger log = null;
 
 	// Tipo database passato al momento della creazione dell'oggetto
 	private String tipoDB = null;
@@ -236,10 +237,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	public void initDriverConfigurazioneDB(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDB, 
 			boolean tabellaSoggettiPDD, boolean useOp2UtilsDatasource, boolean bindJMX) {
 		try {
-			//PropertyConfigurator.configure(DriverConfigurazioneDB.class.getResource("/tracer.log4j.properties"));
-
 			if(alog==null)
-				this.log = Logger.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
+				this.log = LoggerWrapperFactory.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
 			else{
 				this.log = alog;
 				DriverConfigurazioneDB_LIB.initStaticLogger(this.log);
@@ -292,9 +291,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 	public DriverConfigurazioneDB(Connection connection,Logger alog,String tipoDB,boolean tabellaSoggettiPDD) throws DriverConfigurazioneException {
 
-		//PropertyConfigurator.configure(DriverConfigurazioneDB.class.getResource("/tracer.log4j.properties"));
 		if(alog==null)
-			this.log = Logger.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
+			this.log = LoggerWrapperFactory.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
 		else{
 			this.log = alog;
 			DriverConfigurazioneDB_LIB.initStaticLogger(this.log);
@@ -10966,7 +10964,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					try{
 						idSoggVirt = DBUtils.getIdSoggetto(nomeSoggVirt, tipoSoggVirt, con, this.tipoDB,this.tabellaSoggetti);
 					}catch (Exception e) {
-						this.log.error(e);
+						this.log.error(e.getMessage(),e);
 					}
 					paSoggVirt=new PortaApplicativaSoggettoVirtuale();
 					paSoggVirt.setId(idSoggVirt);
@@ -11546,7 +11544,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					try {
 						idSoggErogatore = DBUtils.getIdSoggetto(nomeSoggettoErogatore, tipoSoggettoErogatore, con, this.tipoDB,this.tabellaSoggetti);
 					} catch (CoreException e) {
-						this.log.debug(e);
+						this.log.debug(e.getMessage(),e);
 					}
 				}
 				PortaDelegataSoggettoErogatore SoggettoErogatore = null;

@@ -25,8 +25,9 @@ package org.openspcoop2.protocol.trasparente.testsuite.core;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.testsuite.units.UnitsTestSuiteProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Reader delle proprieta' della TestSuite
@@ -41,7 +42,7 @@ import org.openspcoop2.testsuite.units.UnitsTestSuiteProperties;
 public class TestSuiteProperties implements UnitsTestSuiteProperties {
 
 	/** Logger utilizzato per errori eventuali. */
-	private static Logger log = Logger.getLogger("TestSuiteProperties");
+	private static Logger log = LoggerWrapperFactory.getLogger("TestSuiteProperties");
 
 
 

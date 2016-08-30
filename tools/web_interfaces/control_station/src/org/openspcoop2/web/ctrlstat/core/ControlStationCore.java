@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -126,6 +125,7 @@ import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
 import org.openspcoop2.web.lib.users.dao.User;
 //import org.openspcoop2.web.ctrlstat.gestori.GestorePdDInitThread;
+import org.slf4j.Logger;
 
 /**
  * Questa classe e' l'entrypoint alla pddConsole, fornisce cioe' ai
@@ -3106,7 +3106,7 @@ public class ControlStationCore {
 
 		} catch (DriverConfigurazioneNotFound e) {
 			// se ci sono degli errori faccio il rollback
-			ControlStationCore.log.error(e);
+			ControlStationCore.log.error(e.getMessage(),e);
 
 			try {
 				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
@@ -3118,7 +3118,7 @@ public class ControlStationCore {
 			throw e;
 		} catch (DriverConfigurazioneException e) {
 			// se ci sono degli errori faccio il rollback
-			ControlStationCore.log.error(e);
+			ControlStationCore.log.error(e.getMessage(),e);
 
 			try {
 				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
@@ -3129,7 +3129,7 @@ public class ControlStationCore {
 
 			throw e;
 		} catch (DriverRegistroServiziNotFound e) {
-			ControlStationCore.log.error(e);
+			ControlStationCore.log.error(e.getMessage(),e);
 
 			try {
 				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
@@ -3141,7 +3141,7 @@ public class ControlStationCore {
 			throw e;
 
 		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error(e);
+			ControlStationCore.log.error(e.getMessage(),e);
 
 			try {
 				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
@@ -3153,7 +3153,7 @@ public class ControlStationCore {
 			throw e;
 
 		} catch (DriverControlStationException e) {
-			ControlStationCore.log.error(e);
+			ControlStationCore.log.error(e.getMessage(),e);
 
 			try {
 				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);
@@ -3164,7 +3164,7 @@ public class ControlStationCore {
 
 			throw new DriverControlStationException(e);
 		} catch (Exception e) {
-			ControlStationCore.log.error(e, e);
+			ControlStationCore.log.error(e.getMessage(),e);
 
 			try {
 				ControlStationCore.log.debug("[ControlStationCore::performOperation] rollback on error :" + e.getMessage(), e);

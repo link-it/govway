@@ -36,7 +36,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.constants.CostantiDB;

@@ -30,8 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.message.ServletTestService;
 
 
@@ -50,27 +48,8 @@ public class PingService extends ServletTestService {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger log = null;
-	private static synchronized void initLogger(){
-		try{
-			if(PingService.log==null){
-				PropertyConfigurator.configure(PingService.class.getResource("/testService.log4j.properties"));
-				PingService.log = Logger.getLogger("openspcoop2.pingService");
-			}
-		}catch(Exception e){
-			e.printStackTrace(System.out);
-		}
-	}
-	private static Logger getLogger(){
-		if(PingService.log==null){
-			PingService.initLogger();
-		}
-		return PingService.log;
-	}
-
-	
 	public PingService(){
-		super(getLogger());
+		super(Startup.logPing);
 	}
 
 	@Override

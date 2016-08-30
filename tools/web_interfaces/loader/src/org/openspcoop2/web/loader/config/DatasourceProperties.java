@@ -26,8 +26,9 @@ package org.openspcoop2.web.loader.config;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 
@@ -68,7 +69,7 @@ public class DatasourceProperties {
 		if(log!=null)
 			this.log = log;
 		else
-			this.log = Logger.getLogger(DatasourceProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(DatasourceProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();

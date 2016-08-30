@@ -46,7 +46,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -147,7 +147,7 @@ public class BusteEGov11LineeGuida11 {
 	 */
 	Repository repositoryVerificaReturnCodeOneway=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".VerificaReturnCodeOneway"})
-	public void VerificaReturnCodeOneway()throws FatalTestSuiteException, SOAPException, Exception{
+	public void VerificaReturnCodeOneway()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -286,7 +286,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryOneWayEccezioniNonGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWENG"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniNonGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniNonGravi()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniNonGravi.xml");
 		this.repositoryOneWayEccezioniNonGravi.add(this.busteEGov.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGov.getBusta(index).getBytes());
@@ -415,7 +415,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySincronaEccezioniNonGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SENG"},
 			dependsOnMethods="init")
-			public void EGovSincronaEccezioniNonGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSincronaEccezioniNonGravi()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSincronaEccezioniNonGravi.xml");
 
 		this.repositorySincronaEccezioniNonGravi.add(this.busteEGov.getID(index));
@@ -542,7 +542,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryOneWayEccezioniAlcuneGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniAlcuneGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniAlcuneGravi()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi.add(this.busteEGov.getID(index));
@@ -658,7 +658,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySincronaEccezioniAlcuneGravi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SEAG"},
 			dependsOnMethods="init")
-			public void EGovSincronaEccezioniAlcuneGravi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSincronaEccezioniAlcuneGravi()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSincronaEccezioniAlcuneGravi.xml");
 		this.repositorySincronaEccezioniAlcuneGravi.add(this.busteEGov.getID(index));
@@ -770,7 +770,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryOneWayEccezioniAlcuneGravi_faultCorretto=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG_FC"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi_faultCorretto.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi_faultCorretto.add(this.busteEGov.getID(index));
@@ -897,7 +897,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryOneWayEccezioniAlcuneGravi_faultCorretto_CDATA=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".OWEAG_FC_CDATA"},
 			dependsOnMethods="init")
-			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto_CDATA()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWayEccezioniAlcuneGravi_faultCorretto_CDATA()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWayEccezioniAlcuneGravi_faultCorretto_CDATA.xml");
 		this.repositoryOneWayEccezioniAlcuneGravi_faultCorretto_CDATA.add(this.busteEGov.getID(index));
@@ -1021,7 +1021,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryTipoMittenteDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TMDSPC"},
 			dependsOnMethods="init")
-			public void EGovTipoMittenteDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovTipoMittenteDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTipoMittenteDiversoSPC.xml");
 
 		this.repositoryTipoMittenteDiversoSPC.add(this.busteEGov.getID(index));
@@ -1048,7 +1048,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -1167,7 +1167,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryIndirizzoTelematicoMittente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ITM"},
 			dependsOnMethods="init")
-			public void EGovIndirizzoTelematicoMittente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovIndirizzoTelematicoMittente()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaIndirizzoTelematicoMittente.xml");
 
 		this.repositoryIndirizzoTelematicoMittente.add(this.busteEGov.getID(index));
@@ -1325,7 +1325,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryTipoDestinatarioDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".DTDSPC"},
 			dependsOnMethods="init")
-			public void EGovTipoDestinatarioDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovTipoDestinatarioDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTipoDestinatarioDiversoSPC.xml");
 
 		this.repositoryTipoDestinatarioDiversoSPC.add(this.busteEGov.getID(index));
@@ -1352,7 +1352,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -1472,7 +1472,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryIndirizzoTelematicoDestinatario=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ITD"},
 			dependsOnMethods="init")
-			public void EGovIndirizzoTelematicoDestinatario()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovIndirizzoTelematicoDestinatario()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaIndirizzoTelematicoDestinatario.xml");
 
 		this.repositoryIndirizzoTelematicoDestinatario.add(this.busteEGov.getID(index));
@@ -1630,7 +1630,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryOneWaySenzaTipoServizio=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BOWSTS"},
 			dependsOnMethods="init")
-			public void EGovOneWaySenzaTipoServizio()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovOneWaySenzaTipoServizio()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1660,7 +1660,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -1796,7 +1796,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryBustaOneWaySenzaServizio=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ROWSS"},
 			dependsOnMethods="init")
-			public void EGovBustaOneWaySenzaServizio()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovBustaOneWaySenzaServizio()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWaySenzaServizio.xml");
 
@@ -1824,7 +1824,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -1946,7 +1946,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryTipoServizioDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TServDSPC"},
 			dependsOnMethods="init")
-			public void EGovTipoServizioDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovTipoServizioDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTipoServizioDiversoSPC.xml");
 
 		this.repositoryTipoServizioDiversoSPC.add(this.busteEGov.getID(index));
@@ -1973,7 +1973,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -2094,7 +2094,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryBustaOneWaySenzaAzione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BOWSAz"},
 			dependsOnMethods="init")
-			public void EGovBustaOneWaySenzaAzione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovBustaOneWaySenzaAzione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaOneWaySenzaAzione.xml");
 
 		this.repositoryBustaOneWaySenzaAzione.add(this.busteEGov.getID(index));
@@ -2122,7 +2122,7 @@ public class BusteEGov11LineeGuida11 {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA");
-					throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2249,7 +2249,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryIdentificatoreDuplicato=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".IDD"},
 			dependsOnMethods="init")
-			public void EGovConIdentificatoreDuplicato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConIdentificatoreDuplicato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaIdentificatoreDuplicato.xml");
 
 		this.repositoryIdentificatoreDuplicato.add(this.busteEGov.getID(index));
@@ -2424,7 +2424,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryBustaSenzaProfiloCollaborazione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BSPC"},
 			dependsOnMethods="init")
-			public void EGovBustaSenzaProfiloCollaborazione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovBustaSenzaProfiloCollaborazione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSenzaProfiloCollaborazione.xml");
 
 		this.repositoryBustaSenzaProfiloCollaborazione.add(this.busteEGov.getID(index));
@@ -2452,7 +2452,7 @@ public class BusteEGov11LineeGuida11 {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA");
-					throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2582,7 +2582,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryBustaTipoServizioCorrelato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BTSC"},
 			dependsOnMethods="init")
-			public void EGovBustaTipoServizioCorrelato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovBustaTipoServizioCorrelato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTipoServizioCorrelato.xml");
 
 		this.repositoryBustaTipoServizioCorrelato.add(this.busteEGov.getID(index));
@@ -2746,7 +2746,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryBustaServizioCorrelato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BSC"},
 			dependsOnMethods="init")
-			public void EGovBustaServizioCorrelato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovBustaServizioCorrelato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaServizioCorrelato.xml");
 
 		this.repositoryBustaServizioCorrelato.add(this.busteEGov.getID(index));
@@ -2911,7 +2911,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryBustaTipoEServizioCorrelato=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BTESC"},
 			dependsOnMethods="init")
-			public void EGovBustaTipoEServizioCorrelato()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovBustaTipoEServizioCorrelato()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaServizioETipoCorrelato.xml");
 
 		this.repositoryBustaTipoEServizioCorrelato.add(this.busteEGov.getID(index));
@@ -3084,7 +3084,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryBustaCollaborazione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".Collaborazione"},
 			dependsOnMethods="init")
-			public void EGovBustaCollaborazione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovBustaCollaborazione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaCollaborazione.xml");
 
 		this.repositoryBustaCollaborazione.add(this.busteEGov.getID(index));
@@ -3239,7 +3239,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryCollaborazioneAsincronoSimmetricoConCollaborazione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BCASCC"},
 			dependsOnMethods="init")
-			public void EGovCollaborazioneAsincronoSimmetricoConCollaborazione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovCollaborazioneAsincronoSimmetricoConCollaborazione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaCollaborazioneAsincronoSimmetricoConCollaborazione.xml");
 
 		this.repositoryCollaborazioneAsincronoSimmetricoConCollaborazione.add(this.busteEGov.getID(index));
@@ -3373,7 +3373,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryCollaborazioneAsincronoSimmetricoSenzaCollaborazione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".CBASSC"},
 			dependsOnMethods="init")
-			public void EGovCollaborazioneAsincronoSimmetricoSenzaCollaborazione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovCollaborazioneAsincronoSimmetricoSenzaCollaborazione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaCollaborazioneAsincronoSimmetricoSenzaCollaborazione.xml");
 
 		this.repositoryCollaborazioneAsincronoSimmetricoSenzaCollaborazione.add(this.busteEGov.getID(index));
@@ -3401,7 +3401,7 @@ public class BusteEGov11LineeGuida11 {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA");
-					throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3527,7 +3527,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryTipoOraRegistrazioneDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TORDSPC"},
 			dependsOnMethods="init")
-			public void EGovTipoOraRegistrazioneDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovTipoOraRegistrazioneDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTipoOraRegistrazioneDiversoSPC.xml");
 
 		this.repositoryTipoOraRegistrazioneDiversoSPC.add(this.busteEGov.getID(index));
@@ -3555,7 +3555,7 @@ public class BusteEGov11LineeGuida11 {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA");
-					throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3678,7 +3678,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryConfermaRicezione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".CR"},
 			dependsOnMethods="init")
-			public void EGovConfermaRicezione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovConfermaRicezione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaConfermaRicezione.xml");
 
 		this.repositoryConfermaRicezione.add(this.busteEGov.getID(index));
@@ -3706,7 +3706,7 @@ public class BusteEGov11LineeGuida11 {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA");
-					throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3833,7 +3833,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySenzaFiltroDuplicati=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SFD"},
 			dependsOnMethods="init")
-			public void EGovSenzaFiltroDuplicati()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaFiltroDuplicati()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSenzaFiltroDuplicati.xml");
 
 		this.repositorySenzaFiltroDuplicati.add(this.busteEGov.getID(index));
@@ -3861,7 +3861,7 @@ public class BusteEGov11LineeGuida11 {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA");
-					throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3988,7 +3988,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySincronaConfermaRicezione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BSCR"},
 			dependsOnMethods="init")
-			public void EGovSincronaConfermaRicezione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSincronaConfermaRicezione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSincronaConfermaRicezione.xml");
 
 		this.repositorySincronaConfermaRicezione.add(this.busteEGov.getID(index));
@@ -4015,7 +4015,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -4134,7 +4134,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySincronaSenzaFiltroDuplicati=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BSSFD"},
 			dependsOnMethods="init")
-			public void EGovSincronaSenzaFiltroDuplicati()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSincronaSenzaFiltroDuplicati()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSincronaSenzaFiltroDuplicati.xml");
 
 		this.repositorySincronaSenzaFiltroDuplicati.add(this.busteEGov.getID(index));
@@ -4161,7 +4161,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -4283,7 +4283,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySequenza=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SEQ"},
 			dependsOnMethods="init")
-			public void EGovSequenza()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSequenza()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSequenza.xml");
 
 		this.repositorySequenza.add(this.busteEGov.getID(index));
@@ -4402,7 +4402,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySincronaSequenza=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".SEQs"},
 			dependsOnMethods="init")
-			public void EGovSincronaSequenza()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSincronaSequenza()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSincronaSequenza.xml");
 
 		this.repositorySincronaSequenza.add(this.busteEGov.getID(index));
@@ -4556,7 +4556,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryListaTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".TR"},
 			dependsOnMethods="init")
-			public void EGovListaTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovListaTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaListaTrasmissione.xml");
 
 		this.repositoryListaTrasmissione.add(this.busteEGov.getID(index));
@@ -4694,7 +4694,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryListaTrasmissioneTipoMittenteDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BLTTMDSPC"},
 			dependsOnMethods="init")
-			public void EGovListaTrasmissioneTipoMittenteDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovListaTrasmissioneTipoMittenteDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaListaTrasmissioneTipoMittenteDiversoSPC.xml");
 
 		this.repositoryListaTrasmissioneTipoMittenteDiversoSPC.add(this.busteEGov.getID(index));
@@ -4721,7 +4721,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -4841,7 +4841,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryListaTrasmissioneTipoDestinatarioDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BLTTDDSPC"},
 			dependsOnMethods="init")
-			public void EGovListaTrasmissioneTipoDestinatarioDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovListaTrasmissioneTipoDestinatarioDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaListaTrasmissioneTipoDestinatarioDiversoSPC.xml");
 
 		this.repositoryListaTrasmissioneTipoDestinatarioDiversoSPC.add(this.busteEGov.getID(index));
@@ -4868,7 +4868,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -4989,7 +4989,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryListaTrasmissioneOraRegistrazioneDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BLTORDSPC"},
 			dependsOnMethods="init")
-			public void EGovListaTrasmissioneOraRegistrazioneDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovListaTrasmissioneOraRegistrazioneDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaListaTrasmissioneOraRegistrazioneDiversoSPC.xml");
 
 		this.repositoryListaTrasmissioneOraRegistrazioneDiversoSPC.add(this.busteEGov.getID(index));
@@ -5016,7 +5016,7 @@ public class BusteEGov11LineeGuida11 {
 			try {
 				client.run();
 				Reporter.log("Invocazione PA");
-				throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");
@@ -5138,7 +5138,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryListaTrasmissioneIndirizzoTelematicoMittente=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BLTITM"},
 			dependsOnMethods="init")
-			public void EGovListaTrasmissioneIndirizzoTelematicoMittente()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovListaTrasmissioneIndirizzoTelematicoMittente()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaListaTrasmissioneIndirizzoTelematicoMittente.xml");
 
 		this.repositoryListaTrasmissioneIndirizzoTelematicoMittente.add(this.busteEGov.getID(index));
@@ -5298,7 +5298,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryListaTrasmissioneIndirizzoTelematicoDestinatario=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BLTITD"},
 			dependsOnMethods="init")
-			public void EGovListaTrasmissioneIndirizzoTelematicoDestinatario()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovListaTrasmissioneIndirizzoTelematicoDestinatario()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaListaTrasmissioneIndirizzoTelematicoDestinatario.xml");
 
 		this.repositoryListaTrasmissioneIndirizzoTelematicoDestinatario.add(this.busteEGov.getID(index));
@@ -5455,7 +5455,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryRiscontro=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".BRiscontro"},
 			dependsOnMethods="init")
-			public void EGovRiscontro()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovRiscontro()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaRiscontro.xml");
 
 		this.repositoryRiscontro.add(this.busteEGov.getID(index));
@@ -5580,7 +5580,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositoryRiscontroTempoDiversoSPC=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".RTDSPC"},
 			dependsOnMethods="init")
-			public void EGovRiscontroTempoDiversoSPC()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovRiscontroTempoDiversoSPC()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaRiscontroTempoDiversoSPC.xml");
 
 		this.repositoryRiscontroTempoDiversoSPC.add(this.busteEGov.getID(index));
@@ -5608,7 +5608,7 @@ public class BusteEGov11LineeGuida11 {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA");
-					throw new FatalTestSuiteException("Invocazione PA non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -5744,7 +5744,7 @@ public class BusteEGov11LineeGuida11 {
 	Repository repositorySenzaProfiloTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO, ID_GRUPPO+".SPT"},
 			dependsOnMethods="init")
-			public void EGovSenzaProfiloTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovSenzaProfiloTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaSenzaProfiloTrasmissione.xml");
 
 		this.repositorySenzaProfiloTrasmissione.add(this.busteEGov.getID(index));

@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 import javax.xml.soap.AttachmentPart;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.sun.org.apache.xml.internal.security.signature.XMLSignatureInput;
 import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverException;
@@ -34,6 +34,7 @@ import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverS
 import org.apache.xml.utils.URI;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,7 +50,7 @@ import org.w3c.dom.Element;
  */
 public class SunEnvelopeIdResolver extends ResourceResolverSpi {
 
-    private static final Logger logger = Logger.getLogger(SunEnvelopeIdResolver.class);
+    private static final Logger logger = LoggerWrapperFactory.getLogger(SunEnvelopeIdResolver.class);
   
     public synchronized static ResourceResolverSpi getInstance(OpenSPCoop2Message message) {
         return new SunEnvelopeIdResolver(message);

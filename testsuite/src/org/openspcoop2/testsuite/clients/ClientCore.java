@@ -34,21 +34,20 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.message.SOAPBody;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.testsuite.axis14.Axis14WSSBaseUtils;
 import org.openspcoop2.testsuite.axis14.Axis14WSSReceiver;
 import org.openspcoop2.testsuite.axis14.Axis14WSSSender;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
-import org.openspcoop2.testsuite.server.ServerGenerico;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 /**
  * Client core.
@@ -98,23 +97,28 @@ public class ClientCore {
 	
 	
 	/**
+	 * @throws UtilsException 
 	 * 
 	 */
-	public ClientCore() {
+	public ClientCore() throws TestSuiteException {
 		
 		// Inizializzazione TestSuiteProperties
 		if(TestSuiteProperties.isInitialized()==false){
 			// Server Properties
 			TestSuiteProperties.initialize();
 			// Logger
-			PropertyConfigurator.configure(ServerGenerico.class.getResource("/"+CostantiTestSuite.LOGGER_PROPERTIES));
+			try{
+				LoggerWrapperFactory.setLogConfiguration(ClientCore.class.getResource("/"+CostantiTestSuite.LOGGER_PROPERTIES));
+			}catch(Exception e){
+				throw new TestSuiteException(e.getMessage(),e);
+			}
 		}
 		
 		// Istanza di Server Properties
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
 		
 		// Istanza di logger
-		this.log=Logger.getLogger("TestSuite.tracer");
+		this.log=LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
 			
 	}
 	
@@ -133,11 +137,11 @@ public class ClientCore {
 	 * @param fileName il nome del file da prelevare il messaggio
 	 * @param isBody se il valore e' true, nel file si trova solo il soap body del messaggio, il metodo imbusta.
 	 */
-	public void setMessageFromFile(String fileName,boolean isBody,boolean generaIDUnivoco) throws FatalTestSuiteException{
+	public void setMessageFromFile(String fileName,boolean isBody,boolean generaIDUnivoco) throws TestSuiteException{
 		this.soapEngine.setMessageFromFile(fileName,isBody,generaIDUnivoco);
 		this.sentMessage = this.soapEngine.getRequestMessage();
 	}
-	public void setMessageFromFile(String fileName,boolean isBody) throws FatalTestSuiteException{
+	public void setMessageFromFile(String fileName,boolean isBody) throws TestSuiteException{
 		setMessageFromFile(fileName,isBody,false);
 	}
 
@@ -205,10 +209,10 @@ public class ClientCore {
 	 * Crea il soapEngine utilizzato per la gestione della richiesta SOAP.
 	 * Deve essere chiamato dopo aver impostato la url della Porta di Dominio, e la porta delegata da invocare
 	 */
-	public void connectToSoapEngine() throws FatalTestSuiteException{
+	public void connectToSoapEngine() throws TestSuiteException{
 		this.connectToSoapEngine(SOAPVersion.SOAP11);
 	}
-	public void connectToSoapEngine(SOAPVersion soapVersion) throws FatalTestSuiteException{
+	public void connectToSoapEngine(SOAPVersion soapVersion) throws TestSuiteException{
 		if(this.portaDelegata==null)
 			this.portaDelegata="";
 		this.soapEngine=new SOAPEngine(this.urlPortaDiDominio+this.portaDelegata,soapVersion);
@@ -301,10 +305,10 @@ public class ClientCore {
 	 * il requisito della risposta e' che deve soddisfare il tipo 
 	 *  OpenSPCoopOK.xsd
 	 *  
-	 * @throws FatalTestSuiteException 
+	 * @throws TestSuiteException 
 	 * @throws AxisFault 
 	 * @throws SOAPException */
-	protected void invocazioneAsincrona() throws FatalTestSuiteException, AxisFault{
+	protected void invocazioneAsincrona() throws TestSuiteException, AxisFault{
 		this.soapEngine.invoke(this.repository);
 		this.receivedMessage=this.soapEngine.getResponseMessage();
 		if(this.receivedMessage!=null && !Utilities.isOpenSPCoopOKMessage(this.receivedMessage))
@@ -342,7 +346,7 @@ public class ClientCore {
 	 *
 	 * @throws AxisFault
 	 */
-	protected void invocazioneSincrona() throws FatalTestSuiteException,AxisFault{
+	protected void invocazioneSincrona() throws TestSuiteException,AxisFault{
 		this.soapEngine.invoke(this.repository);
 		this.receivedMessage=this.soapEngine.getResponseMessage();
 		if(this.testsuiteProperties.getIdMessaggioTrasporto()==null)

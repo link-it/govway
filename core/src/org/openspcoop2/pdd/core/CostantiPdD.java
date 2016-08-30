@@ -68,22 +68,23 @@ public class CostantiPdD {
     public final static String OPENSPCOOP2_PROPERTIES_LOCAL_PATH = "openspcoop2_local.properties";
     public final static String OPENSPCOOP2_PROPERTIES = "OPENSPCOOP2_PROPERTIES";
     
-    public final static String OPENSPCOOP2_CLASSNAME_LOCAL_PATH = "className_local.properties";
-    public final static String OPENSPCOOP2_CLASSNAME_PROPERTIES = "OPENSPCOOP2_CLASSNAME_PROPERTIES";
+    public final static String OPENSPCOOP2_CLASSNAME_LOCAL_PATH = "openspcoop2_local.classRegistry.properties";
+    public final static String OPENSPCOOP2_CLASSNAME_PROPERTIES = "OPENSPCOOP2_CLASSREGISTRY_PROPERTIES";
     
-    public final static String OPENSPCOOP2_PDD_LOCAL_PATH = "pdd_local.properties";
+    public final static String OPENSPCOOP2_PDD_LOCAL_PATH = "openspcoop2_local.pdd.properties";
     public final static String OPENSPCOOP2_PDD_PROPERTIES = "OPENSPCOOP2_PDD_PROPERTIES";
     
-    public final static String OPENSPCOOP2_MSGDIAGNOSTICI_LOCAL_PATH = "msgDiagnostici_local.properties";
+    public final static String OPENSPCOOP2_MSGDIAGNOSTICI_LOCAL_PATH = "openspcoop2_local.msgDiagnostici.properties";
     public final static String OPENSPCOOP2_MSGDIAGNOSTICI_PROPERTIES = "OPENSPCOOP2_MSGDIAGNOSTICI_PROPERTIES";
        
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "logger_local.properties";
+    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "openspcoop2_local.log4j2.properties";
     public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_LOGGER_PROPERTIES";
-       
-    public final static String OPENSPCOOP2_CACHE_LOCAL_PATH = "cache_local.properties";
+     
+    public final static String OPENSPCOOP2_CACHE_DEFAULT_PROPERTIES_NAME = "openspcoop2.jcs.properties";
+    public final static String OPENSPCOOP2_CACHE_LOCAL_PATH = "openspcoop2_local.jcs.properties";
     public final static String OPENSPCOOP2_CACHE_PROPERTIES = "OPENSPCOOP2_CACHE_PROPERTIES";
     
-    public final static String OPENSPCOOP2_CONFIG_LOCAL_PATH = "config_local.properties";
+    public final static String OPENSPCOOP2_CONFIG_LOCAL_PATH = "openspcoop2_local.config.properties";
     public final static String OPENSPCOOP2_CONFIG_PROPERTIES = "OPENSPCOOP2_CONFIG_PROPERTIES";
     
     /** Costante per l'indicazione dell'imbustamento con Attachments */

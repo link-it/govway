@@ -21,7 +21,8 @@
 
 package org.openspcoop2.utils.digest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -45,7 +46,7 @@ public class WSSecurityDigestReader implements IDigestReader {
 	private AbstractXMLUtils xmlUtils;
 
 	public WSSecurityDigestReader(AbstractXMLUtils xmlUtils,AbstractXPathExpressionEngine xpathEngine) {
-		this(Logger.getLogger(WSSecurityDigestReader.class),xmlUtils,xpathEngine);
+		this(LoggerWrapperFactory.getLogger(WSSecurityDigestReader.class),xmlUtils,xpathEngine);
 	}
 	public WSSecurityDigestReader(Logger log,AbstractXMLUtils xmlUtils,AbstractXPathExpressionEngine xpathEngine) {
 		this.log = log;

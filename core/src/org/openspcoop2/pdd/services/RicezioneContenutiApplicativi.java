@@ -34,7 +34,7 @@ import java.util.Vector;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -151,6 +151,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -421,7 +422,7 @@ public class RicezioneContenutiApplicativi {
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if (logCore == null) {
-			logCore = Logger.getLogger(RicezioneContenutiApplicativi.ID_MODULO);
+			logCore = LoggerWrapperFactory.getLogger(RicezioneContenutiApplicativi.ID_MODULO);
 		}
 		
 		// MsgDiagnostico
@@ -680,7 +681,7 @@ public class RicezioneContenutiApplicativi {
 		// Credenziali utilizzate nella richiesta
 		Credenziali credenziali = this.msgContext.getCredenziali();
 
-		// Autenticazione/Autorizzazione registrate nel className.properties
+		// Autenticazione/Autorizzazione registrate
 		ClassNameProperties className = ClassNameProperties.getInstance();
 
 		// PropertiesReader

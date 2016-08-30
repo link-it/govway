@@ -41,14 +41,14 @@ public class DatabaseProperties {
 	/** Copia Statica */
 	private static DatabaseProperties databaseProperties = null;
 
-	public static synchronized void initialize(String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, String nomeFileProperties,org.apache.log4j.Logger log) throws ServiceException{
+	public static synchronized void initialize(String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, String nomeFileProperties,org.slf4j.Logger log) throws ServiceException{
 
 		if(DatabaseProperties.databaseProperties==null)
 			DatabaseProperties.databaseProperties = new DatabaseProperties(PROPERTIES_LOCAL_PATH,PROPERTIES_NAME,nomeFileProperties,log);	
 
 	}
 
-	public static DatabaseProperties getInstance(org.apache.log4j.Logger log) throws ServiceException{
+	public static DatabaseProperties getInstance(org.slf4j.Logger log) throws ServiceException{
 
 		if(DatabaseProperties.databaseProperties==null){
 			throw new ServiceException("DatabaseProperties not initialized, use initialize method");
@@ -76,7 +76,7 @@ public class DatabaseProperties {
 	 *
 	 * 
 	 */
-	public DatabaseProperties(String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, String nomeFileProperties,org.apache.log4j.Logger log) throws ServiceException{
+	public DatabaseProperties(String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, String nomeFileProperties,org.slf4j.Logger log) throws ServiceException{
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 

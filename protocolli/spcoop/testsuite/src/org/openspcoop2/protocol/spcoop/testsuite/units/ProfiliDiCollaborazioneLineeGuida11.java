@@ -29,7 +29,7 @@ import java.util.Date;
 import javax.xml.soap.SOAPException;
 
 import org.openspcoop2.testsuite.clients.ClientOneWay;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
@@ -106,7 +106,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	Repository repositoryOneWay=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ONEWAY"})
-	public void oneWay() throws FatalTestSuiteException, Exception{
+	public void oneWay() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryOneWay,CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_LINEE_GUIDA,addIDUnivoco);
 	}
 	@DataProvider (name="OneWay")
@@ -159,7 +159,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	Repository repositoryOneWayStateless=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ONEWAY_STATELESS"})
-	public void oneWayStateless() throws FatalTestSuiteException, Exception{
+	public void oneWayStateless() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.sincrono(this.repositoryOneWayStateless,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_LINEE_GUIDA_STATELESS,addIDUnivoco,true);
 	}
@@ -212,7 +212,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	Repository repositorySincrono=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".SINCRONO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincrono() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincrono() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincrono,CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_LINEE_GUIDA,addIDUnivoco);
 	}
 	@DataProvider (name="Sincrono")
@@ -262,7 +262,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	Repository repositorySincronoStateful=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".SINCRONO_STATEFUL"},
 			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoStateful() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoStateful() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoStateful,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_LINEE_GUIDA_STATEFUL,addIDUnivoco);
 	}
@@ -790,7 +790,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_asincr"})
-	public void asincronoAsimmetrico_ModalitaAsincrona() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_ModalitaAsincrona() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_LINEE_GUIDA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_ASINCRONA_LINEE_GUIDA,
@@ -888,7 +888,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona_Stateful = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_asincr_stateful"})
-	public void asincronoAsimmetrico_ModalitaAsincrona_Stateful() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_ModalitaAsincrona_Stateful() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_LINEE_GUIDA_STATEFUL,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_ASINCRONA_LINEE_GUIDA_STATEFUL,
@@ -989,7 +989,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_sincr"})
-	public void asincronoAsimmetrico_modalitaSincrona() throws FatalTestSuiteException, IOException, SOAPException{
+	public void asincronoAsimmetrico_modalitaSincrona() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_LINEE_GUIDA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA_LINEE_GUIDA,
@@ -1080,7 +1080,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona_Stateful = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_sincr_stateful"})
-	public void asincronoAsimmetrico_modalitaSincrona_Stateful() throws FatalTestSuiteException, IOException, SOAPException{
+	public void asincronoAsimmetrico_modalitaSincrona_Stateful() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_LINEE_GUIDA_STATEFUL,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_MODALITA_SINCRONA_LINEE_GUIDA_STATEFUL,
@@ -1177,7 +1177,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	Repository repositoryOneWayLoopback=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ONEWAY_LOOPBACK"})
-	public void oneWayLoopback() throws FatalTestSuiteException, Exception{
+	public void oneWayLoopback() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryOneWayLoopback,CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_LOOPBACK_LINEE_GUIDA,addIDUnivoco);
 	}
 	@DataProvider (name="OneWayLoopback")
@@ -1248,7 +1248,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaAsincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_asin_azCorrelata"})
-	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaAsincrona() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaAsincrona() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_AZIONE_CORRELATA_MODALITA_ASINCRONA_LINEE_GUIDA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_AZIONE_CORRELATA_MODALITA_ASINCRONA_LINEE_GUIDA,
@@ -1343,7 +1343,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaSincrona = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".ASINCRONO_ASIMMETRICO_sin_azCorrelata"})
-	public void asincronoAsimmetrico_AzioneCorrelata_modalitaSincrona() throws FatalTestSuiteException, IOException, SOAPException{
+	public void asincronoAsimmetrico_AzioneCorrelata_modalitaSincrona() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_AZIONE_CORRELATA_MODALITA_SINCRONA_LINEE_GUIDA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_ASIMMETRICO_CORRELATO_AZIONE_CORRELATA_MODALITA_SINCRONA_LINEE_GUIDA,
@@ -1436,7 +1436,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	 */
 	Repository repositoryConsengaAffidabile=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".RiscontroDeprecato"})
-	public void ConsegnaAffidabile() throws FatalTestSuiteException, Exception{
+	public void ConsegnaAffidabile() throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
@@ -1552,7 +1552,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 	
 	Repository repositorySincronoTESTCollaborazioneDeprecata=new Repository();
 	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,"CollaborazioneDeprecata"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoTESTCollaborazioneDeprecata() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoTESTCollaborazioneDeprecata() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBaseTESTCollaborazioneDeprecata.sincrono(this.repositorySincronoTESTCollaborazioneDeprecata,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_COLLABORAZIONE_LINEE_GUIDA,addIDUnivoco);
 	}

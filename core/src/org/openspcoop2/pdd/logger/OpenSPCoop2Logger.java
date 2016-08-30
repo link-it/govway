@@ -33,8 +33,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -49,6 +48,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppende
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpOpenSPCoopAppender;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
@@ -73,15 +73,15 @@ public class OpenSPCoop2Logger {
 	/** Logger log4j utilizzato per scrivere i tracciamenti: impostazione */
 	public static boolean loggerTracciamentoAbilitato = false;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici */
-	protected static Logger loggerMsgDiagnostico = null;
+	protected static org.apache.logging.log4j.Logger loggerMsgDiagnostico = null;
 	/** Logger log4j utilizzato per scrivere i msg diagnostici: impostazione */
 	public static boolean loggerMsgDiagnosticoAbilitato = false;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici */
-	protected static Logger loggerOpenSPCoop2 = null;
+	protected static org.apache.logging.log4j.Logger loggerOpenSPCoop2 = null;
 	/** Logger log4j utilizzato per scrivere i msg diagnostici 'readable': impostazione */
 	public static boolean loggerMsgDiagnosticoReadableAbilitato = false;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici del servizio di IntegrationManager */
-	protected static Logger loggerIntegrationManager = null;
+	protected static org.apache.logging.log4j.Logger loggerIntegrationManager = null;
 	/** Logger log4j utilizzato per scrivere i msg diagnostici 'readable' del servizio di IntegrationManager: impostazione */
 	public static boolean loggerIntegrationManagerAbilitato = false;
 	/**  Logger log4j utilizzato per effettuare un dump dei messaggi applicativi */
@@ -89,7 +89,7 @@ public class OpenSPCoop2Logger {
 	/** Logger log4j utilizzato per scrivere i dump applicativi: impostazione */
 	public static boolean loggerDumpAbilitato = false;
 	/**  Logger log4j utilizzato per segnalare a video errori gravi (FATAL) o di informazione sull'inizializzazione (INFO)*/
-	protected static Logger loggerOpenSPCoopConsole = Logger.getLogger("openspcoop2.startup");
+	protected static Logger loggerOpenSPCoopConsole = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 	/** Logger log4j utilizzato per segnalare a video errori gravi (FATAL) o di informazione sull'inizializzazione (INFO) */
 	protected static boolean loggerOpenSPCoopConsoleStartupAgganciatoLog = false;
 	/**  Logger log4j utilizzato per il core di OpenSPCoop */
@@ -124,7 +124,7 @@ public class OpenSPCoop2Logger {
 	}
 	
 	/**
-	 * Il Metodo si occupa di inizializzare il Logger utilizzato da OpenSPCoop (file,DB scelti da logger.log4j.properties)
+	 * Il Metodo si occupa di inizializzare il Logger utilizzato da OpenSPCoop (file,DB scelti da openspcoop2.log4j2.properties)
 	 *
 	 * @param logConsole Log console
 	 * @return true in caso di inizializzazione con successo, false altrimenti.
@@ -143,14 +143,14 @@ public class OpenSPCoop2Logger {
 			}
 			
 			java.util.Properties loggerProperties = new java.util.Properties();
-			isLogger = OpenSPCoop2Logger.class.getResourceAsStream("/logger.log4j.properties");
+			isLogger = OpenSPCoop2Logger.class.getResourceAsStream("/openspcoop2.log4j2.properties");
 			if(isLogger!=null){
 				loggerProperties.load(isLogger);
 			}
 			
 			// Cerco eventuale ridefinizione
 			CollectionProperties loggerPropertiesRidefinito =  
-					PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,Logger.getLogger(OpenSPCoop2Logger.class), 
+					PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,LoggerWrapperFactory.getLogger(OpenSPCoop2Logger.class), 
 							CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES, CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, 
 							confDir);
 			
@@ -168,7 +168,8 @@ public class OpenSPCoop2Logger {
 				}
 			}
 			
-			PropertyConfigurator.configure(loggerProperties);
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			
 			return true;
 		}catch(Exception e){
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.error("Riscontrato errore durante l'inizializzazione del sistema di logging di OpenSPCoop: "
@@ -194,9 +195,9 @@ public class OpenSPCoop2Logger {
 			
 			// Originale
 			java.util.Properties loggerProperties = new java.util.Properties();
-			java.io.File loggerFile = new java.io.File(rootDirectory+"logger.log4j.properties");
+			java.io.File loggerFile = new java.io.File(rootDirectory+"openspcoop2.log4j2.properties");
 			if(loggerFile .exists() == false ){
-				loggerProperties.load(OpenSPCoop2Logger.class.getResourceAsStream("/logger.log4j.properties"));
+				loggerProperties.load(OpenSPCoop2Logger.class.getResourceAsStream("/openspcoop2.log4j2.properties"));
 			}else{
 				FileInputStream fin = null;
 				try{
@@ -243,25 +244,25 @@ public class OpenSPCoop2Logger {
 				}
 			}
 
-			PropertyConfigurator.configure(loggerProperties);
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			
 			// STARTUP CONSOLE
-			String tmp = loggerProperties.getProperty("log4j.category.openspcoop2.startup");
+			String tmp = loggerProperties.getProperty("logger.openspcoop2_startup.level");
 			if(tmp!=null){
-				if(!tmp.startsWith("OFF")){
+				if(!tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsoleStartupAgganciatoLog = true;
 				}
 			}
 			
 			// TRACCIAMENTO
-			OpenSPCoop2Logger.loggerTracciamento = Logger.getLogger("openspcoop2.tracciamento");
+			OpenSPCoop2Logger.loggerTracciamento = LoggerWrapperFactory.getLogger("openspcoop2.tracciamento");
 			if(OpenSPCoop2Logger.loggerTracciamento==null)
 				throw new Exception("Logger openspcoop2.tracciamento non trovato");
 			// Abilitazione log da Log4j
-			tmp = loggerProperties.getProperty("log4j.category.openspcoop2.tracciamento");
+			tmp = loggerProperties.getProperty("logger.openspcoop2_tracciamento.level");
 			if(tmp!=null){
 				tmp.trim();
-				if(tmp.startsWith("OFF")){
+				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging delle tracce disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerTracciamentoAbilitato = false;
 				}
@@ -270,14 +271,14 @@ public class OpenSPCoop2Logger {
 			}
 			
 			// MESSAGGI DIAGNOSTICI
-			OpenSPCoop2Logger.loggerMsgDiagnostico = Logger.getLogger("openspcoop2.msgDiagnostico");
+			OpenSPCoop2Logger.loggerMsgDiagnostico = LoggerWrapperFactory.getLoggerImpl("openspcoop2.msgDiagnostico");
 			if(OpenSPCoop2Logger.loggerMsgDiagnostico==null)
 				throw new Exception("Logger openspcoop2.msgDiagnostico non trovato");
 			// Abilitazione log da Log4j
-			tmp = loggerProperties.getProperty("log4j.category.openspcoop2.msgDiagnostico");
+			tmp = loggerProperties.getProperty("logger.openspcoop2_msgDiagnostico.level");
 			if(tmp!=null){
 				tmp.trim();
-				if(tmp.startsWith("OFF")){
+				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei messaggi diagnostici disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato = false;
 				}else
@@ -285,14 +286,14 @@ public class OpenSPCoop2Logger {
 			}
 			
 			// MESSAGGI DIAGNOSTICI LEGGIBILI
-			OpenSPCoop2Logger.loggerOpenSPCoop2 = Logger.getLogger("openspcoop2.portaDiDominio");
+			OpenSPCoop2Logger.loggerOpenSPCoop2 = LoggerWrapperFactory.getLoggerImpl("openspcoop2.portaDiDominio");
 			if(OpenSPCoop2Logger.loggerOpenSPCoop2==null)
 				throw new Exception("Logger openspcoop2.portaDiDominio non trovato");
 			// Abilitazione log da Log4j
-			tmp = loggerProperties.getProperty("log4j.category.openspcoop2.portaDiDominio");
+			tmp = loggerProperties.getProperty("logger.openspcoop2_portaDiDominio.level");
 			if(tmp!=null){
 				tmp.trim();
-				if(tmp.startsWith("OFF")){
+				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei messaggi diagnostici 'readable' disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato = false;
 				}else
@@ -300,14 +301,14 @@ public class OpenSPCoop2Logger {
 			}
 			
 			// MESSAGGI DIAGNOSTICI DELL'INTEGRATION MANAGER
-			OpenSPCoop2Logger.loggerIntegrationManager = Logger.getLogger("openspcoop2.integrationManager");
+			OpenSPCoop2Logger.loggerIntegrationManager = LoggerWrapperFactory.getLoggerImpl("openspcoop2.integrationManager");
 			if(OpenSPCoop2Logger.loggerIntegrationManager==null)
 				throw new Exception("Logger openspcoop2.integrationManager non trovato");
 			// Abilitazione log da Log4j
-			tmp = loggerProperties.getProperty("log4j.category.openspcoop2.integrationManager");
+			tmp = loggerProperties.getProperty("logger.openspcoop2_integrationManager.level");
 			if(tmp!=null){
 				tmp.trim();
-				if(tmp.startsWith("OFF")){
+				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei messaggi diagnostici 'readable' per il servizio di IntegrationManager disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerIntegrationManagerAbilitato = false;
 				}else
@@ -315,14 +316,14 @@ public class OpenSPCoop2Logger {
 			}
 			
 			// DUMP APPLICATIVO
-			OpenSPCoop2Logger.loggerDump = Logger.getLogger("openspcoop2.dump");
+			OpenSPCoop2Logger.loggerDump = LoggerWrapperFactory.getLogger("openspcoop2.dump");
 			if(OpenSPCoop2Logger.loggerDump==null)
 				throw new Exception("Logger openspcoop2.dump non trovato");
 			// Abilitazione log da Log4j
-			tmp = loggerProperties.getProperty("log4j.category.openspcoop2.dump");
+			tmp = loggerProperties.getProperty("logger.openspcoop2_dump.level");
 			if(tmp!=null){
 				tmp.trim();
-				if(tmp.startsWith("OFF")){
+				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei contenuti applicativi (dump) disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerDumpAbilitato = false;
 				}
@@ -331,37 +332,37 @@ public class OpenSPCoop2Logger {
 			}
 
 			// OPENSPCOOP CORE
-			OpenSPCoop2Logger.loggerOpenSPCoopCore = Logger.getLogger("openspcoop2.core");
+			OpenSPCoop2Logger.loggerOpenSPCoopCore = LoggerWrapperFactory.getLogger("openspcoop2.core");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopCore==null)
 				throw new Exception("Logger openspcoop2.core non trovato");
 			
 			// TIMERS LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopTimers = Logger.getLogger("openspcoop2.timers");
+			OpenSPCoop2Logger.loggerOpenSPCoopTimers = LoggerWrapperFactory.getLogger("openspcoop2.timers");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTimers==null)
 				throw new Exception("Logger openspcoop2.timers non trovato");
 			
 			// RESOURCES LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopResources = Logger.getLogger("openspcoop2.resources");
+			OpenSPCoop2Logger.loggerOpenSPCoopResources = LoggerWrapperFactory.getLogger("openspcoop2.resources");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopResources==null)
 				throw new Exception("Logger openspcoop2.resources non trovato");
 			
 			// CONFIGURAZIONE SISTEMA LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema = Logger.getLogger("openspcoop2.configurazioneSistema");
+			OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema = LoggerWrapperFactory.getLogger("openspcoop2.configurazioneSistema");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema==null)
 				throw new Exception("Logger openspcoop2.configurazioneSistema non trovato");
 			
 			// CONNETTORI LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopConnettori = Logger.getLogger("openspcoop2.connettori");
+			OpenSPCoop2Logger.loggerOpenSPCoopConnettori = LoggerWrapperFactory.getLogger("openspcoop2.connettori");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConnettori==null)
 				throw new Exception("Logger openspcoop2.connettori non trovato");
 			
 			// RAW DATA SERVIZIO PD LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD = Logger.getLogger("openspcoop2.dumpBinarioPD");
+			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD = LoggerWrapperFactory.getLogger("openspcoop2.dumpBinarioPD");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD==null)
 				throw new Exception("Logger openspcoop2.dumpBinarioPD non trovato");
 			
 			// RAW DATA SERVIZIO PD LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA = Logger.getLogger("openspcoop2.dumpBinarioPA");
+			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA = LoggerWrapperFactory.getLogger("openspcoop2.dumpBinarioPA");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA==null)
 				throw new Exception("Logger openspcoop2.dumpBinarioPA non trovato");
 			

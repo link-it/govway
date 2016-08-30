@@ -33,7 +33,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -1277,7 +1277,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			SOAPFault fault = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
-			// Ricerco connettore nel className.properties
+			// Ricerco connettore
 			ClassNameProperties prop = ClassNameProperties.getInstance();
 			String connectorClass = prop.getConnettore(tipoConnector);
 			if(connectorClass == null){

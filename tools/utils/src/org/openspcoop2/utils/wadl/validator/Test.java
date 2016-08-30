@@ -27,8 +27,9 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jvnet.ws.wadl.HTTPMethods;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.wadl.ApplicationWrapper;
@@ -58,7 +59,7 @@ public class Test {
 		AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 		
 		URI uri = Test.class.getResource("/org/openspcoop2/utils/wadl/test.wadl").toURI();
-		Logger log = Logger.getRootLogger();
+		Logger log = LoggerWrapperFactory.getLogger(Test.class);
 		WADLUtilities wadlUtilities = WADLUtilities.getInstance(xmlUtils);
 		
 		//ApplicationWrapper wr = wadlUtilities.readWADLFromURI(log, uri, true, true, true);

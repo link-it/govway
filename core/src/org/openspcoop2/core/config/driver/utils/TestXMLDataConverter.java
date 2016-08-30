@@ -19,8 +19,6 @@
  *
  */
 
-
-
 package org.openspcoop2.core.config.driver.utils;
 
 import java.io.File;
@@ -28,12 +26,12 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
-import org.openspcoop2.core.config.driver.utils.XMLDataConverter;
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Inizializza una configurazione
@@ -73,17 +71,16 @@ public class TestXMLDataConverter {
 		String loggerValue = null;
 		try{
 			if(args_logger!=null){
-				loggerValue = args_logger;
+				LoggerWrapperFactory.setLogConfiguration(args_logger);
 			}else{
-				loggerValue = "/xml2backend.log4j.properties";
+				LoggerWrapperFactory.setLogConfiguration(TestXMLDataConverter.class.getResource("/xml2backend.log4j2.properties"));
 			}
-			PropertyConfigurator.configure(loggerValue);
 		}catch(Exception e) {
 			String errorMsg = "Errore durante il caricamento del file di log loggerValue["+loggerValue+"] : "+e.getMessage();
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}	
-		Logger log = Logger.getLogger("gestoreDatiConfigurazione");
+		Logger log = LoggerWrapperFactory.getLogger("gestoreDatiConfigurazione");
 		
 		java.util.Properties reader = new java.util.Properties();
 		try{
@@ -175,6 +172,13 @@ public class TestXMLDataConverter {
 			throw new Exception(errorMsg,e);
 		}
 
+		try{
+			ExtendedInfoManager.initialize(new Loader(TestXMLDataConverter.class.getClassLoader()), null, null, null);
+		}catch(Exception e){
+			log.error("Inizializzazione [ExtendedInfoManager] fallita",e);
+			return;
+		}
+		
 		Connection connectionSQL = null;
 		try{
 			// XMLDataConverter

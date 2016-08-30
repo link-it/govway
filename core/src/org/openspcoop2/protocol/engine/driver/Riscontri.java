@@ -30,13 +30,14 @@ import java.sql.ResultSet;
 import java.util.Date;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -97,7 +98,7 @@ public class Riscontri  {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = Logger.getLogger(Riscontri.class.getName());
+			this.log = LoggerWrapperFactory.getLogger(Riscontri.class.getName());
 		}
 	}
 	

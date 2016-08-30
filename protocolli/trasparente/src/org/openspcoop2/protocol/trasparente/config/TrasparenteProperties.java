@@ -23,9 +23,10 @@ package org.openspcoop2.protocol.trasparente.config;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -65,7 +66,7 @@ public class TrasparenteProperties {
 		if(log != null)
 			this.log = log;
 		else
-			this.log = Logger.getLogger("TrasparenteProperties");
+			this.log = LoggerWrapperFactory.getLogger("TrasparenteProperties");
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 

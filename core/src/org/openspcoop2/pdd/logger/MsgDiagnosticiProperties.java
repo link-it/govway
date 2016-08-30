@@ -28,9 +28,10 @@ import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.MsgDiagnosticiInstanceProperties;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.PropertiesReader;
 
@@ -53,7 +54,7 @@ public class MsgDiagnosticiProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'msgDiagnostici.properties' */
+	/** Reader delle proprieta' impostate nel file 'openspcoop2.msgDiagnostici.properties' */
 	private MsgDiagnosticiInstanceProperties reader;
 
 	/** Copia Statica */
@@ -72,7 +73,7 @@ public class MsgDiagnosticiProperties {
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = Logger.getLogger(MsgDiagnosticiProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(MsgDiagnosticiProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader  = new Properties();
@@ -81,14 +82,14 @@ public class MsgDiagnosticiProperties {
 			if(location!=null){
 				properties = new FileInputStream(location);
 			}else{
-				properties = MsgDiagnosticiProperties.class.getResourceAsStream("/msgDiagnostici.properties");
+				properties = MsgDiagnosticiProperties.class.getResourceAsStream("/openspcoop2.msgDiagnostici.properties");
 			}
 			if(properties==null){
-				throw new Exception("File '/msgDiagnostici.properties' not found");
+				throw new Exception("File '/openspcoop2.msgDiagnostici.properties' not found");
 			}
 			propertiesReader.load(properties);		    
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'msgDiagnostici.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.msgDiagnostici.properties': \n\n"+e.getMessage());
 			throw new Exception("MsgDiagnosticiProperties initialize error: "+e.getMessage());
 		}finally{
 			try{

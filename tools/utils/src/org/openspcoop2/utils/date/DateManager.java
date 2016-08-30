@@ -30,7 +30,8 @@ import java.util.GregorianCalendar;
 import java.util.Properties;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Loader;
 
@@ -60,7 +61,7 @@ public class DateManager {
 				if(log!=null)
 					DateManager.log = log;
 				else
-					DateManager.log = Logger.getLogger(DateManager.class);
+					DateManager.log = LoggerWrapperFactory.getLogger(DateManager.class);
 				DateManager.dataManager = (IDate) Loader.getInstance().newInstance(className);
 				DateManager.dataManager.init(properties);
 			}catch(Exception e){
@@ -94,7 +95,7 @@ public class DateManager {
 	public static Date getDate() {
 		try{
 			if(DateManager.dataManager==null){
-				Logger log = Logger.getLogger(DateManager.class);
+				Logger log = LoggerWrapperFactory.getLogger(DateManager.class);
 				log.warn("DateManager non inizializzato");
 				DateManager.initializeDataManager("org.openspcoop2.utils.date.SystemDate", new Properties(), log);
 			}
@@ -113,7 +114,7 @@ public class DateManager {
 	public static long getTimeMillis() {
 		try{
 			if(DateManager.dataManager==null){
-				Logger log = Logger.getLogger(DateManager.class);
+				Logger log = LoggerWrapperFactory.getLogger(DateManager.class);
 				log.warn("DateManager non inizializzato");
 				DateManager.initializeDataManager("org.openspcoop2.utils.date.SystemDate", new Properties(), log);
 			}
@@ -132,7 +133,7 @@ public class DateManager {
 	public static Timestamp getTimestamp() {
 		try{
 			if(DateManager.dataManager==null){
-				Logger log = Logger.getLogger(DateManager.class);
+				Logger log = LoggerWrapperFactory.getLogger(DateManager.class);
 				log.warn("DateManager non inizializzato");
 				DateManager.initializeDataManager("org.openspcoop2.utils.date.SystemDate", new Properties(), log);
 			}
@@ -151,7 +152,7 @@ public class DateManager {
 	public static Calendar getCalendar() throws UtilsException{
 		try{
 			if(DateManager.dataManager==null){
-				Logger log = Logger.getLogger(DateManager.class);
+				Logger log = LoggerWrapperFactory.getLogger(DateManager.class);
 				log.warn("DateManager non inizializzato");
 				DateManager.initializeDataManager("org.openspcoop2.utils.date.SystemDate", new Properties(), log);
 			}

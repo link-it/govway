@@ -44,7 +44,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
@@ -104,7 +104,7 @@ public class AutorizzazioneContenuto {
 	 */
 	Repository repositorysincronoPD_OK=new Repository();
 	@Test(groups={AutorizzazioneContenuto.ID_GRUPPO,AutorizzazioneContenuto.ID_GRUPPO+".SINCRONO_PD_OK"},description="Test di tipo sincronoPD_OK, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoPD_OK() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoPD_OK() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorysincronoPD_OK,CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_OK,addIDUnivoco);
 	}
 	@DataProvider (name="sincronoPD_OK")
@@ -163,7 +163,7 @@ public class AutorizzazioneContenuto {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con autorizzazione contenuto sincrono KO (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con autorizzazione contenuto sincrono KO (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con autorizzazione contenuto sincrono KO (PortaDelegata: "+CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO+") non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo actor ["+CostantiPdD.OPENSPCOOP2+"]");
@@ -195,7 +195,7 @@ public class AutorizzazioneContenuto {
 	 */
 	Repository repositorysincronoPA_OK=new Repository();
 	@Test(groups={AutorizzazioneContenuto.ID_GRUPPO,AutorizzazioneContenuto.ID_GRUPPO+".SINCRONO_PA_OK"},description="Test di tipo sincronoPA_OK, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoPA_OK() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoPA_OK() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase.sincrono(this.repositorysincronoPA_OK,CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SPCOOP_SINCRONO_OK,addIDUnivoco);
 	}
 	@DataProvider (name="sincronoPA_OK")
@@ -234,7 +234,7 @@ public class AutorizzazioneContenuto {
 	 */
 	Repository repositorysincronoPA_KO=new Repository();
 	@Test(groups={AutorizzazioneContenuto.ID_GRUPPO,AutorizzazioneContenuto.ID_GRUPPO+".SINCRONO_PA_KO"})
-	public void sincronoPA_KO()throws FatalTestSuiteException, SOAPException, Exception{
+	public void sincronoPA_KO()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -282,7 +282,7 @@ public class AutorizzazioneContenuto {
 			}
 			try {
 				client.run();
-				throw new FatalTestSuiteException("Invocazione PA con autorizzazione contenuto SPCoop KO, non ha causato errori.");
+				throw new TestSuiteException("Invocazione PA con autorizzazione contenuto SPCoop KO, non ha causato errori.");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [Client]");

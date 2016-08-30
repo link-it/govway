@@ -28,10 +28,11 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -52,7 +53,7 @@ public class ClassNameProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'className.properties' */
+	/** Reader delle proprieta' impostate nel file 'openspcoop2.classRegistry.properties' */
 	private ClassNameInstanceProperties reader;
 
 	/** Copia Statica */
@@ -71,19 +72,19 @@ public class ClassNameProperties {
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = Logger.getLogger(ClassNameProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(ClassNameProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
 		try{  
-		    properties = ClassNameProperties.class.getResourceAsStream("/className.properties");
+		    properties = ClassNameProperties.class.getResourceAsStream("/openspcoop2.classRegistry.properties");
 			if(properties==null){
-				throw new Exception("File '/className.properties' not found");
+				throw new Exception("File '/openspcoop2.classRegistry.properties' not found");
 			}
 		    propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'className.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.classRegistry.properties': \n\n"+e.getMessage());
 		    throw new Exception("ClassName initialize error: "+e.getMessage());
 		}finally{
 		    try{

@@ -27,7 +27,7 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.Enumeration;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -63,6 +63,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -262,7 +263,7 @@ public class RegistroServiziReader {
 			if(aLog!=null)
 				this.log = aLog;
 			else
-				this.log = Logger.getLogger(RegistroServiziReader.class);
+				this.log = LoggerWrapperFactory.getLogger(RegistroServiziReader.class);
 			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX);
 			RegistroServiziReader.initialize = true;

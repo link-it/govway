@@ -35,7 +35,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -64,6 +64,7 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.security.message.MessageSecurityContext;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.w3c.dom.Element;
 
@@ -98,7 +99,7 @@ public class Imbustamento  {
 		if(aLog!=null)
 			this.log = aLog;
 		else
-			this.log = Logger.getLogger(Imbustamento.class);
+			this.log = LoggerWrapperFactory.getLogger(Imbustamento.class);
 		this.protocolFactory = protocolFactory;
 		
 		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();

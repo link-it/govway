@@ -25,7 +25,8 @@ package org.openspcoop2.testsuite.db;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -39,7 +40,7 @@ import org.openspcoop2.utils.Utilities;
 public class DatabaseProperties {
 
 	/** Logger utilizzato per errori eventuali. */
-	private static Logger log = Logger.getLogger("DatabaseProperties");
+	private static Logger log = LoggerWrapperFactory.getLogger("DatabaseProperties");
 
 	/** File di configurazione dell'accesso al database */
 	public static final String DATABASE_PROPERTIES = "database.properties";

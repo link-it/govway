@@ -31,7 +31,8 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /***
  * 
@@ -48,7 +49,7 @@ public class ViewExpiredListener  implements PhaseListener {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private static Logger log = Logger.getLogger(ViewExpiredListener.class);
+	private static Logger log = LoggerWrapperFactory.getLogger(ViewExpiredListener.class);
 
 	@Override
 	public void beforePhase(PhaseEvent event) {

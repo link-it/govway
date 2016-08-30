@@ -50,9 +50,9 @@
 				<include name="${jboss_deployment_structure}" />
 			</webinf>
 			<classes dir="${cfg}" >
-				<include name="loader.log4j.properties"/>
+				<include name="loader.log4j2.properties"/>
 				<include name="loader.properties"/>
-				<include name="${log4j_properties}" />
+				<include name="log4j2.properties" />
 			</classes>
 			<classes dir="${build_loaderConsole}/tmp" >
 				<include name="loader.datasource.properties"/>
@@ -89,7 +89,8 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="${log4j_jar}"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${dist_loaderConsole}" >
 				<include name="openspcoop2*.jar"/>

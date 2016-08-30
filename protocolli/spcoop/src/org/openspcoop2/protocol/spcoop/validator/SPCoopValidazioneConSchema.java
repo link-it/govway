@@ -31,7 +31,7 @@ import java.util.Iterator;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.xml.sax.SAXException;
@@ -87,7 +88,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 		if(protocolFactory.getLogger()!=null)
 			this.log = protocolFactory.getLogger();
 		else
-			this.log = Logger.getLogger("ValidazioneConSchemaSPCoop");
+			this.log = LoggerWrapperFactory.getLogger("ValidazioneConSchemaSPCoop");
 		
 		this.xmlUtils = XMLUtils.getInstance();
 	}
@@ -128,7 +129,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 			return true; // schema gia' inizializzato.
 
 		if(log==null)
-			log = Logger.getLogger("ValidazioneConSchemaSPCoop");
+			log = LoggerWrapperFactory.getLogger("ValidazioneConSchemaSPCoop");
 		
 		try{
 			SPCoopProperties spcoopProperties = SPCoopProperties.getInstance(log);

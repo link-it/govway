@@ -57,7 +57,7 @@ public class PortaApplicativaSoap12Service extends Service {
 			url = PortaApplicativaSoap12Service.class.getClassLoader().getResource("/config/PortaApplicativaAll_PortSoap12.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.Logger.getLogger(PortaApplicativaSoap12Service.class.getName())
+			java.util.logging.LoggerWrapperFactory.getLogger(PortaApplicativaSoap12Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/PortaApplicativaAll_PortSoap12.wsdl");
         }       

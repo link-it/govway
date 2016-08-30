@@ -30,7 +30,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.tracciamento.Allegati;
 import org.openspcoop2.core.tracciamento.Allegato;
 import org.openspcoop2.core.tracciamento.Busta;

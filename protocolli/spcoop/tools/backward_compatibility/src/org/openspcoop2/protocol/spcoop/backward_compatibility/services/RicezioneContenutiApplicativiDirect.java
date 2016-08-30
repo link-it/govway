@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.Costanti;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Servlet di ingresso al servizio DirectPD che costruisce il SOAPMessage gli applica gli handlers
@@ -90,7 +91,7 @@ public class RicezioneContenutiApplicativiDirect extends HttpServlet {
 			try{
 				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				if(log==null){
-					log = Logger.getLogger(RicezioneContenutiApplicativiDirect.class);
+					log = LoggerWrapperFactory.getLogger(RicezioneContenutiApplicativiDirect.class);
 				}
 				log.error(e.getMessage(), e);
 			}catch(Exception eLog){}
@@ -131,7 +132,7 @@ public class RicezioneContenutiApplicativiDirect extends HttpServlet {
 			try{
 				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				if(log==null){
-					log = Logger.getLogger(RicezioneContenutiApplicativiDirect.class);
+					log = LoggerWrapperFactory.getLogger(RicezioneContenutiApplicativiDirect.class);
 				}
 				log.error(e.getMessage(), e);
 			}catch(Exception eLog){}

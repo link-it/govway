@@ -28,7 +28,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -80,7 +80,7 @@ public class NodeSenderDB extends AbstractCore implements INodeSender{
 				else{
 					//	initDBManager();
 					ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
-					//		Ricerco connettore nel className.properties
+					//		Ricerco connettore
 					String adapterClass = classNameProperties.getJDBCAdapter(jdbcAdapter);
 					if(adapterClass == null){
 						NodeSenderDB.log.error("Inizializzione GestoreMessaggi non riuscita: AdapterClass non registrata ["+NodeSenderDB.propertiesReader.getRepositoryJDBCAdapter()+"]");

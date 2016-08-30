@@ -23,12 +23,13 @@
 
 package org.openspcoop2.protocol.engine.builder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -59,7 +60,7 @@ public class DiagnosticoBuilder  {
 		if(aLog!=null)
 			this.log = aLog;
 		else
-			this.log = Logger.getLogger(DiagnosticoBuilder.class);
+			this.log = LoggerWrapperFactory.getLogger(DiagnosticoBuilder.class);
 		this.protocolFactory = protocolFactory;
 		try{
 			this.diagnosticoProtocolBuilder = this.protocolFactory.createXMLDiagnosticoBuilder();

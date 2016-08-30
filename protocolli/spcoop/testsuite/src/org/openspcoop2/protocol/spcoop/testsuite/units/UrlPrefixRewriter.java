@@ -47,7 +47,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -135,7 +135,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -208,7 +208,7 @@ public class UrlPrefixRewriter {
 	Date testPA1StartTime = null;
 	Repository repository_testPA1=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_1"})
-	public void testPA1()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA1()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -254,7 +254,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -427,7 +427,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -500,7 +500,7 @@ public class UrlPrefixRewriter {
 	Date testPA2StartTime = null;
 	Repository repository_testPA2=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_2"})
-	public void testPA2()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA2()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -546,7 +546,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -715,7 +715,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -781,7 +781,7 @@ public class UrlPrefixRewriter {
 	Date testPA3StartTime = null;
 	Repository repository_testPA3=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_3"})
-	public void testPA3()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA3()throws TestSuiteException,SOAPException, Exception{
 		
 		this.testPA3StartTime = new Date();
 		
@@ -825,7 +825,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -965,7 +965,7 @@ public class UrlPrefixRewriter {
 
 	Repository repository_testPD4=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PD_4"})
-	public void testPD4() throws FatalTestSuiteException, IOException, SOAPException{
+	public void testPD4() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase_testPD4.sincrono(this.repository_testPD4,CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_4,true);
 	}
 	@DataProvider (name="testPD4Provider")
@@ -998,7 +998,7 @@ public class UrlPrefixRewriter {
 	 */
 	Repository repository_testPA4=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_4"})
-	public void testPA4()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA4()throws TestSuiteException,SOAPException, Exception{
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repository_testPA4.add(egov);
@@ -1190,7 +1190,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -1263,7 +1263,7 @@ public class UrlPrefixRewriter {
 	Date testPA5StartTime = null;
 	Repository repository_testPA5=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_5"})
-	public void testPA5()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA5()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1309,7 +1309,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1483,7 +1483,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -1556,7 +1556,7 @@ public class UrlPrefixRewriter {
 	Date testPA6StartTime = null;
 	Repository repository_testPA6=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_6"})
-	public void testPA6()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA6()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1602,7 +1602,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1756,7 +1756,7 @@ public class UrlPrefixRewriter {
 
 	Repository repository_testPD7=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PD_7"})
-	public void testPD7() throws FatalTestSuiteException, IOException, SOAPException{
+	public void testPD7() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBase_testPD7.sincrono(this.repository_testPD7,CostantiTestSuite.PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_7,true);
 	}
 	@DataProvider (name="testPD7Provider")
@@ -1801,7 +1801,7 @@ public class UrlPrefixRewriter {
 	 */
 	Repository repository_testPA7=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_7"})
-	public void testPA7()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA7()throws TestSuiteException,SOAPException, Exception{
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repository_testPA7.add(egov);
@@ -2005,7 +2005,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -2078,7 +2078,7 @@ public class UrlPrefixRewriter {
 	Date testPA8StartTime = null;
 	Repository repository_testPA8=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_8"})
-	public void testPA8()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA8()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2124,7 +2124,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2303,7 +2303,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -2376,7 +2376,7 @@ public class UrlPrefixRewriter {
 	Date testPA9StartTime = null;
 	Repository repository_testPA9=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_9"})
-	public void testPA9()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA9()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2422,7 +2422,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2601,7 +2601,7 @@ public class UrlPrefixRewriter {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata con identificazione dinamica dei dati non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -2673,7 +2673,7 @@ public class UrlPrefixRewriter {
 	Date testPA10StartTime = null;
 	Repository repository_testPA10=new Repository();
 	@Test(groups={UrlPrefixRewriter.ID_GRUPPO,UrlPrefixRewriter.ID_GRUPPO+".PA_10"})
-	public void testPA10()throws FatalTestSuiteException,SOAPException, Exception{
+	public void testPA10()throws TestSuiteException,SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2719,7 +2719,7 @@ public class UrlPrefixRewriter {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA.");
-					throw new FatalTestSuiteException("Invocazione PA, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());

@@ -32,7 +32,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -43,9 +42,9 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Verifica le tracce
@@ -75,7 +74,7 @@ public abstract class AbstractVerificatoreTraccia {
 	// **** PREPARED STATEMENT *******
 	
 	// Traccia
-	protected PreparedStatement prepareStatement(String idMessaggio) throws FatalTestSuiteException{
+	protected PreparedStatement prepareStatement(String idMessaggio) throws TestSuiteException{
 		try{
 			PreparedStatement pstmt = this.con
 					.prepareStatement("select * from "+CostantiDB.TRACCE+" where "+this.getColumnId()+"=? AND "+
@@ -87,7 +86,7 @@ public abstract class AbstractVerificatoreTraccia {
 			throw new TestSuiteException(e,e.getMessage());
 		}
 	}
-	protected PreparedStatement prepareStatement(String idMessaggio,IDSoggetto idPortaMessaggio) throws FatalTestSuiteException{
+	protected PreparedStatement prepareStatement(String idMessaggio,IDSoggetto idPortaMessaggio) throws TestSuiteException{
 		try{
 			PreparedStatement pstmt = this.con
 					.prepareStatement("select * from "+CostantiDB.TRACCE+" where "+this.getColumnId()+"=? AND "+
@@ -104,7 +103,7 @@ public abstract class AbstractVerificatoreTraccia {
 		}
 	}
 	protected PreparedStatement prepareStatement(String idMessaggio,
-			DatiServizioAzione datiServizioAzione) throws FatalTestSuiteException {
+			DatiServizioAzione datiServizioAzione) throws TestSuiteException {
 		try{
 			String tipoServizio = datiServizioAzione.getTipoServizio();
 			String nomeServizio = datiServizioAzione.getNomeServizio();
@@ -150,7 +149,7 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	// traccia riscontri
-	protected PreparedStatement prepareStatementListaRiscontri(String idMessaggioPortaRiscontro,String idRiscontro) throws FatalTestSuiteException {
+	protected PreparedStatement prepareStatementListaRiscontri(String idMessaggioPortaRiscontro,String idRiscontro) throws TestSuiteException {
 		try{
 			PreparedStatement pstmt = null;
 			if(idMessaggioPortaRiscontro!=null){
@@ -179,16 +178,16 @@ public abstract class AbstractVerificatoreTraccia {
 	// TRACCIA
 	
 	
-	public boolean isTraced(String idMessaggio) throws FatalTestSuiteException {
+	public boolean isTraced(String idMessaggio) throws TestSuiteException {
 		return _isTraced(this.prepareStatement(idMessaggio));
 	}
-	public boolean isTraced(String idMessaggio,IDSoggetto idPortaMessaggio) throws FatalTestSuiteException {
+	public boolean isTraced(String idMessaggio,IDSoggetto idPortaMessaggio) throws TestSuiteException {
 		return _isTraced(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
-	public boolean isTraced(String idMessaggio, DatiServizioAzione datiServizioAzione) throws FatalTestSuiteException {
+	public boolean isTraced(String idMessaggio, DatiServizioAzione datiServizioAzione) throws TestSuiteException {
 		return _isTraced(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
-	private boolean _isTraced(PreparedStatement pstmt) throws FatalTestSuiteException {
+	private boolean _isTraced(PreparedStatement pstmt) throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -213,19 +212,19 @@ public abstract class AbstractVerificatoreTraccia {
 
 
 	public boolean isTracedRiferimentoMessaggio(String idMessaggio, String riferimentoMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedRiferimentoMessaggio(this.prepareStatement(idMessaggio),riferimentoMessaggio);
 	}
 	public boolean isTracedRiferimentoMessaggio(String idMessaggio,IDSoggetto idPortaMessaggio, String riferimentoMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedRiferimentoMessaggio(this.prepareStatement(idMessaggio,idPortaMessaggio),riferimentoMessaggio);
 	}
 	public boolean isTracedRiferimentoMessaggio(String idMessaggio,DatiServizioAzione datiServizioAzione, 
 			String riferimentoMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedRiferimentoMessaggio(this.prepareStatement(idMessaggio,datiServizioAzione),riferimentoMessaggio);
 	}
-	private boolean _isTracedRiferimentoMessaggio(PreparedStatement pstmt,String riferimentoMessaggio) throws FatalTestSuiteException {
+	private boolean _isTracedRiferimentoMessaggio(PreparedStatement pstmt,String riferimentoMessaggio) throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -264,18 +263,18 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	public int countTracce(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countTracce(this.prepareStatement(idMessaggio));
 	}
 	public int countTracce(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countTracce(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public int countTracce(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countTracce(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
-	private int _countTracce(PreparedStatement pstmt) throws FatalTestSuiteException {
+	private int _countTracce(PreparedStatement pstmt) throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -302,19 +301,19 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	public String[] getValuesTraced(String idMessaggio,String colonna)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getValuesTraced(this.prepareStatement(idMessaggio),colonna);
 	}
 	public String[] getValuesTraced(String idMessaggio,IDSoggetto idPortaMessaggio,String colonna)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getValuesTraced(this.prepareStatement(idMessaggio,idPortaMessaggio),colonna);
 	}
 	public String[] getValuesTraced(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String colonna)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getValuesTraced(this.prepareStatement(idMessaggio,datiServizioAzione),colonna);
 	}
-	private String[] _getValuesTraced(PreparedStatement pstmt,String colonna) throws FatalTestSuiteException{
+	private String[] _getValuesTraced(PreparedStatement pstmt,String colonna) throws TestSuiteException{
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -355,20 +354,20 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** DATI GENERALI
 	
 	public boolean isTracedRuoloPdd(String idMessaggio, String ruoloPdd)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedRuoloPdd(this.prepareStatement(idMessaggio),ruoloPdd);
 	}
 	public boolean isTracedRuoloPdd(String idMessaggio,IDSoggetto idPortaMessaggio, String ruoloPdd)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedRuoloPdd(this.prepareStatement(idMessaggio,idPortaMessaggio),ruoloPdd);
 	}
 	public boolean isTracedRuoloPdd(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String ruoloPdd)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedRuoloPdd(this.prepareStatement(idMessaggio,datiServizioAzione),ruoloPdd);
 	}
 	private boolean _isTracedRuoloPdd(PreparedStatement pstmt, String ruoloPdd)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -408,20 +407,20 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 
 	public boolean isTracedTipoTraccia(String idMessaggio, TipoTraccia tipoTraccia)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTipoTraccia(this.prepareStatement(idMessaggio),tipoTraccia);
 	}
 	public boolean isTracedTipoTraccia(String idMessaggio,IDSoggetto idPortaMessaggio, TipoTraccia tipoTraccia)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTipoTraccia(this.prepareStatement(idMessaggio,idPortaMessaggio),tipoTraccia);
 	}
 	public boolean isTracedTipoTraccia(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			TipoTraccia tipoTraccia)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTipoTraccia(this.prepareStatement(idMessaggio,datiServizioAzione),tipoTraccia);
 	}
 	private boolean _isTracedTipoTraccia(PreparedStatement pstmt, TipoTraccia tipoTraccia)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -461,20 +460,20 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 
 	public boolean isTracedEsito(String idMessaggio, EsitoElaborazioneMessaggioTracciatura esitoElaborazione, String dettaglioEsitoElaborazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEsito(this.prepareStatement(idMessaggio),esitoElaborazione,dettaglioEsitoElaborazione);
 	}
 	public boolean isTracedEsito(String idMessaggio,IDSoggetto idPortaMessaggio, EsitoElaborazioneMessaggioTracciatura esitoElaborazione, String dettaglioEsitoElaborazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEsito(this.prepareStatement(idMessaggio,idPortaMessaggio),esitoElaborazione,dettaglioEsitoElaborazione);
 	}
 	public boolean isTracedEsito(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			EsitoElaborazioneMessaggioTracciatura esitoElaborazione, String dettaglioEsitoElaborazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEsito(this.prepareStatement(idMessaggio,datiServizioAzione),esitoElaborazione,dettaglioEsitoElaborazione);
 	}
 	private boolean _isTracedEsito(PreparedStatement pstmt, EsitoElaborazioneMessaggioTracciatura esitoElaborazione, String dettaglioEsitoElaborazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -530,20 +529,20 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** MITTENTE
 
 	public boolean isTracedMittente(String idMessaggio, IDSoggetto mittente, String indirizzoMittente)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedMittente(this.prepareStatement(idMessaggio),mittente, indirizzoMittente);
 	}
 	public boolean isTracedMittente(String idMessaggio,IDSoggetto idPortaMessaggio, IDSoggetto mittente, String indirizzoMittente)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedMittente(this.prepareStatement(idMessaggio,idPortaMessaggio),mittente, indirizzoMittente);
 	}
 	public boolean isTracedMittente(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			IDSoggetto mittente, String indirizzoMittente)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedMittente(this.prepareStatement(idMessaggio,datiServizioAzione),mittente, indirizzoMittente);
 	}
 	private boolean _isTracedMittente(PreparedStatement pstmt, IDSoggetto mittente, String indirizzoMittente)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -576,7 +575,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 	public boolean isTracedMittente_checkLocalhost(String idMessaggio, 
 			IDSoggetto mittente1, String indirizzoMittente1,
-			IDSoggetto mittente2, String indirizzoMittente2) throws FatalTestSuiteException {
+			IDSoggetto mittente2, String indirizzoMittente2) throws TestSuiteException {
 
 		boolean check1 = isTracedMittente(idMessaggio, mittente1, indirizzoMittente1);
 		boolean check2 = isTracedMittente(idMessaggio, mittente2, indirizzoMittente2);
@@ -585,7 +584,7 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	public boolean isTracedMittente_checkLocalhost(String idMessaggio,IDSoggetto idPortaMessaggio, 
 			IDSoggetto mittente1, String indirizzoMittente1,
-			IDSoggetto mittente2, String indirizzoMittente2) throws FatalTestSuiteException {
+			IDSoggetto mittente2, String indirizzoMittente2) throws TestSuiteException {
 
 		boolean check1 = isTracedMittente(idMessaggio,idPortaMessaggio, mittente1, indirizzoMittente1);
 		boolean check2 = isTracedMittente(idMessaggio,idPortaMessaggio, mittente2, indirizzoMittente2);
@@ -594,7 +593,7 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	public boolean isTracedMittente_checkLocalhost(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			IDSoggetto mittente1, String indirizzoMittente1,
-			IDSoggetto mittente2, String indirizzoMittente2) throws FatalTestSuiteException {
+			IDSoggetto mittente2, String indirizzoMittente2) throws TestSuiteException {
 
 		boolean check1 = isTracedMittente(idMessaggio,datiServizioAzione, mittente1, indirizzoMittente1);
 		boolean check2 = isTracedMittente(idMessaggio,datiServizioAzione, mittente2, indirizzoMittente2);
@@ -654,20 +653,20 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** DESTINATARIO
 	
 	public boolean isTracedDestinatario(String idMessaggio, IDSoggetto destinatario, String indirizzoDestinatario)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedDestinatario(this.prepareStatement(idMessaggio),destinatario, indirizzoDestinatario);
 	}
 	public boolean isTracedDestinatario(String idMessaggio,IDSoggetto idPortaMessaggio, IDSoggetto destinatario, String indirizzoDestinatario)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedDestinatario(this.prepareStatement(idMessaggio,idPortaMessaggio),destinatario, indirizzoDestinatario);
 	}
 	public boolean isTracedDestinatario(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			IDSoggetto destinatario, String indirizzoDestinatario)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedDestinatario(this.prepareStatement(idMessaggio,datiServizioAzione),destinatario, indirizzoDestinatario);
 	}
 	private boolean _isTracedDestinatario(PreparedStatement pstmt, IDSoggetto destinatario, String indirizzoDestinatario)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -700,7 +699,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 	public boolean isTracedDestinatario_checkLocalhost(String idMessaggio, 
 			IDSoggetto destinatario1, String indirizzoDestinatario1,
-			IDSoggetto destinatario2, String indirizzoDestinatario2) throws FatalTestSuiteException {
+			IDSoggetto destinatario2, String indirizzoDestinatario2) throws TestSuiteException {
 
 		boolean check1 = isTracedDestinatario(idMessaggio, destinatario1, indirizzoDestinatario1);
 		boolean check2 = isTracedDestinatario(idMessaggio, destinatario2, indirizzoDestinatario2);
@@ -709,7 +708,7 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	public boolean isTracedDestinatario_checkLocalhost(String idMessaggio,IDSoggetto idPortaMessaggio, 
 			IDSoggetto destinatario1, String indirizzoDestinatario1,
-			IDSoggetto destinatario2, String indirizzoDestinatario2) throws FatalTestSuiteException {
+			IDSoggetto destinatario2, String indirizzoDestinatario2) throws TestSuiteException {
 
 		boolean check1 = isTracedDestinatario(idMessaggio,idPortaMessaggio, destinatario1, indirizzoDestinatario1);
 		boolean check2 = isTracedDestinatario(idMessaggio,idPortaMessaggio, destinatario2, indirizzoDestinatario2);
@@ -718,7 +717,7 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	public boolean isTracedDestinatario_checkLocalhost(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			IDSoggetto destinatario1, String indirizzoDestinatario1,
-			IDSoggetto destinatario2, String indirizzoDestinatario2) throws FatalTestSuiteException {
+			IDSoggetto destinatario2, String indirizzoDestinatario2) throws TestSuiteException {
 
 		boolean check1 = isTracedDestinatario(idMessaggio,datiServizioAzione, destinatario1, indirizzoDestinatario1);
 		boolean check2 = isTracedDestinatario(idMessaggio,datiServizioAzione, destinatario2, indirizzoDestinatario2);
@@ -777,20 +776,20 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** PROFILO COLLABORAZIONE
 
 	public boolean isTracedProfiloDiCollaborazione(String idMessaggio, String profiloCollaborazione, ProfiloDiCollaborazione  profiloCollaborazioneSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedProfiloDiCollaborazione(this.prepareStatement(idMessaggio),profiloCollaborazione, profiloCollaborazioneSdkValue);
 	}
 	public boolean isTracedProfiloDiCollaborazione(String idMessaggio,IDSoggetto idPortaMessaggio, String profiloCollaborazione, ProfiloDiCollaborazione  profiloCollaborazioneSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedProfiloDiCollaborazione(this.prepareStatement(idMessaggio,idPortaMessaggio),profiloCollaborazione, profiloCollaborazioneSdkValue);
 	}
 	public boolean isTracedProfiloDiCollaborazione(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String profiloCollaborazione, ProfiloDiCollaborazione  profiloCollaborazioneSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedProfiloDiCollaborazione(this.prepareStatement(idMessaggio,datiServizioAzione),profiloCollaborazione, profiloCollaborazioneSdkValue);
 	}
 	private boolean _isTracedProfiloDiCollaborazione(PreparedStatement pstmt, String profiloCollaborazione, ProfiloDiCollaborazione  profiloCollaborazioneSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -844,20 +843,20 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** SERVIZIO
 
 	public boolean isTracedServizio(String idMessaggio, DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedServizio(this.prepareStatement(idMessaggio),datiServizio);
 	}
 	public boolean isTracedServizio(String idMessaggio,IDSoggetto idPortaMessaggio, DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedServizio(this.prepareStatement(idMessaggio,idPortaMessaggio),datiServizio);
 	}
 	public boolean isTracedServizio(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedServizio(this.prepareStatement(idMessaggio,datiServizioAzione),datiServizio);
 	}
 	private boolean _isTracedServizio(PreparedStatement pstmt, DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		String tipo = null;
 		String nome = null;
@@ -925,20 +924,20 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	public boolean isTracedServizioCorrelato(String idMessaggio, DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedServizioCorrelato(this.prepareStatement(idMessaggio),datiServizio);
 	}
 	public boolean isTracedServizioCorrelato(String idMessaggio,IDSoggetto idPortaMessaggio, DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedServizioCorrelato(this.prepareStatement(idMessaggio,idPortaMessaggio),datiServizio);
 	}
 	public boolean isTracedServizioCorrelato(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedServizioCorrelato(this.prepareStatement(idMessaggio,datiServizioAzione),datiServizio);
 	}
 	private boolean _isTracedServizioCorrelato(PreparedStatement pstmt, DatiServizio datiServizio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		
 		String tipoServizioCorrelato = null;
 		String nomeServizioCorrelato = null;
@@ -992,19 +991,19 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** COLLABORAZIONE
 
 	public boolean isTracedCollaborazione(String idMessaggio, String idCollaborazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCollaborazione(this.prepareStatement(idMessaggio),idCollaborazione);
 	}
 	public boolean isTracedCollaborazione(String idMessaggio,IDSoggetto idPortaMessaggio, String idCollaborazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCollaborazione(this.prepareStatement(idMessaggio,idPortaMessaggio),idCollaborazione);
 	}
 	public boolean isTracedCollaborazione(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String idCollaborazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCollaborazione(this.prepareStatement(idMessaggio,datiServizioAzione),idCollaborazione);
 	}
-	private boolean _isTracedCollaborazione(PreparedStatement pstmt,String idCollaborazione) throws FatalTestSuiteException{
+	private boolean _isTracedCollaborazione(PreparedStatement pstmt,String idCollaborazione) throws TestSuiteException{
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -1041,20 +1040,20 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** AZIONE
 
 	public boolean isTracedAzione(String idMessaggio, String nome)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedAzione(this.prepareStatement(idMessaggio),nome);
 	}
 	public boolean isTracedAzione(String idMessaggio,IDSoggetto idPortaMessaggio, String nome)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedAzione(this.prepareStatement(idMessaggio,idPortaMessaggio),nome);
 	}
 	public boolean isTracedAzione(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String nome)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedAzione(this.prepareStatement(idMessaggio,datiServizioAzione),nome);
 	}
 	private boolean _isTracedAzione(PreparedStatement pstmt, String nome)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -1094,32 +1093,32 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** ORA REGISTRAZIONE
 	
 	public boolean isTracedOraRegistrazione(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedOraRegistrazione(this.prepareStatement(idMessaggio),null,null);
 	}
 	public boolean isTracedOraRegistrazione(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedOraRegistrazione(this.prepareStatement(idMessaggio,idPortaMessaggio),null,null);
 	}
 	public boolean isTracedOraRegistrazione(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedOraRegistrazione(this.prepareStatement(idMessaggio,datiServizioAzione),null,null);
 	}
 	public boolean isTracedOraRegistrazione(String idMessaggio, String tipoOraRegistrazione, TipoOraRegistrazione tipoOraRegistrazioneSdkConstant)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedOraRegistrazione(this.prepareStatement(idMessaggio),tipoOraRegistrazione,tipoOraRegistrazioneSdkConstant);
 	}
 	public boolean isTracedOraRegistrazione(String idMessaggio,IDSoggetto idPortaMessaggio, String tipoOraRegistrazione, TipoOraRegistrazione tipoOraRegistrazioneSdkConstant)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedOraRegistrazione(this.prepareStatement(idMessaggio,idPortaMessaggio),tipoOraRegistrazione,tipoOraRegistrazioneSdkConstant);
 	}
 	public boolean isTracedOraRegistrazione(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String tipoOraRegistrazione, TipoOraRegistrazione tipoOraRegistrazioneSdkConstant)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedOraRegistrazione(this.prepareStatement(idMessaggio,datiServizioAzione),tipoOraRegistrazione,tipoOraRegistrazioneSdkConstant);
 	}
 	private boolean _isTracedOraRegistrazione(PreparedStatement pstmt,String tipoOraRegistrazione, TipoOraRegistrazione tipoOraRegistrazioneSdkConstant)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -1174,19 +1173,19 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 
 	public boolean isTracedScadenza(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedScadenza(this.prepareStatement(idMessaggio));
 	}
 	public boolean isTracedScadenza(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedScadenza(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public boolean isTracedScadenza(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedScadenza(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
 	private boolean _isTracedScadenza(PreparedStatement pstmt)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -1222,20 +1221,20 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** TRASMISSIONE
 	
 	public boolean isTracedProfiloTrasmissione(String idMessaggio, boolean confermaRicezione, String inoltro, Inoltro inoltroSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedProfiloTrasmissione(this.prepareStatement(idMessaggio),confermaRicezione,inoltro,inoltroSdkValue);
 	}
 	public boolean isTracedProfiloTrasmissione(String idMessaggio,IDSoggetto idPortaMessaggio, boolean confermaRicezione, String inoltro, Inoltro inoltroSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedProfiloTrasmissione(this.prepareStatement(idMessaggio,idPortaMessaggio),confermaRicezione,inoltro,inoltroSdkValue);
 	}
 	public boolean isTracedProfiloTrasmissione(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			boolean confermaRicezione, String inoltro, Inoltro inoltroSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedProfiloTrasmissione(this.prepareStatement(idMessaggio,datiServizioAzione),confermaRicezione,inoltro,inoltroSdkValue);
 	}
 	private boolean _isTracedProfiloTrasmissione(PreparedStatement pstmt, boolean confermaRicezione, String inoltro, Inoltro inoltroSdkValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1295,18 +1294,18 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	public boolean isTracedSequenza(String idMessaggio,int sequenza)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSequenza(this.prepareStatement(idMessaggio),sequenza);
 	}
 	public boolean isTracedSequenza(String idMessaggio,IDSoggetto idPortaMessaggio,int sequenza)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSequenza(this.prepareStatement(idMessaggio,idPortaMessaggio),sequenza);
 	}
 	public boolean isTracedSequenza(String idMessaggio, DatiServizioAzione datiServizioAzione,int sequenza)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSequenza(this.prepareStatement(idMessaggio,datiServizioAzione),sequenza);
 	}
-	private boolean _isTracedSequenza(PreparedStatement pstmt,int sequenza) throws FatalTestSuiteException{
+	private boolean _isTracedSequenza(PreparedStatement pstmt,int sequenza) throws TestSuiteException{
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -1337,19 +1336,19 @@ public abstract class AbstractVerificatoreTraccia {
 	// *** INTEGRAZIONE
 	
 	public boolean isTracedLocation(String idMessaggio, String location)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedLocation(this.prepareStatement(idMessaggio),location);
 	}
 	public boolean isTracedLocation(String idMessaggio,IDSoggetto idPortaMessaggio, String location)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedLocation(this.prepareStatement(idMessaggio,idPortaMessaggio),location);
 	}
 	public boolean isTracedLocation(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String location)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedLocation(this.prepareStatement(idMessaggio,datiServizioAzione),location);
 	}
-	private boolean _isTracedLocation(PreparedStatement pstmt,String location) throws FatalTestSuiteException{
+	private boolean _isTracedLocation(PreparedStatement pstmt,String location) throws TestSuiteException{
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -1383,20 +1382,20 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio),correlazioneApplicativa);
 	}
 	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio,IDSoggetto idPortaMessaggio, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,idPortaMessaggio),correlazioneApplicativa);
 	}
 	public boolean isTracedCorrelazioneApplicativaRichiesta(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,datiServizioAzione),correlazioneApplicativa);
 	}
 	private boolean _isTracedCorrelazioneApplicativaRichiesta(PreparedStatement pstmt, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1435,19 +1434,19 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean existsTracedCorrelazioneApplicativaRichiesta(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio));
 	}
 	public boolean existsTracedCorrelazioneApplicativaRichiesta(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public boolean existsTracedCorrelazioneApplicativaRichiesta(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedCorrelazioneApplicativaRichiesta(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
 	private boolean _existsTracedCorrelazioneApplicativaRichiesta(PreparedStatement pstmt)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1482,20 +1481,20 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean isTracedCorrelazioneApplicativaRisposta(String idMessaggio, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCorrelazioneApplicativaRisposta(this.prepareStatement(idMessaggio),correlazioneApplicativa);
 	}
 	public boolean isTracedCorrelazioneApplicativaRisposta(String idMessaggio,IDSoggetto idPortaMessaggio, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCorrelazioneApplicativaRisposta(this.prepareStatement(idMessaggio,idPortaMessaggio),correlazioneApplicativa);
 	}
 	public boolean isTracedCorrelazioneApplicativaRisposta(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedCorrelazioneApplicativaRisposta(this.prepareStatement(idMessaggio,datiServizioAzione),correlazioneApplicativa);
 	}
 	private boolean _isTracedCorrelazioneApplicativaRisposta(PreparedStatement pstmt, String correlazioneApplicativa)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1533,19 +1532,19 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	public boolean existsTracedCorrelazioneApplicativaRisposta(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedCorrelazioneApplicativaRisposta(this.prepareStatement(idMessaggio));
 	}
 	public boolean existsTracedCorrelazioneApplicativaRisposta(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedCorrelazioneApplicativaRisposta(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public boolean existsTracedCorrelazioneApplicativaRisposta(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedCorrelazioneApplicativaRisposta(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
 	private boolean _existsTracedCorrelazioneApplicativaRisposta(PreparedStatement pstmt)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1580,20 +1579,20 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean isTracedSAFruitore(String idMessaggio, String saFruitore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSAFruitore(this.prepareStatement(idMessaggio),saFruitore);
 	}
 	public boolean isTracedSAFruitore(String idMessaggio,IDSoggetto idPortaMessaggio, String saFruitore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSAFruitore(this.prepareStatement(idMessaggio,idPortaMessaggio),saFruitore);
 	}
 	public boolean isTracedSAFruitore(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String saFruitore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSAFruitore(this.prepareStatement(idMessaggio,datiServizioAzione),saFruitore);
 	}
 	private boolean _isTracedSAFruitore(PreparedStatement pstmt, String saFruitore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1633,19 +1632,19 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean existsTracedSAFruitore(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedSAFruitore(this.prepareStatement(idMessaggio));
 	}
 	public boolean existsTracedSAFruitore(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedSAFruitore(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public boolean existsTracedSAFruitore(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedSAFruitore(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
 	private boolean _existsTracedSAFruitore(PreparedStatement pstmt)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1683,20 +1682,20 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean isTracedSAErogatore(String idMessaggio, String saErogatore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSAErogatore(this.prepareStatement(idMessaggio),saErogatore);
 	}
 	public boolean isTracedSAErogatore(String idMessaggio,IDSoggetto idPortaMessaggio, String saErogatore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSAErogatore(this.prepareStatement(idMessaggio,idPortaMessaggio),saErogatore);
 	}
 	public boolean isTracedSAErogatore(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			String saErogatore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedSAErogatore(this.prepareStatement(idMessaggio,datiServizioAzione),saErogatore);
 	}
 	private boolean _isTracedSAErogatore(PreparedStatement pstmt, String saErogatore)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1741,18 +1740,18 @@ public abstract class AbstractVerificatoreTraccia {
 	// IS ARRIVED
 	
 	public int isArrivedCount(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isArrivedCount(this.prepareStatement(idMessaggio));
 	}
 	public int isArrivedCount(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isArrivedCount(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public int isArrivedCount(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isArrivedCount(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
-	private int _isArrivedCount(PreparedStatement pstmt) throws FatalTestSuiteException {
+	private int _isArrivedCount(PreparedStatement pstmt) throws TestSuiteException {
 		ResultSet res = null;
 		try {
 			res = pstmt.executeQuery();
@@ -1785,19 +1784,19 @@ public abstract class AbstractVerificatoreTraccia {
 	// SOAP
 	
 	public boolean existsTracedSOAPElement(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedSOAPElement(this.prepareStatement(idMessaggio));
 	}
 	public boolean existsTracedSOAPElement(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedSOAPElement(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public boolean existsTracedSOAPElement(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedSOAPElement(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
 	private boolean _existsTracedSOAPElement(PreparedStatement pstmt)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1832,19 +1831,19 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	public boolean existsTracedDigest(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedDigest(this.prepareStatement(idMessaggio));
 	}
 	public boolean existsTracedDigest(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedDigest(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public boolean existsTracedDigest(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsTracedDigest(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
 	private boolean _existsTracedDigest(PreparedStatement pstmt)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 
 		ResultSet res = null;
 		try {
@@ -1898,7 +1897,7 @@ public abstract class AbstractVerificatoreTraccia {
 	public boolean isTracedRicevutaAsincrona(String mittente,String tipo_mittente, 
 			String destinatario,String tipo_destinatario, 
 			String servizio, String tipo_servizio,Integer versione_servizio,String azione)
-					throws FatalTestSuiteException {
+					throws TestSuiteException {
 
 		PreparedStatement pstmt = null;
 		ResultSet res = null;
@@ -1974,14 +1973,14 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	/* --------------------- RISCONTRO ------------------------- */
-	public boolean isTracedRiscontro(String idRiscontro,String idMessaggioPortaRiscontro) throws FatalTestSuiteException {
+	public boolean isTracedRiscontro(String idRiscontro,String idMessaggioPortaRiscontro) throws TestSuiteException {
 		return isTracedRiscontro(idRiscontro,idMessaggioPortaRiscontro, true,null,null);
 	}
-	public boolean isTracedRiscontro(String idRiscontro,String idMessaggioPortaRiscontro,boolean checkOraRegistrazione) throws FatalTestSuiteException {
+	public boolean isTracedRiscontro(String idRiscontro,String idMessaggioPortaRiscontro,boolean checkOraRegistrazione) throws TestSuiteException {
 		return isTracedRiscontro(idRiscontro,idMessaggioPortaRiscontro, checkOraRegistrazione,null,null);
 	}
 	public boolean isTracedRiscontro(String idRiscontro,String idMessaggioPortaRiscontro,
-			boolean checkOraRegistrazione,String tipoOraRegistrazione, TipoOraRegistrazione tipoOraRegistrazioneSdkConstant) throws FatalTestSuiteException {
+			boolean checkOraRegistrazione,String tipoOraRegistrazione, TipoOraRegistrazione tipoOraRegistrazioneSdkConstant) throws TestSuiteException {
 	
 		PreparedStatement pstmt = null;
 		ResultSet res = null;
@@ -2046,18 +2045,18 @@ public abstract class AbstractVerificatoreTraccia {
 	/* ---------------- ECCEZIONI ------------------------ */
 
 	public boolean existsListaEccezioni(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsListaEccezioni(this.prepareStatement(idMessaggio));
 	}
 	public boolean existsListaEccezioni(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsListaEccezioni(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public boolean existsListaEccezioni(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _existsListaEccezioni(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
-	private boolean _existsListaEccezioni(PreparedStatement pstmt) throws FatalTestSuiteException{
+	private boolean _existsListaEccezioni(PreparedStatement pstmt) throws TestSuiteException{
 		
 		PreparedStatement pstmtListaEccezioni = null;
 		ResultSet res = null;
@@ -2095,201 +2094,201 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean isTracedEccezione(String idMessaggio,String faultCode)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE, faultCode ,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE, Utilities.toString(faultCode, this.protocollo) ,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,String faultCode)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE, faultCode,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE, Utilities.toString(faultCode, this.protocollo) ,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String faultCode)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE, faultCode,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE, Utilities.toString(faultCode, this.protocollo),true);
 	}
 	
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),true);
 	}
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio,IDSoggetto idPortaMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),true);
 	}
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),true);
 	}
 	
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio,ErroreCooperazione errore)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),true);
 	}
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio,IDSoggetto idPortaMessaggio,ErroreCooperazione errore)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),true);
 	}
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			ErroreCooperazione errore)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),true);
 	}
 	
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio,String colonna,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,colonna,value,true);
 	}
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio,IDSoggetto idPortaMessaggio,String colonna,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,colonna,value,true);
 	}
 	public boolean isTracedPerTutteLeEccezioni(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String colonna,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,colonna,value,true);
 	}
 	
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),false);
 	}
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),false);
 	}
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),false);
 	}
 	
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio,ErroreCooperazione errore)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),false);
 	}
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,ErroreCooperazione errore)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),false);
 	}
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			ErroreCooperazione errore)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),false);
 	}
 	
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio,String colonna,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,colonna,value,false);
 	}
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,String colonna,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,idPortaMessaggio,colonna,value,false);
 	}
 	public boolean isTracedPerAlmenoUnaEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String colonna,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return isTracedEccezione(idMessaggio,datiServizioAzione,colonna,value,false);
 	}
 	
 	public boolean isTracedEccezione(String idMessaggio,CodiceErroreCooperazione faultCode,boolean uniqueValue)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),uniqueValue,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,CodiceErroreCooperazione faultCode,boolean uniqueValue)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,idPortaMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),uniqueValue,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			CodiceErroreCooperazione faultCode,boolean uniqueValue)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,datiServizioAzione),CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),uniqueValue,true);
 	}
 	
 	public boolean isTracedEccezione(String idMessaggio,ErroreCooperazione errore,boolean uniqueValue)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),uniqueValue,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,ErroreCooperazione errore,boolean uniqueValue)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,idPortaMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),uniqueValue,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			ErroreCooperazione errore,boolean uniqueValue)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,datiServizioAzione),CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),uniqueValue,true);
 	}
 	
 	public boolean isTracedEccezione(String idMessaggio,String colonna,String value,boolean uniqueValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio),colonna,value,uniqueValue,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,String colonna,String value,boolean uniqueValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,idPortaMessaggio),colonna,value,uniqueValue,true);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String colonna,String value,boolean uniqueValue)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,datiServizioAzione),colonna,value,uniqueValue,true);
 	}
 	
 	public boolean isTracedEccezione(String idMessaggio,CodiceErroreCooperazione faultCode,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),uniqueValue,checkTutteLeTrasmissioni);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,CodiceErroreCooperazione faultCode,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,idPortaMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),uniqueValue,checkTutteLeTrasmissioni);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzionee,
 			CodiceErroreCooperazione faultCode,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,datiServizioAzionee),CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE,Utilities.toString(faultCode, this.protocollo),uniqueValue,checkTutteLeTrasmissioni);
 	}
 	
 	public boolean isTracedEccezione(String idMessaggio,ErroreCooperazione errore,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),uniqueValue,checkTutteLeTrasmissioni);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,ErroreCooperazione errore,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,idPortaMessaggio),CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),uniqueValue,checkTutteLeTrasmissioni);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			ErroreCooperazione errore,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,datiServizioAzione),CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE,Utilities.toString(errore, this.protocollo),uniqueValue,checkTutteLeTrasmissioni);
 	}
 		
 	public boolean isTracedEccezione(String idMessaggio,String colonna,String value,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio),colonna,value,uniqueValue,checkTutteLeTrasmissioni);
 	}
 	public boolean isTracedEccezione(String idMessaggio,IDSoggetto idPortaMessaggio,String colonna,String value,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,idPortaMessaggio),colonna,value,uniqueValue,checkTutteLeTrasmissioni);
 	}
 	public boolean isTracedEccezione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String colonna,String value,boolean uniqueValue,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedEccezione(this.prepareStatement(idMessaggio,datiServizioAzione),colonna,value,uniqueValue,checkTutteLeTrasmissioni);
 	}
 	
-	private boolean _isTracedEccezione(PreparedStatement pstmt,String colonna,String value,boolean uniqueValue,boolean checkTutteLeTrasmissioni) throws FatalTestSuiteException{
+	private boolean _isTracedEccezione(PreparedStatement pstmt,String colonna,String value,boolean uniqueValue,boolean checkTutteLeTrasmissioni) throws TestSuiteException{
 		
 		ResultSet res = null;
 		PreparedStatement pstmtE = null;
@@ -2365,33 +2364,33 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public List<EccezioneVO> getEccezioniTraced(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getEccezioniTraced(this.prepareStatement(idMessaggio),true);
 	}
 	public List<EccezioneVO> getEccezioniTraced(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getEccezioniTraced(this.prepareStatement(idMessaggio,idPortaMessaggio),true);
 	}
 	public List<EccezioneVO> getEccezioniTraced(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getEccezioniTraced(this.prepareStatement(idMessaggio,datiServizioAzione),true);
 	}
 	
 	public List<EccezioneVO> getEccezioniTraced(String idMessaggio,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getEccezioniTraced(this.prepareStatement(idMessaggio),checkTutteLeTrasmissioni);
 	}
 	public List<EccezioneVO> getEccezioniTraced(String idMessaggio,IDSoggetto idPortaMessaggio,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getEccezioniTraced(this.prepareStatement(idMessaggio,idPortaMessaggio),checkTutteLeTrasmissioni);
 	}
 	public List<EccezioneVO> getEccezioniTraced(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _getEccezioniTraced(this.prepareStatement(idMessaggio,datiServizioAzione),checkTutteLeTrasmissioni);
 	}
 		
-	private List<EccezioneVO> _getEccezioniTraced(PreparedStatement pstmt,boolean checkTutteLeTrasmissioni) throws FatalTestSuiteException{
+	private List<EccezioneVO> _getEccezioniTraced(PreparedStatement pstmt,boolean checkTutteLeTrasmissioni) throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement pstmtE = null;
 		ResultSet resE = null;
@@ -2459,60 +2458,60 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public int countEccezioniTraced(String idMessaggio,String faultCode)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio),true),faultCode);
 	}
 	public int countEccezioniTraced(String idMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio),true),Utilities.toString(faultCode, this.protocollo));
 	}
 	public int countEccezioniTraced(String idMessaggio,IDSoggetto idPortaMessaggio,String faultCode)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,idPortaMessaggio),true),faultCode);
 	}
 	public int countEccezioniTraced(String idMessaggio,IDSoggetto idPortaMessaggio,CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,idPortaMessaggio),true),Utilities.toString(faultCode, this.protocollo));
 	}
 	public int countEccezioniTraced(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String faultCode)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,datiServizioAzione),true),faultCode);
 	}
 	public int countEccezioniTraced(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			CodiceErroreCooperazione faultCode)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,datiServizioAzione),true),Utilities.toString(faultCode, this.protocollo));
 	}
 	
 	public int countEccezioniTraced(String idMessaggio,String faultCode,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio),checkTutteLeTrasmissioni),faultCode);
 	}
 	public int countEccezioniTraced(String idMessaggio,CodiceErroreCooperazione faultCode,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio),checkTutteLeTrasmissioni),Utilities.toString(faultCode, this.protocollo));
 	}
 	public int countEccezioniTraced(String idMessaggio,IDSoggetto idPortaMessaggio,String faultCode,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,idPortaMessaggio),checkTutteLeTrasmissioni),faultCode);
 	}
 	public int countEccezioniTraced(String idMessaggio,IDSoggetto idPortaMessaggio,CodiceErroreCooperazione faultCode,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,idPortaMessaggio),checkTutteLeTrasmissioni),Utilities.toString(faultCode, this.protocollo));
 	}
 	public int countEccezioniTraced(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String faultCode,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,datiServizioAzione),checkTutteLeTrasmissioni),faultCode);
 	}
 	public int countEccezioniTraced(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			CodiceErroreCooperazione faultCode,boolean checkTutteLeTrasmissioni)
-			throws FatalTestSuiteException, ProtocolException {
+			throws TestSuiteException, ProtocolException {
 		return _countEccezioniTraced(_getEccezioniTraced(this.prepareStatement(idMessaggio,datiServizioAzione),checkTutteLeTrasmissioni),Utilities.toString(faultCode, this.protocollo));
 	}
 	
-	private int _countEccezioniTraced(List<EccezioneVO> ecc,String faultCode)throws FatalTestSuiteException{
+	private int _countEccezioniTraced(List<EccezioneVO> ecc,String faultCode)throws TestSuiteException{
 		//System.out.println("VERIFICA TRACCIATURA ECC["+faultCode+"] in lista con size["+ecc.size()+"]");
 		int count=0;
 		if(ecc!=null){
@@ -2735,7 +2734,7 @@ public abstract class AbstractVerificatoreTraccia {
 	public boolean isTracedTrasmissione(String idMessaggio,
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				true,null,null);
@@ -2743,7 +2742,7 @@ public abstract class AbstractVerificatoreTraccia {
 	public boolean isTracedTrasmissione(String idMessaggio,IDSoggetto idPortaMessaggio,
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio,idPortaMessaggio),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				true,null,null);
@@ -2751,7 +2750,7 @@ public abstract class AbstractVerificatoreTraccia {
 	public boolean isTracedTrasmissione(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio,datiServizioAzione),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				true,null,null);
@@ -2761,7 +2760,7 @@ public abstract class AbstractVerificatoreTraccia {
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario,
 			boolean checkOraRegistrazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				checkOraRegistrazione,null,null);
@@ -2770,7 +2769,7 @@ public abstract class AbstractVerificatoreTraccia {
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario,
 			boolean checkOraRegistrazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio,idPortaMessaggio),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				checkOraRegistrazione,null,null);
@@ -2779,7 +2778,7 @@ public abstract class AbstractVerificatoreTraccia {
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario,
 			boolean checkOraRegistrazione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio,datiServizioAzione),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				checkOraRegistrazione,null,null);
@@ -2789,7 +2788,7 @@ public abstract class AbstractVerificatoreTraccia {
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario,
 			boolean checkOraRegistrazione,String tipoOraRegistrazione,TipoOraRegistrazione tipoOraRegistrazioneSdk)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				checkOraRegistrazione,tipoOraRegistrazione,tipoOraRegistrazioneSdk);
@@ -2798,7 +2797,7 @@ public abstract class AbstractVerificatoreTraccia {
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario,
 			boolean checkOraRegistrazione,String tipoOraRegistrazione,TipoOraRegistrazione tipoOraRegistrazioneSdk)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio,idPortaMessaggio),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				checkOraRegistrazione,tipoOraRegistrazione,tipoOraRegistrazioneSdk);
@@ -2807,7 +2806,7 @@ public abstract class AbstractVerificatoreTraccia {
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario,
 			boolean checkOraRegistrazione,String tipoOraRegistrazione,TipoOraRegistrazione tipoOraRegistrazioneSdk)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedTrasmissione(this.prepareStatement(idMessaggio,datiServizioAzione),
 				mittente,indirizzoMittente,destinatario,indirizzoDestinatario,
 				checkOraRegistrazione,tipoOraRegistrazione,tipoOraRegistrazioneSdk);
@@ -2815,7 +2814,7 @@ public abstract class AbstractVerificatoreTraccia {
 	private boolean _isTracedTrasmissione(PreparedStatement pstmt,
 			IDSoggetto mittente,String indirizzoMittente,
 			IDSoggetto destinatario,String indirizzoDestinatario,
-			boolean checkOraRegistrazione,String tipoOraRegistrazione,TipoOraRegistrazione tipoOraRegistrazioneSdk) throws FatalTestSuiteException{
+			boolean checkOraRegistrazione,String tipoOraRegistrazione,TipoOraRegistrazione tipoOraRegistrazioneSdk) throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement pstmtListaTrasmissioni = null;
@@ -2981,18 +2980,18 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	/* -------------- ALLEGATI ----------------------- */
 	public long countTracedAllegati(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countTracedAllegati(this.prepareStatement(idMessaggio));
 	}
 	public long countTracedAllegati(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countTracedAllegati(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public long countTracedAllegati(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _countTracedAllegati(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
-	private long _countTracedAllegati(PreparedStatement pstmt) throws FatalTestSuiteException{
+	private long _countTracedAllegati(PreparedStatement pstmt) throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement pstmtListaAllegati = null;
 		int idTraccia = 0;
@@ -3044,20 +3043,20 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public boolean isTracedAllegato(String idMessaggio,String contentId,String contentLocation, String contentType, boolean checkNotNullDigit)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedAllegato(this.prepareStatement(idMessaggio),contentId,contentLocation,contentType,checkNotNullDigit);
 	}
 	public boolean isTracedAllegato(String idMessaggio,IDSoggetto idPortaMessaggio,String contentId,String contentLocation, String contentType, boolean checkNotNullDigit)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedAllegato(this.prepareStatement(idMessaggio,idPortaMessaggio),contentId,contentLocation,contentType,checkNotNullDigit);
 	}
 	public boolean isTracedAllegato(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String contentId,String contentLocation, String contentType, boolean checkNotNullDigit)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedAllegato(this.prepareStatement(idMessaggio,datiServizioAzione),contentId,contentLocation,contentType,checkNotNullDigit);
 	}
 	private boolean _isTracedAllegato(PreparedStatement pstmt,
-			String contentId,String contentLocation, String contentType, boolean checkNotNullDigit) throws FatalTestSuiteException{
+			String contentId,String contentLocation, String contentType, boolean checkNotNullDigit) throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement pstmtListaAllegati = null;
@@ -3176,20 +3175,20 @@ public abstract class AbstractVerificatoreTraccia {
 	/* -------------- EXTENDEND INFO PROTOCOL ----------------------- */
 
 	public boolean isTracedExtInfoProtocol(String idMessaggio,String name,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedExtInfoProtocol(this.prepareStatement(idMessaggio),name,value);
 	}
 	public boolean isTracedExtInfoProtocol(String idMessaggio,IDSoggetto idPortaMessaggio,String name,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedExtInfoProtocol(this.prepareStatement(idMessaggio,idPortaMessaggio),name,value);
 	}
 	public boolean isTracedExtInfoProtocol(String idMessaggio, DatiServizioAzione datiServizioAzione,
 			String name,String value)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _isTracedExtInfoProtocol(this.prepareStatement(idMessaggio,datiServizioAzione),name,value);
 	}
 	private boolean _isTracedExtInfoProtocol(PreparedStatement pstmt,
-			String name,String value) throws FatalTestSuiteException{
+			String name,String value) throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement pstmtListaExtInfoProtocol = null;
@@ -3246,18 +3245,18 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	
 	public Hashtable<String,String> readTracedExtInfoProtocol(String idMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _readTracedExtInfoProtocol(this.prepareStatement(idMessaggio));
 	}
 	public Hashtable<String,String> readTracedExtInfoProtocol(String idMessaggio,IDSoggetto idPortaMessaggio)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _readTracedExtInfoProtocol(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
 	public Hashtable<String,String> readTracedExtInfoProtocol(String idMessaggio, DatiServizioAzione datiServizioAzione)
-			throws FatalTestSuiteException {
+			throws TestSuiteException {
 		return _readTracedExtInfoProtocol(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
-	private Hashtable<String,String> _readTracedExtInfoProtocol(PreparedStatement pstmt) throws FatalTestSuiteException{
+	private Hashtable<String,String> _readTracedExtInfoProtocol(PreparedStatement pstmt) throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement pstmtListaExtInfoProtocol = null;
@@ -3331,7 +3330,7 @@ public abstract class AbstractVerificatoreTraccia {
 		java.sql.Timestamp minDate = null;
 		int giro = 0;
 		int giriMax = 300;
-		Logger.getLogger("TestSuite.tracer").debug("Query in corso...:  select tracce.gdo from tracce where tracce."+CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '"+destinatario+"%"+"' ORDER BY tracce.gdo");
+		LoggerWrapperFactory.getLogger("openspcoop2.testsuite").debug("Query in corso...:  select tracce.gdo from tracce where tracce."+CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '"+destinatario+"%"+"' ORDER BY tracce.gdo");
 		while(giro<giriMax){
 			try {
 				//System.out.println("SELECT [select "+CostantiDB.TRACCE_COLUMN_GDO+" from "+CostantiDB.TRACCE+" where  "+CostantiDB.TRACCE_COLUMN_ID+"="+id+" AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"=0 AND "+CostantiDatabase.ID_PORTA+" LIKE "+destinatario+"%"+" ORDER BY "+CostantiDB.TRACCE_COLUMN_GDO+"]");
@@ -3445,7 +3444,7 @@ public abstract class AbstractVerificatoreTraccia {
 	 */
 	public String[] getIdMessaggio(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,String tipoServizio,String servizio,String azione,
 			long timeAfter)
-					throws FatalTestSuiteException {
+					throws TestSuiteException {
 
 		ResultSet res = null;
 		PreparedStatement pstmt = null;

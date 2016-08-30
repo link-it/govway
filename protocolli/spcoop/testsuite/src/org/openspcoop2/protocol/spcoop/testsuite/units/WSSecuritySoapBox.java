@@ -40,7 +40,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -106,7 +106,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxEncryptSignature=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_ENCRYPT_SIGNATURE"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Encrypt e Signature")
-	public void sincronoWSSSoapBoxEncryptSignature() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxEncryptSignature() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxEncryptSignature);
@@ -151,7 +151,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxSignatureEncrypt=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_SIGNATURE_ENCRYPT"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Signature e Encrypt")
-	public void sincronoWSSSoapBoxSignatureEncrypt() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxSignatureEncrypt() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxSignatureEncrypt);
@@ -197,7 +197,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxEncrypt=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_ENCRYPT"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Encrypt")
-	public void sincronoWSSSoapBoxEncrypt() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxEncrypt() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxEncrypt);
@@ -247,7 +247,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxSignature=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_SIGNATURE"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Signature")
-	public void sincronoWSSSoapBoxSignature() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxSignature() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxSignature);
@@ -295,7 +295,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxEncryptSignatureAttachments=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_ENCRYPT_SIGNATURE_ATTACHMENTS"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Encrypt e Signature Con Attachments")
-	public void sincronoWSSSoapBoxEncryptSignatureAttachments() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxEncryptSignatureAttachments() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxEncryptSignatureAttachments);
@@ -343,7 +343,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxSignatureEncryptAttachments=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_SIGNATURE_ENCRYPT_ATTACHMENTS"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Signature e Encrypt Con Attachments")
-	public void sincronoWSSSoapBoxSignatureEncryptAttachments() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxSignatureEncryptAttachments() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxSignatureEncryptAttachments);
@@ -392,7 +392,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxEncryptAttachments=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_ENCRYPT_ATTACHMENTS"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Encrypt Con Attachments")
-	public void sincronoWSSSoapBoxEncryptAttachments() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxEncryptAttachments() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxEncryptAttachments);
@@ -445,7 +445,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxSignatureAttachments=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_SIGNATURE_ATTACHMENTS"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Signature Con Attachments")
-	public void sincronoWSSSoapBoxSignatureAttachments() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxSignatureAttachments() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxSignatureAttachments);
@@ -574,7 +574,7 @@ public class WSSecuritySoapBox {
 	Repository repositorySincronoWSSSoapBoxSignatureAttachments_engineXmlSec=new Repository();
 	@Test(groups={WSSecuritySoapBox.ID_GRUPPO,WSSecuritySoapBox.ID_GRUPPO+".SOAPBOX_SINCRONO_SIGNATURE_ATTACHMENTS_ENGINE_XMLSEC"},
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SoapBox Signature Con Attachments (Engine 'xmlSec')")
-	public void sincronoWSSSoapBoxSignatureAttachments_engineXmlSec() throws FatalTestSuiteException, IOException, SOAPException{
+	public void sincronoWSSSoapBoxSignatureAttachments_engineXmlSec() throws TestSuiteException, IOException, SOAPException{
 		
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSSSoapBoxSignatureAttachments_engineXmlSec);

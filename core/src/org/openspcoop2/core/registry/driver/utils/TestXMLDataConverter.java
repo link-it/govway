@@ -19,8 +19,6 @@
  *
  */
 
-
-
 package org.openspcoop2.core.registry.driver.utils;
 
 import java.io.File;
@@ -29,13 +27,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Enumeration;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Inizializza un registro Servizi
@@ -79,17 +77,16 @@ public class TestXMLDataConverter {
 		String loggerValue = null;
 		try{
 			if(args_logger!=null){
-				loggerValue = args_logger;
+				LoggerWrapperFactory.setLogConfiguration(args_logger);
 			}else{
-				loggerValue = "/xml2backend.log4j.properties";
+				LoggerWrapperFactory.setLogConfiguration(TestXMLDataConverter.class.getResource("/xml2backend.log4j2.properties"));
 			}
-			PropertyConfigurator.configure(loggerValue);
 		}catch(Exception e) {
 			String errorMsg = "Errore durante il caricamento del file di log loggerValue["+loggerValue+"] : "+e.getMessage();
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}	
-		Logger log = Logger.getLogger("gestoreDatiRegistro");
+		Logger log = LoggerWrapperFactory.getLogger("gestoreDatiRegistro");
 		
 		// StatoAccordo
 		String statoAccordo = args_statoAccordiImportati;

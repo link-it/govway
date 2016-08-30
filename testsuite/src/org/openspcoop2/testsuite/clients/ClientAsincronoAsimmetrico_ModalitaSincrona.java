@@ -32,7 +32,7 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.Message;
 import org.apache.axis.utils.ByteArrayOutputStream;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
 
 /**
@@ -60,7 +60,7 @@ public class ClientAsincronoAsimmetrico_ModalitaSincrona extends ClientCore{
 		this.generaIDUnivoco = generaIDUnivoco;
 	}
 	
-	public ClientAsincronoAsimmetrico_ModalitaSincrona(RepositoryCorrelazioneIstanzeAsincrone rep) throws FatalTestSuiteException{
+	public ClientAsincronoAsimmetrico_ModalitaSincrona(RepositoryCorrelazioneIstanzeAsincrone rep) throws TestSuiteException{
 		super();
 		this.repositoryCorrelazioneIstanzeAsincrone=rep;
 	}
@@ -74,7 +74,7 @@ public class ClientAsincronoAsimmetrico_ModalitaSincrona extends ClientCore{
 	}
 
 	
-	public void run() throws FatalTestSuiteException, SOAPException, IOException{
+	public void run() throws TestSuiteException, SOAPException, IOException{
 		
 		// Backup della richiesta per un successivo invio
 		String contentType = this.soapEngine.getRequestMessage().getContentType(new org.apache.axis.soap.SOAP11Constants());
@@ -144,7 +144,7 @@ public class ClientAsincronoAsimmetrico_ModalitaSincrona extends ClientCore{
 	    this.sentMessage=this.soapEngine.getRequestMessage();
 	    // Check riferimentoAsincrono uguale a identificativo richiesta
 	    if(identificativoRichiestaAsincrona.equals(this.riferimentoAsincrono)==false){
-	    	throw new FatalTestSuiteException("RiferimentoAsincrono ritornato con la richiesta stato ["+this.riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
+	    	throw new TestSuiteException("RiferimentoAsincrono ritornato con la richiesta stato ["+this.riferimentoAsincrono+"] non e' uguale all'identificativo di correlazione atteso ["+identificativoRichiestaAsincrona+"]");
 	    }
 	    
 	    // Attesa terminazione messaggi

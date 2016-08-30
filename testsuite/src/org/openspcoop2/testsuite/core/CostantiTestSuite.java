@@ -65,7 +65,7 @@ public class CostantiTestSuite {
 	public static final String TESTSUITE_PROPERTIES = "testsuite.properties";
 	
 	/** File di configurazione dei server */
-	public static final String LOGGER_PROPERTIES = "testsuite.log4j.properties";
+	public static final String LOGGER_PROPERTIES = "testsuite.log4j2.properties";
 		
 	/** Proprieta' del tracciamento is arrived sul database tracciamento */
 	public static final String PROPERTY_IS_ARRIVED = "org.openspcoop2.testsuite.server.database.tracciamentoIsArrived";

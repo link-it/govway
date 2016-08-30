@@ -22,7 +22,7 @@
 package org.openspcoop2.protocol.basic;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.protocol.basic.builder.ErroreApplicativoBuilder;
 import org.openspcoop2.protocol.basic.builder.EsitoBuilder;

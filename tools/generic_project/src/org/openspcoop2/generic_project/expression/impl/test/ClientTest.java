@@ -25,7 +25,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -35,8 +34,6 @@ import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-import org.openspcoop2.generic_project.dao.jpa.JPAExpression;
-import org.openspcoop2.generic_project.dao.jpa.JPAPaginatedExpression;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotFoundException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -102,13 +99,10 @@ public class ClientTest {
 		testTypes.add(TestType.TO_STRING);
 		testTypes.add(TestType.SQL_STANDARD);
 		testTypes.add(TestType.PREPARED_STATEMENT);
-		testTypes.add(TestType.JPA);
 		testTypes.add(TestType.SQL_STANDARD_QUERY_OBJECT);
 		testTypes.add(TestType.PREPARED_STATEMENT_QUERY_OBJECT);
-		testTypes.add(TestType.JPA_QUERY_OBJECT); 
 		testTypes.add(TestType.SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION);
-		testTypes.add(TestType.PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION);
-		testTypes.add(TestType.JPA_QUERY_OBJECT_WITH_FROM_CONDITION); 
+		testTypes.add(TestType.PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION); 
 		
 		for (Iterator<TestType> iterator = testTypes.iterator(); iterator.hasNext();) {
 			TestType testType = iterator.next();
@@ -200,19 +194,6 @@ public class ClientTest {
 					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 	
 				}
 			}
-		case JPA:
-		case JPA_QUERY_OBJECT:
-		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
-			if(expr==null)
-				return new JPAExpression(sqlFieldConverter);
-			else{
-				if(expr instanceof IPaginatedExpression){
-					cleanManuallyFieldAdd(expr);
-					return new JPAExpression((JPAPaginatedExpression)expr);		
-				}else{
-					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 		
-				}
-			}
 		}
 		throw new ExpressionException("Not implemented");
 	}
@@ -255,15 +236,6 @@ public class ClientTest {
 			else{
 				cleanManuallyFieldAdd(expr);
 				return new JDBCPaginatedExpression((JDBCExpression)expr);
-			}
-		case JPA:
-		case JPA_QUERY_OBJECT:
-		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
-			if(expr==null)
-				return new JPAPaginatedExpression(sqlFieldConverter);
-			else{
-				cleanManuallyFieldAdd(expr);
-				return new JPAPaginatedExpression((JPAExpression)expr);
 			}
 		}
 		throw new ExpressionException("Not implemented");
@@ -309,22 +281,6 @@ public class ClientTest {
 					System.out.println("Object["+object.getClass().getName()+"]: "+object);
 				}
 				return s;
-			case JPA:
-				Hashtable<String, Object> map = new Hashtable<String, Object>();
-				String sJPA = null;
-				if(expSQL!=null)
-					sJPA = ((JPAExpression)expSQL).toSqlForJPA(map);
-				else if(pagExpSQL!=null)
-					sJPA = ((JPAPaginatedExpression)pagExpSQL).toSqlForJPA(map);
-				else
-					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 	
-				Enumeration<String> keys = map.keys();
-				while (keys.hasMoreElements()) {
-					String key = keys.nextElement();
-					Object o = map.get(key);
-					System.out.println("Key["+key+"] Object["+o.getClass().getName()+"]: "+o);
-				}
-				return sJPA;
 			case SQL_STANDARD_QUERY_OBJECT:
 				ISQLQueryObject sqlQueryObject = null;
 				if(sqlQueryObjectParam!=null){
@@ -363,29 +319,6 @@ public class ClientTest {
 				sqlQueryObjectPreparedStatement.addFromTable("NOMETABELLA");
 				sqlQueryObjectPreparedStatement.addSelectField("PROVA"); // group by richiede un alias
 				return sqlQueryObjectPreparedStatement.createSQLQuery();
-			case JPA_QUERY_OBJECT:
-				ISQLQueryObject sqlQueryObjectJPA = null;
-				if(sqlQueryObjectParam!=null){
-					sqlQueryObjectJPA = sqlQueryObjectParam;
-				}else{
-					sqlQueryObjectJPA = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-				}
-				Hashtable<String, Object> mapJPA = new Hashtable<String, Object>();
-				if(expSQL!=null)
-					((JPAExpression)expSQL).toSqlForJPA(sqlQueryObjectJPA,mapJPA);
-				else if(pagExpSQL!=null)
-					((JPAPaginatedExpression)pagExpSQL).toSqlForJPA(sqlQueryObjectJPA,mapJPA);
-				else
-					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 	
-				Enumeration<String> keysJPA = mapJPA.keys();
-				while (keysJPA.hasMoreElements()) {
-					String key = keysJPA.nextElement();
-					Object o = mapJPA.get(key);
-					System.out.println("Key["+key+"] Object["+o.getClass().getName()+"]: "+o);
-				}
-				sqlQueryObjectJPA.addFromTable("NOMETABELLA");
-				sqlQueryObjectJPA.addSelectField("PROVA"); // group by richiede un alias
-				return sqlQueryObjectJPA.createSQLQuery();
 			case SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION:
 				ISQLQueryObject sqlQueryObjectWithFromCondition = null;
 				if(sqlQueryObjectParam!=null){
@@ -421,28 +354,6 @@ public class ClientTest {
 				}
 				sqlQueryObjectPreparedStatementWithFromCondition.addSelectField("PROVA"); // group by richiede un alias
 				return sqlQueryObjectPreparedStatementWithFromCondition.createSQLQuery();
-			case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
-				ISQLQueryObject sqlQueryObjectJPAWithFromCondition = null;
-				if(sqlQueryObjectParam!=null){
-					sqlQueryObjectJPAWithFromCondition = sqlQueryObjectParam;
-				}else{
-					sqlQueryObjectJPAWithFromCondition = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-				}
-				mapJPA = new Hashtable<String, Object>();
-				if(expSQL!=null)
-					((JPAExpression)expSQL).toSqlForJPAWithFromCondition(sqlQueryObjectJPAWithFromCondition,mapJPA,"NOMETABELLA");
-				else if(pagExpSQL!=null)
-					((JPAPaginatedExpression)pagExpSQL).toSqlForJPAWithFromCondition(sqlQueryObjectJPAWithFromCondition,mapJPA,"NOMETABELLA");
-				else
-					throw new ExpressionException("Tipo non gestito: "+expr.getClass().getName()); 	
-				keysJPA = mapJPA.keys();
-				while (keysJPA.hasMoreElements()) {
-					String key = keysJPA.nextElement();
-					Object o = mapJPA.get(key);
-					System.out.println("Key["+key+"] Object["+o.getClass().getName()+"]: "+o);
-				}
-				sqlQueryObjectJPAWithFromCondition.addSelectField("PROVA"); // group by richiede un alias
-				return sqlQueryObjectJPAWithFromCondition.createSQLQuery();
 			}
 		}catch(Exception e){
 			throw new ExpressionException(e);
@@ -557,10 +468,8 @@ public class ClientTest {
 		switch (ClientTest.mode) {
 		case SQL_STANDARD_QUERY_OBJECT:
 		case PREPARED_STATEMENT_QUERY_OBJECT:
-		case JPA_QUERY_OBJECT:
 		case SQL_STANDARD_QUERY_OBJECT_WITH_FROM_CONDITION:
 		case PREPARED_STATEMENT_QUERY_OBJECT_WITH_FROM_CONDITION:
-		case JPA_QUERY_OBJECT_WITH_FROM_CONDITION:
 			ClientTest.limit(author,false);
 			break;
 		default:

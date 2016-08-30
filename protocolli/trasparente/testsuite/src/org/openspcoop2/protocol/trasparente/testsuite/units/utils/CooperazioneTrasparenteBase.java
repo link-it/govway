@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.constants.Costanti;

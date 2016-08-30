@@ -95,7 +95,7 @@ public class DriverControlStationDB  {
 	private boolean atomica = true;
 
 	/** Logger utilizzato per debug. */
-	private org.apache.log4j.Logger log = null;
+	private org.slf4j.Logger log = null;
 
 	// Tipo database passato al momento della creazione dell'oggetto
 	private String tipoDB = null;

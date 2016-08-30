@@ -265,7 +265,7 @@
 							<arg value="false" /> <!-- mantieniFruitori -->
 							<arg value="operativo" /> <!-- statoAccordiImportati -->
 							<arg value="${protocolloDefault}" /> <!-- protocolloDefault -->
-							<arg value="${openspcoop2_testsuite}/deploy/properties_xml2Backend/xml2backend.log4j.properties"/>
+							<arg value="${openspcoop2_testsuite}/deploy/properties_xml2Backend/xml2backend.log4j2.properties"/>
 							<classpath>
 								<path refid="classpath_run"/>
 							</classpath>
@@ -325,7 +325,7 @@
 							<arg value="insertUpdate" />
 							<arg value="false" /> <!-- gestioneSoggetti -->
 							<arg value="${protocolloDefault}" /> <!-- protocolloDefault -->
-							<arg value="${openspcoop2_testsuite}/deploy/properties_xml2Backend/xml2backend.log4j.properties"/>
+							<arg value="${openspcoop2_testsuite}/deploy/properties_xml2Backend/xml2backend.log4j2.properties"/>
 							<classpath>
 								<path refid="classpath_run"/>
 							</classpath>

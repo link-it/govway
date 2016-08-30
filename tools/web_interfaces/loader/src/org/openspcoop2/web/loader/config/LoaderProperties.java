@@ -28,9 +28,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 
@@ -71,7 +72,7 @@ public class LoaderProperties {
 		if(log!=null)
 			this.log = log;
 		else
-			this.log = Logger.getLogger(LoaderProperties.class);
+			this.log = LoggerWrapperFactory.getLogger(LoaderProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
@@ -250,7 +251,7 @@ public class LoaderProperties {
 						Type[]types = ms[i].getGenericParameterTypes();
 	
 						if(types!=null && types.length==1){
-							if( (types[0].toString().equals("class org.apache.log4j.Logger")) ){
+							if( (types[0].toString().equals("class org.slf4j.Logger")) ){
 								mFactory = ms[i];
 								break;
 							}
@@ -290,7 +291,7 @@ public class LoaderProperties {
 						Type[]types = ms[i].getGenericParameterTypes();
 	
 						if(types!=null && types.length==3){
-							if( (types[0].toString().equals("class org.apache.log4j.Logger")) && 
+							if( (types[0].toString().equals("class org.slf4j.Logger")) && 
 									(types[1].toString().equals("class "+classLicenseValidatorFactory)) && 
 									(types[2].toString().equals("boolean")) ){
 								m = ms[i];

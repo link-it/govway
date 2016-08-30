@@ -31,7 +31,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -64,7 +65,7 @@ public class ExampleService extends HttpServlet {
 			throw new ServletException("Applicazione non inizializzata");
 		}
 		
-		Logger log = Logger.getLogger(ExampleService.class);
+		Logger log = LoggerWrapperFactory.getLogger(ExampleService.class);
 		
 		String prefix = "";
 		Connection con = null;

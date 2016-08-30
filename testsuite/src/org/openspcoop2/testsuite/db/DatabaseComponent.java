@@ -29,7 +29,7 @@ import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 
 /**
  * Gestione del Database di Tracciamento
@@ -101,7 +101,7 @@ public class DatabaseComponent {
 	}
 	
 
-	public void close() throws FatalTestSuiteException{
+	public void close() throws TestSuiteException{
 		try{
 			String error = null;
 			try{
@@ -132,7 +132,7 @@ public class DatabaseComponent {
 
 	/** ********************Crea una connessione****************************** */
 
-	private void setConnection(String dataSource,Properties propJNDI,boolean tracciamento) throws FatalTestSuiteException {
+	private void setConnection(String dataSource,Properties propJNDI,boolean tracciamento) throws TestSuiteException {
 		InitialContext ctx = null;
 		try {
 			ctx = new InitialContext(propJNDI);
@@ -146,7 +146,7 @@ public class DatabaseComponent {
 				this.connectionPdD = ds.getConnection();
 
 		} catch (Exception e) {
-			throw new FatalTestSuiteException("Impossibile instanziare la connessione al database ("+dataSource+")("+tracciamento+"): "+e.getMessage());
+			throw new TestSuiteException("Impossibile instanziare la connessione al database ("+dataSource+")("+tracciamento+"): "+e.getMessage());
 		}finally{
 			try{
 				if(ctx!=null)
@@ -155,7 +155,7 @@ public class DatabaseComponent {
 		}
 	}
 
-	private void setConnection(String driverJDBC,String connectionUrl,String username,String password,boolean tracciamento) throws FatalTestSuiteException {
+	private void setConnection(String driverJDBC,String connectionUrl,String username,String password,boolean tracciamento) throws TestSuiteException {
 		try {
 
 			// Carico driver JDBC
@@ -167,7 +167,7 @@ public class DatabaseComponent {
 				this.connectionPdD = DriverManager.getConnection(connectionUrl, username, password); 
 
 		} catch (Exception e) {
-			throw new FatalTestSuiteException("Impossibile instanziare la connessione al database ("+connectionUrl+")("+tracciamento+"): "+e.getMessage());
+			throw new TestSuiteException("Impossibile instanziare la connessione al database ("+connectionUrl+")("+tracciamento+"): "+e.getMessage());
 		}
 	}
 

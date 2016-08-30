@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration>
+	<Appenders>
+		<RollingFile name="transaction.rollingFile" 
+					fileName="/var/tmp/transaction.log" 
+					filePattern="/var/tmp/transaction.log.%i">
+			<PatternLayout pattern="%m %n %n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
+		<RollingFile name="diagnostic.rollingFile" 
+					fileName="/var/tmp/diagnostic.log" 
+					filePattern="/var/tmp/diagnostic.log.%i">
+			<PatternLayout pattern="%m %n %n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
+		<RollingFile name="dump.rollingFile" 
+					fileName="/var/tmp/dump.log" 
+					filePattern="/var/tmp/dump.log.%i">
+			<PatternLayout pattern="%m %n %n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
+		<RollingFile name="event.rollingFile" 
+					fileName="/var/tmp/event.log" 
+					filePattern="/var/tmp/event.log.%i">
+			<PatternLayout pattern="%m %n %n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="transaction" level="ALL" additivity="false">
+			<AppenderRef ref="transaction.rollingFile" />
+		</Logger>
+		<Logger name="diagnostic" level="ALL" additivity="false">
+			<AppenderRef ref="diagnostic.rollingFile" />
+		</Logger>
+		<Logger name="dump" level="ALL" additivity="false">
+			<AppenderRef ref="dump.rollingFile" />
+		</Logger>
+		<Logger name="event" level="ALL" additivity="false">
+			<AppenderRef ref="event.rollingFile" />
+		</Logger>
+	</Loggers>
+</Configuration>
+		

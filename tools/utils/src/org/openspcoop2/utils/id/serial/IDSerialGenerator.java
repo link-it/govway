@@ -23,7 +23,7 @@ package org.openspcoop2.utils.id.serial;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;

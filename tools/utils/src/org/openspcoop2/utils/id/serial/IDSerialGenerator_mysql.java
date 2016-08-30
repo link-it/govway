@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * IDSerialGenerator_mysql

@@ -41,7 +41,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.utils.date.DateManager;
@@ -159,7 +159,7 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsSoapFaultDefault".equals(username) ||
 						"erroreApplicativoAsSoapFaultRidefinito".equals(username)){
 					Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
@@ -406,7 +406,7 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsSoapFaultDefault".equals(username) ||
 						"erroreApplicativoAsSoapFaultRidefinito".equals(username)){
 					Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
@@ -616,7 +616,7 @@ public class ErroreApplicativoCNIPA {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -862,7 +862,7 @@ public class ErroreApplicativoCNIPA {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -951,7 +951,7 @@ public class ErroreApplicativoCNIPA {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -1027,7 +1027,7 @@ public class ErroreApplicativoCNIPA {
 				client.run();
 
 				Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-				throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+				throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 
 			} catch (AxisFault error) {
 				
@@ -1277,7 +1277,7 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
 						"erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
@@ -1505,7 +1505,7 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
 						"erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
@@ -1737,7 +1737,7 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
 						"erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==200);
@@ -1967,7 +1967,7 @@ public class ErroreApplicativoCNIPA {
 				if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
 						"erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 					Reporter.log("Invocazione porta delegata inesistente non ha causato errori.");
-					throw new FatalTestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
+					throw new TestSuiteException("Invocazione porta delegata inesistente non ha causato errori.");
 				}
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==200);

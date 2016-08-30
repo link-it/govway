@@ -39,7 +39,6 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
 
@@ -74,7 +73,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		this.setConnection(driverJDBC,connectionUrl,username,password);
 	}
 
-	public void close() throws FatalTestSuiteException{
+	public void close() throws TestSuiteException{
 		try{
 			String error = null;
 			try{
@@ -97,7 +96,7 @@ public class DatabaseMsgDiagnosticiComponent {
 
 	/** ********************Crea una connessione****************************** */
 
-	private void setConnection(String dataSource,Properties propJNDI) throws FatalTestSuiteException {
+	private void setConnection(String dataSource,Properties propJNDI) throws TestSuiteException {
 		InitialContext ctx = null;
 		try {
 			ctx = new InitialContext(propJNDI);
@@ -108,7 +107,7 @@ public class DatabaseMsgDiagnosticiComponent {
 			this.connectionMsgDiagnostici = ds.getConnection();
 
 		} catch (Exception e) {
-			throw new FatalTestSuiteException("Impossibile instanziare la connessione al database dei msg diagnostici("+dataSource+"): "+e.getMessage());
+			throw new TestSuiteException("Impossibile instanziare la connessione al database dei msg diagnostici("+dataSource+"): "+e.getMessage());
 		}finally{
 			try{
 				if(ctx!=null)
@@ -116,7 +115,7 @@ public class DatabaseMsgDiagnosticiComponent {
 			} catch (Exception e) {}
 		}
 	}
-	private void setConnection(String driverJDBC,String connectionurl,String username,String password) throws FatalTestSuiteException {
+	private void setConnection(String driverJDBC,String connectionurl,String username,String password) throws TestSuiteException {
 		try {
 			// Carico driver JDBC
 			Class.forName(driverJDBC); 
@@ -124,7 +123,7 @@ public class DatabaseMsgDiagnosticiComponent {
 			this.connectionMsgDiagnostici = DriverManager.getConnection(connectionurl, username, password); 
 
 		} catch (Exception e) {
-			throw new FatalTestSuiteException("Impossibile instanziare la connessione al database dei msg diagnostici("+connectionurl+"): "+e.getMessage());
+			throw new TestSuiteException("Impossibile instanziare la connessione al database dei msg diagnostici("+connectionurl+"): "+e.getMessage());
 		}
 	}
 
@@ -136,10 +135,10 @@ public class DatabaseMsgDiagnosticiComponent {
 		this.dataSourceMsgDiagnostici = dataSourceMsgDiagnostici;
 	}
 
-	public long count(String id)throws FatalTestSuiteException{
+	public long count(String id)throws TestSuiteException{
 		return countSeveritaLessEquals(id, null);
 	}
-	public long countSeveritaLessEquals(String id, Integer severita)throws FatalTestSuiteException{
+	public long countSeveritaLessEquals(String id, Integer severita)throws TestSuiteException{
 		if(id==null)throw new TestSuiteException("Il parametro id vale null");
 
 		ResultSet res = null;
@@ -184,16 +183,16 @@ public class DatabaseMsgDiagnosticiComponent {
 	
 	
 
-	public boolean isTracedMessaggio(String id,CodiceErroreCooperazione codice, String rilevanza, String contesto, ErroreCooperazione errore)throws FatalTestSuiteException, ProtocolException{
+	public boolean isTracedMessaggio(String id,CodiceErroreCooperazione codice, String rilevanza, String contesto, ErroreCooperazione errore)throws TestSuiteException, ProtocolException{
 		return isTracedMessaggio(id,Utilities.toString(codice, this.protocollo),rilevanza,contesto,Utilities.toString(errore, this.protocollo));
 	}
-	public boolean isTracedMessaggio(String id,CodiceErroreCooperazione codice, String rilevanza, String contesto, String posizione)throws FatalTestSuiteException, ProtocolException{
+	public boolean isTracedMessaggio(String id,CodiceErroreCooperazione codice, String rilevanza, String contesto, String posizione)throws TestSuiteException, ProtocolException{
 		return isTracedMessaggio(id,Utilities.toString(codice, this.protocollo),rilevanza,contesto,posizione);
 	}
-	public boolean isTracedMessaggio(String id,String codice, String rilevanza, String contesto, ErroreCooperazione errore)throws FatalTestSuiteException, ProtocolException{
+	public boolean isTracedMessaggio(String id,String codice, String rilevanza, String contesto, ErroreCooperazione errore)throws TestSuiteException, ProtocolException{
 		return isTracedMessaggio(id,codice,rilevanza,contesto,Utilities.toString(errore, this.protocollo));
 	}
-	public boolean isTracedMessaggio(String id,String codice, String rilevanza, String contesto, String posizione)throws FatalTestSuiteException{
+	public boolean isTracedMessaggio(String id,String codice, String rilevanza, String contesto, String posizione)throws TestSuiteException{
 		if(codice==null)throw new TestSuiteException("Il codice eccezione vale null");
 		if(rilevanza==null)throw new TestSuiteException("La rilevanza eccezione vale null");
 		if(contesto==null)throw new TestSuiteException("Il contesto eccezione vale null");
@@ -232,7 +231,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean isTracedMessaggio(String id,String messaggio)throws FatalTestSuiteException{
+	public boolean isTracedMessaggio(String id,String messaggio)throws TestSuiteException{
 		if(messaggio==null)throw new TestSuiteException("Messaggio vale null");
 
 		ResultSet res = null;
@@ -297,7 +296,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean isTracedCodice(String id,String codice)throws FatalTestSuiteException{
+	public boolean isTracedCodice(String id,String codice)throws TestSuiteException{
 		if(id==null)throw new TestSuiteException("Id vale null");
 		if(codice==null)throw new TestSuiteException("Codice vale null");
 
@@ -365,7 +364,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean isTracedMessaggio(String messaggio)throws FatalTestSuiteException{
+	public boolean isTracedMessaggio(String messaggio)throws TestSuiteException{
 		if(messaggio==null)throw new TestSuiteException("Messaggio vale null");
 
 		ResultSet res = null;
@@ -518,7 +517,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean isTracedMessaggio(String ... valoriContenutiMsg)throws FatalTestSuiteException{
+	public boolean isTracedMessaggio(String ... valoriContenutiMsg)throws TestSuiteException{
 		if(valoriContenutiMsg==null)throw new TestSuiteException("Parametri non passati");
 
 		ResultSet res = null;
@@ -551,7 +550,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean isTracedMessaggio(String id, boolean richiesta, String ... valoriContenutiMsg)throws FatalTestSuiteException{
+	public boolean isTracedMessaggio(String id, boolean richiesta, String ... valoriContenutiMsg)throws TestSuiteException{
 		if(valoriContenutiMsg==null)throw new TestSuiteException("Parametri non passati");
 
 		ResultSet res = null;
@@ -586,7 +585,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean isTracedErrorMsg(String id)throws FatalTestSuiteException{
+	public boolean isTracedErrorMsg(String id)throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement prep = null;
@@ -614,7 +613,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean isTracedMessaggiWithCode(String id,String ... code)throws FatalTestSuiteException{
+	public boolean isTracedMessaggiWithCode(String id,String ... code)throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement prep = null;
@@ -628,11 +627,11 @@ public class DatabaseMsgDiagnosticiComponent {
 			if(res.next()){
 				long count = res.getLong("totale");
 				if(count!=code.length){
-					//throw new FatalTestSuiteException("Trovati "+count+" diagnostici");
+					//throw new TestSuiteException("Trovati "+count+" diagnostici");
 					return false;
 				}
 			}else{
-				//throw new FatalTestSuiteException("Diagnostico con codice ["+code[i]+"] non trovato");
+				//throw new TestSuiteException("Diagnostico con codice ["+code[i]+"] non trovato");
 				return false;
 			}
 			res.close();
@@ -656,11 +655,11 @@ public class DatabaseMsgDiagnosticiComponent {
 						}
 					}
 					if(count!=sommaCodiciDaTrovareUguali){
-						//throw new FatalTestSuiteException("Trovati "+count+" diagnostici con codice ["+code[i]+"]");
+						//throw new TestSuiteException("Trovati "+count+" diagnostici con codice ["+code[i]+"]");
 						return false;
 					}
 				}else{
-					//throw new FatalTestSuiteException("Diagnostico con codice ["+code[i]+"] non trovato");
+					//throw new TestSuiteException("Diagnostico con codice ["+code[i]+"] non trovato");
 					return false;
 				}
 				res.close();
@@ -699,7 +698,7 @@ public class DatabaseMsgDiagnosticiComponent {
 	}
 	
 	
-	public Vector<String> getMessaggiNonTrasformatiCorrettamente()throws FatalTestSuiteException{
+	public Vector<String> getMessaggiNonTrasformatiCorrettamente()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
@@ -761,7 +760,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		return resultsVector;
 	}
 	
-	public Vector<String> getMessaggiCheSegnalanoNullPointer()throws FatalTestSuiteException{
+	public Vector<String> getMessaggiCheSegnalanoNullPointer()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
@@ -797,7 +796,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		return resultsVector;
 	}
 	
-	public Vector<String> getMessaggiSenzaCodici()throws FatalTestSuiteException{
+	public Vector<String> getMessaggiSenzaCodici()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
@@ -833,7 +832,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		return resultsVector;
 	}
 	
-	public Vector<String> getTracciamentoNonRiuscito()throws FatalTestSuiteException{
+	public Vector<String> getTracciamentoNonRiuscito()throws TestSuiteException{
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
@@ -869,13 +868,13 @@ public class DatabaseMsgDiagnosticiComponent {
 		return resultsVector;
 	}
 
-	public boolean isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(String value) throws FatalTestSuiteException{
+	public boolean isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(String value) throws TestSuiteException{
 		return this.isTracedIntoMsgDiagnosticiCorrelazione(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_ID_CORRELAZIONE_APPLICATIVA_RICHIESTA,value);
 	} 
-	public boolean isTracedCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(String value) throws FatalTestSuiteException{
+	public boolean isTracedCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(String value) throws TestSuiteException{
 		return this.isTracedIntoMsgDiagnosticiCorrelazione(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_ID_CORRELAZIONE_APPLICATIVA_RISPOSTA,value);
 	} 
-	private boolean isTracedIntoMsgDiagnosticiCorrelazione(String field,String value)throws FatalTestSuiteException{
+	private boolean isTracedIntoMsgDiagnosticiCorrelazione(String field,String value)throws TestSuiteException{
 		if(value==null)throw new TestSuiteException("Messaggio vale null");
 
 		ResultSet res = null;
@@ -903,13 +902,13 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
-	public boolean existsCorrelazioneApplicativaRichiestaIntoMsgDiagnosticiCorrelazione(String idMessaggio,boolean delegata) throws FatalTestSuiteException{
+	public boolean existsCorrelazioneApplicativaRichiestaIntoMsgDiagnosticiCorrelazione(String idMessaggio,boolean delegata) throws TestSuiteException{
 		return this.existsCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idMessaggio, delegata, true);
 	} 
-	public boolean existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(String idMessaggio,boolean delegata) throws FatalTestSuiteException{
+	public boolean existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(String idMessaggio,boolean delegata) throws TestSuiteException{
 		return this.existsCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idMessaggio, delegata, false);
 	} 
-	private boolean existsCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(String idMessaggio,boolean delegata,boolean richiesta)throws FatalTestSuiteException{
+	private boolean existsCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(String idMessaggio,boolean delegata,boolean richiesta)throws TestSuiteException{
 		
 		ResultSet res = null;
 		PreparedStatement prep = null;

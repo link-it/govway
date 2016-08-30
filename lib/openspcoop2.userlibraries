@@ -34,6 +34,7 @@
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-ws-security-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-common-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-validator-3.1.7.jar"/>
+	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-wsdlto-core-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/asm-5.0.4.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/javax.ws.rs-api-2.0.1.jar"/>
         <archive path="/op2_2.3.dev/lib/cxf/stax2-api-3.1.4.jar"/>
@@ -86,9 +87,11 @@
 	<archive path="/op2_2.3.dev/lib/jminix/org.restlet.ext.servlet-2.1.4.jar"/>
 	<archive path="/op2_2.3.dev/lib/jminix/org.restlet.ext.velocity-2.1.4.jar"/>
 	<!-- log -->
-        <archive path="/op2_2.3.dev/lib/log/slf4j-jdk14-1.7.21.jar"/>
         <archive path="/op2_2.3.dev/lib/log/slf4j-api-1.7.21.jar"/>
-        <archive path="/op2_2.3.dev/lib/log/log4j-1.2.16.jar"/>
+	<archive path="/op2_2.3.dev/lib/log/log4j-1.2-api-2.6.2.jar"/>
+        <archive path="/op2_2.3.dev/lib/log/log4j-api-2.6.2.jar"/>
+	<archive path="/op2_2.3.dev/lib/log/log4j-core-2.6.2.jar"/>
+	<archive path="/op2_2.3.dev/lib/log/log4j-slf4j-impl-2.6.2.jar"/>
 	<!-- lucene -->
         <archive path="/op2_2.3.dev/lib/lucene/lucene-core-6.1.0.jar"/>
 	<archive path="/op2_2.3.dev/lib/lucene/lucene-analyzers-common-6.1.0.jar"/>

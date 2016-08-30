@@ -25,7 +25,7 @@ package org.openspcoop2.message;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 
 

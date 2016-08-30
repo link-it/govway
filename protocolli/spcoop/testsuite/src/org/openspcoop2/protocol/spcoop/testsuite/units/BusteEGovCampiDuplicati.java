@@ -43,7 +43,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -131,7 +131,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2headerEGov=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2H"},
 			dependsOnMethods="init")
-			public void EGov2headerEGov()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2headerEGov()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("busta_2headerEGov.xml");
 		this.repository2headerEGov.add(this.busteEGovErrate.getID(index));
 
@@ -158,7 +158,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2headerEGov.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2headerEGov, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2headerEGov, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -228,7 +228,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2IntestazioneMessaggio=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2IM"},
 			dependsOnMethods="init")
-			public void EGov2IntestazioneMessaggio()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2IntestazioneMessaggio()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -258,7 +258,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2IntestazioneMessaggio.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2IntestazioneMessaggio, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2IntestazioneMessaggio, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -402,7 +402,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Mittenti=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2M"},
 			dependsOnMethods="init")
-			public void EGov2Mittenti()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Mittenti()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -431,7 +431,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Mittenti.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Mittenti, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Mittenti, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -572,7 +572,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Destinatari=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2D"},
 			dependsOnMethods="init")
-			public void EGov2Destinatari()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Destinatari()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -602,7 +602,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Destinatari.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Destinatari, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Destinatari, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -747,7 +747,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2ProfiliCollaborazione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2PC"},
 			dependsOnMethods="init")
-			public void EGov2ProfiliCollaborazione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2ProfiliCollaborazione()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -776,7 +776,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2ProfiliCollaborazione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2ProfiliCollaborazione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2ProfiliCollaborazione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -923,7 +923,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Collaborazioni=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2C"},
 			dependsOnMethods="init")
-			public void EGov2Collaborazioni()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Collaborazioni()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -952,7 +952,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Collaborazioni.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Collaborazioni, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Collaborazioni, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1096,7 +1096,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Servizi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2S"},
 			dependsOnMethods="init")
-			public void EGov2Servizi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Servizi()throws TestSuiteException, SOAPException, Exception{
 	
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1125,7 +1125,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Servizi.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Servizi, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Servizi, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1264,7 +1264,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Azioni=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2A"},
 			dependsOnMethods="init")
-			public void EGov2Azioni()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Azioni()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1293,7 +1293,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Azioni.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Azione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Azione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1439,7 +1439,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Messaggi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2Me"},
 			dependsOnMethods="init")
-			public void EGov2Messaggi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Messaggi()throws TestSuiteException, SOAPException, Exception{
 	
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1468,7 +1468,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Messaggi.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Messaggi, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Messaggi, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1614,7 +1614,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Identificatori=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2I"},
 			dependsOnMethods="init")
-			public void EGov2Identificatori()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Identificatori()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1643,7 +1643,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Identificatori.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Identificatori, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Identificatori, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1789,7 +1789,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2OreRegistrazioni=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2OR"},
 			dependsOnMethods="init")
-			public void EGov2OreRegistrazioni()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2OreRegistrazioni()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1818,7 +1818,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2OreRegistrazioni.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2OreRegistrazioni, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2OreRegistrazioni, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -1965,7 +1965,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2RiferimentiMessaggi=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2RM"},
 			dependsOnMethods="init")
-			public void EGov2RiferimentiMessaggi()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2RiferimentiMessaggi()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1994,7 +1994,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2RiferimentiMessaggi.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2RiferimentiMessaggi, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2RiferimentiMessaggi, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2140,7 +2140,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Scadenze=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2Sc"},
 			dependsOnMethods="init")
-			public void EGov2Scadenze()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Scadenze()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2169,7 +2169,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Scadenze.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Scadenze, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Scadenze, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2314,7 +2314,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2ProfiliTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2PT"},
 			dependsOnMethods="init")
-			public void EGov2ProfiliTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2ProfiliTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2343,7 +2343,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2ProfiliTrasmissione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2ProfiliTrasmissione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2ProfiliTrasmissione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2491,7 +2491,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2Sequenze=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2Se"},
 			dependsOnMethods="init")
-			public void EGov2Sequenze()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2Sequenze()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2520,7 +2520,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2Sequenze.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2Sequenze, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2Sequenze, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2667,7 +2667,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2ListeTrasmissioni=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2LT"},
 			dependsOnMethods="init")
-			public void EGov2ListeTrasmissioni()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2ListeTrasmissioni()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2696,7 +2696,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2ListeTrasmissioni.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2ListeTrasmissioni, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2ListeTrasmissioni, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -2844,7 +2844,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2OrigineTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2OT"},
 			dependsOnMethods="init")
-			public void EGov2OrigineTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2OrigineTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2873,7 +2873,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2OrigineTrasmissione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2OrigineTrasmissione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2OrigineTrasmissione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3020,7 +3020,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2DestinazioneTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2DT"},
 			dependsOnMethods="init")
-			public void EGov2DestinazioneTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2DestinazioneTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3049,7 +3049,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2DestinazioneTrasmissione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2DestinazioneTrasmissione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2DestinazioneTrasmissione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3197,7 +3197,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2OraRegistrazioneTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2ORT"},
 			dependsOnMethods="init")
-			public void EGov2OraRegistrazioneTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2OraRegistrazioneTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3226,7 +3226,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2OraRegistrazioneTrasmissione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2OraRegistrazioneTrasmissione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2OraRegistrazioneTrasmissione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3375,7 +3375,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2IdentificativiParteOrigineTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2IPOT"},
 			dependsOnMethods="init")
-			public void EGov2IdentificativiParteOrigineTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2IdentificativiParteOrigineTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		
 		int index = this.busteEGovErrate.getIndexFromNomeFile("busta_2IdentificativiParteOrigineTrasmissione.xml");
 		this.repository2IdentificativiParteOrigineTrasmissione.add(this.busteEGovErrate.getID(index));
@@ -3402,7 +3402,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2IdentificativiParteOrigineTrasmissione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2IdentificativiParteOrigineTrasmissione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2IdentificativiParteOrigineTrasmissione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3535,7 +3535,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2IdentificativiParteDestinazioneTrasmissione=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2IPDT"},
 			dependsOnMethods="init")
-			public void EGov2IdentificativiParteDestinazioneTrasmissione()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2IdentificativiParteDestinazioneTrasmissione()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGovErrate.getIndexFromNomeFile("busta_2IdentificativiParteDestinazioneTrasmissione.xml");
 		this.repository2IdentificativiParteDestinazioneTrasmissione.add(this.busteEGovErrate.getID(index));
 		java.io.ByteArrayInputStream bin = new java.io.ByteArrayInputStream(this.busteEGovErrate.getBusta(index).getBytes());
@@ -3561,7 +3561,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2IdentificativiParteDestinazioneTrasmissione.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2IdentificativiParteDestinazioneTrasmissione, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2IdentificativiParteDestinazioneTrasmissione, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -3693,7 +3693,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2ListeEccezioni=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2LE"},
 			dependsOnMethods="init")
-			public void EGov2ListeEccezioni()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2ListeEccezioni()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3848,7 +3848,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2ListeRiscontri=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2LR"},
 			dependsOnMethods="init")
-			public void EGov2ListeRiscontri()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2ListeRiscontri()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3877,7 +3877,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2ListeRiscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2ListeRiscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2ListeRiscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4023,7 +4023,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2IdentificatoriRiscontro_ListeRiscontri=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2IR_LR"},
 			dependsOnMethods="init")
-			public void EGov2IdentificatoriRiscontro_ListeRiscontri()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGov2IdentificatoriRiscontro_ListeRiscontri()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4052,7 +4052,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2IdentificatoriRiscontro_ListeRiscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2IdentificatoriRiscontro_ListeRiscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2IdentificatoriRiscontro_ListeRiscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -4200,7 +4200,7 @@ public class BusteEGovCampiDuplicati {
 	Repository repository2OraRegistrazioneRiscontro_ListeRiscontri=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".2ORR_LR"},
 			dependsOnMethods="init")
-	public void EGov2OraRegistrazioneRiscontro_ListeRiscontri()throws FatalTestSuiteException, SOAPException, Exception{
+	public void EGov2OraRegistrazioneRiscontro_ListeRiscontri()throws TestSuiteException, SOAPException, Exception{
 		
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -4229,7 +4229,7 @@ public class BusteEGovCampiDuplicati {
 				client.run();
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
 					Reporter.log("Invocazione PA con una busta con 2OraRegistrazioneRiscontro_ListeRiscontri.");
-					throw new FatalTestSuiteException("Invocazione PA con busta con 2OraRegistrazioneRiscontro_ListeRiscontri, non ha causato errori.");
+					throw new TestSuiteException("Invocazione PA con busta con 2OraRegistrazioneRiscontro_ListeRiscontri, non ha causato errori.");
 				}
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());

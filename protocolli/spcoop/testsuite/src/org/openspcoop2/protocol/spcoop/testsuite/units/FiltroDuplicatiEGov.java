@@ -34,7 +34,7 @@ import org.apache.axis.Message;
 
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -172,7 +172,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_OnewayConRiscontri=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ONEWAY_CON_RISCONTRO"})
-	public void filtroDuplicatiStateful_OnewayConRiscontri()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_OnewayConRiscontri()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -301,7 +301,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_OnewayConRiscontri=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ONEWAY_CON_RISCONTRO"})
-	public void filtroDuplicatiStateless_OnewayConRiscontri()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_OnewayConRiscontri()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -424,7 +424,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_Oneway_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ONEWAY_LINEE_GUIDA"})
-	public void filtroDuplicatiStateful_Oneway_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_Oneway_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -556,7 +556,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_Oneway_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ONEWAY_LINEE_GUIDA"})
-	public void filtroDuplicatiStateless_Oneway_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_Oneway_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -684,7 +684,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_Sincrono=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_SINCRONO"})
-	public void filtroDuplicatiStateful_Sincrono()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_Sincrono()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -799,7 +799,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_Sincrono=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_SINCRONO"})
-	public void filtroDuplicatiStateless_Sincrono()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_Sincrono()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -912,7 +912,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_Sincrono_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_SINCRONO_LINEE_GUIDA"})
-	public void filtroDuplicatiStateful_Sincrono_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_Sincrono_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1027,7 +1027,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_Sincrono_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_SINCRONO_LINEE_GUIDA"})
-	public void filtroDuplicatiStateless_Sincrono_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_Sincrono_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1157,7 +1157,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoSimmetrico_RicevutaAbilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_SIMMETRICO_RICEVUTA_SINCRONA"})
-	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaAbilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaAbilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1319,7 +1319,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoSimmetrico_RicevutaAbilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_SIMMETRICO_RICEVUTA_SINCRONA"})
-	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaAbilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaAbilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1433,7 +1433,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoSimmetrico_RicevutaAbilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_SIMMETRICO_RICEVUTA_SINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaAbilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaAbilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1595,7 +1595,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoSimmetrico_RicevutaAbilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_SIMMETRICO_RICEVUTA_SINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaAbilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaAbilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1731,7 +1731,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoSimmetrico_RicevutaDisabilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_SIMMETRICO_RICEVUTA_ASINCRONA"})
-	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaDisabilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaDisabilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -1893,7 +1893,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoSimmetrico_RicevutaDisabilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_SIMMETRICO_RICEVUTA_ASINCRONA"})
-	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaDisabilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaDisabilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2009,7 +2009,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoSimmetrico_RicevutaDisabilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_SIMMETRICO_RICEVUTA_ASINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaDisabilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoSimmetrico_RicevutaDisabilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2171,7 +2171,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoSimmetrico_RicevutaDisabilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_SIMMETRICO_RICEVUTA_ASINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaDisabilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoSimmetrico_RicevutaDisabilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2307,7 +2307,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoAsimmetrico_RicevutaAbilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_ASIMMETRICO_RICEVUTA_SINCRONA"})
-	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaAbilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaAbilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2470,7 +2470,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoAsimmetrico_RicevutaAbilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_ASIMMETRICO_RICEVUTA_SINCRONA"})
-	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaAbilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaAbilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2584,7 +2584,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoAsimmetrico_RicevutaAbilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_ASIMMETRICO_RICEVUTA_SINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaAbilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaAbilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2746,7 +2746,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoAsimmetrico_RicevutaAbilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_ASIMMETRICO_RICEVUTA_SINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaAbilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaAbilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -2882,7 +2882,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoAsimmetrico_RicevutaDisabilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_ASIMMETRICO_RICEVUTA_ASINCRONA"})
-	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaDisabilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaDisabilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -3044,7 +3044,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoAsimmetrico_RicevutaDisabilitata=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_ASIMMETRICO_RICEVUTA_ASINCRONA"})
-	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaDisabilitata()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaDisabilitata()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -3160,7 +3160,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_AsincronoAsimmetrico_RicevutaDisabilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ASINCRONO_ASIMMETRICO_RICEVUTA_ASINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaDisabilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_AsincronoAsimmetrico_RicevutaDisabilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -3322,7 +3322,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_AsincronoAsimmetrico_RicevutaDisabilitata_LineeGuida=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ASINCRONO_ASIMMETRICO_RICEVUTA_ASINCRONA_LINEE_GUIDA"})
-	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaDisabilitata_LineeGuida()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_AsincronoAsimmetrico_RicevutaDisabilitata_LineeGuida()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -3451,7 +3451,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateful_Oneway=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATEFUL_ONEWAY"})
-	public void filtroDuplicatiStateful_Oneway()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateful_Oneway()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
@@ -3562,7 +3562,7 @@ public class FiltroDuplicatiEGov {
 	 */
 	Repository repositoryFiltroDuplicatiStateless_Oneway=new Repository();
 	@Test(groups={FiltroDuplicatiEGov.ID_GRUPPO,FiltroDuplicatiEGov.ID_GRUPPO+".STATELESS_ONEWAY"})
-	public void filtroDuplicatiStateless_Oneway()throws FatalTestSuiteException, SOAPException, Exception{
+	public void filtroDuplicatiStateless_Oneway()throws TestSuiteException, SOAPException, Exception{
 
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);

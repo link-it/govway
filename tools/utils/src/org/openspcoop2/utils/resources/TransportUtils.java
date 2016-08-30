@@ -24,7 +24,8 @@ import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /**
  * TransportUtils
@@ -37,7 +38,7 @@ import org.apache.log4j.Logger;
 public class TransportUtils {
 
 	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location){
-		return buildLocationWithURLBasedParameter(propertiesURLBased, location, Logger.getLogger(TransportUtils.class));
+		return buildLocationWithURLBasedParameter(propertiesURLBased, location, LoggerWrapperFactory.getLogger(TransportUtils.class));
 	}
 	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location, Logger log){
 		if(propertiesURLBased != null && propertiesURLBased.size()>0){

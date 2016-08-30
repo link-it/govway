@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.security.message.engine;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.message.XPathExpressionEngine;
 import org.openspcoop2.security.message.MessageSecurityDigestReader;

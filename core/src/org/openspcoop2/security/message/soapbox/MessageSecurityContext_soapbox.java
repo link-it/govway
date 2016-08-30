@@ -24,7 +24,7 @@
 package org.openspcoop2.security.message.soapbox;
 
 import org.adroitlogic.soapbox.CryptoSupport;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.xml.security.exceptions.AlgorithmAlreadyRegisteredException;
 import org.apache.xml.security.transforms.Transform;
 import org.openspcoop2.security.SecurityException;

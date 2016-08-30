@@ -37,7 +37,7 @@ import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 import javax.naming.InitialContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.resources.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;

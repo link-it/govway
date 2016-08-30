@@ -28,7 +28,8 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
  * 
@@ -95,7 +96,7 @@ public class WSStartup implements ServletContextListener {
 		if(WSStartup.initializedLog==false){
 			
 			try{
-				WSStartup.log = Logger.getLogger(WSStartup.class);
+				WSStartup.log = LoggerWrapperFactory.getLogger(WSStartup.class);
 				LoggerProperties.initialize(WSStartup.log, confDir, null);
 				initializedLog = true;
 				WSStartup.log = LoggerProperties.getLoggerWS();

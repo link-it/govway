@@ -21,7 +21,7 @@
 
 package org.openspcoop2.utils.wadl;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * Message Listener che riceve gli eventi durante la lettura di un wadl

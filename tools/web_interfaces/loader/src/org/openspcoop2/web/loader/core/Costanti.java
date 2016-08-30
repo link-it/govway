@@ -44,7 +44,7 @@ public class Costanti {
     public final static String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "loader_local.datasource.properties";
     public final static String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_LOADER_DATASOURCE_PROPERTIES";
 	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "loader_local.log4j.properties";
+    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "loader_local.log4j2.properties";
     public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_LOADER_LOG_PROPERTIES";
 	
 	/* OTHER */

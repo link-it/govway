@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -119,7 +119,7 @@ public class PortaDelegata extends Porta {
 
 	}
 
-	public void oneWayLocalForward(Repository repositoryOneWay) throws FatalTestSuiteException, Exception{
+	public void oneWayLocalForward(Repository repositoryOneWay) throws TestSuiteException, Exception{
 		this.collaborazioneTrasparenteBase.oneWay(repositoryOneWay,this.portaDelegataOneWayLocalForward,true, null, null);
 	}
 
@@ -141,7 +141,7 @@ public class PortaDelegata extends Porta {
 	}
 
 
-	public void sincronoLocalForward(Repository repository) throws FatalTestSuiteException, Exception{
+	public void sincronoLocalForward(Repository repository) throws TestSuiteException, Exception{
 		this.collaborazioneTrasparenteBase.sincrono(repository,this.portaDelegataSincronoLocalForward,true);
 	}
 
@@ -156,7 +156,7 @@ public class PortaDelegata extends Porta {
 		}
 	}
 
-	public static void _oneWayLocalForward(PortaDelegata port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _oneWayLocalForward(PortaDelegata port, Repository repository) throws TestSuiteException, Exception{
 		port.oneWayLocalForward(repository);
 	}
 	
@@ -164,7 +164,7 @@ public class PortaDelegata extends Porta {
 		port.testOneWayLocalForward(data, msgDiagData, id, checkServizioApplicativo);
 	}	
 	
-	public static void _sincronoLocalForward(PortaDelegata port, Repository repository) throws FatalTestSuiteException, Exception{
+	public static void _sincronoLocalForward(PortaDelegata port, Repository repository) throws TestSuiteException, Exception{
 		port.sincronoLocalForward(repository);
 	}
 	

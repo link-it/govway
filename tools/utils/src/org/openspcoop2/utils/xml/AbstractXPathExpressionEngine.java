@@ -28,7 +28,8 @@ import java.util.Enumeration;
 
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.w3c.dom.Attr;
@@ -66,7 +67,7 @@ public abstract class AbstractXPathExpressionEngine {
 	}
 	
 	
-	private static Logger logger = Logger.getLogger(AbstractXPathExpressionEngine.class);
+	private static Logger logger = LoggerWrapperFactory.getLogger(AbstractXPathExpressionEngine.class);
 	public static void setLogger(Logger logger) {
 		AbstractXPathExpressionEngine.logger = logger;
 	}

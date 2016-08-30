@@ -317,10 +317,10 @@
 				<include name="${jboss_deployment_structure}" />
 			</webinf>
 			<classes dir="${cfg}">
-				<include name="console.audit.log4j.properties" />
-				<include name="console.log4j.properties" />
+				<include name="console.audit.log4j2.properties" />
+				<include name="console.log4j2.properties" />
 				<include name="console.registroServiziRemoto.properties" />
-				<include name="${log4j_properties}" />
+				<include name="log4j2.properties" />
 			</classes>
 			<classes dir="${build_pddConsole}/tmp">
 				<include name="console.datasource.properties" />
@@ -370,7 +370,8 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="${log4j_jar}"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
 				<include name="${javax_jms_jar}"/>

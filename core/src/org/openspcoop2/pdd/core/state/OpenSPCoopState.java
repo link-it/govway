@@ -24,7 +24,7 @@ package org.openspcoop2.pdd.core.state;
 import java.sql.Connection;
 import java.util.Enumeration;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.Resource;

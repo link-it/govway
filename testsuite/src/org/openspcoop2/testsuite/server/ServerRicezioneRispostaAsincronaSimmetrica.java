@@ -40,7 +40,6 @@ import javax.xml.soap.SOAPHeader;
 import org.apache.axis.Message;
 import org.apache.axis.message.PrefixedQName;*/
 
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
 
@@ -93,19 +92,19 @@ public class ServerRicezioneRispostaAsincronaSimmetrica extends Thread{
 
 	}
 	
-	public void closeSocket() throws FatalTestSuiteException{
+	public void closeSocket() throws TestSuiteException{
 		for(int i=0;i<this.numberThreads;i++){
 			try {
 				if(this.sock[i].isClosed() == false)
 					this.sock[i].close();
 			}catch(Exception e){
-				throw new FatalTestSuiteException("Errore durante la chiusura del Socket "+i+": "+e.getMessage());
+				throw new TestSuiteException("Errore durante la chiusura del Socket "+i+": "+e.getMessage());
 			}
 		}
 		try {
 			this.serSock.close();
 		}catch(Exception e){
-			throw new FatalTestSuiteException("Errore durante la chiusura del Server: "+e.getMessage());
+			throw new TestSuiteException("Errore durante la chiusura del Server: "+e.getMessage());
 		}
 	}
 	

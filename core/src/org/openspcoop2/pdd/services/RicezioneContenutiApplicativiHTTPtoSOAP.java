@@ -29,7 +29,7 @@ import java.util.Hashtable;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.Costanti;
@@ -71,6 +71,7 @@ import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -100,7 +101,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAP  {
 		// Log
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
-			logCore = Logger.getLogger(idModulo);
+			logCore = LoggerWrapperFactory.getLogger(idModulo);
 				
 		//	Proprieta' OpenSPCoop
 		OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();

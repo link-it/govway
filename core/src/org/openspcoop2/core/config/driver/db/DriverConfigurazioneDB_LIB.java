@@ -37,7 +37,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
@@ -128,6 +128,7 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
@@ -148,7 +149,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 public class DriverConfigurazioneDB_LIB {
 
 	/** Logger utilizzato per debug. */
-	public static org.apache.log4j.Logger log = Logger.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
+	public static org.slf4j.Logger log = LoggerWrapperFactory.getLogger(CostantiConfigurazione.DRIVER_DB_LOGGER);
 
 	// Tipo database e tabella Soggetto PDD ereditato da DriverConfigurazioneDB
 	private static String tipoDB = null;
@@ -2963,7 +2964,7 @@ public class DriverConfigurazioneDB_LIB {
 		try {
 			idSoggVirt = DBUtils.getIdSoggetto(nomeSoggVirt, tipoSoggVirt, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
 		} catch (CoreException e1) {
-			DriverConfigurazioneDB_LIB.log.error(e1);
+			DriverConfigurazioneDB_LIB.log.error(e1.getMessage(),e1);
 		}
 
 		ProprietaProtocollo propProtocollo = null;

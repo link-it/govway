@@ -24,7 +24,8 @@ package org.openspcoop2.pdd.mdb.threads;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /**
  * Metodi per funzionalita' alternative all MDB 
@@ -36,7 +37,7 @@ import org.apache.log4j.Logger;
 public class ThreadsStartup implements ServletContextListener {
 
 	/** Logger utilizzato per segnalazione di errori. */
-	private static Logger log = Logger.getLogger(ThreadsStartup.class);
+	private static Logger log = LoggerWrapperFactory.getLogger(ThreadsStartup.class);
 	
 	/** Indicazione su una corretta inizializzazione */
 	public static boolean initialize = false;

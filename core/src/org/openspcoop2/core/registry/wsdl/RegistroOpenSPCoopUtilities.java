@@ -31,13 +31,14 @@ import java.util.Vector;
 
 import javax.wsdl.Import;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
@@ -71,7 +72,7 @@ public class RegistroOpenSPCoopUtilities {
 		if(log!=null)
 			this.logger = log;
 		else
-			this.logger = Logger.getLogger(RegistroOpenSPCoopUtilities.class);
+			this.logger = LoggerWrapperFactory.getLogger(RegistroOpenSPCoopUtilities.class);
 		
 		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
 		this.xsdUtils = new XSDUtils(this.xmlUtils);

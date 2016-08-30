@@ -34,7 +34,7 @@ import javax.activation.CommandInfo;
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 

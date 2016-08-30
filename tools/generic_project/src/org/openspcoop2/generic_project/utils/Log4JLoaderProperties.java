@@ -20,8 +20,8 @@
  */
 package org.openspcoop2.generic_project.utils;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Log4JLoaderProperties
@@ -39,7 +39,7 @@ public class Log4JLoaderProperties extends LoaderProperties {
 
 	public void configureLog4j() throws ServiceException {
 		try{
-			PropertyConfigurator.configure(super.properties);
+			LoggerWrapperFactory.setLogConfiguration(super.properties);
 		}catch(Exception e){
 			throw new ServiceException(e);
 		}

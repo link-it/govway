@@ -28,7 +28,7 @@ import javax.mail.internet.ContentType;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.message.mtom.MTOMUtilities;
 
 /**

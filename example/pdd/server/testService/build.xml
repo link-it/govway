@@ -61,26 +61,6 @@
 		</then>
 	</if>
 	
-	<!-- cxf -->
-	<var name="cxf_jar" value="cxf-core-*.jar"/>
-	<var name="cxf_rt_jar" value="cxf-rt-*.jar"/>
-	<if>
-		<matches string="${as}" pattern="jboss6"/>
-		<then>
-			<var name="cxf_jar" value=""/>
-			<var name="cxf_rt_jar" value=""/>
-		</then>
-	</if>
-	<!-- log -->
-	<var name="log4j_jar" value=""/>
-	<if>
-		<or>
-			<matches string="${as}" pattern="tomcat.*"/>
-		</or>
-		<then>
-			<var name="log4j_jar" value="log4j-1.2.16.jar"/>
-		</then>
-	</if>
 	<!-- jaxp_ri -->
 	<var name="jaxp_ri_jar" value=""/>
 	<if>
@@ -102,11 +82,43 @@
 			<var name="neethi_jar" value="neethi-3.0.3.jar"/>
 		</then>
 	</if>
+	<!-- jboss_deployment_structure -->
+	<var name="jboss_deployment_structure" value="" />
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>  
 	
 
 	<!-- Creazione del modulo .WAR -->
 	<target name="build" depends="compile" description="Crea la struttura del modulo WAR">
+		
+		<mkdir dir="${build}/example" />
+		
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.${as}" 
+						tofile="${build}/example/${jboss_deployment_structure}" />
+			</then>
+ 		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly" 
+						tofile="${build}/example/${jboss_deployment_structure}" />
+			</then>
+ 		</if>
+		
 		<war destfile="${dist}/TestService.war" webxml="${src}/WEB-INF/web.xml">
+			<webinf dir="${build}/example">
+				<include name="${jboss_deployment_structure}" />
+			</webinf>
 			<classes dir="${build}">
 				<include name="**/*"/>
 			</classes>
@@ -119,11 +131,13 @@
 				<include name="commons-lang-2.6.jar"/>
 			</lib>
 			<lib dir="${libs}/cxf">
-				<include name="${cxf_jar}"/>
-				<include name="${cxf_rt_jar}"/>
+				<include name="*.jar"/>
 			</lib>
 			<lib dir="${libs}/saaj">
 				<include name="*.jar"/>
+			</lib>
+			<lib dir="${libs}/jax">
+				<include name="jaxws-*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jax">
 				<include name="${jaxp_ri_jar}" />
@@ -134,12 +148,15 @@
 				<include name="openspcoop2_message_*.jar"/>
 			</lib>
 			<lib dir="${libs}/log">
-				<include name="${log4j_jar}"/>
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
 				<include name="${neethi_jar}" />
 			</lib>
 		</war>
+		
+		<delete dir="${build}/example" />
 
 	</target>
 

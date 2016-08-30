@@ -34,7 +34,7 @@ import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreCredenzialiTest;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -168,7 +168,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_PD=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_PD"})
-	public void testLetturaCredenzialeNONEtoBASIC_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_PD() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_PD = new Date();
 		
@@ -289,7 +289,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoSSL_PD=new Repository();
 	Date dataLetturaCredenzialeNONEtoSSL_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoSSL_PD"})
-	public void testLetturaCredenzialeNONEtoSSL_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoSSL_PD() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoSSL_PD = new Date();
 		
@@ -425,7 +425,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoBASIC_PD=new Repository();
 	Date dataLetturaCredenzialeBASICtoBASIC_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoBASIC_PD"})
-	public void testLetturaCredenzialeBASICtoBASIC_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoBASIC_PD() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoBASIC_PD = new Date();
 		
@@ -552,7 +552,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoSSL_PD=new Repository();
 	Date dataLetturaCredenzialeBASICtoSSL_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoSSL_PD"})
-	public void testLetturaCredenzialeBASICtoSSL_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoSSL_PD() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoSSL_PD = new Date();
 		
@@ -688,7 +688,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoBASIC_PD=new Repository();
 	Date dataLetturaCredenzialeSSLtoBASIC_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoBASIC_PD"})
-	public void testLetturaCredenzialeSSLtoBASIC_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoBASIC_PD() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoBASIC_PD = new Date();
 		
@@ -827,7 +827,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoSSL_PD=new Repository();
 	Date dataLetturaCredenzialeSSLtoSSL_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoSSL_PD"})
-	public void testLetturaCredenzialeSSLtoSSL_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoSSL_PD() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoSSL_PD = new Date();
 		
@@ -975,7 +975,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_CONFIGURAZIONE_PD"})
-	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PD() throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1062,7 +1062,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeERRORE_GENERALE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_GENERALE_PD = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_PD"})
-	public void testLetturaCredenzialeERRORE_GENERALE_PD() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeERRORE_GENERALE_PD() throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1170,7 +1170,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_PA=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_PA"})
-	public void testLetturaCredenzialeNONEtoBASIC_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_PA() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_PA = new Date();
 		
@@ -1294,7 +1294,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoSSL_PA=new Repository();
 	Date dataLetturaCredenzialeNONEtoSSL_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoSSL_PA"})
-	public void testLetturaCredenzialeNONEtoSSL_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoSSL_PA() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoSSL_PA = new Date();
 		
@@ -1419,7 +1419,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoBASIC_PA=new Repository();
 	Date dataLetturaCredenzialeBASICtoBASIC_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoBASIC_PA"})
-	public void testLetturaCredenzialeBASICtoBASIC_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoBASIC_PA() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoBASIC_PA = new Date();
 		
@@ -1544,7 +1544,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoSSL_PA=new Repository();
 	Date dataLetturaCredenzialeBASICtoSSL_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoSSL_PA"})
-	public void testLetturaCredenzialeBASICtoSSL_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoSSL_PA() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoSSL_PA = new Date();
 		
@@ -1671,7 +1671,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoBASIC_PA=new Repository();
 	Date dataLetturaCredenzialeSSLtoBASIC_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoBASIC_PA"})
-	public void testLetturaCredenzialeSSLtoBASIC_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoBASIC_PA() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoBASIC_PA = new Date();
 		
@@ -1808,7 +1808,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoSSL_PA=new Repository();
 	Date dataLetturaCredenzialeSSLtoSSL_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoSSL_PA"})
-	public void testLetturaCredenzialeSSLtoSSL_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoSSL_PA() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoSSL_PA = new Date();
 		
@@ -1957,7 +1957,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PA=new Repository();
 	Date dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_CONFIGURAZIONE_PA"})
-	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeERRORE_CONFIGURAZIONE_PA() throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2046,7 +2046,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeERRORE_GENERALE_PA=new Repository();
 	Date dataLetturaCredenzialeERRORE_GENERALE_PA = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_PA"})
-	public void testLetturaCredenzialeERRORE_GENERALE_PA() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeERRORE_GENERALE_PA() throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -2151,7 +2151,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_IM = new Date();
 		
@@ -2277,7 +2277,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoSSL_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoSSL_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoSSL_IM"})
-	public void testLetturaCredenzialeNONEtoSSL_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoSSL_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoSSL_IM = new Date();
 		
@@ -2403,7 +2403,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoBASIC_IM=new Repository();
 	Date dataLetturaCredenzialeBASICtoBASIC_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoBASIC_IM"})
-	public void testLetturaCredenzialeBASICtoBASIC_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoBASIC_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoBASIC_IM = new Date();
 		
@@ -2531,7 +2531,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeBASICtoSSL_IM=new Repository();
 	Date dataLetturaCredenzialeBASICtoSSL_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_BASICtoSSL_IM"})
-	public void testLetturaCredenzialeBASICtoSSL_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeBASICtoSSL_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeBASICtoSSL_IM = new Date();
 		
@@ -2660,7 +2660,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoBASIC_IM=new Repository();
 	Date dataLetturaCredenzialeSSLtoBASIC_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoBASIC_IM"})
-	public void testLetturaCredenzialeSSLtoBASIC_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoBASIC_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoBASIC_IM = new Date();
 		
@@ -2797,7 +2797,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeSSLtoSSL_IM=new Repository();
 	Date dataLetturaCredenzialeSSLtoSSL_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_SSLtoSSL_IM"})
-	public void testLetturaCredenzialeSSLtoSSL_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeSSLtoSSL_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeSSLtoSSL_IM = new Date();
 		
@@ -2938,7 +2938,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeErroreConfigurazione_IM=new Repository();
 	Date dataLetturaCredenzialeErroreConfigurazione_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_CONFIGURAZIONE_IM"})
-	public void testLetturaCredenzialeErroreConfigurazione_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeErroreConfigurazione_IM() throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3027,7 +3027,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeErroreGenerale_IM=new Repository();
 	Date dataLetturaCredenzialeErroreGenerale_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_ERRORE_GENERALE_IM"})
-	public void testLetturaCredenzialeErroreGenerale_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeErroreGenerale_IM() throws TestSuiteException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -3122,7 +3122,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationGetMessage_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM = new Date();
 		
@@ -3252,7 +3252,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteMessage_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM = new Date();
 		
@@ -3387,7 +3387,7 @@ public class LetturaCredenzialiIngresso {
 	Repository repositoryLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM=new Repository();
 	Date dataLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM = null;
 	@Test(groups={LetturaCredenzialiIngresso.ID_GRUPPO,LetturaCredenzialiIngresso.ID_GRUPPO+".LETTURA_CREDENZIALI_NONEtoBASIC_OperationDeleteAllMessages_IM"})
-	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM() throws FatalTestSuiteException, Exception{
+	public void testLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM() throws TestSuiteException, Exception{
 
 		this.dataLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM = new Date();
 		

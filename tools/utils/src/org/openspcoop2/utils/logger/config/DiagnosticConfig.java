@@ -22,6 +22,8 @@
 package org.openspcoop2.utils.logger.config;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
@@ -38,9 +40,44 @@ public class DiagnosticConfig {
 
 	private Boolean throwExceptionPlaceholderFailedResolution;
 	
-	private File diagnosticPropertiesResource;
-	private Properties diagnosticProperties;
-	private String diagnosticPropertiesResourceURI;
+	private File diagnosticConfigFile;
+	private String diagnosticConfigName;
+	private URI diagnosticConfigURI;
+	private URL diagnosticConfigURL;
+	private Properties diagnosticConfigProperties;
+	
+	
+	public File getDiagnosticConfigFile() {
+		return this.diagnosticConfigFile;
+	}
+	public void setDiagnosticConfigFile(File diagnosticConfigFile) {
+		this.diagnosticConfigFile = diagnosticConfigFile;
+	}
+	public Properties getDiagnosticConfigProperties() {
+		return this.diagnosticConfigProperties;
+	}
+	public void setDiagnosticConfigProperties(Properties diagnosticConfigProperties) {
+		this.diagnosticConfigProperties = diagnosticConfigProperties;
+	}
+	public String getDiagnosticConfigName() {
+		return this.diagnosticConfigName;
+	}
+	public void setDiagnosticConfigName(String diagnosticConfigName) {
+		this.diagnosticConfigName = diagnosticConfigName;
+	}
+	public URI getDiagnosticConfigURI() {
+		return this.diagnosticConfigURI;
+	}
+	public void setDiagnosticConfigURI(URI diagnosticConfigURI) {
+		this.diagnosticConfigURI = diagnosticConfigURI;
+	}
+	public URL getDiagnosticConfigURL() {
+		return this.diagnosticConfigURL;
+	}
+	public void setDiagnosticConfigURL(URL diagnosticConfigURL) {
+		this.diagnosticConfigURL = diagnosticConfigURL;
+	}
+	
 	
 	public Boolean getThrowExceptionPlaceholderFailedResolution() {
 		return this.throwExceptionPlaceholderFailedResolution;
@@ -48,27 +85,10 @@ public class DiagnosticConfig {
 	public void setThrowExceptionPlaceholderFailedResolution(Boolean throwExceptionPlaceholderFailedResolution) {
 		this.throwExceptionPlaceholderFailedResolution = throwExceptionPlaceholderFailedResolution;
 	}
-	public File getDiagnosticPropertiesResource() {
-		return this.diagnosticPropertiesResource;
-	}
-	public void setDiagnosticPropertiesResource(File diagnosticPropertiesResource) {
-		this.diagnosticPropertiesResource = diagnosticPropertiesResource;
-	}
-	public Properties getDiagnosticProperties() {
-		return this.diagnosticProperties;
-	}
-	public void setDiagnosticProperties(Properties diagnosticProperties) {
-		this.diagnosticProperties = diagnosticProperties;
-	}
-	public String getDiagnosticPropertiesResourceURI() {
-		return this.diagnosticPropertiesResourceURI;
-	}
-	public void setDiagnosticPropertiesResourceURI(String diagnosticPropertiesResourceURI) {
-		this.diagnosticPropertiesResourceURI = diagnosticPropertiesResourceURI;
-	}
+
 
 	
-	public static Properties validateAndGetProperties(DiagnosticConfig config) throws UtilsException{
+	public static void validate(DiagnosticConfig config) throws UtilsException{
 		if(config==null){
 			throw new UtilsException("Diagnostic Configuration undefined");
 		}
@@ -76,13 +96,19 @@ public class DiagnosticConfig {
 			throw new UtilsException("Diagnostic configuration (property ThrowExceptionPlaceholderFailedResolution) undefined");
 		}
 		int diagnosticConfigMode = 0;
-		if(config.getDiagnosticProperties()!=null){
+		if(config.getDiagnosticConfigFile()!=null){
 			diagnosticConfigMode++;
 		}
-		if(config.getDiagnosticPropertiesResource()!=null){
+		if(config.getDiagnosticConfigName()!=null){
 			diagnosticConfigMode++;
 		}
-		if(config.getDiagnosticPropertiesResourceURI()!=null){
+		if(config.getDiagnosticConfigURI()!=null){
+			diagnosticConfigMode++;
+		}
+		if(config.getDiagnosticConfigURL()!=null){
+			diagnosticConfigMode++;
+		}
+		if(config.getDiagnosticConfigProperties()!=null){
 			diagnosticConfigMode++;
 		}
 		if(diagnosticConfigMode==0){
@@ -91,15 +117,27 @@ public class DiagnosticConfig {
 		if(diagnosticConfigMode>1){
 			throw new UtilsException("Diagnostic configuration uncorrect: found multiple source diagnostic configuration file");
 		}
+	}
+	
+	public static Properties readProperties(DiagnosticConfig config) throws UtilsException{
+		if(config==null){
+			throw new UtilsException("Diagnostic Configuration undefined");
+		}
 		Properties diagProperties = null;
-		if(config.getDiagnosticProperties()!=null){
-			diagProperties = config.getDiagnosticProperties();
+		if(config.getDiagnosticConfigFile()!=null){
+			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigFile());
 		}
-		else if(config.getDiagnosticPropertiesResource()!=null){
-			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticPropertiesResource());
+		else if(config.getDiagnosticConfigName()!=null){
+			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigName());
 		}
-		else if(config.getDiagnosticPropertiesResourceURI()!=null){
-			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticPropertiesResourceURI());
+		else if(config.getDiagnosticConfigURI()!=null){
+			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigURI());
+		}
+		else if(config.getDiagnosticConfigURL()!=null){
+			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigURL());
+		}
+		else if(config.getDiagnosticConfigProperties()!=null){
+			diagProperties = config.getDiagnosticConfigProperties();
 		}
 		return diagProperties;
 	}

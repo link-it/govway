@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.message.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.MapReader;
 
 /**
@@ -52,7 +53,7 @@ public class ConnectorUtils {
 	public static Logger getErrorLog(){
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(log == null){
-			log = Logger.getLogger(ConnectorUtils.class);
+			log = LoggerWrapperFactory.getLogger(ConnectorUtils.class);
 		}
 		return log;
 	}
@@ -68,7 +69,7 @@ public class ConnectorUtils {
 			log = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
 		}
 		if(log==null){
-			log = Logger.getLogger(ConnectorUtils.class);
+			log = LoggerWrapperFactory.getLogger(ConnectorUtils.class);
 		}
 		
 		StringBuffer bf = new StringBuffer();
@@ -213,7 +214,7 @@ public class ConnectorUtils {
 			parameters = protocolContext.getFunctionParameters();
 		}catch(Exception e){
 			if(logCore==null){
-				Logger.getLogger(ConnectorUtils.class).error(e.getMessage(),e);
+				LoggerWrapperFactory.getLogger(ConnectorUtils.class).error(e.getMessage(),e);
 			}else{
 				logCore.error(e.getMessage(),e);
 			}
@@ -318,7 +319,7 @@ public class ConnectorUtils {
 				}
 			}catch(Exception e){
 				if(logCore==null){
-					Logger.getLogger(ConnectorUtils.class).error(e.getMessage(),e);
+					LoggerWrapperFactory.getLogger(ConnectorUtils.class).error(e.getMessage(),e);
 				}else{
 					logCore.error(e.getMessage(),e);
 				}

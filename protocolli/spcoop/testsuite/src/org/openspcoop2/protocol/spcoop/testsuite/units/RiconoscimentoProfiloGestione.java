@@ -32,7 +32,7 @@ import javax.xml.soap.SOAPException;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
@@ -141,7 +141,7 @@ public class RiconoscimentoProfiloGestione {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaSincronaTEST1 = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ERTEST1"})
-	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaSincronaTEST1() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaSincronaTEST1() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBaseTEST1.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_RICONOSCIMENTO_PROFILO_RICHIESTA_MINISTERO_EROGATORE,
 				CostantiTestSuite.PORTA_DELEGATA_RICONOSCIMENTO_PROFILO_RISPOSTA_MINISTERO_EROGATORE,
@@ -225,7 +225,7 @@ public class RiconoscimentoProfiloGestione {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaSincronaTEST2 = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ERTEST2"})
-	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaSincronaTEST2() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaSincronaTEST2() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBaseTEST2.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_RICONOSCIMENTO_PROFILO_RICHIESTA_MINISTERO_EROGATORE_LINEE_GUIDA,
 				CostantiTestSuite.PORTA_DELEGATA_RICONOSCIMENTO_PROFILO_RISPOSTA_MINISTERO_EROGATORE_LINEE_GUIDA,
@@ -309,7 +309,7 @@ public class RiconoscimentoProfiloGestione {
 	 */
 	RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaSincronaTEST3 = new RepositoryCorrelazioneIstanzeAsincrone();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".ERTEST3"})
-	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaSincronaTEST3() throws FatalTestSuiteException, Exception{
+	public void asincronoAsimmetrico_AzioneCorrelata_ModalitaSincronaTEST3() throws TestSuiteException, Exception{
 		this.collaborazioneSPCoopBaseTEST3.asincronoAsimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_RICONOSCIMENTO_PROFILO_RICHIESTA_MINISTERO_TMP,
 				CostantiTestSuite.PORTA_DELEGATA_RICONOSCIMENTO_PROFILO_RISPOSTA_MINISTERO_TMP,
@@ -395,7 +395,7 @@ public class RiconoscimentoProfiloGestione {
 	Repository repositoryCollaborazioneAsincronoSimmetricoTEST1=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".FRTEST1"},
 			dependsOnMethods="init")
-			public void EGovCollaborazioneAsincronoSimmetricoTEST1()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovCollaborazioneAsincronoSimmetricoTEST1()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTestProfiloAsincronoAsimmetrico.xml");
 
 		this.repositoryCollaborazioneAsincronoSimmetricoTEST1.add(this.busteEGov.getID(index));
@@ -527,7 +527,7 @@ public class RiconoscimentoProfiloGestione {
 	Repository repositoryCollaborazioneAsincronoSimmetricoTEST2=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".FRTEST2"},
 			dependsOnMethods="init")
-			public void EGovCollaborazioneAsincronoSimmetricoTEST2()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovCollaborazioneAsincronoSimmetricoTEST2()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTestProfiloAsincronoAsimmetricoSoggettoLineeGuida.xml");
 
 		this.repositoryCollaborazioneAsincronoSimmetricoTEST2.add(this.busteEGov.getID(index));
@@ -655,7 +655,7 @@ public class RiconoscimentoProfiloGestione {
 	Repository repositoryCollaborazioneAsincronoSimmetricoTEST3=new Repository();
 	@Test(groups={ID_GRUPPO,ID_GRUPPO+".FRTEST3"},
 			dependsOnMethods="init")
-			public void EGovCollaborazioneAsincronoSimmetricoTEST3()throws FatalTestSuiteException, SOAPException, Exception{
+			public void EGovCollaborazioneAsincronoSimmetricoTEST3()throws TestSuiteException, SOAPException, Exception{
 		int index = this.busteEGov.getIndexFromNomeFile("bustaTestProfiloAsincronoAsimmetricoFruitoreLineeGuida.xml");
 
 		this.repositoryCollaborazioneAsincronoSimmetricoTEST3.add(this.busteEGov.getID(index));

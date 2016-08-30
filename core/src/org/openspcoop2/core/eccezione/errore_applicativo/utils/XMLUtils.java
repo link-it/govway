@@ -36,7 +36,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione;
 import org.openspcoop2.core.eccezione.errore_applicativo.Dominio;
 import org.openspcoop2.core.eccezione.errore_applicativo.Eccezione;

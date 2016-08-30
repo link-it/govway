@@ -20,7 +20,8 @@
  */
 package org.openspcoop2.generic_project.web.logging;
 
-import org.apache.log4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /***
  * 
@@ -34,6 +35,6 @@ import org.apache.log4j.Logger;
 public class LoggerManager {
 	
 	public static Logger getWebGenericProjectLogger() throws Exception{
-		return Logger.getLogger(LoggerManager.class.getName());
+		return LoggerWrapperFactory.getLogger(LoggerManager.class.getName());
 	}
 }

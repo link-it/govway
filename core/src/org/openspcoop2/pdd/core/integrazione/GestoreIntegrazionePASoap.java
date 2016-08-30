@@ -24,11 +24,12 @@ package org.openspcoop2.pdd.core.integrazione;
 
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 /**
@@ -54,7 +55,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 	public GestoreIntegrazionePASoap(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(this.log==null){
-			this.log = Logger.getLogger(GestoreIntegrazionePASoap.class);
+			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePASoap.class);
 		}
 		try{
 			this.utilities = UtilitiesIntegrazione.getInstance(this.log);

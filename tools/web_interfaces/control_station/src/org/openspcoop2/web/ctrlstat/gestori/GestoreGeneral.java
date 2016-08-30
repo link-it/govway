@@ -30,7 +30,7 @@ import javax.jms.Queue;
 import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.queue.ClassQueue;
 import org.openspcoop2.web.lib.queue.dao.Operation;

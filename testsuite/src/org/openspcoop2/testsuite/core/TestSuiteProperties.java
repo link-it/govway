@@ -25,7 +25,8 @@ package org.openspcoop2.testsuite.core;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -59,7 +60,7 @@ public class TestSuiteProperties {
 	 */
 	public TestSuiteProperties() throws Exception {
 
-		this.log = Logger.getLogger(TestSuiteProperties.class);
+		this.log = LoggerWrapperFactory.getLogger(TestSuiteProperties.class);
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
@@ -101,7 +102,7 @@ public class TestSuiteProperties {
 			return true;
 		}
 		catch(Exception e) {
-			Logger.getLogger(TestSuiteProperties.class).error("Errore durante l'inizializzazione del TestSuiteProperties: "+e.getMessage(),e);		   
+			LoggerWrapperFactory.getLogger(TestSuiteProperties.class).error("Errore durante l'inizializzazione del TestSuiteProperties: "+e.getMessage(),e);		   
 			return false;
 		}
 	}

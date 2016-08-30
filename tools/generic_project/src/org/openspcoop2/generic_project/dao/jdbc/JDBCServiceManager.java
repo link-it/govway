@@ -28,10 +28,11 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
 /**
@@ -71,7 +72,7 @@ public class JDBCServiceManager {
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.DATASOURCE_CFG;
 		
 		if(alog==null){
-			this.log = Logger.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
 		}else
 			this.log = alog;
 		
@@ -106,7 +107,7 @@ public class JDBCServiceManager {
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.DATASOURCE_OBJECT;
 		
 		if(alog==null){
-			this.log = Logger.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
 		}else
 			this.log = alog;
 		
@@ -140,7 +141,7 @@ public class JDBCServiceManager {
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.CONNECTION_CFG;
 		
 		if(alog==null){
-			this.log = Logger.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
 		}else
 			this.log = alog;
 		
@@ -179,7 +180,7 @@ public class JDBCServiceManager {
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.CONNECTION_OBJECT;
 		
 		if(alog==null){
-			this.log = Logger.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
 		}else
 			this.log = alog;
 		

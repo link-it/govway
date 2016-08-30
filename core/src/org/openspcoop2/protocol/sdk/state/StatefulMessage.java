@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.sdk.state;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * Oggetto che rappresenta lo stato (su database relazionale) di una busta

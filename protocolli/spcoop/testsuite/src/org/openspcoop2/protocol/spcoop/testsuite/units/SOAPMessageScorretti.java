@@ -51,7 +51,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -168,7 +168,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".RICHIESTA_ALTRI_DATI",
 			SOAPMessageScorretti.ID_GRUPPO+".CONTENT_TYPE_NON_SUPPORTATO_PD"})
-	public void contentTypeNonSupportato_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void contentTypeNonSupportato_PD()throws TestSuiteException,SOAPException, Exception{
 
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
@@ -219,7 +219,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".RICHIESTA_ALTRI_DATI",
 			SOAPMessageScorretti.ID_GRUPPO+".CONTENT_TYPE_NON_SUPPORTATO_PA"})
-	public void contentTypeNonSupportato_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void contentTypeNonSupportato_PA()throws TestSuiteException,SOAPException, Exception{
 
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
@@ -296,7 +296,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".RICHIESTA_ALTRI_DATI",
 			SOAPMessageScorretti.ID_GRUPPO+".HEADER_NOT_UNDERSTAND_PD"})
-	public void headerDontUnderstand_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void headerDontUnderstand_PD()throws TestSuiteException,SOAPException, Exception{
 
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
@@ -367,7 +367,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".RICHIESTA_ALTRI_DATI",
 			SOAPMessageScorretti.ID_GRUPPO+".HEADER_NOT_UNDERSTAND_PA"})
-	public void headerDontUnderstand_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void headerDontUnderstand_PA()throws TestSuiteException,SOAPException, Exception{
 
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
@@ -464,7 +464,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".RICHIESTA_ALTRI_DATI",
 			SOAPMessageScorretti.ID_GRUPPO+".NAMESPACE_ERRATO_PD"})
-	public void namespaceErrato_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void namespaceErrato_PD()throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 
@@ -531,7 +531,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".RICHIESTA_ALTRI_DATI",
 			SOAPMessageScorretti.ID_GRUPPO+".NAMESPACE_ERRATO_PA"})
-	public void namespaceErrato_PA()throws FatalTestSuiteException,SOAPException, Exception{
+	public void namespaceErrato_PA()throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 
@@ -949,13 +949,13 @@ public class SOAPMessageScorretti {
 
 	
 	private void invocazionePD(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi,
-			Repository repository,String nomePortaDelegata,boolean checkDiagnostico,boolean PD2SOAP)throws FatalTestSuiteException,SOAPException, Exception{
+			Repository repository,String nomePortaDelegata,boolean checkDiagnostico,boolean PD2SOAP)throws TestSuiteException,SOAPException, Exception{
 		invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, repository, nomePortaDelegata, 
 				CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA,checkDiagnostico,PD2SOAP);
 	}
 	private void invocazionePD(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi,
 			Repository repository,String nomePortaDelegata,CodiceErroreIntegrazione codiceErroreIntegrazione,boolean checkDiagnostico,
-			boolean PD2SOAP)throws FatalTestSuiteException,SOAPException, Exception{
+			boolean PD2SOAP)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 
@@ -1114,7 +1114,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		this.invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, 
 				this.repositoryStrutturaXMLErrataPortaDelegata, CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO,
@@ -1126,7 +1126,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD2SOAP",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD2SOAP_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_PD2SOAP_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_PD2SOAP_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1202,7 +1202,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_STATEFUL_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_stateful_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_stateful_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		this.invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, 
 				this.repositoryStrutturaXMLErrataPortaDelegataStateful, CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL,
@@ -1214,7 +1214,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_INTEGRAZIONE_CONTENT_BASED_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_integrazioneContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_integrazioneContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		this.invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, 
 				this.repositoryStrutturaXMLErrataPortaDelegataIntegrazioneContentBased, CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CONTENT_BASED2,
@@ -1226,7 +1226,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_CORRELAZIONE_APPLICATIVA_CONTENT_BASED_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_correlazioneApplicativaContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_correlazioneApplicativaContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		this.invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, 
 				this.repositoryStrutturaXMLErrataPortaDelegataCorrelazioneApplicativaContentBased, 
@@ -1239,7 +1239,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_VALIDAZIONE_CONTENUTI_WARN_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_validazioneContenutiApplicativiWarningOnly_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_validazioneContenutiApplicativiWarningOnly_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		listErroriAttesi.add("Riscontrata non conformità rispetto all'interfaccia WSDL");
 		listErroriAttesi.add("Validazione WSDL (true) fallita");
@@ -1258,7 +1258,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_VALIDAZIONE_CONTENUTI_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_validazioneContenutiApplicativi_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_validazioneContenutiApplicativi_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 		
 		listErroriAttesi.add("Riscontrata non conformità rispetto all'interfaccia WSDL");
 		listErroriAttesi.add("Validazione WSDL (true) fallita");
@@ -1311,7 +1311,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_WSSECURITY_ENCRYPT_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_WSSecurityEncrypt_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_WSSecurityEncrypt_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		listErroriAttesi.add("Generatosi errore durante il processamento Message-Security(Sender)");
 		listErroriAttesi.add("BypassMustUnderstand, errore durante il set processed degli header con mustUnderstand='1' e actor non presente");
@@ -1326,7 +1326,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_WSSECURITY_SIGNATURE_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaDelegata_WSSecuritySignature_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaDelegata_WSSecuritySignature_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		listErroriAttesi.add("Generatosi errore durante il processamento Message-Security(Sender)");
 		listErroriAttesi.add("BypassMustUnderstand, errore durante il set processed degli header con mustUnderstand='1' e actor non presente");
@@ -1352,13 +1352,13 @@ public class SOAPMessageScorretti {
 	
 	private void invocazionePA(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi,
 			Repository repository,String servizio, String azione,
-			boolean erroreValidazione,boolean checkDiagnostico)throws FatalTestSuiteException,SOAPException, Exception{
+			boolean erroreValidazione,boolean checkDiagnostico)throws TestSuiteException,SOAPException, Exception{
 		invocazionePA(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, repository, servizio, azione,
 				CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA,erroreValidazione,checkDiagnostico);
 	}
 	private void invocazionePA(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi,
 			Repository repository,String servizio, String azione, CodiceErroreIntegrazione codiceErroreIntegrazione,
-			boolean erroreValidazione,boolean checkDiagnostico)throws FatalTestSuiteException,SOAPException, Exception{
+			boolean erroreValidazione,boolean checkDiagnostico)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 
@@ -1475,7 +1475,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PA_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaApplicativa_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaApplicativa_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		this.invocazionePA(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, 
 				this.repositoryStrutturaXMLErrataPortaApplicativa, 
@@ -1489,7 +1489,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PA_STATEFUL_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaApplicativa_stateful_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaApplicativa_stateful_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		this.invocazionePA(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, 
 				this.repositoryStrutturaXMLErrataPortaApplicativaStateful, 
@@ -1503,7 +1503,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PA_CORRELAZIONE_APPLICATIVA_CONTENT_BASED_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaApplicativa_correlazioneApplicativaContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaApplicativa_correlazioneApplicativaContentBased_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		listErroriAttesi.add("Riscontrato errore durante la correlazione applicativa");
 		
@@ -1519,7 +1519,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PA_VALIDAZIONE_CONTENUTI_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaApplicativa_validazioneContenutiApplicativi_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaApplicativa_validazioneContenutiApplicativi_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1572,7 +1572,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PA_WSSECURITY_ENCRYPT_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaApplicativa_WSSecurityEncrypt_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaApplicativa_WSSecurityEncrypt_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1626,7 +1626,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PA_WSSECURITY_SIGNATURE_RICHIESTA"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_PortaApplicativa_WSSecuritySignature_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PortaApplicativa_WSSecuritySignature_Richiesta(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		
@@ -1692,7 +1692,7 @@ public class SOAPMessageScorretti {
 
 	private void invocazionePA_bustaSintatticamenteErrata(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi,
 			Repository repository,String servizio, String azione,
-			boolean erroreValidazione,boolean checkDiagnostico)throws FatalTestSuiteException,SOAPException, Exception{
+			boolean erroreValidazione,boolean checkDiagnostico)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 
@@ -1811,7 +1811,7 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RICHIESTA",
 			SOAPMessageScorretti.ID_GRUPPO+".BUSTA_ERRATA_PA_RICHIESTA"},dataProvider="strutturaSoapErrata")
 	public void strutturaXMLErrata_PortaApplicativa_Richiesta_bustaSintatticamenteErrata(byte[] messaggioXMLRichiesta,String identificativoTest,
-			List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+			List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		motivoErroreParser.add("Unexpected character '<'");
 		listErroriAttesi.add("Unexpected character '<'");
@@ -1850,7 +1850,7 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_CASO1"})
-	public void strutturaXMLErrata_PA_RispostaApplicativa_Body()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PA_RispostaApplicativa_Body()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 		// costruzione busta
 		String busta = new String(getBusta(CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_BODY_BODY));
@@ -1949,7 +1949,7 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_CASO2"})
-	public void strutturaXMLErrata_PA_RispostaApplicativa_BodyFirstChild()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PA_RispostaApplicativa_BodyFirstChild()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 		// costruzione busta
 		String busta = new String(getBusta(CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_BODY_BODYFIRSTCHILD));
@@ -2047,7 +2047,7 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_CASO3"})
-	public void strutturaXMLErrata_PA_RispostaApplicativa_InsideBody()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PA_RispostaApplicativa_InsideBody()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 		// costruzione busta
 		String busta = new String(getBusta(CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_BODY_INSIDEBODY));
@@ -2166,7 +2166,7 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_STATEFUL",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_STATEFUL_CASO1"})
-	public void strutturaXMLErrata_PA_RispostaApplicativa_Stateful_Body()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PA_RispostaApplicativa_Stateful_Body()throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();	
 		// costruzione busta
@@ -2271,7 +2271,7 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_STATEFUL",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_STATEFUL_CASO2"})
-	public void strutturaXMLErrata_PA_RispostaApplicativa_Stateful_BodyFirstChild()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PA_RispostaApplicativa_Stateful_BodyFirstChild()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();	
 		// costruzione busta
 		String busta = new String(getBusta(CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_BODY_BODYFIRSTCHILD_STATEFUL));
@@ -2367,7 +2367,7 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".PA_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_STATEFUL",
 			SOAPMessageScorretti.ID_GRUPPO+".RISPOSTA_APPLICATIVA_XML_ERRATO_PA_STATEFUL_CASO3"})
-	public void strutturaXMLErrata_PA_RispostaApplicativa_Stateful_InsideBody()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_PA_RispostaApplicativa_Stateful_InsideBody()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 
 		// costruzion
@@ -2487,7 +2487,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_RISPOSTA_PDD"})
-	public void strutturaXMLBodyRispostaPdDErrato_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLBodyRispostaPdDErrato_PD()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 
 		// costruzione busta
@@ -2583,7 +2583,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_XML_ERRATA_PD_RISPOSTA_HEADER_PDD"})
-	public void strutturaXMLHeaderRispostaPdDErrato_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLHeaderRispostaPdDErrato_PD()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 
 		// costruzione busta
@@ -2668,7 +2668,7 @@ public class SOAPMessageScorretti {
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
 			SOAPMessageScorretti.ID_GRUPPO+".PD_XML_RISPOSTA",
 			SOAPMessageScorretti.ID_GRUPPO+".STRUTTURA_CONTENT_TYPE_ERRATO_PD_RISPOSTA_PDD"})
-	public void strutturaContentTypeRispostaPdDErrato_PD()throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaContentTypeRispostaPdDErrato_PD()throws TestSuiteException,SOAPException, Exception{
 		Date dataInizioTest = DateManager.getDate();
 
 		// costruzione busta
@@ -2744,7 +2744,7 @@ public class SOAPMessageScorretti {
 	
 	
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,SOAPMessageScorretti.ID_GRUPPO+".INTEGRATION_MANAGER"},dataProvider="strutturaSoapErrata")
-	public void strutturaXMLErrata_integrationManager(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws FatalTestSuiteException,SOAPException, Exception{
+	public void strutturaXMLErrata_integrationManager(byte[] messaggioXMLRichiesta,String identificativoTest,List<String> motivoErroreParser,List<String> listErroriAttesi)throws TestSuiteException,SOAPException, Exception{
 
 		Date dataInizioTest = DateManager.getDate();
 		

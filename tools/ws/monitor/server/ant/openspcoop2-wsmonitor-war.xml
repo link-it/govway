@@ -157,16 +157,16 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
 				<include name="slf4j-api-1.7.21.jar"/>
-				<include name="${log4j_jar}"/>
+				<include name="log4j*.jar"/>
 			</lib>
 			
 			<classes dir="${build_monitor_ws}/properties">
 				<include name="wsmonitor.datasource.properties"/>
 			</classes>			
 			<classes dir="${properties_monitor_ws}">
-				<include name="wsmonitor.log4j.properties"/>
+				<include name="wsmonitor.log4j2.properties"/>
 				<include name="wsmonitor.properties"/>
-				<include name="${log4j_properties}"/>
+				<include name="log4j2.properties"/>
 			</classes>
 			
 			<classes dir="${build_dir_monitor_ws}/wsdl"/>								

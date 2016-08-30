@@ -21,7 +21,7 @@
 
 package org.openspcoop2.protocol.engine;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;

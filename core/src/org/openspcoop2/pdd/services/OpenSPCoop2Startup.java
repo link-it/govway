@@ -32,7 +32,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
@@ -91,8 +91,9 @@ import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
-import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.security.utils.ExternalPWCallback;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
@@ -115,7 +116,7 @@ import org.openspcoop2.utils.resources.Loader;
 public class OpenSPCoop2Startup implements ServletContextListener {
 
 	/** Logger utilizzato per segnalazione di errori. */
-	private static Logger log = Logger.getLogger("openspcoop2.startup");
+	private static Logger log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 
 	/** Variabile che indica il Nome del modulo attuale di OpenSPCoop */
 	private static final String ID_MODULO = "InizializzazioneRisorse";
@@ -182,7 +183,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		OpenSPCoop2Startup.contextDestroyed = false;
 		
 		this.startDate = System.currentTimeMillis();
-
+		
 		/* ------  Ottiene il servletContext --------*/
 		this.servletContext = sce.getServletContext();
 		this.th = new OpenSPCoopStartupThread();
@@ -224,7 +225,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(OpenSPCoop2Logger.initializeLogConsole(OpenSPCoop2Startup.log) == false){
 				return;
 			}
-			OpenSPCoop2Startup.log = Logger.getLogger("openspcoop2.startup");
+			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 			
 			
 			
@@ -233,7 +234,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- Inizializzo ClassNameProperties di OpenSPCoop --------------- */
 			if( ClassNameProperties.initialize() == false){
-				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'className.properties'");
+				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'openspcoop2.classRegistry.properties'");
 				return;
 			}
 			ClassNameProperties classNameReader = ClassNameProperties.getInstance();
@@ -339,7 +340,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-			OpenSPCoop2Startup.log = Logger.getLogger("openspcoop2.startup");
+			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 			
 			Utilities.log = logCore;
 			Utilities.freeMemoryLog = propertiesReader.getFreeMemoryLog();
@@ -355,7 +356,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				locationPddProperties = propertiesReader.getLocationPddProperties();
 			}
 			if( PddProperties.initialize(locationPddProperties,propertiesReader.getRootDirectory()) == false){
-				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'pdd.properties'");
+				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'openspcoop2.pdd.properties'");
 				return;
 			}
 			if(o!=null){
@@ -381,7 +382,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- MsgDiagnostici.properties --------------- */
 			if( MsgDiagnosticiProperties.initialize(null,propertiesReader.getRootDirectory()) == false){
-				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'msgDiagnostici.properties'");
+				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'openspcoop2.msgDiagnostici.properties'");
 				return;
 			}
 			if(o!=null){
@@ -402,7 +403,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			/* ------------- Cache.properties --------------- */
-			boolean isInitializeCache = Cache.initialize(OpenSPCoop2Startup.log, logCore, propertiesReader.getRootDirectory(), cacheP, 
+			boolean isInitializeCache = Cache.initialize(OpenSPCoop2Startup.log, logCore, 
+					CostantiPdD.OPENSPCOOP2_CACHE_DEFAULT_PROPERTIES_NAME,
+					propertiesReader.getRootDirectory(), cacheP, 
 					CostantiPdD.OPENSPCOOP2_LOCAL_HOME, CostantiPdD.OPENSPCOOP2_CACHE_PROPERTIES, CostantiPdD.OPENSPCOOP2_CACHE_LOCAL_PATH);
 			if(isInitializeCache == false){
 				this.logError("Riscontrato errore durante l'inizializzazione della cache di OpenSPCoop.");
@@ -537,7 +540,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if (DBManager.isInitialized()) {
 				OpenSPCoop2Startup.log.info("Inizializzazione DBManager effettuata con successo.");
 			} else {
-				OpenSPCoop2Startup.log.fatal("Inizializzazione DBManager non effettuata", new Exception(erroreDB));
+				OpenSPCoop2Startup.log.error("Inizializzazione DBManager non effettuata", new Exception(erroreDB));
 				//msgDiag.logStartupError(new Exception(erroreDB), "DatabaseManager");
 				return;
 			}
@@ -555,7 +558,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			else if(JDBCUtilities.isTransactionIsolationSqlServerSnapshot(DBManager.getTransactionIsolationLevel()) )
 				OpenSPCoop2Startup.log.info("Database TransactionLevel is SQLSERVER SNAPSHOT");
 			else {
-				OpenSPCoop2Startup.log.fatal("TransactionLevel associato alla connessione non conosciuto");
+				OpenSPCoop2Startup.log.error("TransactionLevel associato alla connessione non conosciuto");
 				//			msgDiag.logStartupError("TransactionLevel associato alla connessione non conosciuto","DatabaseManager");
 				return;
 			}
@@ -564,7 +567,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				org.openspcoop2.protocol.utils.IDSerialGenerator.init(DBManager.getInstance().getDataSource());
 			}catch(Exception e){
-				OpenSPCoop2Startup.log.fatal("Inizializzazione datasource libreria serial generator", e);
+				OpenSPCoop2Startup.log.error("Inizializzazione datasource libreria serial generator", e);
 				//msgDiag.logStartupError(e, "Inizializzazione datasource libreria");
 				return;
 			}

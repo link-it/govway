@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.logger.ILogger;
 import org.openspcoop2.utils.logger.LoggerFactory;
@@ -52,7 +51,6 @@ import org.openspcoop2.utils.logger.constants.proxy.Result;
 import org.openspcoop2.utils.logger.constants.proxy.ResultProcessing;
 import org.openspcoop2.utils.logger.constants.proxy.ServerEndpointType;
 import org.openspcoop2.utils.logger.log4j.Log4JLoggerWithProxyContext;
-import org.openspcoop2.utils.logger.log4j.Log4jType;
 
 /**
  * Test
@@ -67,14 +65,20 @@ public class Test {
 		
 		// DIAGNOSTIC CONFIGURATION
 		DiagnosticConfig diagnosticConfig = new DiagnosticConfig();
-		diagnosticConfig.setDiagnosticPropertiesResourceURI("/org/openspcoop2/utils/logger/test/example.msgDiagnostici.properties");
+		diagnosticConfig.setDiagnosticConfigURL(Test.class.getResource("/org/openspcoop2/utils/logger/test/example.msgDiagnostici.properties"));
 		diagnosticConfig.setThrowExceptionPlaceholderFailedResolution(true);
 		
 		
 		// LOG4J CONFIGURATION
 		Log4jConfig log4jConfig = new Log4jConfig();
-		log4jConfig.setLog4jType(Log4jType.LOG4Jv1);
-		log4jConfig.setLog4jPropertiesResourceURI("/org/openspcoop2/utils/logger/test/example.log4j.properties");
+		boolean exampleWithProperties = true;
+		if(exampleWithProperties){
+			log4jConfig.setLog4jConfigURL(Test.class.getResource("/org/openspcoop2/utils/logger/test/example.log4j2.properties"));
+		}
+		else{
+			log4jConfig.setLog4jConfigURL(Test.class.getResource("/org/openspcoop2/utils/logger/test/example.log4j2.xml"));
+		}
+		
 		
 		// MULTILOGGER
 		
@@ -92,7 +96,7 @@ public class Test {
 		//mConfig.setDatabaseConfig(dbConfig);
 		
 		LoggerFactory.initialize(Log4JLoggerWithProxyContext.class.getName(),
-				Logger.getLogger(Test.class),mConfig);
+				mConfig);
 		
 		//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
 		//Log4JLogger.setEventSeverity(Severity.ERROR);

@@ -308,8 +308,8 @@
 	</target>
 	
 	
-	<!-- logger.log4j.properties -->
-	<target name="pdd_logger_log4j_properties_settings">
+	<!-- openspcoop2.log4j2.properties -->
+	<target name="pdd_openspcoop2_log4j_properties_settings">
 		
 		<concat destfile="${file}" append="yes" >
 
@@ -404,8 +404,8 @@
 		
 	</target>
 	
-	<!-- className.properties -->
-	<target name="pdd_className_properties_settings">
+	<!-- openspcoop2.classRegistry.properties -->
+	<target name="pdd_openspcoop2_classRegistry_properties_settings">
 		
 		<available file="${file}" property="file.present"/>
 		

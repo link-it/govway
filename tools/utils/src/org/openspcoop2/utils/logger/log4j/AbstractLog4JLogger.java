@@ -20,14 +20,11 @@
  */
 package org.openspcoop2.utils.logger.log4j;
 
-import java.io.File;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.AbstractBasicLogger;
 import org.openspcoop2.utils.logger.IContext;
@@ -36,6 +33,8 @@ import org.openspcoop2.utils.logger.beans.Diagnostic;
 import org.openspcoop2.utils.logger.beans.Event;
 import org.openspcoop2.utils.logger.beans.Message;
 import org.openspcoop2.utils.logger.beans.Property;
+import org.openspcoop2.utils.logger.config.DiagnosticConfig;
+import org.openspcoop2.utils.logger.config.Log4jConfig;
 import org.openspcoop2.utils.logger.constants.Severity;
 
 /**
@@ -48,60 +47,37 @@ import org.openspcoop2.utils.logger.constants.Severity;
 public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 
 
-	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		this(diagnosticProperties,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
-	}
-	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType) throws UtilsException {
-		super(diagnosticProperties,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties,log4jType);
-	}
-
-	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		this(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
-	}	
-	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType) throws UtilsException {
-		super(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties,log4jType);
-	}
-
-	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties) throws UtilsException {
-		this(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
-	}
-	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, String resourceLogProperties, Log4jType log4jType) throws UtilsException {
-		super(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties,log4jType);
-	}
-	
-	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		this(diagnosticProperties,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
-	}
-	public AbstractLog4JLogger(Properties diagnosticProperties, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType) throws UtilsException {
-		super(diagnosticProperties,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties,log4jType);
-	}
-
-	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		this(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
-	}
-	public AbstractLog4JLogger(String diagnosticPropertiesResourceURI, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType) throws UtilsException {
-		super(diagnosticPropertiesResourceURI,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties,log4jType);
-	}
-
-	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties) throws UtilsException {
-		this(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution,resourceLogProperties,Log4jType.LOG4Jv1);
-	}
-	public AbstractLog4JLogger(File diagnosticPropertiesResource, Boolean throwExceptionPlaceholderFailedResolution, Properties resourceLogProperties, Log4jType log4jType) throws UtilsException {
-		super(diagnosticPropertiesResource,throwExceptionPlaceholderFailedResolution);
-		this.init(resourceLogProperties,log4jType);
+	public AbstractLog4JLogger(DiagnosticConfig diagnosticConfig, Log4jConfig logConfig) throws UtilsException {
+		super(diagnosticConfig);
+		
+		Log4jConfig.validate(logConfig);
+		Log4jConfig.setConfigurationLogger(logConfig);
+		
+		this.logTransaction = LoggerWrapperFactory.getLogger("transaction");
+		if(this.logTransaction==null){
+			throw new UtilsException("Category [transaction] not found; expected in log4j configuration");
+		}
+		
+		this.logDiagnostic = LoggerWrapperFactory.getLoggerImpl("diagnostic");
+		if(this.logDiagnostic==null){
+			throw new UtilsException("Category [diagnostic] not found; expected in log4j configuration");
+		}
+		
+		this.logDump = LoggerWrapperFactory.getLogger("dump");
+		if(this.logDump==null){
+			throw new UtilsException("Category [dump] not found; expected in log4j configuration");
+		}
+		
+		this.logEvent = LoggerWrapperFactory.getLogger("event");
+		if(this.logEvent==null){
+			throw new UtilsException("Category [event] not found; expected in log4j configuration");
+		}
 	}
 
 	protected Logger logTransaction;
-	protected Logger logDiagnostic;
+	protected org.apache.logging.log4j.Logger logDiagnostic;
 	protected Logger logDump;
 	protected Logger logEvent;
-	
-	protected Log4jType log4jType;
 	
 	private static Severity diagnosticSeverity = Severity.DEBUG_HIGH;
 	public static void setDiagnosticSeverity(Severity logSeverity) {
@@ -119,57 +95,6 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		return severity.intValue() <= eventSeverity.intValue();
 	}
 
-	private void init(String resourceLogProperties, Log4jType log4jType) throws UtilsException{
-		InputStream is = null;
-		try{
-			is = AbstractLog4JLogger.class.getResourceAsStream(resourceLogProperties);
-			if(is==null){
-				throw new Exception("Resource ["+resourceLogProperties+"] not found");
-			}
-			Properties p = new Properties();
-			p.load(is);
-			this.init(p,log4jType);
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
-		finally{
-			try{
-				if(is!=null){
-					is.close();
-				}
-			}catch(Exception eClose){}
-		}
-	}
-	
-	private void init(Properties p, Log4jType log4jType) throws UtilsException{
-		try{
-			PropertyConfigurator.configure(p);
-			
-			this.logTransaction = Logger.getLogger("transaction");
-			if(this.logTransaction==null){
-				throw new UtilsException("Category [transaction] not found; expected in log4j configuration");
-			}
-			
-			this.logDiagnostic = Logger.getLogger("diagnostic");
-			if(this.logDiagnostic==null){
-				throw new UtilsException("Category [diagnostic] not found; expected in log4j configuration");
-			}
-			
-			this.logDump = Logger.getLogger("dump");
-			if(this.logDump==null){
-				throw new UtilsException("Category [dump] not found; expected in log4j configuration");
-			}
-			
-			this.logEvent = Logger.getLogger("event");
-			if(this.logEvent==null){
-				throw new UtilsException("Category [event] not found; expected in log4j configuration");
-			}
-			
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
-	}
-	
 	
 	@Override
 	public void log() throws UtilsException {
@@ -360,19 +285,12 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		showMsg.append(diagnostic.getMessage());
 		showMsg.append("\n");
 
-		// TODO: Per log4j 2 non funziona la conversione in Priority. Per i custom level è tutto differente: http://logging.apache.org/log4j/2.x/manual/customloglevels.html
-		// Viene quindi implementato in un if
-		if(Log4jType.LOG4Jv1.equals(this.log4jType)){
-			this.logDiagnostic.log(this.convertToPriority(diagnostic.getSeverity()), showMsg.toString());
-		}
-		else{
-			SeverityLog4J.log4j2(this.logDiagnostic, diagnostic.getSeverity(), showMsg.toString());
-		}
+		this.logDiagnostic.log(this.convertToPriority(diagnostic.getSeverity()), showMsg.toString());
 
 	}
 	
-	protected Priority convertToPriority(Severity severity){
-		return SeverityLog4J.getSeverityLog4J(severity,this.log4jType);
+	protected Level convertToPriority(Severity severity){
+		return SeverityLog4J.getSeverityLog4J(severity);
 	}
 
 	@Override

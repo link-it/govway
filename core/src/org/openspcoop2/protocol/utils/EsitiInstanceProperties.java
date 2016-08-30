@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.utils;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.utils.resources.InstanceProperties;
 
