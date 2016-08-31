@@ -40,11 +40,11 @@ import org.openspcoop2.core.config.ws.server.beans.UseInfo;
 import org.openspcoop2.core.config.ws.server.config.Constants;
 import org.openspcoop2.core.config.ws.server.config.DriverConfigurazione;
 import org.openspcoop2.core.config.ws.server.config.LoggerProperties;
-import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
 import org.openspcoop2.core.config.ws.server.filter.SearchFilterServizioApplicativo;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -449,7 +449,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 
 
 	@Override
-	public List<ServizioApplicativo> findAll(SearchFilterServizioApplicativo filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public List<ServizioApplicativo> findAll(SearchFilterServizioApplicativo filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.servizioApplicativoService);
@@ -476,7 +476,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 
 	@Override
-	public ServizioApplicativo find(SearchFilterServizioApplicativo filter) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public ServizioApplicativo find(SearchFilterServizioApplicativo filter) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.servizioApplicativoService);
@@ -513,7 +513,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 
 	@Override
-	public long count(SearchFilterServizioApplicativo filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long count(SearchFilterServizioApplicativo filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.servizioApplicativoService);
@@ -539,7 +539,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 
 	@Override
-	public ServizioApplicativo get(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public ServizioApplicativo get(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneGet(this.servizioApplicativoService);
@@ -563,7 +563,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);
@@ -585,7 +585,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 
 	@Override
-	public List<org.openspcoop2.core.config.IdServizioApplicativo> findAllIds(SearchFilterServizioApplicativo filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public List<org.openspcoop2.core.config.IdServizioApplicativo> findAllIds(SearchFilterServizioApplicativo filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.servizioApplicativoService);
@@ -611,7 +611,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 
 	@Override
-	public UseInfo inUse(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public UseInfo inUse(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			this.logStartMethod("inUse", id);
@@ -689,7 +689,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 
 	@Override
-	public void create(ServizioApplicativo obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void create(ServizioApplicativo obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);
@@ -711,7 +711,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	}
 	
 	@Override
-    public void update(org.openspcoop2.core.config.IdServizioApplicativo oldId, ServizioApplicativo obj) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+    public void update(org.openspcoop2.core.config.IdServizioApplicativo oldId, ServizioApplicativo obj) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);
@@ -744,7 +744,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
     }
 	
 	@Override
-	public void updateOrCreate(org.openspcoop2.core.config.IdServizioApplicativo oldId, ServizioApplicativo obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void updateOrCreate(org.openspcoop2.core.config.IdServizioApplicativo oldId, ServizioApplicativo obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);
@@ -777,7 +777,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
     }
 	
 	@Override
-	public void deleteById(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void deleteById(org.openspcoop2.core.config.IdServizioApplicativo id) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);
@@ -786,7 +786,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 			ServizioApplicativo sa = null;
 			try{
 				sa = this.get(id);
-			}catch(ConfigNotFoundException notFound){}
+			}catch(ConfigNotFoundException_Exception notFound){}
 			if(sa!=null)
 				((IDriverConfigurazioneCRUD)this.servizioApplicativoService.getDriver()).deleteServizioApplicativo(sa);
 			this.logEndMethod("deleteById");
@@ -804,7 +804,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	
 	
 	@Override
-	public long deleteAll() throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long deleteAll() throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);
@@ -840,7 +840,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	
 	
 	@Override
-	public long deleteAllByFilter(SearchFilterServizioApplicativo filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterServizioApplicativo filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);
@@ -877,7 +877,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 	
 	
 	@Override
-	public void delete(ServizioApplicativo obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void delete(ServizioApplicativo obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.servizioApplicativoService);

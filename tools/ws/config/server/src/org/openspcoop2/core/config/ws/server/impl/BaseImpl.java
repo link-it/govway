@@ -34,10 +34,15 @@ import org.openspcoop2.core.config.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.config.ws.server.config.ServerProperties;
 import org.openspcoop2.core.config.ws.server.config.WSStartup;
 import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException_Exception;
 import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException_Exception;
 import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException_Exception;
 import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException_Exception;
 import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
@@ -75,8 +80,10 @@ public abstract class BaseImpl {
 		}
 	}
 			
-	protected ConfigNotFoundException throwNotFoundException(String methodName,DriverConfigurazioneNotFound e, String errorCode, Object objectId) throws ConfigNotFoundException{
-		ConfigNotFoundException ex = new ConfigNotFoundException(methodName,e.getMessage(),e);
+	protected ConfigNotFoundException_Exception throwNotFoundException(String methodName,DriverConfigurazioneNotFound e, String errorCode, Object objectId) throws ConfigNotFoundException_Exception{
+		ConfigNotFoundException ex = new ConfigNotFoundException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.config") 
@@ -96,11 +103,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new ConfigNotFoundException_Exception(e.getMessage(),ex,e);
 	}
 
-	protected ConfigNotAuthorizedException throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws ConfigNotAuthorizedException{
-		ConfigNotAuthorizedException ex = new ConfigNotAuthorizedException(methodName,e.getMessage(),e);
+	protected ConfigNotAuthorizedException_Exception throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws ConfigNotAuthorizedException_Exception{
+		ConfigNotAuthorizedException ex = new ConfigNotAuthorizedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.config") 
@@ -120,11 +129,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new ConfigNotAuthorizedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected ConfigNotImplementedException throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws ConfigNotImplementedException{
-		ConfigNotImplementedException ex = new ConfigNotImplementedException(methodName,e.getMessage(),e);
+	protected ConfigNotImplementedException_Exception throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws ConfigNotImplementedException_Exception{
+		ConfigNotImplementedException ex = new ConfigNotImplementedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.config") 
@@ -144,11 +155,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new ConfigNotImplementedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected ConfigMultipleResultException throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws ConfigMultipleResultException{
-		ConfigMultipleResultException ex = new ConfigMultipleResultException(methodName,e.getMessage(),e);
+	protected ConfigMultipleResultException_Exception throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws ConfigMultipleResultException_Exception{
+		ConfigMultipleResultException ex = new ConfigMultipleResultException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.config") 
@@ -168,11 +181,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new ConfigMultipleResultException_Exception(e.getMessage(),ex,e);
 	}
 	
-	protected ConfigServiceException throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws ConfigServiceException{
-		ConfigServiceException ex = new ConfigServiceException(methodName,e.getMessage(),e);
+	protected ConfigServiceException_Exception throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws ConfigServiceException_Exception{
+		ConfigServiceException ex = new ConfigServiceException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.config") 
@@ -192,7 +207,7 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new ConfigServiceException_Exception(e.getMessage(),ex,e);
 	}
 	
 	protected String throwableStackTraceToString(Throwable e){
@@ -210,7 +225,7 @@ public abstract class BaseImpl {
 		}
 	}	
 	
-	protected void authorize(boolean searchMethod) throws ConfigServiceException,ServiceException,NotAuthorizedException{
+	protected void authorize(boolean searchMethod) throws ConfigServiceException_Exception,ServiceException,NotAuthorizedException{
 		AuthorizationManager.getAuthorizationManager().authorize(this.getHttpServletRequest(), LoggerProperties.getLoggerWS(), searchMethod);
 	}
 	
@@ -323,7 +338,7 @@ public abstract class BaseImpl {
 		LoggerProperties.getLoggerWS().info("@@@ ["+methodName+"] finished (size:"+size+")");
 	}
 	
-	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws ConfigServiceException;
-	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws ConfigServiceException;
+	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws ConfigServiceException_Exception;
+	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws ConfigServiceException_Exception;
 
 }

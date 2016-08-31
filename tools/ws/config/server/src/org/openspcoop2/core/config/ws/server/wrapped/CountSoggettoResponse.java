@@ -36,7 +36,7 @@ package org.openspcoop2.core.config.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 
@@ -53,11 +53,9 @@ import javax.xml.bind.annotation.XmlElement;
     "countItems"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "countResponse")
-public class CountSoggettoResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class CountSoggettoResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="countItems",required=true,nillable=false)

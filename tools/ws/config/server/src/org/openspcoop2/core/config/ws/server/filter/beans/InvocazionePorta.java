@@ -38,7 +38,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -59,11 +59,9 @@ import org.openspcoop2.core.config.ws.server.filter.beans.InvocazionePortaGestio
     "sbustamentoInformazioniProtocollo"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "invocazione-porta")
-public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="gestione-errore",required=false,nillable=false)
 	private InvocazionePortaGestioneErrore gestioneErrore;

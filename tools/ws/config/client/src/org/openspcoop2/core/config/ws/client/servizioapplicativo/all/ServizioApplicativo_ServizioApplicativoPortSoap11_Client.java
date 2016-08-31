@@ -281,6 +281,11 @@ public final class ServizioApplicativo_ServizioApplicativoPortSoap11_Client {
 					throw new Exception("Expected Not Found");
 				}catch (ConfigNotFoundException_Exception e) { 
 					System.out.println("NOT FOUND ATTESO");
+					System.out.println("All'interno dell'eccezione trovo: ");
+					System.out.println("\t - ErrorCode: "+e.getFaultInfo().getErrorCode());
+					System.out.println("\t - ErrorMessage: "+e.getFaultInfo().getErrorMessage());
+					System.out.println("\t - MethodName: "+e.getFaultInfo().getMethodName());
+					System.out.println("\t - ObjectId: "+e.getFaultInfo().getObjectId());
 				}
 			} catch (ConfigNotAuthorizedException_Exception e) { 
 				System.out.println("Expected exception: config-not-authorized-exception has occurred.");
@@ -340,6 +345,11 @@ public final class ServizioApplicativo_ServizioApplicativoPortSoap11_Client {
 				throw new Exception("Expected Multiple Result");
 			}catch (ConfigMultipleResultException_Exception e) { 
 				System.out.println("MULTIPLE RESULT ATTESO");
+				System.out.println("All'interno dell'eccezione trovo: ");
+				System.out.println("\t - ErrorCode: "+e.getFaultInfo().getErrorCode());
+				System.out.println("\t - ErrorMessage: "+e.getFaultInfo().getErrorMessage());
+				System.out.println("\t - MethodName: "+e.getFaultInfo().getMethodName());
+				System.out.println("\t - ObjectId: "+e.getFaultInfo().getObjectId());
 			}
 
 		}

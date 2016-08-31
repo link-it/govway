@@ -37,7 +37,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
@@ -57,11 +57,9 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
     "tipo"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "validazione-contenuti-applicativi")
-public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="stato",required=false,nillable=false)
 	private StatoFunzionalitaConWarning stato;

@@ -27,11 +27,11 @@ import org.openspcoop2.core.config.ws.server.beans.UseInfo;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -52,8 +52,8 @@ public interface PortaApplicativaAll {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type PortaApplicativa
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllPortaApplicativa")
@@ -63,17 +63,17 @@ public interface PortaApplicativaAll {
 	public List<PortaApplicativa> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterPortaApplicativa filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type PortaApplicativa that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return object of type PortaApplicativa
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindPortaApplicativa")
@@ -83,15 +83,15 @@ public interface PortaApplicativaAll {
 	public PortaApplicativa find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterPortaApplicativa filter
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to count all objects of type PortaApplicativa that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type PortaApplicativa
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CountPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CountPortaApplicativa")
@@ -101,17 +101,17 @@ public interface PortaApplicativaAll {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterPortaApplicativa filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type PortaApplicativa identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return object of type PortaApplicativa
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "getResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.GetPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "get", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.GetPortaApplicativa")
@@ -121,16 +121,16 @@ public interface PortaApplicativaAll {
 	public PortaApplicativa get(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdPortaApplicativa id
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the existence of the instance of the object PortaApplicativa identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return Indicates the existence of the instance of the object PortaApplicativa identified by the id parameter. 
-	 * @throws ConfigServiceException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "existsResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.ExistsPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "exists", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.ExistsPortaApplicativa")
@@ -140,15 +140,15 @@ public interface PortaApplicativaAll {
 	public boolean exists(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdPortaApplicativa id
-	) throws ConfigServiceException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve all object Ids of type org.openspcoop2.core.config.IdPortaApplicativa that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return List object ids of type org.openspcoop2.core.config.IdPortaApplicativa
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllIdsResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllIdsPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAllIds", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllIdsPortaApplicativa")
@@ -158,15 +158,15 @@ public interface PortaApplicativaAll {
 	public List<org.openspcoop2.core.config.IdPortaApplicativa> findAllIds(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterPortaApplicativa filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the use of the object (identified by parameter) by other components
 	 *
 	 * @return Indicates the use of the object (identified by parameter) by other components
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "inUseResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UseInfoPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "inUse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UseInfoPortaApplicativa")
@@ -176,14 +176,14 @@ public interface PortaApplicativaAll {
 	public UseInfo inUse(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdPortaApplicativa id
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Create the object described by the provided parameter
 	 *
 	 * @param portaApplicativa object
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "createResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CreatePortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "create", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CreatePortaApplicativa")
@@ -192,16 +192,16 @@ public interface PortaApplicativaAll {
 	public void create(
 		@javax.jws.WebParam(name = "porta-applicativa", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		PortaApplicativa portaApplicativa
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 	
 	/**
 	 * Update the object instance identified by the id parameter, using the provided object description.
 	 *
 	 * @param oldId object id
 	 * @param portaApplicativa object
-	 * @throws ConfigServiceException
- 	 * @throws ConfigNotFoundException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+ 	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "updateResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UpdatePortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "update", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UpdatePortaApplicativa")
@@ -212,15 +212,15 @@ public interface PortaApplicativaAll {
     	org.openspcoop2.core.config.IdPortaApplicativa oldId,
     	@javax.jws.WebParam(name = "porta-applicativa", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 	    PortaApplicativa portaApplicativa
-    ) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+    ) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Update the object istance identified by the id parameter or create a new object, using the provided object description.
 	 *
 	 * @param oldId object id
 	 * @param portaApplicativa object
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "updateOrCreateResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UpdateOrCreatePortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "updateOrCreate", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UpdateOrCreatePortaApplicativa")
@@ -231,14 +231,14 @@ public interface PortaApplicativaAll {
 		org.openspcoop2.core.config.IdPortaApplicativa oldId, 
 		@javax.jws.WebParam(name = "porta-applicativa", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		PortaApplicativa portaApplicativa
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Delete the object instance identified by the id parameter.
 	 *
 	 * @param id object id
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */		
 	@javax.xml.ws.ResponseWrapper(localName = "deleteByIdResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeleteByIdPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteById", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeleteByIdPortaApplicativa")
@@ -247,27 +247,27 @@ public interface PortaApplicativaAll {
 	public void deleteById(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdPortaApplicativa id
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Delete all object instances
 	 *
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "deleteAllResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeleteAllPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteAll", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeleteAllPortaApplicativa")
     @javax.jws.WebResult(name = "deletedItems", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 	@javax.jws.soap.SOAPBinding(parameterStyle=ParameterStyle.WRAPPED,style=Style.DOCUMENT,use=Use.LITERAL)
     @javax.jws.WebMethod(action="deleteAll",operationName="deleteAll")
-	public long deleteAll() throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	public long deleteAll() throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Delete all object instances matching the filter parameter
 	 *
 	 * @param filter Filter
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */		
 	@javax.xml.ws.ResponseWrapper(localName = "deleteAllByFilterResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeleteAllByFilterPortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteAllByFilter", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeleteAllByFilterPortaApplicativa")
@@ -277,14 +277,14 @@ public interface PortaApplicativaAll {
 	public long deleteAllByFilter(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterPortaApplicativa filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 	
 	/**
 	 * Delete the object instance identified by the provided object description.
 	 *
 	 * @param portaApplicativa object
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "deleteResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeletePortaApplicativaResponse")
     @javax.xml.ws.RequestWrapper(localName = "delete", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.DeletePortaApplicativa")
@@ -293,5 +293,5 @@ public interface PortaApplicativaAll {
 	public void delete(
 		@javax.jws.WebParam(name = "porta-applicativa", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		PortaApplicativa portaApplicativa
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 }

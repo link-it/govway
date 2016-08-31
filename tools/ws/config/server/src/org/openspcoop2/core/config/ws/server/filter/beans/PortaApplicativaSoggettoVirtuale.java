@@ -37,7 +37,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 
@@ -55,11 +55,9 @@ import javax.xml.bind.annotation.XmlElement;
     "nome"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "porta-applicativa-soggetto-virtuale")
-public class PortaApplicativaSoggettoVirtuale extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class PortaApplicativaSoggettoVirtuale extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=false,nillable=false)

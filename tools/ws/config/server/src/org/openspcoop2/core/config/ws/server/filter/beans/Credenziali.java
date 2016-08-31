@@ -39,7 +39,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
@@ -60,11 +60,9 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
     "subject"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "credenziali")
-public class Credenziali extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class Credenziali extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="tipo",required=false,nillable=false)
 	private CredenzialeTipo tipo;

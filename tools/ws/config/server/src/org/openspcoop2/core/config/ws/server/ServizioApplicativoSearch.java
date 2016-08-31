@@ -27,11 +27,11 @@ import org.openspcoop2.core.config.ws.server.beans.UseInfo;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -52,8 +52,8 @@ public interface ServizioApplicativoSearch {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type ServizioApplicativo
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllServizioApplicativoResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllServizioApplicativo")
@@ -63,17 +63,17 @@ public interface ServizioApplicativoSearch {
 	public List<ServizioApplicativo> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterServizioApplicativo filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type ServizioApplicativo that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return object of type ServizioApplicativo
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindServizioApplicativoResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindServizioApplicativo")
@@ -83,15 +83,15 @@ public interface ServizioApplicativoSearch {
 	public ServizioApplicativo find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterServizioApplicativo filter
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to count all objects of type ServizioApplicativo that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type ServizioApplicativo
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CountServizioApplicativoResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CountServizioApplicativo")
@@ -101,17 +101,17 @@ public interface ServizioApplicativoSearch {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterServizioApplicativo filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type ServizioApplicativo identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return object of type ServizioApplicativo
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "getResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.GetServizioApplicativoResponse")
     @javax.xml.ws.RequestWrapper(localName = "get", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.GetServizioApplicativo")
@@ -121,16 +121,16 @@ public interface ServizioApplicativoSearch {
 	public ServizioApplicativo get(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdServizioApplicativo id
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the existence of the instance of the object ServizioApplicativo identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return Indicates the existence of the instance of the object ServizioApplicativo identified by the id parameter. 
-	 * @throws ConfigServiceException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "existsResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.ExistsServizioApplicativoResponse")
     @javax.xml.ws.RequestWrapper(localName = "exists", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.ExistsServizioApplicativo")
@@ -140,15 +140,15 @@ public interface ServizioApplicativoSearch {
 	public boolean exists(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdServizioApplicativo id
-	) throws ConfigServiceException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve all object Ids of type org.openspcoop2.core.config.IdServizioApplicativo that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return List object ids of type org.openspcoop2.core.config.IdServizioApplicativo
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllIdsResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllIdsServizioApplicativoResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAllIds", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllIdsServizioApplicativo")
@@ -158,15 +158,15 @@ public interface ServizioApplicativoSearch {
 	public List<org.openspcoop2.core.config.IdServizioApplicativo> findAllIds(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterServizioApplicativo filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the use of the object (identified by parameter) by other components
 	 *
 	 * @return Indicates the use of the object (identified by parameter) by other components
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "inUseResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UseInfoServizioApplicativoResponse")
     @javax.xml.ws.RequestWrapper(localName = "inUse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UseInfoServizioApplicativo")
@@ -176,6 +176,6 @@ public interface ServizioApplicativoSearch {
 	public UseInfo inUse(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdServizioApplicativo id
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 }

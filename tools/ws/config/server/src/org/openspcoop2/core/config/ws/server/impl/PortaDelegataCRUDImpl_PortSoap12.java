@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.core.config.ws.server.impl;
 
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
 
 /**     
  * PortaDelegataCRUDImpl_PortSoap12
@@ -42,7 +42,7 @@ public class PortaDelegataCRUDImpl_PortSoap12 extends PortaDelegataImpl {
 	
 	@Override
 	@javax.jws.WebMethod
-	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws ConfigServiceException{
+	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws ConfigServiceException_Exception{
 		
 		javax.servlet.http.HttpServletRequest req =  null;
 		
@@ -56,7 +56,7 @@ public class PortaDelegataCRUDImpl_PortSoap12 extends PortaDelegataImpl {
 
 	@Override
 	protected javax.servlet.http.HttpServletResponse getHttpServletResponse()
-			throws ConfigServiceException {
+			throws ConfigServiceException_Exception {
 		
 		javax.servlet.http.HttpServletResponse res =  null;
 		

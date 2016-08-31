@@ -39,11 +39,11 @@ import org.openspcoop2.core.config.ws.server.config.Constants;
 import org.openspcoop2.core.config.ws.server.config.DriverConfigurazione;
 import org.openspcoop2.core.config.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.config.ws.server.config.ServerProperties;
-import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
 import org.openspcoop2.core.config.ws.server.filter.SearchFilterSoggetto;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -272,7 +272,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 
 
 	@Override
-	public List<Soggetto> findAll(SearchFilterSoggetto filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public List<Soggetto> findAll(SearchFilterSoggetto filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.soggettoService);
@@ -299,7 +299,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public Soggetto find(SearchFilterSoggetto filter) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public Soggetto find(SearchFilterSoggetto filter) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.soggettoService);
@@ -336,7 +336,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public long count(SearchFilterSoggetto filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long count(SearchFilterSoggetto filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.soggettoService);
@@ -362,7 +362,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public Soggetto get(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public Soggetto get(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneGet(this.soggettoService);
@@ -386,7 +386,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);
@@ -408,7 +408,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public List<org.openspcoop2.core.config.IdSoggetto> findAllIds(SearchFilterSoggetto filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public List<org.openspcoop2.core.config.IdSoggetto> findAllIds(SearchFilterSoggetto filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.soggettoService);
@@ -434,7 +434,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public UseInfo inUse(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public UseInfo inUse(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			this.logStartMethod("inUse", id);
@@ -512,7 +512,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public void create(Soggetto obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void create(Soggetto obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);
@@ -534,7 +534,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 	
 	@Override
-    public void update(org.openspcoop2.core.config.IdSoggetto oldId, Soggetto obj) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+    public void update(org.openspcoop2.core.config.IdSoggetto oldId, Soggetto obj) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);
@@ -563,7 +563,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
     }
 	
 	@Override
-	public void updateOrCreate(org.openspcoop2.core.config.IdSoggetto oldId, Soggetto obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void updateOrCreate(org.openspcoop2.core.config.IdSoggetto oldId, Soggetto obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);
@@ -592,7 +592,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
     }
 	
 	@Override
-	public void deleteById(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void deleteById(org.openspcoop2.core.config.IdSoggetto id) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);
@@ -601,7 +601,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 			Soggetto soggetto = null;
 			try{
 				soggetto = this.get(id);
-			}catch(ConfigNotFoundException notFound){}
+			}catch(ConfigNotFoundException_Exception notFound){}
 			if(soggetto!=null)
 				((IDriverConfigurazioneCRUD)this.soggettoService.getDriver()).deleteSoggetto(soggetto);
 			this.logEndMethod("deleteById");
@@ -619,7 +619,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	
 	
 	@Override
-	public long deleteAll() throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long deleteAll() throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);
@@ -655,7 +655,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	
 	
 	@Override
-	public long deleteAllByFilter(SearchFilterSoggetto filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterSoggetto filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);
@@ -692,7 +692,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	
 	
 	@Override
-	public void delete(Soggetto obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void delete(Soggetto obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.soggettoService);

@@ -49,7 +49,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.ws.server.filter.beans.InvocazionePorta;
@@ -83,11 +83,9 @@ import java.util.Date;
     "offset"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-servizio-applicativo")
-public class SearchFilterServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="invocazione-porta",required=false,nillable=false)
 	private InvocazionePorta invocazionePorta;

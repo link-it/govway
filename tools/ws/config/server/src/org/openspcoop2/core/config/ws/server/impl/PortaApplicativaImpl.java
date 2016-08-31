@@ -39,11 +39,11 @@ import org.openspcoop2.core.config.ws.server.beans.UseInfo;
 import org.openspcoop2.core.config.ws.server.config.Constants;
 import org.openspcoop2.core.config.ws.server.config.DriverConfigurazione;
 import org.openspcoop2.core.config.ws.server.config.LoggerProperties;
-import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
 import org.openspcoop2.core.config.ws.server.filter.SearchFilterPortaApplicativa;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
@@ -377,7 +377,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 
 
 	@Override
-	public List<PortaApplicativa> findAll(SearchFilterPortaApplicativa filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public List<PortaApplicativa> findAll(SearchFilterPortaApplicativa filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.portaApplicativaService);
@@ -404,7 +404,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 
 	@Override
-	public PortaApplicativa find(SearchFilterPortaApplicativa filter) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public PortaApplicativa find(SearchFilterPortaApplicativa filter) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.portaApplicativaService);
@@ -441,7 +441,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 
 	@Override
-	public long count(SearchFilterPortaApplicativa filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long count(SearchFilterPortaApplicativa filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.portaApplicativaService);
@@ -467,7 +467,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 
 	@Override
-	public PortaApplicativa get(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public PortaApplicativa get(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneGet(this.portaApplicativaService);
@@ -491,7 +491,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
@@ -513,7 +513,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 
 	@Override
-	public List<org.openspcoop2.core.config.IdPortaApplicativa> findAllIds(SearchFilterPortaApplicativa filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public List<org.openspcoop2.core.config.IdPortaApplicativa> findAllIds(SearchFilterPortaApplicativa filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneDB(this.portaApplicativaService);
@@ -539,7 +539,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 
 	@Override
-	public UseInfo inUse(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public UseInfo inUse(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			this.logStartMethod("inUse", id);
@@ -617,7 +617,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 
 	@Override
-	public void create(PortaApplicativa obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void create(PortaApplicativa obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
@@ -639,7 +639,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	}
 	
 	@Override
-    public void update(org.openspcoop2.core.config.IdPortaApplicativa oldId, PortaApplicativa obj) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+    public void update(org.openspcoop2.core.config.IdPortaApplicativa oldId, PortaApplicativa obj) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
@@ -672,7 +672,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
     }
 	
 	@Override
-	public void updateOrCreate(org.openspcoop2.core.config.IdPortaApplicativa oldId, PortaApplicativa obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void updateOrCreate(org.openspcoop2.core.config.IdPortaApplicativa oldId, PortaApplicativa obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
@@ -705,7 +705,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
     }
 	
 	@Override
-	public void deleteById(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void deleteById(org.openspcoop2.core.config.IdPortaApplicativa id) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
@@ -714,7 +714,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			PortaApplicativa pa = null;
 			try{
 				pa = this.get(id);
-			}catch(ConfigNotFoundException notFound){}
+			}catch(ConfigNotFoundException_Exception notFound){}
 			if(pa!=null)
 				((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).deletePortaApplicativa(pa);
 			this.logEndMethod("deleteById");
@@ -732,7 +732,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	
 	
 	@Override
-	public long deleteAll() throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long deleteAll() throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
@@ -768,7 +768,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	
 	
 	@Override
-	public long deleteAllByFilter(SearchFilterPortaApplicativa filter) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterPortaApplicativa filter) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
@@ -805,7 +805,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	
 	
 	@Override
-	public void delete(PortaApplicativa obj) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException {
+	public void delete(PortaApplicativa obj) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);

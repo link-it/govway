@@ -36,7 +36,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -54,11 +54,9 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
     "mode"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "mtom-processor-flow")
-public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="mode",required=false,nillable=false,defaultValue="disable")
 	private MTOMProcessorType mode = (MTOMProcessorType) MTOMProcessorType.toEnumConstantFromString("disable");

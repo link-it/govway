@@ -32,7 +32,7 @@ package org.openspcoop2.core.config.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 
 /**     
@@ -47,11 +47,9 @@ package org.openspcoop2.core.config.ws.server.wrapped;
 @javax.xml.bind.annotation.XmlType(name = "createResponse", namespace="http://www.openspcoop2.org/core/config/management", propOrder = {
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "createResponse")
-public class CreateServizioApplicativoResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class CreateServizioApplicativoResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	
 	

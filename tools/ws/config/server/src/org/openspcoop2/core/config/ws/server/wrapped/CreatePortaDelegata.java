@@ -36,7 +36,7 @@ package org.openspcoop2.core.config.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -54,11 +54,9 @@ import org.openspcoop2.core.config.PortaDelegata;
     "obj"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "create")
-public class CreatePortaDelegata extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class CreatePortaDelegata extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="obj",required=true,nillable=false)
 	private PortaDelegata obj;

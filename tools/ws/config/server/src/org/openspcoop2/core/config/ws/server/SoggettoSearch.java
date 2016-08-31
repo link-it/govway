@@ -27,11 +27,11 @@ import org.openspcoop2.core.config.ws.server.beans.UseInfo;
 
 import org.openspcoop2.core.config.Soggetto;
 
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException;
-import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotFoundException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigMultipleResultException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedException_Exception;
+import org.openspcoop2.core.config.ws.server.exception.ConfigNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -52,8 +52,8 @@ public interface SoggettoSearch {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type Soggetto
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllSoggettoResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllSoggetto")
@@ -63,17 +63,17 @@ public interface SoggettoSearch {
 	public List<Soggetto> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterSoggetto filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type Soggetto that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return object of type Soggetto
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindSoggettoResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindSoggetto")
@@ -83,15 +83,15 @@ public interface SoggettoSearch {
 	public Soggetto find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterSoggetto filter
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to count all objects of type Soggetto that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type Soggetto
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CountSoggettoResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.CountSoggetto")
@@ -101,17 +101,17 @@ public interface SoggettoSearch {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterSoggetto filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type Soggetto identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return object of type Soggetto
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "getResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.GetSoggettoResponse")
     @javax.xml.ws.RequestWrapper(localName = "get", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.GetSoggetto")
@@ -121,16 +121,16 @@ public interface SoggettoSearch {
 	public Soggetto get(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdSoggetto id
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the existence of the instance of the object Soggetto identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return Indicates the existence of the instance of the object Soggetto identified by the id parameter. 
-	 * @throws ConfigServiceException
-	 * @throws ConfigMultipleResultException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigMultipleResultException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "existsResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.ExistsSoggettoResponse")
     @javax.xml.ws.RequestWrapper(localName = "exists", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.ExistsSoggetto")
@@ -140,15 +140,15 @@ public interface SoggettoSearch {
 	public boolean exists(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdSoggetto id
-	) throws ConfigServiceException,ConfigMultipleResultException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigMultipleResultException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve all object Ids of type org.openspcoop2.core.config.IdSoggetto that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return List object ids of type org.openspcoop2.core.config.IdSoggetto
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllIdsResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllIdsSoggettoResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAllIds", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.FindAllIdsSoggetto")
@@ -158,15 +158,15 @@ public interface SoggettoSearch {
 	public List<org.openspcoop2.core.config.IdSoggetto> findAllIds(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		SearchFilterSoggetto filter
-	) throws ConfigServiceException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the use of the object (identified by parameter) by other components
 	 *
 	 * @return Indicates the use of the object (identified by parameter) by other components
-	 * @throws ConfigServiceException
-	 * @throws ConfigNotFoundException
-	 * @throws ConfigNotImplementedException
+	 * @throws ConfigServiceException_Exception
+	 * @throws ConfigNotFoundException_Exception
+	 * @throws ConfigNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "inUseResponse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UseInfoSoggettoResponse")
     @javax.xml.ws.RequestWrapper(localName = "inUse", targetNamespace = "http://www.openspcoop2.org/core/config/management", className = "org.openspcoop2.core.config.ws.wrapped.UseInfoSoggetto")
@@ -176,6 +176,6 @@ public interface SoggettoSearch {
 	public UseInfo inUse(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 		org.openspcoop2.core.config.IdSoggetto id
-	) throws ConfigServiceException,ConfigNotFoundException,ConfigNotImplementedException,ConfigNotAuthorizedException;
+	) throws ConfigServiceException_Exception,ConfigNotFoundException_Exception,ConfigNotImplementedException_Exception,ConfigNotAuthorizedException_Exception;
 
 }

@@ -21,7 +21,7 @@
 package org.openspcoop2.core.config.ws.server.impl;
 
 import org.openspcoop2.core.config.ws.server.SoggettoAll;
-import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException;
+import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
 
 /**     
  * SoggettoAllImpl_PortSoap11
@@ -43,7 +43,7 @@ public class SoggettoAllImpl_PortSoap11 extends SoggettoImpl implements Soggetto
 	
 	@Override
 	@javax.jws.WebMethod
-	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws ConfigServiceException{
+	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws ConfigServiceException_Exception{
 		
 		javax.servlet.http.HttpServletRequest req =  null;
 		
@@ -57,7 +57,7 @@ public class SoggettoAllImpl_PortSoap11 extends SoggettoImpl implements Soggetto
 
 	@Override
 	protected javax.servlet.http.HttpServletResponse getHttpServletResponse()
-			throws ConfigServiceException {
+			throws ConfigServiceException_Exception {
 		
 		javax.servlet.http.HttpServletResponse res =  null;
 		
