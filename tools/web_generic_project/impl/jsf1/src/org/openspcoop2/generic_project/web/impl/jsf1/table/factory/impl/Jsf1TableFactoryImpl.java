@@ -30,7 +30,6 @@ import org.openspcoop2.generic_project.web.impl.jsf1.table.impl.BaseTable;
 import org.openspcoop2.generic_project.web.table.PagedDataTable;
 import org.openspcoop2.generic_project.web.table.Table;
 import org.openspcoop2.generic_project.web.table.factory.TableFactory;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

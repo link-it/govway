@@ -76,6 +76,7 @@
 			<lib dir="${required_lib_openspcoop2Pools}/commons">
 				<include name="${commons_pool_jar}" />
 				<include name="${commons_dbcp_jar}" />
+				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${build_openspcoop2Pools}/tmp_driver_jdbc">
 				<include name="*"/>

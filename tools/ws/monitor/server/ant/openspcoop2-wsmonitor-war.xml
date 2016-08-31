@@ -134,6 +134,7 @@
 				<include name="xmlsec-2.0.7.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jax">
+				<include name="jaxws-*.jar"/>
 				<include name="${jaxp_ri_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/shared">

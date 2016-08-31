@@ -41,8 +41,6 @@ import org.openspcoop2.generic_project.web.output.OutputNumber;
 import org.openspcoop2.generic_project.web.output.Text;
 import org.openspcoop2.generic_project.web.output.factory.OutputFieldFactory;
 import org.openspcoop2.generic_project.web.view.IViewBean;
-import org.openspcoop2.utils.LoggerWrapperFactory;
-
 /***
  * 
  * Implementazione della factory JSF1 per gli elementi di output.

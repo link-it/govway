@@ -94,7 +94,7 @@ public abstract class BaseFormMBean<BeanType,KeyType,FormType extends Form> impl
 			init();
 			initNavigationManager();
 		} catch (Exception e) {
-			this.getLog().error(e,e);
+			this.getLog().error(e.getMessage(),e);
 		}
 	}
 	
@@ -118,7 +118,7 @@ public abstract class BaseFormMBean<BeanType,KeyType,FormType extends Form> impl
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 				this.selectedElement = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
 			}catch (Exception e) {
-				this.getLog().error(e,e);
+				this.getLog().error(e.getMessage(),e);
 			}
 		}
 		return this.selectedElement;
@@ -156,7 +156,7 @@ public abstract class BaseFormMBean<BeanType,KeyType,FormType extends Form> impl
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 				this.metadata = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
 			}catch (Exception e) {
-				this.getLog().error(e,e);
+				this.getLog().error(e.getMessage(),e);
 			}
 		}
 		return this.metadata;

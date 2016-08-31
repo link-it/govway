@@ -20,12 +20,18 @@
  */
 package org.openspcoop2.utils.jdbc;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Properties;
 
+import org.apache.logging.log4j.Level;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 /**
  * TestKeyGenerator
@@ -37,6 +43,8 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public class TestKeyGenerator {
 
+	private static Logger log = null;
+	
 	public static void main(String[] args) throws Exception{
 		
 		/**
@@ -107,6 +115,12 @@ public class TestKeyGenerator {
 		 * ---------------------------
 		 */
 		
+		File logFile = File.createTempFile("runKeyGeneratorTest_", ".log");
+		System.out.println("LogMessages write in "+logFile.getAbsolutePath());
+		LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%m %n");
+		log = LoggerWrapperFactory.getLogger(TestKeyGenerator.class);
+		
+		DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), log);
 		
 		String url = null;
 		String driver = null;
@@ -226,7 +240,7 @@ public class TestKeyGenerator {
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
 	    	
-	    	System.out.println("Test effettuato correttamente (id generati: first["+id1+"] second["+id2+"])");
+	    	log.info("Test effettuato correttamente (id generati: first["+id1+"] second["+id2+"])");
 
 	    	
 	    }finally{

@@ -61,7 +61,6 @@ import org.openspcoop2.generic_project.web.input.Spinner;
 import org.openspcoop2.generic_project.web.input.Text;
 import org.openspcoop2.generic_project.web.input.TextArea;
 import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

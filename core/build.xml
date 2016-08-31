@@ -526,15 +526,30 @@
                 <arg value="${DirOutput}" />
                 <classpath>
                 		<path refid="classpath_run_dist" />
-                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="log/*.jar"/>
                 		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
                 		<fileset dir="${required_lib}" includes="shared/*.jar"/>
                 		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
                 </classpath>
         </java>
 	</target>
 	
 	<target name="test_validazione_semantica_configurazione">
+		<!-- 
+			example:
+			ant test_validazione_semantica_configurazione 
+				-DproprietaComuni=tools/validator/deploy/properties/commons.properties 
+				-DtipoConfigurazione=xml 
+				-DproprietaConfigurazione=tools/validator/deploy/properties/configurazione.properties 
+				-DvalidazioneConfigurazione=true
+		-->
+		<if>
+			<equals arg1="${proprietaComuni}" arg2="$${proprietaComuni}"/>
+			<then>
+				<fail message="Parametro proprietaComuni non fornito"/>
+			</then>
+		</if>
 		<if>
 			<equals arg1="${tipoConfigurazione}" arg2="$${tipoConfigurazione}"/>
 			<then>
@@ -555,20 +570,36 @@
 		</if>
         <!-- Run the java code  -->
         <java classname="org.openspcoop2.core.config.driver.utils.TestValidazioneSemantica" fork="true">
+        		<arg value="${proprietaComuni}" />
                 <arg value="${tipoConfigurazione}" />
         	 	<arg value="${proprietaConfigurazione}" />
                 <arg value="${validazioneConfigurazione}" />
                 <classpath>
                 		<path refid="classpath_run_dist" />
-                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="log/*.jar"/>
                 		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
                 		<fileset dir="${required_lib}" includes="shared/*.jar"/>
                 		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
                 </classpath>
         </java>
 	</target>
 	
 	<target name="test_validazione_semantica_registro">
+		<!--
+			example:
+			ant test_validazione_semantica_registro 
+				-DproprietaComuni=tools/validator/deploy/properties/commons.properties 
+				-DtipoRegistro=xml 
+				-DproprietaRegistro=tools/validator/deploy/properties/registroServizi.properties 
+				-DcheckURI=false
+		-->
+		<if>
+			<equals arg1="${proprietaComuni}" arg2="$${proprietaComuni}"/>
+			<then>
+				<fail message="Parametro proprietaComuni non fornito"/>
+			</then>
+		</if>
 		<if>
 			<equals arg1="${tipoRegistro}" arg2="$${tipoRegistro}"/>
 			<then>
@@ -589,15 +620,17 @@
 		</if>
         <!-- Run the java code  -->
         <java classname="org.openspcoop2.core.registry.driver.utils.TestValidazioneSemantica" fork="true">
+        		<arg value="${proprietaComuni}" />
                 <arg value="${tipoRegistro}" />
         	 	<arg value="${proprietaRegistro}" />
                 <arg value="${checkURI}" />
                 <classpath>
                 		<path refid="classpath_run_dist" />
-                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="log/*.jar"/>
                 		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
                 		<fileset dir="${required_lib}" includes="shared/*.jar"/>
                 		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
                 </classpath>
         </java>
 	</target>

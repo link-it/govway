@@ -106,7 +106,7 @@ public abstract class BaseMBean<BeanType,KeyType,SearchFormType extends SearchFo
 			init();
 			initNavigationManager();
 		} catch (Exception e) {
-			this.getLog().error(e,e);
+			this.getLog().error(e.getMessage(),e);
 		}
 	}
 	
@@ -141,7 +141,7 @@ public abstract class BaseMBean<BeanType,KeyType,SearchFormType extends SearchFo
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 				this.selectedElement = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
 			}catch (Exception e) {
-				this.getLog().error(e,e);
+				this.getLog().error(e.getMessage(),e);
 				throw e;
 			}
 		}
@@ -187,7 +187,7 @@ public abstract class BaseMBean<BeanType,KeyType,SearchFormType extends SearchFo
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 				this.metadata = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
 			}catch (Exception e) {
-				this.getLog().error(e,e);
+				this.getLog().error(e.getMessage(),e);
 				throw e;
 			}
 		}

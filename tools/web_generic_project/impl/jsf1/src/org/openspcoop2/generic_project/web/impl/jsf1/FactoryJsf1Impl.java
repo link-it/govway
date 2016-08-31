@@ -30,7 +30,6 @@ import org.openspcoop2.generic_project.web.impl.jsf1.table.factory.impl.Jsf1Tabl
 import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
 import org.openspcoop2.generic_project.web.output.factory.OutputFieldFactory;
 import org.openspcoop2.generic_project.web.table.factory.TableFactory;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 

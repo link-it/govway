@@ -16,6 +16,7 @@
 		<exclusions>
 			<module name="org.slf4j" />
 			<module name="org.apache.log4j" />
+			<module name="org.apache.commons.logging"/>
 		</exclusions>
 	</deployment>
 	<sub-deployment name="OpenSPCoop2.war">

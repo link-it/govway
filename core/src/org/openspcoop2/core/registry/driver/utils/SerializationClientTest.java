@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.JavaDate;
@@ -50,6 +52,7 @@ import org.openspcoop2.utils.serialization.JavaDeserializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
 import org.openspcoop2.utils.serialization.XMLDeserializer;
 import org.openspcoop2.utils.serialization.XMLSerializer;
+import org.slf4j.Logger;
 
 /**	
  * Contiene una batteria di test
@@ -63,7 +66,14 @@ import org.openspcoop2.utils.serialization.XMLSerializer;
  */
 public class SerializationClientTest {
 
+	private static Logger log = null;
+	
 	public static void main(String [] args) throws Exception{
+		
+		File logFile = File.createTempFile("testSerializzazione_", ".log");
+		System.out.println("LogMessages write in "+logFile.getAbsolutePath());
+		LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%m %n");
+		log = LoggerWrapperFactory.getLogger(SerializationClientTest.class);	
 		
 		// Factory
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
@@ -206,9 +216,9 @@ public class SerializationClientTest {
 		
 		
 		// **************** TEST SERIALIZZAZIONE JAVA **************************************
-		System.out.println();
-		System.out.println("********** Serializzazione Java (SingleObject) ****************");
-		System.out.println();
+		log.info("\n");
+		log.info("********** Serializzazione Java (SingleObject) ****************");
+		log.info("\n");
 		
 		// Serializzazione tramite stream in/out
 		
@@ -216,27 +226,28 @@ public class SerializationClientTest {
 		FileOutputStream foutJava = new FileOutputStream(javaFileStream);
 		FileInputStream finJava = new FileInputStream(javaFileStream);
 		
-		System.out.print("- Serializzazione (Stream in/out): ");
+		log.info("- Serializzazione (Stream in/out): ");
 		JavaSerializer javaSerializer = new JavaSerializer();
 		dataInizio = DateManager.getTimeMillis();
 		javaSerializer.writeObject(soggettoTest, foutJava);
 		dataFine = DateManager.getTimeMillis();
 		foutJava.flush();
 		foutJava.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Stream in/out): ");
+		log.info("- Deserializzazione (Stream in/out): ");
 		JavaDeserializer javaDeserializer = new JavaDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		Object oJavaRead = javaDeserializer.readObject(finJava, soggettoTest.getClass());
 		dataFine = DateManager.getTimeMillis();
 		finJava.close();
 		SerializationClientTest.equals(soggettoTest, (Soggetto)oJavaRead, dir);
-		System.out.print("OK, nome soggetto: "+((Soggetto)oJavaRead).getTipo()+"/"+((Soggetto)oJavaRead).getNome()+"\n");
-		System.out.println("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)oJavaRead).getTipo()+"/"+((Soggetto)oJavaRead).getNome());
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione tramite reader e writer
 		
@@ -244,62 +255,65 @@ public class SerializationClientTest {
 		FileWriter fwriterJava = new FileWriter(javaFileReader);
 		FileReader freaderJava = new FileReader(javaFileReader);
 		
-		System.out.print("- Serializzazione (Reader/Writer): ");
+		log.info("- Serializzazione (Reader/Writer): ");
 		javaSerializer = new JavaSerializer();
 		dataInizio = DateManager.getTimeMillis();
 		javaSerializer.writeObject(as, fwriterJava);
 		dataFine = DateManager.getTimeMillis();
 		fwriterJava.flush();
 		fwriterJava.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Reader/Writer): ");
+		log.info("- Deserializzazione (Reader/Writer): ");
 		javaDeserializer = new JavaDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJavaRead = javaDeserializer.readObject(freaderJava, as.getClass());
 		dataFine = DateManager.getTimeMillis();
 		freaderJava.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJavaRead, dir);
-		System.out.print("OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJavaRead))+" allegati:("+((AccordoServizioParteComune)oJavaRead).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJavaRead))+" allegati:("+((AccordoServizioParteComune)oJavaRead).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione tramite get e read in Object
 		
-		System.out.print("- Serializzazione (Object): ");
+		log.info("- Serializzazione (Object): ");
 		javaSerializer = new JavaSerializer();
 		dataInizio = DateManager.getTimeMillis();
 		String javaSerializationObject = javaSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Object): ");
+		log.info("- Deserializzazione (Object): ");
 		javaDeserializer = new JavaDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJavaRead = javaDeserializer.getObject(javaSerializationObject, as.getClass());
 		dataFine = DateManager.getTimeMillis();
 		freaderJava.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJavaRead, dir);
-		System.out.print("OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJavaRead))+" allegati:("+((AccordoServizioParteComune)oJavaRead).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJavaRead))+" allegati:("+((AccordoServizioParteComune)oJavaRead).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione Enumerations
 		
-		System.out.print("- Serializzazione (Enumerations): ");
+		log.info("- Serializzazione (Enumerations): ");
 		javaSerializer = new JavaSerializer();
 		dataInizio = DateManager.getTimeMillis();
 		javaSerializationObject = javaSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Enumerations): ");
+		log.info("- Deserializzazione (Enumerations): ");
 		javaDeserializer = new JavaDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJavaRead = javaDeserializer.getObject(javaSerializationObject, TestEnumerations.class);
@@ -308,13 +322,13 @@ public class SerializationClientTest {
 		if(((TestEnumerations)oJavaRead).toString().equals(TestEnumerations.VALORE1.toString())==false){
 			throw new Exception("Enumeration originale ["+TestEnumerations.VALORE1.toString()+"] e ricostruita["+((TestEnumerations)oJavaRead).toString()+"] differiscono");
 		}
-		System.out.print("OK, enum value: "+oJavaRead+"\n");
-		System.out.println("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, enum value: "+oJavaRead);
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
-		System.out.println();
-		System.out.println("********** Serializzazione Java (Array/List/Set) ****************");
-		System.out.println();
+		log.info("\n");
+		log.info("********** Serializzazione Java (Array/List/Set) ****************");
+		log.info("\n");
 		
 		// Serializzazione di array
 		
@@ -322,18 +336,19 @@ public class SerializationClientTest {
 		foutJava = new FileOutputStream(javaFileStream);
 		finJava = new FileInputStream(javaFileStream);
 		
-		System.out.print("- Serializzazione (Array): ");
+		log.info("- Serializzazione (Array): ");
 		javaSerializer = new JavaSerializer();
 		dataInizio = DateManager.getTimeMillis();
 		javaSerializer.writeObject(testSerializzazioneLista.toArray(), foutJava);
 		dataFine = DateManager.getTimeMillis();
 		foutJava.flush();
 		foutJava.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Array): ");
+		log.info("- Deserializzazione (Array): ");
 		javaDeserializer = new JavaDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJavaRead = javaDeserializer.readObject(finJava, testSerializzazioneLista.toArray().getClass());
@@ -341,10 +356,10 @@ public class SerializationClientTest {
 		finJava.close();
 		Object [] vJavaArray = (Object [])oJavaRead;
 		SerializationClientTest.equalsOpenSPCoopObject(testSerializzazioneLista.toArray(),vJavaArray,dir);
-		System.out.print("OK, nome soggetto: "+((Soggetto)vJavaArray[1]).getTipo()+"/"+((Soggetto)vJavaArray[1]).getNome()+"   nome accordo: "+
-				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJavaArray[0]))+" allegati:("+((AccordoServizioParteComune)vJavaArray[0]).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)vJavaArray[1]).getTipo()+"/"+((Soggetto)vJavaArray[1]).getNome()+"   nome accordo: "+
+				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJavaArray[0]))+" allegati:("+((AccordoServizioParteComune)vJavaArray[0]).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 
 		
 		// Serializzazione di list
@@ -353,18 +368,19 @@ public class SerializationClientTest {
 		foutJava = new FileOutputStream(javaFileStream);
 		finJava = new FileInputStream(javaFileStream);
 		
-		System.out.print("- Serializzazione (List): ");
+		log.info("- Serializzazione (List): ");
 		javaSerializer = new JavaSerializer();
 		dataInizio = DateManager.getTimeMillis();
 		javaSerializer.writeObject(testSerializzazioneLista, foutJava);
 		dataFine = DateManager.getTimeMillis();
 		foutJava.flush();
 		foutJava.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (List): ");
+		log.info("- Deserializzazione (List): ");
 		javaDeserializer = new JavaDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJavaRead = javaDeserializer.readObject(finJava, testSerializzazioneLista.getClass());
@@ -372,10 +388,10 @@ public class SerializationClientTest {
 		finJava.close();
 		List<?> vJavaList = (List<?>)oJavaRead;
 		SerializationClientTest.equalsOpenSPCoopObject(testSerializzazioneLista.toArray(),vJavaList.toArray(),dir);
-		System.out.print("OK, nome soggetto: "+((Soggetto)vJavaList.get(1)).getTipo()+"/"+((Soggetto)vJavaList.get(1)).getNome()+"   nome accordo: "+
-				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJavaList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJavaList.get(0)).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)vJavaList.get(1)).getTipo()+"/"+((Soggetto)vJavaList.get(1)).getNome()+"   nome accordo: "+
+				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJavaList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJavaList.get(0)).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 
 		
 		// Serializzazione di Set
@@ -384,18 +400,19 @@ public class SerializationClientTest {
 		foutJava = new FileOutputStream(javaFileStream);
 		finJava = new FileInputStream(javaFileStream);
 		
-		System.out.print("- Serializzazione (Set): ");
+		log.info("- Serializzazione (Set): ");
 		javaSerializer = new JavaSerializer();
 		dataInizio = DateManager.getTimeMillis();
 		javaSerializer.writeObject(testSerializzazioneSet, foutJava);
 		dataFine = DateManager.getTimeMillis();
 		foutJava.flush();
 		foutJava.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(javaFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Set): ");
+		log.info("- Deserializzazione (Set): ");
 		javaDeserializer = new JavaDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJavaRead = javaDeserializer.readObject(finJava, testSerializzazioneSet.getClass());
@@ -403,19 +420,19 @@ public class SerializationClientTest {
 		finJava.close();
 		Set<?> vJavaSet = (Set<?>)oJavaRead;
 		SerializationClientTest.equalsOpenSPCoopObject(testSerializzazioneLista.toArray(),vJavaSet.toArray(),dir);
-		System.out.print("OK, dimensione set: "+vJavaSet.size()+")\n");
-		System.out.println("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
-		System.out.println();
+		log.info("- OK, dimensione set: "+vJavaSet.size()+")");
+		log.info("- Costo ms deserializzazione java: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
+		log.info("\n");
 		
 		
 		
 		
 		
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
+		log.info("\n");
+		log.info("\n");
+		log.info("\n");
+		log.info("\n");
 		
 		
 		
@@ -435,9 +452,9 @@ public class SerializationClientTest {
 		
 		
 		// **************** TEST SERIALIZZAZIONE JSON **************************************
-		System.out.println();
-		System.out.println("********** Serializzazione Json (SingleObject) ****************");
-		System.out.println();
+		log.info("\n");
+		log.info("********** Serializzazione Json (SingleObject) ****************");
+		log.info("\n");
 		
 		// Serializzazione tramite stream in/out
 		
@@ -445,7 +462,7 @@ public class SerializationClientTest {
 		FileOutputStream foutJson = new FileOutputStream(jsonFileStream);
 		FileInputStream finJson = new FileInputStream(jsonFileStream);
 		
-		System.out.print("- Serializzazione (Stream in/out): ");
+		log.info("- Serializzazione (Stream in/out): ");
 		Filter filter = new Filter();
 		JSonSerializer jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
@@ -453,20 +470,21 @@ public class SerializationClientTest {
 		dataFine = DateManager.getTimeMillis();
 		foutJson.flush();
 		foutJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Stream in/out): ");
+		log.info("- Deserializzazione (Stream in/out): ");
 		JSonDeserializer jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		Object oJsonRead = jsonDeserializer.readObject(finJson, soggettoTest.getClass());
 		dataFine = DateManager.getTimeMillis();
 		finJson.close();
 		SerializationClientTest.equals(soggettoTest, (Soggetto)oJsonRead, dir);
-		System.out.print("OK, nome soggetto: "+((Soggetto)oJsonRead).getTipo()+"/"+((Soggetto)oJsonRead).getNome()+"\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)oJsonRead).getTipo()+"/"+((Soggetto)oJsonRead).getNome()+"");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione tramite reader e writer
 		
@@ -474,62 +492,65 @@ public class SerializationClientTest {
 		FileWriter fwriterJson = new FileWriter(jsonFileReader);
 		FileReader freaderJson = new FileReader(jsonFileReader);
 		
-		System.out.print("- Serializzazione (Reader/Writer): ");
+		log.info("- Serializzazione (Reader/Writer): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(as, fwriterJson);
 		dataFine = DateManager.getTimeMillis();
 		fwriterJson.flush();
 		fwriterJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Reader/Writer): ");
+		log.info("- Deserializzazione (Reader/Writer): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readObject(freaderJson, as.getClass());
 		dataFine = DateManager.getTimeMillis();
 		freaderJson.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonRead, dir);
-		System.out.print("OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonRead))+" allegati:("+((AccordoServizioParteComune)oJsonRead).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonRead))+" allegati:("+((AccordoServizioParteComune)oJsonRead).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione tramite get e read in Object
 		
-		System.out.print("- Serializzazione (Object): ");
+		log.info("- Serializzazione (Object): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		String jsonSerializationObject = jsonSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Object): ");
+		log.info("- Deserializzazione (Object): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.getObject(jsonSerializationObject, as.getClass());
 		dataFine = DateManager.getTimeMillis();
 		freaderJson.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonRead, dir);
-		System.out.print("OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonRead))+" allegati:("+((AccordoServizioParteComune)oJsonRead).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonRead))+" allegati:("+((AccordoServizioParteComune)oJsonRead).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione Enumerations
 		
-		System.out.print("- Serializzazione (Enumerations): ");
+		log.info("- Serializzazione (Enumerations): ");
 		jsonSerializer = new JSonSerializer(filter);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializationObject = jsonSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Enumerations): ");
+		log.info("- Deserializzazione (Enumerations): ");
 		jsonDeserializer = new JSonDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.getObject(jsonSerializationObject, TestEnumerations.class);
@@ -538,13 +559,13 @@ public class SerializationClientTest {
 		if(((TestEnumerations)oJsonRead).toString().equals(TestEnumerations.VALORE1.toString())==false){
 			throw new Exception("Enumeration originale ["+TestEnumerations.VALORE1.toString()+"] e ricostruita["+((TestEnumerations)oJsonRead).toString()+"] differiscono");
 		}
-		System.out.print("OK, enum value: "+oJsonRead+"\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, enum value: "+oJsonRead+"");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
-		System.out.println();
-		System.out.println("********** Serializzazione Json (Array/List/Set) ****************");
-		System.out.println();
+		log.info("\n");
+		log.info("********** Serializzazione Json (Array/List/Set) ****************");
+		log.info("\n");
 		
 		// NOTA: JSON Deve conoscere ESATTAMENTE il tipo utilizzato nelle liste!!
 		
@@ -554,7 +575,7 @@ public class SerializationClientTest {
 		foutJson = new FileOutputStream(jsonFileStream);
 		finJson = new FileInputStream(jsonFileStream);
 		
-		System.out.print("- Serializzazione (Array)(Accordi): ");
+		log.info("- Serializzazione (Array)(Accordi): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		AccordoServizioParteComune [] arrayJsonTestAccordi = testSerializzazioneListaAccordi.toArray(new AccordoServizioParteComune[1]);
@@ -562,11 +583,12 @@ public class SerializationClientTest {
 		dataFine = DateManager.getTimeMillis();
 		foutJson.flush();
 		foutJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Array)(Accordi): ");
+		log.info("- Deserializzazione (Array)(Accordi): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readObject(finJson, AccordoServizioParteComune[].class);
@@ -578,16 +600,16 @@ public class SerializationClientTest {
 			vJsonArrayTestAccordi[i] = (AccordoServizioParteComune) vJsonArray[i];
 		}
 		SerializationClientTest.equals(arrayJsonTestAccordi,vJsonArrayTestAccordi,dir);
-		System.out.print("OK, nome accordo: "+
-				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonArray[0]))+" allegati:("+((AccordoServizioParteComune)vJsonArray[0]).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome accordo: "+
+				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonArray[0]))+" allegati:("+((AccordoServizioParteComune)vJsonArray[0]).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		jsonFileStream = new File(dir,"array.soggetti.json");
 		foutJson = new FileOutputStream(jsonFileStream);
 		finJson = new FileInputStream(jsonFileStream);
 		
-		System.out.print("- Serializzazione (Array)(Soggetti): ");
+		log.info("- Serializzazione (Array)(Soggetti): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		Soggetto [] arrayJsonTestSoggetti = testSerializzazioneListaSoggetti.toArray(new Soggetto[testSerializzazioneListaSoggetti.size()]);
@@ -595,11 +617,12 @@ public class SerializationClientTest {
 		dataFine = DateManager.getTimeMillis();
 		foutJson.flush();
 		foutJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Array)(Soggetti): ");
+		log.info("- Deserializzazione (Array)(Soggetti): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readObject(finJson, Soggetto[].class);
@@ -611,9 +634,9 @@ public class SerializationClientTest {
 			vJsonArrayTestSoggetti[i] = (Soggetto) vJsonArray[i];
 		}
 		SerializationClientTest.equals(arrayJsonTestSoggetti,vJsonArrayTestSoggetti,dir);
-		System.out.print("OK, nome soggetto: "+((Soggetto)vJsonArray[1]).getTipo()+"/"+((Soggetto)vJsonArray[1]).getNome()+"\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)vJsonArray[1]).getTipo()+"/"+((Soggetto)vJsonArray[1]).getNome());
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 
 		
 		// Serializzazione di list
@@ -622,18 +645,19 @@ public class SerializationClientTest {
 		foutJson = new FileOutputStream(jsonFileStream);
 		finJson = new FileInputStream(jsonFileStream);
 		
-		System.out.print("- Serializzazione (List)(Accordi): ");
+		log.info("- Serializzazione (List)(Accordi): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneListaAccordi, foutJson);
 		dataFine = DateManager.getTimeMillis();
 		foutJson.flush();
 		foutJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (List)(Accordi): ");
+		log.info("- Deserializzazione (List)(Accordi): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readListObject(finJson, testSerializzazioneListaAccordi.getClass(), AccordoServizioParteComune.class);
@@ -643,27 +667,28 @@ public class SerializationClientTest {
 		AccordoServizioParteComune [] originaleAccordi = testSerializzazioneSetAccordi.toArray(new AccordoServizioParteComune[1]);
 		AccordoServizioParteComune [] ricostruitoAccordi = vJsonList.toArray(new AccordoServizioParteComune[1]);
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
-		System.out.print("OK, nome accordo: "+
-				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJsonList.get(0)).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome accordo: "+
+				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJsonList.get(0)).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		jsonFileStream = new File(dir,"list.soggetti.json");
 		foutJson = new FileOutputStream(jsonFileStream);
 		finJson = new FileInputStream(jsonFileStream);
 		
-		System.out.print("- Serializzazione (List)(Soggetti): ");
+		log.info("- Serializzazione (List)(Soggetti): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneListaSoggetti, foutJson);
 		dataFine = DateManager.getTimeMillis();
 		foutJson.flush();
 		foutJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (List)(Soggetti): ");
+		log.info("- Deserializzazione (List)(Soggetti): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readListObject(finJson, testSerializzazioneListaSoggetti.getClass(), Soggetto.class);
@@ -672,9 +697,9 @@ public class SerializationClientTest {
 		vJsonList = (List<?>)oJsonRead;
 		Soggetto [] originaleSoggetti = testSerializzazioneSetSoggetti.toArray(new Soggetto[1]);
 		Soggetto [] ricostruitoSoggetti = vJsonList.toArray(new Soggetto[1]);
-		System.out.print("OK, nome soggetto: "+((Soggetto)vJsonList.get(1)).getTipo()+"/"+((Soggetto)vJsonList.get(1)).getNome()+")\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)vJsonList.get(1)).getTipo()+"/"+((Soggetto)vJsonList.get(1)).getNome()+")");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 
 		
 		// Serializzazione di Set
@@ -683,18 +708,19 @@ public class SerializationClientTest {
 		foutJson = new FileOutputStream(jsonFileStream);
 		finJson = new FileInputStream(jsonFileStream);
 		
-		System.out.print("- Serializzazione (Set)(Accordi) (E' normale uno stackatrace: IllegalArgumentException): ");
+		log.info("- Serializzazione (Set)(Accordi) (E' normale uno stackatrace: IllegalArgumentException): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneSetAccordi, foutJson); // NOTA: e' normale che stampa un errore, e' l'equals degli oggetti Openspcoop che non e' perfetto.
 		dataFine = DateManager.getTimeMillis();
 		foutJson.flush();
 		foutJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Set)(Accordi): ");
+		log.info("- Deserializzazione (Set)(Accordi): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readSetObject(finJson, testSerializzazioneSetAccordi.getClass(), AccordoServizioParteComune.class);
@@ -704,27 +730,28 @@ public class SerializationClientTest {
 		originaleAccordi = testSerializzazioneSetAccordi.toArray(new AccordoServizioParteComune[1]);
 		ricostruitoAccordi = vJsonSet.toArray(new AccordoServizioParteComune[1]);
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
-		System.out.print("OK, dimensione set: "+vJsonSet.size()+")\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
-		System.out.println();
+		log.info("- OK, dimensione set: "+vJsonSet.size()+")");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
+		log.info("\n");
 		
 		jsonFileStream = new File(dir,"set.soggetti.json");
 		foutJson = new FileOutputStream(jsonFileStream);
 		finJson = new FileInputStream(jsonFileStream);
 		
-		System.out.print("- Serializzazione (Set)(Soggetti): ");
+		log.info("- Serializzazione (Set)(Soggetti): ");
 		jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneSetSoggetti, foutJson);
 		dataFine = DateManager.getTimeMillis();
 		foutJson.flush();
 		foutJson.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Set)(Soggetti): ");
+		log.info("- Deserializzazione (Set)(Soggetti): ");
 		jsonDeserializer = new JSonDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readSetObject(finJson, testSerializzazioneSetSoggetti.getClass(), Soggetto.class);
@@ -734,10 +761,10 @@ public class SerializationClientTest {
 		originaleSoggetti = testSerializzazioneSetSoggetti.toArray(new Soggetto[1]);
 		ricostruitoSoggetti = vJsonSet.toArray(new Soggetto[1]);
 		SerializationClientTest.equals(originaleSoggetti,ricostruitoSoggetti,dir);
-		System.out.print("OK, dimensione set: "+vJsonSet.size()+")\n");
-		System.out.println("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
-		System.out.println();
+		log.info("- OK, dimensione set: "+vJsonSet.size()+")");
+		log.info("- Costo ms deserializzazione json: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
+		log.info("\n");
 		
 		
 		
@@ -754,9 +781,9 @@ public class SerializationClientTest {
 		
 		
 		// **************** TEST SERIALIZZAZIONE JSON+XML **************************************
-		System.out.println();
-		System.out.println("********** Serializzazione JsonXML (SingleObject) ****************");
-		System.out.println();
+		log.info("\n");
+		log.info("********** Serializzazione JsonXML (SingleObject) ****************");
+		log.info("\n");
 		
 		// Serializzazione tramite stream in/out
 		
@@ -764,27 +791,28 @@ public class SerializationClientTest {
 		FileOutputStream foutJsonXML = new FileOutputStream(jsonXMLFileStream);
 		FileInputStream finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
-		System.out.print("- Serializzazione (Stream in/out): ");
+		log.info("- Serializzazione (Stream in/out): ");
 		XMLSerializer jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(soggettoTest, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
 		foutJsonXML.flush();
 		foutJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Stream in/out): ");
+		log.info("- Deserializzazione (Stream in/out): ");
 		XMLDeserializer jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		Object oJsonXMLRead = jsonXMLDeserializer.readObject(finJsonXML, soggettoTest.getClass());
 		dataFine = DateManager.getTimeMillis();
 		finJsonXML.close();
 		SerializationClientTest.equals(soggettoTest,(Soggetto)oJsonXMLRead,dir);
-		System.out.print("OK, nome soggetto: "+((Soggetto)oJsonXMLRead).getTipo()+"/"+((Soggetto)oJsonXMLRead).getNome()+"\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)oJsonXMLRead).getTipo()+"/"+((Soggetto)oJsonXMLRead).getNome()+"");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione tramite reader e writer
 		
@@ -792,62 +820,65 @@ public class SerializationClientTest {
 		FileWriter fwriterJsonXML = new FileWriter(jsonXMLFileReader);
 		FileReader freaderJsonXML = new FileReader(jsonXMLFileReader);
 		
-		System.out.print("- Serializzazione (Reader/Writer): ");
+		log.info("- Serializzazione (Reader/Writer): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(as, fwriterJsonXML);
 		dataFine = DateManager.getTimeMillis();
 		fwriterJsonXML.flush();
 		fwriterJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Reader/Writer): ");
+		log.info("- Deserializzazione (Reader/Writer): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readObject(freaderJsonXML, as.getClass());
 		dataFine = DateManager.getTimeMillis();
 		freaderJsonXML.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonXMLRead, dir);
-		System.out.print("OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonXMLRead))+" allegati:("+((AccordoServizioParteComune)oJsonXMLRead).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonXMLRead))+" allegati:("+((AccordoServizioParteComune)oJsonXMLRead).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione tramite get e read in Object
 		
-		System.out.print("- Serializzazione (Object): ");
+		log.info("- Serializzazione (Object): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		String jsonXMLSerializationObject = jsonXMLSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Object): ");
+		log.info("- Deserializzazione (Object): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.getObject(jsonXMLSerializationObject, as.getClass());
 		dataFine = DateManager.getTimeMillis();
 		freaderJsonXML.close();
 		SerializationClientTest.equals(as, (AccordoServizioParteComune)oJsonXMLRead, dir);
-		System.out.print("OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonXMLRead))+" allegati:("+((AccordoServizioParteComune)oJsonXMLRead).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, accordo: "+idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)oJsonXMLRead))+" allegati:("+((AccordoServizioParteComune)oJsonXMLRead).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		// Serializzazione Enumerations
 		
-		System.out.print("- Serializzazione (Enumerations): ");
+		log.info("- Serializzazione (Enumerations): ");
 		jsonXMLSerializer = new XMLSerializer(filter);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializationObject = jsonXMLSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Enumerations): ");
+		log.info("- Deserializzazione (Enumerations): ");
 		jsonXMLDeserializer = new XMLDeserializer();
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.getObject(jsonXMLSerializationObject, TestEnumerations.class);
@@ -856,13 +887,13 @@ public class SerializationClientTest {
 		if(((TestEnumerations)oJsonXMLRead).toString().equals(TestEnumerations.VALORE1.toString())==false){
 			throw new Exception("Enumeration originale ["+TestEnumerations.VALORE1.toString()+"] e ricostruita["+((TestEnumerations)oJsonXMLRead).toString()+"] differiscono");
 		}
-		System.out.print("OK, enum value: "+oJsonXMLRead+"\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, enum value: "+oJsonXMLRead);
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
-		System.out.println();
-		System.out.println("********** Serializzazione JsonXML (Array/List/Set) ****************");
-		System.out.println();
+		log.info("\n");
+		log.info("********** Serializzazione JsonXML (Array/List/Set) ****************");
+		log.info("\n");
 		
 		// NOTA: JSON Deve conoscere ESATTAMENTE il tipo utilizzato nelle liste!!
 		
@@ -872,7 +903,7 @@ public class SerializationClientTest {
 		foutJsonXML = new FileOutputStream(jsonXMLFileStream);
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
-		System.out.print("- Serializzazione (Array)(Accordi): ");
+		log.info("- Serializzazione (Array)(Accordi): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		AccordoServizioParteComune [] arrayJsonXMLTestAccordi = testSerializzazioneListaAccordi.toArray(new AccordoServizioParteComune[1]);
@@ -880,11 +911,12 @@ public class SerializationClientTest {
 		dataFine = DateManager.getTimeMillis();
 		foutJsonXML.flush();
 		foutJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Array)(Accordi): ");
+		log.info("- Deserializzazione (Array)(Accordi): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readObject(finJsonXML, AccordoServizioParteComune[].class);
@@ -896,16 +928,16 @@ public class SerializationClientTest {
 			vJsonXMLArrayTestAccordi[i] = (AccordoServizioParteComune) vJsonXMLArray[i];
 		}
 		SerializationClientTest.equals(arrayJsonXMLTestAccordi,vJsonXMLArrayTestAccordi,dir);
-		System.out.print("OK, nome accordo: "+
-				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonXMLArray[0]))+" allegati:("+((AccordoServizioParteComune)vJsonXMLArray[0]).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome accordo: "+
+				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonXMLArray[0]))+" allegati:("+((AccordoServizioParteComune)vJsonXMLArray[0]).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		jsonXMLFileStream = new File(dir,"array.soggetti.jsonXML");
 		foutJsonXML = new FileOutputStream(jsonXMLFileStream);
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
-		System.out.print("- Serializzazione (Array)(Soggetti): ");
+		log.info("- Serializzazione (Array)(Soggetti): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		Soggetto [] arrayJsonXMLTestSoggetti = testSerializzazioneListaSoggetti.toArray(new Soggetto[testSerializzazioneListaSoggetti.size()]);
@@ -913,11 +945,12 @@ public class SerializationClientTest {
 		dataFine = DateManager.getTimeMillis();
 		foutJsonXML.flush();
 		foutJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Array)(Soggetti): ");
+		log.info("- Deserializzazione (Array)(Soggetti): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readObject(finJsonXML, Soggetto[].class);
@@ -929,9 +962,9 @@ public class SerializationClientTest {
 			vJsonXMLArrayTestSoggetti[i] = (Soggetto) vJsonXMLArray[i];
 		}
 		SerializationClientTest.equals(arrayJsonXMLTestSoggetti,vJsonXMLArrayTestSoggetti,dir);
-		System.out.print("OK, nome soggetto: "+((Soggetto)vJsonXMLArray[1]).getTipo()+"/"+((Soggetto)vJsonXMLArray[1]).getNome()+"\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)vJsonXMLArray[1]).getTipo()+"/"+((Soggetto)vJsonXMLArray[1]).getNome());
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 
 		
 		// Serializzazione di list
@@ -940,18 +973,19 @@ public class SerializationClientTest {
 		foutJsonXML = new FileOutputStream(jsonXMLFileStream);
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
-		System.out.print("- Serializzazione (List)(Accordi): ");
+		log.info("- Serializzazione (List)(Accordi): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneListaAccordi, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
 		foutJsonXML.flush();
 		foutJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (List)(Accordi): ");
+		log.info("- Deserializzazione (List)(Accordi): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readListObject(finJsonXML, testSerializzazioneListaAccordi.getClass(), AccordoServizioParteComune.class);
@@ -961,27 +995,28 @@ public class SerializationClientTest {
 		originaleAccordi = testSerializzazioneSetAccordi.toArray(new AccordoServizioParteComune[1]);
 		ricostruitoAccordi = vJsonXMLList.toArray(new AccordoServizioParteComune[1]);
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
-		System.out.print("OK, nome accordo: "+
-				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonXMLList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJsonXMLList.get(0)).sizeAllegatoList()+")\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome accordo: "+
+				idAccordoFactory.getUriFromAccordo(((AccordoServizioParteComune)vJsonXMLList.get(0)))+" allegati:("+((AccordoServizioParteComune)vJsonXMLList.get(0)).sizeAllegatoList()+")");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 		
 		jsonXMLFileStream = new File(dir,"list.soggetti.jsonXML");
 		foutJsonXML = new FileOutputStream(jsonXMLFileStream);
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
-		System.out.print("- Serializzazione (List)(Soggetti): ");
+		log.info("- Serializzazione (List)(Soggetti): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneListaSoggetti, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
 		foutJsonXML.flush();
 		foutJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (List)(Soggetti): ");
+		log.info("- Deserializzazione (List)(Soggetti): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readListObject(finJsonXML, testSerializzazioneListaSoggetti.getClass(), Soggetto.class);
@@ -990,9 +1025,9 @@ public class SerializationClientTest {
 		vJsonXMLList = (List<?>)oJsonXMLRead;
 		originaleSoggetti = testSerializzazioneSetSoggetti.toArray(new Soggetto[1]);
 		ricostruitoSoggetti = vJsonXMLList.toArray(new Soggetto[1]);
-		System.out.print("OK, nome soggetto: "+((Soggetto)vJsonXMLList.get(1)).getTipo()+"/"+((Soggetto)vJsonXMLList.get(1)).getNome()+")\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
+		log.info("- OK, nome soggetto: "+((Soggetto)vJsonXMLList.get(1)).getTipo()+"/"+((Soggetto)vJsonXMLList.get(1)).getNome()+")");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
 
 		
 		// Serializzazione di Set
@@ -1001,18 +1036,19 @@ public class SerializationClientTest {
 		foutJsonXML = new FileOutputStream(jsonXMLFileStream);
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
-		System.out.print("- Serializzazione (Set)(Accordi) (E' normale uno stackatrace: IllegalArgumentException): ");
+		log.info("- Serializzazione (Set)(Accordi) (E' normale uno stackatrace: IllegalArgumentException): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneSetAccordi, foutJsonXML); // NOTA: e' normale che stampa un errore, e' l'equals degli oggetti Openspcoop che non e' perfetto.
 		dataFine = DateManager.getTimeMillis();
 		foutJsonXML.flush();
 		foutJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Set)(Accordi): ");
+		log.info("- Deserializzazione (Set)(Accordi): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readSetObject(finJsonXML, testSerializzazioneSetAccordi.getClass(), AccordoServizioParteComune.class);
@@ -1022,27 +1058,28 @@ public class SerializationClientTest {
 		originaleAccordi = testSerializzazioneSetAccordi.toArray(new AccordoServizioParteComune[1]);
 		ricostruitoAccordi = vJsonXMLSet.toArray(new AccordoServizioParteComune[1]);
 		SerializationClientTest.equals(originaleAccordi,ricostruitoAccordi,dir);
-		System.out.print("OK, dimensione set: "+vJsonXMLSet.size()+")\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
-		System.out.println();
+		log.info("- OK, dimensione set: "+vJsonXMLSet.size()+")");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
+		log.info("\n");
 		
 		jsonXMLFileStream = new File(dir,"set.soggetti.jsonXML");
 		foutJsonXML = new FileOutputStream(jsonXMLFileStream);
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
-		System.out.print("- Serializzazione (Set)(Soggetti): ");
+		log.info("- Serializzazione (Set)(Soggetti): ");
 		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneSetSoggetti, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
 		foutJsonXML.flush();
 		foutJsonXML.close();
-		System.out.print("OK\n");
-		System.out.println("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("- OK");
+		log.info("- Costo ms serializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("- Dimensione oggetto serializzato: "+Utilities.convertBytesToFormatString(jsonXMLFileStream.length()));
+		log.info("\n");
 		
-		System.out.print("- Deserializzazione (Set)(Soggetti): ");
+		log.info("- Deserializzazione (Set)(Soggetti): ");
 		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readSetObject(finJsonXML, testSerializzazioneSetSoggetti.getClass(), Soggetto.class);
@@ -1052,10 +1089,10 @@ public class SerializationClientTest {
 		originaleSoggetti = testSerializzazioneSetSoggetti.toArray(new Soggetto[1]);
 		ricostruitoSoggetti = vJsonXMLSet.toArray(new Soggetto[1]);
 		SerializationClientTest.equals(originaleSoggetti,ricostruitoSoggetti,dir);
-		System.out.print("OK, dimensione set: "+vJsonXMLSet.size()+")\n");
-		System.out.println("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
-		System.out.println();
-		System.out.println();
+		log.info("- OK, dimensione set: "+vJsonXMLSet.size()+")");
+		log.info("- Costo ms deserializzazione jsonXML: "+Utilities.convertSystemTimeIntoString_millisecondi((dataFine-dataInizio), true));
+		log.info("\n");
+		log.info("\n");
 		
 		
 		

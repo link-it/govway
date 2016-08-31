@@ -132,7 +132,7 @@
 		<fileset dir="${libs}/javax" includes="javax.jms.jar"/>
 		<fileset dir="${libs}/shared" includes="concurrent-1.0.jar"/>
 		<fileset dir="${libs}/shared" includes="xercesImpl-2.11.0.jar"/>
-		<fileset dir="${libs}/log" includes="log4j-1.2.16.jar"/>
+		<fileset dir="${libs}/log" includes="*.jar"/>
 	</path>
 
 

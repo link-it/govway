@@ -22,10 +22,13 @@
 
 package org.openspcoop2.core.config.driver.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
@@ -56,16 +59,32 @@ public class TestValidazioneSemantica {
 		}
 
 		// Inizializzo logger
+//		System.out.println("LUNGHEZZA: "+args.length);
+//		for (int i = 0; i < args.length; i++) {
+//			System.out.println("ARG["+i+"]=["+args[i]+"]");
+//		}
 		try{
 			if(args.length==5){
 				LoggerWrapperFactory.setLogConfiguration(args[4]);
 			}else{
-				LoggerWrapperFactory.setLogConfiguration(TestValidazioneSemantica.class.getResource("/validator.log4j2.properties"));
+				URL url = TestValidazioneSemantica.class.getResource("/validator.log4j2.properties");
+				if(url!=null){
+					LoggerWrapperFactory.setLogConfiguration(url);
+				}
+				else{
+					File logFile = File.createTempFile("testValidazioneSemanticaConfigurazione_", ".log");
+					System.out.println("LogMessages write in "+logFile.getAbsolutePath());
+					LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%p <%d{dd-MM-yyyy HH:mm:ss}> %C.%M(%L): %m %n %n");
+				}
 			}
 		}catch(Exception e) {
-			String errorMsg = "Errore durante il caricamento del file di log args4["+args[4]+"] : "+e.getMessage();
+			String errorMsg = "Errore durante il caricamento del file di log: "+e.getMessage();
 			System.err.println(errorMsg);
-			throw new Exception(errorMsg);
+			System.out.println("Args.length: "+args.length);
+			for (int i = 0; i < args.length; i++) {
+				System.out.println("Arg["+i+"]=["+args[i]+"]");
+			}
+			throw new Exception(errorMsg,e);
 		}	
 		Logger log = LoggerWrapperFactory.getLogger("validatoreDatiConfigurazione");
 		

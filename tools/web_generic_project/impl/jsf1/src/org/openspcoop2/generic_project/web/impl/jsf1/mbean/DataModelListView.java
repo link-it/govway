@@ -30,7 +30,6 @@ import org.openspcoop2.generic_project.web.iservice.IBaseService;
 import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 import org.openspcoop2.generic_project.web.table.PagedDataTable;
 import org.openspcoop2.generic_project.web.view.IViewBean;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /***
  * 
@@ -122,7 +121,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> {
 				ParameterizedType parameterizedType =  (ParameterizedType) getClass().getGenericSuperclass();
 				this.dataModel = ((Class<DMType>)parameterizedType.getActualTypeArguments()[4]).newInstance();
 			}catch (Exception e) {
-				this.getLog().error(e,e);
+				this.getLog().error(e.getMessage(),e);
 				throw e;
 			}
 		}
@@ -143,7 +142,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> {
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 				this.metadata = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]).newInstance();
 			}catch (Exception e) {
-				this.getLog().error(e,e);
+				this.getLog().error(e.getMessage(),e);
 				throw e;
 			}
 		}
@@ -158,7 +157,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> {
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 				this.selectedElement = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]).newInstance();
 			}catch (Exception e) {
-				this.getLog().error(e,e);
+				this.getLog().error(e.getMessage(),e);
 				throw e;
 			}
 		}

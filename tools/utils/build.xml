@@ -113,7 +113,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/log" >
-			<include name="log4j-1.2.16.jar"/>
+			<include name="*.jar"/>
 		</fileset>
 	</path>	
 		

@@ -28,9 +28,19 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.RootLoggerComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.properties.PropertiesConfigurationFactory;
 import org.apache.logging.log4j.core.config.json.JsonConfigurationFactory;
 import org.apache.logging.log4j.core.config.xml.XmlConfigurationFactory;
@@ -102,6 +112,61 @@ public class LoggerWrapperFactory {
 	
 
 	// ** Imposta proprietà in configurazione log4J2 */
+	
+	public static void setDefaultConsoleLogConfiguration(Level level) throws UtilsException{
+		setDefaultLogConfiguration(level, true, "%p <%d{dd-MM-yyyy HH:mm:ss.SSS}> %C.%M(%L): %m %n %n", null, null);
+	}
+	public static void setDefaultConsoleLogConfiguration(Level level,
+			String layout) throws UtilsException{
+		setDefaultLogConfiguration(level, true, layout, null, null);
+	}
+	public static void setDefaultLogConfiguration(Level level,boolean console,String layoutConsole,
+			File file,String layoutFile) throws UtilsException{
+		
+		if(layoutConsole==null){
+			layoutConsole="%p <%d{dd-MM-yyyy HH:mm:ss.SSS}> %C.%M(%L): %m %n %n";
+		}
+		if(layoutFile==null){
+			layoutFile="%p <%d{dd-MM-yyyy HH:mm:ss.SSS}> %C.%M(%L): %m %n %n";
+		}
+		
+		ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+		builder.setConfigurationName("ConsoleDefault");
+		builder.setStatusLevel(Level.ERROR);
+		// Console Appender
+		if(console){
+			AppenderComponentBuilder appenderBuilder = builder.newAppender("Stdout", "CONSOLE").
+					addAttribute("target",  ConsoleAppender.Target.SYSTEM_OUT);
+			appenderBuilder.add(builder.newLayout("PatternLayout")
+					.addAttribute("pattern", layoutConsole));
+			builder.add(appenderBuilder);
+		}
+		if(file!=null){
+			// create a rolling file appender
+			LayoutComponentBuilder layoutBuilder = builder.newLayout("PatternLayout")
+			    .addAttribute("pattern", layoutFile);
+			ComponentBuilder<?> triggeringPolicy = builder.newComponent("Policies")
+			    .addComponent(builder.newComponent("CronTriggeringPolicy").addAttribute("schedule", "0 0 0 * * ?"))
+			    .addComponent(builder.newComponent("SizeBasedTriggeringPolicy").addAttribute("size", "100M"));
+			AppenderComponentBuilder appenderBuilder = builder.newAppender("rolling", "RollingFile")
+			    .addAttribute("fileName", file.getAbsolutePath())
+			    .addAttribute("filePattern", file.getAbsolutePath()+".%i")
+			    .add(layoutBuilder)
+			    .addComponent(triggeringPolicy);
+			builder.add(appenderBuilder);
+		}
+		// RootLogger
+		RootLoggerComponentBuilder rootLoggerBuilder = builder.newRootLogger(level);
+		if(console){
+			rootLoggerBuilder.add(builder.newAppenderRef("Stdout"));
+		}
+		if(file!=null){
+			rootLoggerBuilder.add(builder.newAppenderRef("rolling"));
+		}
+		builder.add(rootLoggerBuilder);
+		// Initialize
+		Configurator.initialize(builder.build());
+	}
 	
 	public static void setLogConfiguration(File file) throws UtilsException{
 		setLogConfiguration(getContext(), file);

@@ -273,7 +273,7 @@
                 		<path refid="classpath_run_dist" />
                 		<path refid="classpath_run_openspcoop_dist" />
                 		<pathelement path="${openspcoop2}/core/deploy/properties"/>
-                		<fileset dir="${required_lib}" includes="log/log4j-1.2.16.jar"/>
+                		<fileset dir="${required_lib}" includes="log/*.jar"/>
                 		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
                 		<fileset dir="${required_lib}" includes="shared/*.jar"/>
                 		<fileset dir="${required_lib}" includes="commons/*.jar"/>

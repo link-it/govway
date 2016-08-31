@@ -49,7 +49,7 @@
             <include name="shared/*"/>
             <include name="spring/*"/>
 			<include name="jibx/*"/>
-			<include name="log/log4j-1.2.16.jar"/>
+			<include name="log/*"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >

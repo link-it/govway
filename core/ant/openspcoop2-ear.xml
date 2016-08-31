@@ -497,6 +497,17 @@
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
 					
 		<!-- application server (jars e jboss-app.xml) -->
+		<!-- commons_logging -->
+		<var name="commons_logging_jar" value="" />
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
+			</then>
+		</if>
 		<!-- xalan -->
 		<var name="xalan_jar" value=""/>
 		<var name="xalan_serializer_jar" value="" />
@@ -713,6 +724,7 @@
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.5.jar"/>
 				<include name="commons-beanutils-1.9.2.jar"/> <!--jmx mini console -->
+				<include name="${commons_logging_jar}"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jibx">
 				<include name="bcel-6.0.jar"/>

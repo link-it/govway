@@ -9,6 +9,7 @@
 			<module name="org.springframework.spring" />
 			<module name="org.slf4j" />
 			<module name="org.apache.log4j" />
+			<module name="org.apache.commons.logging"/>
 			<module name="org.jboss.as.webservices" />
 			<module name="org.jboss.ws" />
 			<module name="org.jboss.ws.*" />

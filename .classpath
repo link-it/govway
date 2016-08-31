@@ -47,7 +47,7 @@
 	<classpathentry kind="src" path="example/pdd/client/IntegrationManagerClient/cxf/src"/>
 	<classpathentry kind="src" path="example/pdd/client/JMSReceiver/src"/>
 	<classpathentry kind="src" path="example/pdd/client/JMXClient/src"/>
-	<classpathentry kind="src" path="example/pdd/server/testService/src"/>
+	<classpathentry excluding="*/jboss*.xml*" kind="src" path="example/pdd/server/testService/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.3_lib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_2.3_lib_axis14_withoutSecurity"/>
