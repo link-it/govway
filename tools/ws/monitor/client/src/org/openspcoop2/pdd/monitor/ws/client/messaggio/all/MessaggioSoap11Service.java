@@ -57,7 +57,7 @@ public class MessaggioSoap11Service extends Service {
 			url = MessaggioSoap11Service.class.getClassLoader().getResource("/monitor/MessaggioAll_PortSoap11.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(MessaggioSoap11Service.class.getName())
+			java.util.logging.Logger.getLogger(MessaggioSoap11Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/MessaggioAll_PortSoap11.wsdl");
         }       

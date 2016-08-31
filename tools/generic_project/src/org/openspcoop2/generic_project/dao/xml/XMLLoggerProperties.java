@@ -40,7 +40,7 @@ public class XMLLoggerProperties extends Log4JLoaderProperties {
 		super(log4jProperties.getAbsolutePath());
 	}
 	public XMLLoggerProperties(IProjectInfo project) throws ServiceException {
-		super(Utilities.normalizedProjectName(project.getProjectName())+".dao.xml.log4j.properties");
+		super(Utilities.normalizedProjectName(project.getProjectName())+".dao.xml.log4j2.properties");
 	}
 
 	public static XMLLoggerProperties getInstance(IProjectInfo project) throws ServiceException {

@@ -57,7 +57,7 @@ public class InformazioniProtocolloTransazioneSoap12Service extends Service {
 			url = InformazioniProtocolloTransazioneSoap12Service.class.getClassLoader().getResource("/diagnostica/InformazioniProtocolloTransazioneSearch_PortSoap12.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(InformazioniProtocolloTransazioneSoap12Service.class.getName())
+			java.util.logging.Logger.getLogger(InformazioniProtocolloTransazioneSoap12Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/InformazioniProtocolloTransazioneSearch_PortSoap12.wsdl");
         }       

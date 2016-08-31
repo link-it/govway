@@ -25,7 +25,6 @@ package org.openspcoop2.core.tracciamento.ws.server.config;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -88,7 +87,7 @@ public class DriverTracciamento {
 			logWS.info("Initialized ManagementService. Tracciamento type: [" + this.driver.getClass().getName() + "]");
 			
 		} catch (Exception e) {
-			logWS.error(e);
+			logWS.error(e.getMessage(),e);
 			logWS.error("ManagementService NON ATTIVO.");
 			throw new RuntimeException("ManagementService Non Attivo.");
 		}

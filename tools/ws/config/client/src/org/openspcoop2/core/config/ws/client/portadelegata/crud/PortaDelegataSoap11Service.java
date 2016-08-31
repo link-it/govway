@@ -57,7 +57,7 @@ public class PortaDelegataSoap11Service extends Service {
 			url = PortaDelegataSoap11Service.class.getClassLoader().getResource("/config/PortaDelegataCRUD_PortSoap11.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(PortaDelegataSoap11Service.class.getName())
+			java.util.logging.Logger.getLogger(PortaDelegataSoap11Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/PortaDelegataCRUD_PortSoap11.wsdl");
         }       

@@ -452,10 +452,10 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.properties"/>
 		</antcall>
 		<antcall target="pddConsole_console_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.log4j.properties"/>
+		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.log4j2.properties"/>
 		</antcall>
 		<antcall target="pddConsole_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/log4j.properties"/>
+		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
 		<antcall target="pddConsole_datasource_properties_settings">
 		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.datasource.properties"/>
@@ -519,10 +519,10 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.datasource.properties"/>
 		</antcall>
 		<antcall target="loader_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.log4j.properties"/>
+		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.log4j2.properties"/>
 		</antcall>
 		<antcall target="loader_default_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/log4j.properties"/>
+		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
 			<param name="dir" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes"/>

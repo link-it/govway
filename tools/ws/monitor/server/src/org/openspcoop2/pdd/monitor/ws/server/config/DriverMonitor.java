@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -88,7 +87,7 @@ public class DriverMonitor {
 			logWS.info("Initialized ManagementService. Monitor type: [" + this.driver.getClass().getName() + "]");
 			
 		} catch (Exception e) {
-			logWS.error(e);
+			logWS.error(e.getMessage(),e);
 			logWS.error("ManagementService NON ATTIVO.");
 			throw new RuntimeException("ManagementService Non Attivo.");
 		}

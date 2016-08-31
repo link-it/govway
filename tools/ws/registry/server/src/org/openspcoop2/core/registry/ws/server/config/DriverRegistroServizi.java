@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
 import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 /**     
@@ -132,7 +131,7 @@ public class DriverRegistroServizi {
 			logWS.info("Initialized ManagementService. Registry type: [" + this.tipo + "]");
 			
 		} catch (Exception e) {
-			logWS.error(e);
+			logWS.error(e.getMessage(),e);
 			logWS.error("ManagementService NON ATTIVO.");
 			throw new RuntimeException("ManagementService Non Attivo.");
 		}

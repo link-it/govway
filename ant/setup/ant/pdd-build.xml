@@ -326,51 +326,24 @@
 		<!-- TIPI DI LOG -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="log4j.category.openspcoop2.tracciamento"/>
+			<param name="token" value="logger.openspcoop2_tracciamento.level"/>
 			<param name="value" value="OFF"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="log4j.category.openspcoop2.msgDiagnostico"/>
+			<param name="token" value="logger.openspcoop2_msgDiagnostico.level"/>
 			<param name="value" value="OFF"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="log4j.category.openspcoop2.core"/>
-			<param name="value" value="ERROR,openspcoop2.core.rollingFile"/>
+			<param name="token" value="logger.openspcoop2_core.level"/>
+			<param name="value" value="ERROR"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="log4j.category.openspcoop2.resources"/>
-			<param name="value" value="ERROR,openspcoop2.resources.rollingFile"/>
+			<param name="token" value="logger.openspcoop2_resources.level"/>
+			<param name="value" value="ERROR"/>
 		</antcall>
-		<if>
-			<not>
-				<matches string="${as}" pattern="jboss.*"/>
-			</not>
-			<then>
-				<antcall target="set_property">
-				    <param name="file" value="${file}"/>
-					<param name="token" value="log4j.logger.org.openspcoop2"/>
-					<param name="value" value="DEBUG,openspcoop2.core.rollingFile"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${file}"/>
-					<param name="token" value="log4j.category.openspcoop2.startup"/>
-					<param name="value" value="DEBUG,openspcoop2.startup.rollingFile"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${file}"/>
-					<param name="token" value="log4j.additivity.org.openspcoop2"/>
-					<param name="value" value="false"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${file}"/>
-					<param name="token" value="log4j.additivity.openspcoop2.startup"/>
-					<param name="value" value="false"/>
-				</antcall>
-			</then>
-		</if>	
 		
 		<!-- DATASOURCE -->
 		<antcall target="replace_token">
@@ -381,7 +354,7 @@
 	
 	</target>
 	
-	<!-- log4j.properties -->
+	<!-- log4j2.properties -->
 	<target name="pdd_log4j_properties_settings">
 		
 		<available file="${file}" property="file.present"/>

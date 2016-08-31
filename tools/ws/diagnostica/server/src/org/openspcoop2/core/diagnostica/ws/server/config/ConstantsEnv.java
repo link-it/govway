@@ -39,6 +39,6 @@ public class ConstantsEnv {
     public final static String OPENSPCOOP2_DATASOURCE_LOCAL_PATH = "wsdiagnostica_local.datasource.properties";
     public final static String OPENSPCOOP2_DATASOURCE_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_DATASOURCE_PROPERTIES";
     	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsdiagnostica_local.log4j.properties";
+    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsdiagnostica_local.log4j2.properties";
     public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_WSDIAGNOSTICA_LOG_PROPERTIES";
 }

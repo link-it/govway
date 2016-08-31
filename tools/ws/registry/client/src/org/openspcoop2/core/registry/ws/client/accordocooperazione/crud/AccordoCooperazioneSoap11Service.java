@@ -57,7 +57,7 @@ public class AccordoCooperazioneSoap11Service extends Service {
 			url = AccordoCooperazioneSoap11Service.class.getClassLoader().getResource("/registry/AccordoCooperazioneCRUD_PortSoap11.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(AccordoCooperazioneSoap11Service.class.getName())
+			java.util.logging.Logger.getLogger(AccordoCooperazioneSoap11Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/AccordoCooperazioneCRUD_PortSoap11.wsdl");
         }       

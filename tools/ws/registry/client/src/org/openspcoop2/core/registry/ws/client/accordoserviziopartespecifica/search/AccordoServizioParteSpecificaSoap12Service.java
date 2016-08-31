@@ -57,7 +57,7 @@ public class AccordoServizioParteSpecificaSoap12Service extends Service {
 			url = AccordoServizioParteSpecificaSoap12Service.class.getClassLoader().getResource("/registry/AccordoServizioParteSpecificaSearch_PortSoap12.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(AccordoServizioParteSpecificaSoap12Service.class.getName())
+			java.util.logging.Logger.getLogger(AccordoServizioParteSpecificaSoap12Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/AccordoServizioParteSpecificaSearch_PortSoap12.wsdl");
         }       

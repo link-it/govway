@@ -37,7 +37,6 @@ import org.openspcoop2.pools.pdd.db.DBInfo;
 import org.openspcoop2.pools.pdd.db.DBPool;
 import org.openspcoop2.pools.pdd.jms.JMSInfo;
 import org.openspcoop2.pools.pdd.jms.JMSInfoContextProperty;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
 

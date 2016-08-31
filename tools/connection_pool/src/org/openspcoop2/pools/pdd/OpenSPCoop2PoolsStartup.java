@@ -29,7 +29,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.slf4j.Logger;
-import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.pools.pdd.jmx.GestoreRisorseJMX;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 
@@ -90,8 +89,8 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 		/* ------------- Inizializzo il sistema di Logging di OpenSPCoop --------------- */
 		try{
 			java.util.Properties loggerProperties = new java.util.Properties();
-			loggerProperties.load(OpenSPCoop2PoolsStartup.class.getResourceAsStream("/openspcoop2_pools.log4j.properties"));
-			PropertyConfigurator.configure(loggerProperties);
+			loggerProperties.load(OpenSPCoop2PoolsStartup.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			OpenSPCoop2PoolsStartup.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 		}catch(Exception e){
 			OpenSPCoop2PoolsStartup.loggerConsole.error("Inizializzazione logger non riuscita",e);

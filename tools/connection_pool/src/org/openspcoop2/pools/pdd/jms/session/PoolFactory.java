@@ -27,7 +27,6 @@ import java.util.Vector;
 
 import org.apache.commons.pool.BasePoolableObjectFactory; 
 import org.slf4j.Logger;
-import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -221,8 +220,8 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 		// Logger
 		try{
 			java.util.Properties loggerProperties = new java.util.Properties();
-			loggerProperties.load(PoolFactory.class.getResourceAsStream("/openspcoop2_pools.log4j.properties"));
-			PropertyConfigurator.configure(loggerProperties);
+			loggerProperties.load(PoolFactory.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 		}catch(Exception e){
 			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");

@@ -39,6 +39,6 @@ public class ConstantsEnv {
     public final static String OPENSPCOOP2_BACKEND_LOCAL_PATH = "wsconfig_local.backend.properties";
     public final static String OPENSPCOOP2_BACKEND_PROPERTIES = "OPENSPCOOP2_WSCONFIG_BACKEND_PROPERTIES";
     	
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsconfig_local.log4j.properties";
+    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "wsconfig_local.log4j2.properties";
     public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_WSCONFIG_LOG_PROPERTIES";
 }

@@ -57,7 +57,7 @@ public class StatoPddSoap11Service extends Service {
 			url = StatoPddSoap11Service.class.getClassLoader().getResource("/monitor/StatoPddAll_PortSoap11.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(StatoPddSoap11Service.class.getName())
+			java.util.logging.Logger.getLogger(StatoPddSoap11Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/StatoPddAll_PortSoap11.wsdl");
         }       

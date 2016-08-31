@@ -25,7 +25,6 @@ package org.openspcoop2.pools.pdd.jms.session;
 
 import javax.jms.JMSException;
 
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
 /**

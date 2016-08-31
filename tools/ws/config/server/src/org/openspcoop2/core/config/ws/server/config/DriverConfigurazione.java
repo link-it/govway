@@ -25,7 +25,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 /**     
@@ -101,7 +100,7 @@ public class DriverConfigurazione {
 			logWS.info("Initialized ManagementService. Config type: [" + this.tipo + "]");
 			
 		} catch (Exception e) {
-			logWS.error(e);
+			logWS.error(e.getMessage(),e);
 			logWS.error("ManagementService NON ATTIVO.");
 			throw new RuntimeException("ManagementService Non Attivo.");
 		}

@@ -27,7 +27,6 @@ import org.apache.commons.pool.impl.GenericObjectPool.Config;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
 import org.slf4j.Logger;
-import org.apache.logging.log4j.PropertyConfigurator;
 
 import java.util.Hashtable;
 
@@ -88,8 +87,8 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 		if(ConnectionSessionJMSPool.staticLogger==null){
 			try{
 				java.util.Properties loggerProperties = new java.util.Properties();
-				loggerProperties.load(ConnectionSessionJMSPool.class.getResourceAsStream("/openspcoop2_pools.log4j.properties"));
-				PropertyConfigurator.configure(loggerProperties);
+				loggerProperties.load(ConnectionSessionJMSPool.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
+				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 			}catch(Exception e){
 				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");

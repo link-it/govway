@@ -40,7 +40,7 @@ public class JDBCLoggerProperties extends Log4JLoaderProperties {
 		super(log4jProperties.getAbsolutePath());
 	}
 	public JDBCLoggerProperties(IProjectInfo project) throws ServiceException {
-		super(Utilities.normalizedProjectName(project.getProjectName())+".dao.jdbc.log4j.properties");
+		super(Utilities.normalizedProjectName(project.getProjectName())+".dao.jdbc.log4j2.properties");
 	}
 
 	public static JDBCLoggerProperties getInstance(IProjectInfo project) throws ServiceException {

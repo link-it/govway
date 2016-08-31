@@ -27,8 +27,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.CollectionProperties;
 import org.openspcoop2.utils.resources.PropertiesUtilities;
 
@@ -42,17 +42,17 @@ import org.openspcoop2.utils.resources.PropertiesUtilities;
  */
 public class LoggerProperties {
 
-	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException{
+	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException, UtilsException{
 
 		// Originale
 		java.util.Properties loggerProperties = new java.util.Properties();
 		java.io.File loggerFile = null;
 		if(rootDirectory!=null)
-			loggerFile = new java.io.File(rootDirectory+"wstracciamento.log4j.properties");
+			loggerFile = new java.io.File(rootDirectory+"wstracciamento.log4j2.properties");
 		else
-			loggerFile = new java.io.File("wstracciamento.log4j.properties");
+			loggerFile = new java.io.File("wstracciamento.log4j2.properties");
 		if(loggerFile .exists() == false ){
-			loggerProperties.load(LoggerProperties.class.getResourceAsStream("/wstracciamento.log4j.properties"));
+			loggerProperties.load(LoggerProperties.class.getResourceAsStream("/wstracciamento.log4j2.properties"));
 		}else{
 			FileInputStream fin = null;
 			try{
@@ -99,7 +99,7 @@ public class LoggerProperties {
 			}
 		}
 
-		PropertyConfigurator.configure(loggerProperties);
+		LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 
 	}
 

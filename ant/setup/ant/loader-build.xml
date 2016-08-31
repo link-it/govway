@@ -135,7 +135,7 @@
 	</target>
 	
 	
-	<!-- loader.log4j.properties -->
+	<!-- loader.log4j2.properties -->
 	<target name="loader_log4j_properties_settings">
 		
 		<concat destfile="${file}" append="yes" >
@@ -159,7 +159,7 @@
 	
 	</target>
 	
-	<!-- log4j.properties -->
+	<!-- log4j2.properties -->
 	<target name="loader_default_log4j_properties_settings">
 		
 		<available file="${file}" property="file.present"/>

@@ -25,7 +25,6 @@ package org.openspcoop2.core.config.ws.server.config;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.InstanceProperties;
 
 /**

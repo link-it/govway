@@ -57,7 +57,7 @@ public class SoggettoSoap12Service extends Service {
 			url = SoggettoSoap12Service.class.getClassLoader().getResource("/config/SoggettoCRUD_PortSoap12.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(SoggettoSoap12Service.class.getName())
+			java.util.logging.Logger.getLogger(SoggettoSoap12Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/SoggettoCRUD_PortSoap12.wsdl");
         }       

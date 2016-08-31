@@ -27,7 +27,6 @@ package org.openspcoop2.pools.pdd;
 import java.util.Properties;
 import java.io.File;
 
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
 

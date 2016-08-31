@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-import org.apache.logging.log4j.PropertyConfigurator;
 import org.openspcoop2.generic_project.utils.ServerProperties;
 import org.openspcoop2.pdd.monitor.Busta;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
@@ -64,12 +63,12 @@ public class MonitorConsole {
 		InputStream inPropLog4j = null;
 		Properties propertiesLog4j = new Properties();
 		try {
-			inPropLog4j = MonitorConsole.class.getResourceAsStream("/monitor_pdd.cli.log4j.properties");
+			inPropLog4j = MonitorConsole.class.getResourceAsStream("/monitor_pdd.cli.log4j2.properties");
 			propertiesLog4j.load(inPropLog4j);
-			PropertyConfigurator.configure(propertiesLog4j);
+			LoggerWrapperFactory.setLogConfiguration(propertiesLog4j);
 			
 		} catch(java.lang.Exception e) {
-			System.out.println("Impossibile leggere i dati dal file 'monitor_pdd.cli.log4j.properties': "+e.getMessage());
+			System.out.println("Impossibile leggere i dati dal file 'monitor_pdd.cli.log4j2.properties': "+e.getMessage());
 			return;
 		} finally {
 			try {

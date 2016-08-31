@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -89,7 +88,7 @@ public class DriverDiagnostica {
 			logWS.info("Initialized ManagementService. Diagnostica type: [" + this.driver.getClass().getName() + "]");
 			
 		} catch (Exception e) {
-			logWS.error(e);
+			logWS.error(e.getMessage(),e);
 			logWS.error("ManagementService NON ATTIVO.");
 			throw new RuntimeException("ManagementService Non Attivo.");
 		}

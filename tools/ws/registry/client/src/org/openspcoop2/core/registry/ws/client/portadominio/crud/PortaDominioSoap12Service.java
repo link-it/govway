@@ -57,7 +57,7 @@ public class PortaDominioSoap12Service extends Service {
 			url = PortaDominioSoap12Service.class.getClassLoader().getResource("/registry/PortaDominioCRUD_PortSoap12.wsdl");
 		}
 		if (url==null ){
-			java.util.logging.LoggerWrapperFactory.getLogger(PortaDominioSoap12Service.class.getName())
+			java.util.logging.Logger.getLogger(PortaDominioSoap12Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "deploy/wsdl/PortaDominioCRUD_PortSoap12.wsdl");
         }       

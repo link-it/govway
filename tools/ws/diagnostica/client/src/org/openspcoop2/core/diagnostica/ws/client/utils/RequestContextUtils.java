@@ -51,7 +51,7 @@ public class RequestContextUtils {
 			this.username = props.getProperty(service+".username");
 			this.password = props.getProperty(service+".password");
 		} catch (Exception e) {
-			java.util.logging.LoggerWrapperFactory.getLogger(RequestContextUtils.class.getName())
+			java.util.logging.Logger.getLogger(RequestContextUtils.class.getName())
             .log(java.util.logging.Level.INFO,
             		"Errore durante l'init del RequestContextUtils", e);
 			throw e;
