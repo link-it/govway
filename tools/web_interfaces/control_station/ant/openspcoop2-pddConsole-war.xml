@@ -356,6 +356,7 @@
 			</lib>
 			<lib dir="${required_lib_pddConsole}/cxf">
 				<include name="cxf-core-*.jar" />
+				<include name="cxf-rt-*.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
 				<include name="${pddConsoleRemota_cxf_xmlschema-core}" />
 				<include name="${pddConsoleRemota_cxf_woodstox-core-asl}" />

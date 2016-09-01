@@ -143,7 +143,7 @@ public class AuditLog4JAppender implements IAuditAppender {
 				}
 			}
 			
-			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
 			
 			// Logger
 			String category = properties.getProperty("category");

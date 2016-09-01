@@ -26,14 +26,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
+import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
@@ -41,8 +46,8 @@ import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFact
 import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.RootLoggerComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
-import org.apache.logging.log4j.core.config.properties.PropertiesConfigurationFactory;
 import org.apache.logging.log4j.core.config.json.JsonConfigurationFactory;
+import org.apache.logging.log4j.core.config.properties.PropertiesConfigurationFactory;
 import org.apache.logging.log4j.core.config.xml.XmlConfigurationFactory;
 import org.apache.logging.log4j.core.config.yaml.YamlConfigurationFactory;
 
@@ -169,9 +174,12 @@ public class LoggerWrapperFactory {
 	}
 	
 	public static void setLogConfiguration(File file) throws UtilsException{
-		setLogConfiguration(getContext(), file);
+		setLogConfiguration(getContext(), file, false);
 	}
-	private static void setLogConfiguration(LoggerContext context, File file) throws UtilsException{
+	public static void setLogConfiguration(File file,boolean append) throws UtilsException{
+		setLogConfiguration(getContext(), file, append);
+	}
+	private static void setLogConfiguration(LoggerContext context, File file,boolean append) throws UtilsException{
 		String filePath = "fs";
 		try{
 			if(file==null){
@@ -179,7 +187,12 @@ public class LoggerWrapperFactory {
 			}
 			filePath = file.getAbsolutePath();
 			if(file.exists()){
-				context.setConfigLocation(file.toURI());
+				if(append){
+					appendConfiguration(context, file.toURI());
+				}
+				else{
+					newConfiguration(context, file.toURI());
+				}
 			}
 			else{
 				throw new UtilsException("Resource not exists");
@@ -189,16 +202,24 @@ public class LoggerWrapperFactory {
 		}
 	}
 	public static void setLogConfiguration(String name) throws UtilsException{
-		setLogConfiguration(getContext(), name);
+		setLogConfiguration(getContext(), name, false);
 	}
-	private static void setLogConfiguration(LoggerContext context, String name) throws UtilsException{
+	public static void setLogConfiguration(String name,boolean append) throws UtilsException{
+		setLogConfiguration(getContext(), name, append);
+	}
+	private static void setLogConfiguration(LoggerContext context, String name,boolean append) throws UtilsException{
 		try{
 			if(name==null){
 				throw new Exception("Resource name undefined");
 			}
 			File f = new File(name);
 			if(f.exists()){
-				context.setConfigLocation(f.toURI());
+				if(append){
+					appendConfiguration(context, f.toURI());
+				}
+				else{
+					newConfiguration(context, f.toURI());
+				}
 			}
 			else{
 				String newName = null;
@@ -210,7 +231,12 @@ public class LoggerWrapperFactory {
 				}
 				URL url = Utilities.class.getResource(newName);
 				if(url!=null){
-					context.setConfigLocation(url.toURI());
+					if(append){
+						appendConfiguration(context, url.toURI());
+					}
+					else{
+						newConfiguration(context, url.toURI());
+					}
 				}
 				else{
 					throw new UtilsException("Resource ["+name+"] not found");
@@ -221,35 +247,54 @@ public class LoggerWrapperFactory {
 		}
 	}
 	public static void setLogConfiguration(URL url) throws UtilsException{
-		setLogConfiguration(getContext(), url);
+		setLogConfiguration(getContext(), url, false);
 	}
-	private static void setLogConfiguration(LoggerContext context, URL url) throws UtilsException{
+	public static void setLogConfiguration(URL url,boolean append) throws UtilsException{
+		setLogConfiguration(getContext(), url, append);
+	}
+	private static void setLogConfiguration(LoggerContext context, URL url,boolean append) throws UtilsException{
 		try{
 			if(url==null){
 				throw new Exception("Resource URL undefined");
 			}
-			context.setConfigLocation(url.toURI());
+			if(append){
+				appendConfiguration(context, url.toURI());
+			}
+			else{
+				newConfiguration(context, url.toURI());
+			}
 		}catch(Exception e){
 			throw new UtilsException("Setting Logging Configuration failed (url ["+url+"]): "+e.getMessage(),e);
 		}
 	}
 	public static void setLogConfiguration(URI uri) throws UtilsException{
-		setLogConfiguration(getContext(), uri);
+		setLogConfiguration(getContext(), uri, false);
 	}
-	private static void setLogConfiguration(LoggerContext context, URI uri) throws UtilsException{
+	public static void setLogConfiguration(URI uri,boolean append) throws UtilsException{
+		setLogConfiguration(getContext(), uri, append);
+	}
+	private static void setLogConfiguration(LoggerContext context, URI uri,boolean append) throws UtilsException{
 		try{
 			if(uri==null){
 				throw new Exception("Resource URI undefined");
 			}
-			context.setConfigLocation(uri);
+			if(append){
+				appendConfiguration(context, uri);
+			}
+			else{
+				newConfiguration(context, uri);
+			}
 		}catch(Exception e){
 			throw new UtilsException("Setting Logging Configuration failed (uri ["+uri+"]): "+e.getMessage(),e);
 		}
 	}
 	public static void setLogConfiguration(Properties props) throws UtilsException{
-		setLogConfiguration(getContext(), props);
+		setLogConfiguration(getContext(), props, false);
 	}
-	private static void setLogConfiguration(LoggerContext context, Properties props) throws UtilsException{
+	public static void setLogConfiguration(Properties props,boolean append) throws UtilsException{
+		setLogConfiguration(getContext(), props, append);
+	}
+	private static void setLogConfiguration(LoggerContext context, Properties props,boolean append) throws UtilsException{
 		File fTmp = null;
 		FileOutputStream foutTmp = null;
 		try{
@@ -263,7 +308,12 @@ public class LoggerWrapperFactory {
 			foutTmp.close();
 			foutTmp = null;
 
-			context.setConfigLocation(fTmp.toURI());
+			if(append){
+				appendConfiguration(context, fTmp.toURI());
+			}
+			else{
+				newConfiguration(context, fTmp.toURI());
+			}
 			
 		}catch(Exception e){
 			throw new UtilsException("Setting Logging Configuration failed: "+e.getMessage(),e);
@@ -281,5 +331,41 @@ public class LoggerWrapperFactory {
 		}
 	}
 
+	
+	private static void newConfiguration(LoggerContext context, URI configUri) throws Exception{
+		context.setConfigLocation(configUri);
+	}
+	private static void appendConfiguration(LoggerContext context, URI configUri) throws Exception{
+		
+		Configuration actualConfiguration = context.getConfiguration();
+		
+		ConfigurationFactory configurationFactory = ConfigurationFactory.getInstance();
+		Configuration appendConfiguration = configurationFactory.getConfiguration(actualConfiguration.getName(), configUri);
+		appendConfiguration.initialize();
+				
+		Map<String, Appender> mapAppenders = appendConfiguration.getAppenders();
+		if(mapAppenders.size()>0){
+			Iterator<String> appenderNameIterator = mapAppenders.keySet().iterator();
+			while (appenderNameIterator.hasNext()) {
+				String appenderName = (String) appenderNameIterator.next();
+				Appender appender = mapAppenders.get(appenderName);
+				appender.start();
+				//System.out.println("ADDDDDDDDDDDDDDDDDD APPENDER ["+appenderName+"]");
+				actualConfiguration.addAppender(appender);
+			}
+		}
+		
+		Map<String, LoggerConfig> mapLoggers = appendConfiguration.getLoggers();
+		if(mapLoggers.size()>0){
+			Iterator<String> loggerNameIterator = mapLoggers.keySet().iterator();
+			while (loggerNameIterator.hasNext()) {
+				String loggerName = (String) loggerNameIterator.next();
+				LoggerConfig logger = mapLoggers.get(loggerName);
+				//System.out.println("ADDDDDDDDDDDDDDDDDD LOGGER ["+loggerName+"]");
+				actualConfiguration.addLogger(loggerName, logger);
+			}
+		}
+		
+	}
 
 }

@@ -533,5 +533,21 @@ public class SmistatoreThread extends Thread {
 
 	public void stopGestore() {
 		this.stop = true;
+		
+		SmistatoreThread.log.debug("Fermo il thread ...");
+		int timeout = 60;
+		for (int i = 0; i < timeout; i++) {
+			if(this.isRunning()){
+				try{
+					Thread.sleep(1000);
+				}catch(Exception e){}
+			}
+			else{
+				break;
+			}
+		}
+		if(this.isRunning){
+			SmistatoreThread.log.debug("Sono trascorsi 60 secondi ed il thread non è ancora terminato??");
+		}
 	}
 }

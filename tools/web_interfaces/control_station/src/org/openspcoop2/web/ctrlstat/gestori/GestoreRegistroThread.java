@@ -1211,6 +1211,22 @@ public class GestoreRegistroThread extends GestoreGeneral {
 	@Override
 	public void stopGestore() {
 		this.stop = true;
+		
+		this.log.debug("Fermo il thread ...");
+		int timeout = 60;
+		for (int i = 0; i < timeout; i++) {
+			if(this.isRunning()){
+				try{
+					Thread.sleep(1000);
+				}catch(Exception e){}
+			}
+			else{
+				break;
+			}
+		}
+		if(this.isRunning){
+			this.log.debug("Sono trascorsi 60 secondi ed il thread non è ancora terminato??");
+		}
 	}
 
 	@Override
