@@ -126,16 +126,16 @@
 		<!-- DataSource Properties -->
 		<delete dir="${build_config_ws}/properties" />
 		<mkdir dir="${build_config_ws}/properties" />
-		<copy file="${properties_config_ws}/wsconfig.backend.properties" todir="${build_config_ws}/properties" />
+		<copy file="${properties_config_ws}/wsconfig.datasource.properties" todir="${build_config_ws}/properties" />
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
-				<concat destfile="${build_config_ws}/properties/wsconfig.backend.properties" append="yes" >
+				<concat destfile="${build_config_ws}/properties/wsconfig.datasource.properties" append="yes" >
 
 # ----- Personalizzazione Tomcat -------------
 				</concat>
 				<antcall target="set_property">
-				    <param name="file" value="${build_config_ws}/properties/wsconfig.backend.properties"/>
+				    <param name="file" value="${build_config_ws}/properties/wsconfig.datasource.properties"/>
 					<param name="token" value="db.dataSource"/>
 					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
 				</antcall>
@@ -210,7 +210,7 @@
 			</lib>
 			
 			<classes dir="${build_config_ws}/properties">
-				<include name="wsconfig.backend.properties"/>
+				<include name="wsconfig.datasource.properties"/>
 			</classes>			
 			<classes dir="${properties_config_ws}">
 				<include name="wsconfig.log4j2.properties"/>

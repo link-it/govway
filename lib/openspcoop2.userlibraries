@@ -95,6 +95,7 @@
         <archive path="/op2_2.3.dev/lib/log/log4j-api-2.6.2.jar"/>
 	<archive path="/op2_2.3.dev/lib/log/log4j-core-2.6.2.jar"/>
 	<archive path="/op2_2.3.dev/lib/log/log4j-slf4j-impl-2.6.2.jar"/>
+	<archive path="/op2_2.3.dev/lib/log/log4j-jcl-2.6.2.jar"/>
 	<!-- lucene -->
         <archive path="/op2_2.3.dev/lib/lucene/lucene-core-6.1.0.jar"/>
 	<archive path="/op2_2.3.dev/lib/lucene/lucene-analyzers-common-6.1.0.jar"/>

@@ -49,7 +49,7 @@ public class BackendProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'wsregistry.backend.properties' */
+	/** Reader delle proprieta' impostate nel file 'wsregistry.datasource.properties' */
 	private BackendInstanceProperties reader;
 
 	/** Copia Statica */
@@ -74,13 +74,13 @@ public class BackendProperties {
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
 		try{  
-			properties = BackendProperties.class.getResourceAsStream("/wsregistry.backend.properties");
+			properties = BackendProperties.class.getResourceAsStream("/wsregistry.datasource.properties");
 			if(properties==null){
-				throw new Exception("File '/wsregistry.backend.properties' not found");
+				throw new Exception("File '/wsregistry.datasource.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'wsregistry.backend.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'wsregistry.datasource.properties': \n\n"+e.getMessage());
 		    throw new Exception("WSRegistryProperties initialize error: "+e.getMessage());
 		}finally{
 		    try{

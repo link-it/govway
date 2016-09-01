@@ -49,7 +49,7 @@ public class BackendProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'wsconfig.backend.properties' */
+	/** Reader delle proprieta' impostate nel file 'wsconfig.datasource.properties' */
 	private BackendInstanceProperties reader;
 
 	/** Copia Statica */
@@ -74,13 +74,13 @@ public class BackendProperties {
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
 		try{  
-			properties = BackendProperties.class.getResourceAsStream("/wsconfig.backend.properties");
+			properties = BackendProperties.class.getResourceAsStream("/wsconfig.datasource.properties");
 			if(properties==null){
-				throw new Exception("File '/wsconfig.backend.properties' not found");
+				throw new Exception("File '/wsconfig.datasource.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'wsconfig.backend.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'wsconfig.datasource.properties': \n\n"+e.getMessage());
 		    throw new Exception("WSConfigProperties initialize error: "+e.getMessage());
 		}finally{
 		    try{

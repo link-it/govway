@@ -126,16 +126,16 @@
 		<!-- DataSource Properties -->
 		<delete dir="${build_registry_ws}/properties" />
 		<mkdir dir="${build_registry_ws}/properties" />
-		<copy file="${properties_registry_ws}/wsregistry.backend.properties" todir="${build_registry_ws}/properties" />
+		<copy file="${properties_registry_ws}/wsregistry.datasource.properties" todir="${build_registry_ws}/properties" />
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
-				<concat destfile="${build_registry_ws}/properties/wsregistry.backend.properties" append="yes" >
+				<concat destfile="${build_registry_ws}/properties/wsregistry.datasource.properties" append="yes" >
 
 # ----- Personalizzazione Tomcat -------------
 				</concat>
 				<antcall target="set_property">
-				    <param name="file" value="${build_registry_ws}/properties/wsregistry.backend.properties"/>
+				    <param name="file" value="${build_registry_ws}/properties/wsregistry.datasource.properties"/>
 					<param name="token" value="db.dataSource"/>
 					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
 				</antcall>
@@ -210,7 +210,7 @@
 			</lib>
 			
 			<classes dir="${build_registry_ws}/properties">
-				<include name="wsregistry.backend.properties"/>
+				<include name="wsregistry.datasource.properties"/>
 			</classes>			
 			<classes dir="${properties_registry_ws}">
 				<include name="wsregistry.log4j2.properties"/>
