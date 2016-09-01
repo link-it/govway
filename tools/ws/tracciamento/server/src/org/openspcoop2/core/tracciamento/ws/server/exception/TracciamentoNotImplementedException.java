@@ -40,7 +40,7 @@ package org.openspcoop2.core.tracciamento.ws.server.exception;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 
@@ -59,36 +59,10 @@ import javax.xml.bind.annotation.XmlElement;
     "errorMessage",
     "errorCode",
     "errorStackTrace"
-	,"cause" // for not emit WARNING 'propOrder in @XmlType doesn't define all schema elements'
 })
-@javax.xml.ws.WebFault(name = "tracciamento-not-implemented-exception", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management")
-public class TracciamentoNotImplementedException extends Exception implements Serializable {
+public class TracciamentoNotImplementedException extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	// Deprecated: Costruttori utili se i beans vengono usati al posto di quelli generati tramite tools automatici
-	@Deprecated
-	public TracciamentoNotImplementedException(String message, java.lang.Throwable t){
-		super(message, t);
-		this.errorMessage = message;
-	}
-	@Deprecated
-	public TracciamentoNotImplementedException(String message){
-		super(message);
-		this.errorMessage = message;
-	}
-	
-	public TracciamentoNotImplementedException(String method, String message, java.lang.Throwable t){
-		super(message, t);
-		this.methodName = method;
-		this.errorMessage = message;
-	}
-	public TracciamentoNotImplementedException(String method, String message){
-		super(message);
-		this.methodName = method;
-		this.errorMessage = message;
-	}	
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="methodName",required=true,nillable=false)

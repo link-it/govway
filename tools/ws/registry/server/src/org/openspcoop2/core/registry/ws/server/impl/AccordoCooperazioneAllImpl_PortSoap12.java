@@ -21,7 +21,7 @@
 package org.openspcoop2.core.registry.ws.server.impl;
 
 import org.openspcoop2.core.registry.ws.server.AccordoCooperazioneAll;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
 
 /**     
  * AccordoCooperazioneAllImpl_PortSoap12
@@ -43,7 +43,7 @@ public class AccordoCooperazioneAllImpl_PortSoap12 extends AccordoCooperazioneIm
 	
 	@Override
 	@javax.jws.WebMethod
-	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws RegistryServiceException{
+	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws RegistryServiceException_Exception{
 		
 		javax.servlet.http.HttpServletRequest req =  null;
 		
@@ -57,7 +57,7 @@ public class AccordoCooperazioneAllImpl_PortSoap12 extends AccordoCooperazioneIm
 
 	@Override
 	protected javax.servlet.http.HttpServletResponse getHttpServletResponse()
-			throws RegistryServiceException {
+			throws RegistryServiceException_Exception {
 		
 		javax.servlet.http.HttpServletResponse res =  null;
 		

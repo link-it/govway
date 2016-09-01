@@ -40,7 +40,7 @@ package org.openspcoop2.core.diagnostica.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 
@@ -61,11 +61,9 @@ import javax.xml.bind.annotation.XmlElement;
     "identificativoRisposta"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "filtro-informazioni-diagnostici")
-public class FiltroInformazioniDiagnostici extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class FiltroInformazioniDiagnostici extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice",required=false,nillable=false)

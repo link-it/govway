@@ -40,11 +40,11 @@ import org.openspcoop2.core.registry.ws.server.config.Constants;
 import org.openspcoop2.core.registry.ws.server.config.DriverRegistroServizi;
 import org.openspcoop2.core.registry.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.registry.ws.server.config.ServerProperties;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
 import org.openspcoop2.core.registry.ws.server.filter.SearchFilterPortaDominio;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -241,7 +241,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	
 
 	@Override
-	public List<PortaDominio> findAll(SearchFilterPortaDominio filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<PortaDominio> findAll(SearchFilterPortaDominio filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.portaDominioService);
@@ -268,7 +268,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 
 	@Override
-	public PortaDominio find(SearchFilterPortaDominio filter) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public PortaDominio find(SearchFilterPortaDominio filter) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.portaDominioService);
@@ -305,7 +305,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 
 	@Override
-	public long count(SearchFilterPortaDominio filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long count(SearchFilterPortaDominio filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.portaDominioService);
@@ -331,7 +331,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 
 	@Override
-	public PortaDominio get(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public PortaDominio get(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziGet(this.portaDominioService);
@@ -355,7 +355,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);
@@ -377,7 +377,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 
 	@Override
-	public List<org.openspcoop2.core.registry.IdPortaDominio> findAllIds(SearchFilterPortaDominio filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<org.openspcoop2.core.registry.IdPortaDominio> findAllIds(SearchFilterPortaDominio filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.portaDominioService);
@@ -403,7 +403,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 
 	@Override
-	public UseInfo inUse(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public UseInfo inUse(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			this.logStartMethod("inUse", id);
@@ -488,7 +488,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 
 	@Override
-	public void create(PortaDominio obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void create(PortaDominio obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);
@@ -510,7 +510,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	}
 	
 	@Override
-    public void update(org.openspcoop2.core.registry.IdPortaDominio oldId, PortaDominio obj) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+    public void update(org.openspcoop2.core.registry.IdPortaDominio oldId, PortaDominio obj) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);
@@ -538,7 +538,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
     }
 	
 	@Override
-	public void updateOrCreate(org.openspcoop2.core.registry.IdPortaDominio oldId, PortaDominio obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void updateOrCreate(org.openspcoop2.core.registry.IdPortaDominio oldId, PortaDominio obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);
@@ -566,7 +566,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
     }
 	
 	@Override
-	public void deleteById(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void deleteById(org.openspcoop2.core.registry.IdPortaDominio id) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);
@@ -575,7 +575,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 			PortaDominio pdd = null;
 			try{
 				pdd = this.get(id);
-			}catch(RegistryNotFoundException notFound){}
+			}catch(RegistryNotFoundException_Exception notFound){}
 			if(pdd!=null)
 				((IDriverRegistroServiziCRUD)this.portaDominioService.getDriver()).deletePortaDominio(pdd);
 			this.logEndMethod("deleteById");
@@ -593,7 +593,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	
 	
 	@Override
-	public long deleteAll() throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAll() throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);
@@ -629,7 +629,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	
 	
 	@Override
-	public long deleteAllByFilter(SearchFilterPortaDominio filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterPortaDominio filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);
@@ -666,7 +666,7 @@ public abstract class PortaDominioImpl extends BaseImpl  implements PortaDominio
 	
 	
 	@Override
-	public void delete(PortaDominio obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void delete(PortaDominio obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.portaDominioService);

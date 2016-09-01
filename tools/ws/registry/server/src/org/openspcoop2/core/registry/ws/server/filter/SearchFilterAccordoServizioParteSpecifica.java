@@ -49,7 +49,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.registry.ws.server.filter.beans.Servizio;
@@ -81,11 +81,9 @@ import java.util.Date;
     "offset"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-accordo-servizio-parte-specifica")
-public class SearchFilterAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="servizio",required=false,nillable=false)
 	private Servizio servizio;

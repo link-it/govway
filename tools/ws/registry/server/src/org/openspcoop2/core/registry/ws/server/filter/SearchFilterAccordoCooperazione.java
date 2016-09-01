@@ -46,7 +46,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
@@ -75,11 +75,9 @@ import org.openspcoop2.core.registry.ws.server.filter.beans.IdSoggetto;
     "offset"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-accordo-cooperazione")
-public class SearchFilterAccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterAccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="soggetto-referente",required=false,nillable=false)
 	private IdSoggetto soggettoReferente;

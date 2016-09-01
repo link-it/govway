@@ -36,7 +36,7 @@ package org.openspcoop2.core.tracciamento.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.tracciamento.IdTraccia;
@@ -54,11 +54,9 @@ import org.openspcoop2.core.tracciamento.IdTraccia;
     "itemsFound"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "findAllIdsResponse")
-public class FindAllIdsTracciaResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class FindAllIdsTracciaResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="itemsFound",required=true,nillable=false)
 	private java.util.List<IdTraccia> itemsFound;

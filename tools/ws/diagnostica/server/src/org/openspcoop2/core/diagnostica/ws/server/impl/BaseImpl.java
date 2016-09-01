@@ -30,16 +30,21 @@ import org.openspcoop2.core.diagnostica.ws.server.config.DriverDiagnostica;
 import org.openspcoop2.core.diagnostica.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.diagnostica.ws.server.config.ServerProperties;
 import org.openspcoop2.core.diagnostica.ws.server.config.WSStartup;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException;
-import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException;
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException;
-import org.openspcoop2.generic_project.exception.MultipleResultException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException_Exception;
 import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 
 
@@ -74,8 +79,10 @@ public abstract class BaseImpl {
 		}
 	}
 			
-	protected DiagnosticaNotFoundException throwNotFoundException(String methodName,NotFoundException e, String errorCode, Object objectId) throws DiagnosticaNotFoundException{
-		DiagnosticaNotFoundException ex = new DiagnosticaNotFoundException(methodName,e.getMessage(),e);
+	protected DiagnosticaNotFoundException_Exception throwNotFoundException(String methodName,NotFoundException e, String errorCode, Object objectId) throws DiagnosticaNotFoundException_Exception{
+		DiagnosticaNotFoundException ex = new DiagnosticaNotFoundException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.diagnostica") 
@@ -95,11 +102,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new DiagnosticaNotFoundException_Exception(e.getMessage(),ex,e);
 	}
 
-	protected DiagnosticaNotAuthorizedException throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws DiagnosticaNotAuthorizedException{
-		DiagnosticaNotAuthorizedException ex = new DiagnosticaNotAuthorizedException(methodName,e.getMessage(),e);
+	protected DiagnosticaNotAuthorizedException_Exception throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws DiagnosticaNotAuthorizedException_Exception{
+		DiagnosticaNotAuthorizedException ex = new DiagnosticaNotAuthorizedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.diagnostica") 
@@ -119,11 +128,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new DiagnosticaNotAuthorizedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected DiagnosticaNotImplementedException throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws DiagnosticaNotImplementedException{
-		DiagnosticaNotImplementedException ex = new DiagnosticaNotImplementedException(methodName,e.getMessage(),e);
+	protected DiagnosticaNotImplementedException_Exception throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws DiagnosticaNotImplementedException_Exception{
+		DiagnosticaNotImplementedException ex = new DiagnosticaNotImplementedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.diagnostica") 
@@ -143,11 +154,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new DiagnosticaNotImplementedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected DiagnosticaMultipleResultException throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws DiagnosticaMultipleResultException{
-		DiagnosticaMultipleResultException ex = new DiagnosticaMultipleResultException(methodName,e.getMessage(),e);
+	protected DiagnosticaMultipleResultException_Exception throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws DiagnosticaMultipleResultException_Exception{
+		DiagnosticaMultipleResultException ex = new DiagnosticaMultipleResultException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.diagnostica") 
@@ -167,11 +180,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new DiagnosticaMultipleResultException_Exception(e.getMessage(),ex,e);
 	}
 	
-	protected DiagnosticaServiceException throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws DiagnosticaServiceException{
-		DiagnosticaServiceException ex = new DiagnosticaServiceException(methodName,e.getMessage(),e);
+	protected DiagnosticaServiceException_Exception throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws DiagnosticaServiceException_Exception{
+		DiagnosticaServiceException ex = new DiagnosticaServiceException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.diagnostica") 
@@ -191,7 +206,7 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new DiagnosticaServiceException_Exception(e.getMessage(),ex,e);
 	}
 	
 	protected String throwableStackTraceToString(Throwable e){
@@ -209,7 +224,7 @@ public abstract class BaseImpl {
 		}
 	}	
 	
-	protected void authorize(boolean searchMethod) throws DiagnosticaServiceException,ServiceException,NotAuthorizedException{
+	protected void authorize(boolean searchMethod) throws DiagnosticaServiceException_Exception,ServiceException,NotAuthorizedException{
 		AuthorizationManager.getAuthorizationManager().authorize(this.getHttpServletRequest(), LoggerProperties.getLoggerWS(), searchMethod);
 	}
 	
@@ -306,7 +321,7 @@ public abstract class BaseImpl {
 		LoggerProperties.getLoggerWS().info("@@@ ["+methodName+"] finished (size:"+size+")");
 	}
 	
-	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws DiagnosticaServiceException;
-	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws DiagnosticaServiceException;
+	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws DiagnosticaServiceException_Exception;
+	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws DiagnosticaServiceException_Exception;
 
 }

@@ -39,7 +39,7 @@ package org.openspcoop2.pdd.monitor.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.pdd.monitor.ws.server.filter.beans.Filtro;
@@ -60,11 +60,9 @@ import org.openspcoop2.pdd.monitor.ws.server.filter.beans.Filtro;
     "offset"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-stato-pdd")
-public class SearchFilterStatoPdd extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterStatoPdd extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="filtro",required=false,nillable=false)
 	private Filtro filtro;

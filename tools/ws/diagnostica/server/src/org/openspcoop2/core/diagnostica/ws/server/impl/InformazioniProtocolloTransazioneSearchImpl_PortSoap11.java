@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.core.diagnostica.ws.server.impl;
 
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
 
 /**     
  * InformazioniProtocolloTransazioneSearchImpl_PortSoap11
@@ -42,7 +42,7 @@ public class InformazioniProtocolloTransazioneSearchImpl_PortSoap11 extends Info
 	
 	@Override
 	@javax.jws.WebMethod
-	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws DiagnosticaServiceException{
+	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws DiagnosticaServiceException_Exception{
 		
 		javax.servlet.http.HttpServletRequest req =  null;
 		
@@ -56,7 +56,7 @@ public class InformazioniProtocolloTransazioneSearchImpl_PortSoap11 extends Info
 
 	@Override
 	protected javax.servlet.http.HttpServletResponse getHttpServletResponse()
-			throws DiagnosticaServiceException {
+			throws DiagnosticaServiceException_Exception {
 		
 		javax.servlet.http.HttpServletResponse res =  null;
 		

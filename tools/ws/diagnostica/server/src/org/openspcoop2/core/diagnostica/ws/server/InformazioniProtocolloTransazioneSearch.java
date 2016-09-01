@@ -26,11 +26,11 @@ import java.util.List;
 
 import org.openspcoop2.core.diagnostica.InformazioniProtocolloTransazione;
 
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -51,8 +51,8 @@ public interface InformazioniProtocolloTransazioneSearch {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type InformazioniProtocolloTransazione
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindAllInformazioniProtocolloTransazioneResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindAllInformazioniProtocolloTransazione")
@@ -62,17 +62,17 @@ public interface InformazioniProtocolloTransazioneSearch {
 	public List<InformazioniProtocolloTransazione> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		SearchFilterInformazioniProtocolloTransazione filter
-	) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type InformazioniProtocolloTransazione that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return object of type InformazioniProtocolloTransazione
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaNotFoundException
-	 * @throws DiagnosticaMultipleResultException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaNotFoundException_Exception
+	 * @throws DiagnosticaMultipleResultException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindInformazioniProtocolloTransazioneResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindInformazioniProtocolloTransazione")
@@ -82,15 +82,15 @@ public interface InformazioniProtocolloTransazioneSearch {
 	public InformazioniProtocolloTransazione find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		SearchFilterInformazioniProtocolloTransazione filter
-	) throws DiagnosticaServiceException,DiagnosticaNotFoundException,DiagnosticaMultipleResultException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaNotFoundException_Exception,DiagnosticaMultipleResultException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to count all objects of type InformazioniProtocolloTransazione that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type InformazioniProtocolloTransazione
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.CountInformazioniProtocolloTransazioneResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.CountInformazioniProtocolloTransazione")
@@ -100,17 +100,17 @@ public interface InformazioniProtocolloTransazioneSearch {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		SearchFilterInformazioniProtocolloTransazione filter
-	) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type InformazioniProtocolloTransazione identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return object of type InformazioniProtocolloTransazione
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaNotFoundException
-	 * @throws DiagnosticaMultipleResultException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaNotFoundException_Exception
+	 * @throws DiagnosticaMultipleResultException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "getResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.GetInformazioniProtocolloTransazioneResponse")
     @javax.xml.ws.RequestWrapper(localName = "get", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.GetInformazioniProtocolloTransazione")
@@ -120,16 +120,16 @@ public interface InformazioniProtocolloTransazioneSearch {
 	public InformazioniProtocolloTransazione get(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione id
-	) throws DiagnosticaServiceException,DiagnosticaNotFoundException,DiagnosticaMultipleResultException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaNotFoundException_Exception,DiagnosticaMultipleResultException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the existence of the instance of the object InformazioniProtocolloTransazione identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return Indicates the existence of the instance of the object InformazioniProtocolloTransazione identified by the id parameter. 
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaMultipleResultException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaMultipleResultException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "existsResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.ExistsInformazioniProtocolloTransazioneResponse")
     @javax.xml.ws.RequestWrapper(localName = "exists", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.ExistsInformazioniProtocolloTransazione")
@@ -139,15 +139,15 @@ public interface InformazioniProtocolloTransazioneSearch {
 	public boolean exists(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione id
-	) throws DiagnosticaServiceException,DiagnosticaMultipleResultException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaMultipleResultException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve all object Ids of type org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return List object ids of type org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllIdsResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindAllIdsInformazioniProtocolloTransazioneResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAllIds", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindAllIdsInformazioniProtocolloTransazione")
@@ -157,7 +157,7 @@ public interface InformazioniProtocolloTransazioneSearch {
 	public List<org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione> findAllIds(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		SearchFilterInformazioniProtocolloTransazione filter
-	) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 	
 

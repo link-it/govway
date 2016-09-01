@@ -36,7 +36,7 @@ package org.openspcoop2.core.registry.ws.server.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.registry.IdAccordoServizioParteComune;
@@ -54,11 +54,9 @@ import org.openspcoop2.core.registry.IdAccordoServizioParteComune;
     "id"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "wrapperIdAccordoServizioParteComune")
-public class WrapperIdAccordoServizioParteComune extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class WrapperIdAccordoServizioParteComune extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="id",required=true,nillable=false)
 	private IdAccordoServizioParteComune id;

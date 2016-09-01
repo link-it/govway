@@ -49,7 +49,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
@@ -81,11 +81,9 @@ import org.openspcoop2.core.registry.ws.server.filter.beans.Connettore;
     "offset"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-soggetto")
-public class SearchFilterSoggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterSoggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="connettore",required=false,nillable=false)
 	private Connettore connettore;

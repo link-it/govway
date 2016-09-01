@@ -46,11 +46,11 @@ import org.openspcoop2.core.registry.ws.server.config.Constants;
 import org.openspcoop2.core.registry.ws.server.config.DriverRegistroServizi;
 import org.openspcoop2.core.registry.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.registry.ws.server.config.ServerProperties;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
 import org.openspcoop2.core.registry.ws.server.filter.SearchFilterAccordoServizioParteComune;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -315,7 +315,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 
 
 	@Override
-	public List<AccordoServizioParteComune> findAll(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<AccordoServizioParteComune> findAll(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoServizioParteComuneService);
@@ -342,7 +342,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 
 	@Override
-	public AccordoServizioParteComune find(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public AccordoServizioParteComune find(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoServizioParteComuneService);
@@ -379,7 +379,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 
 	@Override
-	public long count(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long count(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoServizioParteComuneService);
@@ -405,7 +405,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 
 	@Override
-	public AccordoServizioParteComune get(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public AccordoServizioParteComune get(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziGet(this.accordoServizioParteComuneService);
@@ -429,7 +429,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);
@@ -451,7 +451,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 
 	@Override
-	public List<org.openspcoop2.core.registry.IdAccordoServizioParteComune> findAllIds(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<org.openspcoop2.core.registry.IdAccordoServizioParteComune> findAllIds(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoServizioParteComuneService);
@@ -477,7 +477,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 
 	@Override
-	public UseInfo inUse(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public UseInfo inUse(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			this.logStartMethod("inUse", id);
@@ -561,7 +561,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 
 	@Override
-	public void create(AccordoServizioParteComune obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void create(AccordoServizioParteComune obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);
@@ -583,7 +583,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	}
 	
 	@Override
-    public void update(org.openspcoop2.core.registry.IdAccordoServizioParteComune oldId, AccordoServizioParteComune obj) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+    public void update(org.openspcoop2.core.registry.IdAccordoServizioParteComune oldId, AccordoServizioParteComune obj) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);
@@ -611,7 +611,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
     }
 	
 	@Override
-	public void updateOrCreate(org.openspcoop2.core.registry.IdAccordoServizioParteComune oldId, AccordoServizioParteComune obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void updateOrCreate(org.openspcoop2.core.registry.IdAccordoServizioParteComune oldId, AccordoServizioParteComune obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);
@@ -639,7 +639,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
     }
 	
 	@Override
-	public void deleteById(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void deleteById(org.openspcoop2.core.registry.IdAccordoServizioParteComune id) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);
@@ -648,7 +648,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 			AccordoServizioParteComune as = null;
 			try{
 				as = this.get(id);
-			}catch(RegistryNotFoundException notFound){}
+			}catch(RegistryNotFoundException_Exception notFound){}
 			if(as!=null)
 				((IDriverRegistroServiziCRUD)this.accordoServizioParteComuneService.getDriver()).deleteAccordoServizioParteComune(as);
 			this.logEndMethod("deleteById");
@@ -666,7 +666,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	
 	
 	@Override
-	public long deleteAll() throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAll() throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);
@@ -702,7 +702,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	
 	
 	@Override
-	public long deleteAllByFilter(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterAccordoServizioParteComune filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);
@@ -739,7 +739,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 	
 	
 	@Override
-	public void delete(AccordoServizioParteComune obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void delete(AccordoServizioParteComune obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteComuneService);

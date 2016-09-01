@@ -26,11 +26,11 @@ import java.util.List;
 
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException;
-
-
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -51,8 +51,8 @@ public interface MessaggioDiagnosticoSearch {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type MessaggioDiagnostico
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindAllMessaggioDiagnosticoResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.FindAllMessaggioDiagnostico")
@@ -62,7 +62,7 @@ public interface MessaggioDiagnosticoSearch {
 	public List<MessaggioDiagnostico> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		SearchFilterMessaggioDiagnostico filter
-	) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 	
 
@@ -71,8 +71,8 @@ public interface MessaggioDiagnosticoSearch {
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type MessaggioDiagnostico
-	 * @throws DiagnosticaServiceException
-	 * @throws DiagnosticaNotImplementedException
+	 * @throws DiagnosticaServiceException_Exception
+	 * @throws DiagnosticaNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.CountMessaggioDiagnosticoResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management", className = "org.openspcoop2.core.diagnostica.ws.wrapped.CountMessaggioDiagnostico")
@@ -82,6 +82,6 @@ public interface MessaggioDiagnosticoSearch {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/diagnostica/management")
 		SearchFilterMessaggioDiagnostico filter
-	) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException;
+	) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception;
 
 }

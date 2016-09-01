@@ -36,7 +36,7 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 
@@ -53,11 +53,9 @@ import javax.xml.bind.annotation.XmlElement;
     "deletedItems"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "deleteAllByFilterResponse")
-public class DeleteAllByFilterAccordoServizioParteSpecificaResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class DeleteAllByFilterAccordoServizioParteSpecificaResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="deletedItems",required=true,nillable=false)

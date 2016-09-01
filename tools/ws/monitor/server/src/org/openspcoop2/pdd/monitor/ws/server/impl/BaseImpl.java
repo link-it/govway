@@ -24,22 +24,27 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
+import org.openspcoop2.generic_project.exception.MultipleResultException;
+import org.openspcoop2.generic_project.exception.NotAuthorizedException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
 import org.openspcoop2.pdd.monitor.ws.server.config.AuthorizationManager;
 import org.openspcoop2.pdd.monitor.ws.server.config.DriverMonitor;
 import org.openspcoop2.pdd.monitor.ws.server.config.LoggerProperties;
 import org.openspcoop2.pdd.monitor.ws.server.config.ServerProperties;
 import org.openspcoop2.pdd.monitor.ws.server.config.WSStartup;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException;
-import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException;
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException;
-import org.openspcoop2.generic_project.exception.MultipleResultException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException_Exception;
 import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException;
-import org.openspcoop2.generic_project.exception.NotAuthorizedException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException_Exception;
 
 
 /**     
@@ -73,8 +78,10 @@ public abstract class BaseImpl {
 		}
 	}
 			
-	protected MonitorNotFoundException throwNotFoundException(String methodName,NotFoundException e, String errorCode, Object objectId) throws MonitorNotFoundException{
-		MonitorNotFoundException ex = new MonitorNotFoundException(methodName,e.getMessage(),e);
+	protected MonitorNotFoundException_Exception throwNotFoundException(String methodName,NotFoundException e, String errorCode, Object objectId) throws MonitorNotFoundException_Exception{
+		MonitorNotFoundException ex = new MonitorNotFoundException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.pdd.monitor") 
@@ -94,11 +101,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new MonitorNotFoundException_Exception(e.getMessage(),ex,e);
 	}
 
-	protected MonitorNotAuthorizedException throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws MonitorNotAuthorizedException{
-		MonitorNotAuthorizedException ex = new MonitorNotAuthorizedException(methodName,e.getMessage(),e);
+	protected MonitorNotAuthorizedException_Exception throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws MonitorNotAuthorizedException_Exception{
+		MonitorNotAuthorizedException ex = new MonitorNotAuthorizedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.pdd.monitor") 
@@ -118,11 +127,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new MonitorNotAuthorizedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected MonitorNotImplementedException throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws MonitorNotImplementedException{
-		MonitorNotImplementedException ex = new MonitorNotImplementedException(methodName,e.getMessage(),e);
+	protected MonitorNotImplementedException_Exception throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws MonitorNotImplementedException_Exception{
+		MonitorNotImplementedException ex = new MonitorNotImplementedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.pdd.monitor") 
@@ -142,11 +153,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new MonitorNotImplementedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected MonitorMultipleResultException throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws MonitorMultipleResultException{
-		MonitorMultipleResultException ex = new MonitorMultipleResultException(methodName,e.getMessage(),e);
+	protected MonitorMultipleResultException_Exception throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws MonitorMultipleResultException_Exception{
+		MonitorMultipleResultException ex = new MonitorMultipleResultException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.pdd.monitor") 
@@ -166,11 +179,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new MonitorMultipleResultException_Exception(e.getMessage(),ex,e);
 	}
 	
-	protected MonitorServiceException throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws MonitorServiceException{
-		MonitorServiceException ex = new MonitorServiceException(methodName,e.getMessage(),e);
+	protected MonitorServiceException_Exception throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws MonitorServiceException_Exception{
+		MonitorServiceException ex = new MonitorServiceException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.pdd.monitor") 
@@ -190,7 +205,7 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new MonitorServiceException_Exception(e.getMessage(),ex,e);
 	}
 	
 	protected String throwableStackTraceToString(Throwable e){
@@ -208,7 +223,7 @@ public abstract class BaseImpl {
 		}
 	}	
 	
-	protected void authorize(boolean searchMethod) throws MonitorServiceException,ServiceException,NotAuthorizedException{
+	protected void authorize(boolean searchMethod) throws MonitorServiceException_Exception,ServiceException,NotAuthorizedException{
 		AuthorizationManager.getAuthorizationManager().authorize(this.getHttpServletRequest(), LoggerProperties.getLoggerWS(), searchMethod);
 	}
 	
@@ -305,7 +320,7 @@ public abstract class BaseImpl {
 		LoggerProperties.getLoggerWS().info("@@@ ["+methodName+"] finished (size:"+size+")");
 	}
 	
-	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws MonitorServiceException;
-	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws MonitorServiceException;
+	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws MonitorServiceException_Exception;
+	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws MonitorServiceException_Exception;
 
 }

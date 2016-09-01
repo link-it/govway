@@ -45,11 +45,11 @@ import org.openspcoop2.core.registry.ws.server.config.Constants;
 import org.openspcoop2.core.registry.ws.server.config.DriverRegistroServizi;
 import org.openspcoop2.core.registry.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.registry.ws.server.config.ServerProperties;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
 import org.openspcoop2.core.registry.ws.server.filter.SearchFilterAccordoCooperazione;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -296,7 +296,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 
 
 	@Override
-	public List<AccordoCooperazione> findAll(SearchFilterAccordoCooperazione filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<AccordoCooperazione> findAll(SearchFilterAccordoCooperazione filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoCooperazioneService);
@@ -323,7 +323,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 
 	@Override
-	public AccordoCooperazione find(SearchFilterAccordoCooperazione filter) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public AccordoCooperazione find(SearchFilterAccordoCooperazione filter) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoCooperazioneService);
@@ -360,7 +360,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 
 	@Override
-	public long count(SearchFilterAccordoCooperazione filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long count(SearchFilterAccordoCooperazione filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoCooperazioneService);
@@ -386,7 +386,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 
 	@Override
-	public AccordoCooperazione get(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public AccordoCooperazione get(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziGet(this.accordoCooperazioneService);
@@ -410,7 +410,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);
@@ -432,7 +432,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 
 	@Override
-	public List<org.openspcoop2.core.registry.IdAccordoCooperazione> findAllIds(SearchFilterAccordoCooperazione filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<org.openspcoop2.core.registry.IdAccordoCooperazione> findAllIds(SearchFilterAccordoCooperazione filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.accordoCooperazioneService);
@@ -458,7 +458,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 
 	@Override
-	public UseInfo inUse(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public UseInfo inUse(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			this.logStartMethod("inUse", id);
@@ -543,7 +543,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 
 	@Override
-	public void create(AccordoCooperazione obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void create(AccordoCooperazione obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);
@@ -565,7 +565,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	}
 	
 	@Override
-    public void update(org.openspcoop2.core.registry.IdAccordoCooperazione oldId, AccordoCooperazione obj) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+    public void update(org.openspcoop2.core.registry.IdAccordoCooperazione oldId, AccordoCooperazione obj) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);
@@ -593,7 +593,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
     }
 	
 	@Override
-	public void updateOrCreate(org.openspcoop2.core.registry.IdAccordoCooperazione oldId, AccordoCooperazione obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void updateOrCreate(org.openspcoop2.core.registry.IdAccordoCooperazione oldId, AccordoCooperazione obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);
@@ -621,7 +621,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
     }
 	
 	@Override
-	public void deleteById(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void deleteById(org.openspcoop2.core.registry.IdAccordoCooperazione id) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);
@@ -630,7 +630,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 			AccordoCooperazione ac = null;
 			try{
 				ac = this.get(id);
-			}catch(RegistryNotFoundException notFound){}
+			}catch(RegistryNotFoundException_Exception notFound){}
 			if(ac!=null)
 				((IDriverRegistroServiziCRUD)this.accordoCooperazioneService.getDriver()).deleteAccordoCooperazione(ac);
 			this.logEndMethod("deleteById");
@@ -648,7 +648,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	
 	
 	@Override
-	public long deleteAll() throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAll() throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);
@@ -684,7 +684,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	
 	
 	@Override
-	public long deleteAllByFilter(SearchFilterAccordoCooperazione filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterAccordoCooperazione filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);
@@ -721,7 +721,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 	
 	
 	@Override
-	public void delete(AccordoCooperazione obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void delete(AccordoCooperazione obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.accordoCooperazioneService);

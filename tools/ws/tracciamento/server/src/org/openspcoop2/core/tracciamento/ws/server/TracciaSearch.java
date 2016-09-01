@@ -26,11 +26,11 @@ import java.util.List;
 
 import org.openspcoop2.core.tracciamento.Traccia;
 
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotFoundException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoMultipleResultException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotImplementedException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotAuthorizedException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotFoundException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoMultipleResultException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotImplementedException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -51,8 +51,8 @@ public interface TracciaSearch {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type Traccia
-	 * @throws TracciamentoServiceException
-	 * @throws TracciamentoNotImplementedException
+	 * @throws TracciamentoServiceException_Exception
+	 * @throws TracciamentoNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.FindAllTracciaResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.FindAllTraccia")
@@ -62,17 +62,17 @@ public interface TracciaSearch {
 	public List<Traccia> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management")
 		SearchFilterTraccia filter
-	) throws TracciamentoServiceException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException;
+	) throws TracciamentoServiceException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type Traccia that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return object of type Traccia
-	 * @throws TracciamentoServiceException
-	 * @throws TracciamentoNotFoundException
-	 * @throws TracciamentoMultipleResultException
-	 * @throws TracciamentoNotImplementedException
+	 * @throws TracciamentoServiceException_Exception
+	 * @throws TracciamentoNotFoundException_Exception
+	 * @throws TracciamentoMultipleResultException_Exception
+	 * @throws TracciamentoNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.FindTracciaResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.FindTraccia")
@@ -82,15 +82,15 @@ public interface TracciaSearch {
 	public Traccia find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management")
 		SearchFilterTraccia filter
-	) throws TracciamentoServiceException,TracciamentoNotFoundException,TracciamentoMultipleResultException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException;
+	) throws TracciamentoServiceException_Exception,TracciamentoNotFoundException_Exception,TracciamentoMultipleResultException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to count all objects of type Traccia that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type Traccia
-	 * @throws TracciamentoServiceException
-	 * @throws TracciamentoNotImplementedException
+	 * @throws TracciamentoServiceException_Exception
+	 * @throws TracciamentoNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.CountTracciaResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.CountTraccia")
@@ -100,17 +100,17 @@ public interface TracciaSearch {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management")
 		SearchFilterTraccia filter
-	) throws TracciamentoServiceException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException;
+	) throws TracciamentoServiceException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type Traccia identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return object of type Traccia
-	 * @throws TracciamentoServiceException
-	 * @throws TracciamentoNotFoundException
-	 * @throws TracciamentoMultipleResultException
-	 * @throws TracciamentoNotImplementedException
+	 * @throws TracciamentoServiceException_Exception
+	 * @throws TracciamentoNotFoundException_Exception
+	 * @throws TracciamentoMultipleResultException_Exception
+	 * @throws TracciamentoNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "getResponse", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.GetTracciaResponse")
     @javax.xml.ws.RequestWrapper(localName = "get", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.GetTraccia")
@@ -120,16 +120,16 @@ public interface TracciaSearch {
 	public Traccia get(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management")
 		org.openspcoop2.core.tracciamento.IdTraccia id
-	) throws TracciamentoServiceException,TracciamentoNotFoundException,TracciamentoMultipleResultException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException;
+	) throws TracciamentoServiceException_Exception,TracciamentoNotFoundException_Exception,TracciamentoMultipleResultException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the existence of the instance of the object Traccia identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return Indicates the existence of the instance of the object Traccia identified by the id parameter. 
-	 * @throws TracciamentoServiceException
-	 * @throws TracciamentoMultipleResultException
-	 * @throws TracciamentoNotImplementedException
+	 * @throws TracciamentoServiceException_Exception
+	 * @throws TracciamentoMultipleResultException_Exception
+	 * @throws TracciamentoNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "existsResponse", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.ExistsTracciaResponse")
     @javax.xml.ws.RequestWrapper(localName = "exists", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.ExistsTraccia")
@@ -139,15 +139,15 @@ public interface TracciaSearch {
 	public boolean exists(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management")
 		org.openspcoop2.core.tracciamento.IdTraccia id
-	) throws TracciamentoServiceException,TracciamentoMultipleResultException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException;
+	) throws TracciamentoServiceException_Exception,TracciamentoMultipleResultException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve all object Ids of type org.openspcoop2.core.tracciamento.IdTraccia that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return List object ids of type org.openspcoop2.core.tracciamento.IdTraccia
-	 * @throws TracciamentoServiceException
-	 * @throws TracciamentoNotImplementedException
+	 * @throws TracciamentoServiceException_Exception
+	 * @throws TracciamentoNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllIdsResponse", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.FindAllIdsTracciaResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAllIds", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management", className = "org.openspcoop2.core.tracciamento.ws.wrapped.FindAllIdsTraccia")
@@ -157,7 +157,7 @@ public interface TracciaSearch {
 	public List<org.openspcoop2.core.tracciamento.IdTraccia> findAllIds(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/tracciamento/management")
 		SearchFilterTraccia filter
-	) throws TracciamentoServiceException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException;
+	) throws TracciamentoServiceException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception;
 
 	
 

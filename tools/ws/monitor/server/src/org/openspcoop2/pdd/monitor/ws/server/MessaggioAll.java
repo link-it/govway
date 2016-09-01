@@ -26,11 +26,11 @@ import java.util.List;
 
 import org.openspcoop2.pdd.monitor.Messaggio;
 
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException;
-
-
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -51,8 +51,8 @@ public interface MessaggioAll {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type Messaggio
-	 * @throws MonitorServiceException
-	 * @throws MonitorNotImplementedException
+	 * @throws MonitorServiceException_Exception
+	 * @throws MonitorNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.FindAllMessaggioResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.FindAllMessaggio")
@@ -62,7 +62,7 @@ public interface MessaggioAll {
 	public List<Messaggio> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management")
 		SearchFilterMessaggio filter
-	) throws MonitorServiceException,MonitorNotImplementedException,MonitorNotAuthorizedException;
+	) throws MonitorServiceException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception;
 
 	
 
@@ -71,8 +71,8 @@ public interface MessaggioAll {
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type Messaggio
-	 * @throws MonitorServiceException
-	 * @throws MonitorNotImplementedException
+	 * @throws MonitorServiceException_Exception
+	 * @throws MonitorNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.CountMessaggioResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.CountMessaggio")
@@ -82,7 +82,7 @@ public interface MessaggioAll {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management")
 		SearchFilterMessaggio filter
-	) throws MonitorServiceException,MonitorNotImplementedException,MonitorNotAuthorizedException;
+	) throws MonitorServiceException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception;
 
 	
 	
@@ -93,8 +93,8 @@ public interface MessaggioAll {
 	 * Delete all object instances matching the filter parameter
 	 *
 	 * @param filter Filter
-	 * @throws MonitorServiceException
-	 * @throws MonitorNotImplementedException
+	 * @throws MonitorServiceException_Exception
+	 * @throws MonitorNotImplementedException_Exception
 	 */		
 	@javax.xml.ws.ResponseWrapper(localName = "deleteAllByFilterResponse", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.DeleteAllByFilterMessaggioResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteAllByFilter", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.DeleteAllByFilterMessaggio")
@@ -104,6 +104,6 @@ public interface MessaggioAll {
 	public long deleteAllByFilter(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management")
 		SearchFilterMessaggio filter
-	) throws MonitorServiceException,MonitorNotImplementedException,MonitorNotAuthorizedException;
+	) throws MonitorServiceException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception;
 	
 }

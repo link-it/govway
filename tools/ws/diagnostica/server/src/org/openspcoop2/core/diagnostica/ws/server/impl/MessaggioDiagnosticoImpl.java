@@ -30,9 +30,9 @@ import org.openspcoop2.core.diagnostica.ws.server.MessaggioDiagnosticoSearch;
 import org.openspcoop2.core.diagnostica.ws.server.config.Constants;
 import org.openspcoop2.core.diagnostica.ws.server.config.DriverDiagnostica;
 import org.openspcoop2.core.diagnostica.ws.server.config.LoggerProperties;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
 import org.openspcoop2.core.diagnostica.ws.server.filter.SearchFilterMessaggioDiagnostico;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -305,7 +305,7 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 
 
 	@Override
-	public List<MessaggioDiagnostico> findAll(SearchFilterMessaggioDiagnostico filter) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public List<MessaggioDiagnostico> findAll(SearchFilterMessaggioDiagnostico filter) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverDiagnostica(this.diagnosticaService);
@@ -345,7 +345,7 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 	}
 
 	@Override
-	public long count(SearchFilterMessaggioDiagnostico filter) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public long count(SearchFilterMessaggioDiagnostico filter) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverDiagnostica(this.diagnosticaService);

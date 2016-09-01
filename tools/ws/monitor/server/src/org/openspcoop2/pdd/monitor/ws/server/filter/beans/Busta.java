@@ -43,7 +43,7 @@ package org.openspcoop2.pdd.monitor.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.pdd.monitor.ws.server.filter.beans.BustaSoggetto;
@@ -69,11 +69,9 @@ import org.openspcoop2.pdd.monitor.ws.server.filter.beans.BustaServizio;
     "riferimentoMessaggio"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "busta")
-public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="attesa-riscontro",required=false,nillable=false,defaultValue="false")

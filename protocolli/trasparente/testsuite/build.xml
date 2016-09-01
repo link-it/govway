@@ -191,6 +191,7 @@
 		</if>
 		<copy file="deploy/properties/testsuite_testunits.properties" todir="${build_testunits}/NG_UNITS" />
 		<copy file="deploy/properties/testsuite_trasparente.log4j2.properties" todir="${build_testunits}/NG_UNITS" />
+		<copy file="deploy/properties/testsuite_trasparente.log4j2.properties" todir="${build_testunits}/NG_UNITS/log4j2.properties" />
 		<copy file="${openspcoop2_testsuite_properties}/testsuite.properties" todir="${build_testunits}/NG_UNITS" />
 		<copy file="${openspcoop2}/testsuite/deploy/properties/testsuite.log4j2.properties" todir="${build_testunits}/NG_UNITS" />
 		

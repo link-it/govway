@@ -36,7 +36,7 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.registry.IdAccordoCooperazione;
@@ -54,11 +54,9 @@ import org.openspcoop2.core.registry.IdAccordoCooperazione;
     "id"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "deleteById")
-public class DeleteByIdAccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class DeleteByIdAccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="id",required=true,nillable=false)
 	private IdAccordoCooperazione id;

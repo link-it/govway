@@ -36,7 +36,7 @@ package org.openspcoop2.core.diagnostica.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
@@ -54,11 +54,9 @@ import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
     "findReturn"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "findAllResponse")
-public class FindAllMessaggioDiagnosticoResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class FindAllMessaggioDiagnosticoResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="findReturn",required=true,nillable=false)
 	private java.util.List<MessaggioDiagnostico> findReturn;

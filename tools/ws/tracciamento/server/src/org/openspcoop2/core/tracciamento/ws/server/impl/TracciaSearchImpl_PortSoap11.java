@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.core.tracciamento.ws.server.impl;
 
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException_Exception;
 
 /**     
  * TracciaSearchImpl_PortSoap11
@@ -42,7 +42,7 @@ public class TracciaSearchImpl_PortSoap11 extends TracciaImpl {
 	
 	@Override
 	@javax.jws.WebMethod
-	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws TracciamentoServiceException{
+	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws TracciamentoServiceException_Exception{
 		
 		javax.servlet.http.HttpServletRequest req =  null;
 		
@@ -56,7 +56,7 @@ public class TracciaSearchImpl_PortSoap11 extends TracciaImpl {
 
 	@Override
 	protected javax.servlet.http.HttpServletResponse getHttpServletResponse()
-			throws TracciamentoServiceException {
+			throws TracciamentoServiceException_Exception {
 		
 		javax.servlet.http.HttpServletResponse res =  null;
 		

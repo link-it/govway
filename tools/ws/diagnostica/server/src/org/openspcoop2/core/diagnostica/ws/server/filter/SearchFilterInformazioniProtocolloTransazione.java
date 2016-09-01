@@ -54,7 +54,7 @@ package org.openspcoop2.core.diagnostica.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.diagnostica.ws.server.filter.beans.Protocollo;
@@ -96,11 +96,9 @@ import org.openspcoop2.core.diagnostica.ws.server.filter.beans.DominioTransazion
     "descOrder"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-informazioni-protocollo-transazione")
-public class SearchFilterInformazioniProtocolloTransazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterInformazioniProtocolloTransazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="tipoPdD",required=false,nillable=false)
 	private TipoPdD tipoPdD;

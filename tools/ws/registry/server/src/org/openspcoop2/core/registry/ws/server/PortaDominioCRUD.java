@@ -26,10 +26,10 @@ import org.openspcoop2.core.registry.ws.server.filter.SearchFilterPortaDominio;
 
 import org.openspcoop2.core.registry.PortaDominio;
 
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -50,8 +50,8 @@ public interface PortaDominioCRUD {
 	 * Create the object described by the provided parameter
 	 *
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "createResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CreatePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "create", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CreatePortaDominio")
@@ -60,16 +60,16 @@ public interface PortaDominioCRUD {
 	public void create(
 		@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		PortaDominio portaDominio
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 	
 	/**
 	 * Update the object instance identified by the id parameter, using the provided object description.
 	 *
 	 * @param oldId object id
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
- 	 * @throws RegistryNotFoundException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+ 	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "updateResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdatePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "update", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdatePortaDominio")
@@ -80,15 +80,15 @@ public interface PortaDominioCRUD {
     	org.openspcoop2.core.registry.IdPortaDominio oldId,
     	@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 	    PortaDominio portaDominio
-    ) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+    ) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Update the object istance identified by the id parameter or create a new object, using the provided object description.
 	 *
 	 * @param oldId object id
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "updateOrCreateResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdateOrCreatePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "updateOrCreate", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdateOrCreatePortaDominio")
@@ -99,14 +99,14 @@ public interface PortaDominioCRUD {
 		org.openspcoop2.core.registry.IdPortaDominio oldId, 
 		@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		PortaDominio portaDominio
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Delete the object instance identified by the id parameter.
 	 *
 	 * @param id object id
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */		
 	@javax.xml.ws.ResponseWrapper(localName = "deleteByIdResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteByIdPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteById", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteByIdPortaDominio")
@@ -115,27 +115,27 @@ public interface PortaDominioCRUD {
 	public void deleteById(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdPortaDominio id
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Delete all object instances
 	 *
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "deleteAllResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteAll", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllPortaDominio")
     @javax.jws.WebResult(name = "deletedItems", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 	@javax.jws.soap.SOAPBinding(parameterStyle=ParameterStyle.WRAPPED,style=Style.DOCUMENT,use=Use.LITERAL)
     @javax.jws.WebMethod(action="deleteAll",operationName="deleteAll")
-	public long deleteAll() throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	public long deleteAll() throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Delete all object instances matching the filter parameter
 	 *
 	 * @param filter Filter
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */		
 	@javax.xml.ws.ResponseWrapper(localName = "deleteAllByFilterResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllByFilterPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteAllByFilter", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllByFilterPortaDominio")
@@ -145,14 +145,14 @@ public interface PortaDominioCRUD {
 	public long deleteAllByFilter(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterPortaDominio filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 	
 	/**
 	 * Delete the object instance identified by the provided object description.
 	 *
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "deleteResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeletePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "delete", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeletePortaDominio")
@@ -161,5 +161,5 @@ public interface PortaDominioCRUD {
 	public void delete(
 		@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		PortaDominio portaDominio
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 }

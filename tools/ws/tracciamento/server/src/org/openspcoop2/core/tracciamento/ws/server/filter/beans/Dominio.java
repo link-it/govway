@@ -38,7 +38,7 @@ package org.openspcoop2.core.tracciamento.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.tracciamento.constants.TipoPdD;
@@ -59,11 +59,9 @@ import org.openspcoop2.core.tracciamento.ws.server.filter.beans.DominioSoggetto;
     "funzione"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "dominio")
-public class Dominio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class Dominio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-porta",required=false,nillable=false)

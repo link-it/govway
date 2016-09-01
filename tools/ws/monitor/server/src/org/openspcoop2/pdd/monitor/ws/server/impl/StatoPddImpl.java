@@ -35,11 +35,11 @@ import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.pdd.monitor.ws.server.config.Constants;
 import org.openspcoop2.pdd.monitor.ws.server.config.DriverMonitor;
 import org.openspcoop2.pdd.monitor.ws.server.config.LoggerProperties;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException_Exception;
 import org.openspcoop2.pdd.monitor.ws.server.filter.SearchFilterStatoPdd;
 
 
@@ -147,7 +147,7 @@ public abstract class StatoPddImpl extends BaseImpl  {
 	
 
 	
-	public StatoPdd find(SearchFilterStatoPdd filter) throws MonitorServiceException,MonitorNotFoundException,MonitorMultipleResultException,MonitorNotImplementedException,MonitorNotAuthorizedException {
+	public StatoPdd find(SearchFilterStatoPdd filter) throws MonitorServiceException_Exception,MonitorNotFoundException_Exception,MonitorMultipleResultException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverMonitoraggio(this.statoPddService);

@@ -36,7 +36,7 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 
@@ -53,11 +53,9 @@ import javax.xml.bind.annotation.XmlElement;
     "accordoCooperazione"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "accordo-servizio-parte-comune-servizio-composto")
-public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="accordo-cooperazione",required=false,nillable=false)

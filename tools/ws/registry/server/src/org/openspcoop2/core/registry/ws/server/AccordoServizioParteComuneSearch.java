@@ -27,11 +27,11 @@ import org.openspcoop2.core.registry.ws.server.beans.UseInfo;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -52,8 +52,8 @@ public interface AccordoServizioParteComuneSearch {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type AccordoServizioParteComune
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllAccordoServizioParteComuneResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllAccordoServizioParteComune")
@@ -63,17 +63,17 @@ public interface AccordoServizioParteComuneSearch {
 	public List<AccordoServizioParteComune> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterAccordoServizioParteComune filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type AccordoServizioParteComune that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return object of type AccordoServizioParteComune
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotFoundException
-	 * @throws RegistryMultipleResultException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryMultipleResultException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAccordoServizioParteComuneResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAccordoServizioParteComune")
@@ -83,15 +83,15 @@ public interface AccordoServizioParteComuneSearch {
 	public AccordoServizioParteComune find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterAccordoServizioParteComune filter
-	) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to count all objects of type AccordoServizioParteComune that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type AccordoServizioParteComune
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CountAccordoServizioParteComuneResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CountAccordoServizioParteComune")
@@ -101,17 +101,17 @@ public interface AccordoServizioParteComuneSearch {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterAccordoServizioParteComune filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type AccordoServizioParteComune identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return object of type AccordoServizioParteComune
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotFoundException
-	 * @throws RegistryMultipleResultException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryMultipleResultException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "getResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.GetAccordoServizioParteComuneResponse")
     @javax.xml.ws.RequestWrapper(localName = "get", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.GetAccordoServizioParteComune")
@@ -121,16 +121,16 @@ public interface AccordoServizioParteComuneSearch {
 	public AccordoServizioParteComune get(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdAccordoServizioParteComune id
-	) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the existence of the instance of the object AccordoServizioParteComune identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return Indicates the existence of the instance of the object AccordoServizioParteComune identified by the id parameter. 
-	 * @throws RegistryServiceException
-	 * @throws RegistryMultipleResultException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryMultipleResultException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "existsResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.ExistsAccordoServizioParteComuneResponse")
     @javax.xml.ws.RequestWrapper(localName = "exists", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.ExistsAccordoServizioParteComune")
@@ -140,15 +140,15 @@ public interface AccordoServizioParteComuneSearch {
 	public boolean exists(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdAccordoServizioParteComune id
-	) throws RegistryServiceException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve all object Ids of type org.openspcoop2.core.registry.IdAccordoServizioParteComune that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return List object ids of type org.openspcoop2.core.registry.IdAccordoServizioParteComune
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllIdsResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllIdsAccordoServizioParteComuneResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAllIds", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllIdsAccordoServizioParteComune")
@@ -158,15 +158,15 @@ public interface AccordoServizioParteComuneSearch {
 	public List<org.openspcoop2.core.registry.IdAccordoServizioParteComune> findAllIds(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterAccordoServizioParteComune filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the use of the object (identified by parameter) by other components
 	 *
 	 * @return Indicates the use of the object (identified by parameter) by other components
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotFoundException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "inUseResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UseInfoAccordoServizioParteComuneResponse")
     @javax.xml.ws.RequestWrapper(localName = "inUse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UseInfoAccordoServizioParteComune")
@@ -176,6 +176,6 @@ public interface AccordoServizioParteComuneSearch {
 	public UseInfo inUse(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdAccordoServizioParteComune id
-	) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 }

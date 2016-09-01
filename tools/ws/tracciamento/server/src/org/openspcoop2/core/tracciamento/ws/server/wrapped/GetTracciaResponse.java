@@ -36,7 +36,7 @@ package org.openspcoop2.core.tracciamento.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.tracciamento.Traccia;
@@ -54,11 +54,9 @@ import org.openspcoop2.core.tracciamento.Traccia;
     "traccia"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "getResponse")
-public class GetTracciaResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class GetTracciaResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="traccia",required=true,nillable=false)
 	private Traccia traccia;

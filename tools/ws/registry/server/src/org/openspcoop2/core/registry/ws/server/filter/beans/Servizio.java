@@ -41,7 +41,7 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -65,11 +65,9 @@ import org.openspcoop2.core.registry.ws.server.filter.beans.Connettore;
     "tipologiaServizio"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "servizio")
-public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="connettore",required=false,nillable=false)
 	private Connettore connettore;

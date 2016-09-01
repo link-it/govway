@@ -41,11 +41,11 @@ import org.openspcoop2.core.registry.ws.server.config.Constants;
 import org.openspcoop2.core.registry.ws.server.config.DriverRegistroServizi;
 import org.openspcoop2.core.registry.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.registry.ws.server.config.ServerProperties;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
 import org.openspcoop2.core.registry.ws.server.filter.SearchFilterSoggetto;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -286,7 +286,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	
 
 	@Override
-	public List<Soggetto> findAll(SearchFilterSoggetto filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<Soggetto> findAll(SearchFilterSoggetto filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.soggettoService);
@@ -313,7 +313,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public Soggetto find(SearchFilterSoggetto filter) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public Soggetto find(SearchFilterSoggetto filter) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.soggettoService);
@@ -350,7 +350,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public long count(SearchFilterSoggetto filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long count(SearchFilterSoggetto filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.soggettoService);
@@ -376,7 +376,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public Soggetto get(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public Soggetto get(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziGet(this.soggettoService);
@@ -400,7 +400,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);
@@ -422,7 +422,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public List<org.openspcoop2.core.registry.IdSoggetto> findAllIds(SearchFilterSoggetto filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public List<org.openspcoop2.core.registry.IdSoggetto> findAllIds(SearchFilterSoggetto filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziDB(this.soggettoService);
@@ -448,7 +448,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public UseInfo inUse(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public UseInfo inUse(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			this.logStartMethod("inUse", id);
@@ -533,7 +533,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 
 	@Override
-	public void create(Soggetto obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void create(Soggetto obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);
@@ -555,7 +555,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	}
 	
 	@Override
-    public void update(org.openspcoop2.core.registry.IdSoggetto oldId, Soggetto obj) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+    public void update(org.openspcoop2.core.registry.IdSoggetto oldId, Soggetto obj) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);
@@ -584,7 +584,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
     }
 	
 	@Override
-	public void updateOrCreate(org.openspcoop2.core.registry.IdSoggetto oldId, Soggetto obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void updateOrCreate(org.openspcoop2.core.registry.IdSoggetto oldId, Soggetto obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);
@@ -613,7 +613,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
     }
 	
 	@Override
-	public void deleteById(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void deleteById(org.openspcoop2.core.registry.IdSoggetto id) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);
@@ -622,7 +622,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 			Soggetto soggetto = null;
 			try{
 				soggetto = this.get(id);
-			}catch(RegistryNotFoundException notFound){}
+			}catch(RegistryNotFoundException_Exception notFound){}
 			if(soggetto!=null)
 				((IDriverRegistroServiziCRUD)this.soggettoService.getDriver()).deleteSoggetto(soggetto);
 			this.logEndMethod("deleteById");
@@ -640,7 +640,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	
 	
 	@Override
-	public long deleteAll() throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAll() throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);
@@ -676,7 +676,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	
 	
 	@Override
-	public long deleteAllByFilter(SearchFilterSoggetto filter) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterSoggetto filter) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);
@@ -713,7 +713,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 	
 	
 	@Override
-	public void delete(Soggetto obj) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException {
+	public void delete(Soggetto obj) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverRegistroServiziCRUD(this.soggettoService);

@@ -27,11 +27,11 @@ import org.openspcoop2.core.registry.ws.server.beans.UseInfo;
 
 import org.openspcoop2.core.registry.PortaDominio;
 
-import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
-import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -52,8 +52,8 @@ public interface PortaDominioAll {
 	 *
 	 * @param filter Filter
 	 * @return List objects of type PortaDominio
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAll", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllPortaDominio")
@@ -63,17 +63,17 @@ public interface PortaDominioAll {
 	public List<PortaDominio> findAll(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterPortaDominio filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type PortaDominio that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return object of type PortaDominio
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotFoundException
-	 * @throws RegistryMultipleResultException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryMultipleResultException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindPortaDominio")
@@ -83,15 +83,15 @@ public interface PortaDominioAll {
 	public PortaDominio find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterPortaDominio filter
-	) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to count all objects of type PortaDominio that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return Count all objects of type PortaDominio
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "countResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CountPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "count", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CountPortaDominio")
@@ -101,17 +101,17 @@ public interface PortaDominioAll {
 	public long count(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterPortaDominio filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve the object of type PortaDominio identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return object of type PortaDominio
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotFoundException
-	 * @throws RegistryMultipleResultException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryMultipleResultException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "getResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.GetPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "get", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.GetPortaDominio")
@@ -121,16 +121,16 @@ public interface PortaDominioAll {
 	public PortaDominio get(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdPortaDominio id
-	) throws RegistryServiceException,RegistryNotFoundException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the existence of the instance of the object PortaDominio identified by the id parameter.
 	 *
 	 * @param id Object Id
 	 * @return Indicates the existence of the instance of the object PortaDominio identified by the id parameter. 
-	 * @throws RegistryServiceException
-	 * @throws RegistryMultipleResultException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryMultipleResultException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "existsResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.ExistsPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "exists", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.ExistsPortaDominio")
@@ -140,15 +140,15 @@ public interface PortaDominioAll {
 	public boolean exists(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdPortaDominio id
-	) throws RegistryServiceException,RegistryMultipleResultException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryMultipleResultException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * It allows you to retrieve all object Ids of type org.openspcoop2.core.registry.IdPortaDominio that matching the filter parameter
 	 *
 	 * @param filter Filter
 	 * @return List object ids of type org.openspcoop2.core.registry.IdPortaDominio
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findAllIdsResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllIdsPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "findAllIds", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.FindAllIdsPortaDominio")
@@ -158,15 +158,15 @@ public interface PortaDominioAll {
 	public List<org.openspcoop2.core.registry.IdPortaDominio> findAllIds(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterPortaDominio filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Indicates the use of the object (identified by parameter) by other components
 	 *
 	 * @return Indicates the use of the object (identified by parameter) by other components
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotFoundException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "inUseResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UseInfoPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "inUse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UseInfoPortaDominio")
@@ -176,14 +176,14 @@ public interface PortaDominioAll {
 	public UseInfo inUse(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdPortaDominio id
-	) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Create the object described by the provided parameter
 	 *
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "createResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CreatePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "create", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.CreatePortaDominio")
@@ -192,16 +192,16 @@ public interface PortaDominioAll {
 	public void create(
 		@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		PortaDominio portaDominio
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 	
 	/**
 	 * Update the object instance identified by the id parameter, using the provided object description.
 	 *
 	 * @param oldId object id
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
- 	 * @throws RegistryNotFoundException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+ 	 * @throws RegistryNotFoundException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "updateResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdatePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "update", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdatePortaDominio")
@@ -212,15 +212,15 @@ public interface PortaDominioAll {
     	org.openspcoop2.core.registry.IdPortaDominio oldId,
     	@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 	    PortaDominio portaDominio
-    ) throws RegistryServiceException,RegistryNotFoundException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+    ) throws RegistryServiceException_Exception,RegistryNotFoundException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Update the object istance identified by the id parameter or create a new object, using the provided object description.
 	 *
 	 * @param oldId object id
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "updateOrCreateResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdateOrCreatePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "updateOrCreate", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.UpdateOrCreatePortaDominio")
@@ -231,14 +231,14 @@ public interface PortaDominioAll {
 		org.openspcoop2.core.registry.IdPortaDominio oldId, 
 		@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		PortaDominio portaDominio
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Delete the object instance identified by the id parameter.
 	 *
 	 * @param id object id
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */		
 	@javax.xml.ws.ResponseWrapper(localName = "deleteByIdResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteByIdPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteById", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteByIdPortaDominio")
@@ -247,27 +247,27 @@ public interface PortaDominioAll {
 	public void deleteById(
 		@javax.jws.WebParam(name = "id", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		org.openspcoop2.core.registry.IdPortaDominio id
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Delete all object instances
 	 *
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "deleteAllResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteAll", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllPortaDominio")
     @javax.jws.WebResult(name = "deletedItems", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 	@javax.jws.soap.SOAPBinding(parameterStyle=ParameterStyle.WRAPPED,style=Style.DOCUMENT,use=Use.LITERAL)
     @javax.jws.WebMethod(action="deleteAll",operationName="deleteAll")
-	public long deleteAll() throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	public long deleteAll() throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 
 	/**
 	 * Delete all object instances matching the filter parameter
 	 *
 	 * @param filter Filter
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */		
 	@javax.xml.ws.ResponseWrapper(localName = "deleteAllByFilterResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllByFilterPortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "deleteAllByFilter", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeleteAllByFilterPortaDominio")
@@ -277,14 +277,14 @@ public interface PortaDominioAll {
 	public long deleteAllByFilter(
 		@javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		SearchFilterPortaDominio filter
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 	
 	/**
 	 * Delete the object instance identified by the provided object description.
 	 *
 	 * @param portaDominio object
-	 * @throws RegistryServiceException
-	 * @throws RegistryNotImplementedException
+	 * @throws RegistryServiceException_Exception
+	 * @throws RegistryNotImplementedException_Exception
 	 */	
 	@javax.xml.ws.ResponseWrapper(localName = "deleteResponse", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeletePortaDominioResponse")
     @javax.xml.ws.RequestWrapper(localName = "delete", targetNamespace = "http://www.openspcoop2.org/core/registry/management", className = "org.openspcoop2.core.registry.ws.wrapped.DeletePortaDominio")
@@ -293,5 +293,5 @@ public interface PortaDominioAll {
 	public void delete(
 		@javax.jws.WebParam(name = "porta-dominio", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 		PortaDominio portaDominio
-	) throws RegistryServiceException,RegistryNotImplementedException,RegistryNotAuthorizedException;
+	) throws RegistryServiceException_Exception,RegistryNotImplementedException_Exception,RegistryNotAuthorizedException_Exception;
 }

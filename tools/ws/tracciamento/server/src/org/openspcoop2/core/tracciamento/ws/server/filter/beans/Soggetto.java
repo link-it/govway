@@ -37,7 +37,7 @@ package org.openspcoop2.core.tracciamento.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.tracciamento.ws.server.filter.beans.SoggettoIdentificativo;
@@ -56,11 +56,9 @@ import org.openspcoop2.core.tracciamento.ws.server.filter.beans.SoggettoIdentifi
     "identificativoPorta"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "soggetto")
-public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="identificativo",required=false,nillable=false)
 	private SoggettoIdentificativo identificativo;

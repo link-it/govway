@@ -42,7 +42,7 @@ package org.openspcoop2.pdd.monitor.ws.server.filter.beans;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
@@ -67,11 +67,9 @@ import org.openspcoop2.pdd.monitor.ws.server.filter.beans.Busta;
     "tipo"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "filtro")
-public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="correlazione-applicativa",required=false,nillable=false)

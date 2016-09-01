@@ -35,9 +35,9 @@ import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.pdd.monitor.ws.server.config.Constants;
 import org.openspcoop2.pdd.monitor.ws.server.config.DriverMonitor;
 import org.openspcoop2.pdd.monitor.ws.server.config.LoggerProperties;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException_Exception;
 import org.openspcoop2.pdd.monitor.ws.server.filter.SearchFilterMessaggio;
 
 
@@ -160,7 +160,7 @@ public abstract class MessaggioImpl extends BaseImpl  {
 
 
 	
-	public List<Messaggio> findAll(SearchFilterMessaggio filter) throws MonitorServiceException,MonitorNotImplementedException,MonitorNotAuthorizedException {
+	public List<Messaggio> findAll(SearchFilterMessaggio filter) throws MonitorServiceException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverMonitoraggio(this.messaggioService);
@@ -190,7 +190,7 @@ public abstract class MessaggioImpl extends BaseImpl  {
 	
 
 	
-	public long count(SearchFilterMessaggio filter) throws MonitorServiceException,MonitorNotImplementedException,MonitorNotAuthorizedException {
+	public long count(SearchFilterMessaggio filter) throws MonitorServiceException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverMonitoraggio(this.messaggioService);
@@ -223,7 +223,7 @@ public abstract class MessaggioImpl extends BaseImpl  {
 	
 	
 	
-	public long deleteAllByFilter(SearchFilterMessaggio filter) throws MonitorServiceException,MonitorNotImplementedException,MonitorNotAuthorizedException {
+	public long deleteAllByFilter(SearchFilterMessaggio filter) throws MonitorServiceException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverMonitoraggio(this.messaggioService);

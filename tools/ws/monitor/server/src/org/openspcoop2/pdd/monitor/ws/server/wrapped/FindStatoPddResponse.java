@@ -36,7 +36,7 @@ package org.openspcoop2.pdd.monitor.ws.server.wrapped;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.pdd.monitor.StatoPdd;
@@ -54,11 +54,9 @@ import org.openspcoop2.pdd.monitor.StatoPdd;
     "statoPdd"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "findResponse")
-public class FindStatoPddResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class FindStatoPddResponse extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="statoPdd",required=true,nillable=false)
 	private StatoPdd statoPdd;

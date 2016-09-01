@@ -21,7 +21,7 @@
 package org.openspcoop2.pdd.monitor.ws.server.impl;
 
 import org.openspcoop2.pdd.monitor.ws.server.MessaggioAll;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException_Exception;
 
 /**     
  * MessaggioAllImpl_PortSoap12
@@ -43,7 +43,7 @@ public class MessaggioAllImpl_PortSoap12 extends MessaggioImpl implements Messag
 	
 	@Override
 	@javax.jws.WebMethod
-	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws MonitorServiceException{
+	protected javax.servlet.http.HttpServletRequest getHttpServletRequest() throws MonitorServiceException_Exception{
 		
 		javax.servlet.http.HttpServletRequest req =  null;
 		
@@ -57,7 +57,7 @@ public class MessaggioAllImpl_PortSoap12 extends MessaggioImpl implements Messag
 
 	@Override
 	protected javax.servlet.http.HttpServletResponse getHttpServletResponse()
-			throws MonitorServiceException {
+			throws MonitorServiceException_Exception {
 		
 		javax.servlet.http.HttpServletResponse res =  null;
 		

@@ -30,16 +30,21 @@ import org.openspcoop2.core.tracciamento.ws.server.config.DriverTracciamento;
 import org.openspcoop2.core.tracciamento.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.tracciamento.ws.server.config.ServerProperties;
 import org.openspcoop2.core.tracciamento.ws.server.config.WSStartup;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException;
-import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotFoundException;
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoMultipleResultException;
-import org.openspcoop2.generic_project.exception.MultipleResultException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotImplementedException;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoMultipleResultException_Exception;
 import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotAuthorizedException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotAuthorizedException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotFoundException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotFoundException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotImplementedException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotImplementedException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException_Exception;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 
 
 /**     
@@ -73,8 +78,10 @@ public abstract class BaseImpl {
 		}
 	}
 			
-	protected TracciamentoNotFoundException throwNotFoundException(String methodName,NotFoundException e, String errorCode, Object objectId) throws TracciamentoNotFoundException{
-		TracciamentoNotFoundException ex = new TracciamentoNotFoundException(methodName,e.getMessage(),e);
+	protected TracciamentoNotFoundException_Exception throwNotFoundException(String methodName,NotFoundException e, String errorCode, Object objectId) throws TracciamentoNotFoundException_Exception{
+		TracciamentoNotFoundException ex = new TracciamentoNotFoundException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.tracciamento") 
@@ -94,11 +101,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new TracciamentoNotFoundException_Exception(e.getMessage(),ex,e);
 	}
 
-	protected TracciamentoNotAuthorizedException throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws TracciamentoNotAuthorizedException{
-		TracciamentoNotAuthorizedException ex = new TracciamentoNotAuthorizedException(methodName,e.getMessage(),e);
+	protected TracciamentoNotAuthorizedException_Exception throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws TracciamentoNotAuthorizedException_Exception{
+		TracciamentoNotAuthorizedException ex = new TracciamentoNotAuthorizedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.tracciamento") 
@@ -118,11 +127,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new TracciamentoNotAuthorizedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected TracciamentoNotImplementedException throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws TracciamentoNotImplementedException{
-		TracciamentoNotImplementedException ex = new TracciamentoNotImplementedException(methodName,e.getMessage(),e);
+	protected TracciamentoNotImplementedException_Exception throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws TracciamentoNotImplementedException_Exception{
+		TracciamentoNotImplementedException ex = new TracciamentoNotImplementedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.tracciamento") 
@@ -142,11 +153,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new TracciamentoNotImplementedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected TracciamentoMultipleResultException throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws TracciamentoMultipleResultException{
-		TracciamentoMultipleResultException ex = new TracciamentoMultipleResultException(methodName,e.getMessage(),e);
+	protected TracciamentoMultipleResultException_Exception throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws TracciamentoMultipleResultException_Exception{
+		TracciamentoMultipleResultException ex = new TracciamentoMultipleResultException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.tracciamento") 
@@ -166,11 +179,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new TracciamentoMultipleResultException_Exception(e.getMessage(),ex,e);
 	}
 	
-	protected TracciamentoServiceException throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws TracciamentoServiceException{
-		TracciamentoServiceException ex = new TracciamentoServiceException(methodName,e.getMessage(),e);
+	protected TracciamentoServiceException_Exception throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws TracciamentoServiceException_Exception{
+		TracciamentoServiceException ex = new TracciamentoServiceException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.tracciamento") 
@@ -190,7 +205,7 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new TracciamentoServiceException_Exception(e.getMessage(),ex,e);
 	}
 	
 	protected String throwableStackTraceToString(Throwable e){
@@ -208,7 +223,7 @@ public abstract class BaseImpl {
 		}
 	}	
 	
-	protected void authorize(boolean searchMethod) throws TracciamentoServiceException,ServiceException,NotAuthorizedException{
+	protected void authorize(boolean searchMethod) throws TracciamentoServiceException_Exception,ServiceException,NotAuthorizedException{
 		AuthorizationManager.getAuthorizationManager().authorize(this.getHttpServletRequest(), LoggerProperties.getLoggerWS(), searchMethod);
 	}
 
@@ -305,7 +320,7 @@ public abstract class BaseImpl {
 		LoggerProperties.getLoggerWS().info("@@@ ["+methodName+"] finished (size:"+size+")");
 	}
 	
-	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws TracciamentoServiceException;
-	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws TracciamentoServiceException;
+	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws TracciamentoServiceException_Exception;
+	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws TracciamentoServiceException_Exception;
 
 }

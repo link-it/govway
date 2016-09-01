@@ -48,7 +48,7 @@ package org.openspcoop2.core.diagnostica.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.diagnostica.ws.server.filter.beans.Protocollo;
@@ -81,11 +81,9 @@ import java.util.Date;
     "descOrder"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-messaggio-diagnostico")
-public class SearchFilterMessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterMessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="dominio",required=false,nillable=false)
 	private DominioDiagnostico dominio;

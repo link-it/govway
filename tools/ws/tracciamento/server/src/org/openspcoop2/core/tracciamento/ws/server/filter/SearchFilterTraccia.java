@@ -47,7 +47,7 @@ package org.openspcoop2.core.tracciamento.ws.server.filter;
  * 
  */
  
- import java.io.Serializable;
+import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.tracciamento.constants.TipoTraccia;
@@ -79,11 +79,9 @@ import org.openspcoop2.core.tracciamento.ws.server.filter.beans.Dominio;
     "descOrder"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "search-filter-traccia")
-public class SearchFilterTraccia extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable  {
+public class SearchFilterTraccia extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-
-	
 	
 	@XmlElement(name="dominio",required=false,nillable=false)
 	private Dominio dominio;

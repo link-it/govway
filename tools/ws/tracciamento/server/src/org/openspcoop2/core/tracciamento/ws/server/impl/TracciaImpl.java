@@ -33,11 +33,11 @@ import org.openspcoop2.core.tracciamento.ws.server.TracciaSearch;
 import org.openspcoop2.core.tracciamento.ws.server.config.Constants;
 import org.openspcoop2.core.tracciamento.ws.server.config.DriverTracciamento;
 import org.openspcoop2.core.tracciamento.ws.server.config.LoggerProperties;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoMultipleResultException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotAuthorizedException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotFoundException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotImplementedException;
-import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoMultipleResultException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotAuthorizedException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotFoundException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoNotImplementedException_Exception;
+import org.openspcoop2.core.tracciamento.ws.server.exception.TracciamentoServiceException_Exception;
 import org.openspcoop2.core.tracciamento.ws.server.filter.SearchFilterTraccia;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -331,7 +331,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 
 
 	@Override
-	public List<Traccia> findAll(SearchFilterTraccia filter) throws TracciamentoServiceException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException {
+	public List<Traccia> findAll(SearchFilterTraccia filter) throws TracciamentoServiceException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverTracciamento(this.tracciamentoService);
@@ -369,7 +369,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 	}
 
 	@Override
-	public Traccia find(SearchFilterTraccia filter) throws TracciamentoServiceException,TracciamentoNotFoundException,TracciamentoMultipleResultException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException {
+	public Traccia find(SearchFilterTraccia filter) throws TracciamentoServiceException_Exception,TracciamentoNotFoundException_Exception,TracciamentoMultipleResultException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverTracciamento(this.tracciamentoService);
@@ -412,7 +412,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 	}
 
 	@Override
-	public long count(SearchFilterTraccia filter) throws TracciamentoServiceException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException {
+	public long count(SearchFilterTraccia filter) throws TracciamentoServiceException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverTracciamento(this.tracciamentoService);
@@ -439,7 +439,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 	}
 
 	@Override
-	public Traccia get(org.openspcoop2.core.tracciamento.IdTraccia id) throws TracciamentoServiceException,TracciamentoNotFoundException,TracciamentoMultipleResultException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException {
+	public Traccia get(org.openspcoop2.core.tracciamento.IdTraccia id) throws TracciamentoServiceException_Exception,TracciamentoNotFoundException_Exception,TracciamentoMultipleResultException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception {
 		try{
 		
 			if(id.getIdentificativo()==null){
@@ -494,7 +494,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.tracciamento.IdTraccia id) throws TracciamentoServiceException,TracciamentoMultipleResultException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.tracciamento.IdTraccia id) throws TracciamentoServiceException_Exception,TracciamentoMultipleResultException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception {
 		try{
 		
 			if(id.getIdentificativo()==null){
@@ -545,7 +545,7 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 	}
 
 	@Override
-	public List<org.openspcoop2.core.tracciamento.IdTraccia> findAllIds(SearchFilterTraccia filter) throws TracciamentoServiceException,TracciamentoNotImplementedException,TracciamentoNotAuthorizedException {
+	public List<org.openspcoop2.core.tracciamento.IdTraccia> findAllIds(SearchFilterTraccia filter) throws TracciamentoServiceException_Exception,TracciamentoNotImplementedException_Exception,TracciamentoNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverTracciamento(this.tracciamentoService);

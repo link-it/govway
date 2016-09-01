@@ -34,10 +34,15 @@ import org.openspcoop2.core.registry.ws.server.config.LoggerProperties;
 import org.openspcoop2.core.registry.ws.server.config.ServerProperties;
 import org.openspcoop2.core.registry.ws.server.config.WSStartup;
 import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryMultipleResultException_Exception;
 import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotAuthorizedException_Exception;
 import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotFoundException_Exception;
 import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryNotImplementedException_Exception;
 import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException;
+import org.openspcoop2.core.registry.ws.server.exception.RegistryServiceException_Exception;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
@@ -75,8 +80,10 @@ public abstract class BaseImpl {
 		}
 	}
 			
-	protected RegistryNotFoundException throwNotFoundException(String methodName,DriverRegistroServiziNotFound e, String errorCode, Object objectId) throws RegistryNotFoundException{
-		RegistryNotFoundException ex = new RegistryNotFoundException(methodName,e.getMessage(),e);
+	protected RegistryNotFoundException_Exception throwNotFoundException(String methodName,DriverRegistroServiziNotFound e, String errorCode, Object objectId) throws RegistryNotFoundException_Exception{
+		RegistryNotFoundException ex = new RegistryNotFoundException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.registry") 
@@ -96,11 +103,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new RegistryNotFoundException_Exception(e.getMessage(),ex,e);
 	}
 
-	protected RegistryNotAuthorizedException throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws RegistryNotAuthorizedException{
-		RegistryNotAuthorizedException ex = new RegistryNotAuthorizedException(methodName,e.getMessage(),e);
+	protected RegistryNotAuthorizedException_Exception throwNotAuthorizedException(String methodName,NotAuthorizedException e, String errorCode, Object objectId) throws RegistryNotAuthorizedException_Exception{
+		RegistryNotAuthorizedException ex = new RegistryNotAuthorizedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.registry") 
@@ -120,11 +129,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new RegistryNotAuthorizedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected RegistryNotImplementedException throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws RegistryNotImplementedException{
-		RegistryNotImplementedException ex = new RegistryNotImplementedException(methodName,e.getMessage(),e);
+	protected RegistryNotImplementedException_Exception throwNotImplementedException(String methodName,NotImplementedException e, String errorCode, Object objectId) throws RegistryNotImplementedException_Exception{
+		RegistryNotImplementedException ex = new RegistryNotImplementedException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.registry") 
@@ -144,11 +155,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new RegistryNotImplementedException_Exception(e.getMessage(),ex,e);
 	}
 		
-	protected RegistryMultipleResultException throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws RegistryMultipleResultException{
-		RegistryMultipleResultException ex = new RegistryMultipleResultException(methodName,e.getMessage(),e);
+	protected RegistryMultipleResultException_Exception throwMultipleResultException(String methodName,MultipleResultException e, String errorCode, Object objectId) throws RegistryMultipleResultException_Exception{
+		RegistryMultipleResultException ex = new RegistryMultipleResultException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.registry") 
@@ -168,11 +181,13 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new RegistryMultipleResultException_Exception(e.getMessage(),ex,e);
 	}
 	
-	protected RegistryServiceException throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws RegistryServiceException{
-		RegistryServiceException ex = new RegistryServiceException(methodName,e.getMessage(),e);
+	protected RegistryServiceException_Exception throwServiceException(String methodName,Exception e, String errorCode, Object objectId) throws RegistryServiceException_Exception{
+		RegistryServiceException ex = new RegistryServiceException();
+		ex.setMethodName(methodName);
+		ex.setErrorMessage(e.getMessage());
 		ex.setErrorCode(errorCode);
 		if(objectId!=null){
 			if(objectId.getClass().getPackage().getName().equals("org.openspcoop2.core.registry") 
@@ -192,7 +207,7 @@ public abstract class BaseImpl {
 			id = " id["+ex.getObjectId()+"]";
 		}
 		LoggerProperties.getLoggerWS().error("["+methodName+"] (cod:"+errorCode+")"+id+": "+e.getMessage(),e);
-		throw ex;
+		throw new RegistryServiceException_Exception(e.getMessage(),ex,e);
 	}
 	
 	protected String throwableStackTraceToString(Throwable e){
@@ -210,7 +225,7 @@ public abstract class BaseImpl {
 		}
 	}	
 	
-	protected void authorize(boolean searchMethod) throws RegistryServiceException,ServiceException,NotAuthorizedException{
+	protected void authorize(boolean searchMethod) throws RegistryServiceException_Exception,ServiceException,NotAuthorizedException{
 		AuthorizationManager.getAuthorizationManager().authorize(this.getHttpServletRequest(), LoggerProperties.getLoggerWS(), searchMethod);
 	}
 	
@@ -323,7 +338,7 @@ public abstract class BaseImpl {
 		LoggerProperties.getLoggerWS().info("@@@ ["+methodName+"] finished (size:"+size+")");
 	}
 	
-	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws RegistryServiceException;
-	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws RegistryServiceException;
+	protected abstract javax.servlet.http.HttpServletRequest getHttpServletRequest() throws RegistryServiceException_Exception;
+	protected abstract javax.servlet.http.HttpServletResponse getHttpServletResponse() throws RegistryServiceException_Exception;
 
 }

@@ -26,11 +26,11 @@ import org.openspcoop2.pdd.monitor.ws.server.filter.SearchFilterStatoPdd;
 
 import org.openspcoop2.pdd.monitor.StatoPdd;
 
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException;
-import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
@@ -53,10 +53,10 @@ public interface StatoPddAll {
 	 *
 	 * @param filter Filter
 	 * @return object of type StatoPdd
-	 * @throws MonitorServiceException
-	 * @throws MonitorNotFoundException
-	 * @throws MonitorMultipleResultException
-	 * @throws MonitorNotImplementedException
+	 * @throws MonitorServiceException_Exception
+	 * @throws MonitorNotFoundException_Exception
+	 * @throws MonitorMultipleResultException_Exception
+	 * @throws MonitorNotImplementedException_Exception
 	 */
 	@javax.xml.ws.ResponseWrapper(localName = "findResponse", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.FindStatoPddResponse")
     @javax.xml.ws.RequestWrapper(localName = "find", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management", className = "org.openspcoop2.pdd.monitor.ws.wrapped.FindStatoPdd")
@@ -66,7 +66,7 @@ public interface StatoPddAll {
 	public StatoPdd find(
 	    @javax.jws.WebParam(name = "filter", targetNamespace = "http://www.openspcoop2.org/pdd/monitor/management")
 		SearchFilterStatoPdd filter
-	) throws MonitorServiceException,MonitorNotFoundException,MonitorMultipleResultException,MonitorNotImplementedException,MonitorNotAuthorizedException;
+	) throws MonitorServiceException_Exception,MonitorNotFoundException_Exception,MonitorMultipleResultException_Exception,MonitorNotImplementedException_Exception,MonitorNotAuthorizedException_Exception;
 
 	
 

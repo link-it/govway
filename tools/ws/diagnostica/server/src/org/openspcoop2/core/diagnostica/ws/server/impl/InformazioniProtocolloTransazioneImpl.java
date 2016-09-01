@@ -32,11 +32,11 @@ import org.openspcoop2.core.diagnostica.ws.server.InformazioniProtocolloTransazi
 import org.openspcoop2.core.diagnostica.ws.server.config.Constants;
 import org.openspcoop2.core.diagnostica.ws.server.config.DriverDiagnostica;
 import org.openspcoop2.core.diagnostica.ws.server.config.LoggerProperties;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
 import org.openspcoop2.core.diagnostica.ws.server.filter.SearchFilterInformazioniProtocolloTransazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -308,7 +308,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 
 
 	@Override
-	public List<InformazioniProtocolloTransazione> findAll(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public List<InformazioniProtocolloTransazione> findAll(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverDiagnostica(this.diagnosticaService);
@@ -348,7 +348,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 	}
 
 	@Override
-	public InformazioniProtocolloTransazione find(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException,DiagnosticaNotFoundException,DiagnosticaMultipleResultException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public InformazioniProtocolloTransazione find(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException_Exception,DiagnosticaNotFoundException_Exception,DiagnosticaMultipleResultException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverDiagnostica(this.diagnosticaService);
@@ -392,7 +392,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 	}
 
 	@Override
-	public long count(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public long count(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverDiagnostica(this.diagnosticaService);
@@ -419,7 +419,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 	}
 
 	@Override
-	public InformazioniProtocolloTransazione get(org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione id) throws DiagnosticaServiceException,DiagnosticaNotFoundException,DiagnosticaMultipleResultException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public InformazioniProtocolloTransazione get(org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione id) throws DiagnosticaServiceException_Exception,DiagnosticaNotFoundException_Exception,DiagnosticaMultipleResultException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			if(id.getIdentificativoRichiesta()==null){
@@ -477,7 +477,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 	}
 	
 	@Override
-	public boolean exists(org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione id) throws DiagnosticaServiceException,DiagnosticaMultipleResultException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public boolean exists(org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione id) throws DiagnosticaServiceException_Exception,DiagnosticaMultipleResultException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			if(id.getIdentificativoRichiesta()==null){
@@ -523,7 +523,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 	}
 
 	@Override
-	public List<org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione> findAllIds(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException,DiagnosticaNotImplementedException,DiagnosticaNotAuthorizedException {
+	public List<org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione> findAllIds(SearchFilterInformazioniProtocolloTransazione filter) throws DiagnosticaServiceException_Exception,DiagnosticaNotImplementedException_Exception,DiagnosticaNotAuthorizedException_Exception {
 		try{
 		
 			checkInitDriverDiagnostica(this.diagnosticaService);
