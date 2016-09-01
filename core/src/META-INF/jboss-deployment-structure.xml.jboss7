@@ -16,7 +16,12 @@
 		<exclusions>
 			<module name="org.slf4j" />
 			<module name="org.apache.log4j" />
-			<module name="org.apache.commons.logging"/>
+                        <!--
+                                Se si elimina commons logging, durante lo shutdown jboss ottiene un errore
+                                ClassCastException: org.apache.logging.log4j.simple.SimpleLoggerContext cannot be cast to
+                                                    org.apache.logging.log4j.core.LoggerContext
+                        -->
+                        <!-- <module name="org.apache.commons.logging"/> -->
 		</exclusions>
 	</deployment>
 	<sub-deployment name="OpenSPCoop2.war">
