@@ -29,12 +29,15 @@
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-frontend-jaxws-3.1.7.jar" />
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-security-3.1.7.jar" />
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-transports-http-3.1.7.jar"/>
+	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-transports-http-jetty-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-wsdl-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-ws-policy-3.1.7.jar" />
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-rt-ws-security-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-common-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-validator-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-wsdlto-core-3.1.7.jar"/>
+	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-wsdlto-databinding-jaxb-3.1.7.jar"/>
+	<archive path="/op2_2.3.dev/lib/cxf/cxf-tools-wsdlto-frontend-jaxws-3.1.7.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/asm-5.0.4.jar"/>
 	<archive path="/op2_2.3.dev/lib/cxf/javax.ws.rs-api-2.0.1.jar"/>
         <archive path="/op2_2.3.dev/lib/cxf/stax2-api-3.1.4.jar"/>
@@ -161,6 +164,7 @@
 	<archive path="/op2_2.3.dev/lib/shared/saxon9he-7-0-7.jar"/>
 	<archive path="/op2_2.3.dev/lib/shared/saxon9-xqj-7-0-7.jar"/>
 	<archive path="/op2_2.3.dev/lib/shared/xmlunit-1.6.jar"/>
+	<archive path="/op2_2.3.dev/lib/shared/guava-19.0.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_2.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_2.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
