@@ -38,7 +38,7 @@ openspcoop2.requests=1
 #openspcoop2.durationInSeconds=30
 
 # Client side socket timeout (in ms)
-openspcoop2.socketTimeout=60
+openspcoop2.socketTimeout=60000
 
 # ChunkingMode
 # NOTA: Se vengono utilizzati attachments e/o buste viene sempre generato l'header Content-Length

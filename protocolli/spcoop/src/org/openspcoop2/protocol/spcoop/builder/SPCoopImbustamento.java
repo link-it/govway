@@ -39,7 +39,9 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
 import org.slf4j.Logger;
+import org.w3c.dom.Node;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.SOAPVersion;
@@ -866,12 +868,26 @@ public class SPCoopImbustamento {
 //					Reader stringReader = new StringReader(xmlBody);
 				//Source streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(body)); FIX: StreamSource instances may only be used once.
 				//System.out.println("BODY IS :["+new String(body)+"] ["+body.length+"]");
+				boolean bodyWithMultiRootElement = false;
 				if(body==null || body.length==0){
 					body = SPCoopCostanti.XML_MANIFEST_EGOV_EMPTY_BODY.getBytes();
 					//System.out.println("PATCH ["+new String(body)+"]");
 				}
-				Source streamSource = new DOMSource(this.xmlUtils.newElement(body));
-				ap.setContent(streamSource, "text/xml");
+				else{
+					List<Node> listNode = SoapUtils.getNotEmptyChildNodes(msg.getSOAPPart().getEnvelope().getBody(), false);
+					if(listNode!=null && listNode.size()>1){
+						//System.out.println("MULTI ELEMENT: "+listNode.size());
+						bodyWithMultiRootElement = true;
+					}
+				}
+				if(bodyWithMultiRootElement){
+					//System.out.println("OCTECT");
+					ap.setContent(body, Costanti.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+				}else{
+					//System.out.println("XML");
+					Source streamSource = new DOMSource(this.xmlUtils.newElement(body));
+					ap.setContent(streamSource, "text/xml");
+				}
 				ap.setContentId(msg.createContentID(SPCoopCostanti.NAMESPACE_EGOV));
 				//ap.setContentLocation("provaOpenSPCoop"); // Test Sbustamento con ContentLocation
 				msg.addAttachmentPart(ap);
