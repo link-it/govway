@@ -34,6 +34,7 @@ set ANTINSTALLER_LIBRARIES=%LIBRARIES%\antinstaller
 
 REM # Installer from command line classpath
 set CLASSPATH=%LIBRARIES%\shared\xercesImpl-2.11.0.jar
+set CLASSPATH=%LIBRARIES%\shared\xml-apis-2.11.0.jar
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\xml-apis_antinstaller0.8b.jar
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-installer-0.8b.jar
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ai-icons-eclipse_antinstaller0.8b.jar

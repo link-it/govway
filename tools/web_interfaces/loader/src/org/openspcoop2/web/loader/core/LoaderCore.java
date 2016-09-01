@@ -94,7 +94,7 @@ public class LoaderCore{
 	private String nomePdDOperativaCtrlstatSinglePdD = null;
 	public LoaderCore() throws Exception{
 		// Log4J caricato tramite LoaderStartup
-		LoaderCore.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
+		LoaderCore.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
 
 		this.initCore();
 

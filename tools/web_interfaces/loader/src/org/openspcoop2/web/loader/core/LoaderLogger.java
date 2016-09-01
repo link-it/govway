@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.CollectionProperties;
@@ -44,7 +45,7 @@ import org.openspcoop2.utils.resources.PropertiesUtilities;
  */
 public class LoaderLogger {
 
-	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties) throws IOException, UtilsException{
+	public static void initialize(Logger logConsole,String rootDirectory,Properties objectProperties,boolean appendActualConfiguration) throws IOException, UtilsException{
 
 		// Originale
 		java.util.Properties loggerProperties = new java.util.Properties();
@@ -101,7 +102,27 @@ public class LoaderLogger {
 			}
 		}
 
-		LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+		if(appendActualConfiguration){
+			System.out.println("[LoaderConsole] Attendo inizializzazione PdDOpenSPCoop prima di appender la configurazione Log4J ...");
+			int i=0;
+			int limit = 60;
+			while(OpenSPCoop2Startup.initialize==false && i<limit){
+				try{
+					Thread.sleep(1000);
+				}catch(Exception e){}
+				i++;
+				if(i%10==0){
+					System.out.println("[LoaderConsole] Attendo inizializzazione PdDOpenSPCoop ...");
+				}
+			}
+			System.out.println("[LoaderConsole] Configurazione Log4J ...");
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
+			System.out.println("[LoaderConsole] Configurazione Log4J aggiunta");
+		}
+		else{
+			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+		}
+		
 
 
 	}

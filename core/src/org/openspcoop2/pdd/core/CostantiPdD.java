@@ -42,9 +42,9 @@ public class CostantiPdD {
     /* ********  F I E L D S    S T A T I C    P U B L I C  ******** */
 
     /** Versione beta, es: "b1" */
-    public static final String OPENSPCOOP2_BETA = ".1";
+    public static final String OPENSPCOOP2_BETA = "b1";
     /** Versione di OpenSPCoop */
-    public static final String OPENSPCOOP2_VERSION = "2.2"+CostantiPdD.OPENSPCOOP2_BETA;
+    public static final String OPENSPCOOP2_VERSION = "2.3"+CostantiPdD.OPENSPCOOP2_BETA;
     /** Versione di OpenSPCoop */
     public static final String OPENSPCOOP2_PRODUCT = "OpenSPCoop2";
     /** Versione di OpenSPCoop (User-Agent) */

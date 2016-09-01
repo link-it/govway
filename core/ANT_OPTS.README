@@ -1,4 +1,4 @@
 Il processo di build richiede memoria (soprattutto per quanto riguarda il PermGen space).
 Se si ottiene un out of memory regolare la memoria fornita ad ant impostando la seguente variabile di ambiente:
 
-export ANT_OPTS="-Xmx1000m -XX:MaxPermSize=512m"
+export ANT_OPTS="-Xmx1024m -XX:MaxPermSize=1024m"

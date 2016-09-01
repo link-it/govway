@@ -1,4 +1,6 @@
-AS_VERSION=jboss4,jboss5,jboss6,jboss7,wildfly8,wildfly9,wildfly10,tomcat6
+#AS_VERSION=jboss4,jboss5,jboss6,jboss7,wildfly8,wildfly9,wildfly10,tomcat6
+# Gli application server jboss4, jboss5 e jboss6 sono stati deprecati dalla versione 2.3
+AS_VERSION=jboss7,wildfly8,wildfly9,wildfly10,tomcat6
 # Per tomcat qualsiasi versione venga generata è uguale.
 # L'importante che anche il setup associo alla label abbia la solita versione
 
@@ -16,7 +18,7 @@ SPCOOP_BACKWARD_COMPATIBILITY=${ROOT}/protocolli/spcoop/tools/backward_compatibi
 if [ ! -f ${CORE}/local_env.xml  ]
 then
 	cp ${CORE}/local_env.xml.template ${CORE}/local_env.xml
-	perl -pi -e "s#jboss/wildfly/tomcat#jboss5#g" ${CORE}/local_env.xml;
+	perl -pi -e "s#jboss/wildfly/tomcat#jboss7#g" ${CORE}/local_env.xml;
 fi
 
 # WebLib-MVC

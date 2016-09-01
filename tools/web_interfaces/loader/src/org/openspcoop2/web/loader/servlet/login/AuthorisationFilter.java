@@ -71,7 +71,7 @@ public final class AuthorisationFilter implements Filter {
 		GeneralHelper generalHelper = new GeneralHelper(session);
 
 		try {
-			String contextPath = request.getContextPath(); // '/openspcoop2_loader'
+			String contextPath = request.getContextPath(); 
 			
 			// Non faccio il filtro sulla pagina di login e sulle immagini
 			String urlRichiesta = request.getRequestURI();

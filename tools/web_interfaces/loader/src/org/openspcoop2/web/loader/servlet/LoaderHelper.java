@@ -75,7 +75,7 @@ public class LoaderHelper {
 
 		this.session = session;
 
-		this.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
+		this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
 		try {
 			this.core = new LoaderCore();
 		} catch (Exception e) {

@@ -64,10 +64,10 @@ public class GeneralHelper {
 		try {
 			this.loaderCore = new LoaderCore();
 		} catch (Exception e) {
-			this.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
+			this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
 			this.log.error("Exception: " + e.getMessage(), e);
 		}
-		this.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");	
+		this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");	
 	}
 
 	

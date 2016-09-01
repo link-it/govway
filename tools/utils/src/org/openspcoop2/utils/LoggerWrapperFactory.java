@@ -335,14 +335,16 @@ public class LoggerWrapperFactory {
 	private static void newConfiguration(LoggerContext context, URI configUri) throws Exception{
 		context.setConfigLocation(configUri);
 	}
-	private static void appendConfiguration(LoggerContext context, URI configUri) throws Exception{
+	private static synchronized void appendConfiguration(LoggerContext context, URI configUri) throws Exception{
+		
+		//System.out.println("APPEND LOG ["+configUri+"]");
 		
 		Configuration actualConfiguration = context.getConfiguration();
 		
 		ConfigurationFactory configurationFactory = ConfigurationFactory.getInstance();
 		Configuration appendConfiguration = configurationFactory.getConfiguration(actualConfiguration.getName(), configUri);
 		appendConfiguration.initialize();
-				
+		
 		Map<String, Appender> mapAppenders = appendConfiguration.getAppenders();
 		if(mapAppenders.size()>0){
 			Iterator<String> appenderNameIterator = mapAppenders.keySet().iterator();
@@ -350,7 +352,7 @@ public class LoggerWrapperFactory {
 				String appenderName = (String) appenderNameIterator.next();
 				Appender appender = mapAppenders.get(appenderName);
 				appender.start();
-				//System.out.println("ADDDDDDDDDDDDDDDDDD APPENDER ["+appenderName+"]");
+				//System.out.println("ADD APPENDER ["+appenderName+"]");
 				actualConfiguration.addAppender(appender);
 			}
 		}
@@ -359,12 +361,14 @@ public class LoggerWrapperFactory {
 		if(mapLoggers.size()>0){
 			Iterator<String> loggerNameIterator = mapLoggers.keySet().iterator();
 			while (loggerNameIterator.hasNext()) {
-				String loggerName = (String) loggerNameIterator.next();
+				String loggerName = (String) loggerNameIterator.next();				
 				LoggerConfig logger = mapLoggers.get(loggerName);
-				//System.out.println("ADDDDDDDDDDDDDDDDDD LOGGER ["+loggerName+"]");
+				//System.out.println("ADD LOGGER ["+loggerName+"]");
 				actualConfiguration.addLogger(loggerName, logger);
 			}
 		}
+		
+		//System.out.println("APPEND LOG ["+configUri+"] FINE");
 		
 	}
 

@@ -24,13 +24,13 @@
 	<target name="prepare_software" depends="clean_prepare,init_prepare">
 		<antcall target="prepare_shared_jar_setup" />
 		<antcall target="prepare_pdd_setup" />
-		<antcall target="prepare_sql_setup" />
 		<antcall target="prepare_spcoop_setup" />
 		<antcall target="prepare_sdi_setup" />
 		<antcall target="prepare_trasparente_setup" />
 		<antcall target="prepare_loader_setup" />
 		<antcall target="prepare_pddConsole_setup" />
 		<antcall target="prepare_backwardCompatibility_setup" />
+		<antcall target="prepare_sql_setup" />
 		<!-- Elimina i openspcoop2_jars singoli creati -->
 		<delete dir="${deploy_sw_openspcoop2_jars}"/>
 	</target>
@@ -54,8 +54,11 @@
 			<include name="saaj/*"/>
 			<include name="javax/*"/>
 			<include name="jibx/*"/>
+			<include name="jminix/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
+			<include name="opensaml/*"/>
+			<include name="wss4j/*"/>
 			<include name="shared/*"/>
 			<include name="soapbox/*"/>
 			<include name="spring/*"/>

@@ -91,6 +91,7 @@ public class InitListener implements ServletContextListener {
 		String confDir = null;
 		String confPropertyName = null;
 		String confLocalPathPrefix = null;
+		boolean appendActualConfiguration = false;
 		try{
 			InputStream is = InitListener.class.getResourceAsStream("/console.properties");
 			try{
@@ -112,6 +113,11 @@ public class InitListener implements ServletContextListener {
 					if(confLocalPathPrefix!=null){
 						confLocalPathPrefix = confLocalPathPrefix.trim();
 					}
+					
+					String tmpAppendActualConfiguration = p.getProperty("appendLog4j");
+					if(tmpAppendActualConfiguration!=null){
+						appendActualConfiguration = "true".equalsIgnoreCase(tmpAppendActualConfiguration.trim());
+					}
 				}
 			}finally{
 				try{
@@ -124,7 +130,7 @@ public class InitListener implements ServletContextListener {
 		}catch(Exception e){}
 				
 		try{
-			ControlStationLogger.initialize(InitListener.log, confDir, confPropertyName, confLocalPathPrefix, null);
+			ControlStationLogger.initialize(InitListener.log, confDir, confPropertyName, confLocalPathPrefix, null, appendActualConfiguration);
 			InitListener.log = ControlStationLogger.getPddConsoleCoreLogger();
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);

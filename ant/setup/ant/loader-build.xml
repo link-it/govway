@@ -80,6 +80,13 @@
 			</else>
 		</if>
 		
+		<!-- LOG4J APPEND -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="appendLog4j"/>
+			<param name="value" value="true"/>
+		</antcall>
+		
 		<!-- OTHER -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

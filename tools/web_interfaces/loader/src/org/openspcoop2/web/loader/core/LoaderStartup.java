@@ -53,9 +53,6 @@ public class LoaderStartup implements ServletContextListener {
 	//private static String IDMODULO = "ControlStation";
 	private static Logger log = null;
 	private static boolean initialized = false;
-	static {
-		LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
-	}
 
 	public static boolean isInitialized() {
 		return LoaderStartup.initialized;
@@ -63,6 +60,9 @@ public class LoaderStartup implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
+		if(LoaderStartup.log==null){
+			LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
+		}
 		LoaderStartup.log.info("Undeploy loader in corso...");
 
 		LoaderStartup.initialized = false;
@@ -75,15 +75,22 @@ public class LoaderStartup implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent sce) {
 		
 		String confDir = null;
+		boolean appendActualConfiguration = false;
 		try{
 			InputStream is = LoaderStartup.class.getResourceAsStream("/loader.properties");
 			try{
 				if(is!=null){
 					Properties p = new Properties();
 					p.load(is);
+					
 					confDir = p.getProperty("confDirectory");
 					if(confDir!=null){
 						confDir = confDir.trim();
+					}
+					
+					String tmpAppendActualConfiguration = p.getProperty("appendLog4j");
+					if(tmpAppendActualConfiguration!=null){
+						appendActualConfiguration = "true".equalsIgnoreCase(tmpAppendActualConfiguration.trim());
 					}
 				}
 			}finally{
@@ -97,8 +104,8 @@ public class LoaderStartup implements ServletContextListener {
 		}catch(Exception e){}
 		
 		try{
-			LoaderLogger.initialize(LoaderStartup.log, confDir, null);
-			LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2_loader");
+			LoaderLogger.initialize(LoaderStartup.log, confDir, null, appendActualConfiguration);
+			LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}
