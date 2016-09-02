@@ -468,7 +468,7 @@ public class TunnelSOAP {
 		
 	}
 	@DataProvider (name="SincronoMultipartRelatedMIME")
-	public Object[][]testSincronoMultipartRelatedMIME()throws Exception{
+	public Object[][]testSincronoMultipartRelatedMIME()throws Exception{		
 		String id=this.repositorySincronoMultipartRelatedMIME.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	

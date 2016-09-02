@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.services;
 
 import java.rmi.RemoteException;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -425,6 +426,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// MessageFactory
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
 				OpenSPCoop2MessageFactory.initMessageFactory(true);
+				
+				// BouncyCastleProvider
+				if(propertiesReader.isLoadBouncyCastle()){
+					Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+					OpenSPCoop2Startup.log.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				}
 				
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));

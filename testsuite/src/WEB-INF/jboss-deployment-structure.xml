@@ -17,6 +17,9 @@
     	</exclusions>
     </deployment>
     <module name="deployment.custom">
+        <resources>
+                <resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-155.jar" use-physical-code-source="true"/>
+        </resources>
         <dependencies>
             <module name="javaee.api" export="true">
                 <imports>

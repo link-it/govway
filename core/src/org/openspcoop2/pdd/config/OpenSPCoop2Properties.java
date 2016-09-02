@@ -1405,6 +1405,7 @@ public class OpenSPCoop2Properties {
 			}
 			
 			// MessageSecurity
+			this.isLoadBouncyCastle();
 			this.isGenerazioneActorDefault(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.getActorDefault(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.getPrefixWsuId();
@@ -8980,6 +8981,29 @@ public class OpenSPCoop2Properties {
 
 
 	/* ----------- MessageSecurity --------------------- */
+	private static Boolean isLoadBouncyCastle = null;
+	public boolean isLoadBouncyCastle(){
+
+		if(OpenSPCoop2Properties.isLoadBouncyCastle==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.security.addBouncyCastleProvider"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isLoadBouncyCastle = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.security.addBouncyCastleProvider' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isLoadBouncyCastle = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.security.addBouncyCastleProvider' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isLoadBouncyCastle = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isLoadBouncyCastle;
+	}
 	/**
 	 * Indicazione se generare un actor di default
 	 *   

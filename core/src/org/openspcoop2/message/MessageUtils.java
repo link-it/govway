@@ -21,8 +21,9 @@
 
 package org.openspcoop2.message;
 
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -354,45 +355,90 @@ public class MessageUtils {
 	}
 	
 	public static String dumpAttachment(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
-		javax.activation.DataHandler dh= ap.getDataHandler();  
-    	java.io.InputStream inputDH = dh.getInputStream();
-		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-    	byte [] readB = new byte[8192];
-		int readByte = 0;
-		while((readByte = inputDH.read(readB))!= -1)
-			bout.write(readB,0,readByte);
-		inputDH.close();
-		bout.flush();
-		bout.close();
+		java.io.ByteArrayOutputStream bout = null;
+		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
+		//java.io.InputStream inputDH = dh.getInputStream(); NON FUNZIONA CON JBOSS7 e JAVA7 e imbustamentoSOAP con GestioneManifest e rootElementMaggioreUno (tipo: application/octet-stream)
+		Object o = ap.getDataHandler().getContent();
+		String s = null;
+		if(o!=null){
+			if(o instanceof byte[]){
+				byte[] b = (byte[]) o;
+				bout = new ByteArrayOutputStream();
+				bout.write(b);
+				bout.flush();
+				bout.close();
+			}
+			else if(o instanceof InputStream){
+				InputStream is = (InputStream) o;
+				bout = new java.io.ByteArrayOutputStream();
+		    	byte [] readB = new byte[8192];
+				int readByte = 0;
+				while((readByte = is.read(readB))!= -1)
+					bout.write(readB,0,readByte);
+				is.close();
+				bout.flush();
+				bout.close();
+			}
+			else if(o instanceof String){
+				s = (String) o;
+				bout = new ByteArrayOutputStream();
+				bout.write(s.getBytes());
+				bout.flush();
+				bout.close();
+			}
+			else{
+				// Provo con codiceOriginale ma in jboss non funziona sempre
+				javax.activation.DataHandler dh= ap.getDataHandler();  
+		    	java.io.InputStream inputDH = dh.getInputStream();
+				bout = new java.io.ByteArrayOutputStream();
+		    	byte [] readB = new byte[8192];
+				int readByte = 0;
+				while((readByte = inputDH.read(readB))!= -1)
+					bout.write(readB,0,readByte);
+				inputDH.close();
+				bout.flush();
+				bout.close();		
+			}
+		}
+		else{
+			// Provo con codiceOriginale ma in jboss non funziona sempre
+			javax.activation.DataHandler dh= ap.getDataHandler();  
+	    	java.io.InputStream inputDH = dh.getInputStream();
+			bout = new java.io.ByteArrayOutputStream();
+	    	byte [] readB = new byte[8192];
+			int readByte = 0;
+			while((readByte = inputDH.read(readB))!= -1)
+				bout.write(readB,0,readByte);
+			inputDH.close();
+			bout.flush();
+			bout.close();		
+		}
 		// Per non perdere quanto letto
-		if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
+		if(Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP.equals(ap.getContentType())){
+			 // reimposto handler
+			 MessageUtils.rebuildAttachmentAsByteArray(msg, ap);
+		}
+		else if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
 			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
 			// In axiom l'update del data handler non funziona
-			msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
+			if(ap.getContentType()!=null && ap.getContentType().startsWith("text/plain")){
+				if(s!=null){
+					msg.updateAttachmentPart(ap, s, ap.getContentType());
+				}
+				else{
+					msg.updateAttachmentPart(ap, bout.toString(),ap.getContentType());
+				}
+			}else{
+				msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
+			}
 		}
-		return bout.toString();
-	}
-	
-	public static byte[] toByteArrayAttachment(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
-		javax.activation.DataHandler dh= ap.getDataHandler();  
-    	java.io.InputStream inputDH = dh.getInputStream();
-		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-    	byte [] readB = new byte[8192];
-		int readByte = 0;
-		while((readByte = inputDH.read(readB))!= -1)
-			bout.write(readB,0,readByte);
-		inputDH.close();
-		bout.flush();
-		bout.close();
-		// Per non perdere quanto letto
-		if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
-			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
-			// In axiom l'update del data handler non funziona
-			msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
+		if(s!=null){
+			return s;
+		}else{
+			return bout.toString();
 		}
-		return bout.toByteArray();
 	}
-	
+		
 	private static void rebuildAttachmentAsByteArray(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
 		javax.activation.DataHandler dh= ap.getDataHandler();  
     	java.io.InputStream inputDH = dh.getInputStream();
@@ -408,20 +454,7 @@ public class MessageUtils {
 		// In axiom l'update del data handler non funziona
 		msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
 	}
-	
-	protected String dumpContenutoXML(javax.xml.transform.stream.StreamSource xml) throws SOAPException,IOException{
-		java.io.InputStream inputXML = xml.getInputStream();
-		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-    	byte [] readB = new byte[8192];
-		int readByte = 0;
-		while((readByte = inputXML.read(readB))!= -1)
-			bout.write(readB,0,readByte);
-		inputXML.close();
-		bout.flush();
-		bout.close();
-		xml.setInputStream(new ByteArrayInputStream(bout.toByteArray()));
-		return bout.toString();
-	}
+
 	
 		
 	// Parse-Exception

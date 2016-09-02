@@ -129,6 +129,7 @@ Requisiti globali:
 
 Batterie di test che verificano la normale gestione del protocollo e-Gov
 - 'ProfiliDiCollaborazione' vengono provati i quattro profili di collaborazione oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico
+  (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - 'PortTypes' vengono provati i quattro profili di collaborazione oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico
               configurati tramite accordi con port types e operation
 - 'BusteEGovCampiDuplicati' vengono generate buste SPCoop che contengono campi duplicati, e viene controllato che la PdD gestisca l'errore
@@ -151,6 +152,7 @@ Le seguenti batterie di test, coinvolgono il profilo di gestione dettato dalle L
 
 Batterie di test che verificano il servizio IntegrationManager per quanto concerne le funzioni 'PD' e 'MessageBox'
 - 'IntegrationManager' viene testata l'interfaccia di IntegrationManager
+  (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 
 ** Integrazione con i servizi applicativi **

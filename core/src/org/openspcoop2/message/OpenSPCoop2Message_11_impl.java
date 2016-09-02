@@ -242,6 +242,11 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 	}
 	
 	@Override
+	public void updateAttachmentPart(AttachmentPart ap,String content,String contentType){
+		this.updateAttachmentPart(ap, new DataHandler(content,contentType));
+	}
+	
+	@Override
 	public void updateAttachmentPart(AttachmentPart ap,DataHandler dh){
 		ap.setDataHandler(dh);
 	}
