@@ -229,6 +229,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="build_openspcoop2_all" >
@@ -236,6 +237,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 				
 		<antcall target="compile_spcoop_plugin" >
@@ -243,6 +245,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_spcoop" value="${protocolli.spcoop.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_backwardCompatibility" >
@@ -250,6 +253,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_backwardCompatibility" value="${protocolli.spcoop.backwardCompatibility.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 
 		<antcall target="compile_trasparente_plugin" >
@@ -257,6 +261,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_trasparente" value="${protocolli.trasparente.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_sdi_plugin" >
@@ -264,6 +269,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_sdi" value="${protocolli.sdi.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_users" >
@@ -271,6 +277,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_users" value="${web.lib.users.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_mvc" >
@@ -279,6 +286,7 @@
 			<param name="src_mvc" value="${web.lib.mvc.dir}/src"/>
 			<param name="src_users" value="${web.lib.users.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_audit" >
@@ -288,6 +296,7 @@
 			<param name="src_mvc" value="${web.lib.mvc.dir}/src"/>
 			<param name="src_users" value="${web.lib.users.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_queue" >
@@ -295,6 +304,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_queue" value="${web.lib.queue.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_openspcoop2_pddConsole" >
@@ -302,6 +312,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_pddConsole" value="${web.pddConsole.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 		
 		<antcall target="compile_openspcoop2_loaderConsole" >
@@ -309,6 +320,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_loaderConsole" value="${web.pddLoader.dir}/src"/>
 			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
 		</antcall>
 
 		<delete dir="${build}"/>		
