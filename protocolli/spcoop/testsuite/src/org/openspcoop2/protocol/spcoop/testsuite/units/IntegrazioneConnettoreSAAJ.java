@@ -61,8 +61,8 @@ import org.testng.annotations.Test;
  * Test sulle informazioni di integrazione
  * 
  * @author Andi Rexha (rexha@openspcoop.org)
- * @author $Author: apoli $
- * @version $Rev: 11424 $, $Date: 2016-01-26 10:59:24 +0100 (Tue, 26 Jan 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class IntegrazioneConnettoreSAAJ {
 

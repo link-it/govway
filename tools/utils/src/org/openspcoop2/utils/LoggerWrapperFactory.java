@@ -56,8 +56,8 @@ import org.apache.logging.log4j.core.config.yaml.YamlConfigurationFactory;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 12095 $, $Date: 2016-07-27 11:35:23 +0200 (Wed, 27 Jul 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class LoggerWrapperFactory {
 

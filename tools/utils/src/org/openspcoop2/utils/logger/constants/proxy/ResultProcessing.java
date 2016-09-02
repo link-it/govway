@@ -26,8 +26,8 @@ import java.io.Serializable;
  * ResultProcessing
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 11948 $, $Date: 2016-05-11 14:43:26 +0200 (Wed, 11 May 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public enum ResultProcessing implements Serializable {
 
