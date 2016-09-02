@@ -33,7 +33,7 @@
 		</not>
 		<then>
 			  <copy file="${core.dir}/local_env.xml.template" tofile="${core.dir}/local_env.xml"/>
-			  <replace file="${core.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			  <replace file="${core.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${core.dir}/build.xml" />
@@ -47,7 +47,7 @@
 		</not>
 		<then>
 			<copy file="${protocolli.spcoop.dir}/local_env.xml.template" tofile="${protocolli.spcoop.dir}/local_env.xml"/>
-			<replace file="${protocolli.spcoop.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${protocolli.spcoop.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${protocolli.spcoop.dir}/build.xml" />
@@ -61,7 +61,7 @@
 		</not>
 		<then>
 			<copy file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml.template" tofile="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml"/>
-			<replace file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${protocolli.spcoop.backwardCompatibility.dir}/build.xml" />
@@ -75,7 +75,7 @@
 		</not>
 		<then>
 			<copy file="${protocolli.trasparente.dir}/local_env.xml.template" tofile="${protocolli.trasparente.dir}/local_env.xml"/>
-			<replace file="${protocolli.trasparente.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${protocolli.trasparente.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${protocolli.trasparente.dir}/build.xml" />
@@ -89,7 +89,7 @@
 		</not>
 		<then>
 			<copy file="${protocolli.sdi.dir}/local_env.xml.template" tofile="${protocolli.sdi.dir}/local_env.xml"/>
-			<replace file="${protocolli.sdi.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${protocolli.sdi.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${protocolli.sdi.dir}/build.xml" />
@@ -104,7 +104,7 @@
 		</not>
 		<then>
 			<copy file="${web.lib.users.dir}/local_env.xml.template" tofile="${web.lib.users.dir}/local_env.xml"/>
-			<replace file="${web.lib.users.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${web.lib.users.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${web.lib.users.dir}/build.xml" />
@@ -119,7 +119,7 @@
 		</not>
 		<then>
 			<copy file="${web.lib.mvc.dir}/local_env.xml.template" tofile="${web.lib.mvc.dir}/local_env.xml"/>
-			<replace file="${web.lib.mvc.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${web.lib.mvc.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${web.lib.mvc.dir}/build.xml" />
@@ -134,7 +134,7 @@
 		</not>
 		<then>
 			<copy file="${web.lib.audit.dir}/local_env.xml.template" tofile="${web.lib.audit.dir}/local_env.xml"/>
-			<replace file="${web.lib.audit.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${web.lib.audit.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${web.lib.audit.dir}/build.xml" />
@@ -149,7 +149,7 @@
 		</not>
 		<then>
 			<copy file="${web.lib.queue.dir}/local_env.xml.template" tofile="${web.lib.queue.dir}/local_env.xml"/>
-			<replace file="${web.lib.queue.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${web.lib.queue.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${web.lib.queue.dir}/build.xml" />
@@ -163,7 +163,7 @@
 		</not>
 		<then>
 			<copy file="${web.pddConsole.dir}/local_env.xml.template" tofile="${web.pddConsole.dir}/local_env.xml"/>
-			<replace file="${web.pddConsole.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${web.pddConsole.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${web.pddConsole.dir}/build.xml" />
@@ -177,7 +177,7 @@
 		</not>
 		<then>
 			<copy file="${web.pddLoader.dir}/local_env.xml.template" tofile="${web.pddLoader.dir}/local_env.xml"/>
-			<replace file="${web.pddLoader.dir}/local_env.xml" token="jboss/tomcat" value="${as}"/>
+			<replace file="${web.pddLoader.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${web.pddLoader.dir}/build.xml" />
