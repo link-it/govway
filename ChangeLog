@@ -1,3 +1,229 @@
+2016-09-02  Andrea Poli <apoli@link.it>
+
+	* [Librerie Terze Parte]
+	Aggiunta funzionalità OP-450
+	Aggiornamento Librerie Terze Parti e Passaggio a Java 7 come requisito minimo.
+	--- Jibx ---
+	jibx-bind-1.2.3.jar -> jibx-bind-1.2.6.jar
+	jibx-run-1.2.3.jar -> jibx-run-1.2.6.jar
+	xpp3-1.2.3.jar -> xpp3-1.2.6.jar
+	bcel-5.2.jar -> bcel-6.0.jar
+	--- Commons ---
+	Aggiornati:
+	commons-beanutils-1.8.3.jar -> commons-beanutils-1.9.2.jar
+	commons-io-2.1.jar -> commons-io-2.5.jar
+	commons-net-3.0.1.jar -> commons-net-3.5.jar
+	commons-fileupload-1.2.1.jar -> commons-fileupload-1.3.2.jar
+	commons-lang3-3.1.jar -> commons-lang3-3.4.jar
+	commons-codec-1.5.jar -> commons-codec-1.10.jar
+	commons-logging-1.1.1.jar -> commons-logging-1.2.jar
+	commons-csv-1.2.jar -> commons-csv-1.4.jar
+	commons-collections-3.2.1.jar -> commons-collections-3.2.2.jar
+	Eliminati:
+	commons-httpclient-3.1.jar
+	--- Saaj ---
+	Aggiornati:
+	cxf/saaj-impl-1.3.19.jar -> saaj/saaj-impl-1.3.25.jar
+	Eliminati:
+	cxf/saaj-api-1.3.4.jar (presente all'interno di java)
+	Aggiunti:
+	saaj/stax-ex-1.7.7.jar
+	saaj/mimepull-1.9.6.jar
+	--- Cxf ---
+	Aggiornati:
+	javax.ws.rs-api-2.0.jar -> javax.ws.rs-api-2.0.1.jar
+	stax2-api-3.1.1.jar -> stax2-api-3.1.4.jar
+	woodstox-core-asl-4.2.0.jar -> woodstox-core-asl-4.4.1.jar
+	xmlschema-core-2.0.3.jar -> xmlschema-core-2.2.1.jar
+	Eliminati:
+	cxf-2.7.4.jar
+	geronimo-annotation_1.0_spec-1.1.1.jar
+	geronimo-jaxws_2.2_spec-1.1.jar
+	geronimo-stax-api_1.0_spec-1.0.1.jar
+	geronimo-ws-metadata_2.0_spec-1.1.3.jar
+	Aggiunti:
+	asm-5.0.4.jar
+	cxf-core-3.1.7.jar
+	cxf-rt-bindings-soap-3.1.7.jar
+	cxf-rt-databinding-jaxb-3.1.7.jar
+	cxf-rt-frontend-jaxws-3.1.7.jar
+	cxf-rt-frontend-simple-3.1.7.jar
+	cxf-rt-security-3.1.7.jar
+	cxf-rt-transports-http-3.1.7.jar
+	cxf-rt-transports-http-jetty-3.1.7.jar
+	cxf-rt-ws-policy-3.1.7.jar
+	cxf-rt-ws-security-3.1.7.jar
+	cxf-rt-wsdl-3.1.7.jar
+	cxf-tools-common-3.1.7.jar
+	cxf-tools-validator-3.1.7.jar
+	cxf-tools-wsdlto-core-3.1.7.jar
+	cxf-tools-wsdlto-databinding-jaxb-3.1.7.jar
+	cxf-tools-wsdlto-frontend-jaxws-3.1.7.jar
+	--- HttpCore ---
+	Aggiornati:
+	httpasyncclient-4.0-beta3.jar -> httpasyncclient-4.1.2.jar
+	httpclient-4.2.5.jar -> httpclient-4.5.2.jar
+	httpclient-cache-4.2.5.jar -> httpclient-cache-4.5.2.jar
+	httpcore-4.2.4.jar -> httpcore-4.4.5.jar
+	httpcore-ab-4.2.4.jar -> httpcore-ab-4.4.5.jar
+	httpcore-nio-4.2.4.jar -> httpcore-nio-4.4.5.jar
+	httpmime-4.2.5.jar -> httpmime-4.5.2.jar
+	Aggiunti:
+	fluent-hc-4.5.2.jar
+	httpasyncclient-cache-4.1.2.jar
+	httpclient-win-4.5.2.jar
+	--- Jax ---
+	Aggiornati:
+	jaxb-api-2.2.6.jar -> jaxb-api-2.2.11.jar
+	jaxb-impl-2.2.5.1.jar -> jaxb-impl-2.2.11.jar
+	jaxb-xjc-2.2.5.1.jar -> jaxb-xjc-2.2.11.jar
+	Aggiunti:
+	jaxb-core-2.2.11.jar
+	jaxws-api-2.2.11.jar
+	jaxws-jsr181-api-2.2.11.jar
+	--- Jetty ---
+	Aggiornati:
+	jetty-continuation-8.1.7.v20120910.jar -> jetty-continuation-9.2.18.v20160721.jar
+	jetty/jetty-http-8.1.7.v20120910.jar -> jetty-http-9.2.18.v20160721.jar
+	jetty-io-8.1.7.v20120910.jar -> jetty-io-9.2.18.v20160721.jar
+	jetty-server-8.1.7.v20120910.jar -> jetty-server-9.2.18.v20160721.jar
+	jetty-util-8.1.7.v20120910.jar -> jetty-util-9.2.18.v20160721.jar
+	Aggiunti:
+	jetty-security-9.2.18.v20160721.jar
+	--- Jminix ---
+	Aggiornati:
+	jminix-1.1.0.jar -> jminix-1.2.0.jar
+	org.restlet-1.1.5.jar -> org.restlet-2.1.4.jar
+	org.restlet.ext.velocity-1.1.5.jar -> org.restlet.ext.velocity-2.1.4.jar
+	Aggiunti:
+	jminix-1.2.0-standalone.jar
+	org.restlet.ext.servlet-2.1.4.jar
+	Eliminati:
+	com.noelios.restlet-1.1.5.jar
+	om.noelios.restlet.ext.servlet-1.1.5.jar
+	com.noelios.restlet.ext.simple-1.1.5.jar
+	org.simpleframework-3.1.3.jar
+	--- Lucene ---
+	lucene-analyzers-common-4.7.0.jar -> lucene-analyzers-common-6.1.0.jar
+	lucene-codecs-4.7.0.jar -> lucene-codecs-6.1.0.jar
+	lucene-core-4.7.0.jar -> lucene-core-6.1.0.jar
+	lucene-misc-4.7.0.jar -> lucene-misc-6.1.0.jar
+	lucene-queries-4.7.0.jar -> lucene-queries-6.1.0.jar
+	lucene-suggest-4.7.0.jar -> lucene-suggest-6.1.0.jar
+	--- OpenSAML ---
+	Aggiunti:
+	opensaml-core-3.2.0.jar
+	opensaml-messaging-api-3.2.0.jar
+	opensaml-messaging-impl-3.2.0.jar
+	opensaml-profile-api-3.2.0.jar
+	opensaml-profile-impl-3.2.0.jar
+	opensaml-saml-api-3.2.0.jar
+	opensaml-saml-impl-3.2.0.jar
+	opensaml-security-api-3.2.0.jar
+	opensaml-security-impl-3.2.0.jar
+	opensaml-soap-api-3.2.0.jar
+	opensaml-soap-impl-3.2.0.jar
+	opensaml-storage-api-3.2.0.jar
+	opensaml-storage-impl-3.2.0.jar
+	opensaml-xacml-api-3.2.0.jar
+	opensaml-xacml-impl-3.2.0.jar
+	opensaml-xacml-saml-api-3.2.0.jar
+	opensaml-xacml-saml-impl-3.2.0.jar
+	opensaml-xmlsec-api-3.2.0.jar
+	opensaml-xmlsec-impl-3.2.0.jar
+	Eliminati:
+	security/opensaml-2.5.1-1.jar
+	security/openws-1.4.2-1.jar
+	--- Reports ---
+	Aggiornati:
+	dynamicreports-core-4.0.2.jar -> dynamicreports-core-4.1.1.jar
+	itext-2.1.7.js3.jar -> itext-2.1.7.js5.jar
+	jasperreports-6.1.1.jar -> jasperreports-6.2.2.jar
+	Eliminati:
+	jdtcore-3.1.0.jar
+	--- Security ---
+	Aggiornati:
+	bcpkix-jdk15on-152.jar -> bcpkix-jdk15on-155.jar
+	bcprov-ext-jdk15on-152.jar -> bcprov-ext-jdk15on-155.jar
+	neethi-3.0.2.jar -> neethi-3.0.3.jar
+	xmlsec-1.5.4.jar -> xmlsec-2.0.7.jar
+	Aggiunti:
+	cryptacular-1.1.1.jar
+	jasypt-1.9.2.jar
+	--- Shared ---
+	Aggiornati:
+	addressing-1.0.jar -> addressing-1.1.jar
+	aspectjrt-1.7.3.jar -> aspectjrt-1.8.9.jar
+	aspectjweaver-1.7.3.jar -> aspectjweaver-1.8.9.jar
+	freemarker-2.3.23.jar -> freemarker-2.3.25.jar
+	mailapi-1.4.4.jar -> mailapi-1.5.6.jar
+	mailapi-smtp-1.4.4.jar -> mailapi-smtp-1.5.6.jar
+	saxon9-xqj.jar (7.0.1) -> saxon9-xqj-7-0-7.jar
+	saxon9he.jar (7.0.1) -> saxon9he-7-0-7.jar
+	velocity-1.6.4.jar -> velocity-1.7.jar
+	wsdl4j-1.6.2.jar -> wsdl4j-1.6.3.jar
+	xercesImpl-2.9.1.jar -> xercesImpl-2.11.0.jar
+	xom-1.2.7.jar -> xom-1.2.10.jar
+	Aggiunti:
+	xml-apis-2.11.0.jar
+	guava-19.0.jar
+	--- Spring-Framework ---
+	Aggiornati:
+	org.springframework.aop-3.1.1.RELEASE.jar -> spring-aop-4.3.2.RELEASE.jar
+	org.springframework.beans-3.1.1.RELEASE.jar -> spring-beans-4.3.2.RELEASE.jar
+	org.springframework.context-3.1.1.RELEASE.jar -> spring-context-4.3.2.RELEASE.jar
+	org.springframework.core-3.1.1.RELEASE.jar -> spring-core-4.3.2.RELEASE.jar
+	org.springframework.expression-3.1.1.RELEASE.jar -> spring-expression-4.3.2.RELEASE.jar
+	org.springframework.orm-3.1.1.RELEASE.jar -> spring-orm-4.3.2.RELEASE.jar
+	org.springframework.transaction-3.1.1.RELEASE.jar -> spring-tx-4.3.2.RELEASE.jar
+	org.springframework.web-3.1.1.RELEASE.jar -> spring-web-4.3.2.RELEASE.jar
+	Aggiunti:
+	spring-aspects-4.3.2.RELEASE.jar
+	spring-context-support-4.3.2.RELEASE.jar
+	Eliminati:
+	org.springframework.asm-3.1.1.RELEASE.jar
+	--- Spring-Security ---
+	spring-security-config-3.1.0.RELEASE.jar -> spring-security-config-4.1.3.RELEASE.jar
+	spring-security-core-3.1.0.RELEASE.jar -> spring-security-core-4.1.3.RELEASE.jar
+	spring-security-web-3.1.0.RELEASE.jar -> spring-security-web-4.1.3.RELEASE.jar
+	--- Testsuite ---
+	Aggiornati:
+	testng-6.3.jar -> testng-6.9.12.jar
+	Aggiunti:
+	jcommander-1.48.jar
+	Eliminati:
+	selenium-java-client-driver-1.0.1.jar
+	selenium-server-1.0.1.jar
+	--- WSS4j ---
+	Aggiunti:
+	wss4j-bindings-2.1.7.jar
+	wss4j-integration-2.1.7.jar
+	wss4j-policy-2.1.7.jar
+	wss4j-ws-security-common-2.1.7.jar
+	wss4j-ws-security-dom-2.1.7.jar
+	wss4j-ws-security-policy-stax-2.1.7.jar
+	wss4j-ws-security-stax-2.1.7.jar
+	Eliminati:
+	security/wss4j-1.6.10.jar
+	--- SVN ---
+	svnkit-javahl16-1.7.5-v1.jar -> svnkit-javahl16-1.8.12.jar
+	sqljet-1.1.4.jar -> sqljet-1.1.10.jar
+	svnClientAdapter.jar rinominato in svnClientAdapter-1.3.1.jar
+	sequence-library-1.0.2.jar -> sequence-library-1.0.3.jar
+	svnkit-1.7.5-v1.jar -> svnkit-1.8.12.jar
+	--- Log ---
+	Aggiornati:
+	slf4j-api-1.6.2.jar -> slf4j-api-1.7.21.jar
+	Aggiunti:
+	log4j-1.2-api-2.6.2.jar
+	log4j-api-2.6.2.jar
+	log4j-core-2.6.2.jar
+	log4j-slf4j-impl-2.6.2.jar
+	log4j-jcl-2.6.2.jar
+	Eliminati:
+	slf4j-jdk14-1.6.2.jar
+	log4j-1.2.16.jar
+
 2016-07-29  Andrea Poli <apoli@link.it>
 
 	* [Pdd, ProtocolloSPCoop, ProtocolloTrasparente]
