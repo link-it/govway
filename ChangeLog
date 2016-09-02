@@ -1,5 +1,9 @@
 2016-09-02  Andrea Poli <apoli@link.it>
 
+        * Rilasciata versione 2.3b1
+
+2016-09-02  Andrea Poli <apoli@link.it>
+
 	* [Librerie Terze Parte]
 	Aggiunta funzionalità OP-450
 	Aggiornamento Librerie Terze Parti e Passaggio a Java 7 come requisito minimo.
