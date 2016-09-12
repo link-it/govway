@@ -170,7 +170,7 @@ public class Sbustamento {
 				resourcePathBuild = resourcePathBuild.substring(1);
 			}
 			
-			if(baseUrl.endsWith("/")==false){
+			if(baseUrl.endsWith("/")==false && resourcePathBuild!=null && !"".equals(resourcePathBuild)){
 				newUrl.append("/");
 			}
 			newUrl.append(resourcePathBuild);
