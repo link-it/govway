@@ -5,32 +5,32 @@ In questo file sono documentate le modalità di ricompilazione del software Open
 1.1. Scaricare la versione binaria della PdD OpenSPCoop, disponibile alla URL:
 
   http://www.openspcoop.org/openspcoop/download/openspcoop2-pdd-<versione>.tgz
-  (es.   http://www.openspcoop.org/openspcoop/download/openspcoop2-pdd-2.2.1.tgz)
+  (es.   http://www.openspcoop.org/openspcoop/download/openspcoop2-pdd-2.3.tgz)
   
 1.2. Scaricare le librerie esterne relative alla versione sorgente da compilare, disponibili alla URL: 
 
   http://www.openspcoop.org/openspcoop/download/openspcoop2-external-lib-<versione>.tgz
-  (es. http://www.openspcoop.org/openspcoop/download/openspcoop2-external-lib-2.2.1.tgz)
+  (es. http://www.openspcoop.org/openspcoop/download/openspcoop2-external-lib-2.3.tgz)
 
 1.3. Scaricare i sorgenti del software, disponibili in svn all'indirizzo:
 
    svn://openspcoop.org/gov4j/openspcoop2/tags/<versione>
-   (es. svn://openspcoop.org/gov4j/openspcoop2/tags/2.2.1)
+   (es. svn://openspcoop.org/gov4j/openspcoop2/tags/2.3)
      
    Ultimo trunk di sviluppo della versione in svn://openspcoop.org/gov4j/openspcoop2/branches/<versioneSenzaMinor>/<versioneSenzaMinor>.dev
-   (es. svn://openspcoop.org/gov4j/openspcoop2/branches/2.2/2.2.dev)
+   (es. svn://openspcoop.org/gov4j/openspcoop2/branches/2.3/2.3.dev)
 
 2. Istruzioni per la compilazione
 
 2.1 Posizionarsi nella radice della directory dei sorgenti scaricati da svn
 
     Esempio:
-	cd openspcoop-src-2.2.1
+	cd openspcoop-src-2.3
 
 2.2 Copiare le librerie esterne all'interno della directory lib
 
     Esempio: 
-    	tar xzf openspcoop2-external-lib-2.2.1.tgz
+    	tar xzf openspcoop2-external-lib-2.3.tgz
 
 2.3 Compilare il Software tramite il comando ant
 
@@ -42,23 +42,23 @@ In questo file sono documentate le modalità di ricompilazione del software Open
 3.1 Tutti i jar compilati saranno disponibili al termine della compilazione nella sottodirectory dist della directory di lavoro
 
     Esempio:
-	openspcoop-src-2.2.1/dist/openspcoop2_*.jar
+	openspcoop-src-2.3/dist/openspcoop2_*.jar
 
 3.2 Il modo più semplice di utilizzarli è quello di sostiturli ai jar inclusi nella distribuzione binaria e poi rieseguire l'installer. Per farlo:
 
     - spacchettare la distribuzione binaria.
     Esempio:
-        tar xzf openspcoop2-pdd-2.2.1.tgz
+        tar xzf openspcoop2-pdd-2.3.tgz
 
     - copiare i jar ricompilati al posto di quelli preesistenti
     Esempio:
-    cp openspcoop-src-2.2.1/dist/openspcoop2_*-protocol*.jar openspcoop2-pdd-2.2.1/installer/setup/deploy/sw/openspcoop2_*.jar
-    cp openspcoop-src-2.2.1/dist/openspcoop2_*.jar openspcoop2-pdd-2.2.1/installer/setup/deploy/sw/jars/openspcoop2_*.jar
+    cp openspcoop-src-2.3/dist/openspcoop2_*-protocol*.jar openspcoop2-pdd-2.3/installer/setup/deploy/sw/openspcoop2_*.jar
+    cp openspcoop-src-2.3/dist/openspcoop2_*.jar openspcoop2-pdd-2.3/installer/setup/deploy/sw/jars/openspcoop2_*.jar
 
 3.3 Rieseguire il setup
 
     Esempio:
 
-    cd openspcoop2-pdd-2.2.1
+    cd openspcoop2-pdd-2.3
     ./setup
 
