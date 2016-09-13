@@ -50,15 +50,24 @@ In questo file sono documentate le modalità di ricompilazione del software Open
     Esempio:
         tar xzf openspcoop2-pdd-2.3.tgz
 
-    - copiare i jar ricompilati al posto di quelli preesistenti
-    Esempio:
-    cp openspcoop-src-2.3/dist/openspcoop2_*-protocol*.jar openspcoop2-pdd-2.3/installer/setup/deploy/sw/openspcoop2_*.jar
-    cp openspcoop-src-2.3/dist/openspcoop2_*.jar openspcoop2-pdd-2.3/installer/setup/deploy/sw/jars/openspcoop2_*.jar
+    - copiare i nuovi jar generati nella directory openspcoop-src-<versione>/dist al posto di quelli preesistenti nella versione binaria 
+      preservando il nome dell'archivio jar di destinazione.
+      La directory dove si trovano gli archivi jar da sostituire nella versione binaria, fatta eccezione per i jar di protocollo, è la seguente:
+	openspcoop2-pdd-<versione>/installer/setup/deploy/sw/jars/
+      La directory di destinazione per i jar di protocollo 
+	openspcoop2_spcoop-protocol_*.jar
+	openspcoop2_trasparente-protocol_*.jar
+	openspcoop2_sdi-protocol_*.jar
+      è la directory superiore 
+	openspcoop2-pdd-<versione>/installer/setup/deploy/sw/
+      !!Attenzione!!: Preservare il nome dell'archivio jar di destinazione presente nella versione binaria, rispetto a quello prodotto dalla versione sorgente.
+      Esempio:
+	cp openspcoop-src-2.3/dist/openspcoop2_pdd_RELEASE.jar openspcoop2-pdd-bin/installer/setup/deploy/sw/jars/openspcoop2_pdd_2.3.RELEASE.jar
 
 3.3 Rieseguire il setup
 
     Esempio:
 
     cd openspcoop2-pdd-2.3
-    ./setup
+    ./install.sh o ./install.cmd
 
