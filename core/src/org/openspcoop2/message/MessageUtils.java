@@ -355,6 +355,57 @@ public class MessageUtils {
 	}
 	
 	public static String dumpAttachment(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
+		Object o = _dumpAttachment(msg, ap);
+		if(o == null){
+			throw new SOAPException("Dump error (return null reference)");
+		}
+		if(o instanceof String){
+			return (String) o;
+		}
+		else if(o instanceof java.io.ByteArrayOutputStream){
+			java.io.ByteArrayOutputStream bout = null;
+			try{
+				bout = (java.io.ByteArrayOutputStream) o;
+				return bout.toString();
+			}finally{
+				try{
+					if(bout!=null){
+						bout.close();
+					}
+				}catch(Exception eClose){}
+			}
+		}
+		else{
+			throw new SOAPException("Dump error (return type "+o.getClass().getName()+" unknown)");
+		}
+	}
+	public static byte[] dumpAttachmentAsByteArray(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
+		Object o = _dumpAttachment(msg, ap);
+		if(o == null){
+			throw new SOAPException("Dump error (return null reference)");
+		}
+		if(o instanceof String){
+			return ((String) o).getBytes();
+		}
+		else if(o instanceof java.io.ByteArrayOutputStream){
+			java.io.ByteArrayOutputStream bout = null;
+			try{
+				bout = (java.io.ByteArrayOutputStream) o;
+				return bout.toByteArray();
+			}finally{
+				try{
+					if(bout!=null){
+						bout.close();
+					}
+				}catch(Exception eClose){}
+			}
+		}
+		else{
+			throw new SOAPException("Dump error (return type "+o.getClass().getName()+" unknown)");
+		}
+	}
+	
+	private static Object _dumpAttachment(OpenSPCoop2Message msg,AttachmentPart ap) throws SOAPException,IOException{
 		java.io.ByteArrayOutputStream bout = null;
 		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
 		//java.io.InputStream inputDH = dh.getInputStream(); NON FUNZIONA CON JBOSS7 e JAVA7 e imbustamentoSOAP con GestioneManifest e rootElementMaggioreUno (tipo: application/octet-stream)
@@ -435,7 +486,7 @@ public class MessageUtils {
 		if(s!=null){
 			return s;
 		}else{
-			return bout.toString();
+			return bout;
 		}
 	}
 		
