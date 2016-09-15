@@ -1,3 +1,21 @@
+2016-09-15  Andrea Poli <apoli@link.it>
+
+	* [OpenSPCoopPools, Pdd, Utils]
+	Aggiunta funzionalità OP-521
+	Aggiornati jar per Gestione Pool tramite commons pool/dbcp:
+	- commons-dbcp-1.4.jar -> commons-dbcp2-2.1.1.jar
+	- commons-pool-1.6.jar -> commons-pool2-2.4.2.jar
+	Realizzato task ant 'plugin' in tools/connection_pool che permette di integrare all'interno della PdD il tool di gestione dei pools.
+	Questa integrazione insieme all'aggiornamento dei jar ha permesso di risolvere le problematiche relative alla lookup jndi.
+	Adesso i pool creati tramite il tool 'org/openspcoop2/pools' e registrati nell'albero jndi sono accessibili via lookup standard
+	dai componenti interni alla PdD.
+	Come ulteriore funzionalità è comunque stata introdotta la possibilità di registrare i pool creati dal tool 'org/openspcoop2/pools'
+	in un contesto locale che bypassa l'albero jndi. 
+	Il bind e l'unbind in modalità locale viene effettuato, attraverso la classe org.openspcoop2.utils.resources.GestoreJNDI,
+	se viene utilizzato il prefisso 'local:/openspcoop2/' associato ai nomi jndi indicati nella configurazione del tool.
+	La lookup richiede in questo caso l'utilizzo obbligatorio della classe org.openspcoop2.utils.resources.GestoreJNDI,
+	classe che comunque viene utilizzata normalmente da tutti i componenti interni alla Porta di Dominio.
+
 2016-09-02  Andrea Poli <apoli@link.it>
 
         * Rilasciata versione 2.3b1
